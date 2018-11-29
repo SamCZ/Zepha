@@ -13,30 +13,63 @@
 #include "Mesh.h"
 #include "Entity.h"
 #include "Shader.h"
+#include "Camera.h"
 
-Window mainWindow;
-std::vector<Entity*> entities;
+Window* window;
 Shader* shader;
+std::vector<Entity*> entities;
+Camera* camera;
 
-bool  triDirection = true; //Right
-float triOffset = 0;
-float triMaxOffset = 0.7;
-float triMoveStep = 0.01;
+GLfloat deltaTime = 0.0f;
+GLfloat lastTime = 0.0f;
 
 void makeEntities() {
-	unsigned int indices[] {
-		0, 3, 1,
-		1, 3, 2,
-		2, 3, 0,
-		0, 1, 2
-	};
+//	unsigned int indices[] {
+//		0, 3, 1,
+//		1, 3, 2,
+//		2, 3, 0,
+//		0, 1, 2
+//	};
+//
+//	GLfloat vertices[] = {
+//		-1.0f, -1.0f, -0.5f,
+//		 0.0f, -1.0f,  1.0f,
+//		 1.0f, -1.0f, -0.5f,
+//		 0.0f,  1.0f,  0.0f
+//	};
 
-	GLfloat vertices[] = {
-		-1.0f, -1.0f, -0.5f,
-		 0.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f, -0.5f,
-		 0.0f,  1.0f,  0.0f
-	};
+    unsigned int indices[] {
+        //Bottom
+        0, 2, 3,
+        3, 1, 0,
+        //Top
+        4, 6, 7,
+        7, 5, 4,
+        //Left
+        0, 1, 5,
+        5, 4, 0,
+        //Right
+        7, 3, 2,
+        2, 6, 7,
+        //Back
+        0, 2, 6,
+        6, 4, 0,
+        //Front
+        1, 3, 7,
+        7, 5, 1
+    };
+
+    GLfloat vertices[] = {
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f,  0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f,  0.5f,
+
+        -0.5f,  0.5f, -0.5f,
+        -0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f,  0.5f,
+    };
 
     Mesh* mesh = new Mesh();
     mesh->create(vertices, indices, (sizeof(vertices)/sizeof(*vertices)), (sizeof(indices)/sizeof(*indices)));
@@ -47,8 +80,8 @@ void makeEntities() {
 
                 auto *tri = new Entity();
                 tri->create(mesh);
-                tri->setPosition(glm::vec3(i, y + 0.25, j));
-                tri->setScale(0.3);
+                tri->setPosition(glm::vec3(i * 1.45, (y + 0.5) * 1.6, j));
+                tri->setScale(0.7);
 
                 entities.push_back(tri);
             }
@@ -58,8 +91,11 @@ void makeEntities() {
 
 int main() {
     //Window
-    mainWindow = Window(800, 600);
-    mainWindow.initialize();
+    window = new Window(1366, 768);
+    window->initialize();
+
+    //Create camera
+    camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0, 1, 0), -90.0f, 0.0f, 10.0f, 0.1f);
 
 	//Create entities
     makeEntities();
@@ -68,24 +104,21 @@ int main() {
 	shader = new Shader();
 	shader->createFromFile("../GlProject/Shaders/world.vs", "../GlProject/Shaders/world.fs");
 
-	glm::mat4 projectionMatrix = glm::perspective(45.0f, mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f);
+
+	glm::mat4 projectionMatrix = glm::perspective(45.0f, window->getBufferWidth() / window->getBufferHeight(), 0.1f, 100.0f);
 
 	//Game Loop
-	while (!mainWindow.getShouldClose()) {
+	while (!window->getShouldClose()) {
+	    auto now = (GLfloat)glfwGetTime();
+	    deltaTime = now - lastTime;
+	    lastTime = now;
+
 		//Get & Handle Input
 		glfwPollEvents();
+		window->update();
 
-		if (triDirection /*Right*/) {
-			triOffset += triMoveStep;
-		}
-		else /*Left*/ {
-			triOffset -= triMoveStep;
-		}
-
-		if (std::abs(triOffset) >= triMaxOffset) triDirection = !triDirection;
-
-//		triangle->setPosition(glm::vec3(triOffset, 0, -2.5f));
-//		triangle->setScale(glm::vec3(0.4, 0.4, 1));
+		camera->keyControl(window->getKeysArray(), deltaTime);
+		camera->mouseControl(window->getDeltaX(), window->getDeltaY());
 
 		//Clear Window
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -94,18 +127,18 @@ int main() {
 		shader->useShader();
 
 		glUniformMatrix4fv(shader->getProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+		glUniformMatrix4fv(shader->getViewLocation(), 1, GL_FALSE, glm::value_ptr(camera->calculateViewMatrix()));
 
 		for (auto &entity : entities) {
 			glUniformMatrix4fv(shader->getModelLocation(), 1, GL_FALSE, glm::value_ptr(entity->getModelMatrix()));
-
-			entity->getPosition()->x += triMoveStep * (triDirection ? 1 : -1);
+			entity->setAngle(*entity->getAngle() + 0.5f);
 			entity->draw();
         }
 
         Shader::clearShader();
 
-		//Finish Drawing - Swap buffers
-		mainWindow.swapBuffers();
+		//Finish Drawing
+		window->swapBuffers();
 	}
 
 	return 0;

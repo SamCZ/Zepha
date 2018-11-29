@@ -23,6 +23,7 @@ public:
 
     GLint getProjectionLocation();
     GLint getModelLocation();
+    GLint getViewLocation();
 
     void useShader();
     static void clearShader() {
@@ -35,7 +36,7 @@ public:
 
 private:
     GLuint shaderID;
-    GLint uProj, uModel;
+    GLint uProj, uModel, uView;
 
     void compileShader(const char* vertexSource, const char* fragmentSource);
     void addShader(GLuint program, const char* shaderCode, GLenum shaderType);

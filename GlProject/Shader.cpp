@@ -9,6 +9,7 @@ Shader::Shader() {
     shaderID = 0;
     uModel = 0;
     uProj = 0;
+    uView = 0;
 }
 
 void Shader::createFromString(const char *vertexSource, const char *fragmentSource) {
@@ -76,6 +77,7 @@ void Shader::compileShader(const char *vertexSource, const char *fragmentSource)
 
     uModel = glGetUniformLocation(shaderID, "model");
     uProj = glGetUniformLocation(shaderID, "projection");
+    uView = glGetUniformLocation(shaderID, "view");
 }
 
 void Shader::useShader() {
@@ -88,6 +90,10 @@ GLint Shader::getModelLocation() {
 
 GLint Shader::getProjectionLocation() {
     return uProj;
+}
+
+GLint Shader::getViewLocation() {
+    return uView;
 }
 
 void Shader::cleanup() {

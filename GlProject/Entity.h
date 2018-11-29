@@ -21,8 +21,8 @@ public:
     void setPosition(glm::vec3 position);
     glm::vec3* getPosition();
 
-    //void setRotation(glm::vec3 rotation);
-    //glm::vec3* getRotation();
+    void setAngle(GLfloat angle);
+    GLfloat* getAngle();
 
     void setScale(float scale);
     void setScale(glm::vec3 scale);
@@ -35,8 +35,8 @@ private:
     Mesh* mesh;
 
     glm::vec3 position;
-    glm::vec3 rotation;
     glm::vec3 scale;
+    GLfloat angle;
 };
 
 
