@@ -22,20 +22,35 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLf
 void Camera::keyControl(bool *keys, GLfloat delta) {
     GLfloat moveMult = moveSpeed * delta;
 
+    glm::vec3 frontFlat = glm::vec3(front);
+    frontFlat.y = 0;
+    frontFlat = glm::normalize(frontFlat);
+    glm::vec3 rightFlat = glm::vec3(right);
+    rightFlat.y = 0;
+    rightFlat = glm::normalize(rightFlat);
+
     if (keys[GLFW_KEY_W]) {
-        position += front * moveMult;
+        position += frontFlat * moveMult;
     }
 
     if (keys[GLFW_KEY_S]) {
-        position -= front * moveMult;
+        position -= frontFlat * moveMult;
     }
 
     if (keys[GLFW_KEY_D]) {
-        position += right * moveMult;
+        position += rightFlat * moveMult;
     }
 
     if (keys[GLFW_KEY_A]) {
-        position -= right * moveMult;
+        position -= rightFlat * moveMult;
+    }
+
+    if (keys[GLFW_KEY_SPACE]) {
+        position += worldUp * moveMult;
+    }
+
+    if (keys[GLFW_KEY_LEFT_SHIFT]) {
+        position -= worldUp * moveMult;
     }
 }
 
