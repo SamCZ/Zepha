@@ -9,5 +9,5 @@ uniform sampler2D tex;
 
 void main() {
 //	fragColor = color;
-    fragColor = texture(tex, fragTex);
+    fragColor = texture(tex, fragTex) * color;
 }

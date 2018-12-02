@@ -32,141 +32,23 @@ GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
 void makeEntities() {
-//	unsigned int indices[] {
-//		0, 3, 1,
-//		1, 3, 2,
-//		2, 3, 0,
-//		0, 1, 2
-//	};
-//
-//	GLfloat vertices[] = {
-//    //   [x]    [y]    [z]      [u]    [v]
-//		-1.0f, -1.0f, -0.5f,    0.0f,  0.0f,
-//		 0.0f, -1.0f,  1.0f,    0.5f,  0.0f,
-//		 1.0f, -1.0f, -0.5f,    1.0f,  0.0f,
-//		 0.0f,  1.0f,  0.0f,    0.5f,  1.0f,
-//	};
-
-//    unsigned int indices[] {
-//        //Bottom
-//        0, 2, 3,
-//        3, 1, 0,
-//        //Top
-//        4, 6, 7,
-//        7, 5, 4,
-//        //Left
-//        0, 1, 5,
-//        5, 4, 0,
-//        //Right
-//        7, 3, 2,
-//        2, 6, 7,
-//        //Back
-//        0, 2, 6,
-//        6, 4, 0,
-//        //Front
-//        1, 3, 7,
-//        7, 5, 1
-//    };
-//
-//    GLfloat vertices[] = {
-//        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-//        -0.5f, -0.5f,  0.5f, 1.0f, 0.0,
-//         0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
-//         0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
-//
-//        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f,
-//        -0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-//         0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-//         0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
-//    };
-
-
-    unsigned int indices[] = {
-        //Top Face
-        0, 1, 2, 2, 3, 0,
-        //Bottom Face
-        0+4, 1+4, 2+4, 2+4, 3+4, 0+4,
-        //Front Face
-        0+8, 1+8, 2+8, 2+8, 3+8, 0+8,
-        //Back Face
-        0+12, 1+12, 2+12, 2+12, 3+12, 0+12,
-        //Left Face
-        0+16, 1+16, 2+16, 2+16, 3+16, 0+16,
-        //Right Face
-        0+20, 1+20, 2+20, 2+20, 3+20, 0+20,
-    };
-
-    GLfloat vertices[] = {
-         //Top Face
-        -0.5f,  0.5f, -0.5f, 0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
-         0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-         //Bottom Face
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f, 1.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
-         //Front Face
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-         //Back Face
-         0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-         0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-         0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-         //Left Face
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-         //Right Face
-        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
-    };
-
-//    Mesh* mesh = new Mesh();
-//    mesh->create(vertices, indices, (sizeof(vertices)/sizeof(*vertices)), (sizeof(indices)/sizeof(*indices)));
 
 	auto meshGen = new MeshGenerator();
-
 	int array[4][4][4] {
-			{ {0, 1, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0} },
-			{ {1, 0, 0, 1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0} },
-			{ {1, 0, 0, 1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0} },
-			{ {0, 1, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0} }};
+			{ {0, 1, 1, 0}, {1, 0, 0, 1}, {0, 0, 0, 0}, {0, 1, 1, 0} },
+			{ {1, 0, 0, 1}, {0, 0, 0, 0}, {0, 1, 1, 0}, {1, 0, 0, 1} },
+			{ {1, 0, 0, 1}, {0, 0, 0, 0}, {0, 1, 1, 0}, {1, 0, 0, 1} },
+			{ {0, 1, 1, 0}, {1, 0, 0, 1}, {0, 0, 0, 0}, {0, 1, 1, 0} }};
 	MeshData* m = meshGen->generate(array);
 
 	Mesh* mesh = new Mesh();
+	mesh->create(&m->vertices[0], &m->indices[0], (int)m->vertices.size(), (int)m->indices.size());
 
-	float* verts = &m->vertices[0];
-	unsigned int* indxs = &m->indices[0];
-
-	mesh->create(verts, indxs, (int)m->vertices.size(), (int)m->indices.size());
-
-    auto *tri = new Entity();
-    tri->create(mesh);
-    tri->setPosition(glm::vec3(0, 0, -5));
-    tri->setScale(0.5);
-    entities.push_back(tri);
-
-//    for (auto y = -1; y < 1; y++) {
-//        for (auto i = -1; i < 2; i++) {
-//            for (auto j = -4; j < -2; j++) {
-//
-//                auto *tri = new Entity();
-//                tri->create(mesh);
-//                tri->setPosition(glm::vec3(i * 1.45, (y + 0.5) * 1.6, j));
-//                tri->setScale(0.7);
-//
-//                entities.push_back(tri);
-//            }
-//        }
-//    }
+    auto* chunk = new Entity();
+	chunk->create(mesh);
+	chunk->setPosition(glm::vec3(0, 0, -5));
+//	chunk->setScale(0.5);
+    entities.push_back(chunk);
 }
 
 int main() {
@@ -221,7 +103,6 @@ int main() {
 
 		for (auto &entity : entities) {
 			glUniformMatrix4fv(shader->getModelLocation(), 1, GL_FALSE, glm::value_ptr(entity->getModelMatrix()));
-			entity->setAngle(*entity->getAngle() + 0.5f);
 			entity->draw();
         }
 

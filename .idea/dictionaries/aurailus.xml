@@ -3,6 +3,7 @@
     <words>
       <w>glfw</w>
       <w>shaders</w>
+      <w>verts</w>
     </words>
   </dictionary>
 </component>
