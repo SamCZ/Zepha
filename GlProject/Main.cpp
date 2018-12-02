@@ -17,6 +17,8 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Texture.h"
+#include "MeshData.h"
+#include "MeshGenerator.h"
 
 Window* window;
 Shader* shader;
@@ -84,10 +86,18 @@ void makeEntities() {
         0, 1, 2, 2, 3, 0,
         //Bottom Face
         0+4, 1+4, 2+4, 2+4, 3+4, 0+4,
+        //Front Face
+        0+8, 1+8, 2+8, 2+8, 3+8, 0+8,
+        //Back Face
+        0+12, 1+12, 2+12, 2+12, 3+12, 0+12,
+        //Left Face
+        0+16, 1+16, 2+16, 2+16, 3+16, 0+16,
+        //Right Face
+        0+20, 1+20, 2+20, 2+20, 3+20, 0+20,
     };
 
     GLfloat vertices[] = {
-        //Top Face
+         //Top Face
         -0.5f,  0.5f, -0.5f, 0.0f, 0.0f,
         -0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
          0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
@@ -97,24 +107,66 @@ void makeEntities() {
          0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
          0.5f, -0.5f,  0.5f, 1.0f, 1.0f,
         -0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
+         //Front Face
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
+         //Back Face
+         0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+         //Left Face
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+         //Right Face
+        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
     };
 
-    Mesh* mesh = new Mesh();
-    mesh->create(vertices, indices, (sizeof(vertices)/sizeof(*vertices)), (sizeof(indices)/sizeof(*indices)));
+//    Mesh* mesh = new Mesh();
+//    mesh->create(vertices, indices, (sizeof(vertices)/sizeof(*vertices)), (sizeof(indices)/sizeof(*indices)));
 
-    for (auto y = -1; y < 1; y++) {
-        for (auto i = -1; i < 2; i++) {
-            for (auto j = -4; j < -2; j++) {
+	auto meshGen = new MeshGenerator();
 
-                auto *tri = new Entity();
-                tri->create(mesh);
-                tri->setPosition(glm::vec3(i * 1.45, (y + 0.5) * 1.6, j));
-                tri->setScale(0.7);
+	int array[4][4][4] {
+			{ {0, 1, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0} },
+			{ {1, 0, 0, 1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0} },
+			{ {1, 0, 0, 1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0} },
+			{ {0, 1, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0} }};
+	MeshData* m = meshGen->generate(array);
 
-                entities.push_back(tri);
-            }
-        }
-    }
+	Mesh* mesh = new Mesh();
+
+	float* verts = &m->vertices[0];
+	unsigned int* indxs = &m->indices[0];
+
+	mesh->create(verts, indxs, (int)m->vertices.size(), (int)m->indices.size());
+
+    auto *tri = new Entity();
+    tri->create(mesh);
+    tri->setPosition(glm::vec3(0, 0, -5));
+    tri->setScale(0.5);
+    entities.push_back(tri);
+
+//    for (auto y = -1; y < 1; y++) {
+//        for (auto i = -1; i < 2; i++) {
+//            for (auto j = -4; j < -2; j++) {
+//
+//                auto *tri = new Entity();
+//                tri->create(mesh);
+//                tri->setPosition(glm::vec3(i * 1.45, (y + 0.5) * 1.6, j));
+//                tri->setScale(0.7);
+//
+//                entities.push_back(tri);
+//            }
+//        }
+//    }
 }
 
 int main() {

@@ -14,7 +14,7 @@ find_package(glfw3 REQUIRED)
 link_directories(GlProject/Libraries/glew/lib)
 
 add_executable(GlProject
-        GlProject/Main.cpp GlProject/Mesh.cpp GlProject/Mesh.h GlProject/Entity.cpp GlProject/Entity.h GlProject/Shader.cpp GlProject/Shader.h GlProject/Window.cpp GlProject/Window.h GlProject/Camera.cpp GlProject/Camera.h GlProject/Texture.cpp GlProject/Texture.h)
+        GlProject/Main.cpp GlProject/Mesh.cpp GlProject/Mesh.h GlProject/Entity.cpp GlProject/Entity.h GlProject/Shader.cpp GlProject/Shader.h GlProject/Window.cpp GlProject/Window.h GlProject/Camera.cpp GlProject/Camera.h GlProject/Texture.cpp GlProject/Texture.h GlProject/MeshGenerator.cpp GlProject/MeshGenerator.h GlProject/MeshData.cpp GlProject/MeshData.h)
 
 target_link_libraries(GlProject
         ${OPENGL_gl_LIBRARY}
