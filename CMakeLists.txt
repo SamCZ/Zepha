@@ -3,18 +3,40 @@ project(GlProject)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include_directories(GlProject/Libraries/glew/include/GL)
-include_directories(GlProject/Libraries/glfw_linux/include)
-include_directories(GlProject/Libraries/glm)
-include_directories(GlProject/Libraries/stb_image)
+include_directories(Libraries/glew/include/GL)
+include_directories(Libraries/glfw_linux/include)
+include_directories(Libraries/glm)
+include_directories(Libraries/stb_image)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
 
-link_directories(GlProject/Libraries/glew/lib)
+link_directories(Libraries/glew/lib)
 
 add_executable(GlProject
-        GlProject/Main.cpp GlProject/Mesh.cpp GlProject/Mesh.h GlProject/Entity.cpp GlProject/Entity.h GlProject/Shader.cpp GlProject/Shader.h GlProject/Window.cpp GlProject/Window.h GlProject/Camera.cpp GlProject/Camera.h GlProject/Texture.cpp GlProject/Texture.h GlProject/MeshGenerator.cpp GlProject/MeshGenerator.h GlProject/MeshData.cpp GlProject/MeshData.h)
+        GlProject/Main.cpp
+        GlProject/engine/graphics/Mesh.cpp
+        GlProject/engine/graphics/Mesh.h
+        GlProject/engine/Entity.cpp
+        GlProject/engine/Entity.h
+        GlProject/engine/graphics/Shader.cpp
+        GlProject/engine/graphics/Shader.h
+        GlProject/engine/Window.cpp
+        GlProject/engine/Window.h
+        GlProject/engine/Camera.cpp
+        GlProject/engine/Camera.h
+        GlProject/engine/graphics/Texture.cpp
+        GlProject/engine/graphics/Texture.h
+        GlProject/mesh/MeshGenerator.cpp
+        GlProject/mesh/MeshGenerator.h
+        GlProject/mesh/MeshData.cpp
+        GlProject/mesh/MeshData.h
+        GlProject/engine/Timer.cpp
+        GlProject/engine/Timer.h
+        GlProject/blocks/BlockAtlas.cpp
+        GlProject/blocks/BlockAtlas.h
+        GlProject/blocks/BlockDef.cpp
+        GlProject/blocks/BlockDef.h)
 
 target_link_libraries(GlProject
         ${OPENGL_gl_LIBRARY}

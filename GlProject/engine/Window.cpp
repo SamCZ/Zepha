@@ -100,6 +100,8 @@ double Window::getDeltaY() {
     return deltaY;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
 void Window::handleKeys(GLFWwindow* glfwWindow, int key, int code, int action, int mode) {
     auto window = static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
 
@@ -116,6 +118,7 @@ void Window::handleKeys(GLFWwindow* glfwWindow, int key, int code, int action, i
         }
     }
 }
+#pragma clang diagnostic pop
 
 Window::~Window() {
     glfwDestroyWindow(mainWindow);

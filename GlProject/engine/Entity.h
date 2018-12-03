@@ -8,7 +8,7 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 
-#include "Mesh.h"
+#include "graphics/Mesh.h"
 
 class Entity {
 public:
