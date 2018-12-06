@@ -1,7 +1,5 @@
 #define STB_IMAGE_IMPLEMENTATION
 
-#include <stdio.h>
-#include <string.h>
 #include <iostream>
 #include <vector>
 
@@ -49,7 +47,7 @@ BlockModel* createBlockModel() {
 
 void makeEntities(BlockModel* model) {
 	int array[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
-	for (int i = 0; i < CHUNK_SIZE; i++) {
+	for (int i = 0; i < CHUNK_SIZE; i++) { // NOLINT(modernize-loop-convert)
 		for (int j = 0; j < CHUNK_SIZE; j++) {
 			for (int k = 0; k < CHUNK_SIZE; k++) {
 				array[i][j][k] = (j < 8) ? 1 : 0;
@@ -63,7 +61,7 @@ void makeEntities(BlockModel* model) {
 	MeshGenerator mg;
 	mg.build(array, model, vertices, indices);
 
-	Mesh* mesh = new Mesh();
+	auto* mesh = new Mesh();
     mesh->create(&vertices, &indices);
 
 	for (int i = -16; i < 16; i++) {

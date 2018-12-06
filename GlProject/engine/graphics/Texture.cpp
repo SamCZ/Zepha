@@ -52,3 +52,7 @@ void Texture::clear() {
     bitDepth = 0;
     fileLocation = "";
 }
+
+Texture::~Texture() {
+    clear();
+}

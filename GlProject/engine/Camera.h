@@ -12,8 +12,8 @@
 
 class Camera {
 public:
-//    Camera();
-    Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLfloat moveSpeed, GLfloat turnSpeed);
+    Camera();
+    Camera(glm::vec3 position, glm::vec3 up, double yaw, double pitch, float moveSpeed, float turnSpeed);
 
     void keyControl(bool* keys, GLfloat delta);
     void mouseControl(double deltaX, double deltaY);
@@ -33,8 +33,8 @@ private:
     double yaw;
     double pitch;
 
-    GLfloat moveSpeed;
-    GLfloat turnSpeed;
+    float moveSpeed;
+    float turnSpeed;
 
     void update();
 };

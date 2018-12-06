@@ -3,11 +3,10 @@
 //
 
 #include "Camera.h"
-#include <stdio.h>
 
-//Camera::Camera() {}
+Camera::Camera() = default;
 
-Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLfloat moveSpeed, GLfloat turnSpeed) {
+Camera::Camera(glm::vec3 position, glm::vec3 up, double yaw, double pitch, float moveSpeed, float turnSpeed) {
     this->position = position;
     this->worldUp = up;
     this->yaw = yaw;
@@ -90,6 +89,4 @@ void Camera::update() {
     up = glm::normalize(glm::cross(right, front));
 }
 
-Camera::~Camera() {
-
-}
+Camera::~Camera() = default;

@@ -2,6 +2,7 @@
 // Created by aurailus on 26/11/18.
 //
 
+#include <cstdio>
 #include "Window.h"
 
 Window::Window() : Window(800, 600) {};

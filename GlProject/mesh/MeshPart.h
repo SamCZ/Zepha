@@ -43,7 +43,6 @@ private:
     unsigned int* indices;
     int iSize;
 
-    const char* texture;
     MeshMod meshMod;
 };
 

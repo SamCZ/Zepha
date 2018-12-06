@@ -5,7 +5,6 @@
 #ifndef GLPROJECT_WINDOW_H
 #define GLPROJECT_WINDOW_H
 
-#include <stdio.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 

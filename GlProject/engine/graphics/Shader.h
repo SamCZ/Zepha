@@ -5,7 +5,6 @@
 #ifndef GLPROJECT_SHADER_H
 #define GLPROJECT_SHADER_H
 
-#include <stdio.h>
 #include <string>
 #include <iostream>
 #include <fstream>

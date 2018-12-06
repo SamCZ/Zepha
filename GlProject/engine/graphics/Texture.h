@@ -12,7 +12,8 @@
 class Texture {
 public:
     Texture();
-    Texture(char* fileLocation);
+
+    explicit Texture(char* fileLocation);
 
     void load();
     void use();

@@ -13,8 +13,6 @@
 
 const int CHUNK_SIZE = 16;
 
-struct MeshData;
-
 class MeshGenerator {
 public:
     MeshGenerator();

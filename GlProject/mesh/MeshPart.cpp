@@ -15,7 +15,7 @@ MeshPart::MeshPart(Vertex* vertices, int vSize, unsigned int* indices, int iSize
 
 //Add normals and compute tex coordinates for the given Vertex array.
 
-void MeshPart::construct(Vertex* vertices, int vSize, unsigned int *indices, int iSize, const char *texture, MeshMod meshMod, float modValue) {
+void MeshPart::construct(Vertex* vertices, int vSize, unsigned int *indices, int iSize, const char* texture, MeshMod meshMod, float modValue) {
 
     //Set the meshMod and modValue variables on the MeshPart
 
@@ -38,19 +38,18 @@ void MeshPart::construct(Vertex* vertices, int vSize, unsigned int *indices, int
         p3 = &vertices[indices[i*3 + 2]];
 
         //Get the normal of the formed triangle
-        nml = glm::triangleNormal(*(p1->pos), *(p2->pos), *(p3->pos)); //TODO: do this right
+        nml = glm::triangleNormal(*(p1->pos), *(p2->pos), *(p3->pos));
 
         //Set the normal on the vertices
         p1->nml = new glm::vec3(nml.x, nml.y, nml.z);
         p2->nml = new glm::vec3(nml.x, nml.y, nml.z);
         p3->nml = new glm::vec3(nml.x, nml.y, nml.z);
 
-//        //TODO: get the tex dimensions from the texture atlas here
+        //TODO: use 'texture' varaible here
 //        glm::vec4 texBase = glm::vec4(0, 0, 1, 1);
 //        glm::vec2 texWidth = glm::vec2(texBase.x - texBase.z, texBase.y - texBase.w);
 
         //Adjust the texture coordinates to be relative to the texture requested.
-        //TODO: implement this aaaa
     }
 
     //Assign the inputted values to the struct
