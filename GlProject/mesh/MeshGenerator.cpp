@@ -18,6 +18,8 @@ MeshData* MeshGenerator::build(int blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE], B
     vertices->reserve(32768);
     indices->reserve(8192);
 
+//    addBlockModel(&k, &j, &i, model);
+
     for (int i = 0; i < CHUNK_SIZE; i++) {
         for (int j = 0; j < CHUNK_SIZE; j++) {
             for (int k = 0; k < CHUNK_SIZE; k++) {
@@ -50,21 +52,31 @@ MeshData* MeshGenerator::build(int blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE], B
 }
 
 void MeshGenerator::addBlockModel(int* x, int* y, int* z, BlockModel* model) {
-    MeshVertexIter* iter = model->topFaces[0]->getVertexIterator();
+    for (MeshPart* mp : model->topFaces) {
 
-    while (iter->hasNext()) {
-        Vertex* vertex = iter->next();
+        MeshVertexIter* mvIterator = mp->getVertexIterator();
+        while (mvIterator->hasNext()) {
+            Vertex* vertex = mvIterator->next();
 
-        vertices->push_back(vertex->pos->x + *x);
-        vertices->push_back(vertex->pos->y + *y);
-        vertices->push_back(vertex->pos->z + *z);
+            vertices->push_back(vertex->pos->x + *x);
+            vertices->push_back(vertex->pos->y + *y);
+            vertices->push_back(vertex->pos->z + *z);
 
-        vertices->push_back(vertex->tex->x);
-        vertices->push_back(vertex->tex->y);
+            vertices->push_back(vertex->tex->x);
+            vertices->push_back(vertex->tex->y);
 
-        vertices->push_back(0);
-        vertices->push_back(0);
-        vertices->push_back(0);
+            vertices->push_back(vertex->nml->x);
+            vertices->push_back(vertex->nml->y);
+            vertices->push_back(vertex->nml->z);
+        }
+
+        MeshIndexIter* miIterator = mp->getIndexIterator();
+        while(miIterator->hasNext()) {
+            unsigned int index = miIterator->next();
+            indices->push_back(indOffset + index);
+        }
+        indOffset += mp->getVertexCount();
+
     }
 }
 

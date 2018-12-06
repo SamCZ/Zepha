@@ -30,7 +30,7 @@ Texture* dirtTexture;
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
-BlockModel createBlockModel() {
+BlockModel* createBlockModel() {
 
     Vertex* topVerts = new Vertex[4] {
             Vertex(new glm::vec3(0.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
@@ -44,36 +44,35 @@ BlockModel createBlockModel() {
 
     auto* topPart = new MeshPart(topVerts, 4, topInds, 6, "dirt");
 
-    return BlockModel(nullptr, nullptr, topPart, nullptr, nullptr, nullptr, nullptr, true, true);
+    return new BlockModel(nullptr, nullptr, topPart, nullptr, nullptr, nullptr, nullptr, true, true);
 }
 
-void makeEntities(BlockModel model) {
+void makeEntities(BlockModel* model) {
+	int array[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+	for (int i = 0; i < CHUNK_SIZE; i++) {
+		for (int j = 0; j < CHUNK_SIZE; j++) {
+			for (int k = 0; k < CHUNK_SIZE; k++) {
+				array[i][j][k] = (j < 8) ? 1 : 0;
+			}
+		}
+	}
 
-//	int array[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
-//	for (int i = 0; i < CHUNK_SIZE; i++) {
-//		for (int j = 0; j < CHUNK_SIZE; j++) {
-//			for (int k = 0; k < CHUNK_SIZE; k++) {
-//				array[i][j][k] = (j < 8) ? 1 : 0;
-//			}
-//		}
-//	}
-//
-//    auto meshGen = new MeshGenerator();
-//    MeshData *m = meshGen->build(array, &model);
-//    delete meshGen;
-//
-//	Mesh* mesh = new Mesh();
-//	mesh->create(&m->vertices[0], &m->indices[0], (int)m->vertices.size(), (int)m->indices.size());
-//
-//	for (int i = -16; i < 16; i++) {
-//		for (int j = -16; j < 16; j++) {
-//			auto *chunk = new Entity();
-//			chunk->create(mesh);
-//			chunk->setPosition(glm::vec3(i * CHUNK_SIZE, 0, j * CHUNK_SIZE));
-//			chunk->setScale(0.5);
-//			entities.push_back(chunk);
-//		}
-//	}
+    auto meshGen = new MeshGenerator();
+    MeshData *m = meshGen->build(array, model);
+    delete meshGen;
+
+	Mesh* mesh = new Mesh();
+	mesh->create(&m->vertices[0], &m->indices[0], (int)m->vertices.size(), (int)m->indices.size());
+
+	for (int i = -16; i < 16; i++) {
+		for (int j = -16; j < 16; j++) {
+			auto *chunk = new Entity();
+			chunk->create(mesh);
+			chunk->setPosition(glm::vec3(i * CHUNK_SIZE, 0, j * CHUNK_SIZE));
+			chunk->setScale(0.5);
+			entities.push_back(chunk);
+		}
+	}
 }
 
 int main() {
@@ -92,13 +91,13 @@ int main() {
     dirtTexture->load();
 
     //Create model
-    BlockModel model = createBlockModel();
+    BlockModel* model = createBlockModel();
 
-    auto* mesh = model.topFaces[0];
+    auto* mesh = model->topFaces[0];
     mesh->debug();
 
 	//Create entities
-//    makeEntities(model);
+    makeEntities(model);
 
     //Create shader
 	shader = new Shader();
