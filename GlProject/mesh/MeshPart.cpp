@@ -14,11 +14,9 @@ MeshPart::MeshPart(Vertex* vertices, int vSize, unsigned int* indices, int iSize
 }
 
 //Add normals and compute tex coordinates for the given Vertex array.
-
 void MeshPart::construct(Vertex* vertices, int vSize, unsigned int *indices, int iSize, const char* texture, MeshMod meshMod, float modValue) {
 
-    //Set the meshMod and modValue variables on the MeshPart
-
+    //Set the meshMod and modValue variables on the MeshPart.
     this->meshMod = meshMod;
     this->modValue = modValue;
 
@@ -26,34 +24,36 @@ void MeshPart::construct(Vertex* vertices, int vSize, unsigned int *indices, int
     //To do this, we have to assume that each group of 3 indices is a triangle (which it would be hard for it to not be)
     //and that no vertexes are shared on corners or places where vectors should be interpolated.
 
-
     //Iterate through the indices to find all used vertices to add normals and adjust texture coordinates.
     Vertex *p1, *p2, *p3;
-    glm::vec3 nml;
+    glm::vec3 normal;
 
     for (int i = 0; i < iSize/3; i++) {
+
         //Get the three vertices
         p1 = &vertices[indices[i*3]];
         p2 = &vertices[indices[i*3 + 1]];
         p3 = &vertices[indices[i*3 + 2]];
 
         //Get the normal of the formed triangle
-        nml = glm::triangleNormal(*(p1->pos), *(p2->pos), *(p3->pos));
+        normal = glm::triangleNormal(*(p1->pos), *(p2->pos), *(p3->pos));
+        auto* nml = new glm::vec3(normal.x, normal.y, normal.z);
 
         //Set the normal on the vertices
-        p1->nml = new glm::vec3(nml.x, nml.y, nml.z);
-        p2->nml = new glm::vec3(nml.x, nml.y, nml.z);
-        p3->nml = new glm::vec3(nml.x, nml.y, nml.z);
+        p1->nml = nml;
+        p2->nml = nml;
+        p3->nml = nml;
+    }
 
-        //TODO: use 'texture' varaible here
-//        glm::vec4 texBase = glm::vec4(0, 0, 1, 1);
-//        glm::vec2 texWidth = glm::vec2(texBase.x - texBase.z, texBase.y - texBase.w);
+    //Iterate through the vertices to adjust the texture coordinates to fit the atlas.
+    for (int i = 0; i < vSize; i++) {
+        Vertex* vertex = &vertices[i];
 
-        //Adjust the texture coordinates to be relative to the texture requested.
+//        vertex->tex->x /= 2;
+//        vertex->tex->y /= 2;
     }
 
     //Assign the inputted values to the struct
-
     this->vertices = vertices;
     this->vSize = vSize;
     this->indices = indices;
@@ -123,7 +123,6 @@ void MeshPart::debug() {
 
 //Mesh Vertex Iterator
 //Iterator to get the vertices of the MeshPart as a stream.
-
 MeshVertexIter::MeshVertexIter(MeshPart* meshPart) {
     this->meshPart = meshPart;
     this->index = 0;
@@ -139,7 +138,6 @@ Vertex* MeshVertexIter::next() {
 
 //Mesh Index Iterator
 //Iterator to get the indices of the MeshPart as a stream
-
 MeshIndexIter::MeshIndexIter(MeshPart *meshPart) {
     this->meshPart = meshPart;
     this->index = 0;

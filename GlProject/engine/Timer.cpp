@@ -16,3 +16,12 @@ void Timer::elapsed() {
 
      printf("%s took %ld ns.\n", this->name, elapsed);
 }
+
+void Timer::elapsedInMs() {
+     auto finish = std::chrono::high_resolution_clock::now();
+
+     double elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start).count() / (double)1000000;
+
+     printf("%s took %.2f ms.\n", this->name, elapsed);
+}
+

@@ -13,7 +13,7 @@ MeshGenerator::MeshGenerator() {
 void MeshGenerator::build(int blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE], BlockModel* model,
                           std::vector<float> &vertices, std::vector<unsigned int> &indices) {
 
-    auto t = Timer("MeshGen");
+    Timer t("Mesh Generation");
 
     vertices.reserve(16384);
     indices.reserve(4096);
@@ -48,7 +48,7 @@ void MeshGenerator::build(int blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE], BlockM
     vertices.shrink_to_fit();
     indices.shrink_to_fit();
 
-    t.elapsed();
+    t.elapsedInMs();
 }
 
 void MeshGenerator::addFaces(int x, int y, int z, vector<float> &vertices, vector<unsigned int> &indices, vector<MeshPart*> meshParts) {

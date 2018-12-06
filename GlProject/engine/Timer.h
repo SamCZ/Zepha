@@ -13,6 +13,7 @@ public:
     explicit Timer(const char* name);
 
     void elapsed();
+    void elapsedInMs();
 private:
     const char* name;
     std::chrono::high_resolution_clock::time_point start;

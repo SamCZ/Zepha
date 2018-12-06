@@ -16,6 +16,7 @@
 #include "engine/graphics/Shader.h"
 #include "mesh/MeshGenerator.h"
 #include "engine/Entity.h"
+#include "engine/Timer.h"
 
 Window* window;
 Shader* shader;
@@ -34,7 +35,7 @@ BlockModel* createBlockModel() {
             Vertex(new glm::vec3(0.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
             Vertex(new glm::vec3(0.0f, 1.0f, 1.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
             Vertex(new glm::vec3(1.0f, 1.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
-            Vertex(new glm::vec3(1.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
+            Vertex(new glm::vec3(1.0f, 1.0f, 0.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
     };
     auto* topInds = new unsigned int[6] {
             0, 1, 2, 2, 3, 0
@@ -64,12 +65,12 @@ void makeEntities(BlockModel* model) {
 	auto* mesh = new Mesh();
     mesh->create(&vertices, &indices);
 
-	for (int i = -16; i < 16; i++) {
-		for (int j = -16; j < 16; j++) {
+	for (int i = -32; i < 32; i++) {
+		for (int j = -32; j < 32; j++) {
 			auto *chunk = new Entity();
 			chunk->create(mesh);
 			chunk->setPosition(glm::vec3(i * CHUNK_SIZE, 0, j * CHUNK_SIZE));
-			chunk->setScale(0.5);
+			chunk->setScale(1);
 			entities.push_back(chunk);
 		}
 	}
@@ -93,9 +94,6 @@ int main() {
     //Create model
     BlockModel* model = createBlockModel();
 
-    auto* mesh = model->topFaces[0];
-    mesh->debug();
-
 	//Create entities
     makeEntities(model);
 
@@ -109,6 +107,8 @@ int main() {
 
 	//Game Loop
 	while (!window->getShouldClose()) {
+	    Timer t("Game Loop");
+
 	    auto now = (GLfloat)glfwGetTime();
 	    deltaTime = now - lastTime;
 	    lastTime = now;
@@ -140,6 +140,8 @@ int main() {
 
 		//Finish Drawing
 		window->swapBuffers();
+
+		t.elapsedInMs();
 	}
 
 	return 0;
