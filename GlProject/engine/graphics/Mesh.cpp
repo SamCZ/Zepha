@@ -3,7 +3,6 @@
 //
 
 #include "Mesh.h"
-#include <iostream>
 
 Mesh::Mesh() {
     VAO = 0;
@@ -12,7 +11,11 @@ Mesh::Mesh() {
     indCount = 0;
 }
 
-void Mesh::create(GLfloat *vertices, unsigned int *indices, unsigned int vertCount, unsigned int indCount) {
+void Mesh::create(std::vector<float>* vertices, std::vector<unsigned int>* indices) {
+    create(&(*vertices)[0], &(*indices)[0], (unsigned int)vertices->size(), (unsigned int)indices->size());
+}
+
+void Mesh::create(float *vertices, unsigned int *indices, unsigned int vertCount, unsigned int indCount) {
     this->indCount = indCount;
 
     glGenVertexArrays(1, &VAO);

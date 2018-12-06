@@ -30,12 +30,14 @@ public:
     MeshIndexIter* getIndexIterator();
 
     void debug();
+
+    void cleanup();
+    ~MeshPart();
 private:
     void construct(Vertex* vertices, int vSize, unsigned int* indices, int iSize, const char* texture, MeshMod meshMod, float modValue);
 
     float modValue;
 
-    //TODO: Free these values from memory
     Vertex* vertices;
     int vSize;
     unsigned int* indices;

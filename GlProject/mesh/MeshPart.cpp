@@ -85,6 +85,15 @@ MeshIndexIter* MeshPart::getIndexIterator() {
     return new MeshIndexIter(this);
 }
 
+void MeshPart::cleanup() {
+    delete [] vertices;
+    delete [] indices;
+}
+
+MeshPart::~MeshPart() {
+    cleanup();
+}
+
 //Print information about this MeshPart into std::cout.
 void MeshPart::debug() {
     std::cout << "Debugging MeshPart" << std::endl << "Vertices:" << std::endl;

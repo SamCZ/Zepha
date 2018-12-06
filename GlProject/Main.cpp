@@ -57,12 +57,14 @@ void makeEntities(BlockModel* model) {
 		}
 	}
 
-    auto meshGen = new MeshGenerator();
-    MeshData *m = meshGen->build(array, model);
-    delete meshGen;
+	std::vector<float> vertices;
+	std::vector<unsigned int> indices;
+
+	MeshGenerator mg;
+	mg.build(array, model, vertices, indices);
 
 	Mesh* mesh = new Mesh();
-	mesh->create(&m->vertices[0], &m->indices[0], (int)m->vertices.size(), (int)m->indices.size());
+    mesh->create(&vertices, &indices);
 
 	for (int i = -16; i < 16; i++) {
 		for (int j = -16; j < 16; j++) {
