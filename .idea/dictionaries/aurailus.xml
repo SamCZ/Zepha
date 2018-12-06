@@ -1,6 +1,7 @@
 <component name="ProjectDictionaryState">
   <dictionary name="aurailus">
     <words>
+      <w>cout</w>
       <w>glfw</w>
       <w>shaders</w>
       <w>verts</w>

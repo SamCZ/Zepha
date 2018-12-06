@@ -26,30 +26,28 @@ void MeshPart::construct(Vertex* vertices, int vSize, unsigned int *indices, int
     //To do this, we have to assume that each group of 3 indices is a triangle (which it would be hard for it to not be)
     //and that no vertexes are shared on corners or places where vectors should be interpolated.
 
-    Vertex *p1, *p2, *p3;
-    glm::vec3 nml;
 
     //Iterate through the indices to find all used vertices to add normals and adjust texture coordinates.
+    Vertex *p1, *p2, *p3;
+    glm::vec3 nml;
 
     for (int i = 0; i < iSize/3; i++) {
         //Get the three vertices
         p1 = &vertices[indices[i*3]];
-        p2 = &vertices[indices[i*3] + 1];
-        p3 = &vertices[indices[i*3] + 2];
+        p2 = &vertices[indices[i*3 + 1]];
+        p3 = &vertices[indices[i*3 + 2]];
 
         //Get the normal of the formed triangle
-//        nml = glm::triangleNormal(*p1->pos, *p2->pos, *p3->pos); //TODO: do this right
-
-        auto* normal = new glm::vec3(nml.x, nml.y, nml.z);
+        nml = glm::triangleNormal(*(p1->pos), *(p2->pos), *(p3->pos)); //TODO: do this right
 
         //Set the normal on the vertices
-        p1->nml = normal;
-        p2->nml = normal;
-        p3->nml = normal;
+        p1->nml = new glm::vec3(nml.x, nml.y, nml.z);
+        p2->nml = new glm::vec3(nml.x, nml.y, nml.z);
+        p3->nml = new glm::vec3(nml.x, nml.y, nml.z);
 
-        //TODO: get the tex dimensions from the texture atlas here
-        glm::vec4 texBase = glm::vec4(0, 0, 1, 1);
-        glm::vec2 texWidth = glm::vec2(texBase.x - texBase.z, texBase.y - texBase.w);
+//        //TODO: get the tex dimensions from the texture atlas here
+//        glm::vec4 texBase = glm::vec4(0, 0, 1, 1);
+//        glm::vec2 texWidth = glm::vec2(texBase.x - texBase.z, texBase.y - texBase.w);
 
         //Adjust the texture coordinates to be relative to the texture requested.
         //TODO: implement this aaaa
@@ -87,6 +85,7 @@ MeshIndexIter* MeshPart::getIndexIterator() {
     return new MeshIndexIter(this);
 }
 
+//Print information about this MeshPart into std::cout.
 void MeshPart::debug() {
     std::cout << "Debugging MeshPart" << std::endl << "Vertices:" << std::endl;
 
@@ -94,7 +93,7 @@ void MeshPart::debug() {
 
     while (vI->hasNext()) {
         Vertex* v = vI->next();
-        std::cout << v->pos->x << ", " << v->pos->y << ", " << v->pos->z << std::endl;
+        std::cout << v->pos->x << ", " << v->pos->y << ", " << v->pos->z << " | " << v->nml->x << ", " << v->nml->y << ", " << v->nml->z << std::endl;
     }
 
     auto* iI = getIndexIterator();

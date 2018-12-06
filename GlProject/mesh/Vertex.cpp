@@ -4,6 +4,7 @@
 
 #include "Vertex.h"
 
+Vertex::Vertex() = default;
 
 Vertex::Vertex(glm::vec3* pos, glm::vec3* nml, glm::vec2* tex) {
     this->pos = pos;
