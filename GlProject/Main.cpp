@@ -12,14 +12,12 @@
 #include <gtc/type_ptr.hpp>
 
 #include "engine/Window.h"
-#include "engine/graphics/Mesh.h"
-#include "engine/Entity.h"
-#include "engine/graphics/Shader.h"
 #include "engine/Camera.h"
 #include "engine/graphics/Texture.h"
-#include "mesh/MeshData.h"
+#include "mesh/BlockModel.h"
+#include "engine/graphics/Shader.h"
 #include "mesh/MeshGenerator.h"
-#include "engine/Timer.h"
+#include "engine/Entity.h"
 
 Window* window;
 Shader* shader;
@@ -32,7 +30,23 @@ Texture* dirtTexture;
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
-void makeEntities() {
+BlockModel createBlockModel() {
+    Vertex* topVerts = new Vertex[4] {
+            Vertex(new glm::vec3(0.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
+            Vertex(new glm::vec3(0.0f, 1.0f, 1.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
+            Vertex(new glm::vec3(1.0f, 1.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
+            Vertex(new glm::vec3(1.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
+    };
+    auto* topInds = new unsigned int[6] {
+            0, 1, 2, 2, 3, 0
+    };
+
+    auto* topPart = new MeshPart(topVerts, 4, topInds, 6, "dirt");
+
+    return BlockModel(nullptr, nullptr, topPart, nullptr, nullptr, nullptr, nullptr, true, true);
+}
+
+void makeEntities(BlockModel model) {
 
 	int array[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 	for (int i = 0; i < CHUNK_SIZE; i++) {
@@ -44,11 +58,12 @@ void makeEntities() {
 	}
 
     auto meshGen = new MeshGenerator();
-    MeshData *m = meshGen->build(array);
+    MeshData *m = meshGen->build(array, &model);
     delete meshGen;
 
 	Mesh* mesh = new Mesh();
 	mesh->create(&m->vertices[0], &m->indices[0], (int)m->vertices.size(), (int)m->indices.size());
+
 	for (int i = -16; i < 16; i++) {
 		for (int j = -16; j < 16; j++) {
 			auto *chunk = new Entity();
@@ -75,8 +90,14 @@ int main() {
 	dirtTexture = new Texture((char*)"../Textures/default_dirt.png");
     dirtTexture->load();
 
+    //Create model
+    BlockModel model = createBlockModel();
+
+    auto* mesh = model.topFaces[0];
+    mesh->debug();
+
 	//Create entities
-    makeEntities();
+//    makeEntities(model);
 
     //Create shader
 	shader = new Shader();

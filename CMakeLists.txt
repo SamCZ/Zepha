@@ -29,14 +29,19 @@ add_executable(GlProject
         GlProject/engine/graphics/Texture.h
         GlProject/mesh/MeshGenerator.cpp
         GlProject/mesh/MeshGenerator.h
-        GlProject/mesh/MeshData.cpp
-        GlProject/mesh/MeshData.h
         GlProject/engine/Timer.cpp
         GlProject/engine/Timer.h
         GlProject/blocks/BlockAtlas.cpp
         GlProject/blocks/BlockAtlas.h
         GlProject/blocks/BlockDef.cpp
-        GlProject/blocks/BlockDef.h)
+        GlProject/blocks/BlockDef.h
+        GlProject/mesh/MeshPart.cpp
+        GlProject/mesh/MeshPart.h
+        GlProject/mesh/MeshMod.h
+        GlProject/mesh/Vertex.cpp
+        GlProject/mesh/Vertex.h
+        GlProject/mesh/BlockModel.cpp
+        GlProject/mesh/BlockModel.h)
 
 target_link_libraries(GlProject
         ${OPENGL_gl_LIBRARY}

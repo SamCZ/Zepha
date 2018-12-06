@@ -12,7 +12,7 @@ MeshGenerator::MeshGenerator() {
     indOffset = 0;
 }
 
-MeshData* MeshGenerator::build(int blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE]) {
+MeshData* MeshGenerator::build(int blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE], BlockModel* model) {
     auto t = Timer("MeshGen");
 
     vertices->reserve(32768);
@@ -22,14 +22,16 @@ MeshData* MeshGenerator::build(int blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE]) {
         for (int j = 0; j < CHUNK_SIZE; j++) {
             for (int k = 0; k < CHUNK_SIZE; k++) {
                 if (blocks[i][j][k] == 1) {
-                    add_top_face(&k, &j, &i);
-                    add_bottom_face(&k, &j, &i);
+                    addBlockModel(&k, &j, &i, model);
 
-                    add_front_face(&k, &j, &i);
-                    add_back_face(&k, &j, &i);
-
-                    add_left_face(&k, &j, &i);
-                    add_right_face(&k, &j, &i);
+//                    add_top_face(&k, &j, &i);
+//                    add_bottom_face(&k, &j, &i);
+//
+//                    add_front_face(&k, &j, &i);
+//                    add_back_face(&k, &j, &i);
+//
+//                    add_left_face(&k, &j, &i);
+//                    add_right_face(&k, &j, &i);
                 }
             }
         }
@@ -45,6 +47,25 @@ MeshData* MeshGenerator::build(int blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE]) {
     t.elapsed();
 
     return m;
+}
+
+void MeshGenerator::addBlockModel(int* x, int* y, int* z, BlockModel* model) {
+    MeshVertexIter* iter = model->topFaces[0]->getVertexIterator();
+
+    while (iter->hasNext()) {
+        Vertex* vertex = iter->next();
+
+        vertices->push_back(vertex->pos->x + *x);
+        vertices->push_back(vertex->pos->y + *y);
+        vertices->push_back(vertex->pos->z + *z);
+
+        vertices->push_back(vertex->tex->x);
+        vertices->push_back(vertex->tex->y);
+
+        vertices->push_back(0);
+        vertices->push_back(0);
+        vertices->push_back(0);
+    }
 }
 
 void MeshGenerator::add_vertices(std::vector<float> *verts, std::vector<unsigned int> *inds, int *x, int *y, int *z) {
