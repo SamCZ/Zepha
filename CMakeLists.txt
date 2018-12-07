@@ -14,35 +14,7 @@ find_package(glfw3 REQUIRED)
 
 link_directories(Libraries/glew/lib)
 
-add_executable(GlProject
-        GlProject/Main.cpp
-        GlProject/engine/graphics/Mesh.cpp
-        GlProject/engine/graphics/Mesh.h
-        GlProject/engine/Entity.cpp
-        GlProject/engine/Entity.h
-        GlProject/engine/graphics/Shader.cpp
-        GlProject/engine/graphics/Shader.h
-        GlProject/engine/Window.cpp
-        GlProject/engine/Window.h
-        GlProject/engine/Camera.cpp
-        GlProject/engine/Camera.h
-        GlProject/engine/graphics/Texture.cpp
-        GlProject/engine/graphics/Texture.h
-        GlProject/mesh/MeshGenerator.cpp
-        GlProject/mesh/MeshGenerator.h
-        GlProject/engine/Timer.cpp
-        GlProject/engine/Timer.h
-        GlProject/blocks/BlockAtlas.cpp
-        GlProject/blocks/BlockAtlas.h
-        GlProject/blocks/BlockDef.cpp
-        GlProject/blocks/BlockDef.h
-        GlProject/mesh/MeshPart.cpp
-        GlProject/mesh/MeshPart.h
-        GlProject/mesh/MeshMod.h
-        GlProject/mesh/Vertex.cpp
-        GlProject/mesh/Vertex.h
-        GlProject/mesh/BlockModel.cpp
-        GlProject/mesh/BlockModel.h GlProject/engine/TextureAtlas.cpp GlProject/engine/TextureAtlas.h)
+add_executable(GlProject GlProject/Main.cpp GlProject/engine/graphics/Mesh.cpp GlProject/engine/graphics/Mesh.h GlProject/engine/Entity.cpp GlProject/engine/Entity.h GlProject/engine/graphics/Shader.cpp GlProject/engine/graphics/Shader.h GlProject/engine/Window.cpp GlProject/engine/Window.h GlProject/engine/Camera.cpp GlProject/engine/Camera.h GlProject/engine/graphics/Texture.cpp GlProject/engine/graphics/Texture.h GlProject/mesh/MeshGenerator.cpp GlProject/mesh/MeshGenerator.h GlProject/engine/Timer.cpp GlProject/engine/Timer.h GlProject/blocks/BlockAtlas.cpp GlProject/blocks/BlockAtlas.h GlProject/blocks/BlockDef.cpp GlProject/blocks/BlockDef.h GlProject/mesh/MeshPart.cpp GlProject/mesh/MeshPart.h GlProject/mesh/MeshMod.h GlProject/mesh/Vertex.cpp GlProject/mesh/Vertex.h GlProject/mesh/BlockModel.cpp GlProject/mesh/BlockModel.h GlProject/engine/TextureAtlas.cpp GlProject/engine/TextureAtlas.h)
 
 target_link_libraries(GlProject
         ${OPENGL_gl_LIBRARY}
