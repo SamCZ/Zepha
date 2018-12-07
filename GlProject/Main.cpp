@@ -77,6 +77,8 @@ void makeEntities(BlockModel* model) {
 }
 
 int main() {
+	Timer boot("Initialization");
+
     //Window
     window = new Window(1366, 768);
     window->initialize();
@@ -102,6 +104,8 @@ int main() {
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    boot.elapsed();
 
 	//Game Loop
 	while (!window->getShouldClose()) {
@@ -139,7 +143,7 @@ int main() {
 		//Finish Drawing
 		window->swapBuffers();
 
-//		t.elapsedInMs();
+//		t.elapsedMs();
 	}
 
 	return 0;

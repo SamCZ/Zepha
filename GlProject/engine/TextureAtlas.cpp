@@ -36,19 +36,19 @@ TextureAtlas::TextureAtlas(const char* directory) {
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
     std::cout << "This GPU's max texture size is: " << maxTexSize / 4 << "px^2." << std::endl;
 
-    //Using cute_files to open the directory and recursively search for files.
+    //Using cute_files to open the directory and search for files.
     //Filter the files by extension and add all of them to a vector as TextureRefs.
     cf_dir_t dir;
     cf_dir_open(&dir, (std::string(directory) + std::string("/game")).c_str());
 
     std::list<TextureRef> textureRefs;
-//
-//    //Load Missing Texture
-//    auto msg = TextureRef();
-//    strcpy(msg.path, "../Textures/_missing.png");
-//    strcpy(msg.name, "_missing.png");
-//    msg.texData = stbi_load(msg.path, &msg.width, &msg.height, &msg.bitDepth, 4);
-//    textureRefs.push_back(msg);
+
+    //Load Missing Texture
+    auto msg = TextureRef();
+    strcpy(msg.path, "../Textures/_missing.png");
+    strcpy(msg.name, "_missing.png");
+    msg.texData = stbi_load(msg.path, &msg.width, &msg.height, &msg.bitDepth, 4);
+    textureRefs.push_back(msg);
 
     //Iterate though the files
     while (dir.has_next) {
@@ -57,7 +57,7 @@ TextureAtlas::TextureAtlas(const char* directory) {
 
         if (!file.is_dir && strcmp(file.ext, ".png") == 0) {
 
-//            printf("Processing Texture: %s\n", file.name);
+            printf("Loading Texture: %s\n", file.name);
 
             auto ref = TextureRef();
             strcpy(ref.path, file.path);
@@ -138,10 +138,11 @@ TextureAtlas::TextureAtlas(const char* directory) {
 Texture* TextureAtlas::getTexture() {
     return texture;
 }
+
 glm::vec4* TextureAtlas::getUVs(std::string* texture) {
     if (textures.count(*texture) == 0) {
         std::cout << "Texture '" << *texture << "' Not found in atlas! Terminating." << std::endl;
-        throw "Texture not found error";
+        throw std::exception();
     }
     return &textures.at(*texture);
 }

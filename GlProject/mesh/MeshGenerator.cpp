@@ -48,7 +48,7 @@ void MeshGenerator::build(int blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE], BlockM
     vertices.shrink_to_fit();
     indices.shrink_to_fit();
 
-    t.elapsedInMs();
+    t.elapsedMs();
 }
 
 void MeshGenerator::addFaces(int x, int y, int z, vector<float> &vertices, vector<unsigned int> &indices, vector<MeshPart*> meshParts) {
