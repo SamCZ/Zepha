@@ -1,5 +1,4 @@
 //
-
 // Created by aurailus on 29/11/18.
 //
 
@@ -16,6 +15,7 @@ public:
     explicit Texture(char* fileLocation);
 
     void load();
+    void load(unsigned char* bytes, int width, int height);
     void use();
     void clear();
 

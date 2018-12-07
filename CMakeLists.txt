@@ -7,6 +7,7 @@ include_directories(Libraries/glew/include/GL)
 include_directories(Libraries/glfw_linux/include)
 include_directories(Libraries/glm)
 include_directories(Libraries/stb_image)
+include_directories(Libraries/cute)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
@@ -41,7 +42,7 @@ add_executable(GlProject
         GlProject/mesh/Vertex.cpp
         GlProject/mesh/Vertex.h
         GlProject/mesh/BlockModel.cpp
-        GlProject/mesh/BlockModel.h)
+        GlProject/mesh/BlockModel.h GlProject/engine/TextureAtlas.cpp GlProject/engine/TextureAtlas.h)
 
 target_link_libraries(GlProject
         ${OPENGL_gl_LIBRARY}

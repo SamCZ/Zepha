@@ -17,14 +17,14 @@
 #include "mesh/MeshGenerator.h"
 #include "engine/Entity.h"
 #include "engine/Timer.h"
+#include "engine/TextureAtlas.h"
 
 Window* window;
 Shader* shader;
 std::vector<Entity*> entities;
 Camera* camera;
 
-Texture* brickTexture;
-Texture* dirtTexture;
+TextureAtlas* atlas;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
@@ -41,7 +41,7 @@ BlockModel* createBlockModel() {
             0, 1, 2, 2, 3, 0
     };
 
-    auto* topPart = new MeshPart(topVerts, 4, topInds, 6, "dirt");
+    auto* topPart = new MeshPart(topVerts, 4, topInds, 6, "default_dirt", atlas);
 
     return new BlockModel(nullptr, nullptr, topPart, nullptr, nullptr, nullptr, nullptr, true, true);
 }
@@ -82,14 +82,10 @@ int main() {
     window->initialize();
 
     //Create camera
-    camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0, 1, 0), -90.0f, 0.0f, 10.0f, 0.1f);
+    camera = new Camera(glm::vec3(0.0f, 16.0f, 0.0f), glm::vec3(0, 1, 0), -90.0f, -45.0f, 10.0f, 0.1f);
 
     //Load Textures
-	brickTexture = new Texture((char*)"../Textures/brick.png");
-	brickTexture->load();
-
-	dirtTexture = new Texture((char*)"../Textures/default_dirt.png");
-    dirtTexture->load();
+	atlas = new TextureAtlas("../Textures");
 
     //Create model
     BlockModel* model = createBlockModel();
@@ -101,9 +97,11 @@ int main() {
 	shader = new Shader();
 	shader->createFromFile("../GlProject/shader/world.vs", "../GlProject/shader/world.fs");
 
-	glm::mat4 projectionMatrix = glm::perspective(45.0f, window->getBufferWidth() / window->getBufferHeight(), 0.1f, 100.0f);
+	glm::mat4 projectionMatrix = glm::perspective(45.0f, window->getBufferWidth() / window->getBufferHeight(), 0.1f, 1000.0f);
 
     glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Game Loop
 	while (!window->getShouldClose()) {
@@ -129,7 +127,7 @@ int main() {
 		glUniformMatrix4fv(shader->getProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 		glUniformMatrix4fv(shader->getViewLocation(), 1, GL_FALSE, glm::value_ptr(camera->calculateViewMatrix()));
 
-        dirtTexture->use();
+        atlas->getTexture()->use();
 
 		for (auto &entity : entities) {
 			glUniformMatrix4fv(shader->getModelLocation(), 1, GL_FALSE, glm::value_ptr(entity->getModelMatrix()));
@@ -141,7 +139,7 @@ int main() {
 		//Finish Drawing
 		window->swapBuffers();
 
-		t.elapsedInMs();
+//		t.elapsedInMs();
 	}
 
 	return 0;

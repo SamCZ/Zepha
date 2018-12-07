@@ -11,14 +11,15 @@
 #include <gtx/normal.hpp>
 #include "MeshMod.h"
 #include "Vertex.h"
+#include "../engine/TextureAtlas.h"
 
 class MeshVertexIter;
 class MeshIndexIter;
 
 struct MeshPart {
 public:
-    MeshPart(Vertex* vertices, int vSize, unsigned int* indices, int iSize, const char* texture, MeshMod meshMod, float modValue);
-    MeshPart(Vertex* vertices, int vSize, unsigned int* indices, int iSize, const char* texture);
+    MeshPart(Vertex* vertices, int vSize, unsigned int* indices, int iSize, const char* texture, MeshMod meshMod, float modValue, TextureAtlas* atlas);
+    MeshPart(Vertex* vertices, int vSize, unsigned int* indices, int iSize, const char* texture, TextureAtlas* atlas);
 
     int getVertexCount();
     Vertex* getVertex(int index);
@@ -34,7 +35,7 @@ public:
     void cleanup();
     ~MeshPart();
 private:
-    void construct(Vertex* vertices, int vSize, unsigned int* indices, int iSize, const char* texture, MeshMod meshMod, float modValue);
+    void construct(Vertex* vertices, int vSize, unsigned int* indices, int iSize, const char* texture, MeshMod meshMod, float modValue, TextureAtlas* atlas);
 
     float modValue;
 

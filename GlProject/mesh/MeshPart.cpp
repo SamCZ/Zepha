@@ -5,16 +5,16 @@
 #include <iostream>
 #include "MeshPart.h"
 
-MeshPart::MeshPart(Vertex* vertices, int vSize, unsigned int* indices, int iSize, const char* texture, MeshMod meshMod, float modValue) {
-    construct(vertices, vSize, indices, iSize, texture, meshMod, modValue);
+MeshPart::MeshPart(Vertex* vertices, int vSize, unsigned int* indices, int iSize, const char* texture, MeshMod meshMod, float modValue, TextureAtlas* atlas) {
+    construct(vertices, vSize, indices, iSize, texture, meshMod, modValue, atlas);
 }
 
-MeshPart::MeshPart(Vertex* vertices, int vSize, unsigned int* indices, int iSize, const char* texture) {
-    construct(vertices, vSize, indices, iSize, texture, NONE, 0);
+MeshPart::MeshPart(Vertex* vertices, int vSize, unsigned int* indices, int iSize, const char* texture, TextureAtlas* atlas) {
+    construct(vertices, vSize, indices, iSize, texture, NONE, 0, atlas);
 }
 
 //Add normals and compute tex coordinates for the given Vertex array.
-void MeshPart::construct(Vertex* vertices, int vSize, unsigned int *indices, int iSize, const char* texture, MeshMod meshMod, float modValue) {
+void MeshPart::construct(Vertex* vertices, int vSize, unsigned int *indices, int iSize, const char* texture, MeshMod meshMod, float modValue, TextureAtlas* atlas) {
 
     //Set the meshMod and modValue variables on the MeshPart.
     this->meshMod = meshMod;
@@ -45,12 +45,16 @@ void MeshPart::construct(Vertex* vertices, int vSize, unsigned int *indices, int
         p3->nml = nml;
     }
 
+    auto texString = std::string(texture);
+    auto uv = atlas->getUVs(&texString);
+//	std::cout << uv->x << ", " << uv->y << ", " << uv->z << ", " << uv->w << ", " << std::endl;
+
     //Iterate through the vertices to adjust the texture coordinates to fit the atlas.
     for (int i = 0; i < vSize; i++) {
         Vertex* vertex = &vertices[i];
 
-//        vertex->tex->x /= 2;
-//        vertex->tex->y /= 2;
+        vertex->tex->x = uv->x + ((uv->z - uv->x) * vertex->tex->x);
+        vertex->tex->y = uv->y + ((uv->w - uv->y) * vertex->tex->y);
     }
 
     //Assign the inputted values to the struct
