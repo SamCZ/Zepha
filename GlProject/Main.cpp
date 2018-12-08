@@ -31,6 +31,30 @@ GLfloat lastTime = 0.0f;
 
 BlockModel* createBlockModel() {
 
+    Vertex* leftVerts = new Vertex[4] {
+            Vertex(new glm::vec3(0.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
+            Vertex(new glm::vec3(0.0f, 0.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
+            Vertex(new glm::vec3(0.0f, 1.0f, 1.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
+            Vertex(new glm::vec3(0.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
+    };
+    auto* leftInds = new unsigned int[6] {
+            0, 1, 2, 2, 3, 0
+    };
+
+    auto* leftPart = new MeshPart(leftVerts, 4, leftInds, 6, "default_grass_side", atlas);
+
+    Vertex* rightVerts = new Vertex[4] {
+            Vertex(new glm::vec3(1.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
+            Vertex(new glm::vec3(1.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
+            Vertex(new glm::vec3(1.0f, 1.0f, 1.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
+            Vertex(new glm::vec3(1.0f, 0.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
+    };
+    auto* rightInds = new unsigned int[6] {
+            0, 1, 2, 2, 3, 0
+    };
+
+    auto* rightPart = new MeshPart(rightVerts, 4, rightInds, 6, "default_grass_side", atlas);
+
     Vertex* topVerts = new Vertex[4] {
             Vertex(new glm::vec3(0.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
             Vertex(new glm::vec3(0.0f, 1.0f, 1.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
@@ -41,9 +65,45 @@ BlockModel* createBlockModel() {
             0, 1, 2, 2, 3, 0
     };
 
-    auto* topPart = new MeshPart(topVerts, 4, topInds, 6, "default_dirt", atlas);
+    auto* topPart = new MeshPart(topVerts, 4, topInds, 6, "default_grass_top", atlas);
 
-    return new BlockModel(nullptr, nullptr, topPart, nullptr, nullptr, nullptr, nullptr, true, true);
+    Vertex* bottomVerts = new Vertex[4] {
+            Vertex(new glm::vec3(0.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
+            Vertex(new glm::vec3(1.0f, 0.0f, 0.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
+            Vertex(new glm::vec3(1.0f, 0.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
+            Vertex(new glm::vec3(0.0f, 0.0f, 1.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
+    };
+    auto* bottomInds = new unsigned int[6] {
+            0, 1, 2, 2, 3, 0
+    };
+
+    auto* bottomPart = new MeshPart(bottomVerts, 4, bottomInds, 6, "default_dirt", atlas);
+
+    Vertex* frontVerts = new Vertex[4] {
+            Vertex(new glm::vec3(0.0f, 0.0f, 1.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
+            Vertex(new glm::vec3(1.0f, 0.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
+            Vertex(new glm::vec3(1.0f, 1.0f, 1.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
+            Vertex(new glm::vec3(0.0f, 1.0f, 1.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
+    };
+    auto* frontInds = new unsigned int[6] {
+            0, 1, 2, 2, 3, 0
+    };
+
+    auto* frontPart = new MeshPart(frontVerts, 4, frontInds, 6, "default_grass_side", atlas);
+
+    Vertex* backVerts = new Vertex[4] {
+            Vertex(new glm::vec3(0.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
+            Vertex(new glm::vec3(0.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
+            Vertex(new glm::vec3(1.0f, 1.0f, 0.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
+            Vertex(new glm::vec3(1.0f, 0.0f, 0.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
+    };
+    auto* backInds = new unsigned int[6] {
+            0, 1, 2, 2, 3, 0
+    };
+
+    auto* backPart = new MeshPart(backVerts, 4, backInds, 6, "default_grass_side", atlas);
+
+    return new BlockModel(leftPart, rightPart, topPart, bottomPart, frontPart, backPart, nullptr, true, true);
 }
 
 void makeEntities(BlockModel* model) {
@@ -51,7 +111,8 @@ void makeEntities(BlockModel* model) {
 	for (int i = 0; i < CHUNK_SIZE; i++) { // NOLINT(modernize-loop-convert)
 		for (int j = 0; j < CHUNK_SIZE; j++) {
 			for (int k = 0; k < CHUNK_SIZE; k++) {
-				array[i][j][k] = (j < 8) ? 1 : 0;
+//				array[i][j][k] = (j < 8) ? 1 : 0;
+                array[i][j][k] = (int)round(rand()%2);
 			}
 		}
 	}
@@ -65,8 +126,8 @@ void makeEntities(BlockModel* model) {
 	auto* mesh = new Mesh();
     mesh->create(&vertices, &indices);
 
-	for (int i = -32; i < 32; i++) {
-		for (int j = -32; j < 32; j++) {
+	for (int i = -16; i < 16; i++) {
+		for (int j = -16; j < 16; j++) {
 			auto *chunk = new Entity();
 			chunk->create(mesh);
 			chunk->setPosition(glm::vec3(i * CHUNK_SIZE, 0, j * CHUNK_SIZE));

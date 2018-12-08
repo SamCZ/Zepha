@@ -81,8 +81,8 @@ TextureAtlas::TextureAtlas(const char* directory) {
     });
 
     //Define the texpage width and height
-    int pageWidth = 512;
-    int pageHeight = 512;
+    int pageWidth = 256;
+    int pageHeight = 256;
 
     //Define that pagedata array and clean the memory it contains
     auto* pageData = new unsigned char[pageWidth*4 * pageHeight];
@@ -100,7 +100,7 @@ TextureAtlas::TextureAtlas(const char* directory) {
     int tallestInRow = 0;
 
     for (auto i : textureRefs) {
-        if (widthOffset + i.width >= pageWidth) {
+        if (widthOffset + i.width > pageWidth) {
             widthOffset = 0;
             heightOffset += tallestInRow;
             tallestInRow = i.height;
