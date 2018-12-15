@@ -14,6 +14,8 @@ Window::Window(GLint windowWidth, GLint windowHeight) {
     centerX = width / 2;
     centerY = height / 2;
 
+    mouseLocked = true;
+
     for (bool &key : keys) {
         key = false;
     }
@@ -81,16 +83,23 @@ int Window::initialize() {
 
 void Window::update() {
     double mouseX, mouseY;
-    glfwGetCursorPos(mainWindow, &mouseX, &mouseY);
-
-    if (glfwGetWindowAttrib(mainWindow, GLFW_FOCUSED)) {
-        deltaX = mouseX - centerX;
-        deltaY = centerY - mouseY;
-        glfwSetCursorPos(mainWindow, centerX, centerY);
-    }
-    else {
+    if (glfwGetWindowAttrib(mainWindow, GLFW_FOCUSED) == GL_FALSE) {
+        mouseLocked = false;
         deltaX = 0;
         deltaY = 0;
+    }
+    else {
+        glfwGetCursorPos(mainWindow, &mouseX, &mouseY);
+
+        if (!mouseLocked) {
+            //Allow user to grab window edges without locking the mouse
+            if (mouseX > 128 && mouseY > 128 && mouseX < bufferWidth - 128 && mouseY < bufferHeight - 128) mouseLocked = true;
+        }
+        else {
+            deltaX = mouseX - centerX;
+            deltaY = centerY - mouseY;
+            glfwSetCursorPos(mainWindow, centerX, centerY);
+        }
     }
 }
 

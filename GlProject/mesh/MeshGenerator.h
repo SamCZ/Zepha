@@ -23,7 +23,7 @@ public:
 private:
     unsigned int indOffset;
 
-    void addFaces(int x, int y, int z, std::vector<float> &vertices, std::vector<unsigned int> &indices, vector<MeshPart*>);
+    void addFaces(int x, int y, int z, vector<float>* vertices, vector<unsigned int>* indices, vector<MeshPart*>* meshParts);
 
     void cleanup();
 };

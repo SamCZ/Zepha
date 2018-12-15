@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedMacroInspection"
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <iostream>
@@ -18,6 +20,8 @@
 #include "engine/Entity.h"
 #include "engine/Timer.h"
 #include "engine/TextureAtlas.h"
+#include "UDP.h"
+#include "engine/PerlinNoise.h"
 
 Window* window;
 Shader* shader;
@@ -30,7 +34,6 @@ GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
 BlockModel* createBlockModel() {
-
     Vertex* leftVerts = new Vertex[4] {
             Vertex(new glm::vec3(0.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
             Vertex(new glm::vec3(0.0f, 0.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
@@ -41,7 +44,7 @@ BlockModel* createBlockModel() {
             0, 1, 2, 2, 3, 0
     };
 
-    auto* leftPart = new MeshPart(leftVerts, 4, leftInds, 6, "default_grass_side", atlas);
+    auto* leftPart = new MeshPart(leftVerts, 4, leftInds, 6, "default_cobblestone", atlas);
 
     Vertex* rightVerts = new Vertex[4] {
             Vertex(new glm::vec3(1.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
@@ -53,7 +56,7 @@ BlockModel* createBlockModel() {
             0, 1, 2, 2, 3, 0
     };
 
-    auto* rightPart = new MeshPart(rightVerts, 4, rightInds, 6, "default_grass_side", atlas);
+    auto* rightPart = new MeshPart(rightVerts, 4, rightInds, 6, "default_cobblestone", atlas);
 
     Vertex* topVerts = new Vertex[4] {
             Vertex(new glm::vec3(0.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
@@ -65,7 +68,7 @@ BlockModel* createBlockModel() {
             0, 1, 2, 2, 3, 0
     };
 
-    auto* topPart = new MeshPart(topVerts, 4, topInds, 6, "default_grass_top", atlas);
+    auto* topPart = new MeshPart(topVerts, 4, topInds, 6, "default_cobblestone", atlas);
 
     Vertex* bottomVerts = new Vertex[4] {
             Vertex(new glm::vec3(0.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
@@ -77,7 +80,7 @@ BlockModel* createBlockModel() {
             0, 1, 2, 2, 3, 0
     };
 
-    auto* bottomPart = new MeshPart(bottomVerts, 4, bottomInds, 6, "default_dirt", atlas);
+    auto* bottomPart = new MeshPart(bottomVerts, 4, bottomInds, 6, "default_cobblestone", atlas);
 
     Vertex* frontVerts = new Vertex[4] {
             Vertex(new glm::vec3(0.0f, 0.0f, 1.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
@@ -89,7 +92,7 @@ BlockModel* createBlockModel() {
             0, 1, 2, 2, 3, 0
     };
 
-    auto* frontPart = new MeshPart(frontVerts, 4, frontInds, 6, "default_grass_side", atlas);
+    auto* frontPart = new MeshPart(frontVerts, 4, frontInds, 6, "default_cobblestone", atlas);
 
     Vertex* backVerts = new Vertex[4] {
             Vertex(new glm::vec3(0.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
@@ -101,43 +104,58 @@ BlockModel* createBlockModel() {
             0, 1, 2, 2, 3, 0
     };
 
-    auto* backPart = new MeshPart(backVerts, 4, backInds, 6, "default_grass_side", atlas);
+    auto* backPart = new MeshPart(backVerts, 4, backInds, 6, "default_cobblestone", atlas);
 
     return new BlockModel(leftPart, rightPart, topPart, bottomPart, frontPart, backPart, nullptr, true, true);
 }
 
 void makeEntities(BlockModel* model) {
-	int array[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
-	for (int i = 0; i < CHUNK_SIZE; i++) { // NOLINT(modernize-loop-convert)
-		for (int j = 0; j < CHUNK_SIZE; j++) {
-			for (int k = 0; k < CHUNK_SIZE; k++) {
-//				array[i][j][k] = (j < 8) ? 1 : 0;
-                array[i][j][k] = (int)round(rand()%2);
-			}
-		}
-	}
+    PerlinNoise p(0);
 
-	std::vector<float> vertices;
-	std::vector<unsigned int> indices;
+    int VIEW_RANGE = 12;
 
-	MeshGenerator mg;
-	mg.build(array, model, vertices, indices);
+    for (int i = -VIEW_RANGE; i < VIEW_RANGE; i++) {
+        for (int j = -VIEW_RANGE; j < VIEW_RANGE; j++) {
+            for (int k = -8; k < 4; k++) {
 
-	auto* mesh = new Mesh();
-    mesh->create(&vertices, &indices);
+                int array[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 
-	for (int i = -16; i < 16; i++) {
-		for (int j = -16; j < 16; j++) {
-			auto *chunk = new Entity();
-			chunk->create(mesh);
-			chunk->setPosition(glm::vec3(i * CHUNK_SIZE, 0, j * CHUNK_SIZE));
-			chunk->setScale(1);
-			entities.push_back(chunk);
+                for (int x = 0; x < CHUNK_SIZE; x++) { // NOLINT(modernize-loop-convert)
+                    for (int z = 0; z < CHUNK_SIZE; z++) {
+                        for (int y = 0; y < CHUNK_SIZE; y++) {
+                            int xx = x + i * 16;
+                            int yy = y + k * 16;
+                            int zz = z + j * 16;
+                            double val = p.noise(xx / (double) 16, zz / (double) 16, yy / (double) 16);
+
+                            array[z][y][x] = (int) (val > 0.5);
+                        }
+                    }
+                }
+
+                std::vector<float> vertices;
+                std::vector<unsigned int> indices;
+
+                MeshGenerator mg;
+                mg.build(array, model, vertices, indices);
+
+                auto *mesh = new Mesh();
+                mesh->create(&vertices, &indices);
+
+                auto *chunk = new Entity();
+                chunk->create(mesh);
+                chunk->setPosition(glm::vec3(i * CHUNK_SIZE, k * CHUNK_SIZE, j * CHUNK_SIZE));
+                chunk->setScale(1);
+                entities.push_back(chunk);
+            }
 		}
 	}
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+//    UDP().start(argc, argv);
+//    return 0;
+
 	Timer boot("Initialization");
 
     //Window

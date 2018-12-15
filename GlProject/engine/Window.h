@@ -36,6 +36,8 @@ private:
 
     GLint width, height;
     GLint centerX, centerY;
+    bool mouseLocked;
+
     GLint bufferWidth, bufferHeight;
 
     bool keys[1024];
