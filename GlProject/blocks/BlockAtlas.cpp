@@ -3,3 +3,11 @@
 //
 
 #include "BlockAtlas.h"
+
+BlockAtlas::BlockAtlas(BlockModel *model) {
+    blockModel = model;
+}
+
+BlockModel* BlockAtlas::getBlockModel() {
+    return blockModel;
+}

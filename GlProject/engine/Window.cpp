@@ -43,7 +43,7 @@ int Window::initialize() {
 //    glEnable(GL_MULTISAMPLE);
 
     //Create the window
-    mainWindow = glfwCreateWindow(width, height, "OpenGL Learning", nullptr, nullptr);
+    mainWindow = glfwCreateWindow(width, height, "Zeus_cpp OPENGL Linux x64", nullptr, nullptr);
 
     if (!mainWindow) {
         printf("GLFW window failed");

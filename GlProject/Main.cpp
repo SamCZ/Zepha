@@ -22,18 +22,22 @@
 #include "engine/TextureAtlas.h"
 #include "UDP.h"
 #include "engine/PerlinNoise.h"
+#include "world/World.h"
+#include "engine/helpers/ArrayTrans3D.h"
 
 Window* window;
 Shader* shader;
 std::vector<Entity*> entities;
 Camera* camera;
 
-TextureAtlas* atlas;
+TextureAtlas* textureAtlas;
+BlockAtlas* blockAtlas;
+World* world;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
-BlockModel* createBlockModel() {
+BlockAtlas* createAtlas() {
     Vertex* leftVerts = new Vertex[4] {
             Vertex(new glm::vec3(0.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
             Vertex(new glm::vec3(0.0f, 0.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
@@ -44,7 +48,7 @@ BlockModel* createBlockModel() {
             0, 1, 2, 2, 3, 0
     };
 
-    auto* leftPart = new MeshPart(leftVerts, 4, leftInds, 6, "default_cobblestone", atlas);
+    auto* leftPart = new MeshPart(leftVerts, 4, leftInds, 6, "default_grass_side", textureAtlas);
 
     Vertex* rightVerts = new Vertex[4] {
             Vertex(new glm::vec3(1.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
@@ -56,7 +60,7 @@ BlockModel* createBlockModel() {
             0, 1, 2, 2, 3, 0
     };
 
-    auto* rightPart = new MeshPart(rightVerts, 4, rightInds, 6, "default_cobblestone", atlas);
+    auto* rightPart = new MeshPart(rightVerts, 4, rightInds, 6, "default_grass_side", textureAtlas);
 
     Vertex* topVerts = new Vertex[4] {
             Vertex(new glm::vec3(0.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
@@ -68,7 +72,7 @@ BlockModel* createBlockModel() {
             0, 1, 2, 2, 3, 0
     };
 
-    auto* topPart = new MeshPart(topVerts, 4, topInds, 6, "default_cobblestone", atlas);
+    auto* topPart = new MeshPart(topVerts, 4, topInds, 6, "default_grass_top", textureAtlas);
 
     Vertex* bottomVerts = new Vertex[4] {
             Vertex(new glm::vec3(0.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
@@ -80,7 +84,7 @@ BlockModel* createBlockModel() {
             0, 1, 2, 2, 3, 0
     };
 
-    auto* bottomPart = new MeshPart(bottomVerts, 4, bottomInds, 6, "default_cobblestone", atlas);
+    auto* bottomPart = new MeshPart(bottomVerts, 4, bottomInds, 6, "default_dirt", textureAtlas);
 
     Vertex* frontVerts = new Vertex[4] {
             Vertex(new glm::vec3(0.0f, 0.0f, 1.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
@@ -92,7 +96,7 @@ BlockModel* createBlockModel() {
             0, 1, 2, 2, 3, 0
     };
 
-    auto* frontPart = new MeshPart(frontVerts, 4, frontInds, 6, "default_cobblestone", atlas);
+    auto* frontPart = new MeshPart(frontVerts, 4, frontInds, 6, "default_grass_side", textureAtlas);
 
     Vertex* backVerts = new Vertex[4] {
             Vertex(new glm::vec3(0.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
@@ -104,49 +108,40 @@ BlockModel* createBlockModel() {
             0, 1, 2, 2, 3, 0
     };
 
-    auto* backPart = new MeshPart(backVerts, 4, backInds, 6, "default_cobblestone", atlas);
+    auto* backPart = new MeshPart(backVerts, 4, backInds, 6, "default_grass_side", textureAtlas);
 
-    return new BlockModel(leftPart, rightPart, topPart, bottomPart, frontPart, backPart, nullptr, true, true);
+    auto* bm = new BlockModel(leftPart, rightPart, topPart, bottomPart, frontPart, backPart, nullptr, true, true);
+    return new BlockAtlas(bm);
 }
 
-void makeEntities(BlockModel* model) {
+void genChunks(World* world) {
     PerlinNoise p(0);
 
-    int VIEW_RANGE = 12;
+    int VIEW_RANGE = 1;
 
     for (int i = -VIEW_RANGE; i < VIEW_RANGE; i++) {
         for (int j = -VIEW_RANGE; j < VIEW_RANGE; j++) {
-            for (int k = -8; k < 4; k++) {
+            for (int k = -2; k < 2; k++) {
 
-                int array[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+                auto* blocks = new std::vector<int>();
+                blocks->reserve(4096);
 
-                for (int x = 0; x < CHUNK_SIZE; x++) { // NOLINT(modernize-loop-convert)
-                    for (int z = 0; z < CHUNK_SIZE; z++) {
-                        for (int y = 0; y < CHUNK_SIZE; y++) {
-                            int xx = x + i * 16;
-                            int yy = y + k * 16;
-                            int zz = z + j * 16;
-                            double val = p.noise(xx / (double) 16, zz / (double) 16, yy / (double) 16);
+                glm::vec3 innerPos, pos;
 
-                            array[z][y][x] = (int) (val > 0.5);
-                        }
-                    }
+                for (int ind = 0; ind < 4096; ind++) {
+                    ArrayTrans3D::indAssignVec(ind, &innerPos);
+                    pos.x = innerPos.x + i * CHUNK_SIZE;
+                    pos.y = innerPos.y + k * CHUNK_SIZE;
+                    pos.z = innerPos.z + j * CHUNK_SIZE;
+
+                    double val = p.noise(pos.x / (double) 32, pos.z / (double) 32, pos.y / (double) 16) - pos.y * 0.08;
+
+                    std::cout << (int)(val > 0.5) << std::endl;
+
+                    blocks->push_back((int)(val > 0.5));
                 }
 
-                std::vector<float> vertices;
-                std::vector<unsigned int> indices;
-
-                MeshGenerator mg;
-                mg.build(array, model, vertices, indices);
-
-                auto *mesh = new Mesh();
-                mesh->create(&vertices, &indices);
-
-                auto *chunk = new Entity();
-                chunk->create(mesh);
-                chunk->setPosition(glm::vec3(i * CHUNK_SIZE, k * CHUNK_SIZE, j * CHUNK_SIZE));
-                chunk->setScale(1);
-                entities.push_back(chunk);
+                world->newChunk(new glm::vec3(i, k, j), new BlockChunk(blocks));
             }
 		}
 	}
@@ -166,13 +161,19 @@ int main(int argc, char* argv[]) {
     camera = new Camera(glm::vec3(0.0f, 16.0f, 0.0f), glm::vec3(0, 1, 0), -90.0f, -45.0f, 10.0f, 0.1f);
 
     //Load Textures
-	atlas = new TextureAtlas("../Textures");
+	textureAtlas = new TextureAtlas("../Textures");
 
     //Create model
-    BlockModel* model = createBlockModel();
+    blockAtlas = createAtlas();
 
-	//Create entities
-    makeEntities(model);
+	//Create world
+	world = new World(blockAtlas);
+//	for (int i = 0; i < 17; i++) {
+//	    world->newChunk(new glm::vec3(i, 0, 0), nullptr);
+//	}
+
+	//Generate Chunks
+    genChunks(world);
 
     //Create shader
 	shader = new Shader();
@@ -201,6 +202,8 @@ int main(int argc, char* argv[]) {
 		camera->keyControl(window->getKeysArray(), deltaTime);
 		camera->mouseControl(window->getDeltaX(), window->getDeltaY());
 
+		world->update();
+
 		//Clear Window
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -210,12 +213,14 @@ int main(int argc, char* argv[]) {
 		glUniformMatrix4fv(shader->getProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 		glUniformMatrix4fv(shader->getViewLocation(), 1, GL_FALSE, glm::value_ptr(camera->calculateViewMatrix()));
 
-        atlas->getTexture()->use();
+        textureAtlas->getTexture()->use();
 
-		for (auto &entity : entities) {
-			glUniformMatrix4fv(shader->getModelLocation(), 1, GL_FALSE, glm::value_ptr(entity->getModelMatrix()));
-			entity->draw();
-        }
+//		for (auto &entity : entities) {
+//			glUniformMatrix4fv(shader->getModelLocation(), 1, GL_FALSE, glm::value_ptr(entity->getModelMatrix()));
+//			entity->draw();
+//        }
+
+        world->draw(shader->getModelLocation());
 
         Shader::clearShader();
 

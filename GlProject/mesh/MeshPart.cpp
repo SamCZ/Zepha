@@ -49,7 +49,7 @@ void MeshPart::construct(Vertex* vertices, int vSize, unsigned int *indices, int
     auto uv = atlas->getUVs(&texString);
 //	std::cout << uv->x << ", " << uv->y << ", " << uv->z << ", " << uv->w << ", " << std::endl;
 
-    //Iterate through the vertices to adjust the texture coordinates to fit the atlas.
+    //Iterate through the vertices to adjust the texture coordinates to fit the textureAtlas.
     for (int i = 0; i < vSize; i++) {
         Vertex* vertex = &vertices[i];
 

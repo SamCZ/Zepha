@@ -6,8 +6,16 @@
 #define GLPROJECT_BLOCKATLAS_H
 
 
-class BlockAtlas {
+#include "../mesh/BlockModel.h"
 
+class BlockAtlas {
+public:
+    BlockAtlas() = default;
+    explicit BlockAtlas(BlockModel* model);
+
+    BlockModel* getBlockModel();
+private:
+    BlockModel* blockModel;
 };
 
 

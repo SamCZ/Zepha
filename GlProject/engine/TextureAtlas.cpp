@@ -94,7 +94,7 @@ TextureAtlas::TextureAtlas(const char* directory) {
         pageData[i * 4 + 3] = 0;
     }
 
-    //Add all of the textures to the atlas and store the UVs in the associative array
+    //Add all of the textures to the textureAtlas and store the UVs in the associative array
     int widthOffset = 0;
     int heightOffset = 0;
     int tallestInRow = 0;
@@ -130,7 +130,7 @@ TextureAtlas::TextureAtlas(const char* directory) {
         widthOffset += i.width;
     }
 
-    stbi_write_png("../atlas.png", pageWidth, pageHeight, 4, pageData, pageWidth*4);
+    stbi_write_png("../textureAtlas.png", pageWidth, pageHeight, 4, pageData, pageWidth*4);
 	texture = new Texture();
 	texture->load(pageData, pageWidth, pageHeight);
 }
@@ -141,7 +141,7 @@ Texture* TextureAtlas::getTexture() {
 
 glm::vec4* TextureAtlas::getUVs(std::string* texture) {
     if (textures.count(*texture) == 0) {
-        std::cout << "Texture '" << *texture << "' Not found in atlas! Terminating." << std::endl;
+        std::cout << "Texture '" << *texture << "' Not found in textureAtlas! Terminating." << std::endl;
         throw std::exception();
     }
     return &textures.at(*texture);

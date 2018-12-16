@@ -10,20 +10,24 @@
 #include "BlockModel.h"
 #include <vector>
 #include <gtx/normal.hpp>
+#include <cstdio>
+#include "../engine/Timer.h"
+#include "../blocks/BlockAtlas.h"
+#include "../world/BlockChunk.h"
 
 const int CHUNK_SIZE = 16;
 
 class MeshGenerator {
 public:
     MeshGenerator();
-    void build(int blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE], BlockModel* model,
+    void build(BlockChunk* chunk, BlockAtlas* atlas,
                std::vector<float> &vertices, std::vector<unsigned int> &indices);
 
     ~MeshGenerator();
 private:
     unsigned int indOffset;
 
-    void addFaces(int x, int y, int z, vector<float>* vertices, vector<unsigned int>* indices, vector<MeshPart*>* meshParts);
+    void addFaces(glm::vec3 &offset, vector<float>* vertices, vector<unsigned int>* indices, vector<MeshPart*>* meshParts);
 
     void cleanup();
 };
