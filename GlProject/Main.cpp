@@ -3,31 +3,21 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <iostream>
-#include <vector>
-
-#include <glew.h>
-#include <glfw3.h>
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
-#include <gtc/type_ptr.hpp>
 
 #include "engine/Window.h"
 #include "engine/Camera.h"
-#include "engine/graphics/Texture.h"
-#include "mesh/BlockModel.h"
 #include "engine/graphics/Shader.h"
-#include "mesh/MeshGenerator.h"
-#include "engine/Entity.h"
-#include "engine/Timer.h"
+
 #include "engine/TextureAtlas.h"
-#include "UDP.h"
-#include "engine/PerlinNoise.h"
+#include "blocks/BlockAtlas.h"
 #include "world/World.h"
+
+#include "engine/PerlinNoise.h"
 #include "engine/helpers/ArrayTrans3D.h"
+#include "engine/Timer.h"
 
 Window* window;
 Shader* shader;
-std::vector<Entity*> entities;
 Camera* camera;
 
 TextureAtlas* textureAtlas;
@@ -136,8 +126,6 @@ void genChunks(World* world) {
 
                     double val = p.noise(pos.x / (double) 32, pos.z / (double) 32, pos.y / (double) 16) - pos.y * 0.08;
 
-                    std::cout << (int)(val > 0.5) << std::endl;
-
                     blocks->push_back((int)(val > 0.5));
                 }
 
@@ -148,34 +136,19 @@ void genChunks(World* world) {
 }
 
 int main(int argc, char* argv[]) {
-//    UDP().start(argc, argv);
-//    return 0;
-
 	Timer boot("Initialization");
 
-    //Window
     window = new Window(1366, 768);
     window->initialize();
 
-    //Create camera
     camera = new Camera(glm::vec3(0.0f, 16.0f, 0.0f), glm::vec3(0, 1, 0), -90.0f, -45.0f, 10.0f, 0.1f);
 
-    //Load Textures
 	textureAtlas = new TextureAtlas("../Textures");
-
-    //Create model
     blockAtlas = createAtlas();
 
-	//Create world
 	world = new World(blockAtlas);
-//	for (int i = 0; i < 17; i++) {
-//	    world->newChunk(new glm::vec3(i, 0, 0), nullptr);
-//	}
-
-	//Generate Chunks
     genChunks(world);
 
-    //Create shader
 	shader = new Shader();
 	shader->createFromFile("../GlProject/shader/world.vs", "../GlProject/shader/world.fs");
 
@@ -214,11 +187,6 @@ int main(int argc, char* argv[]) {
 		glUniformMatrix4fv(shader->getViewLocation(), 1, GL_FALSE, glm::value_ptr(camera->calculateViewMatrix()));
 
         textureAtlas->getTexture()->use();
-
-//		for (auto &entity : entities) {
-//			glUniformMatrix4fv(shader->getModelLocation(), 1, GL_FALSE, glm::value_ptr(entity->getModelMatrix()));
-//			entity->draw();
-//        }
 
         world->draw(shader->getModelLocation());
 
