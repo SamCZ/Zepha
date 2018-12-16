@@ -22,31 +22,36 @@ void MeshGenerator::build(BlockChunk* chunk, BlockAtlas* atlas,
     indices.reserve(50000);
 
     glm::vec3 off;
+    glm::vec3 check;
 
     BlockModel* model = atlas->getBlockModel();
 
     for (int i = 0; i < 4096; i++) {
-
         if (chunk->getBlock(i) == 1) {
-
             ArrayTrans3D::indAssignVec(i, &off);
 
-//            if (outOfRange(glm::vec3(x - 1, y, z)) || blocks[z][y][x - 1] == 0)
+            check.x = off.x - 1; check.y = off.y; check.z = off.z;
+            if (outOfRange(check) || chunk->getBlock(&check) == 0)
                 addFaces(off, &vertices, &indices, &model->leftFaces);
 
-//            if (outOfRange(glm::vec3(x + 1, y, z)) || blocks[z][y][x + 1] == 0)
+            check.x = off.x + 1; check.y = off.y; check.z = off.z;
+            if (outOfRange(check) || chunk->getBlock(&check) == 0)
                 addFaces(off, &vertices, &indices, &model->rightFaces);
 
-//            if (outOfRange(glm::vec3(x, y - 1, z)) || blocks[z][y - 1][x] == 0)
+            check.x = off.x; check.y = off.y - 1; check.z = off.z;
+            if (outOfRange(check) || chunk->getBlock(&check) == 0)
                 addFaces(off, &vertices, &indices, &model->bottomFaces);
 
-//            if (outOfRange(glm::vec3(x, y + 1, z)) || blocks[z][y + 1][x] == 0)
+            check.x = off.x; check.y = off.y + 1; check.z = off.z;
+            if (outOfRange(check) || chunk->getBlock(&check) == 0)
                 addFaces(off, &vertices, &indices, &model->topFaces);
 
-//            if (outOfRange(glm::vec3(x, y, z - 1)) || blocks[z - 1][y][x] == 0)
+            check.x = off.x; check.y = off.y; check.z = off.z - 1;
+            if (outOfRange(check) || chunk->getBlock(&check) == 0)
                 addFaces(off, &vertices, &indices, &model->backFaces);
 
-//            if (outOfRange(glm::vec3(x, y, z + 1)) || blocks[z + 1][y][x] == 0)
+            check.x = off.x; check.y = off.y; check.z = off.z + 1;
+            if (outOfRange(check) || chunk->getBlock(&check) == 0)
                 addFaces(off, &vertices, &indices, &model->frontFaces);
         }
     }
