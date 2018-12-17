@@ -45,7 +45,7 @@ TextureAtlas::TextureAtlas(const char* directory) {
 
     //Load Missing Texture
     auto msg = TextureRef();
-    strcpy(msg.path, "../Textures/_missing.png");
+    strcpy(msg.path, "../tex/_missing.png");
     strcpy(msg.name, "_missing.png");
     msg.texData = stbi_load(msg.path, &msg.width, &msg.height, &msg.bitDepth, 4);
     textureRefs.push_back(msg);

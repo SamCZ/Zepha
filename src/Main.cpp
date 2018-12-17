@@ -123,7 +123,7 @@ int main(int argc, char* argv[]) {
 
     camera = new Camera(glm::vec3(0.0f, 16.0f, 0.0f), glm::vec3(0, 1, 0), -90.0f, -45.0f, 10.0f, 0.1f);
 
-	textureAtlas = new TextureAtlas("../Textures");
+	textureAtlas = new TextureAtlas("../tex");
     blockAtlas = new BlockAtlas(textureAtlas);
     registerBlocks();
 
@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
     genChunks(world);
 
 	shader = new Shader();
-	shader->createFromFile("../GlProject/shader/world.vs", "../GlProject/shader/world.fs");
+	shader->createFromFile("../src/shader/world.vs", "../src/shader/world.fs");
 
 	glm::mat4 projectionMatrix = glm::perspective(45.0f, window->getBufferWidth() / window->getBufferHeight(), 0.1f, 1000.0f);
 

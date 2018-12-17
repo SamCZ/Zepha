@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(GlProject)
+project(src)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -16,9 +16,9 @@ find_package(glfw3 REQUIRED)
 
 link_directories(Libraries/glew/lib)
 
-add_executable(GlProject GlProject/Main.cpp GlProject/engine/graphics/Mesh.cpp GlProject/engine/graphics/Mesh.h GlProject/engine/PerlinNoise.cpp GlProject/engine/PerlinNoise.h GlProject/engine/Entity.cpp GlProject/engine/Entity.h GlProject/engine/graphics/Shader.cpp GlProject/engine/graphics/Shader.h GlProject/engine/Window.cpp GlProject/engine/Window.h GlProject/engine/Camera.cpp GlProject/engine/Camera.h GlProject/engine/graphics/Texture.cpp GlProject/engine/graphics/Texture.h GlProject/mesh/MeshGenerator.cpp GlProject/mesh/MeshGenerator.h GlProject/engine/Timer.cpp GlProject/engine/Timer.h GlProject/blocks/BlockAtlas.cpp GlProject/blocks/BlockAtlas.h GlProject/blocks/BlockDef.cpp GlProject/blocks/BlockDef.h GlProject/mesh/MeshPart.cpp GlProject/mesh/MeshPart.h GlProject/mesh/MeshMod.h GlProject/mesh/Vertex.cpp GlProject/mesh/Vertex.h GlProject/mesh/BlockModel.cpp GlProject/mesh/BlockModel.h GlProject/engine/TextureAtlas.cpp GlProject/engine/TextureAtlas.h GlProject/world/World.cpp GlProject/world/World.h GlProject/world/BlockChunk.cpp GlProject/world/BlockChunk.h GlProject/engine/helpers/ArrayTrans3D.h GlProject/world/MeshChunk.cpp GlProject/world/MeshChunk.h)
+add_executable(src src/Main.cpp src/engine/graphics/Mesh.cpp src/engine/graphics/Mesh.h src/engine/PerlinNoise.cpp src/engine/PerlinNoise.h src/engine/Entity.cpp src/engine/Entity.h src/engine/graphics/Shader.cpp src/engine/graphics/Shader.h src/engine/Window.cpp src/engine/Window.h src/engine/Camera.cpp src/engine/Camera.h src/engine/graphics/Texture.cpp src/engine/graphics/Texture.h src/mesh/MeshGenerator.cpp src/mesh/MeshGenerator.h src/engine/Timer.cpp src/engine/Timer.h src/blocks/BlockAtlas.cpp src/blocks/BlockAtlas.h src/blocks/BlockDef.cpp src/blocks/BlockDef.h src/mesh/MeshPart.cpp src/mesh/MeshPart.h src/mesh/MeshMod.h src/mesh/Vertex.cpp src/mesh/Vertex.h src/mesh/BlockModel.cpp src/mesh/BlockModel.h src/engine/TextureAtlas.cpp src/engine/TextureAtlas.h src/world/World.cpp src/world/World.h src/world/BlockChunk.cpp src/world/BlockChunk.h src/engine/helpers/ArrayTrans3D.h src/world/MeshChunk.cpp src/world/MeshChunk.h)
 
-target_link_libraries(GlProject
+target_link_libraries(src
         ${OPENGL_gl_LIBRARY}
         glfw
         libGLEW.so
