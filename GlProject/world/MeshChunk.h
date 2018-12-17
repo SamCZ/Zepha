@@ -13,14 +13,12 @@
 class MeshChunk : public Entity {
 public:
     MeshChunk();
-    explicit MeshChunk(BlockChunk* blockChunk);
 
-    void build(BlockAtlas* atlas);
+    void build(std::vector<float> *vertices, std::vector<unsigned int> *indices);
 
     bool isReady();
 private:
     bool ready;
-    BlockChunk* blockChunk;
 };
 
 

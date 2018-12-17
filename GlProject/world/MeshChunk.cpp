@@ -8,24 +8,13 @@ MeshChunk::MeshChunk() {
     ready = false;
 }
 
-MeshChunk::MeshChunk(BlockChunk *blockChunk) {
-    this->blockChunk = blockChunk;
-    ready = false;
-}
-
 bool MeshChunk::isReady() {
     return ready;
 }
 
-void MeshChunk::build(BlockAtlas* atlas) {
-    std::vector<float> vertices;
-    std::vector<unsigned int> indices;
-
-    MeshGenerator mg;
-    mg.build(blockChunk, atlas, vertices, indices);
-
+void MeshChunk::build(std::vector<float> *vertices, std::vector<unsigned int> *indices) {
     auto *mesh = new Mesh();
-    mesh->create(&vertices, &indices);
-
+    mesh->create(vertices, indices);
     this->create(mesh);
+    ready = true;
 }

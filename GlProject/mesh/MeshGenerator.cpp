@@ -11,6 +11,7 @@ MeshGenerator::MeshGenerator() {
 
 bool outOfRange(glm::vec3 pos) {
     return (pos.x < 0 || pos.x > 15 || pos.y < 0 || pos.y > 15 || pos.z < 0 || pos.z > 15);
+//    return false;
 }
 
 void MeshGenerator::build(BlockChunk* chunk, BlockAtlas* atlas,
@@ -59,15 +60,15 @@ void MeshGenerator::build(BlockChunk* chunk, BlockAtlas* atlas,
     vertices.shrink_to_fit();
     indices.shrink_to_fit();
 
-    t.elapsedMs();
+//    t.elapsedMs();
 }
 
 void MeshGenerator::addFaces(glm::vec3 &offset, vector<float>* vertices, vector<unsigned int>* indices, vector<MeshPart*>* meshParts) {
     for (MeshPart *mp : *meshParts) {
 
-        MeshVertexIter *mvIterator = mp->getVertexIterator();
-        while (mvIterator->hasNext()) {
-            Vertex *vertex = mvIterator->next();
+        MeshVertexIter *vertexIter = mp->getVertexIterator();
+        while (vertexIter->hasNext()) {
+            Vertex *vertex = vertexIter->next();
 
             vertices->push_back(vertex->pos->x + offset.x);
             vertices->push_back(vertex->pos->y + offset.y);
@@ -81,9 +82,9 @@ void MeshGenerator::addFaces(glm::vec3 &offset, vector<float>* vertices, vector<
             vertices->push_back(vertex->nml->z);
         }
 
-        MeshIndexIter *miIterator = mp->getIndexIterator();
-        while (miIterator->hasNext()) {
-            unsigned int index = miIterator->next();
+        MeshIndexIter *indexIter = mp->getIndexIterator();
+        while (indexIter->hasNext()) {
+            unsigned int index = indexIter->next();
             indices->push_back(indOffset + index);
         }
         indOffset += mp->getVertexCount();

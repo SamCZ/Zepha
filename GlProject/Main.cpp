@@ -107,11 +107,11 @@ BlockAtlas* createAtlas() {
 void genChunks(World* world) {
     PerlinNoise p(0);
 
-    int VIEW_RANGE = 1;
+    int VIEW_RANGE = 32;
 
     for (int i = -VIEW_RANGE; i < VIEW_RANGE; i++) {
         for (int j = -VIEW_RANGE; j < VIEW_RANGE; j++) {
-            for (int k = -2; k < 2; k++) {
+            for (int k = -1; k < 1; k++) {
 
                 auto* blocks = new std::vector<int>();
                 blocks->reserve(4096);
