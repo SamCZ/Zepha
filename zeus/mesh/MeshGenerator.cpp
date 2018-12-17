@@ -25,12 +25,10 @@ void MeshGenerator::build(BlockChunk* chunk, BlockAtlas* atlas,
     glm::vec3 off;
     glm::vec3 check;
 
-    //TODO: Move this to the loop and make it use 'i' instead of 0
-    BlockModel* model = atlas->getBlock(0)->getModel();
-
     for (int i = 0; i < 4096; i++) {
         if (chunk->getBlock(i) == 1) {
             ArrayTrans3D::indAssignVec(i, &off);
+            BlockModel* model = atlas->getBlock(chunk->getBlock(i))->getModel();
 
             check.x = off.x - 1; check.y = off.y; check.z = off.z;
             if (outOfRange(check) || chunk->getBlock(&check) == 0)

@@ -70,11 +70,8 @@ void World::update() {
     }
 }
 
-void World::draw(GLint modelUni) {
-    for (auto &meshChunk : meshChunks) {
-        glUniformMatrix4fv(modelUni, 1, GL_FALSE, glm::value_ptr(meshChunk.second->getModelMatrix()));
-        meshChunk.second->draw();
-    }
+std::map<glm::vec3*, MeshChunk*>* World::getMeshChunks() {
+    return &meshChunks;
 }
 
 World::ThreadData::ThreadData(glm::vec3 *pos, BlockChunk *chunk, BlockAtlas *atlas) {

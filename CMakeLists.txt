@@ -1,27 +1,22 @@
 cmake_minimum_required(VERSION 3.12)
-project(src)
+project(zeus)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS "-s -O3")
 
-include_directories(Libraries/glew/include/GL)
-include_directories(Libraries/glfw_linux/include)
-include_directories(Libraries/glm)
-include_directories(Libraries/stb_image)
-include_directories(Libraries/cute)
+include_directories(lib/glew/include/GL)
+include_directories(lib/glfw_linux/include)
+include_directories(lib/glm)
+include_directories(lib/stb_image)
+include_directories(lib/cute)
 #include_directories(Libraries/boost_1_68_0)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
 #find_package(Boost COMPONENTS system thread)
 
-link_directories(Libraries/glew/lib)
+link_directories(lib/glew/lib)
 
-add_executable(src src/Main.cpp src/engine/graphics/Mesh.cpp src/engine/graphics/Mesh.h src/engine/PerlinNoise.cpp src/engine/PerlinNoise.h src/engine/Entity.cpp src/engine/Entity.h src/engine/graphics/Shader.cpp src/engine/graphics/Shader.h src/engine/Window.cpp src/engine/Window.h src/engine/Camera.cpp src/engine/Camera.h src/engine/graphics/Texture.cpp src/engine/graphics/Texture.h src/mesh/MeshGenerator.cpp src/mesh/MeshGenerator.h src/engine/Timer.cpp src/engine/Timer.h src/blocks/BlockAtlas.cpp src/blocks/BlockAtlas.h src/blocks/BlockDef.cpp src/blocks/BlockDef.h src/mesh/MeshPart.cpp src/mesh/MeshPart.h src/mesh/MeshMod.h src/mesh/Vertex.cpp src/mesh/Vertex.h src/mesh/BlockModel.cpp src/mesh/BlockModel.h src/engine/TextureAtlas.cpp src/engine/TextureAtlas.h src/world/World.cpp src/world/World.h src/world/BlockChunk.cpp src/world/BlockChunk.h src/engine/helpers/ArrayTrans3D.h src/world/MeshChunk.cpp src/world/MeshChunk.h)
+add_executable(zeus zeus/Main.cpp zeus/engine/graphics/Mesh.cpp zeus/engine/graphics/Mesh.h zeus/engine/PerlinNoise.cpp zeus/engine/PerlinNoise.h zeus/engine/Entity.cpp zeus/engine/Entity.h zeus/engine/graphics/Shader.cpp zeus/engine/graphics/Shader.h zeus/engine/Window.cpp zeus/engine/Window.h zeus/engine/Camera.cpp zeus/engine/Camera.h zeus/engine/graphics/Texture.cpp zeus/engine/graphics/Texture.h zeus/mesh/MeshGenerator.cpp zeus/mesh/MeshGenerator.h zeus/engine/Timer.cpp zeus/engine/Timer.h zeus/blocks/BlockAtlas.cpp zeus/blocks/BlockAtlas.h zeus/blocks/BlockDef.cpp zeus/blocks/BlockDef.h zeus/mesh/MeshPart.cpp zeus/mesh/MeshPart.h zeus/mesh/MeshMod.h zeus/mesh/Vertex.cpp zeus/mesh/Vertex.h zeus/mesh/BlockModel.cpp zeus/mesh/BlockModel.h zeus/engine/TextureAtlas.cpp zeus/engine/TextureAtlas.h zeus/world/World.cpp zeus/world/World.h zeus/world/BlockChunk.cpp zeus/world/BlockChunk.h zeus/engine/helpers/ArrayTrans3D.h zeus/world/MeshChunk.cpp zeus/world/MeshChunk.h zeus/game/GameInstance.cpp zeus/game/GameInstance.h zeus/engine/graphics/Renderer.cpp zeus/engine/graphics/Renderer.h)
 
-target_link_libraries(src
-        ${OPENGL_gl_LIBRARY}
-        glfw
-        libGLEW.so
-        pthread
-        lua
-        dl)
+target_link_libraries(zeus ${OPENGL_gl_LIBRARY} glfw libGLEW.so pthread lua dl)

@@ -24,7 +24,8 @@ public:
     void newChunk(glm::vec3* pos, BlockChunk* c);
 
     void update();
-    void draw(GLint modelUni);
+
+    std::map<glm::vec3*, MeshChunk*>* getMeshChunks();
 
     ~World() = default;
 
