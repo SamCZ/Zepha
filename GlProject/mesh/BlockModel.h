@@ -27,6 +27,9 @@ public:
                MeshPart* backFace, MeshPart* noCulledFace, bool culls, bool visible);
 
     ~BlockModel();
+
+    static BlockModel* Square(const char* top, const char* bottom, const char* front, const char* back, const char* left, const char* right, TextureAtlas* atlas);
+    static BlockModel* Square(const char* tex, TextureAtlas* atlas);
 };
 
 

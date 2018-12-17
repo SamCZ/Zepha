@@ -7,15 +7,20 @@
 
 
 #include "../mesh/BlockModel.h"
+#include "BlockDef.h"
 
 class BlockAtlas {
 public:
     BlockAtlas() = default;
-    explicit BlockAtlas(BlockModel* model);
+    explicit BlockAtlas(TextureAtlas* textureAtlas);
 
-    BlockModel* getBlockModel();
+    void registerBlock(BlockDef* def);
+    BlockDef* getBlock(int id);
+
+    ~BlockAtlas();
 private:
-    BlockModel* blockModel;
+    std::vector<BlockDef*> definitions;
+    TextureAtlas* textureAtlas;
 };
 
 

@@ -84,3 +84,88 @@ BlockModel::~BlockModel() {
     for (MeshPart* m : noCulledFaces) { delete m; }
     noCulledFaces.clear();
 }
+
+//Static methods to generate a basic cube BlockModel.
+//These are just convenience functions.
+
+BlockModel* BlockModel::Square(const char *tex, TextureAtlas* atlas) {
+    return BlockModel::Square(tex, tex, tex, tex, tex, tex, atlas);
+}
+
+BlockModel* BlockModel::Square(const char* top, const char* bottom, const char* front, const char* back, const char* left, const char* right, TextureAtlas* atlas) {
+    Vertex* leftVerts = new Vertex[4] {
+            Vertex(new glm::vec3(0.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
+            Vertex(new glm::vec3(0.0f, 0.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
+            Vertex(new glm::vec3(0.0f, 1.0f, 1.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
+            Vertex(new glm::vec3(0.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
+    };
+    auto* leftInds = new unsigned int[6] {
+            0, 1, 2, 2, 3, 0
+    };
+
+    auto* leftPart = new MeshPart(leftVerts, 4, leftInds, 6, left, atlas);
+
+    Vertex* rightVerts = new Vertex[4] {
+            Vertex(new glm::vec3(1.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
+            Vertex(new glm::vec3(1.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
+            Vertex(new glm::vec3(1.0f, 1.0f, 1.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
+            Vertex(new glm::vec3(1.0f, 0.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
+    };
+    auto* rightInds = new unsigned int[6] {
+            0, 1, 2, 2, 3, 0
+    };
+
+    auto* rightPart = new MeshPart(rightVerts, 4, rightInds, 6, right, atlas);
+
+    Vertex* topVerts = new Vertex[4] {
+            Vertex(new glm::vec3(0.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
+            Vertex(new glm::vec3(0.0f, 1.0f, 1.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
+            Vertex(new glm::vec3(1.0f, 1.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
+            Vertex(new glm::vec3(1.0f, 1.0f, 0.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
+    };
+    auto* topInds = new unsigned int[6] {
+            0, 1, 2, 2, 3, 0
+    };
+
+    auto* topPart = new MeshPart(topVerts, 4, topInds, 6, top, atlas);
+
+    Vertex* bottomVerts = new Vertex[4] {
+            Vertex(new glm::vec3(0.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
+            Vertex(new glm::vec3(1.0f, 0.0f, 0.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
+            Vertex(new glm::vec3(1.0f, 0.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
+            Vertex(new glm::vec3(0.0f, 0.0f, 1.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
+    };
+    auto* bottomInds = new unsigned int[6] {
+            0, 1, 2, 2, 3, 0
+    };
+
+    auto* bottomPart = new MeshPart(bottomVerts, 4, bottomInds, 6, bottom, atlas);
+
+    Vertex* frontVerts = new Vertex[4] {
+            Vertex(new glm::vec3(0.0f, 0.0f, 1.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
+            Vertex(new glm::vec3(1.0f, 0.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
+            Vertex(new glm::vec3(1.0f, 1.0f, 1.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
+            Vertex(new glm::vec3(0.0f, 1.0f, 1.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
+    };
+    auto* frontInds = new unsigned int[6] {
+            0, 1, 2, 2, 3, 0
+    };
+
+    auto* frontPart = new MeshPart(frontVerts, 4, frontInds, 6, front, atlas);
+
+    Vertex* backVerts = new Vertex[4] {
+            Vertex(new glm::vec3(0.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
+            Vertex(new glm::vec3(0.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
+            Vertex(new glm::vec3(1.0f, 1.0f, 0.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
+            Vertex(new glm::vec3(1.0f, 0.0f, 0.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
+    };
+    auto* backInds = new unsigned int[6] {
+            0, 1, 2, 2, 3, 0
+    };
+
+    auto* backPart = new MeshPart(backVerts, 4, backInds, 6, back, atlas);
+
+    auto* model = new BlockModel(leftPart, rightPart, topPart, bottomPart, frontPart, backPart, nullptr, true, true);
+
+    return model;
+}

@@ -51,10 +51,9 @@ private:
     std::map<glm::vec3*, BlockChunk*> blockChunks;
     std::map<glm::vec3*, MeshChunk*> meshChunks;
 
-    std::unordered_set<glm::vec3*> meshGenQueue;
-
     const int MAX_CONCURRENT_THREADS = 32;
 
+    std::unordered_set<glm::vec3*> meshGenQueue;
     std::vector<ThreadData*> genThreads;
 
     BlockAtlas* blockAtlas;

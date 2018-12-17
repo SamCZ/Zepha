@@ -27,81 +27,10 @@ World* world;
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
-BlockAtlas* createAtlas() {
-    Vertex* leftVerts = new Vertex[4] {
-            Vertex(new glm::vec3(0.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
-            Vertex(new glm::vec3(0.0f, 0.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
-            Vertex(new glm::vec3(0.0f, 1.0f, 1.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
-            Vertex(new glm::vec3(0.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
-    };
-    auto* leftInds = new unsigned int[6] {
-            0, 1, 2, 2, 3, 0
-    };
-
-    auto* leftPart = new MeshPart(leftVerts, 4, leftInds, 6, "default_grass_side", textureAtlas);
-
-    Vertex* rightVerts = new Vertex[4] {
-            Vertex(new glm::vec3(1.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
-            Vertex(new glm::vec3(1.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
-            Vertex(new glm::vec3(1.0f, 1.0f, 1.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
-            Vertex(new glm::vec3(1.0f, 0.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
-    };
-    auto* rightInds = new unsigned int[6] {
-            0, 1, 2, 2, 3, 0
-    };
-
-    auto* rightPart = new MeshPart(rightVerts, 4, rightInds, 6, "default_grass_side", textureAtlas);
-
-    Vertex* topVerts = new Vertex[4] {
-            Vertex(new glm::vec3(0.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
-            Vertex(new glm::vec3(0.0f, 1.0f, 1.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
-            Vertex(new glm::vec3(1.0f, 1.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
-            Vertex(new glm::vec3(1.0f, 1.0f, 0.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
-    };
-    auto* topInds = new unsigned int[6] {
-            0, 1, 2, 2, 3, 0
-    };
-
-    auto* topPart = new MeshPart(topVerts, 4, topInds, 6, "default_grass_top", textureAtlas);
-
-    Vertex* bottomVerts = new Vertex[4] {
-            Vertex(new glm::vec3(0.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
-            Vertex(new glm::vec3(1.0f, 0.0f, 0.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
-            Vertex(new glm::vec3(1.0f, 0.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
-            Vertex(new glm::vec3(0.0f, 0.0f, 1.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
-    };
-    auto* bottomInds = new unsigned int[6] {
-            0, 1, 2, 2, 3, 0
-    };
-
-    auto* bottomPart = new MeshPart(bottomVerts, 4, bottomInds, 6, "default_dirt", textureAtlas);
-
-    Vertex* frontVerts = new Vertex[4] {
-            Vertex(new glm::vec3(0.0f, 0.0f, 1.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
-            Vertex(new glm::vec3(1.0f, 0.0f, 1.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
-            Vertex(new glm::vec3(1.0f, 1.0f, 1.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
-            Vertex(new glm::vec3(0.0f, 1.0f, 1.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
-    };
-    auto* frontInds = new unsigned int[6] {
-            0, 1, 2, 2, 3, 0
-    };
-
-    auto* frontPart = new MeshPart(frontVerts, 4, frontInds, 6, "default_grass_side", textureAtlas);
-
-    Vertex* backVerts = new Vertex[4] {
-            Vertex(new glm::vec3(0.0f, 0.0f, 0.0f), nullptr, new glm::vec2(0.0f, 1.0f)),
-            Vertex(new glm::vec3(0.0f, 1.0f, 0.0f), nullptr, new glm::vec2(0.0f, 0.0f)),
-            Vertex(new glm::vec3(1.0f, 1.0f, 0.0f), nullptr, new glm::vec2(1.0f, 0.0f)),
-            Vertex(new glm::vec3(1.0f, 0.0f, 0.0f), nullptr, new glm::vec2(1.0f, 1.0f)),
-    };
-    auto* backInds = new unsigned int[6] {
-            0, 1, 2, 2, 3, 0
-    };
-
-    auto* backPart = new MeshPart(backVerts, 4, backInds, 6, "default_grass_side", textureAtlas);
-
-    auto* bm = new BlockModel(leftPart, rightPart, topPart, bottomPart, frontPart, backPart, nullptr, true, true);
-    return new BlockAtlas(bm);
+void registerBlocks() {
+    auto* bm = BlockModel::Square("default_grass_top", "default_dirt", "default_grass_side", "default_grass_side", "default_grass_side", "default_grass_side", textureAtlas);
+    auto* def = new BlockDef("grass", bm);
+    blockAtlas->registerBlock(def);
 }
 
 void genChunks(World* world) {
@@ -135,7 +64,58 @@ void genChunks(World* world) {
 	}
 }
 
+extern "C" {
+    #include "lua.h"
+    #include "lualib.h"
+    #include "lauxlib.h"
+}
+
+lua_State* L;
+
+static int average(lua_State *L) {
+    int n = lua_gettop(L);
+    double sum = 0;
+
+    for (int i = 1; i <= n; i++) {
+        sum += lua_tonumber(L, i);
+    }
+
+    lua_pushnumber(L, sum / n);
+    lua_pushnumber(L, sum);
+
+
+
+    return 2; //Number of results
+}
+
 int main(int argc, char* argv[]) {
+//    int x = 4, y = 3, sum;
+//
+//    L = luaL_newstate();
+//
+//    //Open base libraries
+//    luaL_openlibs(L);
+//    lua_register(L, "average", average);
+//
+//    luaL_dofile(L, "../file.lua");
+//
+//    //Call the "add" function
+//    lua_getglobal(L, "add");
+//    lua_pushnumber(L, x);
+//    lua_pushnumber(L, y);
+//
+//    lua_call(L, 2, 1);
+//
+//    sum = (int)lua_tointeger(L, -1);
+//    lua_pop(L, 1);
+//
+//    lua_close(L);
+//
+//    printf("Hold up %i", sum);
+//    getchar();
+//
+//    return 0;
+
 	Timer boot("Initialization");
 
     window = new Window(1366, 768);
@@ -144,7 +124,8 @@ int main(int argc, char* argv[]) {
     camera = new Camera(glm::vec3(0.0f, 16.0f, 0.0f), glm::vec3(0, 1, 0), -90.0f, -45.0f, 10.0f, 0.1f);
 
 	textureAtlas = new TextureAtlas("../Textures");
-    blockAtlas = createAtlas();
+    blockAtlas = new BlockAtlas(textureAtlas);
+    registerBlocks();
 
 	world = new World(blockAtlas);
     genChunks(world);
@@ -182,20 +163,18 @@ int main(int argc, char* argv[]) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shader->useShader();
-
-		glUniformMatrix4fv(shader->getProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-		glUniformMatrix4fv(shader->getViewLocation(), 1, GL_FALSE, glm::value_ptr(camera->calculateViewMatrix()));
-
         textureAtlas->getTexture()->use();
 
+        glUniformMatrix4fv(shader->getProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+        glUniformMatrix4fv(shader->getViewLocation(), 1, GL_FALSE, glm::value_ptr(camera->calculateViewMatrix()));
+
+        //Render chunks
         world->draw(shader->getModelLocation());
 
         Shader::clearShader();
-
-		//Finish Drawing
 		window->swapBuffers();
 
-//		t.elapsedMs();
+//		t.elapsedMs(); //Print frame time
 	}
 
 	return 0;

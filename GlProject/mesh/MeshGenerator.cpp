@@ -25,7 +25,8 @@ void MeshGenerator::build(BlockChunk* chunk, BlockAtlas* atlas,
     glm::vec3 off;
     glm::vec3 check;
 
-    BlockModel* model = atlas->getBlockModel();
+    //TODO: Move this to the loop and make it use 'i' instead of 0
+    BlockModel* model = atlas->getBlock(0)->getModel();
 
     for (int i = 0; i < 4096; i++) {
         if (chunk->getBlock(i) == 1) {
