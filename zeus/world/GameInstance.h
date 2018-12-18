@@ -6,12 +6,13 @@
 #define SRC_GAMEWORLD_H
 
 
-#include "../world/World.h"
+#include "World.h"
 #include "../engine/Camera.h"
 #include "../engine/Window.h"
 #include "../engine/PerlinNoise.h"
 #include "../engine/graphics/Renderer.h"
 #include "../engine/helpers/ArrayTrans3D.h"
+#include "../lua_api/LuaParser.h"
 
 class GameInstance {
 public:

@@ -45,6 +45,8 @@ void GameInstance::initialize(Renderer* renderer) {
     textureAtlas = new TextureAtlas("../tex");
     blockAtlas = new BlockAtlas(textureAtlas);
 
+    LuaParser p("../lua/file.lua");
+
     //TODO: Move block registration to lua code
     auto* def = new BlockDef("grass", BlockModel::Square(
             "default_grass_top", "default_dirt", "default_grass_side",

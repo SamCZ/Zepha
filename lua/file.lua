@@ -1,10 +1,9 @@
-print "Hello, world"
+print("----\nPrinting the Zeus Global table's contents:\n----")
 
--- Add numbers together
-function add(x, y)
-	return x + y
+for function_name, _ in pairs(zeus) do
+    print(function_name);
 end
 
-avg, sum = average(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-print("Avg " .. avg)
-print("Sum " .. sum)
+print("----")
+
+print(zeus.average(1, 2, 3, 4, 5));
