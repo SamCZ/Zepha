@@ -3,6 +3,7 @@
 //
 
 #include "GameInstance.h"
+#include "../lua_api/LRegisterBlock.h"
 
 GameInstance::GameInstance() = default;
 
@@ -45,14 +46,16 @@ void GameInstance::initialize(Renderer* renderer) {
     textureAtlas = new TextureAtlas("../tex");
     blockAtlas = new BlockAtlas(textureAtlas);
 
-    LuaParser p("../lua/file.lua");
+    LuaParser p;
+    p.init();
+    auto Z = p.getModule();
 
-    //TODO: Move block registration to lua code
-    auto* def = new BlockDef("grass", BlockModel::Square(
-            "default_grass_top", "default_dirt", "default_grass_side",
-            "default_grass_side", "default_grass_side", "default_grass_side", textureAtlas));
-    blockAtlas->registerBlock(def);
+    //Register APIs here
+    LRegisterBlock(this).regApi(Z);
 
+    p.doFile("../lua/file.lua");
+
+    //Build the world
     //The world requires the blockAtlas for meshing and handling inputs.
     world = new World(blockAtlas);
 

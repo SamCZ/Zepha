@@ -25,7 +25,7 @@ public:
     void draw();
 
     ~GameInstance();
-private:
+public:
     //The renderer contains the camera, window, and draw methods.
     Renderer* renderer;
 

@@ -11,6 +11,7 @@ BlockAtlas::BlockAtlas(TextureAtlas *textureAtlas) {
 
 void BlockAtlas::registerBlock(BlockDef* def) {
     definitions.push_back(def);
+    std::cout << "Registered block" << std::endl;
 }
 
 BlockDef* BlockAtlas::getBlock(int id) {

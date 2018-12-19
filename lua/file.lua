@@ -1,9 +1,25 @@
-print("----\nPrinting the Zeus Global table's contents:\n----")
+--
+-- Register basic blocks
+--
 
-for function_name, _ in pairs(zeus) do
-    print(function_name);
-end
+-- Grass
+zeus.register_block("default:grass", {
+	name = "Grass",
+	textures = {
+		"default_grass_top",
+		"default_dirt",
+		"default_grass_side"
+	}
+})
 
-print("----")
+-- Dirt
+zeus.register_block('default:dirt', {
+	name = "Dirt",
+	textures = {"default_dirt"}
+})
 
-print(zeus.average(1, 2, 3, 4, 5));
+-- Stone
+zeus.register_block('default:stone', {
+	name = "Stone",
+	textures = {"default_stone"}
+})

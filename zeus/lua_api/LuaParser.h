@@ -5,24 +5,24 @@
 #ifndef ZEUS_LUAPARSER_H
 #define ZEUS_LUAPARSER_H
 
-#include <string>
+//Should give tracebacks if there's a segfault
+//#define SOL_CHECK_ARGUMENTS
 
-extern "C" {
-    #include "lua.h"
-    #include "lualib.h"
-    #include "lauxlib.h"
-}
+#include <string>
+#include <sol.hpp>
 
 class LuaParser {
 public:
-    explicit LuaParser(std::string luaFileLoc);
+    LuaParser() = default;
 
-    void regGlobalModule();
-    void regFunc(const char *functionName, lua_CFunction any);
+    void init();
+    sol::table* getModule();
+    void doFile(std::string file);
 
-    ~LuaParser();
+    ~LuaParser() = default;
 private:
-    lua_State* L;
+    sol::state L;
+    sol::table Z;
 };
 
 
