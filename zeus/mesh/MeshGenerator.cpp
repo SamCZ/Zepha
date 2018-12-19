@@ -26,7 +26,7 @@ void MeshGenerator::build(BlockChunk* chunk, BlockAtlas* atlas,
     glm::vec3 check;
 
     for (int i = 0; i < 4096; i++) {
-        if (chunk->getBlock(i) == 1) {
+        if (chunk->getBlock(i) != 0) {
             ArrayTrans3D::indAssignVec(i, &off);
             BlockModel* model = atlas->getBlock(chunk->getBlock(i))->getModel();
 

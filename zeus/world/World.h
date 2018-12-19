@@ -21,6 +21,7 @@ public:
     World();
     explicit World(BlockAtlas* atlas);
 
+    void genChunk(glm::vec3* pos);
     void newChunk(glm::vec3* pos, BlockChunk* c);
 
     void update();
@@ -29,8 +30,8 @@ public:
 
     ~World() = default;
 
-    struct ThreadData {
-        ThreadData(glm::vec3* pos, BlockChunk* chunk, BlockAtlas* atlas);
+    struct MeshThreadData {
+        MeshThreadData(glm::vec3* pos, BlockChunk* chunk, BlockAtlas* atlas);
 
         std::thread* thread;
 
@@ -43,7 +44,22 @@ public:
         std::vector<float>* vertices;
         std::vector<unsigned int>* indices;
 
-        ~ThreadData();
+        ~MeshThreadData();
+    };
+
+    struct ChunkThreadData {
+        ChunkThreadData(glm::vec3* pos, BlockAtlas* atlas);
+
+        std::thread* thread;
+
+        glm::vec3* pos;
+        BlockAtlas* atlas;
+
+        bool done;
+
+        BlockChunk* chunk;
+
+        ~ChunkThreadData();
     };
 private:
     //Note to self:
@@ -52,10 +68,17 @@ private:
     std::map<glm::vec3*, BlockChunk*> blockChunks;
     std::map<glm::vec3*, MeshChunk*> meshChunks;
 
-    const int MAX_CONCURRENT_THREADS = 32;
+    //TODO: Replace this BiQueueThreadArray model with a BiQueueThreadPool model (it's in the name)
 
+    //Chunk Gen BiQueue Variables
+    const int MAX_CHUNK_GEN_THREADS = 16;
+    std::unordered_set<glm::vec3*> chunkGenQueue;
+    std::vector<ChunkThreadData*> chunkGenThreads;
+
+    //Mesh Gen BiQueue Variables
+    const int MAX_MESH_GEN_THREADS = 64;
     std::unordered_set<glm::vec3*> meshGenQueue;
-    std::vector<ThreadData*> genThreads;
+    std::vector<MeshThreadData*> meshGenThreads;
 
     BlockAtlas* blockAtlas;
 };
