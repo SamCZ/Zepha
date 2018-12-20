@@ -12,9 +12,11 @@ class Timer {
 public:
     explicit Timer(const char* name);
 
-    void elapsedNs();
-    void elapsedMs();
-    void elapsed(); //Seconds
+    long elapsedNs();
+
+    void printElapsedNs();
+    void printElapsedMs();
+    void printElapsedSeconds(); //Seconds
 private:
     const char* name;
     std::chrono::high_resolution_clock::time_point start;

@@ -66,6 +66,6 @@ add_executable(zeus
         zeus/lua_api/LuaParser.h
         zeus/lua_api/LRegisterBlock.cpp
         zeus/lua_api/LRegisterBlock.h
-        )
+        zeus/engine/iVec3.h)
 
 target_link_libraries(zeus ${OPENGL_gl_LIBRARY} glfw libGLEW.so pthread lua dl)

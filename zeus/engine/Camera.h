@@ -18,10 +18,11 @@ public:
     void keyControl(bool* keys, GLfloat delta);
     void mouseControl(double deltaX, double deltaY);
 
+    glm::vec3* getPosition();
+
     glm::mat4 calculateViewMatrix();
 
     ~Camera();
-
 private:
     glm::vec3 position;
 

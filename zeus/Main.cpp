@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 
     game->initialize(renderer);
 
-    boot.elapsed();
+    boot.printElapsedSeconds();
 
 	//Game Loop
 	while (!renderer->getWindow()->getShouldClose()) {
@@ -43,7 +43,9 @@ int main(int argc, char* argv[]) {
         game->draw();
         renderer->end();
 
-//		t.elapsedMs(); //Print frame time
+        if (t.elapsedNs() / (double)1000000 >= 20) {
+		    t.printElapsedMs(); //Print frame time
+        }
 	}
 
 	return 0;

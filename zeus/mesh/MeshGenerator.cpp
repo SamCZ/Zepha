@@ -59,7 +59,7 @@ void MeshGenerator::build(BlockChunk* chunk, BlockAtlas* atlas,
     vertices.shrink_to_fit();
     indices.shrink_to_fit();
 
-//    t.elapsedMs();
+//    t.printElapsedMs();
 }
 
 void MeshGenerator::addFaces(glm::vec3 &offset, vector<float>* vertices, vector<unsigned int>* indices, vector<MeshPart*>* meshParts) {

@@ -26,16 +26,14 @@ void GameInstance::initialize(Renderer* renderer) {
     //The world requires the blockAtlas for meshing and handling inputs.
     world = new World(blockAtlas);
 
-    int SIZE = 16;
-    for (int i = -SIZE; i < SIZE; i++) {
-        for (int j = -4; j < 4; j++) {
-            for (int k = -SIZE; k < SIZE; k++) {
-                world->genChunk(new glm::vec3(i, j, k));
-            }
-        }
-    }
-
-//    genChunks(world);
+//    int SIZE = 8;
+//    for (int i = -SIZE; i < SIZE; i++) {
+//        for (int j = -4; j < 4; j++) {
+//            for (int k = -SIZE; k < SIZE; k++) {
+//                world->genChunk(glm::vec3(i, j, k));
+//            }
+//        }
+//    }
 }
 
 void GameInstance::update(GLfloat deltaTime) {
@@ -46,6 +44,21 @@ void GameInstance::update(GLfloat deltaTime) {
     camera->mouseControl(window->getDeltaX(), window->getDeltaY());
 
     world->update();
+
+    glm::vec3 chunk = *camera->getPosition();
+    chunk.x = round(chunk.x / 16);
+    chunk.y = round(chunk.y / 16);
+    chunk.z = round(chunk.z / 16);
+
+    int SIZE = 32;
+    for (int i = -SIZE; i < SIZE; i++) {
+        for (int j = -4; j < 4; j++) {
+            for (int k = -SIZE; k < SIZE; k++) {
+                glm::vec3 adjustedPos(i + chunk.x, j + chunk.y, k + chunk.z);
+                world->genChunk(adjustedPos);
+            }
+        }
+    }
 }
 
 void GameInstance::draw() {
