@@ -22,11 +22,14 @@ void World::genChunk(glm::vec3 pos) {
 
 void World::newChunk(glm::vec3 pos, BlockChunk *c) {
     blockChunks.insert(std::pair<glm::vec3, BlockChunk*>(pos, c));
-    meshGenQueue.insert(pos);
+    if (!c->isEmpty()) {
+        meshGenQueue.insert(pos);
+    }
 }
 
 void chunkGenThread(World::ChunkThreadData *t) {
     PerlinNoise p(0);
+    PerlinNoise p2(10);
 
     auto* blocks = new std::vector<int>();
     blocks->reserve(4096);
@@ -40,7 +43,11 @@ void chunkGenThread(World::ChunkThreadData *t) {
           pos.y = innerPos.y + t->pos.y * CHUNK_SIZE;
           pos.z = innerPos.z + t->pos.z * CHUNK_SIZE;
 
-          double val = p.noise(pos.x / (double) 32, pos.z / (double) 32, 0) * 16 - pos.y;
+          double val = p.noise(pos.x / (double) 32, pos.z / (double) 32, 0) * 16;
+          val *= p2.noise((pos.x + 16) / (double) 48, (pos.z + 16) / (double) 48, 0) * 8;
+          val /= 16;
+          val *= pow(p.noise(pos.x / (double) 64, pos.z / (double) 64, 0), 2) * 40 + 1;
+          val -= pos.y;
 
           int block = (val > 0) ? (val > 1 ) ? (val > 4) ? 3 : 2 : 1 : 0;
           blocks->push_back(block);
@@ -55,32 +62,27 @@ void meshGenThread(World::MeshThreadData *t) {
     t->done = true;
 }
 
-//Generate block chunks
 void World::handleChunkGenQueue() {
-    //Finish Block Gen threads
+    //Finalize finished threads by added the BlockChunks to the world via newChunk().
     for (auto iter = chunkGenThreads.begin(); iter != chunkGenThreads.end(); ) {
         ChunkThreadData* threadData = (*iter);
 
-        //If the threadData is done, create a BlockChunk and delete the threadData.
         if (threadData->done) {
             newChunk(threadData->pos, threadData->chunk);
             delete threadData;
             iter = chunkGenThreads.erase(iter);
         }
-            //Otherwise ignore it and move to the next BlockChunk
         else {
             iter++;
         }
     }
 
-    //Create threads for the chunk generation.
+    //Create new chunk gen threads if there are chunks to be generated.
     while (!chunkGenQueue.empty() && chunkGenThreads.size() < MAX_CHUNK_GEN_THREADS) {
-        //Get and remove the first position from the vector.
         auto it = chunkGenQueue.begin();
         chunkGenQueue.erase(chunkGenQueue.begin());
         glm::vec3 pos = (*it);
 
-        //Create a thread for it and add the threadData to the chunkGenThreads vector
         auto t = new ChunkThreadData(pos, blockAtlas);
         auto thread = new std::thread(chunkGenThread, t);
         thread->detach();
@@ -90,49 +92,35 @@ void World::handleChunkGenQueue() {
 }
 
 void World::handleMeshGenQueue() {
-    //Run through all of the active generation threads, and finish and remove the ones that are ready to be finished.
-    //Then, spin up new threads when there is space in the meshGenThreads array and there are chunks waiting to be meshed.
-
-    //Create MeshChunks for the finished threads.
-    Timer applyGlobal("Applying Meshes");
-
+    //Finalize finished threads by creating a MeshChunk object from the thread data.
     for (auto iter = meshGenThreads.begin(); iter != meshGenThreads.end(); ) {
         MeshThreadData* threadData = (*iter);
 
-        //If the threadData is done, create a MeshChunk and delete the threadData.
         if (threadData->done) {
-            Timer apply("Applying Mesh");
+            //Only create the MeshChunk object if there's vertices in it.
+            if (!threadData->vertices->empty()) {
+                auto meshChunk = new MeshChunk();
+                meshChunk->build(threadData->vertices, threadData->indices);
 
-            auto meshChunk = new MeshChunk();
-            meshChunk->build(threadData->vertices, threadData->indices);
-
-            glm::vec3 pos = glm::vec3(threadData->pos.x * CHUNK_SIZE, threadData->pos.y * CHUNK_SIZE, threadData->pos.z * CHUNK_SIZE);
-            meshChunk->setPosition(pos);
-
-            meshChunks.insert(std::pair<glm::vec3, MeshChunk*>(threadData->pos, meshChunk));
-
-//            apply.printElapsedMs();
+                glm::vec3 pos = threadData->pos * glm::vec3(CHUNK_SIZE);
+                meshChunk->setPosition(pos);
+                meshChunks.insert(std::pair<glm::vec3, MeshChunk *>(threadData->pos, meshChunk));
+            }
 
             delete threadData;
             iter = meshGenThreads.erase(iter);
         }
-            //Otherwise ignore it and move to the next MeshChunk
         else {
             iter++;
         }
     }
 
-//    applyGlobal.printElapsedMs();
-
-    //Begin processing queued chunks if there are chunks to be processed and there's room for more threads.
+    //Create new mesh gen threads if there are meshes to be made.
     while (!meshGenQueue.empty() && meshGenThreads.size() < MAX_MESH_GEN_THREADS) {
-
-        //Get and remove the first position from the vector.
         auto it = meshGenQueue.begin();
         meshGenQueue.erase(meshGenQueue.begin());
         glm::vec3 pos = (*it);
 
-        //Create a thread for it and add the threadData to the meshGenThreads vector
         auto t = new MeshThreadData(pos, blockChunks.at(pos), blockAtlas);
         auto thread = new std::thread(meshGenThread, t);
         thread->detach();
@@ -142,7 +130,10 @@ void World::handleMeshGenQueue() {
 }
 
 void World::update() {
+    //Create / Finalize BlockChunks
     handleChunkGenQueue();
+
+    //Create / Finalize MeshChunks
     handleMeshGenQueue();
 }
 
@@ -150,6 +141,9 @@ std::unordered_map<glm::vec3, MeshChunk*, World::vec3cmp>* World::getMeshChunks(
     return &meshChunks;
 }
 
+//
+//Constructors and Destructors for the MeshThreadData / ChunkThreadData structs.
+//
 World::MeshThreadData::MeshThreadData(glm::vec3 pos, BlockChunk *chunk, BlockAtlas *atlas) {
     this->pos = pos;
     this->chunk = chunk;

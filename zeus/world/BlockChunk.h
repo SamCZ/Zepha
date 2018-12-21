@@ -17,9 +17,12 @@ public:
     int getBlock(glm::vec3* pos);
     int getBlock(int x, int y, int z);
 
+    bool isEmpty();
+
     //TODO: Add block setting methods as well
 private:
     std::vector<int>* blocks;
+    bool empty;
 };
 
 #endif //GLPROJECT_BLOCKCHUNK_H

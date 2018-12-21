@@ -50,7 +50,7 @@ void GameInstance::update(GLfloat deltaTime) {
     chunk.y = round(chunk.y / 16);
     chunk.z = round(chunk.z / 16);
 
-    int SIZE = 32;
+    int SIZE = 16;
     for (int i = -SIZE; i < SIZE; i++) {
         for (int j = -4; j < 4; j++) {
             for (int k = -SIZE; k < SIZE; k++) {
