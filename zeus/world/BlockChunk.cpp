@@ -8,14 +8,18 @@
 
 BlockChunk::BlockChunk(std::vector<int>* blocks) {
     this->blocks = blocks;
-    this->empty = true;
-
+//    this->empty = true;
+//
     for (int i : *blocks) {
-        if (i != 0) {
-            empty = false;
-            break;
-        }
+//        std::cout << i << std::endl;
+//        if (i != 0) {
+//            empty = false;
+//            break;
+//        }
     }
+
+
+    empty = false;
 }
 
 int BlockChunk::getBlock(glm::vec3* pos) {

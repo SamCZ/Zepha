@@ -11,35 +11,62 @@
 #include <vec3.hpp>
 #include <thread>
 #include <bits/unordered_map.h>
+#include <mutex>
 
 #include "BlockChunk.h"
 #include "MeshChunk.h"
 #include "../blocks/BlockAtlas.h"
 
 class World {
+private:
+    //Predeclare structs
+    struct MeshThreadData;
+    struct MeshThreadDef;
+    struct ChunkThreadData;
+    struct ChunkThreadDef;
 public:
+    //Hashing function for glm::vec3 in maps and lists
     struct vec3cmp {
         size_t operator()(const glm::vec3& k)const {
             return std::hash<float>()(k.x) ^ std::hash<float>()(k.y) ^ std::hash<float>()(k.z);
         }
     };
 
-    World();
+    //Functions for the thread pool implementations
+    static void chunkGenThread(ChunkThreadDef* threadDef);
+    static void meshGenThread(MeshThreadDef* threadDef);
+
     explicit World(BlockAtlas* atlas);
 
-    void genChunk(glm::vec3 pos);
-    void newChunk(glm::vec3 pos, BlockChunk* c);
+    void genNewChunk(glm::vec3 pos);
+    void commitChunk(glm::vec3 pos, BlockChunk *c);
 
     void update();
 
     std::unordered_map<glm::vec3, MeshChunk*, vec3cmp>* getMeshChunks();
+private:
+    //Global lists for storing blockChunks and meshChunks
+    std::unordered_map<glm::vec3, BlockChunk*, vec3cmp> blockChunks;
+    std::unordered_map<glm::vec3, MeshChunk*, vec3cmp> meshChunks;
 
-    ~World() = default;
+    void handleChunkGenQueue();
+    void handleMeshGenQueue();
 
+    const int CHUNK_THREADS = 8;
+    const int CHUNK_THREAD_QUEUE = 16;
+    std::unordered_set<glm::vec3, vec3cmp> chunkGenQueue;
+    std::vector<ChunkThreadDef*> chunkThreads;
+
+    const int MESH_THREADS = 8;
+    const int MESH_THREAD_QUEUE = 16;
+    std::unordered_set<glm::vec3, vec3cmp> meshGenQueue;
+    std::vector<MeshThreadDef*> meshThreads;
+
+    BlockAtlas* blockAtlas;
+
+    //Structs for the thread pool implementations
     struct MeshThreadData {
         MeshThreadData(glm::vec3 pos, BlockChunk* chunk, BlockAtlas* atlas);
-
-        std::thread* thread;
 
         glm::vec3 pos;
         BlockChunk* chunk;
@@ -53,41 +80,35 @@ public:
         ~MeshThreadData();
     };
 
-    struct ChunkThreadData {
-        ChunkThreadData(glm::vec3 pos, BlockAtlas* atlas);
+    struct MeshThreadDef {
+        MeshThreadDef();
 
         std::thread* thread;
+        std::mutex lock;
+        std::vector<MeshThreadData*> tasks;
+
+        ~MeshThreadDef();
+    };
+
+    struct ChunkThreadData {
+        ChunkThreadData(glm::vec3 pos, BlockAtlas* atlas);
 
         glm::vec3 pos;
         BlockAtlas* atlas;
 
         bool done;
-
         BlockChunk* chunk;
-
-        ~ChunkThreadData();
     };
-private:
-    std::unordered_map<glm::vec3, BlockChunk*, vec3cmp> blockChunks;
-    std::unordered_map<glm::vec3, MeshChunk*, vec3cmp> meshChunks;
 
-    void handleChunkGenQueue();
-    void handleMeshGenQueue();
+    struct ChunkThreadDef {
+        ChunkThreadDef();
 
-    //TODO: Replace this BiQueueThreadArray model with a BiQueueThreadPool model (it's in the name)
+        std::thread* thread;
+        std::mutex lock;
+        std::vector<ChunkThreadData*> tasks;
 
-    //Chunk Gen BiQueue Variables
-    const int MAX_CHUNK_GEN_THREADS = 32;
-    std::unordered_set<glm::vec3, vec3cmp> chunkGenQueue;
-    std::vector<ChunkThreadData*> chunkGenThreads;
-
-    //Mesh Gen BiQueue Variables
-    const int MAX_MESH_GEN_THREADS = 32;
-    std::unordered_set<glm::vec3, vec3cmp> meshGenQueue;
-    std::vector<MeshThreadData*> meshGenThreads;
-
-    BlockAtlas* blockAtlas;
+        ~ChunkThreadDef();
+    };
 };
-
 
 #endif //GLPROJECT_WORLD_H
