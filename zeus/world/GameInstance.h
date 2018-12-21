@@ -23,8 +23,6 @@ public:
     void update(GLfloat deltaTime);
 
     void draw();
-
-    ~GameInstance();
 public:
     //The renderer contains the camera, window, and draw methods.
     Renderer* renderer;

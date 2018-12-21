@@ -12,8 +12,8 @@
 World::World(BlockAtlas *atlas) {
     blockAtlas = atlas;
 
-    for (int i = 0; i < CHUNK_THREADS; i++) {
-        chunkThreads.push_back(new ChunkThreadDef());
+    for (int i = 0; i < GEN_THREADS; i++) {
+        genThreads.push_back(new ChunkThreadDef());
     }
 
     for (int i = 0; i < MESH_THREADS; i++) {
@@ -23,58 +23,63 @@ World::World(BlockAtlas *atlas) {
 
 void World::genNewChunk(glm::vec3 pos) {
     if (!blockChunks.count(pos)) {
-        chunkGenQueue.insert(pos);
+        pendingGen.insert(pos);
     }
 }
 
 void World::commitChunk(glm::vec3 pos, BlockChunk *c) {
     blockChunks.insert(std::pair<glm::vec3, BlockChunk*>(pos, c));
     if (!c->isEmpty()) {
-        meshGenQueue.insert(pos);
+        pendingMesh.insert(pos);
     }
 }
 
 void World::update() {
+    Timer world("World update");
+
     //Create / Finalize BlockChunks
     handleChunkGenQueue();
 
     //Create / Finalize MeshChunks
     handleMeshGenQueue();
+
+//    world.printElapsedMs();
 }
 
 void World::handleChunkGenQueue() {
-    std::vector<ChunkThreadData*> finishedThreads;
-
-    for (auto threadDef : chunkThreads) {
+    for (auto threadDef : genThreads) {
         std::unique_lock<std::mutex> lock(threadDef->lock, std::defer_lock);
         lock.lock();
         for (auto iter = threadDef->tasks.begin(); iter != threadDef->tasks.end();) {
+            if (finishedGen.size() > GEN_FINISHED_SIZE) break;
             auto threadData = *iter;
 
             if (threadData->done) {
-                finishedThreads.push_back(threadData);
+                finishedGen.push_back(threadData);
                 iter = threadDef->tasks.erase(iter);
             } else iter++;
         }
 
-        while (!chunkGenQueue.empty() && threadDef->tasks.size() < CHUNK_THREAD_QUEUE) {
-            auto it = chunkGenQueue.begin();
-            chunkGenQueue.erase(it);
+        while (!pendingGen.empty() && threadDef->tasks.size() < GEN_QUEUE_SIZE) {
+            auto it = pendingGen.begin();
+            pendingGen.erase(it);
             glm::vec3 pos = *it;
 
             threadDef->tasks.push_back(new ChunkThreadData(*it, blockAtlas));
         }
     }
 
-//    std::cout << "Finished Chunks: " << finishedThreads.size() << std::endl;
+    Timer t("Chunk Initialization");
+    for (auto iter = finishedGen.begin(); iter != finishedGen.end(); ) {
+        if (t.elapsedNs() > 4000000) break;
 
-    for (auto iter = finishedThreads.begin(); iter != finishedThreads.end(); ) {
         ChunkThreadData* threadData = *iter;
 
         commitChunk(threadData->pos, threadData->chunk);
-        iter = finishedThreads.erase(iter);
+        iter = finishedGen.erase(iter);
         delete threadData;
     }
+//    t.printElapsedMs();
 }
 
 //Function that runs on each ChunkGenThread in the chunk generation threadpool.
@@ -138,32 +143,33 @@ void World::chunkGenThread(World::ChunkThreadDef* threadDef) {
 }
 
 void World::handleMeshGenQueue() {
-    std::vector<MeshThreadData*> finishedThreads;
-
     for (auto threadDef : meshThreads) {
         std::unique_lock<std::mutex> lock(threadDef->lock, std::defer_lock);
         lock.lock();
         for (auto iter = threadDef->tasks.begin(); iter != threadDef->tasks.end();) {
+            if (finishedMesh.size() > MESH_FINISHED_SIZE) break;
+
             auto threadData = *iter;
 
             if (threadData->done) {
-                finishedThreads.push_back(threadData);
+                finishedMesh.push_back(threadData);
                 iter = threadDef->tasks.erase(iter);
             } else iter++;
         }
 
-        while (!meshGenQueue.empty() && threadDef->tasks.size() < MESH_THREAD_QUEUE) {
-            auto it = meshGenQueue.begin();
-            meshGenQueue.erase(it);
+        while (!pendingMesh.empty() && threadDef->tasks.size() < MESH_QUEUE_SIZE) {
+            auto it = pendingMesh.begin();
+            pendingMesh.erase(it);
             glm::vec3 pos = *it;
 
             threadDef->tasks.push_back(new MeshThreadData(*it, blockChunks.at(pos), blockAtlas));
         }
     }
 
-    std::cout << "Finished Meshes: " << finishedThreads.size() << std::endl;
+    Timer t("Mesh Initialization");
+    for (auto iter = finishedMesh.begin(); iter != finishedMesh.end(); ) {
+        if (t.elapsedNs() > 4000000) break;
 
-    for (auto iter = finishedThreads.begin(); iter != finishedThreads.end(); ) {
         MeshThreadData* threadData = *iter;
 
         if (!threadData->vertices->empty()) {
@@ -175,9 +181,10 @@ void World::handleMeshGenQueue() {
             meshChunks.insert(std::pair<glm::vec3, MeshChunk *>(threadData->pos, meshChunk));
         }
 
-        iter = finishedThreads.erase(iter);
+        iter = finishedMesh.erase(iter);
         delete threadData;
     }
+//    t.printElapsedMs();
 }
 
 //Function that runs on each MeshGenThread in the mesh generation threadpool.
@@ -231,7 +238,7 @@ World::ChunkThreadData::ChunkThreadData(glm::vec3 pos, BlockAtlas *atlas) {
 World::ChunkThreadDef::ChunkThreadDef() {
     thread = new std::thread(chunkGenThread, this);
 
-    sched_param sch_params;
+    sched_param sch_params{};
     sch_params.sched_priority = 1;
     pthread_setschedparam(thread->native_handle(), SCHED_RR, &sch_params);
 
@@ -259,7 +266,7 @@ World::MeshThreadData::~MeshThreadData() {
 World::MeshThreadDef::MeshThreadDef() {
     thread = new std::thread(meshGenThread, this);
 
-    sched_param sch_params;
+    sched_param sch_params{};
     sch_params.sched_priority = 1;
     pthread_setschedparam(thread->native_handle(), SCHED_RR, &sch_params);
 

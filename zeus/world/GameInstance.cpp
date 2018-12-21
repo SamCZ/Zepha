@@ -69,7 +69,4 @@ void GameInstance::draw() {
     for (auto &chunk : *world->getMeshChunks()) {
         renderer->draw(chunk.second);
     }
-
 }
-
-GameInstance::~GameInstance() = default;

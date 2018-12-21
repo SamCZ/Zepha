@@ -52,15 +52,21 @@ private:
     void handleChunkGenQueue();
     void handleMeshGenQueue();
 
-    const int CHUNK_THREADS = 8;
-    const int CHUNK_THREAD_QUEUE = 16;
-    std::unordered_set<glm::vec3, vec3cmp> chunkGenQueue;
-    std::vector<ChunkThreadDef*> chunkThreads;
+    const int GEN_THREADS = 8;
+    const int GEN_QUEUE_SIZE = 16;
+    const int GEN_FINISHED_SIZE = GEN_THREADS * GEN_QUEUE_SIZE;
+
+    std::unordered_set<glm::vec3, vec3cmp> pendingGen;
+    std::vector<ChunkThreadDef*> genThreads;
+    std::vector<ChunkThreadData*> finishedGen;
 
     const int MESH_THREADS = 8;
-    const int MESH_THREAD_QUEUE = 16;
-    std::unordered_set<glm::vec3, vec3cmp> meshGenQueue;
+    const int MESH_QUEUE_SIZE = 16;
+    const int MESH_FINISHED_SIZE = GEN_THREADS * GEN_QUEUE_SIZE;
+
+    std::unordered_set<glm::vec3, vec3cmp> pendingMesh;
     std::vector<MeshThreadDef*> meshThreads;
+    std::vector<MeshThreadData*> finishedMesh;
 
     BlockAtlas* blockAtlas;
 
