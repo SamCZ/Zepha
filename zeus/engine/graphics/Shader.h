@@ -20,11 +20,10 @@ public:
 
     std::string readFile(const char* fileLocation);
 
-    GLint getProjectionLocation();
-    GLint getModelLocation();
-    GLint getViewLocation();
+    GLint getUniformLocation(const char* name);
 
     void useShader();
+
     static void clearShader() {
         glUseProgram(0);
     }
@@ -35,7 +34,6 @@ public:
 
 private:
     GLuint shaderID;
-    GLint uProj, uModel, uView;
 
     void compileShader(const char* vertexSource, const char* fragmentSource);
     void addShader(GLuint program, const char* shaderCode, GLenum shaderType);

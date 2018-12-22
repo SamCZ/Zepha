@@ -34,14 +34,11 @@ int main(int argc, char* argv[]) {
 
         //Get & Handle Input
         glfwPollEvents();
-        renderer->update();
 
         //Update game instance
         game->update(deltaTime);
 
-        renderer->begin();
         game->draw();
-        renderer->end();
 
         if (t.elapsedNs() / (double)1000000 >= 20) {
 		    t.printElapsedMs(); //Print frame time

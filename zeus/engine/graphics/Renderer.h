@@ -9,6 +9,7 @@
 #include "../Window.h"
 #include "../Camera.h"
 #include "../Entity.h"
+#include "../GuiEntity.h"
 #include <ext.hpp>
 
 class Renderer {
@@ -18,7 +19,13 @@ public:
     void update();
 
     void begin();
+
+    void enableWorldShader();
     void draw(Entity* entity);
+
+    void enableGuiShader();
+    void drawGui(GuiEntity* entity);
+
     void end();
 
     Window* getWindow();
@@ -30,9 +37,13 @@ private:
     Camera* camera;
 
     glm::mat4 projectionMatrix;
+    glm::mat4 orthographicMatrix;
 
     //World Shader
-    Shader* shader;
+    Shader* worldShader;
+    GLint uModel, uProj, uView, uOrtho, uGuiModel;
+
+    Shader* guiShader;
 };
 
 
