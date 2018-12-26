@@ -26,9 +26,9 @@ void GameInstance::initialize(Renderer* renderer) {
     //The world requires the blockAtlas for meshing and handling inputs.
     world = new World(blockAtlas);
 
-    int SIZE = 32;
+    int SIZE = 24;
     for (int i = -SIZE; i < SIZE; i++) {
-        for (int j = 0; j < 4; j++) {
+        for (int j = 0; j < 3; j++) {
             for (int k = -SIZE; k < SIZE; k++) {
                 world->genNewChunk(glm::vec3(i, j, k));
             }
