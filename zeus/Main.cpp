@@ -40,9 +40,13 @@ int main(int argc, char* argv[]) {
 
         game->draw();
 
-        if (t.elapsedNs() / (double)1000000 >= 20) {
-		    t.printElapsedMs(); //Print frame time
-        }
+        float fps = 1000 / (t.elapsedNs() / 1000000.0f);
+        std::ostringstream out;
+        out.precision(2);
+        out << std::fixed << fps;
+        std::string s = out.str();
+
+        game->fpsText->set(s + " FPS");
 	}
 
 	return 0;

@@ -26,16 +26,28 @@ void GameInstance::initialize(Renderer* renderer) {
     //The world requires the blockAtlas for meshing and handling inputs.
     world = new World(blockAtlas);
 
-//    world->genNewChunk(glm::vec3(0,0,0));
-
     int SIZE = 32;
     for (int i = -SIZE; i < SIZE; i++) {
-        for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < 4; j++) {
             for (int k = -SIZE; k < SIZE; k++) {
                 world->genNewChunk(glm::vec3(i, j, k));
             }
         }
     }
+
+    fontTexture = Texture((char*)"../tex/font.png");
+    fontTexture.load();
+
+    alphaText = new HudText();
+    alphaText->set(std::string("Zeus ALPHA"));
+    alphaText->setScale(2.5);
+    alphaText->setPosition(glm::vec3(8, 4, 0));
+    guiEntities.push_back(alphaText);
+
+    fpsText = new HudText();
+    fpsText->setScale(2);
+    fpsText->setPosition(glm::vec3(8, 32, 0));
+    guiEntities.push_back(fpsText);
 }
 
 void GameInstance::update(GLfloat deltaTime) {
@@ -48,37 +60,30 @@ void GameInstance::update(GLfloat deltaTime) {
     camera->mouseControl(window->getDeltaX(), window->getDeltaY());
 
     world->update();
-
-    glm::vec3 chunk = *camera->getPosition();
-    chunk.x = round(chunk.x / 16);
-    chunk.y = round(chunk.y / 16);
-    chunk.z = round(chunk.z / 16);
-
-//    int SIZE = 16;
-//    for (int i = -SIZE; i < SIZE; i++) {
-//        for (int j = -4; j < 4; j++) {
-//            for (int k = -SIZE; k < SIZE; k++) {
-//                glm::vec3 adjustedPos(i + chunk.x, j + chunk.y, k + chunk.z);
-//                world->genNewChunk(adjustedPos);
-//            }
-//        }
-//    }
 }
 
 void GameInstance::draw() {
-    textureAtlas->getTexture()->use();
+    Timer t("Drawing");
 
     renderer->begin();
 
     renderer->enableWorldShader();
+    textureAtlas->getTexture()->use();
 
     for (auto &chunk : *world->getMeshChunks()) {
         renderer->draw(chunk.second);
     }
 
     renderer->enableGuiShader();
+    fontTexture.use();
 
-    //TODO: gui rendering here
+    for (auto &gui : *getGuiEntities()) {
+        renderer->drawGui(gui);
+    }
 
     renderer->end();
+}
+
+std::vector<Entity*>* GameInstance::getGuiEntities() {
+    return &guiEntities;
 }

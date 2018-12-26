@@ -9,7 +9,6 @@
 #include "../Window.h"
 #include "../Camera.h"
 #include "../Entity.h"
-#include "../GuiEntity.h"
 #include <ext.hpp>
 
 class Renderer {
@@ -24,7 +23,7 @@ public:
     void draw(Entity* entity);
 
     void enableGuiShader();
-    void drawGui(GuiEntity* entity);
+    void drawGui(Entity* entity);
 
     void end();
 

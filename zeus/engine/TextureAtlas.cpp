@@ -57,7 +57,7 @@ TextureAtlas::TextureAtlas(const char* directory) {
 
         if (!file.is_dir && strcmp(file.ext, ".png") == 0) {
 
-            printf("Loading Texture: %s\n", file.name);
+//            printf("Loading Texture: %s\n", file.name);
 
             auto ref = TextureRef();
             strcpy(ref.path, file.path);

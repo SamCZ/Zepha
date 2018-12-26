@@ -20,11 +20,11 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) {
     guiShader = new Shader();
     guiShader->createFromFile("../zeus/shader/gui.vs", "../zeus/shader/gui.fs");
 
-    uOrtho = guiShader->getUniformLocation("matrix");
+    uOrtho = guiShader->getUniformLocation("ortho");
     uGuiModel = guiShader->getUniformLocation("model");
 
     projectionMatrix = glm::perspective(45.0f, window->getBufferWidth() / window->getBufferHeight(), 0.1f, 1000.0f);
-    orthographicMatrix = glm::ortho(0, (int)window->getBufferWidth(), (int)window->getBufferHeight(), 0);
+    orthographicMatrix = glm::ortho(0.0f, window->getBufferWidth(), window->getBufferHeight(), 0.0f, 0.0f, 100.0f);
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
@@ -59,8 +59,9 @@ void Renderer::draw(Entity* entity) {
     entity->draw();
 }
 
-void Renderer::drawGui(GuiEntity* entity) {
+void Renderer::drawGui(Entity* entity) {
     glUniformMatrix4fv(uGuiModel, 1, GL_FALSE, glm::value_ptr(entity->getModelMatrix()));
+    entity->draw();
 }
 
 void Renderer::end() {

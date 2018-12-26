@@ -31,7 +31,7 @@ public:
     glm::mat4 getModelMatrix();
 
     ~Entity();
-private:
+protected:
     Mesh* mesh;
 
     glm::vec3 position;

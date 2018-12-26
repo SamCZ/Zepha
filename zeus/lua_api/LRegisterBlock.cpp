@@ -23,7 +23,7 @@ void LRegisterBlock::api(std::string identifier, sol::table data) {
     auto texTable = data.get<sol::optional<sol::table>>("textures");
 
     if (name && texTable) {
-        printf("Registering block %s!\n", name->c_str());
+//        printf("Registering block %s!\n", name->c_str());
 
         auto textures = std::vector<std::string>();
 
