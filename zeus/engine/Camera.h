@@ -19,6 +19,7 @@ public:
     void mouseControl(double deltaX, double deltaY);
 
     glm::vec3* getPosition();
+    void setPosition(glm::vec3 pos);
 
     glm::mat4 calculateViewMatrix();
 

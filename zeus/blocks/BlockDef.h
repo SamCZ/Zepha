@@ -13,6 +13,7 @@ public:
     BlockDef(std::string identifier, BlockModel* model);
 
     BlockModel* getModel();
+    std::string getIdentifier();
 
     ~BlockDef();
 private:

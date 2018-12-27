@@ -2,6 +2,12 @@
 -- Register basic blocks
 --
 
+-- Air
+zeus.register_block("_:air", {
+    name = "Air",
+    textures = {"_missing"}
+})
+
 -- Grass
 zeus.register_block("default:grass", {
 	name = "Grass",

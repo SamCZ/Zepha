@@ -46,6 +46,7 @@ public:
     Texture fontTexture;
 
     HudText* alphaText;
+    HudText* blockText;
 };
 
 

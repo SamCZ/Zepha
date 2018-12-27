@@ -6,7 +6,6 @@
 
 BlockAtlas::BlockAtlas(TextureAtlas *textureAtlas) {
     this->textureAtlas = textureAtlas;
-    definitions.push_back(nullptr); //Air
 }
 
 void BlockAtlas::registerBlock(BlockDef* def) {

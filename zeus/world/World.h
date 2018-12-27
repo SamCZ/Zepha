@@ -44,6 +44,39 @@ public:
     void update();
 
     std::unordered_map<glm::vec3, MeshChunk*, vec3cmp>* getMeshChunks();
+
+    BlockChunk* getChunk(glm::vec3 chunkPos);
+
+    int getBlock(glm::vec3 pos);
+
+    static glm::vec3 roundVec(glm::vec3 vec) {
+        return glm::vec3(floor(vec.x), floor(vec.y), floor(vec.z));
+    }
+
+    static glm::vec3 chunkVec(glm::vec3 globalVec) {
+        return glm::vec3(floor(globalVec.x / 16), floor(globalVec.y / 16), floor(globalVec.z / 16));
+    }
+
+    static glm::vec3 localVec(glm::vec3 globalVec) {
+        glm::vec3 out;
+
+        if (globalVec.x < 0)
+            out.x = 15 + (((int)globalVec.x + 1) % CHUNK_SIZE);
+        else
+            out.x = ((int)globalVec.x) % CHUNK_SIZE;
+
+        if (globalVec.y < 0)
+            out.y = 15 + (((int)globalVec.y + 1) % CHUNK_SIZE);
+        else
+            out.y = ((int)globalVec.y) % CHUNK_SIZE;
+
+        if (globalVec.z < 0)
+            out.z = 15 + (((int)globalVec.z + 1) % CHUNK_SIZE);
+        else
+            out.z = ((int)globalVec.z) % CHUNK_SIZE;
+
+        return out;
+    }
 private:
     //Global lists for storing blockChunks and meshChunks
     std::unordered_map<glm::vec3, BlockChunk*, vec3cmp> blockChunks;
