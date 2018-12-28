@@ -14,6 +14,7 @@
 #include "../engine/helpers/ArrayTrans3D.h"
 #include "../lua_api/LuaParser.h"
 #include "../engine/graphics/HudText.h"
+#include "DebugGui.h"
 
 class GameInstance {
 public:
@@ -21,13 +22,9 @@ public:
 
     void initialize(Renderer* renderer);
 
-    void update(GLfloat deltaTime);
+    void update(GLfloat deltaTime, double fps);
 
     void draw();
-
-    std::vector<Entity*>* getGuiEntities();
-
-    HudText* fpsText;
 public:
     //The renderer contains the camera, window, and draw methods.
     Renderer* renderer;
@@ -41,12 +38,9 @@ public:
     //The block atlas holds block definitions and models.
     BlockAtlas* blockAtlas;
 
-    //GUI Entities (Things to draw on the screen
+    //GUI Related things
     std::vector<Entity*> guiEntities;
-    Texture fontTexture;
-
-    HudText* alphaText;
-    HudText* blockText;
+    DebugGui gui;
 };
 
 

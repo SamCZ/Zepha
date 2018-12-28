@@ -9,14 +9,19 @@
 #include <gtc/matrix_transform.hpp>
 
 #include "graphics/Mesh.h"
+#include "graphics/Texture.h"
 
 class Entity {
 public:
     Entity();
 
     void create(Mesh* mesh);
+    void create(Mesh* mesh, Texture* texture);
     void draw();
     void cleanup();
+
+    void setTexture(Texture* texture);
+    Texture* getTexture();
 
     void setPosition(glm::vec3 position);
     glm::vec3* getPosition();
@@ -33,6 +38,7 @@ public:
     ~Entity();
 protected:
     Mesh* mesh;
+    Texture* texture;
 
     glm::vec3 position;
     glm::vec3 scale;

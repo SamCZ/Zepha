@@ -11,6 +11,7 @@
 class HudText : public Entity {
 public:
     HudText();
+    HudText(Texture* texture);
 
     void set(std::string text);
 private:

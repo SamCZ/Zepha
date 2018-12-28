@@ -5,9 +5,12 @@
 //
 
 #include "HudText.h"
-#include "../../mesh/TextBuilder.h"
+#include "TextBuilder.h"
 
-HudText::HudText() {
+HudText::HudText() = default;
+
+HudText::HudText(Texture *texture) {
+    setTexture(texture);
     mesh = new Mesh();
     set("");
 }

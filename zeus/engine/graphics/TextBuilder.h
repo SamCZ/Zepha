@@ -6,7 +6,7 @@
 #define ZEUS_TEXTBUILDER_H
 
 
-#include "../engine/graphics/Mesh.h"
+#include "Mesh.h"
 
 class TextBuilder {
 public:

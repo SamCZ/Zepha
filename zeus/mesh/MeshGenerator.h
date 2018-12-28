@@ -13,7 +13,7 @@
 #include <cstdio>
 #include "../engine/Timer.h"
 #include "../blocks/BlockAtlas.h"
-#include "../world/BlockChunk.h"
+#include "../blocks/BlockChunk.h"
 
 const int CHUNK_SIZE = 16;
 

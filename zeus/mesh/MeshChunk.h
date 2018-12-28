@@ -6,9 +6,9 @@
 #define GLPROJECT_MESHCHUNK_H
 
 
-#include "BlockChunk.h"
+#include "../blocks/BlockChunk.h"
 #include "../engine/Entity.h"
-#include "../mesh/MeshGenerator.h"
+#include "MeshGenerator.h"
 
 class MeshChunk : public Entity {
 public:

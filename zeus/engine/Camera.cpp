@@ -65,11 +65,11 @@ void Camera::mouseControl(double deltaX, double deltaY) {
     yaw += deltaX;
     pitch += deltaY;
 
-    if (pitch > 89.0f) {
-        pitch = 89.0f;
+    if (pitch > 90.0f) {
+        pitch = 90.0f;
     }
-    if (pitch < -89.0f) {
-        pitch = -89.0f;
+    if (pitch < -90.0f) {
+        pitch = -90.0f;
     }
 
     update();

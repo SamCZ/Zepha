@@ -15,6 +15,19 @@ void Entity::create(Mesh* myMesh) {
     this->mesh = myMesh;
 }
 
+void Entity::create(Mesh* myMesh, Texture* texture) {
+    this->mesh = myMesh;
+    this->texture = texture;
+}
+
+void Entity::setTexture(Texture *texture) {
+    this->texture = texture;
+};
+
+Texture* Entity::getTexture() {
+    return texture;
+}
+
 void Entity::draw() {
     mesh->draw();
 }
@@ -63,4 +76,4 @@ glm::mat4 Entity::getModelMatrix() {
 
 Entity::~Entity() {
     cleanup();
-};
+}

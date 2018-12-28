@@ -47,9 +47,6 @@ void World::update() {
 }
 
 int World::getBlock(glm::vec3 pos) {
-//    glm::vec3 chunkPos(round(pos.x / 16), round(pos.y / 16), round(pos.z / 16));
-//    return 0;
-
     auto chunkPos = World::chunkVec(World::roundVec(pos));
     auto local = World::localVec(World::roundVec(pos));
 
@@ -57,7 +54,6 @@ int World::getBlock(glm::vec3 pos) {
     if (chunk != nullptr) {
         return chunk->getBlock(&local);
     }
-
     return -1;
 }
 

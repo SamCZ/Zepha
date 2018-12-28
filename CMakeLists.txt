@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(zeus)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "-s -O3")
+#set(CMAKE_CXX_FLAGS "-s -O3")
 
 include_directories(lib/glew/include/GL)
 include_directories(lib/glfw_linux/include)
@@ -53,11 +53,11 @@ add_executable(zeus
         zeus/engine/TextureAtlas.h
         zeus/world/World.cpp
         zeus/world/World.h
-        zeus/world/BlockChunk.cpp
-        zeus/world/BlockChunk.h
+        zeus/blocks/BlockChunk.cpp
+        zeus/blocks/BlockChunk.h
         zeus/engine/helpers/ArrayTrans3D.h
-        zeus/world/MeshChunk.cpp
-        zeus/world/MeshChunk.h
+        zeus/mesh/MeshChunk.cpp
+        zeus/mesh/MeshChunk.h
         zeus/world/GameInstance.cpp
         zeus/world/GameInstance.h
         zeus/engine/graphics/Renderer.cpp
@@ -66,10 +66,10 @@ add_executable(zeus
         zeus/lua_api/LuaParser.h
         zeus/lua_api/LRegisterBlock.cpp
         zeus/lua_api/LRegisterBlock.h
-        zeus/mesh/TextBuilder.cpp
-        zeus/mesh/TextBuilder.h
-        zeus/mesh/TextBuilder.cpp
+        zeus/engine/graphics/TextBuilder.cpp
+        zeus/engine/graphics/TextBuilder.h
+        zeus/engine/graphics/TextBuilder.cpp
         zeus/engine/graphics/HudText.cpp
-        zeus/engine/graphics/HudText.h)
+        zeus/engine/graphics/HudText.h zeus/world/DebugGui.cpp zeus/world/DebugGui.h)
 
 target_link_libraries(zeus ${OPENGL_gl_LIBRARY} glfw libGLEW.so pthread lua dl)

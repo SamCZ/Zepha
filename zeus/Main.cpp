@@ -13,6 +13,7 @@
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
+double fps = 0.0;
 
 int main(int argc, char* argv[]) {
     Timer boot("Initialization");
@@ -36,18 +37,11 @@ int main(int argc, char* argv[]) {
         glfwPollEvents();
 
         //Update game instance
-        game->update(deltaTime);
-
+        game->update(deltaTime, fps);
         game->draw();
 
-        float fps = 1000 / (t.elapsedNs() / 1000000.0f);
-        std::ostringstream out;
-        out.precision(2);
-        out << std::fixed << fps;
-        std::string s = out.str();
-
-        game->fpsText->set(s + " FPS");
-	}
+        fps = 1000 / (t.elapsedNs() / 1000000.0);
+    }
 
 	return 0;
 }
