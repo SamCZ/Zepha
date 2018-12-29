@@ -8,7 +8,7 @@
 #include "engine/Camera.h"
 
 #include "engine/Timer.h"
-#include "world/GameInstance.h"
+#include "game/GameInstance.h"
 #include "engine/graphics/Renderer.h"
 
 GLfloat deltaTime = 0.0f;

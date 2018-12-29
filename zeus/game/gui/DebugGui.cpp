@@ -42,7 +42,7 @@ void DebugGui::fpsHistUpdate() {
 
     unsigned int indOffset = 0;
     float xOffset = 0;
-    float width = 4;
+    float width = 6;
     float height = 0.5;
     float i = 0.10;
 

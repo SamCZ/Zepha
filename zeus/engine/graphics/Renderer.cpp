@@ -11,7 +11,7 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) {
     camera = new Camera(glm::vec3(0.0f, 16.0f, 0.0f), glm::vec3(0, 1, 0), -90.0f, -45.0f, 10.0f, 0.1f);
 
     worldShader = new Shader();
-    worldShader->createFromFile("../zeus/shader/game.vs", "../zeus/shader/game.fs");
+    worldShader->createFromFile("../zeus/shader/world.vs", "../zeus/shader/world.fs");
 
     uProj = worldShader->getUniformLocation("projection");
     uModel = worldShader->getUniformLocation("model");

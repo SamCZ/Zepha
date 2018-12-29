@@ -5,7 +5,7 @@
 #ifndef ZEUS_LREGISTERBLOCK_H
 #define ZEUS_LREGISTERBLOCK_H
 
-#include "../world/GameInstance.h"
+#include "../game/GameInstance.h"
 
 class LRegisterBlock {
 public:
