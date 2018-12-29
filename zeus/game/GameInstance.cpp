@@ -22,14 +22,14 @@ void GameInstance::initialize(Renderer* renderer) {
 
     p.doFile("../lua/file.lua");
 
-    //The world requires the blockAtlas for meshing and handling inputs.
+    //The game requires the blockAtlas for meshing and handling inputs.
     world = new World(blockAtlas);
 
     renderer->getCamera()->setPosition(glm::vec3(8, 24, 8));
 
-    int SIZE = 10;
+    int SIZE = 8;
     for (int i = -SIZE; i < SIZE; i++) {
-        for (int j = 0; j < 10; j++) {
+        for (int j = 0; j < 8; j++) {
             for (int k = -SIZE; k < SIZE; k++) {
                 world->genNewChunk(glm::vec3(i, j, k));
             }

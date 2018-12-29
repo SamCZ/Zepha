@@ -7,7 +7,7 @@
 
 
 #include "../engine/graphics/HudText.h"
-#include "World.h"
+#include "../game/world/World.h"
 #include <sstream>
 
 class DebugGui {

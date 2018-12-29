@@ -13,9 +13,9 @@
 #include <bits/unordered_map.h>
 #include <mutex>
 
-#include "../blocks/BlockChunk.h"
-#include "../mesh/MeshChunk.h"
-#include "../blocks/BlockAtlas.h"
+#include "../../blocks/BlockChunk.h"
+#include "../../mesh/MeshChunk.h"
+#include "../../blocks/BlockAtlas.h"
 
 class World {
 private:

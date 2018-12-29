@@ -51,15 +51,15 @@ add_executable(zeus
         zeus/mesh/BlockModel.h
         zeus/engine/TextureAtlas.cpp
         zeus/engine/TextureAtlas.h
-        zeus/world/World.cpp
-        zeus/world/World.h
+        zeus/game/world/World.cpp
+        zeus/game/world/World.h
         zeus/blocks/BlockChunk.cpp
         zeus/blocks/BlockChunk.h
         zeus/engine/helpers/ArrayTrans3D.h
         zeus/mesh/MeshChunk.cpp
         zeus/mesh/MeshChunk.h
-        zeus/world/GameInstance.cpp
-        zeus/world/GameInstance.h
+        zeus/game/GameInstance.cpp
+        zeus/game/GameInstance.h
         zeus/engine/graphics/Renderer.cpp
         zeus/engine/graphics/Renderer.h
         zeus/lua_api/LuaParser.cpp
@@ -70,6 +70,6 @@ add_executable(zeus
         zeus/engine/graphics/TextBuilder.h
         zeus/engine/graphics/TextBuilder.cpp
         zeus/engine/graphics/HudText.cpp
-        zeus/engine/graphics/HudText.h zeus/world/DebugGui.cpp zeus/world/DebugGui.h)
+        zeus/engine/graphics/HudText.h zeus/game/gui/DebugGui.cpp zeus/gui/DebugGui.h)
 
 target_link_libraries(zeus ${OPENGL_gl_LIBRARY} glfw libGLEW.so pthread lua dl)

@@ -6,8 +6,8 @@
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 
 #include "World.h"
-#include "../engine/PerlinNoise.h"
-#include "../engine/helpers/ArrayTrans3D.h"
+#include "../../engine/PerlinNoise.h"
+#include "../../engine/helpers/ArrayTrans3D.h"
 
 World::World(BlockAtlas *atlas) {
     blockAtlas = atlas;
@@ -43,7 +43,7 @@ void World::update() {
     //Create / Finalize MeshChunks
     handleMeshGenQueue();
 
-//    world.printElapsedMs();
+//    game.printElapsedMs();
 }
 
 int World::getBlock(glm::vec3 pos) {

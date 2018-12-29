@@ -2,7 +2,7 @@
 // Created by aurailus on 27/12/18.
 //
 
-#include "DebugGui.h"
+#include "../../gui/DebugGui.h"
 
 DebugGui::DebugGui() {
     fontTexture = new Texture((char*)"../tex/font.png");
@@ -26,7 +26,7 @@ DebugGui::DebugGui() {
 
     fpsHistogram = new Entity();
     fpsHistogram->create(new Mesh(), histogramTexture);
-    fpsHistogram->setPosition(glm::vec3(0, 768, 0));
+    fpsHistogram->setPosition(glm::vec3(8, 764, 0));
 }
 
 void DebugGui::pushGuiObjects(std::vector<Entity*> &list) {
@@ -42,8 +42,8 @@ void DebugGui::fpsHistUpdate() {
 
     unsigned int indOffset = 0;
     float xOffset = 0;
-    float width = 8;
-    float height = 1;
+    float width = 4;
+    float height = 0.5;
     float i = 0.10;
 
     for (double num : fpsHistory) {
