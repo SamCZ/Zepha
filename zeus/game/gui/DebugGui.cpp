@@ -2,27 +2,31 @@
 // Created by aurailus on 27/12/18.
 //
 
-#include "../../gui/DebugGui.h"
+#include "DebugGui.h"
 
 DebugGui::DebugGui() {
-    fontTexture = new Texture((char*)"../tex/font.png");
+    fontTexture = new Texture((char*)"../tex/gui/font.png");
     fontTexture->load();
 
-    histogramTexture = new Texture((char*)"../tex/histogram.png");
+    histogramTexture = new Texture((char*)"../tex/gui/histogram.png");
     histogramTexture->load();
 
     alphaText = new HudText(fontTexture);
-    alphaText->set("Zeus Alpha 0.0000000001");
+    alphaText->set("Zeus Alpha 0.01");
     alphaText->setScale(3);
     alphaText->setPosition(glm::vec3(8, 4, 0));
 
     fpsText = new HudText(fontTexture);
     fpsText->setScale(2);
-    fpsText->setPosition(glm::vec3(8, 38, 0));
+    fpsText->setPosition(glm::vec3(16, 740, 0));
+
+    playerText = new HudText(fontTexture);
+    playerText->setScale(2);
+    playerText->setPosition(glm::vec3(8, 42, 0));
 
     blockText = new HudText(fontTexture);
     blockText->setScale(2);
-    blockText->setPosition(glm::vec3(8, 60, 0));
+    blockText->setPosition(glm::vec3(8, 116, 0));
 
     fpsHistogram = new Entity();
     fpsHistogram->create(new Mesh(), histogramTexture);
@@ -33,6 +37,7 @@ void DebugGui::pushGuiObjects(std::vector<Entity*> &list) {
     list.push_back(alphaText);
     list.push_back(fpsText);
     list.push_back(blockText);
+    list.push_back(playerText);
     list.push_back(fpsHistogram);
 }
 
@@ -77,28 +82,36 @@ void DebugGui::fpsHistUpdate() {
     fpsHistogram->create(m);
 }
 
-void DebugGui::update(glm::vec3 pos, std::string block, double fps) {
-    glm::vec3 chk = World::chunkVec(pos);
-    glm::vec3 loc = World::localVec(pos);
+std::string string_float(float val) {
+    std::ostringstream out;
+    out.precision(2);
+    out << std::fixed << val;
+    std::string s = out.str();
+    return s;
+}
+
+std::string string_double(double val) {
+    return string_float((float)val);
+}
+
+void DebugGui::update(glm::vec3* pos, glm::vec3* vel, float yaw, float pitch, std::string block, std::string look, double fps) {
+    glm::vec3 chk = World::chunkVec(*pos);
+    glm::vec3 loc = World::localVec(*pos);
 
     if (fpsHistory.size() > FPS_HISTOGRAM_SIZE) fpsHistory.erase(fpsHistory.begin());
 
     fpsHistory.push_back(fps);
-
+    fpsText->set(string_double(fps) + " FPS");
     fpsHistUpdate();
 
-    std::ostringstream out;
-    out.precision(2);
-    out << std::fixed << fps;
-    std::string s = out.str();
+    playerText->set(
+            "W: " + to_string((int)pos->x) + "," + to_string((int)pos->y) + "," + to_string((int)pos->z) + "\n" +
+            "C: " + to_string((int)chk.x) + "," + to_string((int)chk.y) + "," + to_string((int)chk.z) + " " +
+            "(" + to_string((int)loc.x) + "," + to_string((int)loc.y) + "," + to_string((int)loc.z) + ")\n" +
+            "V: " + string_float(vel->x) + "," + string_float(vel->y) + "," + string_float(vel->z) + "\n" +
+            "Yaw: " + string_float(yaw) + ", Pitch: " + string_float(pitch));
 
-    fpsText->set(s + " FPS");
-
-    blockText->set(
-            "World Pos: (" + to_string((int)pos.x) + ", " + to_string((int)pos.y) + ", " + to_string((int)pos.z) + ")\n" +
-            "Chunk Pos: (" + to_string((int)chk.x) + ", " + to_string((int)chk.y) + ", " + to_string((int)chk.z) + ")\n" +
-            "Local Pos: (" + to_string((int)loc.x) + ", " + to_string((int)loc.y) + ", " + to_string((int)loc.z) + ")\n" +
-            "Block: " + block);
+    blockText->set("On: " + block + "\nLooking: " + look);
 }
 
 DebugGui::~DebugGui() = default;

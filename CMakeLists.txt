@@ -70,6 +70,6 @@ add_executable(zeus
         zeus/engine/graphics/TextBuilder.h
         zeus/engine/graphics/TextBuilder.cpp
         zeus/engine/graphics/HudText.cpp
-        zeus/engine/graphics/HudText.h zeus/game/gui/DebugGui.cpp zeus/gui/DebugGui.h)
+        zeus/engine/graphics/HudText.h zeus/game/gui/DebugGui.cpp zeus/game/gui/DebugGui.h zeus/game/world/Player.cpp zeus/game/world/Player.h zeus/engine/Ray.cpp zeus/engine/Ray.h)
 
 target_link_libraries(zeus ${OPENGL_gl_LIBRARY} glfw libGLEW.so pthread lua dl)

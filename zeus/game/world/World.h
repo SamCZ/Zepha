@@ -48,6 +48,7 @@ public:
     BlockChunk* getChunk(glm::vec3 chunkPos);
 
     int getBlock(glm::vec3 pos);
+    bool solidAt(glm::vec3 pos);
 
     static glm::vec3 roundVec(glm::vec3 vec) {
         return glm::vec3(floor(vec.x), floor(vec.y), floor(vec.z));

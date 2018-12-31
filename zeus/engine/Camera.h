@@ -13,30 +13,27 @@
 class Camera {
 public:
     Camera();
-    Camera(glm::vec3 position, glm::vec3 up, double yaw, double pitch, float moveSpeed, float turnSpeed);
-
-    void keyControl(bool* keys, GLfloat delta);
-    void mouseControl(double deltaX, double deltaY);
+    void create(glm::vec3 up);
 
     glm::vec3* getPosition();
     void setPosition(glm::vec3 pos);
 
+    void setYaw(double yaw);
+    void setPitch(double pitch);
+
     glm::mat4 calculateViewMatrix();
 
     ~Camera();
-private:
-    glm::vec3 position;
 
     glm::vec3 front;
     glm::vec3 up;
     glm::vec3 right;
     glm::vec3 worldUp;
+private:
+    glm::vec3 position;
 
     double yaw;
     double pitch;
-
-    float moveSpeed;
-    float turnSpeed;
 
     void update();
 };

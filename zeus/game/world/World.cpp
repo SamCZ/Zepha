@@ -57,6 +57,10 @@ int World::getBlock(glm::vec3 pos) {
     return -1;
 }
 
+bool World::solidAt(glm::vec3 pos) {
+    return getBlock(pos) != 0;
+}
+
 BlockChunk* World::getChunk(glm::vec3 chunkPos) {
     if (blockChunks.count(chunkPos) == 1) {
         return blockChunks[chunkPos];
@@ -104,7 +108,7 @@ void World::handleChunkGenQueue() {
 //Takes a threadDef object which contains a vector of tasks to do, and infinitely loops, completing tasks and
 //re-inserting them into the vector to be further manipulated by the main thread.
 void World::chunkGenThread(World::ChunkThreadDef* threadDef) {
-    PerlinNoise p(0);
+    PerlinNoise p(10);
     PerlinNoise p2(10);
 
     //Infinite loop

@@ -14,7 +14,8 @@
 #include "../engine/helpers/ArrayTrans3D.h"
 #include "../lua_api/LuaParser.h"
 #include "../engine/graphics/HudText.h"
-#include "../gui/DebugGui.h"
+#include "gui/DebugGui.h"
+#include "world/Player.h"
 
 class GameInstance {
 public:
@@ -26,6 +27,8 @@ public:
 
     void draw();
 public:
+    Player* player;
+
     //The renderer contains the camera, window, and draw methods.
     Renderer* renderer;
 
@@ -37,6 +40,9 @@ public:
 
     //The block atlas holds block definitions and models.
     BlockAtlas* blockAtlas;
+
+    //Entities
+    std::vector<Entity*> entities;
 
     //GUI Related things
     std::vector<Entity*> guiEntities;

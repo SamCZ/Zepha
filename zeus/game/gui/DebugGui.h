@@ -6,8 +6,8 @@
 #define ZEUS_DEBUGGUI_H
 
 
-#include "../engine/graphics/HudText.h"
-#include "../game/world/World.h"
+#include "../../engine/graphics/HudText.h"
+#include "../world/World.h"
 #include <sstream>
 
 class DebugGui {
@@ -15,7 +15,7 @@ public:
     DebugGui();
 
     void pushGuiObjects(std::vector<Entity*> &list);
-    void update(glm::vec3 pos, std::string block, double fps);
+    void update(glm::vec3* pos, glm::vec3* vel, float yaw, float pitch, std::string block, std::string look, double fps);
 
     ~DebugGui();
 
@@ -27,6 +27,7 @@ private:
 
     HudText* fpsText;
     HudText* alphaText;
+    HudText* playerText;
     HudText* blockText;
     Entity* fpsHistogram;
 

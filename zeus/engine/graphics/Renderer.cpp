@@ -8,7 +8,9 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) {
 
     window = new Window(winWidth, winHeight);
     window->initialize();
-    camera = new Camera(glm::vec3(0.0f, 16.0f, 0.0f), glm::vec3(0, 1, 0), -90.0f, -45.0f, 10.0f, 0.1f);
+
+    camera = new Camera();
+    camera->create(glm::vec3(0, 1, 0));
 
     worldShader = new Shader();
     worldShader->createFromFile("../zeus/shader/world.vs", "../zeus/shader/world.fs");
