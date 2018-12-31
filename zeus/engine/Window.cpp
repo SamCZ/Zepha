@@ -15,6 +15,7 @@ Window::Window(GLint windowWidth, GLint windowHeight) {
     centerY = height / 2;
 
     mouseLocked = true;
+    mouseDown = false;
 
     for (bool &key : keys) {
         key = false;
@@ -104,6 +105,8 @@ void Window::update() {
             glfwSetCursorPos(mainWindow, centerX, centerY);
         }
     }
+
+    mouseDown = glfwGetMouseButton(mainWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
 }
 
 double Window::getDeltaX() {
@@ -112,6 +115,10 @@ double Window::getDeltaX() {
 
 double Window::getDeltaY() {
     return deltaY;
+}
+
+bool Window::mouseIsDown() {
+    return mouseDown;
 }
 
 #pragma clang diagnostic push

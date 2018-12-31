@@ -94,6 +94,9 @@ void GameInstance::update(GLfloat deltaTime, double fps) {
         auto found = world->getBlock(*ray.getEnd());
         if (found > 0) {
             block = found;
+            if (renderer->getWindow()->mouseIsDown()) {
+                world->setBlock(*ray.getEnd(), 0);
+            }
             break;
         }
     }

@@ -17,9 +17,9 @@ public:
     int getBlock(glm::vec3* pos);
     int getBlock(int x, int y, int z);
 
-    bool isEmpty();
+    bool setBlock(glm::vec3* pos, int ind);
 
-    //TODO: Add block setting methods as well
+    bool isEmpty();
 private:
     std::vector<int>* blocks;
     bool empty;

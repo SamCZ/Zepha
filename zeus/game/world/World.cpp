@@ -34,6 +34,10 @@ void World::commitChunk(glm::vec3 pos, BlockChunk *c) {
     }
 }
 
+void World::remeshChunk(glm::vec3 pos) {
+    pendingMesh.insert(pos);
+}
+
 void World::update() {
     Timer world("World update");
 
@@ -55,6 +59,18 @@ int World::getBlock(glm::vec3 pos) {
         return chunk->getBlock(&local);
     }
     return -1;
+}
+
+void World::setBlock(glm::vec3 pos, int block) {
+    auto chunkPos = World::chunkVec(World::roundVec(pos));
+    auto local = World::localVec(World::roundVec(pos));
+
+    auto chunk = getChunk(chunkPos);
+    if (chunk != nullptr) {
+        if (chunk->setBlock(&local, block)) {
+            remeshChunk(chunkPos);
+        }
+    }
 }
 
 bool World::solidAt(glm::vec3 pos) {
@@ -193,6 +209,10 @@ void World::handleMeshGenQueue() {
         if (t.elapsedNs() > 4000000) break;
 
         MeshThreadData* threadData = *iter;
+
+        if (meshChunks.count(threadData->pos) != 0) {
+            meshChunks.erase(threadData->pos);
+        }
 
         if (!threadData->vertices->empty()) {
             auto meshChunk = new MeshChunk();

@@ -40,6 +40,7 @@ public:
 
     void genNewChunk(glm::vec3 pos);
     void commitChunk(glm::vec3 pos, BlockChunk *c);
+    void remeshChunk(glm::vec3 pos);
 
     void update();
 
@@ -48,6 +49,8 @@ public:
     BlockChunk* getChunk(glm::vec3 chunkPos);
 
     int getBlock(glm::vec3 pos);
+    void setBlock(glm::vec3 pos, int block);
+
     bool solidAt(glm::vec3 pos);
 
     static glm::vec3 roundVec(glm::vec3 vec) {

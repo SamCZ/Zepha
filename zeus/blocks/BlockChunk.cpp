@@ -39,6 +39,16 @@ int BlockChunk::getBlock(int x, int y, int z) {
     return blocks->at(ind);
 }
 
+bool BlockChunk::setBlock(glm::vec3* pos, int block) {
+    unsigned int ind = ArrayTrans3D::vecToInd(pos);
+    if (ind < 0 || ind >= 4096) return false;
+    if (blocks->at(ind) != block) {
+        (*blocks)[ind] = block;
+        return true;
+    }
+    return false;
+}
+
 bool BlockChunk::isEmpty() {
     return empty;
 }

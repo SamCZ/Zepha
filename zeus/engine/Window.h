@@ -23,6 +23,7 @@ public:
     bool getShouldClose() { return (bool)glfwWindowShouldClose(mainWindow); }
 
     bool* getKeysArray() { return keys; }
+    bool mouseIsDown();
 
     double getDeltaX();
     double getDeltaY();
@@ -41,6 +42,7 @@ private:
     GLint bufferWidth, bufferHeight;
 
     bool keys[1024];
+    bool mouseDown;
 
     //Static so that GLFW can run callback
     static void handleKeys(GLFWwindow* glfwWindow, int key, int code, int action, int mode);
