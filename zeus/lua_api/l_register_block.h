@@ -5,15 +5,14 @@
 #ifndef ZEUS_LREGISTERBLOCK_H
 #define ZEUS_LREGISTERBLOCK_H
 
-#include "../game/GameInstance.h"
+#include "LuaApi.h"
 
-class LRegisterBlock {
+class l_register_block : LuaApi {
 public:
-    explicit LRegisterBlock(GameInstance* game);
-    void regApi(sol::table* Z);
+    l_register_block(GameInstance* game, LuaParser* parser);
+
 private:
     void api(std::string identifer, sol::table data);
-    GameInstance* game;
 };
 
 

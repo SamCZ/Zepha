@@ -10,7 +10,7 @@
 //}
 
 void LuaParser::init() {
-    L.open_libraries(sol::lib::base, sol::lib::package);
+    L.open_libraries(sol::lib::base, sol::lib::package, sol::lib::string);
 
     Z = L.create_table();
     L["zeus"] = Z;
@@ -18,6 +18,10 @@ void LuaParser::init() {
 
 sol::table* LuaParser::getModule() {
     return &Z;
+}
+
+sol::state* LuaParser::getState() {
+    return &L;
 }
 
 void LuaParser::doFile(std::string file) {

@@ -16,7 +16,10 @@ public:
     LuaParser() = default;
 
     void init();
+
     sol::table* getModule();
+    sol::state* getState();
+
     void doFile(std::string file);
 
     ~LuaParser() = default;

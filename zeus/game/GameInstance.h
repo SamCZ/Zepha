@@ -16,6 +16,7 @@
 #include "../engine/graphics/HudText.h"
 #include "gui/DebugGui.h"
 #include "world/Player.h"
+#include "../engine/Ray.h"
 
 class GameInstance {
 public:

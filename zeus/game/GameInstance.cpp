@@ -3,8 +3,8 @@
 //
 
 #include "GameInstance.h"
-#include "../lua_api/LRegisterBlock.h"
-#include "../engine/Ray.h"
+#include "../lua_api/l_register_block.h"
+#include "../lua_api/l_register_blockmodel.h"
 
 GameInstance::GameInstance() = default;
 
@@ -16,10 +16,10 @@ void GameInstance::initialize(Renderer* renderer) {
 
     LuaParser p;
     p.init();
-    auto Z = p.getModule();
 
     //Register APIs here
-    LRegisterBlock(this).regApi(Z);
+    l_register_block(this, &p);
+    l_register_blockmodel(this, &p);
 
     p.doFile("../lua/file.lua");
 
@@ -66,7 +66,10 @@ void GameInstance::initialize(Renderer* renderer) {
     delete crossVerts;
     delete crossInds;
 
-    crosshair->setPosition(glm::vec3(renderer->getWindow()->getBufferWidth()/2, renderer->getWindow()->getBufferHeight()/2, 0));
+    float xx = renderer->getWindow()->getBufferWidth()/2;
+    float yy = renderer->getWindow()->getBufferHeight()/2;
+
+    crosshair->setPosition(glm::vec3(xx, yy, 0));
     crosshair->setScale(22);
 
     guiEntities.push_back(crosshair);

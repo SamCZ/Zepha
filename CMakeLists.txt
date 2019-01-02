@@ -64,12 +64,12 @@ add_executable(zeus
         zeus/engine/graphics/Renderer.h
         zeus/lua_api/LuaParser.cpp
         zeus/lua_api/LuaParser.h
-        zeus/lua_api/LRegisterBlock.cpp
-        zeus/lua_api/LRegisterBlock.h
+        zeus/lua_api/l_register_block.cpp
+        zeus/lua_api/l_register_block.h
         zeus/engine/graphics/TextBuilder.cpp
         zeus/engine/graphics/TextBuilder.h
         zeus/engine/graphics/TextBuilder.cpp
         zeus/engine/graphics/HudText.cpp
-        zeus/engine/graphics/HudText.h zeus/game/gui/DebugGui.cpp zeus/game/gui/DebugGui.h zeus/game/world/Player.cpp zeus/game/world/Player.h zeus/engine/Ray.cpp zeus/engine/Ray.h)
+        zeus/engine/graphics/HudText.h zeus/game/gui/DebugGui.cpp zeus/game/gui/DebugGui.h zeus/game/world/Player.cpp zeus/game/world/Player.h zeus/engine/Ray.cpp zeus/engine/Ray.h zeus/lua_api/l_register_blockmodel.cpp zeus/lua_api/l_register_blockmodel.h zeus/lua_api/LuaApi.cpp zeus/lua_api/LuaApi.h)
 
 target_link_libraries(zeus ${OPENGL_gl_LIBRARY} glfw libGLEW.so pthread lua dl)
