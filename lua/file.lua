@@ -6,7 +6,7 @@ function dump(tbl, indent)
   		k = "[" .. k .. "]"
   	end
   	local indentString = string.rep("  ", indent);
-    formatting = indentString .. k .. " = "
+    local formatting = indentString .. k .. " = "
     if type(v) == "table" then
       print(formatting .. "{")
       dump(v, indent+1)
@@ -51,7 +51,7 @@ Define 5 positional coordinates for each face.
 zeus.register_blockmodel("default:cube", {
 	{
 		face = "left",
-		tex = 2,
+		tex = 3,
 		points = {
 			0, 0, 0, 0, 1, 
 			0, 0, 1, 1, 1,
@@ -60,16 +60,16 @@ zeus.register_blockmodel("default:cube", {
 		}
 	}, {
 		face = "right",
-		tex = 3,
+		tex = 4,
 		points = {
-			1, 0, 0, 1, 0,
-			0, 0, 1, 1, 1,
-			0, 1, 1, 1, 0,
-			0, 1, 0, 0, 0
+            1, 1, 1, 1, 0,
+			1, 0, 1, 1, 1,
+            1, 0, 0, 0, 1,
+			1, 1, 0, 0, 0
 		}
 	}, {
 		face = "top",
-		tex = 0,
+		tex = 1,
 		points = {
 			0, 1, 0, 0, 0,
 			0, 1, 1, 0, 1,
@@ -78,7 +78,7 @@ zeus.register_blockmodel("default:cube", {
 		}
 	}, {
 		face = "bottom",
-		tex = 1,
+		tex = 2,
 		points = {
 			0, 0, 0, 0, 0,
 			1, 0, 0, 1, 0,
@@ -87,7 +87,7 @@ zeus.register_blockmodel("default:cube", {
 		}
 	}, {
 		face = "front",
-		tex = 4,
+		tex = 5,
 		points = {
 			0, 0, 1, 0, 1,
 			1, 0, 1, 1, 1,
@@ -96,12 +96,12 @@ zeus.register_blockmodel("default:cube", {
 		}
 	}, {
 		face = "back",
-		tex = 5,
+		tex = 6,
 		points = {
 			0, 0, 0, 0, 1,
 			0, 1, 0, 0, 0,
 			1, 1, 0, 1, 0,
-		  1, 0, 0, 1, 1
+            1, 0, 0, 1, 1
 		}
 	}
 })
