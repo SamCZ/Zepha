@@ -53,6 +53,8 @@ void MeshGenerator::build(BlockChunk* chunk, BlockAtlas* atlas,
             check.x = off.x; check.y = off.y; check.z = off.z + 1;
             if (outOfRange(check) || chunk->getBlock(&check) == 0)
                 addFaces(off, &vertices, &indices, &model->frontFaces);
+
+            addFaces(off, &vertices, &indices, &model->noCulledFaces);
         }
     }
 

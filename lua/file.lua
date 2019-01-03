@@ -48,62 +48,281 @@ Define 5 positional coordinates for each face.
 -- print(#zeus.registered_blockmodels);
 
 -- Create cube model
-zeus.register_blockmodel("default:cube", {
-	{
-		face = "left",
-		tex = 3,
-		points = {
-			0, 0, 0, 0, 1, 
-			0, 0, 1, 1, 1,
-			0, 1, 1, 1, 0,
-			0, 1, 0, 0, 0
-		}
-	}, {
-		face = "right",
-		tex = 4,
-		points = {
+zeus.register_blockmodel("default:block", {
+    {
+        face = "left",
+        tex = 3,
+        points = {
+            0, 0, 0, 0, 1,
+            0, 0, 1, 1, 1,
+            0, 1, 1, 1, 0,
+            0, 1, 0, 0, 0
+        }
+    }, {
+        face = "right",
+        tex = 4,
+        points = {
             1, 1, 1, 1, 0,
-			1, 0, 1, 1, 1,
+            1, 0, 1, 1, 1,
             1, 0, 0, 0, 1,
-			1, 1, 0, 0, 0
-		}
-	}, {
-		face = "top",
-		tex = 1,
-		points = {
-			0, 1, 0, 0, 0,
-			0, 1, 1, 0, 1,
-			1, 1, 1, 1, 1,
-			1, 1, 0, 1, 0
-		}
-	}, {
-		face = "bottom",
-		tex = 2,
-		points = {
-			0, 0, 0, 0, 0,
-			1, 0, 0, 1, 0,
-			1, 0, 1, 1, 1,
-			0, 0, 1, 0, 1
-		}
-	}, {
-		face = "front",
-		tex = 5,
-		points = {
-			0, 0, 1, 0, 1,
-			1, 0, 1, 1, 1,
-			1, 1, 1, 1, 0,
-			0, 1, 1, 0, 0
-		}
-	}, {
-		face = "back",
-		tex = 6,
-		points = {
-			0, 0, 0, 0, 1,
-			0, 1, 0, 0, 0,
-			1, 1, 0, 1, 0,
+            1, 1, 0, 0, 0
+        }
+    }, {
+        face = "top",
+        tex = 1,
+        points = {
+            0, 1, 0, 0, 0,
+            0, 1, 1, 0, 1,
+            1, 1, 1, 1, 1,
+            1, 1, 0, 1, 0
+        }
+    }, {
+        face = "bottom",
+        tex = 2,
+        points = {
+            0, 0, 0, 0, 0,
+            1, 0, 0, 1, 0,
+            1, 0, 1, 1, 1,
+            0, 0, 1, 0, 1
+        }
+    }, {
+        face = "front",
+        tex = 5,
+        points = {
+            0, 0, 1, 0, 1,
+            1, 0, 1, 1, 1,
+            1, 1, 1, 1, 0,
+            0, 1, 1, 0, 0
+        }
+    }, {
+        face = "back",
+        tex = 6,
+        points = {
+            0, 0, 0, 0, 1,
+            0, 1, 0, 0, 0,
+            1, 1, 0, 1, 0,
             1, 0, 0, 1, 1
-		}
-	}
+        }
+    }
+})
+
+-- Create blockwithfoliage model
+zeus.register_blockmodel("default:plantlike", {
+    {
+        face = "nocull",
+        tex = 7,
+        points = {
+            0.15, 1, 0.15, 0, 1,
+            0.85, 1, 0.85, 1, 1,
+            0.85, 1.9, 0.85, 1, 0,
+            0.15, 1.9, 0.15, 0, 0
+        }
+    }, {
+        face = "nocull",
+        tex = 7,
+        points = {
+            0.85, 1.9, 0.85, 1, 0,
+            0.85, 1, 0.85, 1, 1,
+            0.15, 1, 0.15, 0, 1,
+            0.15, 1.9, 0.15, 0, 0
+        }
+    }, {
+        face = "nocull",
+        tex = 7,
+        points = {
+            0.85, 1.9, 0.15, 1, 0,
+            0.85, 1, 0.15, 1, 1,
+            0.15, 1, 0.85, 0, 1,
+            0.15, 1.9, 0.85, 0, 0
+        }
+    }, {
+        face = "nocull",
+        tex = 7,
+        points = {
+            0.15, 1, 0.85, 0, 1,
+            0.85, 1, 0.15, 1, 1,
+            0.85, 1.9, 0.15, 1, 0,
+            0.15, 1.9, 0.85, 0, 0
+        }
+    }
+})
+
+-- Create leaves model
+zeus.register_blockmodel("default:block_poof", {
+    {
+        face = "left",
+        tex = 0,
+        points = {
+            0, 0, 0, 0, 1,
+            0, 0, 1, 1, 1,
+            0, 1, 1, 1, 0,
+            0, 1, 0, 0, 0
+        }
+    }, {
+        face = "right",
+        tex = 0,
+        points = {
+            1, 1, 1, 1, 0,
+            1, 0, 1, 1, 1,
+            1, 0, 0, 0, 1,
+            1, 1, 0, 0, 0
+        }
+    }, {
+        face = "top",
+        tex = 0,
+        points = {
+            0, 1, 0, 0, 0,
+            0, 1, 1, 0, 1,
+            1, 1, 1, 1, 1,
+            1, 1, 0, 1, 0
+        }
+    }, {
+        face = "bottom",
+        tex = 0,
+        points = {
+            0, 0, 0, 0, 0,
+            1, 0, 0, 1, 0,
+            1, 0, 1, 1, 1,
+            0, 0, 1, 0, 1
+        }
+    }, {
+        face = "front",
+        tex = 0,
+        points = {
+            0, 0, 1, 0, 1,
+            1, 0, 1, 1, 1,
+            1, 1, 1, 1, 0,
+            0, 1, 1, 0, 0
+        }
+    }, {
+        face = "back",
+        tex = 0,
+        points = {
+            0, 0, 0, 0, 1,
+            0, 1, 0, 0, 0,
+            1, 1, 0, 1, 0,
+            1, 0, 0, 1, 1
+        }
+    }, {
+        face = "nocull",
+        tex = 0,
+        points = {
+            -0.31, 1.30, -0.3, 0, 0,
+            -0.31, -0.30, -0.31, 0, 1,
+            1.3, -0.30, 1.3, 1, 1,
+            1.3, 1.30, 1.29, 1, 0,
+
+            -0.31, 1.30, -0.3, 0, 0,
+            -0.31, -0.30, -0.31, 0, 1,
+            1.3, -0.30, 1.3, 1, 1,
+            1.3, 1.30, 1.29, 1, 0,
+
+            -0.31, 1.30, 1.29, 0, 0,
+            -0.31, -0.30, 1.3, 0, 1,
+            1.3, -0.30, -0.31, 1, 1,
+            1.3, 1.30, -0.3, 1, 0,
+
+            -0.31, 1.30, 1.29, 0, 0,
+            -0.31, -0.30, 1.3, 0, 1,
+            1.3, -0.30, -0.31, 1, 1,
+            1.3, 1.30, -0.3, 1, 0
+        }
+    }
+})
+
+zeus.register_blockmodel("default:block_side_foliage", {
+    {
+        face = "left",
+        tex = 3,
+        points = {
+            0, 0, 0, 0, 1,
+            0, 0, 1, 1, 1,
+            0, 1, 1, 1, 0,
+            0, 1, 0, 0, 0
+        }
+    }, {
+        face = "right",
+        tex = 4,
+        points = {
+            1, 1, 1, 1, 0,
+            1, 0, 1, 1, 1,
+            1, 0, 0, 0, 1,
+            1, 1, 0, 0, 0
+        }
+    }, {
+        face = "top",
+        tex = 1,
+        points = {
+            0, 1, 0, 0, 0,
+            0, 1, 1, 0, 1,
+            1, 1, 1, 1, 1,
+            1, 1, 0, 1, 0
+        }
+    }, {
+        face = "bottom",
+        tex = 2,
+        points = {
+            0, 0, 0, 0, 0,
+            1, 0, 0, 1, 0,
+            1, 0, 1, 1, 1,
+            0, 0, 1, 0, 1
+        }
+    }, {
+        face = "front",
+        tex = 5,
+        points = {
+            0, 0, 1, 0, 1,
+            1, 0, 1, 1, 1,
+            1, 1, 1, 1, 0,
+            0, 1, 1, 0, 0
+        }
+    }, {
+        face = "back",
+        tex = 6,
+        points = {
+            0, 0, 0, 0, 1,
+            0, 1, 0, 0, 0,
+            1, 1, 0, 1, 0,
+            1, 0, 0, 1, 1
+        }
+    }, {
+        --Floats begin here
+        face = "front",
+        tex = 7,
+        points = {
+            0, 1, 1, 0, 0,
+            0, 0.2, 1.2, 0, 1,
+            1, 0.2, 1.2, 1, 1,
+            1, 1, 1, 1, 0
+        }
+    }, {
+        face = "back",
+        tex = 7,
+        points = {
+            1, 0.2, -0.2, 1, 1,
+            0, 0.2, -0.2, 0, 1,
+            0, 1, 0, 0, 0,
+            1, 1, 0, 1, 0
+        }
+    }, {
+        face = "right",
+        tex = 7,
+        points = {
+            1.2, 0.2, 1, 1, 1,
+            1.2, 0.2, 0, 0, 1,
+            1, 1, 0, 0, 0,
+            1, 1, 1, 1, 0
+        }
+    }, {
+        face = "left",
+        tex = 7,
+        points = {
+            0, 1, 0, 0, 0,
+            -0.2, 0.2, 0, 0, 1,
+            -0.2, 0.2, 1, 1, 1,
+            0, 1, 1, 1, 0
+        }
+    }
 })
 
 -- dump(zeus.registered_blockmodels["default:cube"]);
@@ -128,31 +347,35 @@ textures: The list of textures for the blockmodel. Which textures go where are d
 -- Air
 zeus.register_block("_:air", {
 	name = "Air",
-	model = "default:cube",
+	model = "default:block",
 	textures = {"_missing"}
 })
 
 -- Grass
 zeus.register_block("default:grass", {
 	name = "Grass",
-	model = "default:cube",
+	model = "default:block_side_foliage",
 	textures = {
 		"default_grass_top",
 		"default_dirt",
-		"default_grass_side"
+        "default_grass_side",
+        "default_grass_side",
+        "default_grass_side",
+        "default_grass_side",
+        "default_grass_float",
 	}
 })
 
 -- Dirt
 zeus.register_block('default:dirt', {
 	name = "Dirt",
-	model = "default:cube",
+	model = "default:block",
 	textures = {"default_dirt"}
 })
 
 -- Stone
-zeus.register_block('default:stone', {
+zeus.register_block('default:desert_cobblestone', {
 	name = "Stone",
-	model = "default:cube",
-	textures = {"default_cobblestone"}
+	model = "default:block",
+	textures = {"default_stone_dark"}
 })

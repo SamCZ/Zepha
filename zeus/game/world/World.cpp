@@ -164,7 +164,7 @@ void World::chunkGenThread(World::ChunkThreadDef* threadDef) {
                 val *= pow(p.noise(pos.x / (double) 64, pos.z / (double) 64, 0), 2) * 40 + 1;
                 val -= pos.y;
 
-                int block = (val > 0) ? (val > 1) ? (val > 4) ? 3 : 2 : 1 : 0;
+                int block = (val > 0) ? (val > 1) ? (val > 3) ? 3 : 2 : 1 : 0;
                 blocks->push_back(block);
             }
 

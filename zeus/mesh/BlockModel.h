@@ -30,9 +30,6 @@ public:
     ~BlockModel();
 
     static BlockModel* from_lua_def(sol::table model, sol::table textures, TextureAtlas* atlas);
-
-//    static BlockModel* Square(const char* top, const char* bottom, const char* front, const char* back, const char* left, const char* right, TextureAtlas* atlas);
-//    static BlockModel* Square(const char* tex, TextureAtlas* atlas);
 };
 
 
