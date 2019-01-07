@@ -32,7 +32,7 @@ void l_register_blockmodel::api(std::string identifier, sol::table data) {
 //    }
 }
 
-l_register_blockmodel::l_register_blockmodel(GameInstance* game, LuaParser* parser) : LuaApi(game, parser) {
+l_register_blockmodel::l_register_blockmodel(GameScene* game, LuaParser* parser) : LuaApi(game, parser) {
 
     auto registered_blockmodels = parser->getState()->create_table();
     (*parser->getModule())["registered_blockmodels"] = registered_blockmodels;

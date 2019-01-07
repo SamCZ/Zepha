@@ -5,8 +5,10 @@
 #ifndef ZEUS_CLIENT_H
 #define ZEUS_CLIENT_H
 
-#include "../game/GameInstance.h"
 #include "../engine/graphics/Renderer.h"
+#include "../engine/Timer.h"
+#include "SceneManager.h"
+#include "ClientState.h"
 
 class Client {
 public:
@@ -18,14 +20,14 @@ public:
     ~Client();
 
 private:
-    Renderer* renderer;
-    GameInstance* scene;
-
-    double fps = 0.0;
-
     void loop();
 
     void cleanup();
+
+    Renderer* renderer;
+
+    ClientState* state;
+    SceneManager sceneManager;
 
     double timeElapsed = 0.0f;
 };

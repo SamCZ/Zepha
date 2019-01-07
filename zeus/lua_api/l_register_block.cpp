@@ -38,6 +38,6 @@ void l_register_block::api(std::string identifier, sol::table data) {
     game->blockAtlas->registerBlock(def);
 }
 
-l_register_block::l_register_block(GameInstance *game, LuaParser *parser) : LuaApi(game, parser) {
+l_register_block::l_register_block(GameScene *game, LuaParser *parser) : LuaApi(game, parser) {
     parser->getModule()->set_function("register_block", &l_register_block::api, this);
 }

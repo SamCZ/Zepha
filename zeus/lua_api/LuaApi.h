@@ -6,14 +6,14 @@
 #define ZEUS_LUAAPI_H
 
 
-#include "../game/GameInstance.h"
+#include "../game/GameScene.h"
 #include "LuaParser.h"
 
 class LuaApi {
 public:
-    LuaApi(GameInstance* game, LuaParser* parser);
+    LuaApi(GameScene* game, LuaParser* parser);
 
-    GameInstance* game;
+    GameScene* game;
     LuaParser* parser;
 };
 

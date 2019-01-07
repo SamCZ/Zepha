@@ -56,8 +56,8 @@ add_executable(zeus
         zeus/engine/helpers/ArrayTrans3D.h
         zeus/mesh/MeshChunk.cpp
         zeus/mesh/MeshChunk.h
-        zeus/game/GameInstance.cpp
-        zeus/game/GameInstance.h
+        zeus/game/GameScene.cpp
+        zeus/game/GameScene.h
         zeus/engine/graphics/Renderer.cpp
         zeus/engine/graphics/Renderer.h
         zeus/lua_api/LuaParser.cpp
@@ -78,6 +78,12 @@ add_executable(zeus
         zeus/lua_api/l_register_blockmodel.cpp
         zeus/lua_api/l_register_blockmodel.h
         zeus/lua_api/LuaApi.cpp
-        zeus/lua_api/LuaApi.h zeus/client/Client.cpp zeus/client/Client.h)
+        zeus/lua_api/LuaApi.h
+        zeus/client/Client.cpp
+        zeus/client/Client.h
+        zeus/client/SceneManager.cpp
+        zeus/client/SceneManager.h
+        zeus/client/Scene.h
+        zeus/client/ClientState.h)
 
 target_link_libraries(zeus ${OPENGL_gl_LIBRARY} glfw libGLEW.so pthread lua dl)

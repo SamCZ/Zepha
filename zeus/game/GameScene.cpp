@@ -2,14 +2,11 @@
 // Created by aurailus on 17/12/18.
 //
 
-#include "GameInstance.h"
+#include "GameScene.h"
 #include "../lua_api/l_register_block.h"
 #include "../lua_api/l_register_blockmodel.h"
 
-GameInstance::GameInstance() = default;
-
-void GameInstance::initialize(Renderer* renderer) {
-    this->renderer = renderer;
+GameScene::GameScene(ClientState* state) : Scene(state) {
 
     textureAtlas = new TextureAtlas("../tex");
     blockAtlas = new BlockAtlas(textureAtlas);
@@ -36,7 +33,7 @@ void GameInstance::initialize(Renderer* renderer) {
     }
 
     player = new Player();
-    player->create(world, renderer->getCamera());
+    player->create(world, state->renderer->getCamera());
     player->setPos(glm::vec3(16, 24, 0));
 
     world->genNewChunk(glm::vec3(0, 0, 0));
@@ -66,8 +63,8 @@ void GameInstance::initialize(Renderer* renderer) {
     delete crossVerts;
     delete crossInds;
 
-    float xx = renderer->getWindow()->getBufferWidth()/2;
-    float yy = renderer->getWindow()->getBufferHeight()/2;
+    float xx = state->renderer->getWindow()->getBufferWidth()/2;
+    float yy = state->renderer->getWindow()->getBufferHeight()/2;
 
     crosshair->setPosition(glm::vec3(xx, yy, 0));
     crosshair->setScale(22);
@@ -75,13 +72,15 @@ void GameInstance::initialize(Renderer* renderer) {
     guiEntities.push_back(crosshair);
 }
 
-void GameInstance::update(double deltaTime, double fps) {
-    renderer->update();
 
-    auto camera = renderer->getCamera();
-    auto window = renderer->getWindow();
+void GameScene::update() {
+    state->renderer->update(); //TODO: Look into moving this to SceneManager or Client?
 
-    player->update(window->getKeysArray(), deltaTime, window->getDeltaX(), window->getDeltaY());
+    auto camera = state->renderer->getCamera();
+    auto window = state->renderer->getWindow();
+
+    //TODO: Change the deltaTime property to double
+    player->update(window->getKeysArray(), (GLfloat)state->deltaTime, window->getDeltaX(), window->getDeltaY());
 
     glm::vec3 round = World::roundVec(*camera->getPosition());
     round.y -= 2;
@@ -97,7 +96,7 @@ void GameInstance::update(double deltaTime, double fps) {
         auto found = world->getBlock(*ray.getEnd());
         if (found > 0) {
             block = found;
-            if (renderer->getWindow()->mouseIsDown()) {
+            if (state->renderer->getWindow()->mouseIsDown()) {
                 world->setBlock(*ray.getEnd(), 0);
             }
             break;
@@ -109,28 +108,28 @@ void GameInstance::update(double deltaTime, double fps) {
         look = blockAtlas->getBlock(block)->getIdentifier();
     }
 
-    gui.update(player->getPos(), player->getVel(), player->getYaw(), player->getPitch(), on, look, fps);
+    gui.update(player->getPos(), player->getVel(), player->getYaw(), player->getPitch(), on, look, state->fps);
 
     world->update();
 }
 
-void GameInstance::draw() {
+void GameScene::draw() {
     Timer t("Drawing");
 
-    renderer->begin();
+    state->renderer->begin();
 
-    renderer->enableWorldShader();
+    state->renderer->enableWorldShader();
     textureAtlas->getTexture()->use();
 
     for (auto &chunk : *world->getMeshChunks()) {
-        renderer->draw(chunk.second);
+        state->renderer->draw(chunk.second);
     }
 
     for (auto &entity : entities) {
-        renderer->draw(entity);
+        state->renderer->draw(entity);
     }
 
-    renderer->enableGuiShader();
+    state->renderer->enableGuiShader();
 
     Texture* prevTexture = nullptr;
 
@@ -140,8 +139,8 @@ void GameInstance::draw() {
             gui->getTexture()->use();
         }
 
-        renderer->drawGui(gui);
+        state->renderer->drawGui(gui);
     }
 
-    renderer->end();
+    state->renderer->end();
 }

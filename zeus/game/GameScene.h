@@ -17,21 +17,17 @@
 #include "gui/DebugGui.h"
 #include "world/Player.h"
 #include "../engine/Ray.h"
+#include "../client/Scene.h"
 
-class GameInstance {
+class GameScene : public Scene {
 public:
-    GameInstance();
+    GameScene(ClientState* state);
 
-    void initialize(Renderer* renderer);
+    void update() override;
 
-    void update(double deltaTime, double fps);
-
-    void draw();
+    void draw() override;
 public:
     Player* player;
-
-    //The renderer contains the camera, window, and draw methods.
-    Renderer* renderer;
 
     //The World object represents the physical game region that is played in. It handles chunk updates and entities.
     World* world;

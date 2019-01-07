@@ -9,7 +9,7 @@
 
 class l_register_blockmodel : LuaApi {
 public:
-    l_register_blockmodel(GameInstance* game, LuaParser* parser);
+    l_register_blockmodel(GameScene* game, LuaParser* parser);
 
 private:
     void api(std::string identifer, sol::table data);

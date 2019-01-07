@@ -3,6 +3,7 @@
 //
 
 #include "Client.h"
+#include "../game/GameScene.h"
 
 Client::Client() = default;
 
@@ -11,29 +12,35 @@ Client::Client(int width, int height) {
 }
 
 void Client::start() {
-    scene = new GameInstance();
-    scene->initialize(renderer);
+    state = new ClientState {
+            .renderer = renderer,
+            .fps = 0,
+            .deltaTime = 0
+    };
+
+    Scene* s = new GameScene(state);
+    sceneManager.setScene(s); //Main Menu Scene here eventually
 
     while (!renderer->getWindow()->getShouldClose()) loop();
 }
 
 void Client::loop() {
-    Timer t("Game Loop");
+    Timer t("Client Loop");
 
     double now = glfwGetTime();
-    double delta = now - timeElapsed;
+    state->deltaTime = now - timeElapsed;
     timeElapsed = now;
 
     glfwPollEvents();
 
-    scene->update(delta, fps);
-    scene->draw();
+    sceneManager.update();
 
-    fps = 1000 / (t.elapsedNs() / 1000000.0);
+    state->fps = 1000 / (t.elapsedNs() / 1000000.0);
 }
 
 void Client::cleanup() {
-    delete scene;
+    sceneManager.cleanupScene();
+    delete state;
     delete renderer;
 }
 

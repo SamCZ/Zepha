@@ -4,7 +4,7 @@
 
 #include "LuaApi.h"
 
-LuaApi::LuaApi(GameInstance *game, LuaParser *parser) {
+LuaApi::LuaApi(GameScene *game, LuaParser *parser) {
     this->game = game;
     this->parser = parser;
 }
