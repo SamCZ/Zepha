@@ -4,6 +4,8 @@
 
 #include "Renderer.h"
 
+Renderer::Renderer() : Renderer(1366, 768) {};
+
 Renderer::Renderer(GLint winWidth, GLint winHeight) {
 
     window = new Window(winWidth, winHeight);

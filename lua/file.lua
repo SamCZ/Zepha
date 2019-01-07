@@ -374,7 +374,7 @@ zeus.register_block('default:dirt', {
 })
 
 -- Stone
-zeus.register_block('default:desert_cobblestone', {
+zeus.register_block('default:stone', {
 	name = "Stone",
 	model = "default:block",
 	textures = {"default_stone_dark"}

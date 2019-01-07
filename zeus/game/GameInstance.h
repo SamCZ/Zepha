@@ -24,7 +24,7 @@ public:
 
     void initialize(Renderer* renderer);
 
-    void update(GLfloat deltaTime, double fps);
+    void update(double deltaTime, double fps);
 
     void draw();
 public:

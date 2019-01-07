@@ -13,6 +13,7 @@
 
 class Renderer {
 public:
+    Renderer();
     Renderer(GLint winWidth, GLint winHeight);
 
     void update();

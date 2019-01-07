@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.12)
 project(zeus)
 
 set(CMAKE_CXX_STANDARD 14)
-#set(CMAKE_CXX_FLAGS "-s -O3")
 
 include_directories(lib/glew/include/GL)
 include_directories(lib/glfw_linux/include)
@@ -10,11 +9,10 @@ include_directories(lib/glm)
 include_directories(lib/stb_image)
 include_directories(lib/cute)
 include_directories(lib/sol)
-#include_directories(Libraries/boost_1_68_0)
+include_directories(lib/asio-1.12.2/include)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
-#find_package(Boost COMPONENTS system thread)
 
 link_directories(lib/glew/lib)
 
@@ -70,6 +68,16 @@ add_executable(zeus
         zeus/engine/graphics/TextBuilder.h
         zeus/engine/graphics/TextBuilder.cpp
         zeus/engine/graphics/HudText.cpp
-        zeus/engine/graphics/HudText.h zeus/game/gui/DebugGui.cpp zeus/game/gui/DebugGui.h zeus/game/world/Player.cpp zeus/game/world/Player.h zeus/engine/Ray.cpp zeus/engine/Ray.h zeus/lua_api/l_register_blockmodel.cpp zeus/lua_api/l_register_blockmodel.h zeus/lua_api/LuaApi.cpp zeus/lua_api/LuaApi.h)
+        zeus/engine/graphics/HudText.h
+        zeus/game/gui/DebugGui.cpp
+        zeus/game/gui/DebugGui.h
+        zeus/game/world/Player.cpp
+        zeus/game/world/Player.h
+        zeus/engine/Ray.cpp
+        zeus/engine/Ray.h
+        zeus/lua_api/l_register_blockmodel.cpp
+        zeus/lua_api/l_register_blockmodel.h
+        zeus/lua_api/LuaApi.cpp
+        zeus/lua_api/LuaApi.h zeus/client/Client.cpp zeus/client/Client.h)
 
 target_link_libraries(zeus ${OPENGL_gl_LIBRARY} glfw libGLEW.so pthread lua dl)

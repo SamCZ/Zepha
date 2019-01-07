@@ -75,7 +75,7 @@ void GameInstance::initialize(Renderer* renderer) {
     guiEntities.push_back(crosshair);
 }
 
-void GameInstance::update(GLfloat deltaTime, double fps) {
+void GameInstance::update(double deltaTime, double fps) {
     renderer->update();
 
     auto camera = renderer->getCamera();
