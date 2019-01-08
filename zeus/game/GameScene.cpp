@@ -74,12 +74,10 @@ GameScene::GameScene(ClientState* state) : Scene(state) {
 
 
 void GameScene::update() {
-    state->renderer->update(); //TODO: Look into moving this to SceneManager or Client?
 
     auto camera = state->renderer->getCamera();
     auto window = state->renderer->getWindow();
 
-    //TODO: Change the deltaTime property to double
     player->update(window->getKeysArray(), (GLfloat)state->deltaTime, window->getDeltaX(), window->getDeltaY());
 
     glm::vec3 round = World::roundVec(*camera->getPosition());

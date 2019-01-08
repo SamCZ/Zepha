@@ -15,9 +15,9 @@ public:
 
     void create(World* world, Camera* camera);
 
-    void update(bool* keys, GLfloat delta, double mouseX, double mouseY);
+    void update(bool* keys, double delta, double mouseX, double mouseY);
 
-    void posUpdate(bool *keys, GLfloat delta);
+    void posUpdate(bool *keys, double delta);
     void viewUpdate(double deltaX, double deltaY);
     bool collides(glm::vec3 pos);
     void moveCollide();

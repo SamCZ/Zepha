@@ -16,7 +16,7 @@ void Player::create(World* world, Camera* camera) {
     this->world = world;
 }
 
-void Player::update(bool *keys, GLfloat delta, double mouseX, double mouseY) {
+void Player::update(bool *keys, double delta, double mouseX, double mouseY) {
     posUpdate(keys, delta);
     viewUpdate(mouseX, mouseY);
     moveCollide();
@@ -24,12 +24,12 @@ void Player::update(bool *keys, GLfloat delta, double mouseX, double mouseY) {
     camera->setPosition(pos);
 }
 
-void Player::posUpdate(bool *keys, GLfloat delta) {
+void Player::posUpdate(bool *keys, double delta) {
     float moveSpeed = 5.0f;
     float jumpVel = 0.14f;
     float friction = 0.3f;
 
-    GLfloat moveMult = moveSpeed * delta;
+    auto moveMult = (float)(moveSpeed * delta);
     if (keys[GLFW_KEY_LEFT_SHIFT]) {
         moveMult *= 2;
     }

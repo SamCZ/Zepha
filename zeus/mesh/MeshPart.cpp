@@ -77,9 +77,9 @@ MeshIndexIter* MeshPart::getIndexIterator() {
 }
 
 void MeshPart::cleanup() {
+    for (Vertex* v : *vertices) delete v;
     delete vertices;
     delete indices;
-    //TODO: Clean the values inside of the vectors
 }
 
 MeshPart::~MeshPart() {
