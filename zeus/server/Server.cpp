@@ -19,6 +19,7 @@ void Server::start() {
 }
 
 void Server::loop() {
+    Timer t("Loop time");
 
     //Collect incoming packets
     while (server_socket->available() > 0) {
@@ -32,11 +33,29 @@ void Server::loop() {
         if (packet.length > 0) handlePacket(packet, remote_endpoint);
     }
 
-    long sleep_for = 16L*1000000L;
+    long sleep_for = 16L*1000000L - t.elapsedNs();
     std::this_thread::sleep_for(std::chrono::nanoseconds(sleep_for));
 }
 
 void Server::handlePacket(Packet &packet, udp::endpoint* endpoint) {
+    std::string identifier = endpoint->address().to_string() + ":" + std::to_string(endpoint->port());
+
+    if (packet.type == Packet::HANDSHAKE) {
+        if (connections.count(identifier) == 0) {
+            std::cout << "Added " << identifier << " to client connections." << std::endl;
+            auto conn = new ClientConnection(endpoint);
+            connections.insert(std::pair<std::string, ClientConnection*>(identifier, conn));
+        }
+        else {
+            std::cout << identifier << " is already added to client connections." << std::endl;
+        }
+        return;
+    }
+    if (connections.count(identifier) == 0) {
+        std::cout << "Non-handshake packet from identifier " << identifier << "." << std::endl;
+        return;
+    }
+
     std::cout << packet.type << ", " << Packet::decodeInt(&packet.data[0]) << std::endl;
 }
 

@@ -30,9 +30,9 @@ public:
     static void encodeInt(std::vector<PacketByte> &target, int num);
     static int  decodeInt(PacketByte* intStart);
 public:
-    const static PacketType HANDSHAKE    = 0;
-    const static PacketType AUTHENTICATE = 1;
-    const static PacketType KEEPALIVE    = 2;
+    const static PacketType HANDSHAKE = 0;
+    const static PacketType REQCHUNKS = 1;
+    const static PacketType KEEPALIVE = 2;
 };
 
 
