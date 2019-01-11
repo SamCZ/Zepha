@@ -7,7 +7,6 @@
 #include "../lua_api/l_register_blockmodel.h"
 
 GameScene::GameScene(ClientState* state) : Scene(state) {
-
     textureAtlas = new TextureAtlas("../tex");
     blockAtlas = new BlockAtlas(textureAtlas);
 
@@ -39,7 +38,6 @@ GameScene::GameScene(ClientState* state) : Scene(state) {
     world->genNewChunk(glm::vec3(0, 0, 0));
 
     gui.pushGuiObjects(guiEntities);
-
 
     auto crosshairTexture = new Texture((char*)"../tex/gui/crosshair.png");
     crosshairTexture->load();
@@ -74,58 +72,25 @@ GameScene::GameScene(ClientState* state) : Scene(state) {
 
 
 void GameScene::update() {
-
-    auto camera = state->renderer->getCamera();
     auto window = state->renderer->getWindow();
 
-    player->update(window->getKeysArray(), (GLfloat)state->deltaTime, window->getDeltaX(), window->getDeltaY());
+    player->update(window->getKeysArray(), state->deltaTime, window->getDeltaX(), window->getDeltaY());
 
-    glm::vec3 round = World::roundVec(*camera->getPosition());
-    round.y -= 2;
-
-    int block = world->getBlock(round);
-    std::string on = "Null";
-    if (block >= 0) {
-        on = blockAtlas->getBlock(block)->getIdentifier();
-    }
-
-    block = 0;
-    for (Ray ray(player); ray.getLength() < 5; ray.step(0.01)) {
-        auto found = world->getBlock(*ray.getEnd());
-        if (found > 0) {
-            block = found;
-            if (state->renderer->getWindow()->mouseIsDown()) {
-                world->setBlock(*ray.getEnd(), 0);
-            }
-            break;
-        }
-    }
-
-    std::string look = "Null";
-    if (block >= 0) {
-        look = blockAtlas->getBlock(block)->getIdentifier();
-    }
-
-    gui.update(player->getPos(), player->getVel(), player->getYaw(), player->getPitch(), on, look, state->fps);
-
+    gui.update(player, world, window, blockAtlas, state->fps);
     world->update();
 }
 
 void GameScene::draw() {
-    Timer t("Drawing");
-
     state->renderer->begin();
-
     state->renderer->enableWorldShader();
+
     textureAtlas->getTexture()->use();
 
-    for (auto &chunk : *world->getMeshChunks()) {
+    for (auto &chunk : *world->getMeshChunks())
         state->renderer->draw(chunk.second);
-    }
 
-    for (auto &entity : entities) {
+    for (auto &entity : entities)
         state->renderer->draw(entity);
-    }
 
     state->renderer->enableGuiShader();
 
@@ -136,9 +101,12 @@ void GameScene::draw() {
             prevTexture = gui->getTexture();
             gui->getTexture()->use();
         }
-
         state->renderer->drawGui(gui);
     }
 
     state->renderer->end();
+}
+
+void GameScene::cleanup() {
+    //TODO: Clean up
 }

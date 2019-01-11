@@ -18,14 +18,17 @@
 #include "world/Player.h"
 #include "../engine/Ray.h"
 #include "../client/Scene.h"
+#include "../server/Server.h"
 
 class GameScene : public Scene {
 public:
-    GameScene(ClientState* state);
+    explicit GameScene(ClientState* state);
 
     void update() override;
 
     void draw() override;
+
+    void cleanup() override;
 public:
     Player* player;
 

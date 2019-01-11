@@ -24,10 +24,6 @@ DebugGui::DebugGui() {
     playerText->setScale(2);
     playerText->setPosition(glm::vec3(8, 42, 0));
 
-    blockText = new HudText(fontTexture);
-    blockText->setScale(2);
-    blockText->setPosition(glm::vec3(8, 116, 0));
-
     fpsHistogram = new Entity();
     fpsHistogram->create(new Mesh(), histogramTexture);
     fpsHistogram->setPosition(glm::vec3(8, 764, 0));
@@ -36,7 +32,6 @@ DebugGui::DebugGui() {
 void DebugGui::pushGuiObjects(std::vector<Entity*> &list) {
     list.push_back(alphaText);
     list.push_back(fpsText);
-    list.push_back(blockText);
     list.push_back(playerText);
     list.push_back(fpsHistogram);
 }
@@ -94,9 +89,35 @@ std::string string_double(double val) {
     return string_float((float)val);
 }
 
-void DebugGui::update(glm::vec3* pos, glm::vec3* vel, float yaw, float pitch, std::string block, std::string look, double fps) {
-    glm::vec3 chk = World::chunkVec(*pos);
-    glm::vec3 loc = World::localVec(*pos);
+void DebugGui::update(Player* player, World* world, Window* window, BlockAtlas* atlas, double fps) {
+    glm::vec3 round = World::roundVec(*player->getPos());
+    round.y -= 2;
+
+    int block = world->getBlock(round);
+    std::string on = "ignore";
+    if (block >= 0) {
+        on = atlas->getBlock(block)->getIdentifier();
+    }
+
+    block = 0;
+    for (Ray ray(player); ray.getLength() < 5; ray.step(0.01)) {
+        auto found = world->getBlock(*ray.getEnd());
+        if (found > 0) {
+            block = found;
+            if (window->mouseIsDown()) {
+                world->setBlock(*ray.getEnd(), 0);
+            }
+            break;
+        }
+    }
+
+    std::string look = "ignore";
+    if (block >= 0) {
+        look = atlas->getBlock(block)->getIdentifier();
+    }
+
+    glm::vec3 chk = World::chunkVec(*player->getPos());
+    glm::vec3 loc = World::localVec(*player->getPos());
 
     if (fpsHistory.size() > FPS_HISTOGRAM_SIZE) fpsHistory.erase(fpsHistory.begin());
 
@@ -105,13 +126,13 @@ void DebugGui::update(glm::vec3* pos, glm::vec3* vel, float yaw, float pitch, st
     fpsHistUpdate();
 
     playerText->set(
-            "W: " + to_string((int)pos->x) + "," + to_string((int)pos->y) + "," + to_string((int)pos->z) + "\n" +
+            "Chunk: " + to_string(world->lastGenUpdates) + ",Mesh: " + to_string(world->lastMeshUpdates) + "\n" +
+            "W: " + to_string((int)player->getPos()->x) + "," + to_string((int)player->getPos()->y) + "," + to_string((int)player->getPos()->z) + "\n" +
             "C: " + to_string((int)chk.x) + "," + to_string((int)chk.y) + "," + to_string((int)chk.z) + " " +
             "(" + to_string((int)loc.x) + "," + to_string((int)loc.y) + "," + to_string((int)loc.z) + ")\n" +
-            "V: " + string_float(vel->x) + "," + string_float(vel->y) + "," + string_float(vel->z) + "\n" +
-            "Yaw: " + string_float(yaw) + ", Pitch: " + string_float(pitch));
-
-    blockText->set("On: " + block + "\nLooking: " + look);
+            "V: " + string_float(player->getVel()->x) + "," + string_float(player->getVel()->y) + "," + string_float(player->getVel()->z) + "\n" +
+            "Yaw: " + string_float(player->getYaw()) + ", Pitch: " + string_float(player->getPitch()) + "\n" +
+            "On: " + on + "\nLooking: " + look);
 }
 
 DebugGui::~DebugGui() = default;

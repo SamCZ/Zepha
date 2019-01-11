@@ -108,6 +108,7 @@ void World::handleChunkGenQueue() {
     }
 
     Timer t("Chunk Initialization");
+    int genUpdates = 0;
     for (auto iter = finishedGen.begin(); iter != finishedGen.end(); ) {
         if (t.elapsedNs() > 4000000) break;
 
@@ -116,7 +117,10 @@ void World::handleChunkGenQueue() {
         commitChunk(threadData->pos, threadData->chunk);
         iter = finishedGen.erase(iter);
         delete threadData;
+
+        genUpdates++;
     }
+    lastGenUpdates = genUpdates;
 //    t.printElapsedMs();
 }
 
@@ -124,8 +128,8 @@ void World::handleChunkGenQueue() {
 //Takes a threadDef object which contains a vector of tasks to do, and infinitely loops, completing tasks and
 //re-inserting them into the vector to be further manipulated by the main thread.
 void World::chunkGenThread(World::ChunkThreadDef* threadDef) {
-    PerlinNoise p(10);
-    PerlinNoise p2(10);
+    PerlinNoise p(9);
+    PerlinNoise p2(9);
 
     //Infinite loop
     while (true) {
@@ -167,6 +171,15 @@ void World::chunkGenThread(World::ChunkThreadDef* threadDef) {
                 int block = (val > 0) ? (val > 1) ? (val > 3) ? 3 : 2 : 1 : 0;
                 blocks->push_back(block);
             }
+//
+//            (*blocks)[ArrayTrans3D::vecToInd(8, 8, 8)] = 4;
+//            (*blocks)[ArrayTrans3D::vecToInd(7, 8, 8)] = 4;
+//            (*blocks)[ArrayTrans3D::vecToInd(7, 8, 7)] = 4;
+//            (*blocks)[ArrayTrans3D::vecToInd(8, 8, 7)] = 4;
+//            (*blocks)[ArrayTrans3D::vecToInd(8, 7, 8)] = 4;
+//            (*blocks)[ArrayTrans3D::vecToInd(7, 7, 8)] = 4;
+//            (*blocks)[ArrayTrans3D::vecToInd(7, 7, 7)] = 4;
+//            (*blocks)[ArrayTrans3D::vecToInd(8, 7, 7)] = 4;
 
             data->chunk = new BlockChunk(blocks);
             data->done = true;
@@ -205,6 +218,7 @@ void World::handleMeshGenQueue() {
     }
 
     Timer t("Mesh Initialization");
+    int meshUpdates = 0;
     for (auto iter = finishedMesh.begin(); iter != finishedMesh.end(); ) {
         if (t.elapsedNs() > 4000000) break;
 
@@ -225,7 +239,10 @@ void World::handleMeshGenQueue() {
 
         iter = finishedMesh.erase(iter);
         delete threadData;
+
+        meshUpdates++;
     }
+    lastMeshUpdates = meshUpdates;
 //    t.printElapsedMs();
 }
 

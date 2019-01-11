@@ -5,9 +5,11 @@
 #ifndef ZEUS_DEBUGGUI_H
 #define ZEUS_DEBUGGUI_H
 
-
 #include "../../engine/graphics/HudText.h"
 #include "../world/World.h"
+#include "../world/Player.h"
+#include "../../engine/Window.h"
+#include "../../engine/Ray.h"
 #include <sstream>
 
 class DebugGui {
@@ -15,7 +17,7 @@ public:
     DebugGui();
 
     void pushGuiObjects(std::vector<Entity*> &list);
-    void update(glm::vec3* pos, glm::vec3* vel, float yaw, float pitch, std::string block, std::string look, double fps);
+    void update(Player* player, World* world, Window* window, BlockAtlas* atlas, double fps);
 
     ~DebugGui();
 
@@ -28,7 +30,6 @@ private:
     HudText* fpsText;
     HudText* alphaText;
     HudText* playerText;
-    HudText* blockText;
     Entity* fpsHistogram;
 
     const int FPS_HISTOGRAM_SIZE = 120;

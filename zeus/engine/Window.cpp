@@ -44,10 +44,10 @@ int Window::initialize() {
 //    glEnable(GL_MULTISAMPLE);
 
     //VSync 1 = On, 0 = Off
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
 
     //Create the window
-    mainWindow = glfwCreateWindow(width, height, "Zeus_cpp OPENGL Linux x64", nullptr, nullptr);
+    mainWindow = glfwCreateWindow(width, height, "Zeus Alpha", nullptr, nullptr);
 
     if (!mainWindow) {
         printf("GLFW window failed");

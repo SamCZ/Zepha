@@ -29,7 +29,7 @@ void Player::posUpdate(bool *keys, double delta) {
     float jumpVel = 0.14f;
     float friction = 0.3f;
 
-    auto moveMult = (float)(moveSpeed * delta);
+    double moveMult = moveSpeed * delta;
     if (keys[GLFW_KEY_LEFT_SHIFT]) {
         moveMult *= 2;
     }
@@ -45,7 +45,7 @@ void Player::posUpdate(bool *keys, double delta) {
     if (keys[GLFW_KEY_A]) mod -= rightFlat;
 
     if (glm::length(mod) != 0) mod = glm::normalize(mod);
-    mod = mod * moveMult;
+    mod = mod * (float)moveMult;
 
     glm::vec3 velFlat = glm::vec3(vel.x, 0, vel.z);
     velFlat = velFlat * (1.0f-friction) + mod * friction;

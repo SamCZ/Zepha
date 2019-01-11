@@ -9,13 +9,15 @@
 #include "../engine/Timer.h"
 #include "SceneManager.h"
 #include "ClientState.h"
+#include "../game/GameScene.h"
+#include "../game/MenuScene.h"
 
 class Client {
 public:
     Client();
     Client(int width, int height);
 
-    void start();
+    void start(char* path);
 
     ~Client();
 
@@ -28,6 +30,9 @@ private:
 
     ClientState* state;
     SceneManager sceneManager;
+
+    int local_server_pid = 0;
+    int count = 0;
 
     double timeElapsed = 0.0f;
 };

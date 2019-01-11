@@ -151,7 +151,7 @@ zeus.register_blockmodel("default:plantlike", {
 zeus.register_blockmodel("default:block_poof", {
     {
         face = "left",
-        tex = 0,
+        tex = 1,
         points = {
             0, 0, 0, 0, 1,
             0, 0, 1, 1, 1,
@@ -160,7 +160,7 @@ zeus.register_blockmodel("default:block_poof", {
         }
     }, {
         face = "right",
-        tex = 0,
+        tex = 1,
         points = {
             1, 1, 1, 1, 0,
             1, 0, 1, 1, 1,
@@ -169,7 +169,7 @@ zeus.register_blockmodel("default:block_poof", {
         }
     }, {
         face = "top",
-        tex = 0,
+        tex = 1,
         points = {
             0, 1, 0, 0, 0,
             0, 1, 1, 0, 1,
@@ -178,7 +178,7 @@ zeus.register_blockmodel("default:block_poof", {
         }
     }, {
         face = "bottom",
-        tex = 0,
+        tex = 1,
         points = {
             0, 0, 0, 0, 0,
             1, 0, 0, 1, 0,
@@ -187,7 +187,7 @@ zeus.register_blockmodel("default:block_poof", {
         }
     }, {
         face = "front",
-        tex = 0,
+        tex = 1,
         points = {
             0, 0, 1, 0, 1,
             1, 0, 1, 1, 1,
@@ -196,7 +196,7 @@ zeus.register_blockmodel("default:block_poof", {
         }
     }, {
         face = "back",
-        tex = 0,
+        tex = 1,
         points = {
             0, 0, 0, 0, 1,
             0, 1, 0, 0, 0,
@@ -205,16 +205,16 @@ zeus.register_blockmodel("default:block_poof", {
         }
     }, {
         face = "nocull",
-        tex = 0,
+        tex = 2,
         points = {
             -0.31, 1.30, -0.3, 0, 0,
             -0.31, -0.30, -0.31, 0, 1,
             1.3, -0.30, 1.3, 1, 1,
             1.3, 1.30, 1.29, 1, 0,
 
-            -0.31, 1.30, -0.3, 0, 0,
-            -0.31, -0.30, -0.31, 0, 1,
             1.3, -0.30, 1.3, 1, 1,
+            -0.31, -0.30, -0.31, 0, 1,
+            -0.31, 1.30, -0.3, 0, 0,
             1.3, 1.30, 1.29, 1, 0,
 
             -0.31, 1.30, 1.29, 0, 0,
@@ -222,9 +222,9 @@ zeus.register_blockmodel("default:block_poof", {
             1.3, -0.30, -0.31, 1, 1,
             1.3, 1.30, -0.3, 1, 0,
 
-            -0.31, 1.30, 1.29, 0, 0,
-            -0.31, -0.30, 1.3, 0, 1,
             1.3, -0.30, -0.31, 1, 1,
+            -0.31, -0.30, 1.3, 0, 1,
+            -0.31, 1.30, 1.29, 0, 0,
             1.3, 1.30, -0.3, 1, 0
         }
     }
@@ -378,4 +378,26 @@ zeus.register_block('default:stone', {
 	name = "Stone",
 	model = "default:block",
 	textures = {"default_stone_dark"}
+})
+
+-- Leaves
+zeus.register_block('default:leaves', {
+    name = "Log",
+    model = "default:block_poof",
+    textures = {
+        "default_leaves",
+        "default_leaves_puff"
+    }
+})
+
+
+-- Wood
+zeus.register_block('default:wood', {
+    name = "Log",
+    model = "default:block",
+    textures = {
+        "default_log_top",
+        "default_log_top",
+        "default_log_side"
+    }
 })

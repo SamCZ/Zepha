@@ -4,7 +4,9 @@
 
 #include "SceneManager.h"
 
-SceneManager::SceneManager() = default;
+SceneManager::SceneManager() {
+    scene = nullptr;
+};
 
 void SceneManager::update() {
     scene->update();
