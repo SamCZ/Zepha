@@ -89,10 +89,9 @@ add_executable(zeus
         zeus/game/MenuScene.h
         zeus/server/Server.cpp
         zeus/server/Server.h
-        zeus/client/ClientPacket.cpp
         zeus/server/ClientConnection.cpp
         zeus/server/ClientConnection.h
         zeus/server/Packet.cpp
-        zeus/server/Packet.h)
+        zeus/server/Packet.h zeus/server/ServerPlayer.cpp zeus/server/ServerPlayer.h zeus/client/ServerConnection.cpp zeus/client/ServerConnection.h)
 
 target_link_libraries(zeus ${OPENGL_gl_LIBRARY} glfw libGLEW.so pthread lua dl)

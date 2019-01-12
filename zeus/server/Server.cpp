@@ -3,17 +3,17 @@
 //
 
 #include "Server.h"
+#include "../game/world/Player.h"
 
 Server::Server() = default;
 
 Server::Server(int port) {
-    //TODO: Use the port in the server initializer
     this->port = port;
     alive = true;
 }
 
 void Server::start() {
-    server_socket = new asio::ip::udp::socket(io_context, udp::endpoint(udp::v4(), 12346));
+    server_socket = new asio::ip::udp::socket(io_context, udp::endpoint(udp::v4(), port));
 
     while (alive) loop();
 }
@@ -37,26 +37,70 @@ void Server::loop() {
     std::this_thread::sleep_for(std::chrono::nanoseconds(sleep_for));
 }
 
-void Server::handlePacket(Packet &packet, udp::endpoint* endpoint) {
-    std::string identifier = endpoint->address().to_string() + ":" + std::to_string(endpoint->port());
+std::string Server::createIdentifier(udp::endpoint *endpoint) {
+    return endpoint->address().to_string() + ":" + std::to_string(endpoint->port());
+}
 
-    if (packet.type == Packet::HANDSHAKE) {
-        if (connections.count(identifier) == 0) {
-            std::cout << "Added " << identifier << " to client connections." << std::endl;
-            auto conn = new ClientConnection(endpoint);
-            connections.insert(std::pair<std::string, ClientConnection*>(identifier, conn));
-        }
-        else {
-            std::cout << identifier << " is already added to client connections." << std::endl;
-        }
-        return;
-    }
-    if (connections.count(identifier) == 0) {
-        std::cout << "Non-handshake packet from identifier " << identifier << "." << std::endl;
+void Server::handlePacket(Packet &packet, udp::endpoint* endpoint) {
+    auto identifier = createIdentifier(endpoint);
+
+    if (connections.count(identifier) == 0 || !connections[identifier]->authenticated) {
+        handleAuthPacket(identifier, packet, endpoint);
         return;
     }
 
     std::cout << packet.type << ", " << Packet::decodeInt(&packet.data[0]) << std::endl;
+}
+
+void Server::handleAuthPacket(std::string& identifier, Packet &packet, udp::endpoint* endpoint) {
+    if (connections.count(identifier) == 0) {
+        if (packet.type == Packet::HANDSHAKE) {
+            addConnection(identifier, endpoint);
+
+            Packet p;
+            p = Packet(Packet::HANDSHAKE);
+            auto data = p.serialize();
+
+            server_socket->send_to(asio::buffer(data, data.size()), *endpoint);
+            return;
+        }
+    }
+    else {
+        if (packet.type == Packet::AUTHTOKEN) {
+            int strLen = Packet::decodeInt(&packet.data[0]);
+
+            std::string token(packet.data.begin() + 4, packet.data.begin() + 4 + strLen);
+
+            //TODO: Validate this token somehow
+            std::cout << "Token: " << token << std::endl;
+
+            createPlayer(connections[identifier]);
+            return;
+        }
+    }
+}
+
+void Server::addConnection(std::string &identifier, udp::endpoint *endpoint) {
+    std::cout << "[INFO] Recieved handshake from new client " << identifier << std::endl;
+    auto conn = new ClientConnection(endpoint);
+    connections.insert(std::pair<std::string, ClientConnection*>(identifier, conn));
+}
+
+void Server::createPlayer(ClientConnection *connection) {
+
+    auto player = new ServerPlayer(connection, glm::vec3(0, 64, 0));
+    players.insert(std::pair<std::string, ServerPlayer*>("USERNAME", player));
+
+    Packet p;
+    p = Packet(Packet::PLAYRINFO);
+
+    p.addFloat(player->pos.x);
+    p.addFloat(player->pos.y);
+    p.addFloat(player->pos.z);
+
+    auto data = p.serialize();
+
+    server_socket->send_to(asio::buffer(data, data.size()), *connection->endpoint);
 }
 
 void Server::cleanup() {

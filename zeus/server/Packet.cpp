@@ -65,6 +65,31 @@ void Packet::encodeInt(std::vector<Packet::PacketByte> &target, int num) {
 }
 #pragma clang diagnostic pop
 
+void Packet::encodeFloat(std::vector<Packet::PacketByte> &target, float num) {
+    typedef union {
+        float a;
+        unsigned char b[4];
+    } float_union;
+
+    float_union fl {num};
+
+    target.push_back(fl.b[0]);
+    target.push_back(fl.b[1]);
+    target.push_back(fl.b[2]);
+    target.push_back(fl.b[3]);
+}
+
+float Packet::decodeFloat(Packet::PacketByte *floatStart) {
+    typedef union {
+        float a;
+        unsigned char b[4];
+    } float_union;
+
+    float_union fl { .b = {*floatStart, *(floatStart+1), *(floatStart+2), *(floatStart+3)} };
+
+    return fl.a;
+}
+
 int Packet::decodeInt(PacketByte* intStart) {
     int num = 0;
     for (int i = 0; i < 4; i++) {
@@ -84,4 +109,26 @@ void Packet::addIntegers(std::vector<int> &integers) {
 void Packet::addInt(int integer) {
     encodeInt(this->data, integer);
     this->length = data.size();
+}
+
+void Packet::addFloats(std::vector<float> &floats) {
+    for (float f : floats) {
+        encodeFloat(this->data, f);
+    }
+    this->length = data.size();
+}
+
+void Packet::addFloat(float floatVal) {
+    encodeFloat(this->data, floatVal);
+    this->length = data.size();
+}
+
+void Packet::addString(std::string *string) {
+    addInt((int)string->length());
+    std::copy(string->begin(), string->end(), std::back_inserter(data));
+    this->length = data.size();
+}
+
+void Packet::addString(std::string string) {
+    addString(&string);
 }

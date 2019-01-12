@@ -8,6 +8,7 @@ ClientConnection::ClientConnection() = default;
 
 ClientConnection::ClientConnection(asio::ip::udp::endpoint* endpoint) {
     this->endpoint = endpoint;
+    this->authenticated = false;
 }
 
 ClientConnection::~ClientConnection() {

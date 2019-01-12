@@ -19,6 +19,7 @@
 #include "../engine/Ray.h"
 #include "../client/Scene.h"
 #include "../server/Server.h"
+#include "../client/ServerConnection.h"
 
 class GameScene : public Scene {
 public:
@@ -30,18 +31,13 @@ public:
 
     void cleanup() override;
 public:
+    ServerConnection* server;
     Player* player;
-
-    //The World object represents the physical game region that is played in. It handles chunk updates and entities.
     World* world;
-
-    //The texture atlas makes a single patched texture from an asset folder.
     TextureAtlas* textureAtlas;
-
-    //The block atlas holds block definitions and models.
     BlockAtlas* blockAtlas;
 
-    //Entities
+    //Entities to be drawn with world shaders
     std::vector<Entity*> entities;
 
     //GUI Related things

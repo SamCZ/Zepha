@@ -10,6 +10,7 @@
 #include "../engine/Timer.h"
 #include "ClientConnection.h"
 #include "Packet.h"
+#include "ServerPlayer.h"
 #include <iostream>
 #include <asio.hpp>
 
@@ -27,9 +28,18 @@ private:
     void loop();
     void cleanup();
 
-    void handlePacket(Packet& packet, udp::endpoint* endpoint);
+    std::string createIdentifier(udp::endpoint* endpoint);
 
+    void handlePacket(Packet& packet, udp::endpoint* endpoint);
+    void handleAuthPacket(std::string& identifier, Packet& packet, udp::endpoint* endpoint);
+
+    void addConnection(std::string& identifier, udp::endpoint* endpoint);
+    void createPlayer(ClientConnection* connection);
+
+    //string is IP:Port
     std::map<std::string, ClientConnection*> connections;
+    //string is username
+    std::map<std::string, ServerPlayer*> players;
 
     int port;
     bool alive;

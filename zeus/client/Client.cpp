@@ -46,58 +46,6 @@ void Client::start(char* path) {
     Scene* m = new MenuScene(state);
     sceneManager.setScene(m);
 
-    //Try to connect to a server
-    try {
-        asio::io_context io_context;
-        udp::resolver resolver(io_context);
-        udp::endpoint receiver_endpoint = *resolver.resolve(udp::v4(), "127.0.0.1", "12346").begin();
-
-        udp::socket socket(io_context);
-        socket.open(udp::v4());
-
-        int attempts = 0;
-        bool connected = false;
-        while (!connected) {
-            if (attempts > 5) {
-                break;
-            }
-
-            Packet p(Packet::HANDSHAKE);
-            p.addInt(attempts);
-            auto send_buf = p.serialize();
-
-            socket.send_to(asio::buffer(send_buf, send_buf.size()), receiver_endpoint);
-            attempts++;
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
-
-            if (socket.available() > 0) {
-                std::cout << "Connected" << std::endl;
-                connected = true;
-            }
-            else {
-                std::cout << "Failed to connect..." << std::endl;
-                std::this_thread::sleep_for(std::chrono::milliseconds((attempts < 3 ? 50 : 700)));
-            }
-        }
-        if (!connected) {
-            std::cout << "Connection timed out!" << std::endl;
-            return;
-        }
-
-        char recv_buf[20];
-
-        udp::endpoint sender_endpoint; //Populated by the next line
-        size_t len = socket.receive_from(asio::buffer(recv_buf), sender_endpoint);
-
-        std::cout.write(recv_buf, len);
-        std::cout << "Done " << len << std::endl;
-    }
-    catch (std::exception &e) {
-        std::cout << e.what() << std::endl;
-    }
-
-
     while (!renderer->getWindow()->getShouldClose()) loop();
 }
 

@@ -7,6 +7,9 @@
 #include "../lua_api/l_register_blockmodel.h"
 
 GameScene::GameScene(ClientState* state) : Scene(state) {
+    server = new ServerConnection("127.0.0.1", 12345);
+    auto info = server->connect();
+
     textureAtlas = new TextureAtlas("../tex");
     blockAtlas = new BlockAtlas(textureAtlas);
 
@@ -33,7 +36,7 @@ GameScene::GameScene(ClientState* state) : Scene(state) {
 
     player = new Player();
     player->create(world, state->renderer->getCamera());
-    player->setPos(glm::vec3(16, 24, 0));
+    player->setPos(info->playerPos);
 
     world->genNewChunk(glm::vec3(0, 0, 0));
 

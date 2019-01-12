@@ -14,6 +14,7 @@ public:
     explicit ClientConnection(asio::ip::udp::endpoint* endpoint);
 
     asio::ip::udp::endpoint* endpoint;
+    bool authenticated;
     long lastAliveTime;
 
     ~ClientConnection();
