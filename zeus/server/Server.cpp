@@ -13,7 +13,7 @@ Server::Server(int port) {
 }
 
 void Server::start() {
-    server_socket = new asio::ip::udp::socket(io_context, udp::endpoint(udp::v4(), port));
+    server_socket = new asio::ip::udp::socket(io_context, udp::endpoint(udp::v4(), (unsigned short)port));
 
     while (alive) loop();
 }

@@ -10,13 +10,15 @@
 class BlockDef {
 
 public:
-    BlockDef(std::string identifier, BlockModel* model);
+    BlockDef(std::string identifier, BlockModel* model, bool solid);
 
+    bool        isSolid();
     BlockModel* getModel();
     std::string getIdentifier();
 
     ~BlockDef();
 private:
+    bool solid;
     BlockModel* model;
     std::string identifier;
 };

@@ -18,6 +18,10 @@ void l_register_block::api(std::string identifier, sol::table data) {
     auto texTable = data.get<sol::optional<sol::table>>("textures");
     auto modelName = data.get_or<std::string>("model", "default:cube");
 
+    bool visible = data.get_or("visible", true);
+    bool culls = data.get_or("culls", true);
+    bool solid = data.get_or("solid", true);
+
     if (!name || !texTable) {
         printf("Tried to initialize block without data.");
         return;
@@ -31,9 +35,9 @@ void l_register_block::api(std::string identifier, sol::table data) {
         return;
     }
 
-    BlockModel* model = BlockModel::from_lua_def(*modelOptional, *texTable, game->textureAtlas);
+    BlockModel* model = BlockModel::from_lua_def(*modelOptional, *texTable, game->textureAtlas, visible, culls);
 
-    BlockDef* def = new BlockDef(identifier, model);
+    BlockDef* def = new BlockDef(identifier, model, solid);
 
     game->blockAtlas->registerBlock(def);
 }

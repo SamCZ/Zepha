@@ -74,7 +74,9 @@ void World::setBlock(glm::vec3 pos, int block) {
 }
 
 bool World::solidAt(glm::vec3 pos) {
-    return getBlock(pos) != 0;
+    int blockId = getBlock(pos);
+    if (blockId == -1) return true;
+    return blockAtlas->getBlock(blockId)->isSolid();
 }
 
 BlockChunk* World::getChunk(glm::vec3 chunkPos) {
@@ -168,18 +170,23 @@ void World::chunkGenThread(World::ChunkThreadDef* threadDef) {
                 val *= pow(p.noise(pos.x / (double) 64, pos.z / (double) 64, 0), 2) * 40 + 1;
                 val -= pos.y;
 
-                int block = (val > 0) ? (val > 1) ? (val > 3) ? 3 : 2 : 1 : 0;
+                int block = 0;
+                if (val > 0) block = 6 + rand() % 4;
+                if (val > 1) block = 1;
+                if (val > 2) block = 2;
+                if (val > 3) block = 3;
+
                 blocks->push_back(block);
             }
-//
-//            (*blocks)[ArrayTrans3D::vecToInd(8, 8, 8)] = 4;
-//            (*blocks)[ArrayTrans3D::vecToInd(7, 8, 8)] = 4;
-//            (*blocks)[ArrayTrans3D::vecToInd(7, 8, 7)] = 4;
-//            (*blocks)[ArrayTrans3D::vecToInd(8, 8, 7)] = 4;
-//            (*blocks)[ArrayTrans3D::vecToInd(8, 7, 8)] = 4;
-//            (*blocks)[ArrayTrans3D::vecToInd(7, 7, 8)] = 4;
-//            (*blocks)[ArrayTrans3D::vecToInd(7, 7, 7)] = 4;
-//            (*blocks)[ArrayTrans3D::vecToInd(8, 7, 7)] = 4;
+
+            (*blocks)[ArrayTrans3D::vecToInd(8, 8, 8)] = 4;
+            (*blocks)[ArrayTrans3D::vecToInd(7, 8, 8)] = 4;
+            (*blocks)[ArrayTrans3D::vecToInd(7, 8, 7)] = 4;
+            (*blocks)[ArrayTrans3D::vecToInd(8, 8, 7)] = 4;
+            (*blocks)[ArrayTrans3D::vecToInd(8, 7, 8)] = 4;
+            (*blocks)[ArrayTrans3D::vecToInd(7, 7, 8)] = 4;
+            (*blocks)[ArrayTrans3D::vecToInd(7, 7, 7)] = 4;
+            (*blocks)[ArrayTrans3D::vecToInd(8, 7, 7)] = 4;
 
             data->chunk = new BlockChunk(blocks);
             data->done = true;

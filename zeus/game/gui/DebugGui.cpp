@@ -126,7 +126,7 @@ void DebugGui::update(Player* player, World* world, Window* window, BlockAtlas* 
     fpsHistUpdate();
 
     playerText->set(
-            "Chunk: " + to_string(world->lastGenUpdates) + ",Mesh: " + to_string(world->lastMeshUpdates) + "\n" +
+            "Chunk: " + to_string(world->lastGenUpdates) + ", Mesh: " + to_string(world->lastMeshUpdates) + "\n" +
             "W: " + to_string((int)player->getPos()->x) + "," + to_string((int)player->getPos()->y) + "," + to_string((int)player->getPos()->z) + "\n" +
             "C: " + to_string((int)chk.x) + "," + to_string((int)chk.y) + "," + to_string((int)chk.z) + " " +
             "(" + to_string((int)loc.x) + "," + to_string((int)loc.y) + "," + to_string((int)loc.z) + ")\n" +

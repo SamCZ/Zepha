@@ -106,43 +106,43 @@ zeus.register_blockmodel("default:block", {
     }
 })
 
--- Create blockwithfoliage model
+-- Create plantlike model
 zeus.register_blockmodel("default:plantlike", {
     {
         face = "nocull",
-        tex = 7,
+        tex = 1,
         points = {
-            0.15, 1, 0.15, 0, 1,
-            0.85, 1, 0.85, 1, 1,
-            0.85, 1.9, 0.85, 1, 0,
-            0.15, 1.9, 0.15, 0, 0
+            0.1, 0, 0.1, 0, 1,
+            0.9, 0, 0.9, 1, 1,
+            0.9, 0.9, 0.9, 1, 0,
+            0.1, 0.9, 0.1, 0, 0
         }
     }, {
         face = "nocull",
-        tex = 7,
+        tex = 1,
         points = {
-            0.85, 1.9, 0.85, 1, 0,
-            0.85, 1, 0.85, 1, 1,
-            0.15, 1, 0.15, 0, 1,
-            0.15, 1.9, 0.15, 0, 0
+            0.9, 0.9, 0.9, 1, 0,
+            0.9, 0, 0.9, 1, 1,
+            0.1, 0, 0.1, 0, 1,
+            0.1, 0.9, 0.1, 0, 0
         }
     }, {
         face = "nocull",
-        tex = 7,
+        tex = 1,
         points = {
-            0.85, 1.9, 0.15, 1, 0,
-            0.85, 1, 0.15, 1, 1,
-            0.15, 1, 0.85, 0, 1,
-            0.15, 1.9, 0.85, 0, 0
+            0.9, 0.9, 0.1, 1, 0,
+            0.9, 0, 0.1, 1, 1,
+            0.1, 0, 0.9, 0, 1,
+            0.1, 0.9, 0.9, 0, 0
         }
     }, {
         face = "nocull",
-        tex = 7,
+        tex = 1,
         points = {
-            0.15, 1, 0.85, 0, 1,
-            0.85, 1, 0.15, 1, 1,
-            0.85, 1.9, 0.15, 1, 0,
-            0.15, 1.9, 0.85, 0, 0
+            0.1, 0, 0.9, 0, 1,
+            0.9, 0, 0.1, 1, 1,
+            0.9, 0.9, 0.1, 1, 0,
+            0.1, 0.9, 0.9, 0, 0
         }
     }
 })
@@ -346,6 +346,9 @@ textures: The list of textures for the blockmodel. Which textures go where are d
 -- Ignore this, it is temporary
 -- Air
 zeus.register_block("_:air", {
+    visible = false,
+    culls = false,
+    solid = false,
 	name = "Air",
 	model = "default:block",
 	textures = {"_missing"}
@@ -377,11 +380,13 @@ zeus.register_block('default:dirt', {
 zeus.register_block('default:stone', {
 	name = "Stone",
 	model = "default:block",
-	textures = {"default_stone_dark"}
+	textures = {"default_stone"}
 })
 
 -- Leaves
 zeus.register_block('default:leaves', {
+    visible = true,
+    culls = false,
     name = "Log",
     model = "default:block_poof",
     textures = {
@@ -389,7 +394,6 @@ zeus.register_block('default:leaves', {
         "default_leaves_puff"
     }
 })
-
 
 -- Wood
 zeus.register_block('default:wood', {
@@ -399,5 +403,52 @@ zeus.register_block('default:wood', {
         "default_log_top",
         "default_log_top",
         "default_log_side"
+    }
+})
+
+-- TallGrass
+zeus.register_block("default:tallgrass_1", {
+    culls = false,
+    solid = false,
+    name = "Tall Grass",
+    model = "default:plantlike",
+    textures = {
+        "default_tallgrass_1",
+    }
+})
+zeus.register_block("default:tallgrass_2", {
+    culls = false,
+    solid = false,
+    name = "Tall Grass",
+    model = "default:plantlike",
+    textures = {
+        "default_tallgrass_2",
+    }
+})
+zeus.register_block("default:tallgrass_3", {
+    culls = false,
+    solid = false,
+    name = "Tall Grass",
+    model = "default:plantlike",
+    textures = {
+        "default_tallgrass_3",
+    }
+})
+zeus.register_block("default:tallgrass_4", {
+    culls = false,
+    solid = false,
+    name = "Tall Grass",
+    model = "default:plantlike",
+    textures = {
+        "default_tallgrass_4",
+    }
+})
+zeus.register_block("default:tallgrass_5", {
+    culls = false,
+    solid = false,
+    name = "Tall Grass",
+    model = "default:plantlike",
+    textures = {
+        "default_tallgrass_5",
     }
 })
