@@ -29,9 +29,7 @@ void World::genNewChunk(glm::vec3 pos) {
 
 void World::commitChunk(glm::vec3 pos, BlockChunk *c) {
     blockChunks.insert(std::pair<glm::vec3, BlockChunk*>(pos, c));
-    if (!c->isEmpty()) {
-        attemptMeshChunk(pos);
-    }
+    attemptMeshChunk(pos);
 }
 
 void World::remeshChunk(glm::vec3 pos) {
