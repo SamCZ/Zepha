@@ -8,18 +8,6 @@
 
 BlockChunk::BlockChunk(std::vector<int>* blocks) {
     this->blocks = blocks;
-//    this->empty = true;
-//
-    for (int i : *blocks) {
-//        std::cout << i << std::endl;
-//        if (i != 0) {
-//            empty = false;
-//            break;
-//        }
-    }
-
-
-    empty = false;
 }
 
 int BlockChunk::getBlock(glm::vec3* pos) {
@@ -49,6 +37,6 @@ bool BlockChunk::setBlock(glm::vec3* pos, int block) {
     return false;
 }
 
-bool BlockChunk::isEmpty() {
-    return empty;
+bool BlockChunk::allAdjacentsExist() {
+    return adjacent[0] && adjacent[1] && adjacent[2] && adjacent[3] && adjacent[4] && adjacent[5];
 }

@@ -30,12 +30,94 @@ void World::genNewChunk(glm::vec3 pos) {
 void World::commitChunk(glm::vec3 pos, BlockChunk *c) {
     blockChunks.insert(std::pair<glm::vec3, BlockChunk*>(pos, c));
     if (!c->isEmpty()) {
-        pendingMesh.insert(pos);
+        attemptMeshChunk(pos);
     }
 }
 
 void World::remeshChunk(glm::vec3 pos) {
-    pendingMesh.insert(pos);
+    attemptMeshChunk(pos);
+}
+
+void World::attemptMeshChunk(glm::vec3 pos) {
+    auto thisChunk = getChunk(pos);
+    if (thisChunk == nullptr) return;
+
+    thisChunk->adjacent[0] = getAdjacentExists(glm::vec3(pos.x, pos.y + 1, pos.z), pos);
+    thisChunk->adjacent[1] = getAdjacentExists(glm::vec3(pos.x, pos.y - 1, pos.z), pos);
+    thisChunk->adjacent[2] = getAdjacentExists(glm::vec3(pos.x + 1, pos.y, pos.z), pos);
+    thisChunk->adjacent[3] = getAdjacentExists(glm::vec3(pos.x - 1, pos.y, pos.z), pos);
+    thisChunk->adjacent[4] = getAdjacentExists(glm::vec3(pos.x, pos.y, pos.z + 1), pos);
+    thisChunk->adjacent[5] = getAdjacentExists(glm::vec3(pos.x, pos.y, pos.z - 1), pos);
+
+    if (thisChunk->allAdjacentsExist()) pendingMesh.insert(pos);
+}
+
+bool World::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
+    auto chunk = getChunk(pos);
+
+    glm::vec3 diff = otherPos - pos;
+
+    if (chunk != nullptr) {
+        if (diff == glm::vec3(0, 1, 0)) chunk->adjacent[0] = true;
+        if (diff == glm::vec3(0,-1, 0)) chunk->adjacent[1] = true;
+        if (diff == glm::vec3(1, 0, 0)) chunk->adjacent[2] = true;
+        if (diff == glm::vec3(-1,0, 0)) chunk->adjacent[3] = true;
+        if (diff == glm::vec3(0, 0, 1)) chunk->adjacent[4] = true;
+        if (diff == glm::vec3(0, 0,-1)) chunk->adjacent[5] = true;
+
+        if (chunk->allAdjacentsExist()) pendingMesh.insert(pos);
+        return true;
+    }
+    return false;
+}
+
+std::vector<bool>* World::getAdjacentsCull(glm::vec3 pos) {
+    auto culls = new std::vector<bool>();
+    culls->reserve(1536);
+
+    auto top = getChunk(glm::vec3(pos.x, pos.y + 1, pos.z));
+    for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 16; j++) {
+            culls->push_back(blockAtlas->getBlock(top->getBlock(i, 0, j))->isCulling());
+        }
+    }
+
+    auto bottom = getChunk(glm::vec3(pos.x, pos.y - 1, pos.z));
+    for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 16; j++) {
+            culls->push_back(blockAtlas->getBlock(bottom->getBlock(i, 15, j))->isCulling());
+        }
+    }
+
+    auto front = getChunk(glm::vec3(pos.x - 1, pos.y, pos.z));
+    for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 16; j++) {
+            culls->push_back(blockAtlas->getBlock(front->getBlock(15, i, j))->isCulling());
+        }
+    }
+
+    auto back = getChunk(glm::vec3(pos.x + 1, pos.y, pos.z));
+    for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 16; j++) {
+            culls->push_back(blockAtlas->getBlock(back->getBlock(0, i, j))->isCulling());
+        }
+    }
+
+    auto left = getChunk(glm::vec3(pos.x, pos.y, pos.z - 1));
+    for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 16; j++) {
+            culls->push_back(blockAtlas->getBlock(left->getBlock(j, i, 15))->isCulling());
+        }
+    }
+
+    auto right = getChunk(glm::vec3(pos.x, pos.y, pos.z + 1));
+    for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 16; j++) {
+            culls->push_back(blockAtlas->getBlock(right->getBlock(j, i, 0))->isCulling());
+        }
+    }
+
+    return culls;
 }
 
 void World::update() {
@@ -179,14 +261,14 @@ void World::chunkGenThread(World::ChunkThreadDef* threadDef) {
                 blocks->push_back(block);
             }
 
-            (*blocks)[ArrayTrans3D::vecToInd(8, 8, 8)] = 4;
-            (*blocks)[ArrayTrans3D::vecToInd(7, 8, 8)] = 4;
-            (*blocks)[ArrayTrans3D::vecToInd(7, 8, 7)] = 4;
-            (*blocks)[ArrayTrans3D::vecToInd(8, 8, 7)] = 4;
-            (*blocks)[ArrayTrans3D::vecToInd(8, 7, 8)] = 4;
-            (*blocks)[ArrayTrans3D::vecToInd(7, 7, 8)] = 4;
-            (*blocks)[ArrayTrans3D::vecToInd(7, 7, 7)] = 4;
-            (*blocks)[ArrayTrans3D::vecToInd(8, 7, 7)] = 4;
+//            (*blocks)[ArrayTrans3D::vecToInd(8, 8, 8)] = 4;
+//            (*blocks)[ArrayTrans3D::vecToInd(7, 8, 8)] = 4;
+//            (*blocks)[ArrayTrans3D::vecToInd(7, 8, 7)] = 4;
+//            (*blocks)[ArrayTrans3D::vecToInd(8, 8, 7)] = 4;
+//            (*blocks)[ArrayTrans3D::vecToInd(8, 7, 8)] = 4;
+//            (*blocks)[ArrayTrans3D::vecToInd(7, 7, 8)] = 4;
+//            (*blocks)[ArrayTrans3D::vecToInd(7, 7, 7)] = 4;
+//            (*blocks)[ArrayTrans3D::vecToInd(8, 7, 7)] = 4;
 
             data->chunk = new BlockChunk(blocks);
             data->done = true;
@@ -196,7 +278,7 @@ void World::chunkGenThread(World::ChunkThreadDef* threadDef) {
             lock.unlock();
         }
 
-        this_thread::sleep_for(1ms);
+        this_thread::sleep_for(0.5ms);
     }
 }
 
@@ -220,7 +302,11 @@ void World::handleMeshGenQueue() {
             pendingMesh.erase(it);
             glm::vec3 pos = *it;
 
-            threadDef->tasks.push_back(new MeshThreadData(*it, blockChunks.at(pos), blockAtlas));
+            auto blockChunk = getChunk(pos);
+            if (blockChunk != nullptr && blockChunk->allAdjacentsExist()) {
+
+                threadDef->tasks.push_back(new MeshThreadData(*it, blockChunk, getAdjacentsCull(pos), blockAtlas));
+            }
         }
     }
 
@@ -276,7 +362,7 @@ void World::meshGenThread(MeshThreadDef* threadDef) {
         lock.unlock();
 
         if (data != nullptr) {
-            MeshGenerator().build(data->chunk, data->atlas, *(data->vertices), *(data->indices));
+            MeshGenerator().build(data->chunk, data->atlas, data->adjacents, *(data->vertices), *(data->indices));
             data->done = true;
 
             lock.lock();
@@ -284,7 +370,7 @@ void World::meshGenThread(MeshThreadDef* threadDef) {
             lock.unlock();
         }
 
-        this_thread::sleep_for(1ms);
+        this_thread::sleep_for(0.5ms);
     }
 }
 
@@ -315,10 +401,11 @@ World::ChunkThreadDef::~ChunkThreadDef() {
     delete thread;
 }
 
-World::MeshThreadData::MeshThreadData(glm::vec3 pos, BlockChunk *chunk, BlockAtlas *atlas) {
+World::MeshThreadData::MeshThreadData(glm::vec3 pos, BlockChunk *chunk, std::vector<bool>* adjacents, BlockAtlas *atlas) {
     this->pos = pos;
     this->chunk = chunk;
     this->atlas = atlas;
+    this->adjacents = adjacents;
     this->done = false;
     this->vertices = new std::vector<float>();
     this->indices = new std::vector<unsigned int>();
@@ -327,6 +414,7 @@ World::MeshThreadData::MeshThreadData(glm::vec3 pos, BlockChunk *chunk, BlockAtl
 World::MeshThreadData::~MeshThreadData() {
     delete vertices;
     delete indices;
+    delete adjacents;
 }
 
 World::MeshThreadDef::MeshThreadDef() {

@@ -42,6 +42,11 @@ public:
     void commitChunk(glm::vec3 pos, BlockChunk *c);
     void remeshChunk(glm::vec3 pos);
 
+    void attemptMeshChunk(glm::vec3 pos);
+    //This function also updates the chunk that is being checked's adjacent data, so maybe a rename is in order.
+    bool getAdjacentExists(glm::vec3 pos, glm::vec3 myPos);
+    std::vector<bool>* getAdjacentsCull(glm::vec3 pos);
+
     void update();
 
     std::unordered_map<glm::vec3, MeshChunk*, vec3cmp>* getMeshChunks();
@@ -92,15 +97,15 @@ private:
     void handleMeshGenQueue();
 
     const int GEN_THREADS = 8;
-    const int GEN_QUEUE_SIZE = 16;
+    const int GEN_QUEUE_SIZE = 4;
     const int GEN_FINISHED_SIZE = GEN_THREADS * GEN_QUEUE_SIZE;
 
     std::unordered_set<glm::vec3, vec3cmp> pendingGen;
     std::vector<ChunkThreadDef*> genThreads;
     std::vector<ChunkThreadData*> finishedGen;
 
-    const int MESH_THREADS = 8;
-    const int MESH_QUEUE_SIZE = 16;
+    const int MESH_THREADS = 4;
+    const int MESH_QUEUE_SIZE = 32;
     const int MESH_FINISHED_SIZE = GEN_THREADS * GEN_QUEUE_SIZE;
 
     std::unordered_set<glm::vec3, vec3cmp> pendingMesh;
@@ -111,11 +116,12 @@ private:
 
     //Structs for the thread pool implementations
     struct MeshThreadData {
-        MeshThreadData(glm::vec3 pos, BlockChunk* chunk, BlockAtlas* atlas);
+        MeshThreadData(glm::vec3 pos, BlockChunk* chunk, std::vector<bool>* adjacents, BlockAtlas* atlas);
 
         glm::vec3 pos;
         BlockChunk* chunk;
         BlockAtlas* atlas;
+        std::vector<bool>* adjacents;
 
         bool done;
 

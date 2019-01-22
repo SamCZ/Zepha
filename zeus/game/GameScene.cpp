@@ -25,9 +25,9 @@ GameScene::GameScene(ClientState* state) : Scene(state) {
     //The game requires the blockAtlas for meshing and handling inputs.
     world = new World(blockAtlas);
 
-    int SIZE = 8;
+    int SIZE = 12;
     for (int i = -SIZE; i < SIZE; i++) {
-        for (int j = 0; j < 8; j++) {
+        for (int j = -1; j < 12; j++) {
             for (int k = -SIZE; k < SIZE; k++) {
                 world->genNewChunk(glm::vec3(i, j, k));
             }
@@ -71,6 +71,8 @@ GameScene::GameScene(ClientState* state) : Scene(state) {
     crosshair->setScale(22);
 
     guiEntities.push_back(crosshair);
+
+    server->reqChunks(glm::vec3(-4, -4, -4), glm::vec3(4, 4, 4));
 }
 
 

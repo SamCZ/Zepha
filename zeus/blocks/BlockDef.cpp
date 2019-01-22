@@ -13,6 +13,7 @@ BlockModel *BlockDef::getModel() {
 BlockDef::BlockDef(std::string identifier, BlockModel *model, bool solid) {
     this->identifier = std::move(identifier);
     this->model = model;
+    this->culls = model->culls;
     this->solid = solid;
 }
 
@@ -26,4 +27,8 @@ bool BlockDef::isSolid() {
 
 std::string BlockDef::getIdentifier() {
     return identifier;
+}
+
+bool BlockDef::isCulling(){
+    return culls;
 }

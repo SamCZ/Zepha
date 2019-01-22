@@ -12,12 +12,14 @@ class BlockDef {
 public:
     BlockDef(std::string identifier, BlockModel* model, bool solid);
 
+    bool        isCulling();
     bool        isSolid();
     BlockModel* getModel();
     std::string getIdentifier();
 
     ~BlockDef();
 private:
+    bool culls;
     bool solid;
     BlockModel* model;
     std::string identifier;

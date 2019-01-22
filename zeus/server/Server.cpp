@@ -49,7 +49,16 @@ void Server::handlePacket(Packet &packet, udp::endpoint* endpoint) {
         return;
     }
 
-    std::cout << packet.type << ", " << Packet::decodeInt(&packet.data[0]) << std::endl;
+    if (packet.type == Packet::REQCHUNKS) {
+        for (int i = 0; i < packet.length / 12; i++) {
+            int offsetBase = i * 12;
+            int x = Packet::decodeInt(&packet.data[0 + offsetBase]);
+            int y = Packet::decodeInt(&packet.data[0 + offsetBase + 4]);
+            int z = Packet::decodeInt(&packet.data[0 + offsetBase + 8]);
+            printf("%i, %i, %i\n", x, y, z);
+        }
+        std::cout << packet.length << std::endl;
+    }
 }
 
 void Server::handleAuthPacket(std::string& identifier, Packet &packet, udp::endpoint* endpoint) {
@@ -74,10 +83,13 @@ void Server::handleAuthPacket(std::string& identifier, Packet &packet, udp::endp
             //TODO: Validate this token somehow
             std::cout << "Token: " << token << std::endl;
 
+            connections[identifier]->authenticated = true;
             createPlayer(connections[identifier]);
             return;
         }
     }
+    std::cout << "Received a non-auth-related packet (" << packet.type <<
+    ") from unknown client " << identifier << ". Ignoring." << std::endl;
 }
 
 void Server::addConnection(std::string &identifier, udp::endpoint *endpoint) {

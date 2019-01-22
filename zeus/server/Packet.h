@@ -41,9 +41,8 @@ public:
     const static PacketType UNDEFINED = 0;
     const static PacketType HANDSHAKE = 1;
     const static PacketType AUTHTOKEN = 2;
-    const static PacketType PLAYRINFO = 2;
-//    const static PacketType REQCHUNKS = 2;
-//    const static PacketType KEEPALIVE = 3;
+    const static PacketType PLAYRINFO = 3;
+    const static PacketType REQCHUNKS = 4;
 };
 
 

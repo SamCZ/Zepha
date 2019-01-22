@@ -20,7 +20,7 @@ const int CHUNK_SIZE = 16;
 class MeshGenerator {
 public:
     MeshGenerator();
-    void build(BlockChunk* chunk, BlockAtlas* atlas,
+    void build(BlockChunk* chunk, BlockAtlas* atlas, std::vector<bool>* adjacents,
                std::vector<float> &vertices, std::vector<unsigned int> &indices);
 
     ~MeshGenerator();

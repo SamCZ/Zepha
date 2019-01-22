@@ -16,6 +16,8 @@ public:
 
     ClientConnection* connection;
     glm::vec3 pos;
+
+    std::vector<glm::vec3> requestedChunks;
 };
 
 

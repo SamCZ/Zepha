@@ -13,16 +13,16 @@ public:
     BlockChunk() = default;
     explicit BlockChunk(std::vector<int>* blocks);
 
+    bool adjacent[6] = {false, false, false, false, false, false};
+    bool allAdjacentsExist();
+
     int getBlock(int ind);
     int getBlock(glm::vec3* pos);
     int getBlock(int x, int y, int z);
 
     bool setBlock(glm::vec3* pos, int ind);
-
-    bool isEmpty();
 private:
     std::vector<int>* blocks;
-    bool empty;
 };
 
 #endif //GLPROJECT_BLOCKCHUNK_H
