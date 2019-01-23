@@ -31,7 +31,7 @@ public:
 
     ~Packet() = default;
 
-    static Packet deserialize(std::vector<PacketByte> data);
+    static Packet* deserialize(std::vector<PacketByte> data);
     std::vector<Packet::PacketByte> serialize();
 
     static void  encodeInt(std::vector<PacketByte> &target, int num);
@@ -39,11 +39,11 @@ public:
     static void  encodeFloat(std::vector<PacketByte> &target, float num);
     static float decodeFloat(PacketByte* floatStart);
 public:
-    const static PacketType UNDEFINED = 0;
-    const static PacketType HANDSHAKE = 1;
-    const static PacketType AUTHTOKEN = 2;
-    const static PacketType PLAYRINFO = 3;
-    const static PacketType REQCHUNKS = 4;
+    const static PacketType UNDEFINED    = 0;
+    const static PacketType HANDSHAKE    = 1;
+    const static PacketType AUTHENTICATE = 2;
+    const static PacketType PLAYERINFO   = 3;
+    const static PacketType REQCHUNKS    = 4;
 };
 
 

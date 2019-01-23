@@ -9,7 +9,7 @@ Packet::Packet(Packet::PacketType p) {
 }
 
 //Convert a vector of PacketBytes (chars) into a PacketData by splitting the head and body information.
-Packet Packet::deserialize(std::vector<PacketByte> data) {
+Packet* Packet::deserialize(std::vector<PacketByte> data) {
     if (data.size() < 4) std::cerr << "Packet does not contain data." << std::endl;
 
     //Seperate the packet header from the body,
@@ -30,10 +30,10 @@ Packet Packet::deserialize(std::vector<PacketByte> data) {
         dataBody.push_back(data[i]);
     }
 
-    auto p = Packet();
-    p.type = (PacketType)num;
-    p.length = dataBody.size();
-    p.data = std::move(dataBody);
+    auto p = new Packet();
+    p->type = (PacketType)num;
+    p->length = dataBody.size();
+    p->data = std::move(dataBody);
 
     return p;
 }

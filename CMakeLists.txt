@@ -89,9 +89,17 @@ add_executable(zeus
         zeus/client/graphics/scene/MenuScene.h
         zeus/server/Server.cpp
         zeus/server/Server.h
-        zeus/server/network/ClientConnection.cpp
-        zeus/server/network/ClientConnection.h
+        zeus/server/network/ServerClient.cpp
+        zeus/server/network/ServerClient.h
         zeus/generic/network/Packet.cpp
-        zeus/generic/network/Packet.h zeus/server/ServerPlayer.cpp zeus/server/ServerPlayer.h zeus/client/network/ServerConnection.cpp zeus/client/network/ServerConnection.h zeus/client/gameworld/WorldThreadDefs.cpp zeus/client/gameworld/WorldThreadDefs.h)
+        zeus/generic/network/Packet.h
+        zeus/server/ServerPlayer.cpp
+        zeus/server/ServerPlayer.h
+        zeus/client/network/ServerConnection.cpp
+        zeus/client/network/ServerConnection.h
+        zeus/client/gameworld/WorldThreadDefs.cpp
+        zeus/client/gameworld/WorldThreadDefs.h
+        zeus/server/network/ConnMan.cpp
+        zeus/server/network/ConnMan.h)
 
 target_link_libraries(zeus ${OPENGL_gl_LIBRARY} glfw libGLEW.so pthread lua dl)

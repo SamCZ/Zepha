@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
 
     else if (start == "server") {
         Server s(12345);
-        s.start();
+        s.init();
     }
 
     return 0;

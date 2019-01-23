@@ -43,24 +43,25 @@ ServerConfig* ServerConnection::connect() {
 
                 auto packet = Packet::deserialize(recv_buf);
 
-                if (packet.type == Packet::HANDSHAKE) {
+                if (packet->type == Packet::HANDSHAKE) {
                     std::cout << "Handshake received." << std::endl;
                     t = Timer("Authenticate time");
                     handshook = true;
 
                     Packet p;
-                    p = Packet(Packet::AUTHTOKEN);
-                    p.addString("Hello! I'm a string!!!");
+                    p = Packet(Packet::AUTHENTICATE);
+                    p.addString("TOKEN");
+                    p.addString("Aurailus"); //USERNAME HERE
 
                     sendPacket(p, remote_endpoint);
                 }
-                else if (packet.type == Packet::PLAYRINFO) {
+                else if (packet->type == Packet::PLAYERINFO) {
                     std::cout << "Player info received." << std::endl;
                     connected = true;
 
-                    float x = Packet::decodeFloat(&packet.data[0]);
-                    float y = Packet::decodeFloat(&packet.data[4]);
-                    float z = Packet::decodeFloat(&packet.data[8]);
+                    float x = Packet::decodeFloat(&packet->data[0]);
+                    float y = Packet::decodeFloat(&packet->data[4]);
+                    float z = Packet::decodeFloat(&packet->data[8]);
 
                     return new ServerConfig {
                         .playerPos = glm::vec3(x, y, z)
@@ -90,7 +91,7 @@ void ServerConnection::update() {
         socket.receive_from(asio::buffer(recv_buf, pendingSize), *remote_endpoint);
 
         auto packet = Packet::deserialize(recv_buf);
-        if (packet.length > 0) handlePacket(packet, remote_endpoint);
+        if (packet->length > 0) handlePacket(*packet, remote_endpoint);
     }
 
     long sleep_for = 16L*1000000L - t.elapsedNs();
