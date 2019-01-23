@@ -4,6 +4,7 @@
 #pragma clang diagnostic pop
 
 #include "client/Client.h"
+#include "server/Server.h"
 
 int main(int argc, char* argv[]) {
     std::string start = "client";

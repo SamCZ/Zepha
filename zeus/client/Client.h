@@ -5,12 +5,14 @@
 #ifndef ZEUS_CLIENT_H
 #define ZEUS_CLIENT_H
 
-#include "../engine/graphics/Renderer.h"
-#include "../engine/Timer.h"
-#include "SceneManager.h"
+#include "engine/graphics/Renderer.h"
 #include "ClientState.h"
-#include "../game/GameScene.h"
-#include "../game/MenuScene.h"
+#include "engine/scene/SceneManager.h"
+
+#include "graphics/scene/GameScene.h"
+#include "graphics/scene/MenuScene.h"
+
+#include "engine/Timer.h"
 
 class Client {
 public:

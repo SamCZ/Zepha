@@ -7,12 +7,12 @@
 
 #include <thread>
 #include <vector>
-#include "../engine/Timer.h"
-#include "ClientConnection.h"
-#include "Packet.h"
-#include "ServerPlayer.h"
 #include <iostream>
 #include <asio.hpp>
+#include "ServerPlayer.h"
+#include "network/ClientConnection.h"
+#include "../generic/network/Packet.h"
+#include "../client/engine/Timer.h"
 
 using asio::ip::udp;
 

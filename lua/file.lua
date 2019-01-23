@@ -331,7 +331,7 @@ zeus.register_blockmodel("default:block_side_foliage", {
 
 **Block Creation**
 
-The function zeus.register_block creates a block in the game.
+The function zeus.register_block creates a block in the scene.
 The first argument is the name of the block, which should be prefixed by the mod name and a colon.
 The next argument is a table of properties. These are the following accepted properties:
 

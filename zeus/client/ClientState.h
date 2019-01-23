@@ -5,8 +5,7 @@
 #ifndef ZEUS_CLIENTSTATE_H
 #define ZEUS_CLIENTSTATE_H
 
-
-#include "../engine/graphics/Renderer.h"
+#include "engine/graphics/Renderer.h"
 
 struct ClientState {
     Renderer* renderer;

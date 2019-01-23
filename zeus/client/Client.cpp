@@ -2,11 +2,11 @@
 // Created by aurailus on 06/01/19.
 //
 
+//TODO: Move the forking code to main
 #include <zconf.h>
 #include <signal.h>
+
 #include "Client.h"
-#include "../server/Packet.h"
-#include <asio.hpp>
 
 using asio::ip::udp;
 
