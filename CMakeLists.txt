@@ -10,6 +10,7 @@ include_directories(lib/stb_image)
 include_directories(lib/cute)
 include_directories(lib/sol)
 include_directories(lib/asio-1.12.2/include)
+include_directories(lib/gzip-hpp-master/include)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
@@ -102,4 +103,4 @@ add_executable(zeus
         zeus/server/network/ConnMan.cpp
         zeus/server/network/ConnMan.h)
 
-target_link_libraries(zeus ${OPENGL_gl_LIBRARY} glfw libGLEW.so pthread lua dl)
+target_link_libraries(zeus ${OPENGL_gl_LIBRARY} glfw libGLEW.so pthread lua dl z)

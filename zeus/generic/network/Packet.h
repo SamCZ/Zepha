@@ -38,6 +38,9 @@ public:
     static int   decodeInt(PacketByte* intStart);
     static void  encodeFloat(std::vector<PacketByte> &target, float num);
     static float decodeFloat(PacketByte* floatStart);
+
+    static std::string intVecToString(std::vector<int>* vec);
+    static std::vector<int>* stringToIntVec(std::string str);
 public:
     const static PacketType UNDEFINED    = 0;
     const static PacketType HANDSHAKE    = 1;

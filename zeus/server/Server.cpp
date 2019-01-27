@@ -3,6 +3,7 @@
 //
 
 #include "Server.h"
+#include "../generic/blocks/BlockChunk.h"
 
 Server::Server() = default;
 

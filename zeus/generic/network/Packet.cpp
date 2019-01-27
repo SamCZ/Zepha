@@ -98,6 +98,29 @@ int Packet::decodeInt(PacketByte* intStart) {
     return num;
 }
 
+
+std::string Packet::intVecToString(std::vector<int> *vec) {
+    return std::string(reinterpret_cast<const char*>(&(*vec)[0]), vec->size()*4);
+}
+
+std::vector<int> *Packet::stringToIntVec(std::string str) {
+    auto vec = new std::vector<int>(str.size() / 4);
+
+    for (int i = 0; i < str.size() / 4; i++) {
+
+        int val = ((int)(((unsigned char)str[i*4 + 3]) << 24)
+               |  (int)(((unsigned char)str[i*4 + 2]) << 16)
+               |  (int)(((unsigned char)str[i*4 + 1]) << 8)
+               |  (int)( (unsigned char)str[i*4 + 0]));
+
+        (*vec)[i] = val;
+    }
+
+    return vec;
+}
+
+
+
 void Packet::addIntegers(std::vector<int> &integers) {
     for (int i : integers) {
         encodeInt(this->data, i);

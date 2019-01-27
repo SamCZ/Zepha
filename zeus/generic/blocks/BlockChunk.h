@@ -9,10 +9,11 @@
 #include <vector>
 #include <iostream>
 #include "../helpers/ArrayTrans3D.h"
+#include "../network/Packet.h"
 
 class BlockChunk {
 public:
-    BlockChunk() = default;
+    BlockChunk();
     explicit BlockChunk(std::vector<int>* blocks);
 
     bool adjacent[6] = {false, false, false, false, false, false};
@@ -23,6 +24,12 @@ public:
     int getBlock(int x, int y, int z);
 
     bool setBlock(glm::vec3* pos, int ind);
+
+    std::vector<int>* rleEncode();
+    void rleDecode(std::vector<int>* blocksRle);
+
+    std::string serialize();
+    void deserialize(std::string gzip);
 private:
     std::vector<int>* blocks;
 };
