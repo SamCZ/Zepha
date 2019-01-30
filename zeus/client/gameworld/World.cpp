@@ -187,10 +187,10 @@ void World::handleChunkGenQueue() {
 
         while (!pendingGen.empty() && threadDef->tasks.size() < GEN_QUEUE_SIZE) {
             auto it = pendingGen.begin();
-            pendingGen.erase(it);
             glm::vec3 pos = *it;
+            pendingGen.erase(it);
 
-            threadDef->tasks.push_back(new ChunkThreadData(*it, blockAtlas));
+            threadDef->tasks.push_back(new ChunkThreadData(pos, blockAtlas));
         }
     }
 
@@ -236,7 +236,11 @@ void World::chunkGenThread(ChunkThreadDef* threadDef) {
         lock.unlock();
 
         if (data != nullptr) {
-            data->chunk = threadDef->mapGen->generate(data->pos);
+//            data->chunk = threadDef->mapGen->generate(data->pos);
+            //TODO: WARN: THIS IS DISABLING CLIENT-SIDE MAP GENERATION
+            auto b = new BlockChunk(new std::vector<int>(4096));
+            data->chunk = b;
+
             data->done = true;
 
             lock.lock();
@@ -265,13 +269,13 @@ void World::handleMeshGenQueue() {
 
         while (!pendingMesh.empty() && threadDef->tasks.size() < MESH_QUEUE_SIZE) {
             auto it = pendingMesh.begin();
-            pendingMesh.erase(it);
             glm::vec3 pos = *it;
+            pendingMesh.erase(it);
 
             auto blockChunk = getChunk(pos);
             if (blockChunk != nullptr && blockChunk->allAdjacentsExist()) {
 
-                threadDef->tasks.push_back(new MeshThreadData(*it, blockChunk, getAdjacentsCull(pos), blockAtlas));
+                threadDef->tasks.push_back(new MeshThreadData(pos, blockChunk, getAdjacentsCull(pos), blockAtlas));
             }
         }
     }
