@@ -18,6 +18,7 @@
 #include "../../generic/helpers/ArrayTrans3D.h"
 #include "../../generic/blocks/BlockAtlas.h"
 #include "../../generic/blocks/BlockChunk.h"
+#include "../../generic/gen/MapGen.h"
 #include "../graphics/mesh/MeshChunk.h"
 
 class World {
@@ -38,6 +39,8 @@ public:
     void genNewChunk(glm::vec3 pos);
     void commitChunk(glm::vec3 pos, BlockChunk *c);
     void remeshChunk(glm::vec3 pos);
+
+    void loadChunkPacket(Packet* p);
 
     void attemptMeshChunk(glm::vec3 pos);
     //This function also updates the chunk that is being checked's adjacent data, so maybe a rename is in order.
@@ -94,7 +97,7 @@ private:
     void handleMeshGenQueue();
 
     const int GEN_THREADS = 8;
-    const int GEN_QUEUE_SIZE = 4;
+    const int GEN_QUEUE_SIZE = 8;
     const int GEN_FINISHED_SIZE = GEN_THREADS * GEN_QUEUE_SIZE;
 
     std::unordered_set<glm::vec3, vec3cmp> pendingGen;
@@ -102,7 +105,7 @@ private:
     std::vector<ChunkThreadData*> finishedGen;
 
     const int MESH_THREADS = 4;
-    const int MESH_QUEUE_SIZE = 32;
+    const int MESH_QUEUE_SIZE = 64;
     const int MESH_FINISHED_SIZE = GEN_THREADS * GEN_QUEUE_SIZE;
 
     std::unordered_set<glm::vec3, vec3cmp> pendingMesh;
@@ -110,6 +113,7 @@ private:
     std::vector<MeshThreadData*> finishedMesh;
 
     BlockAtlas* blockAtlas;
+    MapGen* mapGen;
 };
 
 #endif //GLPROJECT_WORLD_H

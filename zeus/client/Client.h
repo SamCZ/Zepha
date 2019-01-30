@@ -9,8 +9,8 @@
 #include "ClientState.h"
 #include "engine/scene/SceneManager.h"
 
-#include "graphics/scene/GameScene.h"
-#include "graphics/scene/MenuScene.h"
+#include "scene/GameScene.h"
+#include "scene/MenuScene.h"
 
 #include "engine/Timer.h"
 

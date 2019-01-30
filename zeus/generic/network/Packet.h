@@ -46,7 +46,7 @@ public:
     const static PacketType HANDSHAKE    = 1;
     const static PacketType AUTHENTICATE = 2;
     const static PacketType PLAYERINFO   = 3;
-    const static PacketType REQCHUNKS    = 4;
+    const static PacketType CHUNKINFO    = 4;
 };
 
 

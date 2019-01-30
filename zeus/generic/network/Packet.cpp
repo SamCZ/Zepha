@@ -15,12 +15,7 @@ Packet* Packet::deserialize(std::vector<PacketByte> data) {
     //Seperate the packet header from the body,
     //This can be changed to support more header values in the future.
 
-    //Determine Packet Type
-    int num = 0;
-    for (int i = 0; i < 4; i++) {
-        num <<= 8;
-        num |= data[i];
-    }
+    int num = decodeInt(&data[0]);
 
     //Get body of the packet
     std::vector<PacketByte> dataBody;

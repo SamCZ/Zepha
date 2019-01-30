@@ -12,7 +12,9 @@ ChunkThreadData::ChunkThreadData(glm::vec3 pos, BlockAtlas *atlas) {
     this->chunk = nullptr;
 }
 
-ChunkThreadDef::ChunkThreadDef() {
+ChunkThreadDef::ChunkThreadDef(MapGen *mapGen) {
+    this->mapGen = mapGen;
+
     thread = new std::thread(World::chunkGenThread, this);
 
     sched_param sch_params{};

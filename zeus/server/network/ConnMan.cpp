@@ -3,6 +3,7 @@
 //
 
 #include "ConnMan.h"
+#include "../../generic/blocks/BlockChunk.h"
 
 ConnMan::ConnMan() = default;
 
@@ -58,18 +59,7 @@ void ConnMan::handlePacket(Packet* packet, udp::endpoint* endpoint) {
     }
     else {
         //TODO: Push to the packet vector
-//        if (packet->type == Packet::REQCHUNKS) {
-//            for (int i = 0; i < packet->length / 12; i++) {
-//                int offsetBase = i * 12;
-//                int x = Packet::decodeInt(&packet->data[0 + offsetBase]);
-//                int y = Packet::decodeInt(&packet->data[0 + offsetBase + 4]);
-//                int z = Packet::decodeInt(&packet->data[0 + offsetBase + 8]);
-//                printf("%i, %i, %i\n", x, y, z);
-//            }
-//            std::cout << packet->length << std::endl;
-//        }
     }
-
 }
 
 ServerClient* ConnMan::addClient(std::string uuid, udp::endpoint* endpoint) {
@@ -92,6 +82,24 @@ void ConnMan::addPlayer(ServerClient* client, std::string username) {
     p.addFloat(player->pos.x);
     p.addFloat(player->pos.y);
     p.addFloat(player->pos.z);
+
+    send(&p, client);
+
+    p = Packet(Packet::CHUNKINFO);
+
+    p.addInt(0);
+    p.addInt(0);
+    p.addInt(0);
+
+    auto blocks = new std::vector<int>();
+    for (int i = 0; i < 4096; i++) {
+        blocks->push_back(i < 2048 ? 0 : 1);
+    }
+
+    auto originalChunk = new BlockChunk(blocks);
+    auto gzip = originalChunk->serialize();
+
+    p.addString(gzip);
 
     send(&p, client);
 }

@@ -57,8 +57,8 @@ add_executable(zeus
         zeus/generic/helpers/ArrayTrans3D.h
         zeus/client/graphics/mesh/MeshChunk.cpp
         zeus/client/graphics/mesh/MeshChunk.h
-        zeus/client/graphics/scene/GameScene.cpp
-        zeus/client/graphics/scene/GameScene.h
+        zeus/client/scene/GameScene.cpp
+        zeus/client/scene/GameScene.h
         zeus/client/engine/graphics/Renderer.cpp
         zeus/client/engine/graphics/Renderer.h
         zeus/client/lua/LuaParser.cpp
@@ -86,8 +86,8 @@ add_executable(zeus
         zeus/client/engine/scene/SceneManager.h
         zeus/client/engine/scene/Scene.h
         zeus/client/ClientState.h
-        zeus/client/graphics/scene/MenuScene.cpp
-        zeus/client/graphics/scene/MenuScene.h
+        zeus/client/scene/MenuScene.cpp
+        zeus/client/scene/MenuScene.h
         zeus/server/Server.cpp
         zeus/server/Server.h
         zeus/server/network/ServerClient.cpp
@@ -101,6 +101,6 @@ add_executable(zeus
         zeus/client/gameworld/WorldThreadDefs.cpp
         zeus/client/gameworld/WorldThreadDefs.h
         zeus/server/network/ConnMan.cpp
-        zeus/server/network/ConnMan.h)
+        zeus/server/network/ConnMan.h zeus/generic/gen/MapGen.cpp zeus/generic/gen/MapGen.h)
 
 target_link_libraries(zeus ${OPENGL_gl_LIBRARY} glfw libGLEW.so pthread lua dl z)

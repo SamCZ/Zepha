@@ -11,6 +11,7 @@
 
 #include "../../generic/blocks/BlockChunk.h"
 #include "../../generic/blocks/BlockAtlas.h"
+#include "../../generic/gen/MapGen.h"
 
 //Structs for storing the threads used in World, and passing data to and from them.
 
@@ -51,11 +52,13 @@ struct ChunkThreadData {
 };
 
 struct ChunkThreadDef {
-    ChunkThreadDef();
+    explicit ChunkThreadDef(MapGen *mapGen);
 
     std::thread* thread;
     std::mutex lock;
     std::vector<ChunkThreadData*> tasks;
+
+    MapGen* mapGen;
 
     ~ChunkThreadDef();
 };

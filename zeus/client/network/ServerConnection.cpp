@@ -67,6 +67,9 @@ ServerConfig* ServerConnection::connect() {
                         .playerPos = glm::vec3(x, y, z)
                     };
                 }
+                else {
+                    inPackets.push_back(packet);
+                }
             }
         }
         if (!connected) {
@@ -80,48 +83,50 @@ ServerConfig* ServerConnection::connect() {
 }
 
 void ServerConnection::update() {
-    Timer t("Loop time");
-
     //Collect incoming packets
     while (socket.available() > 0) {
         size_t pendingSize = socket.available();
-        std::vector<Packet::PacketByte> recv_buf((unsigned long)pendingSize);
+        std::vector<Packet::PacketByte> recv_buf((unsigned long) pendingSize);
 
         auto remote_endpoint = new asio::ip::udp::endpoint();
         socket.receive_from(asio::buffer(recv_buf, pendingSize), *remote_endpoint);
 
         auto packet = Packet::deserialize(recv_buf);
-        if (packet->length > 0) handlePacket(*packet, remote_endpoint);
+        if (packet->length > 0) inPackets.push_back(packet);
     }
 
-    long sleep_for = 16L*1000000L - t.elapsedNs();
-    std::this_thread::sleep_for(std::chrono::nanoseconds(sleep_for));
+//    handleInPackets();
 }
 
-void ServerConnection::handlePacket(Packet &packet, asio::ip::udp::endpoint* endpoint) {
-
+bool ServerConnection::hasInPacket() {
+    return !inPackets.empty();
 }
+
+Packet *ServerConnection::getPacket() {
+    auto it = inPackets.begin();
+    inPackets.erase(it);
+    return *it;
+}
+
+//void ServerConnection::handleInPackets() {
+//    while (!inPackets.empty()) {
+//        auto it = inPackets.begin();
+//        inPackets.erase(it);
+//        Packet* packet = *it;
+//
+//        handlePacket(packet);
+//
+//        delete packet;
+//    }
+//}
+//
+//void ServerConnection::handlePacket(Packet* packet) {
+//    std::cout << packet->type << std::endl;
+//}
 
 void ServerConnection::sendPacket(Packet &p, asio::ip::udp::endpoint &e) {
     auto data = p.serialize();
     socket.send_to(asio::buffer(data, data.size()), e);
-}
-
-void ServerConnection::reqChunks(glm::vec3 a, glm::vec3 b) {
-
-    Packet p(Packet::REQCHUNKS);
-
-    for (int i = (int)a.x; i < (int)b.x; i++) {
-        for (int j = (int)a.y; j < (int)b.y; j++) {
-            for (int k = (int)a.z; k < (int)b.z; k++) {
-                p.addInt(i);
-                p.addInt(j);
-                p.addInt(k);
-            }
-        }
-    }
-
-    sendPacket(p, remote_endpoint);
 }
 
 ServerConnection::~ServerConnection() = default;

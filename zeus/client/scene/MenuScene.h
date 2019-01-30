@@ -6,9 +6,9 @@
 #define ZEUS_MENUSCENE_H
 
 
-#include "../../ClientState.h"
-#include "../../engine/scene/Scene.h"
-#include "../../engine/graphics/HudText.h"
+#include "../ClientState.h"
+#include "../engine/scene/Scene.h"
+#include "../engine/graphics/HudText.h"
 
 class MenuScene : public Scene {
 public:

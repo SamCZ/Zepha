@@ -5,8 +5,8 @@
 #include "GameScene.h"
 
 //TODO: Fix this
-#include "../../lua/l_register_block.h"
-#include "../../lua/l_register_blockmodel.h"
+#include "../lua/l_register_block.h"
+#include "../lua/l_register_blockmodel.h"
 
 GameScene::GameScene(ClientState* state) : Scene(state) {
     server = new ServerConnection("127.0.0.1", 12345);
@@ -29,7 +29,7 @@ GameScene::GameScene(ClientState* state) : Scene(state) {
 
     int SIZE = 12;
     for (int i = -SIZE; i < SIZE; i++) {
-        for (int j = -1; j < 12; j++) {
+        for (int j = -12; j < 12; j++) {
             for (int k = -SIZE; k < SIZE; k++) {
                 world->genNewChunk(glm::vec3(i, j, k));
             }
@@ -73,12 +73,19 @@ GameScene::GameScene(ClientState* state) : Scene(state) {
     crosshair->setScale(22);
 
     guiEntities.push_back(crosshair);
-
-    server->reqChunks(glm::vec3(-4, -4, -4), glm::vec3(4, 4, 4));
 }
 
 
 void GameScene::update() {
+    server->update();
+    while (server->hasInPacket()) {
+        auto packet = server->getPacket();
+
+        if (packet->type == Packet::CHUNKINFO) world->loadChunkPacket(packet);
+
+        delete packet;
+    }
+
     auto window = state->renderer->getWindow();
 
     player->update(window->getKeysArray(), state->deltaTime, window->getDeltaX(), window->getDeltaY());

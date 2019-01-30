@@ -25,13 +25,17 @@ public:
     void sendPacket(Packet& p, asio::ip::udp::endpoint& e);
 
     void update();
-    void handlePacket(Packet &packet, asio::ip::udp::endpoint* endpoint);
-    void reqChunks(glm::vec3 a, glm::vec3 b);
+//    void handleInPackets();
+//    void handlePacket(Packet* packet);
+
+    bool hasInPacket();
+    Packet* getPacket();
 
     ~ServerConnection();
 
 private:
     bool connected;
+    std::vector<Packet*> inPackets;
 
     asio::io_context io_context;
     asio::ip::udp::socket socket;

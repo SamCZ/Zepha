@@ -6,19 +6,19 @@
 #define SRC_GAMEWORLD_H
 
 
-#include "../../engine/scene/Scene.h"
-#include "../../engine/graphics/Renderer.h"
-#include "../gui/DebugGui.h"
+#include "../engine/scene/Scene.h"
+#include "../engine/graphics/Renderer.h"
+#include "../graphics/gui/DebugGui.h"
 
-#include "../../lua/LuaParser.h"
+#include "../lua/LuaParser.h"
 
-#include "../../gameworld/World.h"
-#include "../../gameworld/Player.h"
+#include "../gameworld/World.h"
+#include "../gameworld/Player.h"
 
-#include "../../network/ServerConnection.h"
+#include "../network/ServerConnection.h"
 
-#include "../../../generic/blocks/TextureAtlas.h"
-#include "../../../generic/blocks/BlockAtlas.h"
+#include "../../generic/blocks/TextureAtlas.h"
+#include "../../generic/blocks/BlockAtlas.h"
 
 class GameScene : public Scene {
 public:

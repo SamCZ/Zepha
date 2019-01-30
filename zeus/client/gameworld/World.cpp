@@ -9,9 +9,10 @@
 
 World::World(BlockAtlas *atlas) {
     blockAtlas = atlas;
+    mapGen = new MapGen(0);
 
     for (int i = 0; i < GEN_THREADS; i++) {
-        genThreads.push_back(new ChunkThreadDef());
+        genThreads.push_back(new ChunkThreadDef(mapGen));
     }
 
     for (int i = 0; i < MESH_THREADS; i++) {
@@ -25,9 +26,22 @@ void World::genNewChunk(glm::vec3 pos) {
     }
 }
 
+void World::loadChunkPacket(Packet *p) {
+    auto b = new BlockChunk();
+
+    int len = Packet::decodeInt(&p->data[12]);
+    std::string data(p->data.begin() + 16, p->data.begin() + 16 + len);
+
+    b->deserialize(data);
+
+    commitChunk(glm::vec3(0, 0, 0), b);
+}
+
 void World::commitChunk(glm::vec3 pos, BlockChunk *c) {
-    blockChunks.insert(std::pair<glm::vec3, BlockChunk*>(pos, c));
-    attemptMeshChunk(pos);
+    if (!blockChunks.count(pos)) {
+        blockChunks.insert(std::pair<glm::vec3, BlockChunk *>(pos, c));
+        attemptMeshChunk(pos);
+    }
 }
 
 void World::remeshChunk(glm::vec3 pos) {
@@ -183,7 +197,9 @@ void World::handleChunkGenQueue() {
     Timer t("Chunk Initialization");
     int genUpdates = 0;
     for (auto iter = finishedGen.begin(); iter != finishedGen.end(); ) {
-        if (t.elapsedNs() > 4000000) break;
+        if (t.elapsedNs() > 4000000) {
+            break;
+        }
 
         ChunkThreadData* threadData = *iter;
 
@@ -201,9 +217,6 @@ void World::handleChunkGenQueue() {
 //Takes a threadDef object which contains a vector of tasks to do, and infinitely loops, completing tasks and
 //re-inserting them into the vector to be further manipulated by the main thread.
 void World::chunkGenThread(ChunkThreadDef* threadDef) {
-    PerlinNoise p(9);
-    PerlinNoise p2(9);
-
     //Infinite loop
     while (true) {
         std::unique_lock<std::mutex> lock(threadDef->lock, std::defer_lock);
@@ -223,43 +236,7 @@ void World::chunkGenThread(ChunkThreadDef* threadDef) {
         lock.unlock();
 
         if (data != nullptr) {
-            auto *blocks = new std::vector<int>();
-            blocks->reserve(4096);
-
-            glm::vec3 innerPos, pos;
-
-            for (int ind = 0; ind < 4096; ind++) {
-                ArrayTrans3D::indAssignVec(ind, &innerPos);
-
-                pos.x = innerPos.x + data->pos.x * CHUNK_SIZE;
-                pos.y = innerPos.y + data->pos.y * CHUNK_SIZE;
-                pos.z = innerPos.z + data->pos.z * CHUNK_SIZE;
-
-                double val = p.noise(pos.x / (double) 32, pos.z / (double) 32, 0) * 16;
-                val *= p2.noise((pos.x + 16) / (double) 48, (pos.z + 16) / (double) 48, 0) * 8;
-                val /= 16;
-                val *= pow(p.noise(pos.x / (double) 64, pos.z / (double) 64, 0), 2) * 40 + 1;
-                val -= pos.y;
-
-                int block = 0;
-                if (val > 0) block = 6 + rand() % 4;
-                if (val > 1) block = 1;
-                if (val > 2) block = 2;
-                if (val > 3) block = 3;
-
-                blocks->push_back(block);
-            }
-
-//            (*blocks)[ArrayTrans3D::vecToInd(8, 8, 8)] = 4;
-//            (*blocks)[ArrayTrans3D::vecToInd(7, 8, 8)] = 4;
-//            (*blocks)[ArrayTrans3D::vecToInd(7, 8, 7)] = 4;
-//            (*blocks)[ArrayTrans3D::vecToInd(8, 8, 7)] = 4;
-//            (*blocks)[ArrayTrans3D::vecToInd(8, 7, 8)] = 4;
-//            (*blocks)[ArrayTrans3D::vecToInd(7, 7, 8)] = 4;
-//            (*blocks)[ArrayTrans3D::vecToInd(7, 7, 7)] = 4;
-//            (*blocks)[ArrayTrans3D::vecToInd(8, 7, 7)] = 4;
-
-            data->chunk = new BlockChunk(blocks);
+            data->chunk = threadDef->mapGen->generate(data->pos);
             data->done = true;
 
             lock.lock();
@@ -331,7 +308,6 @@ void World::handleMeshGenQueue() {
 //Function that runs on each MeshGenThread in the mesh generation threadpool.
 //Processes tasks and returns meshes in the same vector to be handled by the main thread.
 void World::meshGenThread(MeshThreadDef* threadDef) {
-
     //Infinite loop
     while (true) {
         std::unique_lock<std::mutex> lock(threadDef->lock, std::defer_lock);
