@@ -4,133 +4,104 @@
 
 #include "ServerConnection.h"
 
-ServerConnection::ServerConnection(std::string address, int port) : socket(io_context) {
-    this->address = std::move(address);
+ServerConnection::ServerConnection(std::string address, unsigned short port) {
     this->port = port;
-    this->connected = false;
+    this->address = std::move(address);
+
+    if (enet_initialize() != 0) {
+        fprintf(stderr, "[FATAL] Failed to Initialize ENet.\n");
+        exit(EXIT_FAILURE);
+    }
 }
 
-ServerConfig* ServerConnection::connect() {
-    try {
-        asio::ip::udp::resolver resolver(io_context);
-        remote_endpoint = *resolver.resolve(asio::ip::udp::v4(), address, std::to_string(port)).begin();
+void ServerConnection::init() {
+    client = enet_host_create(nullptr, 1, 2, 0, 0);
 
-        socket.open(asio::ip::udp::v4());
-
-        int attempts = 0;
-        bool handshook = false;
-
-        Timer t("Connection time");
-        while (t.elapsedNs() < 10L*1000000L*1000L) {
-
-            if (!handshook) {
-                Packet p;
-                p = Packet(Packet::HANDSHAKE);
-                p.addInt(attempts++);
-
-                sendPacket(p, remote_endpoint);
-                std::cout << "Sent handshake." << std::endl;
-            }
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
-
-            size_t pendingSize = socket.available();
-            if (pendingSize > 0) {
-                std::vector<Packet::PacketByte> recv_buf((unsigned long)pendingSize);
-
-                auto ignored = new asio::ip::udp::endpoint();
-                socket.receive_from(asio::buffer(recv_buf, pendingSize), *ignored);
-
-                auto packet = Packet::deserialize(recv_buf);
-
-                if (packet->type == Packet::HANDSHAKE) {
-                    std::cout << "Handshake received." << std::endl;
-                    t = Timer("Authenticate time");
-                    handshook = true;
-
-                    Packet p;
-                    p = Packet(Packet::AUTHENTICATE);
-                    p.addString("TOKEN");
-                    p.addString("Aurailus"); //USERNAME HERE
-
-                    sendPacket(p, remote_endpoint);
-                }
-                else if (packet->type == Packet::PLAYERINFO) {
-                    std::cout << "Player info received." << std::endl;
-                    connected = true;
-
-                    float x = Packet::decodeFloat(&packet->data[0]);
-                    float y = Packet::decodeFloat(&packet->data[4]);
-                    float z = Packet::decodeFloat(&packet->data[8]);
-
-                    return new ServerConfig {
-                        .playerPos = glm::vec3(x, y, z)
-                    };
-                }
-                else {
-                    std::cout << "initfunction" << std::endl;
-                    inPackets.push_back(packet);
-                }
-            }
-        }
-        if (!connected) {
-            std::cout << "Connection timed out!" << std::endl;
-            return nullptr;
-        }
+    if (client == nullptr) {
+        fprintf(stderr, "[FATAL] Failed to create ENet client.\n");
+        return;
     }
-    catch (std::exception &e) {
-        std::cout << e.what() << std::endl;
+
+    ENetAddress server_address;
+
+    enet_address_set_host(&server_address, address.c_str());
+    server_address.port = port;
+
+    server = enet_host_connect(client, &server_address, 2, 0);
+
+    if (server == nullptr) {
+        fprintf(stderr, "No available peers to initiate a connection to.\n");
+        return;
+    }
+
+    ENetEvent event;
+    if (enet_host_service(client, &event, 5000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
+        //Connected to the server successfully
+        printf("I connected to %x:%u.\n",
+               event.peer->address.host,
+               event.peer->address.port);
+        connected = true;
+    }
+    else {
+        //Connection failed
+        enet_peer_reset(server);
+        printf("Connection failed.\n");
+        connected = false;
     }
 }
 
 void ServerConnection::update() {
-    //Collect incoming packets
-    while (socket.available() > 0) {
-        size_t pendingSize = socket.available();
-        std::vector<Packet::PacketByte> recv_buf((unsigned long) pendingSize);
+    ENetEvent event;
+    while (enet_host_service(client, &event, 0) > 0) {
 
-        auto remote_endpoint = new asio::ip::udp::endpoint();
-        socket.receive_from(asio::buffer(recv_buf, pendingSize), *remote_endpoint);
+        switch (event.type) {
+            case ENET_EVENT_TYPE_CONNECT:
+                printf("A remote peer connected from %x:%u.\n",
+                       event.peer->address.host,
+                       event.peer->address.port);
 
-        auto packet = Packet::deserialize(recv_buf);
-        if (packet->length > 0) {
-            std::cout << "postupdate" << std::endl;
-            inPackets.push_back(packet);
+                event.peer->data = (void*)std::string("Fuckoff").c_str();
+                break;
+
+            case ENET_EVENT_TYPE_RECEIVE:
+                printf("A packet of length %u containing \"%s\" was received from %s on channel %u.\n",
+                       (unsigned int)event.packet->dataLength,
+                       event.packet->data,
+                       (char*)event.peer->data,
+                       event.channelID);
+
+                enet_packet_destroy(event.packet);
+                break;
+
+            case ENET_EVENT_TYPE_DISCONNECT:
+                printf("%s disconnected.\n", (char*)event.peer->data);
+                event.peer->data = nullptr;
+                break;
+
+            default:
+                break;
         }
     }
 
-//    handleInPackets();
-}
+    sendInterval++;
+//    if (sendInterval % 1 == 0) {
 
-bool ServerConnection::hasInPacket() {
-    return !inPackets.empty();
-}
-
-Packet *ServerConnection::getPacket() {
-    auto it = inPackets.begin();
-    inPackets.erase(it);
-    return *it;
-}
-
-//void ServerConnection::handleInPackets() {
-//    while (!inPackets.empty()) {
-//        auto it = inPackets.begin();
-//        inPackets.erase(it);
-//        Packet* packet = *it;
+//        std::string pacman("Packet #" + std::to_string(sendCount));
+//        sendCount++;
 //
-//        handlePacket(packet);
+//        std::cout << pacman << std::endl;
 //
-//        delete packet;
+//        ENetPacket* packet = enet_packet_create(pacman.c_str(), pacman.length() + 1, ENET_PACKET_FLAG_RELIABLE);
+//        enet_peer_send(server, 0, packet);
 //    }
-//}
-//
-//void ServerConnection::handlePacket(Packet* packet) {
-//    std::cout << packet->type << std::endl;
-//}
-
-void ServerConnection::sendPacket(Packet &p, asio::ip::udp::endpoint &e) {
-    auto data = p.serialize();
-    socket.send_to(asio::buffer(data, data.size()), e);
 }
 
-ServerConnection::~ServerConnection() = default;
+void ServerConnection::cleanup() {
+    connected = false;
+    if (client != nullptr) enet_host_destroy(client);
+    enet_deinitialize();
+}
+
+ServerConnection::~ServerConnection() {
+    cleanup();
+}

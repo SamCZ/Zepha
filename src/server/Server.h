@@ -8,7 +8,7 @@
 #include <thread>
 #include <vector>
 #include <iostream>
-#include <asio.hpp>
+#include <enet/enet.h>
 
 #include "ServerPlayer.h"
 #include "network/ConnMan.h"
@@ -16,26 +16,23 @@
 #include "../generic/network/Packet.h"
 #include "../client/engine/Timer.h"
 
-using asio::ip::udp;
-
 class Server {
 public:
     Server();
     explicit Server(unsigned short port);
 
     void init();
-    void loop();
+    void update();
     void cleanup();
 
     ~Server();
 private:
-    ConnMan conn;
-    std::map<std::string, ServerPlayer*>* players;
+    bool alive = true;
 
-    void sendChunks(ServerPlayer &player);
+    ENetAddress address;
+    ENetHost* server;
 
     unsigned short port;
-    bool alive = true;
 };
 
 

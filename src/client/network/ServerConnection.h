@@ -8,41 +8,32 @@
 #include <string>
 #include <iostream>
 #include <vec3.hpp>
-#include <asio.hpp>
+#include <enet/enet.h>
 
 #include "../../generic/network/Packet.h"
 #include "../engine/Timer.h"
 
-struct ServerConfig {
-    glm::vec3 playerPos;
-};
-
 class ServerConnection {
 public:
-    ServerConnection(std::string address, int port);
+    ServerConnection(std::string address, unsigned short port);
 
-    ServerConfig* connect();
-    void sendPacket(Packet& p, asio::ip::udp::endpoint& e);
-
+    void init();
     void update();
-//    void handleInPackets();
-//    void handlePacket(Packet* packet);
-
-    bool hasInPacket();
-    Packet* getPacket();
+    void cleanup();
 
     ~ServerConnection();
 
 private:
-    bool connected;
-    std::vector<Packet*> inPackets;
+    bool connected = false;
 
-    asio::io_context io_context;
-    asio::ip::udp::socket socket;
-    asio::ip::udp::endpoint remote_endpoint;
+    ENetHost* client;
+    ENetPeer* server;
+
+    int sendInterval = 0;
+    int sendCount = 0;
 
     std::string address;
-    int port;
+    unsigned short port;
 };
 
 

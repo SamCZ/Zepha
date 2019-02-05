@@ -10,7 +10,7 @@
 
 GameScene::GameScene(ClientState* state) : Scene(state) {
     server = new ServerConnection("127.0.0.1", 12345);
-    auto info = server->connect();
+    server->init();
 
     textureAtlas = new TextureAtlas("../res/tex");
     blockAtlas = new BlockAtlas(textureAtlas);
@@ -38,7 +38,8 @@ GameScene::GameScene(ClientState* state) : Scene(state) {
 
     player = new Player();
     player->create(world, state->renderer->getCamera());
-    player->setPos(info->playerPos);
+    player->setPos(glm::vec3(0, 64, 0));
+//    player->setPos(info->playerPos);
 
     world->genNewChunk(glm::vec3(0, 0, 0));
 
@@ -78,17 +79,17 @@ GameScene::GameScene(ClientState* state) : Scene(state) {
 
 void GameScene::update() {
     server->update();
-    while (server->hasInPacket()) {
-        auto packet = server->getPacket();
-
-        if (packet->type == Packet::CHUNKINFO) world->loadChunkPacket(packet);
-
-        if (packet->type != 4) {
-            std::cout << "bad packet" << std::endl;
-            return;
-        }
-//        delete packet;
-    }
+//    while (server->hasInPacket()) {
+//        auto packet = server->getPacket();
+//
+//        if (packet->type == Packet::CHUNKINFO) world->loadChunkPacket(packet);
+//
+//        if (packet->type != 4) {
+//            std::cout << "bad packet" << std::endl;
+//            return;
+//        }
+////        delete packet;
+//    }
 
     auto window = state->renderer->getWindow();
 

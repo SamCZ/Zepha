@@ -9,24 +9,58 @@ Server::Server() = default;
 
 Server::Server(unsigned short port) {
     this->port = port;
+
+    address.host = ENET_HOST_ANY;
+    address.port = port;
+
+    if (enet_initialize() != 0) {
+        fprintf(stderr, "[FATAL] Failed to Initialize ENet.\n");
+        exit(EXIT_FAILURE);
+    }
 }
 
 void Server::init() {
-    conn.init(port);
-    players = conn.getPlayersMap();
+    server = enet_host_create(&address, 32, 2, 0, 0);
 
-    while (alive) loop();
+    if (server == nullptr) {
+        fprintf(stderr, "[FATAL] Failed to create ENet host.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    while (alive) update();
 }
 
-void Server::loop() {
+void Server::update() {
     Timer loop("");
 
-    conn.poll();
+    ENetEvent event;
+    while (enet_host_service(server, &event, 0) > 0 && loop.elapsedNs() < 15L*1000000L) {
+        switch (event.type) {
+            case ENET_EVENT_TYPE_CONNECT:
+                printf("A new client connected from %x:%u.\n",
+                        event.peer->address.host,
+                        event.peer->address.port);
 
-    for (auto &p : *players) {
-        if (p.second->forceSendChunks) {
-            sendChunks(*p.second);
-            p.second->forceSendChunks = false;
+                event.peer->data = (void*)std::string("Fuckoff").c_str();
+                break;
+
+            case ENET_EVENT_TYPE_RECEIVE:
+                printf("A packet of length %u containing \"%s\" was received from %s on channel %u.\n",
+                       (unsigned int)event.packet->dataLength,
+                       event.packet->data,
+                       (char*)event.peer->data,
+                       event.channelID);
+
+                enet_packet_destroy(event.packet);
+                break;
+
+            case ENET_EVENT_TYPE_DISCONNECT:
+                printf("%s disconnected.\n", (char*)event.peer->data);
+                event.peer->data = nullptr;
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -34,35 +68,10 @@ void Server::loop() {
     std::this_thread::sleep_for(std::chrono::nanoseconds(sleep_for));
 }
 
-void Server::sendChunks(ServerPlayer &player) {
-    const int SEND_RANGE = 10;
-
-    auto blocks = new std::vector<int>(4096);
-    for (int i = 0; i < 4096; i++) {
-        (*blocks)[i] = (int)round(rand() % 5);
-    }
-    auto chunk = new BlockChunk(blocks);
-    auto chunkString = chunk->serialize();
-
-    for (int i = -SEND_RANGE; i < SEND_RANGE; i++) {
-        for (int j = -SEND_RANGE; j < SEND_RANGE; j++) {
-            for (int k = -SEND_RANGE; k < SEND_RANGE; k++) {
-                Packet p(Packet::CHUNKINFO);
-
-                p.addInt(i);
-                p.addInt(j);
-                p.addInt(k);
-
-//                p.addString(chunkString);
-
-                conn.send(&p, player.connection);
-            }
-        }
-    }
-}
-
 void Server::cleanup() {
     alive = false;
+    if (server != nullptr) enet_host_destroy(server);
+    enet_deinitialize();
 }
 
 Server::~Server() {
