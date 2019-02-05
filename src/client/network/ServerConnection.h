@@ -8,10 +8,10 @@
 #include <string>
 #include <iostream>
 #include <vec3.hpp>
-#include <enet/enet.h>
 
-#include "../../generic/network/Packet.h"
 #include "../engine/Timer.h"
+#include "../../generic/network/Packet.h"
+#include "../../generic/network/NetHandler.h"
 
 class ServerConnection {
 public:
@@ -26,8 +26,7 @@ public:
 private:
     bool connected = false;
 
-    ENetHost* client;
-    ENetPeer* server;
+    NetHandler handler;
 
     int sendInterval = 0;
     int sendCount = 0;

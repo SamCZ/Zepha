@@ -9,23 +9,10 @@ Server::Server() = default;
 
 Server::Server(unsigned short port) {
     this->port = port;
-
-    address.host = ENET_HOST_ANY;
-    address.port = port;
-
-    if (enet_initialize() != 0) {
-        fprintf(stderr, "[FATAL] Failed to Initialize ENet.\n");
-        exit(EXIT_FAILURE);
-    }
 }
 
 void Server::init() {
-    server = enet_host_create(&address, 32, 2, 0, 0);
-
-    if (server == nullptr) {
-        fprintf(stderr, "[FATAL] Failed to create ENet host.\n");
-        exit(EXIT_FAILURE);
-    }
+    handler = NetHandler(port, 32);
 
     while (alive) update();
 }
@@ -34,7 +21,7 @@ void Server::update() {
     Timer loop("");
 
     ENetEvent event;
-    while (enet_host_service(server, &event, 0) > 0 && loop.elapsedNs() < 15L*1000000L) {
+    while (handler.update(&event) && loop.elapsedNs() < 15L*1000000L) {
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 printf("A new client connected from %x:%u.\n",
@@ -70,8 +57,6 @@ void Server::update() {
 
 void Server::cleanup() {
     alive = false;
-    if (server != nullptr) enet_host_destroy(server);
-    enet_deinitialize();
 }
 
 Server::~Server() {

@@ -8,8 +8,6 @@
 
 #include "Client.h"
 
-using asio::ip::udp;
-
 Client::Client() = default;
 
 Client::Client(int width, int height) {

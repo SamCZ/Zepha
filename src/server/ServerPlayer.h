@@ -7,20 +7,18 @@
 
 
 #include <vec3.hpp>
-#include "network/ServerClient.h"
+//#include "network/ServerClient.h"
 
 class ServerPlayer {
 public:
     ServerPlayer();
-    ServerPlayer(ServerClient* connection, glm::vec3 pos);
+//    ServerPlayer(ServerClient* connection, glm::vec3 pos);
 
-    ServerClient* connection;
+//    ServerClient* connection;
     glm::vec3 pos = glm::vec3(0, 0, 0);
 
-    glm::vec3 lastSentPos = glm::vec3(0, 0, 0);
-    bool forceSendChunks = false;
-
-    std::vector<glm::vec3> requestedChunks;
+//    glm::vec3 lastSentPos = glm::vec3(0, 0, 0);
+//    bool forceSendChunks = false;
 };
 
 

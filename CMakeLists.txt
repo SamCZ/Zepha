@@ -14,7 +14,6 @@ include_directories (
         lib/stb_image
         lib/cute
         lib/sol
-        lib/asio-1.12.2/include
         lib/gzip-hpp-master/include
         lib/catch
 )

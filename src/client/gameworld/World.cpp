@@ -37,8 +37,6 @@ void World::loadChunkPacket(Packet *p) {
 //    b->deserialize(data);
 //
 //    commitChunk(pos, b);
-
-std::cout << "me m e"<<std::endl;
 }
 
 void World::commitChunk(glm::vec3 pos, BlockChunk *c) {
@@ -240,10 +238,10 @@ void World::chunkGenThread(ChunkThreadDef* threadDef) {
         lock.unlock();
 
         if (data != nullptr) {
-//            data->chunk = threadDef->mapGen->generate(data->pos);
-            //TODO: WARN: THIS IS DISABLING CLIENT-SIDE MAP GENERATION
-            auto b = new BlockChunk(new std::vector<int>(4096));
-            data->chunk = b;
+            data->chunk = threadDef->mapGen->generate(data->pos);
+//            TODO: WARN: THIS IS DISABLING CLIENT-SIDE MAP GENERATION
+//            auto b = new BlockChunk(new std::vector<int>(4096));
+//            data->chunk = b;
 
             data->done = true;
 

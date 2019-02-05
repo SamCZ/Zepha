@@ -70,8 +70,6 @@ set(ZEUS_SRC_FILES
         client/scene/MenuScene.h
         server/Server.cpp
         server/Server.h
-        server/network/ServerClient.cpp
-        server/network/ServerClient.h
         generic/network/Packet.cpp
         generic/network/Packet.h
         server/ServerPlayer.cpp
@@ -80,8 +78,6 @@ set(ZEUS_SRC_FILES
         client/network/ServerConnection.h
         client/gameworld/WorldThreadDefs.cpp
         client/gameworld/WorldThreadDefs.h
-        server/network/ConnMan.cpp
-        server/network/ConnMan.h
         generic/gen/MapGen.cpp
         generic/gen/MapGen.h
         generic/network/NetHandler.cpp

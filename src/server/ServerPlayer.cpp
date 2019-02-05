@@ -5,10 +5,10 @@
 #include "ServerPlayer.h"
 
 ServerPlayer::ServerPlayer() {
-    this->connection = nullptr;
+//    this->connection = nullptr;
 }
 
-ServerPlayer::ServerPlayer(ServerClient *connection, glm::vec3 pos) {
-    this->pos = pos;
-    this->connection = connection;
-}
+//ServerPlayer::ServerPlayer(ServerClient *connection, glm::vec3 pos) {
+//    this->pos = pos;
+//    this->connection = connection;
+//}

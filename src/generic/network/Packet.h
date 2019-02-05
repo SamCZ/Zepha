@@ -7,7 +7,6 @@
 
 #include <vector>
 #include <string>
-#include <asio.hpp>
 #include <iostream>
 
 class Packet {

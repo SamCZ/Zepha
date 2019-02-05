@@ -8,13 +8,11 @@
 #include <thread>
 #include <vector>
 #include <iostream>
-#include <enet/enet.h>
 
 #include "ServerPlayer.h"
-#include "network/ConnMan.h"
-#include "network/ServerClient.h"
 #include "../generic/network/Packet.h"
 #include "../client/engine/Timer.h"
+#include "../generic/network/NetHandler.h"
 
 class Server {
 public:
@@ -29,8 +27,7 @@ public:
 private:
     bool alive = true;
 
-    ENetAddress address;
-    ENetHost* server;
+    NetHandler handler;
 
     unsigned short port;
 };
