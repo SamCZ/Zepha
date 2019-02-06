@@ -4,11 +4,14 @@
 
 #include "GameScene.h"
 
-//TODO: Fix this
 #include "../lua/l_register_block.h"
 #include "../lua/l_register_blockmodel.h"
 
-GameScene::GameScene(ClientState* state) : Scene(state) {
+GameScene::GameScene(ClientState* state) :
+        Scene(state),
+        gui(state),
+        debugGui() {
+
     server = new ServerConnection("127.0.0.1", 12345);
     server->init();
 
@@ -38,64 +41,63 @@ GameScene::GameScene(ClientState* state) : Scene(state) {
 
     player = new Player();
     player->create(world, state->renderer->getCamera());
-    player->setPos(glm::vec3(0, 64, 0));
-//    player->setPos(info->playerPos);
+    player->setPos(glm::vec3(0, 22, 0));
 
-    world->genNewChunk(glm::vec3(0, 0, 0));
-
+    debugGui.pushGuiObjects(guiEntities);
     gui.pushGuiObjects(guiEntities);
 
     auto crosshairTexture = new Texture((char*)"../res/tex/gui/crosshair.png");
     crosshairTexture->load();
-    auto crosshair = new Entity();
 
-    auto crossVerts = new std::vector<float> {
+    auto squareVerts = new std::vector<float> {
             -0.5, -0.5, 0, 0, 0, 0, 0, 0,
             -0.5,  0.5, 0, 0, 1, 0, 0, 0,
              0.5,  0.5, 0, 1, 1, 0, 0, 0,
              0.5, -0.5, 0, 1, 0, 0, 0, 0,
+
+             0, -0.5, -0.5, 0, 0, 0, 0, 0,
+             0,  0.5, -0.5, 0, 1, 0, 0, 0,
+             0,  0.5,  0.5, 1, 1, 0, 0, 0,
+             0, -0.5,  0.5, 1, 0, 0, 0, 0,
+
+            -0.5, 0, -0.5, 0, 0, 0, 0, 0,
+             0.5, 0, -0.5, 0, 1, 0, 0, 0,
+             0.5, 0,  0.5, 1, 1, 0, 0, 0,
+            -0.5, 0,  0.5, 1, 0, 0, 0, 0,
     };
-    auto crossInds = new std::vector<unsigned int> {
-        0, 1, 2, 2, 3, 0
+    auto squareInds = new std::vector<unsigned int> {
+            0, 1, 2, 2, 3, 0,
+            0, 2, 1, 2, 0, 3,
+            4, 5, 6, 6, 7, 4,
+            4, 6, 5, 6, 4, 7,
+            8, 9, 10, 10, 11, 8,
+            8, 10, 9, 10, 8, 11
     };
 
     auto m = new Mesh();
-    m->create(crossVerts, crossInds);
+    m->create(squareVerts, squareInds);
 
-    crosshair->create(m, crosshairTexture);
+    auto square = new Entity();
+    square->create(m, crosshairTexture);
 
-    delete crossVerts;
-    delete crossInds;
+    delete squareVerts;
+    delete squareInds;
 
-    float xx = state->renderer->getWindow()->getBufferWidth()/2;
-    float yy = state->renderer->getWindow()->getBufferHeight()/2;
+    square->setPosition(glm::vec3(1, 18, 1));
+    square->setScale(0.5);
 
-    crosshair->setPosition(glm::vec3(xx, yy, 0));
-    crosshair->setScale(22);
-
-    guiEntities.push_back(crosshair);
+    entities.push_back(square);
 }
 
 
 void GameScene::update() {
     server->update();
-//    while (server->hasInPacket()) {
-//        auto packet = server->getPacket();
-//
-//        if (packet->type == Packet::CHUNKINFO) world->loadChunkPacket(packet);
-//
-//        if (packet->type != 4) {
-//            std::cout << "bad packet" << std::endl;
-//            return;
-//        }
-////        delete packet;
-//    }
 
     auto window = state->renderer->getWindow();
 
     player->update(window->getKeysArray(), state->deltaTime, window->getDeltaX(), window->getDeltaY());
 
-    gui.update(player, world, window, blockAtlas, state->fps);
+    debugGui.update(player, world, window, blockAtlas, state->fps);
     world->update();
 }
 
@@ -108,19 +110,30 @@ void GameScene::draw() {
     for (auto &chunk : *world->getMeshChunks())
         state->renderer->draw(chunk.second);
 
-    for (auto &entity : entities)
+    Texture* prevTexture = nullptr;
+
+    for (auto &entity : entities) {
+        auto newTexture = entity->getTexture();
+
+        if (newTexture != nullptr && newTexture != prevTexture) {
+            prevTexture = newTexture;
+            newTexture->use();
+        }
+
         state->renderer->draw(entity);
+    }
 
     state->renderer->enableGuiShader();
 
-    Texture* prevTexture = nullptr;
+    for (auto &entity : guiEntities) {
+        auto newTexture = entity->getTexture();
 
-    for (auto &gui : guiEntities) {
-        if (gui->getTexture() != nullptr && gui->getTexture() != prevTexture) {
-            prevTexture = gui->getTexture();
-            gui->getTexture()->use();
+        if (newTexture != nullptr && newTexture != prevTexture) {
+            prevTexture = newTexture;
+            newTexture->use();
         }
-        state->renderer->drawGui(gui);
+
+        state->renderer->draw(entity);
     }
 
     state->renderer->end();

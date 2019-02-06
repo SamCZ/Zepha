@@ -9,6 +9,7 @@
 #include "../engine/scene/Scene.h"
 #include "../engine/graphics/Renderer.h"
 #include "../graphics/gui/DebugGui.h"
+#include "../graphics/gui/GameGui.h"
 
 #include "../lua/LuaParser.h"
 
@@ -41,7 +42,8 @@ public:
 
     //GUI Related things
     std::vector<Entity*> guiEntities;
-    DebugGui gui;
+    DebugGui debugGui;
+    GameGui gui;
 };
 
 
