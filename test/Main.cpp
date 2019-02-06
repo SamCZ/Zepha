@@ -13,5 +13,6 @@ TEST_CASE("Sanity Check", "[core]") {
 }
 
 #include "generic/blocks/BlockChunk.cpp"
+#include "generic/network/NetHandler.cpp"
 
 #pragma clang diagnostic pop
