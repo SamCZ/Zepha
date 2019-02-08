@@ -85,6 +85,11 @@ set(ZEUS_SRC_FILES
         client/graphics/gui/GameGui.cpp
         client/graphics/gui/GameGui.h
         generic/network/Serializer.cpp
-        generic/network/Serializer.h)
+        generic/network/Serializer.h
+        server/ServerState.cpp
+        server/ServerState.h
+        server/ConnectionList.cpp
+        server/ConnectionList.h
+        server/ServerPeer.h generic/network/PacketType.h generic/network/PacketType.h generic/network/PacketChannel.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

@@ -11,14 +11,16 @@
 
 #include "../engine/Timer.h"
 #include "../../generic/network/Packet.h"
+#include "../../generic/network/PacketType.h"
 #include "../../generic/network/NetHandler.h"
+#include "../../client/gameworld/Player.h"
 
 class ServerConnection {
 public:
     ServerConnection(std::string address, unsigned short port);
 
     void init();
-    void update();
+    void update(Player& player, Entity& pointer);
     void cleanup();
 
     ~ServerConnection();

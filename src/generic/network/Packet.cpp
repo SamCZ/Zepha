@@ -3,12 +3,13 @@
 //
 
 #include "Packet.h"
+#include "PacketType.h"
 
 Packet::Packet() {
-    this->type = UNDEFINED;
+    this->type = PacketType::UNDEFINED;
 }
 
-Packet::Packet(Packet::p_type p) {
+Packet::Packet(PacketType::p_type p) {
     this->type = p;
 }
 
@@ -21,9 +22,14 @@ Packet::Packet(ENetPacket *packet) {
 
 ENetPacket *Packet::toENetPacket() {
     std::string serialized;
-    Serializer::encodeInt(serialized, (int)this->type);
+    Serializer::encodeInt(serialized, this->type);
     serialized += this->data;
 
     ENetPacket* enet = enet_packet_create(serialized.data(), serialized.length() + 1, ENET_PACKET_FLAG_RELIABLE);
     return enet;
+}
+
+void Packet::sendTo(ENetPeer *peer, int channel) {
+    ENetPacket* enet = toENetPacket();
+    enet_peer_send(peer, (enet_uint8)channel, enet);
 }

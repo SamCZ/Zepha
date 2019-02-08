@@ -8,6 +8,7 @@
 #include <string>
 #include <iostream>
 #include <enet/enet.h>
+#include "PacketChannel.h"
 
 class NetHandler {
 public:
@@ -39,8 +40,6 @@ public:
     const static int ERROR          = 2;
     const static int CLIENT         = 3;
     const static int HOST           = 4;
-
-    const static int CHANNELS = 2;
 };
 
 #endif //ZEUS_NETHANDLER_H

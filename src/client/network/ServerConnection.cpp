@@ -17,46 +17,55 @@ void ServerConnection::init() {
     }
 }
 
-void ServerConnection::update() {
+
+void ServerConnection::update(Player &player, Entity& pointer) {
     ENetEvent event;
     while (handler.update(&event)) {
 
         switch (event.type) {
-            case ENET_EVENT_TYPE_CONNECT:
-                printf("A remote peer connected from %x:%u.\n",
-                       event.peer->address.host,
-                       event.peer->address.port);
-
-                event.peer->data = (void*)std::string("Fuckoff").c_str();
+            case ENET_EVENT_TYPE_CONNECT: {
+                printf("[INFO] Connected to server %x:%u.\n", event.peer->address.host, event.peer->address.port);
                 break;
+            }
+            case ENET_EVENT_TYPE_RECEIVE: {
+                Packet p(event.packet);
 
-            case ENET_EVENT_TYPE_RECEIVE:
-                printf("A packet of length %u containing \"%s\" was received from %s on channel %u.\n",
-                       (unsigned int)event.packet->dataLength,
-                       event.packet->data,
-                       (char*)event.peer->data,
-                       event.channelID);
+                if (p.type == PacketType::PLAYERINFO) {
+                    glm::vec3 playerPos = glm::vec3(
+                            Serializer::decodeFloat(&p.data[0]),
+                            Serializer::decodeFloat(&p.data[4]),
+                            Serializer::decodeFloat(&p.data[8])
+                    );
+                    player.setPos(playerPos);
+                }
+                else if (p.type == PacketType::ENTITYINFO) {
+                    glm::vec3 playerPos = glm::vec3(
+                            Serializer::decodeFloat(&p.data[0]),
+                            Serializer::decodeFloat(&p.data[4]),
+                            Serializer::decodeFloat(&p.data[8])
+                    );
+                    pointer.setPosition(playerPos);
+                }
 
                 enet_packet_destroy(event.packet);
                 break;
-
-            case ENET_EVENT_TYPE_DISCONNECT:
-                printf("%s disconnected.\n", (char*)event.peer->data);
-                event.peer->data = nullptr;
+            }
+            case ENET_EVENT_TYPE_DISCONNECT: {
+                printf("[INFO] Disconnected from server %x:%u\n", event.peer->address.host, event.peer->address.port);
                 break;
+            }
 
             default:
                 break;
         }
     }
 
-    std::string pacman("Packet #" + std::to_string(sendCount));
-    sendCount++;
-
-    std::cout << pacman << std::endl;
-
-    ENetPacket* packet = enet_packet_create(pacman.c_str(), pacman.length() + 1, ENET_PACKET_FLAG_RELIABLE);
-    enet_peer_send(handler.getPeer(), 0, packet);
+    //Send Player Position
+    Packet p(PacketType::PLAYERINFO);
+    Serializer::encodeFloat(p.data, player.getPos()->x);
+    Serializer::encodeFloat(p.data, player.getPos()->y);
+    Serializer::encodeFloat(p.data, player.getPos()->z);
+    p.sendTo(handler.getPeer(), 0);
 }
 
 void ServerConnection::cleanup() {

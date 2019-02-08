@@ -13,25 +13,18 @@
 #include <enet/enet.h>
 
 #include "Serializer.h"
+#include "PacketType.h"
 
 struct Packet {
-    //Type Definitions
-    typedef int p_type;
-
-    //Packet Types
-    const static p_type UNDEFINED    = 0;
-    const static p_type HANDSHAKE    = 1;
-    const static p_type AUTHENTICATE = 2;
-    const static p_type PLAYERINFO   = 3;
-    const static p_type CHUNKINFO    = 4;
 
     Packet();
-    explicit Packet(p_type p);
+    explicit Packet(int p);
     explicit Packet(ENetPacket* packet);
 
     ENetPacket* toENetPacket();
+    void sendTo(ENetPeer* peer, int channel);
 
-    p_type type = UNDEFINED;
+    int type = PacketType::UNDEFINED;
     std::string data;
 
     ~Packet() = default;

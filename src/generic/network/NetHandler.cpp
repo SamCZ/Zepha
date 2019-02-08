@@ -35,7 +35,7 @@ void NetHandler::initServer(unsigned short port, short max_clients) {
     address.host = ENET_HOST_ANY;
     address.port = port;
 
-    host = enet_host_create(&address, (size_t)max_clients, CHANNELS, 0, 0);
+    host = enet_host_create(&address, (size_t)max_clients, PacketChannel::CHANNELS, 0, 0);
     peer = nullptr;
 
     if (host == nullptr) {
@@ -56,7 +56,7 @@ void NetHandler::initClient(std::string host_address, unsigned short host_port, 
         return;
     }
 
-    host = enet_host_create(nullptr, 1, CHANNELS, 0, 0);
+    host = enet_host_create(nullptr, 1, PacketChannel::CHANNELS, 0, 0);
 
     if (host == nullptr) {
         fprintf(stderr, "[FATAL] Failed to create ENet client.\n");
@@ -70,7 +70,7 @@ void NetHandler::initClient(std::string host_address, unsigned short host_port, 
     int attempt = 0;
     while (attempt++ < attempts) {
 
-        peer = enet_host_connect(host, &address, CHANNELS, 0);
+        peer = enet_host_connect(host, &address, PacketChannel::CHANNELS, 0);
 
         if (peer == nullptr) {
             fprintf(stderr, "[FATAL] Failed to find ENet peer.\n");

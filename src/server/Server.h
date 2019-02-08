@@ -13,6 +13,8 @@
 #include "../generic/network/Packet.h"
 #include "../client/engine/Timer.h"
 #include "../generic/network/NetHandler.h"
+#include "ConnectionList.h"
+#include "ServerPeer.h"
 
 class Server {
 public:
@@ -28,6 +30,7 @@ private:
     bool alive = true;
 
     NetHandler handler;
+    ConnectionList connections;
 
     unsigned short port;
 };

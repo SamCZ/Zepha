@@ -91,7 +91,7 @@ GameScene::GameScene(ClientState* state) :
 
 
 void GameScene::update() {
-    server->update();
+    server->update(*player, *pointer);
 
     auto window = state->renderer->getWindow();
 
@@ -100,7 +100,7 @@ void GameScene::update() {
     debugGui.update(player, world, window, blockAtlas, state->fps);
     world->update();
 
-    pointer->setPosition(*player->getPos() + glm::vec3(0, -1, 0));
+//    pointer->setPosition(*player->getPos() + glm::vec3(0, -1, 0));
 }
 
 void GameScene::draw() {

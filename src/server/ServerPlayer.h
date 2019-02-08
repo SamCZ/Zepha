@@ -7,18 +7,19 @@
 
 
 #include <vec3.hpp>
-//#include "network/ServerClient.h"
+#include "ServerPeer.h"
+#include "../generic/network/Packet.h"
 
 class ServerPlayer {
 public:
-    ServerPlayer();
-//    ServerPlayer(ServerClient* connection, glm::vec3 pos);
+    explicit ServerPlayer(ServerPeer* peer);
 
-//    ServerClient* connection;
+    Packet getInitPacket();
+
+    ServerPeer* peer;
     glm::vec3 pos = glm::vec3(0, 0, 0);
 
-//    glm::vec3 lastSentPos = glm::vec3(0, 0, 0);
-//    bool forceSendChunks = false;
+    ~ServerPlayer();
 };
 
 

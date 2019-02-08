@@ -23,29 +23,37 @@ void Server::update() {
     ENetEvent event;
     while (handler.update(&event) && loop.elapsedNs() < 15L*1000000L) {
         switch (event.type) {
-            case ENET_EVENT_TYPE_CONNECT:
-                printf("A new client connected from %x:%u.\n",
-                        event.peer->address.host,
-                        event.peer->address.port);
-
-                event.peer->data = (void*)std::string("Fuckoff").c_str();
+            case ENET_EVENT_TYPE_CONNECT: {
+                auto peer = connections.addPeer(event.peer);
+                auto player = connections.addPlayer(peer, "Aurailus");
                 break;
+            }
+            case ENET_EVENT_TYPE_RECEIVE: {
+                Packet p(event.packet);
 
-            case ENET_EVENT_TYPE_RECEIVE:
-                printf("A packet of length %u containing \"%s\" was received from %s on channel %u.\n",
-                       (unsigned int)event.packet->dataLength,
-                       event.packet->data,
-                       (char*)event.peer->data,
-                       event.channelID);
+                if (p.type == PacketType::PLAYERINFO) {
+                    glm::vec3 playerPos = glm::vec3(
+                            Serializer::decodeFloat(&p.data[0]),
+                            Serializer::decodeFloat(&p.data[4]),
+                            Serializer::decodeFloat(&p.data[8])
+                    );
+
+                    Packet r(PacketType::ENTITYINFO);
+
+                    Serializer::encodeFloat(r.data, playerPos.x);
+                    Serializer::encodeFloat(r.data, playerPos.y - 1.0f);
+                    Serializer::encodeFloat(r.data, playerPos.z);
+
+                    r.sendTo(connections.players[0]->peer->peer, PacketChannel::ENTITYINFO);
+                }
 
                 enet_packet_destroy(event.packet);
                 break;
-
-            case ENET_EVENT_TYPE_DISCONNECT:
-                printf("%s disconnected.\n", (char*)event.peer->data);
-                event.peer->data = nullptr;
+            }
+            case ENET_EVENT_TYPE_DISCONNECT: {
+                connections.removePeer(event.peer);
                 break;
-
+            }
             default:
                 break;
         }
