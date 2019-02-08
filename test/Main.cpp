@@ -12,7 +12,9 @@ TEST_CASE("Sanity Check", "[core]") {
     REQUIRE(1 + 1 == 2);
 }
 
-#include "generic/blocks/BlockChunk.cpp"
-#include "generic/network/NetHandler.cpp"
+#include "tests/BlockChunk.cpp"
+#include "tests/NetHandler.cpp"
+#include "tests/Serializer.cpp"
+#include "tests/Packet.cpp"
 
 #pragma clang diagnostic pop

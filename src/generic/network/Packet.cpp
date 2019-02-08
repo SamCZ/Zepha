@@ -4,148 +4,26 @@
 
 #include "Packet.h"
 
-Packet::Packet(Packet::PacketType p) {
+Packet::Packet() {
+    this->type = UNDEFINED;
+}
+
+Packet::Packet(Packet::p_type p) {
     this->type = p;
 }
 
-//Convert a vector of PacketBytes (chars) into a PacketData by splitting the head and body information.
-Packet* Packet::deserialize(std::vector<PacketByte> data) {
-    if (data.size() < 4) std::cerr << "Packet does not contain data." << std::endl;
+Packet::Packet(ENetPacket *packet) {
+    std::string packetData(packet->data, packet->data + packet->dataLength);
+    this->type = Serializer::decodeInt(&packetData[0]);
 
-    //Seperate the packet header from the body,
-    //This can be changed to support more header values in the future.
-
-    int num = decodeInt(&data[0]);
-
-    //Get body of the packet
-    std::vector<PacketByte> dataBody;
-    dataBody.reserve(data.size() - 4);
-
-    for (int i = 4; i < data.size(); i++) {
-        dataBody.push_back(data[i]);
-    }
-
-    auto p = new Packet();
-    p->type = (PacketType)num;
-    p->length = dataBody.size();
-    p->data = std::move(dataBody);
-
-    return p;
+    this->data = packetData.substr(4, packetData.length() - 4);
 }
 
-//Convert a PacketData into a serialized form to send over UDP.
-std::vector<Packet::PacketByte> Packet::serialize() {
-    std::vector<PacketByte> data;
-    data.reserve(this->length + 4);
+ENetPacket *Packet::toENetPacket() {
+    std::string serialized;
+    Serializer::encodeInt(serialized, (int)this->type);
+    serialized += this->data;
 
-    //Encode Packet Type
-    encodeInt(data, (int)this->type);
-
-    //Add body of the packet
-    for (PacketByte i : this->data) {
-        data.push_back(i);
-    }
-
-    return data;
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wconversion"
-void Packet::encodeInt(std::vector<Packet::PacketByte> &target, int num) {
-    target.push_back((num >> 24) & 0xFF);
-    target.push_back((num >> 16) & 0xFF);
-    target.push_back((num >> 8) & 0xFF);
-    target.push_back((num) & 0xFF);
-}
-#pragma clang diagnostic pop
-
-void Packet::encodeFloat(std::vector<Packet::PacketByte> &target, float num) {
-    typedef union {
-        float a;
-        unsigned char b[4];
-    } float_union;
-
-    float_union fl {num};
-
-    target.push_back(fl.b[0]);
-    target.push_back(fl.b[1]);
-    target.push_back(fl.b[2]);
-    target.push_back(fl.b[3]);
-}
-
-float Packet::decodeFloat(Packet::PacketByte *floatStart) {
-    typedef union {
-        float a;
-        unsigned char b[4];
-    } float_union;
-
-    float_union fl { .b = {*floatStart, *(floatStart+1), *(floatStart+2), *(floatStart+3)} };
-
-    return fl.a;
-}
-
-int Packet::decodeInt(PacketByte* intStart) {
-    int num = 0;
-    for (int i = 0; i < 4; i++) {
-        num <<= 8;
-        num |= *(intStart++);
-    }
-    return num;
-}
-
-
-std::string Packet::intVecToString(std::vector<int> *vec) {
-    return std::string(reinterpret_cast<const char*>(&(*vec)[0]), vec->size()*4);
-}
-
-std::vector<int> *Packet::stringToIntVec(std::string str) {
-    auto vec = new std::vector<int>(str.size() / 4);
-
-    for (int i = 0; i < str.size() / 4; i++) {
-
-        int val = ((int)(((unsigned char)str[i*4 + 3]) << 24)
-               |  (int)(((unsigned char)str[i*4 + 2]) << 16)
-               |  (int)(((unsigned char)str[i*4 + 1]) << 8)
-               |  (int)( (unsigned char)str[i*4 + 0]));
-
-        (*vec)[i] = val;
-    }
-
-    return vec;
-}
-
-
-
-void Packet::addIntegers(std::vector<int> &integers) {
-    for (int i : integers) {
-        encodeInt(this->data, i);
-    }
-    this->length = data.size();
-}
-
-void Packet::addInt(int integer) {
-    encodeInt(this->data, integer);
-    this->length = data.size();
-}
-
-void Packet::addFloats(std::vector<float> &floats) {
-    for (float f : floats) {
-        encodeFloat(this->data, f);
-    }
-    this->length = data.size();
-}
-
-void Packet::addFloat(float floatVal) {
-    encodeFloat(this->data, floatVal);
-    this->length = data.size();
-}
-
-void Packet::addString(std::string *string) {
-    addInt((int)string->length());
-    std::copy(string->begin(), string->end(), std::back_inserter(data));
-    this->length = data.size();
-}
-
-void Packet::addString(std::string string) {
-    addString(&string);
+    ENetPacket* enet = enet_packet_create(serialized.data(), serialized.length() + 1, ENET_PACKET_FLAG_RELIABLE);
+    return enet;
 }

@@ -105,7 +105,7 @@ int NetHandler::getState() {
     return state;
 }
 
-ENetPeer *NetHandler::getPeer() {
+ENetPeer* NetHandler::getPeer() {
     return peer;
 }
 

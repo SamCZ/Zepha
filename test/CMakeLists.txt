@@ -1,6 +1,7 @@
 set(ZEUS_TEST_FILES
-        generic/blocks/BlockChunk.cpp
-        generic/network/NetHandler.cpp
-)
+        tests/BlockChunk.cpp
+        tests/NetHandler.cpp
+        tests/Serializer.cpp
+        tests/Packet.cpp)
 
 add_library (zeusTest ${ZEUS_TEST_FILES})

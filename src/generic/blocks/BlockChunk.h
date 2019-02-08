@@ -25,8 +25,8 @@ public:
 
     bool setBlock(glm::vec3* pos, int ind);
 
-    std::vector<int>* rleEncode();
-    void rleDecode(std::vector<int>* blocksRle);
+    std::vector<int> rleEncode();
+    void rleDecode(std::vector<int>& blocksRle);
 
     std::string serialize();
     bool deserialize(std::string gzip);

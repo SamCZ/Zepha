@@ -5,6 +5,7 @@
 
 #include "client/Client.h"
 #include "server/Server.h"
+#include "generic/network/Serializer.h"
 
 int main(int argc, char* argv[]) {
     std::string start = "client";

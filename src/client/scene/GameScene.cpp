@@ -77,16 +77,16 @@ GameScene::GameScene(ClientState* state) :
     auto m = new Mesh();
     m->create(squareVerts, squareInds);
 
-    auto square = new Entity();
-    square->create(m, crosshairTexture);
+    pointer = new Entity();
+    pointer->create(m, crosshairTexture);
 
     delete squareVerts;
     delete squareInds;
 
-    square->setPosition(glm::vec3(1, 18, 1));
-    square->setScale(0.5);
+    pointer->setPosition(glm::vec3(1, 18, 1));
+    pointer->setScale(0.5);
 
-    entities.push_back(square);
+    entities.push_back(pointer);
 }
 
 
@@ -99,6 +99,8 @@ void GameScene::update() {
 
     debugGui.update(player, world, window, blockAtlas, state->fps);
     world->update();
+
+    pointer->setPosition(*player->getPos() + glm::vec3(0, -1, 0));
 }
 
 void GameScene::draw() {

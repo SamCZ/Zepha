@@ -50,17 +50,13 @@ void ServerConnection::update() {
         }
     }
 
-    sendInterval++;
-//    if (sendInterval % 1 == 0) {
+    std::string pacman("Packet #" + std::to_string(sendCount));
+    sendCount++;
 
-//        std::string pacman("Packet #" + std::to_string(sendCount));
-//        sendCount++;
-//
-//        std::cout << pacman << std::endl;
-//
-//        ENetPacket* packet = enet_packet_create(pacman.c_str(), pacman.length() + 1, ENET_PACKET_FLAG_RELIABLE);
-//        enet_peer_send(server, 0, packet);
-//    }
+    std::cout << pacman << std::endl;
+
+    ENetPacket* packet = enet_packet_create(pacman.c_str(), pacman.length() + 1, ENET_PACKET_FLAG_RELIABLE);
+    enet_peer_send(handler.getPeer(), 0, packet);
 }
 
 void ServerConnection::cleanup() {

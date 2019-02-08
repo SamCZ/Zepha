@@ -1,4 +1,6 @@
 //
+// Packet implentation for easy manipulation. Can be converted into an ENet packet, or deserialized from one.
+//
 // Created by aurailus on 10/01/19.
 //
 
@@ -8,44 +10,31 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <enet/enet.h>
 
-class Packet {
-public:
-    typedef unsigned long PacketType;
-    typedef unsigned char PacketByte;
+#include "Serializer.h"
 
-    Packet() = default;
-    explicit Packet(PacketType p);
+struct Packet {
+    //Type Definitions
+    typedef int p_type;
 
-    void addIntegers(std::vector<int> &integers);
-    void addInt(int integer);
-    void addFloats(std::vector<float> &floats);
-    void addFloat(float floatVal);
-    void addString(std::string *string);
-    void addString(std::string string);
+    //Packet Types
+    const static p_type UNDEFINED    = 0;
+    const static p_type HANDSHAKE    = 1;
+    const static p_type AUTHENTICATE = 2;
+    const static p_type PLAYERINFO   = 3;
+    const static p_type CHUNKINFO    = 4;
 
-    unsigned long length = 0;
-    PacketType type = UNDEFINED;
-    std::vector<PacketByte> data;
+    Packet();
+    explicit Packet(p_type p);
+    explicit Packet(ENetPacket* packet);
+
+    ENetPacket* toENetPacket();
+
+    p_type type = UNDEFINED;
+    std::string data;
 
     ~Packet() = default;
-
-    static Packet* deserialize(std::vector<PacketByte> data);
-    std::vector<Packet::PacketByte> serialize();
-
-    static void  encodeInt(std::vector<PacketByte> &target, int num);
-    static int   decodeInt(PacketByte* intStart);
-    static void  encodeFloat(std::vector<PacketByte> &target, float num);
-    static float decodeFloat(PacketByte* floatStart);
-
-    static std::string intVecToString(std::vector<int>* vec);
-    static std::vector<int>* stringToIntVec(std::string str);
-public:
-    const static PacketType UNDEFINED    = 0;
-    const static PacketType HANDSHAKE    = 1;
-    const static PacketType AUTHENTICATE = 2;
-    const static PacketType PLAYERINFO   = 3;
-    const static PacketType CHUNKINFO    = 4;
 };
 
 

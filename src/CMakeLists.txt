@@ -82,6 +82,9 @@ set(ZEUS_SRC_FILES
         generic/gen/MapGen.h
         generic/network/NetHandler.cpp
         generic/network/NetHandler.h
-        client/graphics/gui/GameGui.cpp client/graphics/gui/GameGui.h)
+        client/graphics/gui/GameGui.cpp
+        client/graphics/gui/GameGui.h
+        generic/network/Serializer.cpp
+        generic/network/Serializer.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

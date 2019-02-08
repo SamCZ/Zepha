@@ -3,6 +3,7 @@
 //
 
 #include "BlockChunk.h"
+#include "../network/Serializer.h"
 
 #include <gzip/compress.hpp>
 #include <gzip/decompress.hpp>
@@ -47,8 +48,8 @@ bool BlockChunk::allAdjacentsExist() {
     return adjacent[0] && adjacent[1] && adjacent[2] && adjacent[3] && adjacent[4] && adjacent[5];
 }
 
-std::vector<int>* BlockChunk::rleEncode() {
-    auto rle = new std::vector<int>();
+std::vector<int> BlockChunk::rleEncode() {
+    std::vector<int> rle;
 
     int block = (*blocks)[0];
     int length = 1;
@@ -58,27 +59,27 @@ std::vector<int>* BlockChunk::rleEncode() {
             length++;
         }
         else {
-            rle->push_back(block);
-            rle->push_back(length);
+            rle.push_back(block);
+            rle.push_back(length);
             length = 1;
             block = (*blocks)[i];
         }
     }
 
-    rle->push_back(block);
-    rle->push_back(length);
+    rle.push_back(block);
+    rle.push_back(length);
 
     return rle;
 }
 
-void BlockChunk::rleDecode(std::vector<int> *blocksRle) {
+void BlockChunk::rleDecode(std::vector<int>& blocksRle) {
     auto blocks = new std::vector<int>(4096);
 
     int ind = 0;
 
-    for (int i = 0; i < blocksRle->size() / 2; i++) {
-        int block = (*blocksRle)[i*2];
-        int count = (*blocksRle)[i*2 + 1];
+    for (int i = 0; i < blocksRle.size() / 2; i++) {
+        int block = blocksRle[i*2];
+        int count = blocksRle[i*2 + 1];
 
         for (int j = 0; j < count; j++) {
             (*blocks)[ind++] = (block);
@@ -94,8 +95,9 @@ void BlockChunk::rleDecode(std::vector<int> *blocksRle) {
 
 std::string BlockChunk::serialize() {
     auto rle = rleEncode();
-    std::string str = Packet::intVecToString(rle);
-    delete rle;
+
+    std::string str;
+    Serializer::encodeIntVec(str, rle);
 
     return gzip::compress(str.data(), str.size());
 }
@@ -103,9 +105,11 @@ std::string BlockChunk::serialize() {
 
 //Returns a boolean indicating whether or not it was properly deserialized
 bool BlockChunk::deserialize(std::string gzip) {
+
     if (gzip::is_compressed(gzip.data(), gzip.length())) {
+
         auto str = gzip::decompress(gzip.data(), gzip.length());
-        auto rle = Packet::stringToIntVec(str);
+        auto rle = Serializer::decodeIntVec(str);
 
         rleDecode(rle);
         return true;
