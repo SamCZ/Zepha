@@ -25,26 +25,38 @@ void Server::update() {
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT: {
                 auto peer = connections.addPeer(event.peer);
-                auto player = connections.addPlayer(peer, "Aurailus");
+                connections.addPlayer(peer, "Aurailus");
                 break;
             }
             case ENET_EVENT_TYPE_RECEIVE: {
                 Packet p(event.packet);
 
-                if (p.type == PacketType::PLAYERINFO) {
-                    glm::vec3 playerPos = glm::vec3(
-                            Serializer::decodeFloat(&p.data[0]),
-                            Serializer::decodeFloat(&p.data[4]),
-                            Serializer::decodeFloat(&p.data[8])
-                    );
+                auto from = (ServerPeer*)event.peer->data;
+                auto player = from->player;
 
-                    Packet r(PacketType::ENTITYINFO);
+                if (player != nullptr) {
+                    if (p.type == PacketType::PLAYERINFO) {
 
-                    Serializer::encodeFloat(r.data, playerPos.x);
-                    Serializer::encodeFloat(r.data, playerPos.y - 1.0f);
-                    Serializer::encodeFloat(r.data, playerPos.z);
+                        //Update Player Object
+                        glm::vec3 newPos = glm::vec3(
+                                Serializer::decodeFloat(&p.data[0]),
+                                Serializer::decodeFloat(&p.data[4]),
+                                Serializer::decodeFloat(&p.data[8])
+                        );
+                        player->pos = newPos;
 
-                    r.sendTo(connections.players[0]->peer->peer, PacketChannel::ENTITYINFO);
+                        //Send All Clients the new positon
+                        Packet r(PacketType::ENTITYINFO);
+
+                        Serializer::encodeInt  (r.data, player->peer->index);
+                        Serializer::encodeFloat(r.data, newPos.x);
+                        Serializer::encodeFloat(r.data, newPos.y - 1.0f);
+                        Serializer::encodeFloat(r.data, newPos.z);
+
+                        for (auto peer : connections.peers) {
+                            r.sendTo(peer->peer, PacketChannel::ENTITYINFO);
+                        }
+                    }
                 }
 
                 enet_packet_destroy(event.packet);
@@ -54,6 +66,7 @@ void Server::update() {
                 connections.removePeer(event.peer);
                 break;
             }
+            case ENET_EVENT_TYPE_NONE:
             default:
                 break;
         }

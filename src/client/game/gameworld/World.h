@@ -14,12 +14,12 @@
 #include <gtc/type_ptr.hpp>
 
 #include "WorldThreadDefs.h"
-#include "../../generic/helpers/PerlinNoise.h"
-#include "../../generic/helpers/ArrayTrans3D.h"
-#include "../../generic/blocks/BlockAtlas.h"
-#include "../../generic/blocks/BlockChunk.h"
-#include "../../generic/gen/MapGen.h"
-#include "../graphics/mesh/MeshChunk.h"
+#include "../../../generic/helpers/PerlinNoise.h"
+#include "../../../generic/helpers/ArrayTrans3D.h"
+#include "../../../generic/blocks/BlockAtlas.h"
+#include "../../../generic/blocks/BlockChunk.h"
+#include "../../../generic/gen/MapGen.h"
+#include "../../graphics/mesh/MeshChunk.h"
 
 class World {
 public:

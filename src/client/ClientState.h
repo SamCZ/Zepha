@@ -14,5 +14,4 @@ struct ClientState {
     double deltaTime;
 };
 
-
 #endif //ZEUS_CLIENTSTATE_H

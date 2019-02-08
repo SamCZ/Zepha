@@ -45,53 +45,11 @@ GameScene::GameScene(ClientState* state) :
 
     debugGui.pushGuiObjects(guiEntities);
     gui.pushGuiObjects(guiEntities);
-
-    auto crosshairTexture = new Texture((char*)"../res/tex/gui/crosshair.png");
-    crosshairTexture->load();
-
-    auto squareVerts = new std::vector<float> {
-            -0.5, -0.5, 0, 0, 0, 0, 0, 0,
-            -0.5,  0.5, 0, 0, 1, 0, 0, 0,
-             0.5,  0.5, 0, 1, 1, 0, 0, 0,
-             0.5, -0.5, 0, 1, 0, 0, 0, 0,
-
-             0, -0.5, -0.5, 0, 0, 0, 0, 0,
-             0,  0.5, -0.5, 0, 1, 0, 0, 0,
-             0,  0.5,  0.5, 1, 1, 0, 0, 0,
-             0, -0.5,  0.5, 1, 0, 0, 0, 0,
-
-            -0.5, 0, -0.5, 0, 0, 0, 0, 0,
-             0.5, 0, -0.5, 0, 1, 0, 0, 0,
-             0.5, 0,  0.5, 1, 1, 0, 0, 0,
-            -0.5, 0,  0.5, 1, 0, 0, 0, 0,
-    };
-    auto squareInds = new std::vector<unsigned int> {
-            0, 1, 2, 2, 3, 0,
-            0, 2, 1, 2, 0, 3,
-            4, 5, 6, 6, 7, 4,
-            4, 6, 5, 6, 4, 7,
-            8, 9, 10, 10, 11, 8,
-            8, 10, 9, 10, 8, 11
-    };
-
-    auto m = new Mesh();
-    m->create(squareVerts, squareInds);
-
-    pointer = new Entity();
-    pointer->create(m, crosshairTexture);
-
-    delete squareVerts;
-    delete squareInds;
-
-    pointer->setPosition(glm::vec3(1, 18, 1));
-    pointer->setScale(0.5);
-
-    entities.push_back(pointer);
 }
 
 
 void GameScene::update() {
-    server->update(*player, *pointer);
+    server->update(*player, playerEntities);
 
     auto window = state->renderer->getWindow();
 
@@ -99,8 +57,6 @@ void GameScene::update() {
 
     debugGui.update(player, world, window, blockAtlas, state->fps);
     world->update();
-
-//    pointer->setPosition(*player->getPos() + glm::vec3(0, -1, 0));
 }
 
 void GameScene::draw() {
@@ -115,6 +71,18 @@ void GameScene::draw() {
     Texture* prevTexture = nullptr;
 
     for (auto &entity : entities) {
+        auto newTexture = entity->getTexture();
+
+        if (newTexture != nullptr && newTexture != prevTexture) {
+            prevTexture = newTexture;
+            newTexture->use();
+        }
+
+        state->renderer->draw(entity);
+    }
+
+    //TEMPORARY
+    for (auto &entity : playerEntities) {
         auto newTexture = entity->getTexture();
 
         if (newTexture != nullptr && newTexture != prevTexture) {

@@ -13,13 +13,14 @@
 
 #include "../lua/LuaParser.h"
 
-#include "../gameworld/World.h"
-#include "../gameworld/Player.h"
+#include "gameworld/World.h"
+#include "gameworld/Player.h"
 
 #include "../network/ServerConnection.h"
 
 #include "../../generic/blocks/TextureAtlas.h"
 #include "../../generic/blocks/BlockAtlas.h"
+#include "gameworld/PlayerEntity.h"
 
 class GameScene : public Scene {
 public:
@@ -40,12 +41,12 @@ public:
     //Entities to be drawn with gameworld shaders
     std::vector<Entity*> entities;
 
+    std::vector<PlayerEntity*> playerEntities;
+
     //GUI Related things
     std::vector<Entity*> guiEntities;
     DebugGui debugGui;
     GameGui gui;
-
-    Entity* pointer;
 };
 
 

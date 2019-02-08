@@ -30,15 +30,15 @@ set(ZEUS_SRC_FILES
         generic/blocks/BlockModel.h
         generic/blocks/TextureAtlas.cpp
         generic/blocks/TextureAtlas.h
-        client/gameworld/World.cpp
-        client/gameworld/World.h
+        client/game/gameworld/World.cpp
+        client/game/gameworld/World.h
         generic/blocks/BlockChunk.cpp
         generic/blocks/BlockChunk.h
         generic/helpers/ArrayTrans3D.h
         client/graphics/mesh/MeshChunk.cpp
         client/graphics/mesh/MeshChunk.h
-        client/scene/GameScene.cpp
-        client/scene/GameScene.h
+        client/game/GameScene.cpp
+        client/game/GameScene.h
         client/engine/graphics/Renderer.cpp
         client/engine/graphics/Renderer.h
         client/lua/LuaParser.cpp
@@ -52,8 +52,8 @@ set(ZEUS_SRC_FILES
         client/engine/graphics/HudText.h
         client/graphics/gui/DebugGui.cpp
         client/graphics/gui/DebugGui.h
-        client/gameworld/Player.cpp
-        client/gameworld/Player.h
+        client/game/gameworld/Player.cpp
+        client/game/gameworld/Player.h
         client/engine/Ray.cpp
         client/engine/Ray.h
         client/lua/l_register_blockmodel.cpp
@@ -66,8 +66,8 @@ set(ZEUS_SRC_FILES
         client/engine/scene/SceneManager.h
         client/engine/scene/Scene.h
         client/ClientState.h
-        client/scene/MenuScene.cpp
-        client/scene/MenuScene.h
+        client/menu/MenuScene.cpp
+        client/menu/MenuScene.h
         server/Server.cpp
         server/Server.h
         generic/network/Packet.cpp
@@ -76,8 +76,8 @@ set(ZEUS_SRC_FILES
         server/ServerPlayer.h
         client/network/ServerConnection.cpp
         client/network/ServerConnection.h
-        client/gameworld/WorldThreadDefs.cpp
-        client/gameworld/WorldThreadDefs.h
+        client/game/gameworld/WorldThreadDefs.cpp
+        client/game/gameworld/WorldThreadDefs.h
         generic/gen/MapGen.cpp
         generic/gen/MapGen.h
         generic/network/NetHandler.cpp
@@ -90,6 +90,6 @@ set(ZEUS_SRC_FILES
         server/ServerState.h
         server/ConnectionList.cpp
         server/ConnectionList.h
-        server/ServerPeer.h generic/network/PacketType.h generic/network/PacketType.h generic/network/PacketChannel.h)
+        server/ServerPeer.h generic/network/PacketType.h generic/network/PacketType.h generic/network/PacketChannel.h client/game/gameworld/PlayerEntity.cpp client/game/gameworld/PlayerEntity.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

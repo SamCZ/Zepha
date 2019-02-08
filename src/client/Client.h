@@ -5,12 +5,12 @@
 #ifndef ZEUS_CLIENT_H
 #define ZEUS_CLIENT_H
 
-#include "engine/graphics/Renderer.h"
 #include "ClientState.h"
+#include "engine/graphics/Renderer.h"
 #include "engine/scene/SceneManager.h"
 
-#include "scene/GameScene.h"
-#include "scene/MenuScene.h"
+#include "game/GameScene.h"
+#include "menu/MenuScene.h"
 
 #include "engine/Timer.h"
 

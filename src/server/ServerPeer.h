@@ -13,6 +13,7 @@ class ServerPlayer;
 struct ServerPeer {
     ENetPeer* peer;
     ServerPlayer* player;
+    int index;
 
     void cleanup() {};
 };

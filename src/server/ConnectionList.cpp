@@ -8,7 +8,7 @@
 ServerPeer* ConnectionList::addPeer(ENetPeer *eNetPeer) {
     printf("[INFO] %x:%u connected.\n", eNetPeer->address.host, eNetPeer->address.port);
 
-    auto peer = new ServerPeer {.peer = eNetPeer, .player = nullptr};
+    auto peer = new ServerPeer {.peer = eNetPeer, .player = nullptr, .index = peers.size()};
     eNetPeer->data = (void*)peer;
 
     peers.push_back(peer);

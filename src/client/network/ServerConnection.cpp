@@ -18,7 +18,7 @@ void ServerConnection::init() {
 }
 
 
-void ServerConnection::update(Player &player, Entity& pointer) {
+void ServerConnection::update(Player &player, std::vector<PlayerEntity*>& playerEntities) {
     ENetEvent event;
     while (handler.update(&event)) {
 
@@ -39,12 +39,25 @@ void ServerConnection::update(Player &player, Entity& pointer) {
                     player.setPos(playerPos);
                 }
                 else if (p.type == PacketType::ENTITYINFO) {
+                    int peer_id = Serializer::decodeInt(&p.data[0]);
+
                     glm::vec3 playerPos = glm::vec3(
-                            Serializer::decodeFloat(&p.data[0]),
                             Serializer::decodeFloat(&p.data[4]),
-                            Serializer::decodeFloat(&p.data[8])
+                            Serializer::decodeFloat(&p.data[8]),
+                            Serializer::decodeFloat(&p.data[12])
                     );
-                    pointer.setPosition(playerPos);
+
+                    bool found = false;
+                    for (auto plrEnt : playerEntities) {
+                        if (plrEnt->peer_id == peer_id) {
+                            plrEnt->setPosition(playerPos);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        playerEntities.push_back(new PlayerEntity(playerPos, peer_id));
+                    }
                 }
 
                 enet_packet_destroy(event.packet);

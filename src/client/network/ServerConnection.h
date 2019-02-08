@@ -13,14 +13,15 @@
 #include "../../generic/network/Packet.h"
 #include "../../generic/network/PacketType.h"
 #include "../../generic/network/NetHandler.h"
-#include "../../client/gameworld/Player.h"
+#include "../game/gameworld/Player.h"
+#include "../game/gameworld/PlayerEntity.h"
 
 class ServerConnection {
 public:
     ServerConnection(std::string address, unsigned short port);
 
     void init();
-    void update(Player& player, Entity& pointer);
+    void update(Player &player, std::vector<PlayerEntity*>& playerEntities);
     void cleanup();
 
     ~ServerConnection();

@@ -9,8 +9,8 @@
 #include <iostream>
 
 #include "World.h"
-#include "../engine/Camera.h"
-#include "../engine/Timer.h"
+#include "../../engine/Camera.h"
+#include "../../engine/Timer.h"
 
 class Player {
 public:

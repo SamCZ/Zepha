@@ -6,6 +6,7 @@
 
 ServerPlayer::ServerPlayer(ServerPeer *peer) {
     this->peer = peer;
+    peer->player = this;
 }
 
 ServerPlayer::~ServerPlayer() {
