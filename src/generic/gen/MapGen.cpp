@@ -25,6 +25,8 @@ void MapGen::getElevation(MapGen::MapGenJob &j) {
         localPos = ArrayTrans3D::indToVec(i);
         globalPos = glm::vec3(j.pos.x * 16 + localPos->x, j.pos.y * 16 + localPos->y, j.pos.z * 16 + localPos->z);
 
+//        j.elevation[i] = globalPos.y > 8 ? -1 : 2;
+
         int val = (int)floor(p.noise(globalPos.x / 16, 0, globalPos.z / 16) * 32);
         val /= (int)floor(p.noise(globalPos.x / 32, 0, globalPos.z / 32) * 16);
 

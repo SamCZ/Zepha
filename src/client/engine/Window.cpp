@@ -16,6 +16,8 @@ Window::Window(GLint windowWidth, GLint windowHeight) {
     mouseLocked = true;
     mouseDown = false;
 
+    resized = false;
+
     for (bool &key : keys) {
         key = false;
     }
@@ -79,7 +81,10 @@ int Window::initialize() {
 
     glfwSetWindowUserPointer(mainWindow, this);
     glfwSetKeyCallback(mainWindow, handleKeys);
+    glfwSetWindowSizeCallback(mainWindow, handleResize);
     glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+    glfwMaximizeWindow(mainWindow);
 
     return 0;
 }
@@ -138,9 +143,37 @@ void Window::handleKeys(GLFWwindow* glfwWindow, int key, int code, int action, i
         }
     }
 }
+
+void Window::handleResize(GLFWwindow *glfwWindow, int width, int height) {
+    auto window = static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
+
+    glfwGetFramebufferSize(glfwWindow, &window->bufferWidth, &window->bufferHeight);
+    glViewport(0, 0, window->bufferWidth, window->bufferHeight);
+    window->resized = true;
+}
 #pragma clang diagnostic pop
 
 Window::~Window() {
     glfwDestroyWindow(mainWindow);
     glfwTerminate();
+}
+
+GLfloat Window::getBufferWidth() {
+    return bufferWidth;
+}
+
+GLfloat  Window::getBufferHeight() {
+    return bufferHeight;
+}
+
+bool Window::getShouldClose() {
+    return (bool)glfwWindowShouldClose(mainWindow);
+}
+
+bool *Window::getKeysArray() {
+    return keys;
+}
+
+void Window::swapBuffers() {
+    glfwSwapBuffers(mainWindow);
 }

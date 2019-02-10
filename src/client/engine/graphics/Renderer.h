@@ -27,6 +27,8 @@ public:
     void enableGuiShader();
     void drawGui(Entity* entity);
 
+    void createMatrices();
+
     void end();
 
     Window* getWindow();

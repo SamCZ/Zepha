@@ -3,16 +3,19 @@
 //
 
 #include "DebugGui.h"
+#include "../../engine/graphics/Histogram.h"
 
 DebugGui::DebugGui() {
     fontTexture = new Texture((char*)"../res/tex/gui/font.png");
     fontTexture->load();
 
-    histogramTexture = new Texture((char*)"../res/tex/gui/histogram.png");
-    histogramTexture->load();
+    fpsHist = new Texture((char*)"../res/tex/gui/histogram.png");
+    fpsHist->load();
+    genHist = new Texture((char*)"../res/tex/gui/histogram_white.png");
+    genHist->load();
 
     alphaText = new HudText(fontTexture);
-    alphaText->set("Zeus Alpha 0.01");
+    alphaText->set("Zeus Alpha");
     alphaText->setScale(3);
     alphaText->setPosition(glm::vec3(8, 4, 0));
 
@@ -24,57 +27,27 @@ DebugGui::DebugGui() {
     playerText->setScale(2);
     playerText->setPosition(glm::vec3(8, 42, 0));
 
-    fpsHistogram = new Entity();
-    fpsHistogram->create(new Mesh(), histogramTexture);
-    fpsHistogram->setPosition(glm::vec3(8, 764, 0));
+    chunkUpdateHistogram = new Histogram(genHist, 120, 64, true);
+    chunkUpdateHistogram->setScale(glm::vec3(2, 32, 1));
+    chunkUpdateHistogram->setPosition(glm::vec3(870, 760, 0));
+
+    meshUpdateHistogram = new Histogram(genHist, 120, 64, true);
+    meshUpdateHistogram->setScale(glm::vec3(2, 32, 1));
+    meshUpdateHistogram->setPosition(glm::vec3(1118, 760, 0));
+
+    fpsHistogram = new Histogram(fpsHist, 120, 60, true);
+    fpsHistogram->setScale(glm::vec3(2, 20, 1));
+    fpsHistogram->setPosition(glm::vec3(8, 760, 0));
 }
 
 void DebugGui::pushGuiObjects(std::vector<Entity*> &list) {
     list.push_back(alphaText);
-    list.push_back(fpsText);
+//    list.push_back(fpsText);
     list.push_back(playerText);
+
+    list.push_back(chunkUpdateHistogram);
+    list.push_back(meshUpdateHistogram);
     list.push_back(fpsHistogram);
-}
-
-void DebugGui::fpsHistUpdate() {
-    std::vector<float> vertices;
-    std::vector<unsigned int> indices;
-
-    unsigned int indOffset = 0;
-    float xOffset = 0;
-    float width = 6;
-    float height = 0.5;
-    float i = 0.10;
-
-    for (double num : fpsHistory) {
-        float h = (float)num * height;
-        float sev = (float)std::round(9 - std::max(60 - num, 0.0)/6) / 10.0f;
-
-        auto columnVerts = std::vector<float> {
-                xOffset,         -h, 0,  sev  , sev,   0, 0, 0,
-                xOffset + width, -h, 0,  sev+i, sev,   0, 0, 0,
-                xOffset + width,  0, 0,  sev+i, sev+i, 0, 0, 0,
-                xOffset,          0, 0,  sev  , sev+i, 0, 0, 0,
-        };
-
-        for (float f : columnVerts) vertices.push_back(f);
-
-        indices.push_back(    indOffset);
-        indices.push_back(3 + indOffset);
-        indices.push_back(1 + indOffset);
-        indices.push_back(3 + indOffset);
-        indices.push_back(2 + indOffset);
-        indices.push_back(1 + indOffset);
-
-        xOffset += width;
-        indOffset += 4;
-    }
-
-    auto m = new Mesh();
-    m->create(&vertices, &indices);
-
-    fpsHistogram->cleanup();
-    fpsHistogram->create(m);
 }
 
 std::string string_float(float val) {
@@ -119,11 +92,11 @@ void DebugGui::update(Player* player, World* world, Window* window, BlockAtlas* 
     glm::vec3 chk = World::chunkVec(*player->getPos());
     glm::vec3 loc = World::localVec(*player->getPos());
 
-    if (fpsHistory.size() > FPS_HISTOGRAM_SIZE) fpsHistory.erase(fpsHistory.begin());
-
-    fpsHistory.push_back(fps);
     fpsText->set(string_double(fps) + " FPS");
-    fpsHistUpdate();
+    fpsHistogram->push_back((float)fps);
+
+    meshUpdateHistogram->push_back((float)world->lastMeshUpdates);
+    chunkUpdateHistogram->push_back((float)world->lastGenUpdates);
 
     using namespace std; //Temporary, delete when refactoring this
     playerText->set(

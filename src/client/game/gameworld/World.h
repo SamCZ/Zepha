@@ -87,7 +87,7 @@ public:
         return out;
     }
 
-    int lastGenUpdates, lastMeshUpdates;
+    int lastGenUpdates = 0, lastMeshUpdates = 0;
 private:
     //Global lists for storing blockChunks and meshChunks
     std::unordered_map<glm::vec3, BlockChunk*, vec3cmp> blockChunks;

@@ -5,6 +5,7 @@
 #ifndef ZEUS_DEBUGGUI_H
 #define ZEUS_DEBUGGUI_H
 
+#include "../../engine/graphics/Histogram.h"
 #include "../../engine/graphics/HudText.h"
 #include "../../engine/Window.h"
 #include "../../engine/Ray.h"
@@ -21,18 +22,13 @@ public:
     ~DebugGui();
 
 private:
-    void fpsHistUpdate();
-
     Texture* fontTexture;
-    Texture* histogramTexture;
+    Texture *fpsHist, *genHist;
 
-    HudText* fpsText;
-    HudText* alphaText;
-    HudText* playerText;
-    Entity* fpsHistogram;
-
-    const int FPS_HISTOGRAM_SIZE = 120;
-    std::vector<double> fpsHistory;
+    HudText*   fpsText;
+    HudText*   alphaText;
+    HudText*   playerText;
+    Histogram *chunkUpdateHistogram, *meshUpdateHistogram, *fpsHistogram;
 };
 
 

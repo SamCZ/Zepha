@@ -18,18 +18,19 @@ public:
 
     void update();
 
-    GLfloat getBufferWidth() { return bufferWidth; }
-    GLfloat getBufferHeight() { return bufferHeight; }
+    GLfloat getBufferWidth();
+    GLfloat getBufferHeight();
+    bool resized;
 
-    bool getShouldClose() { return (bool)glfwWindowShouldClose(mainWindow); }
+    bool getShouldClose();
 
-    bool* getKeysArray() { return keys; }
+    bool* getKeysArray();
     bool mouseIsDown();
 
     double getDeltaX();
     double getDeltaY();
 
-    void swapBuffers() { glfwSwapBuffers(mainWindow); }
+    void swapBuffers();
 
     ~Window();
 
@@ -47,6 +48,7 @@ private:
 
     //Static so that GLFW can run callback
     static void handleKeys(GLFWwindow* glfwWindow, int key, int code, int action, int mode);
+    static void handleResize(GLFWwindow* glfwWindow, int width, int height);
 
     double deltaX;
     double deltaY;

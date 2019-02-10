@@ -10,7 +10,7 @@
 struct ClientState {
     Renderer* renderer;
 
-    double fps;
+    double fps = 0;
     double deltaTime;
 };
 

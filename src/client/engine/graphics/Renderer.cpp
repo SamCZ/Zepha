@@ -27,8 +27,7 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) {
     uOrtho = guiShader->getUniformLocation("ortho");
     uGuiModel = guiShader->getUniformLocation("model");
 
-    projectionMatrix = glm::perspective(45.0f, window->getBufferWidth() / window->getBufferHeight(), 0.1f, 1000.0f);
-    orthographicMatrix = glm::ortho(0.0f, window->getBufferWidth(), window->getBufferHeight(), 0.0f, 0.0f, 100.0f);
+    createMatrices();
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
@@ -37,6 +36,10 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) {
 
 void Renderer::update() {
     window->update();
+    if (window->resized) {
+        createMatrices();
+        window->resized = false;
+    }
 }
 
 void Renderer::begin() {
@@ -86,4 +89,9 @@ Window *Renderer::getWindow() {
 
 Camera *Renderer::getCamera() {
     return camera;
+}
+
+void Renderer::createMatrices() {
+    projectionMatrix = glm::perspective(45.0f, window->getBufferWidth() / window->getBufferHeight(), 0.1f, 1000.0f);
+    orthographicMatrix = glm::ortho(0.0f, window->getBufferWidth(), window->getBufferHeight(), 0.0f, 0.0f, 100.0f);
 }
