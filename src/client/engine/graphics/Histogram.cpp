@@ -45,20 +45,19 @@ Mesh* Histogram::buildHistogramMesh() {
 
     unsigned int indOffset = 0;
     float xOffset = 0;
-    float i = 0.10;
 
     for (float num : history) {
         float distFromPointer = (xOffset <= insertionPoint) ? insertionPoint - xOffset : insertionPoint + 120 - xOffset;
-
-        float h = num / maxVal;
-        float section = std::round(9 - (float)fmax(maxVal - num, 0.0)/6) / 10.0f;
         float age = std::round((90 - (distFromPointer / length)*90)) / 100.0f;
 
+        float h = num / maxVal;
+        float sec = (float)std::round(9 - fmin(h, 1)*9) * 0.1f;
+
         auto columnVerts = std::vector<float> {
-            xOffset,     -h, 0, age,       section,   0, 0, 0,
-            xOffset + 1, -h, 0, age+0.01f, section,   0, 0, 0,
-            xOffset + 1,  0, 0, age+0.01f, section+i, 0, 0, 0,
-            xOffset,      0, 0, age,       section+i, 0, 0, 0,
+            xOffset,    -h, 0, age,       sec,       0, 0, 0,
+            xOffset + 1,-h, 0, age+0.01f, sec,       0, 0, 0,
+            xOffset + 1, 0, 0, age+0.01f, sec+0.10f, 0, 0, 0,
+            xOffset,     0, 0, age,       sec+0.10f, 0, 0, 0,
         };
 
         for (float f : columnVerts) vertices.push_back(f);

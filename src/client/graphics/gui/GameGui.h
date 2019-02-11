@@ -5,6 +5,7 @@
 #ifndef ZEUS_GAMEGUI_H
 #define ZEUS_GAMEGUI_H
 
+#include "../../engine/graphics/RectEntity.h"
 #include "../../engine/Entity.h"
 #include "../../ClientState.h"
 

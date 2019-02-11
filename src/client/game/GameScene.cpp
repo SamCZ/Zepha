@@ -30,9 +30,10 @@ GameScene::GameScene(ClientState* state) :
     //The scene requires the blockAtlas for meshing and handling inputs.
     world = new World(blockAtlas);
 
-    int SIZE = 12;
+    int SIZE = 10;
+    int SIZEV = 4;
     for (int i = -SIZE; i < SIZE; i++) {
-        for (int j = -12; j < 12; j++) {
+        for (int j = -SIZEV; j < SIZEV; j++) {
             for (int k = -SIZE; k < SIZE; k++) {
                 world->genNewChunk(glm::vec3(i, j, k));
             }

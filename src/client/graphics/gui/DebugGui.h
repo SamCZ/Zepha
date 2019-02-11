@@ -9,6 +9,7 @@
 #include "../../engine/graphics/HudText.h"
 #include "../../engine/Window.h"
 #include "../../engine/Ray.h"
+#include "../../engine/graphics/RectEntity.h"
 
 #include <sstream>
 
@@ -18,17 +19,20 @@ public:
 
     void pushGuiObjects(std::vector<Entity*> &list);
     void update(Player* player, World* world, Window* window, BlockAtlas* atlas, double fps);
+    void positionElements(int bufferWidth, int bufferHeight);
 
     ~DebugGui();
 
 private:
-    Texture* fontTexture;
-    Texture *fpsHist, *genHist;
+    Texture *fontTexture;
+    Texture *colorHistTexture, *whiteHistTexture;
 
-    HudText*   fpsText;
-    HudText*   alphaText;
-    HudText*   playerText;
-    Histogram *chunkUpdateHistogram, *meshUpdateHistogram, *fpsHistogram;
+    HudText    *dataText, *crosshairText;
+    RectEntity *dataBG,   *crosshairBG;
+
+    HudText    *chunkUpdateText,      *meshUpdateText,      *fpsText;
+    Histogram  *chunkUpdateHistogram, *meshUpdateHistogram, *fpsHistogram;
+    RectEntity *chunkUpdateBG,        *meshUpdateBG,        *fpsBG;
 };
 
 
