@@ -10,35 +10,35 @@
 #include <gzip/utils.hpp>
 
 BlockChunk::BlockChunk() {
-    this->blocks = new std::vector<int>();
+    this->blocks = std::vector<int>(4096);
 }
 
-BlockChunk::BlockChunk(std::vector<int>* blocks) {
-    this->blocks = blocks;
+BlockChunk::BlockChunk(std::vector<int> blocks) {
+    this->blocks = std::move(blocks);
 }
 
 int BlockChunk::getBlock(glm::vec3* pos) {
     unsigned int ind = ArrayTrans3D::vecToInd(pos);
     if (ind < 0 || ind >= 4096) return -1;
-    return blocks->at(ind);
+    return blocks[ind];
 }
 
 int BlockChunk::getBlock(int ind) {
     if (ind < 0 || ind >= 4096) return -1;
-    return blocks->at((unsigned long)ind);
+    return blocks[ind];
 }
 
 int BlockChunk::getBlock(int x, int y, int z) {
     unsigned int ind = ArrayTrans3D::vecToInd(x, y, z);
     if (ind < 0 || ind >= 4096) return -1;
-    return blocks->at(ind);
+    return blocks[ind];
 }
 
 bool BlockChunk::setBlock(glm::vec3* pos, int block) {
     unsigned int ind = ArrayTrans3D::vecToInd(pos);
     if (ind < 0 || ind >= 4096) return false;
-    if (blocks->at(ind) != block) {
-        (*blocks)[ind] = block;
+    if (blocks[ind] != block) {
+        blocks[ind] = block;
         return true;
     }
     return false;
@@ -51,18 +51,18 @@ bool BlockChunk::allAdjacentsExist() {
 std::vector<int> BlockChunk::rleEncode() {
     std::vector<int> rle;
 
-    int block = (*blocks)[0];
+    int block = blocks[0];
     int length = 1;
 
     for (int i = 1; i < 4096; i++) {
-        if ((*blocks)[i] == block) {
+        if (blocks[i] == block) {
             length++;
         }
         else {
             rle.push_back(block);
             rle.push_back(length);
             length = 1;
-            block = (*blocks)[i];
+            block = blocks[i];
         }
     }
 
@@ -73,7 +73,7 @@ std::vector<int> BlockChunk::rleEncode() {
 }
 
 void BlockChunk::rleDecode(std::vector<int>& blocksRle) {
-    auto blocks = new std::vector<int>(4096);
+    blocks = std::vector<int>(4096);
 
     int ind = 0;
 
@@ -82,15 +82,11 @@ void BlockChunk::rleDecode(std::vector<int>& blocksRle) {
         int count = blocksRle[i*2 + 1];
 
         for (int j = 0; j < count; j++) {
-            (*blocks)[ind++] = (block);
+            blocks[ind++] = (block);
 
-            if (ind >= 4096) goto exitloop;
+            if (ind >= 4096) return;
         }
     }
-
-    exitloop:
-    delete this->blocks;
-    this->blocks = blocks;
 }
 
 std::string BlockChunk::serialize() {

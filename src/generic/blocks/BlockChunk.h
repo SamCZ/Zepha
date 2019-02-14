@@ -14,7 +14,7 @@
 class BlockChunk {
 public:
     BlockChunk();
-    explicit BlockChunk(std::vector<int>* blocks);
+    explicit BlockChunk(std::vector<int> blocks);
 
     bool adjacent[6] = {false, false, false, false, false, false};
     bool allAdjacentsExist();
@@ -31,7 +31,7 @@ public:
     std::string serialize();
     bool deserialize(std::string gzip);
 private:
-    std::vector<int>* blocks;
+    std::vector<int> blocks;
 };
 
 #endif //GLPROJECT_BLOCKCHUNK_H

@@ -79,7 +79,7 @@ BlockChunk* MapGen::generate(glm::vec3 pos) {
 
         density -= ((pos.y * 16 + lp.y) / (HILLS_BASE_EFFECT * hills));
 
-        (*j.blocks)[i] = density > 0.5;
+        j.blocks[i] = density > 0.5;
     }
 
 

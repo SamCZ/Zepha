@@ -7,9 +7,9 @@
 #include "../../../src/generic/blocks/BlockChunk.h"
 
 BlockChunk* getRandomChunk() {
-    auto v = new std::vector<int>(4096);
+    auto v = std::vector<int>(4096);
     for (int i = 0; i < 4096; i++) {
-        (*v)[i] = (int)random()%10;
+        v[i] = (int)random()%10;
     }
     return new BlockChunk(v);
 }

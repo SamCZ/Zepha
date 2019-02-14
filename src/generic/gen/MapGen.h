@@ -39,14 +39,14 @@ private:
         std::vector<int>
             elevation,
             biome,
-            *blocks;
+            blocks;
         glm::vec3 pos = glm::vec3(0, 0, 0);
 
         explicit MapGenJob(glm::vec3 pos) {
             this->pos = pos;
             elevation.reserve(4096);
             biome.reserve(4096);
-            blocks = new std::vector<int>(4096);
+            blocks = std::vector<int>(4096);
         }
     };
 
