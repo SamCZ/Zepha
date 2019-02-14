@@ -47,7 +47,7 @@ void MeshGenerator::build(BlockChunk* chunk, BlockAtlas* atlas, std::vector<bool
     for (int i = 0; i < 4096; i++) {
         if (blockData(i, chunk, atlas)->getModel()->visible) {
 
-            ArrayTrans3D::indAssignVec(i, &off);
+            ArrayTrans3D::indAssignVec(i, off);
             BlockModel* model = blockData(i, chunk, atlas)->getModel();
 
             check.x = off.x - 1; check.y = off.y; check.z = off.z;

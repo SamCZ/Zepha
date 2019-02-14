@@ -48,6 +48,9 @@ void Client::start(char* path) {
 }
 
 void Client::loop() {
+    //VSync 1 = On, 0 = Off
+    glfwSwapInterval(1);
+
     Timer t("Client Loop");
 
     double now = glfwGetTime();

@@ -45,8 +45,6 @@ Define 5 positional coordinates for each face.
 
 --]]
 
--- print(#zeus.registered_blockmodels);
-
 -- Create cube model
 zeus.register_blockmodel("default:block", {
     {
@@ -325,8 +323,6 @@ zeus.register_blockmodel("default:block_side_foliage", {
     }
 })
 
--- dump(zeus.registered_blockmodels["default:cube"]);
-
 --[[
 
 **Block Creation**
@@ -407,48 +403,14 @@ zeus.register_block('default:wood', {
 })
 
 -- TallGrass
-zeus.register_block("default:tallgrass_1", {
-    culls = false,
-    solid = false,
-    name = "Tall Grass",
-    model = "default:plantlike",
-    textures = {
-        "default_tallgrass_1",
-    }
-})
-zeus.register_block("default:tallgrass_2", {
-    culls = false,
-    solid = false,
-    name = "Tall Grass",
-    model = "default:plantlike",
-    textures = {
-        "default_tallgrass_2",
-    }
-})
-zeus.register_block("default:tallgrass_3", {
-    culls = false,
-    solid = false,
-    name = "Tall Grass",
-    model = "default:plantlike",
-    textures = {
-        "default_tallgrass_3",
-    }
-})
-zeus.register_block("default:tallgrass_4", {
-    culls = false,
-    solid = false,
-    name = "Tall Grass",
-    model = "default:plantlike",
-    textures = {
-        "default_tallgrass_4",
-    }
-})
-zeus.register_block("default:tallgrass_5", {
-    culls = false,
-    solid = false,
-    name = "Tall Grass",
-    model = "default:plantlike",
-    textures = {
-        "default_tallgrass_5",
-    }
-})
+for i=1,5,1 do
+    zeus.register_block("default:tallgrass_" .. i, {
+        culls = false,
+        solid = false,
+        name = "Tall Grass",
+        model = "default:plantlike",
+        textures = {
+            "default_tallgrass_" .. i,
+        }
+    })
+end

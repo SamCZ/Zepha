@@ -44,9 +44,6 @@ int Window::initialize() {
 //    glfwWindowHint(GLFW_SAMPLES, 16);
 //    glEnable(GL_MULTISAMPLE);
 
-    //VSync 1 = On, 0 = Off
-    glfwSwapInterval(0);
-
     //Create the window
     mainWindow = glfwCreateWindow(width, height, "Zeus Alpha", nullptr, nullptr);
 

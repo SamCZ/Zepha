@@ -66,6 +66,17 @@ DebugGui::DebugGui() {
     fpsText = new HudText(fontTexture);
     fpsText->setScale(2);
 
+    drawCallsHistogram = new Histogram(whiteHistTexture, 240, 0, false);
+    drawCallsHistogram->setScale(glm::vec3(1, 20, 1));
+
+    drawCallsBG = new RectEntity(
+            glm::vec4(0.1, 0.1, 0.1, 0.2), glm::vec4(0.1, 0.1, 0.1, 0.2),
+            glm::vec4(0.1, 0.1, 0.1, 0.7), glm::vec4(0.1, 0.1, 0.1, 0.7));
+    drawCallsBG->setScale(glm::vec3(244, 64, 1));
+
+    drawCallsText = new HudText(fontTexture);
+    drawCallsText->setScale(2);
+
     positionElements(1920, 1000);
 }
 
@@ -81,6 +92,7 @@ void DebugGui::positionElements(int bufferWidth, int bufferHeight) {
     glm::vec2 meshUpdatePos(bufferWidth - 254, bufferHeight - 70 - 80);
     glm::vec2 chunkUpdatePos(bufferWidth - 254, bufferHeight - 70);
     glm::vec2 fpsPos(10, bufferHeight - 70);
+    glm::vec2 drawCallsPos(10, bufferHeight - 70 - 80);
 
     meshUpdateText->setPosition(glm::vec3(meshUpdatePos.x + 4, meshUpdatePos.y + 8, 0));
     meshUpdateHistogram->setPosition(glm::vec3(meshUpdatePos.x + 2, meshUpdatePos.y + 60, -1));
@@ -93,6 +105,10 @@ void DebugGui::positionElements(int bufferWidth, int bufferHeight) {
     fpsText->setPosition(glm::vec3(fpsPos.x + 4, fpsPos.y + 8, 0));
     fpsHistogram->setPosition(glm::vec3(fpsPos.x + 2, fpsPos.y + 60, -1));
     fpsBG->setPosition(glm::vec3(fpsPos.x, fpsPos.y, -2));
+
+    drawCallsText->setPosition(glm::vec3(drawCallsPos.x + 4, drawCallsPos.y + 8, 0));
+    drawCallsHistogram->setPosition(glm::vec3(drawCallsPos.x + 2, drawCallsPos.y + 60, -1));
+    drawCallsBG->setPosition(glm::vec3(drawCallsPos.x, drawCallsPos.y, -2));
 }
 
 void DebugGui::pushGuiObjects(std::vector<Entity*> &list) {
@@ -113,6 +129,10 @@ void DebugGui::pushGuiObjects(std::vector<Entity*> &list) {
     list.push_back(fpsBG);
     list.push_back(fpsHistogram);
     list.push_back(fpsText);
+
+    list.push_back(drawCallsBG);
+    list.push_back(drawCallsHistogram);
+    list.push_back(drawCallsText);
 }
 
 std::string string_float(float val) {
@@ -123,7 +143,7 @@ std::string string_float(float val) {
     return s;
 }
 
-void DebugGui::update(Player* player, World* world, Window* window, BlockAtlas* atlas, double fps) {
+void DebugGui::update(Player* player, World* world, Window* window, BlockAtlas* atlas, double fps, int updates) {
     using namespace std;
 
     glm::vec3 round = World::roundVec(*player->getPos());
@@ -157,6 +177,9 @@ void DebugGui::update(Player* player, World* world, Window* window, BlockAtlas* 
 
     fpsText->set("FPS:" + string_float((float)fps));
     fpsHistogram->push_back((float)fps);
+
+    drawCallsText->set("ChunkDraws:" + to_string(updates));
+    drawCallsHistogram->push_back(updates);
 
     meshUpdateHistogram->push_back((float)world->lastMeshUpdates);
     meshUpdateText->set("Mesh:" + to_string(world->lastMeshUpdates));

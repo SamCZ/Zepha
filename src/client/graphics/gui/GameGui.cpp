@@ -13,7 +13,7 @@ GameGui::GameGui(ClientState* state) {
     float xx = state->renderer->getWindow()->getBufferWidth()/2;
     float yy = state->renderer->getWindow()->getBufferHeight()/2;
 
-    crosshair->setPosition(glm::vec3(xx - 11, yy - 11, 0));
+    crosshair->setPosition(glm::vec3(xx - 11, yy - 9, 0));
     crosshair->setScale(22);
 }
 

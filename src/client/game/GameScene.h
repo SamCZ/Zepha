@@ -47,6 +47,8 @@ public:
     std::vector<Entity*> guiEntities;
     DebugGui debugGui;
     GameGui gui;
+
+    int drawCalls;
 };
 
 

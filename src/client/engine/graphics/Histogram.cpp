@@ -7,6 +7,8 @@
 Histogram::Histogram(Texture *texture, int length, float maxVal, bool editInPlace) {
     this->length = length;
     this->maxVal = maxVal;
+    this->dynamicMax = (maxVal <= 0);
+
     this->editInPlace = editInPlace;
 
     this->history = std::vector<float>((unsigned long)length);
@@ -31,6 +33,12 @@ void Histogram::push_back(float value) {
         }
         history[insertionPoint] = value;
     }
+    if (dynamicMax) {
+        maxVal = 0;
+        for (float i : history) {
+            if (i > maxVal) maxVal = i;
+        }
+    }
 
     cleanup();
     delete mesh;
@@ -47,7 +55,7 @@ Mesh* Histogram::buildHistogramMesh() {
     float xOffset = 0;
 
     for (float num : history) {
-        float distFromPointer = (xOffset <= insertionPoint) ? insertionPoint - xOffset : insertionPoint + 120 - xOffset;
+        float distFromPointer = (xOffset <= insertionPoint) ? insertionPoint - xOffset : insertionPoint + length - xOffset;
         float age = std::round((90 - (distFromPointer / length)*90)) / 100.0f;
 
         float h = num / maxVal;

@@ -34,7 +34,7 @@ void ConnectionList::removePeer(ENetPeer *eNetPeer) {
 ServerPlayer* ConnectionList::addPlayer(ServerPeer *peer, std::string uuid) {
     printf("[INFO] Creating player %s for %x:%u.\n", uuid.c_str(), peer->peer->address.host, peer->peer->address.port);
     auto player = new ServerPlayer(peer);
-    player->pos = glm::vec3(0, 64, 0);
+    player->pos = glm::vec3(-8, 32, -8);
 
     //Send Initialization Data
     auto packet = player->getInitPacket();

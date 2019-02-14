@@ -17,7 +17,8 @@ public:
 private:
     Mesh* buildHistogramMesh();
 
-    float maxVal = 1;
+    float maxVal = 0;
+    bool dynamicMax = true;
 
     int length = 60;
     int insertionPoint = 0;

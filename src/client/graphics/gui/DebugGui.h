@@ -18,7 +18,7 @@ public:
     DebugGui();
 
     void pushGuiObjects(std::vector<Entity*> &list);
-    void update(Player* player, World* world, Window* window, BlockAtlas* atlas, double fps);
+    void update(Player* player, World* world, Window* window, BlockAtlas* atlas, double fps, int drawCalls);
     void positionElements(int bufferWidth, int bufferHeight);
 
     ~DebugGui();
@@ -30,9 +30,9 @@ private:
     HudText    *dataText, *crosshairText;
     RectEntity *dataBG,   *crosshairBG;
 
-    HudText    *chunkUpdateText,      *meshUpdateText,      *fpsText;
-    Histogram  *chunkUpdateHistogram, *meshUpdateHistogram, *fpsHistogram;
-    RectEntity *chunkUpdateBG,        *meshUpdateBG,        *fpsBG;
+    HudText    *chunkUpdateText,      *meshUpdateText,      *fpsText,      *drawCallsText;
+    Histogram  *chunkUpdateHistogram, *meshUpdateHistogram, *fpsHistogram, *drawCallsHistogram;
+    RectEntity *chunkUpdateBG,        *meshUpdateBG,        *fpsBG,        *drawCallsBG;
 };
 
 

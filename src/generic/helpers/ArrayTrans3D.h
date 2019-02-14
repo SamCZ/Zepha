@@ -14,11 +14,11 @@ class ArrayTrans3D {
     static const int SIZE = 16;
 
 public:
-    static void indAssignVec(int ind, glm::vec3* vec) {
-        vec->z = ind / (SIZE * SIZE);
-        ind -= ((int)vec->z * SIZE * SIZE);
-        vec->y = ind / SIZE;
-        vec->x = ind % SIZE;
+    static void indAssignVec(int ind, glm::vec3& vec) {
+        vec.z = ind / (SIZE * SIZE);
+        ind -= ((int)vec.z * SIZE * SIZE);
+        vec.y = ind / SIZE;
+        vec.x = ind % SIZE;
     }
 
     static glm::vec3* indToVec(int ind) {

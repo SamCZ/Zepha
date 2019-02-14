@@ -84,8 +84,8 @@ TextureAtlas::TextureAtlas(const char* directory) {
     });
 
     //Define the texpage width and height
-    int pageWidth = 256;
-    int pageHeight = 256;
+    int pageWidth = 1024;
+    int pageHeight = pageWidth;
 
     //Define that pagedata array and clean the memory it contains
     auto* pageData = new unsigned char[pageWidth*4 * pageHeight];

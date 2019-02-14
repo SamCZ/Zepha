@@ -30,19 +30,27 @@ GameScene::GameScene(ClientState* state) :
     //The scene requires the blockAtlas for meshing and handling inputs.
     world = new World(blockAtlas);
 
-    int SIZE = 10;
-    int SIZEV = 4;
+    int SIZE = 16;
+    int SIZEV = SIZE;
     for (int i = -SIZE; i < SIZE; i++) {
-        for (int j = -SIZEV; j < SIZEV; j++) {
+        for (int j = -SIZE; j < SIZEV; j++) {
             for (int k = -SIZE; k < SIZE; k++) {
                 world->genNewChunk(glm::vec3(i, j, k));
             }
         }
     }
+//
+//    world->genNewChunk(glm::vec3(0, 0, 0));
+//
+//    world->genNewChunk(glm::vec3(0, 1, 0));
+//    world->genNewChunk(glm::vec3(0, -1, 0));
+//    world->genNewChunk(glm::vec3(1, 0, 0));
+//    world->genNewChunk(glm::vec3(-1, 0, 0));
+//    world->genNewChunk(glm::vec3(0, 0, 1));
+//    world->genNewChunk(glm::vec3(0, 0, -1));
 
     player = new Player();
     player->create(world, state->renderer->getCamera());
-    player->setPos(glm::vec3(0, 22, 0));
 
     debugGui.pushGuiObjects(guiEntities);
     gui.pushGuiObjects(guiEntities);
@@ -56,7 +64,7 @@ void GameScene::update() {
 
     player->update(window->getKeysArray(), state->deltaTime, window->getDeltaX(), window->getDeltaY());
 
-    debugGui.update(player, world, window, blockAtlas, state->fps);
+    debugGui.update(player, world, window, blockAtlas, state->fps, drawCalls);
     world->update();
 }
 
@@ -66,8 +74,12 @@ void GameScene::draw() {
 
     textureAtlas->getTexture()->use();
 
-    for (auto &chunk : *world->getMeshChunks())
+    drawCalls = 0;
+
+    for (auto &chunk : *world->getMeshChunks()) {
         state->renderer->draw(chunk.second);
+        drawCalls++;
+    }
 
     Texture* prevTexture = nullptr;
 
