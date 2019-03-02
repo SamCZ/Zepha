@@ -90,6 +90,17 @@ set(ZEUS_SRC_FILES
         server/ServerState.h
         server/ConnectionList.cpp
         server/ConnectionList.h
-        server/ServerPeer.h generic/network/PacketType.h generic/network/PacketType.h generic/network/PacketChannel.h client/game/gameworld/PlayerEntity.cpp client/game/gameworld/PlayerEntity.h client/engine/graphics/Histogram.cpp client/engine/graphics/Histogram.h client/engine/graphics/RectEntity.cpp client/engine/graphics/RectEntity.h)
+        server/ServerPeer.h
+        generic/network/PacketType.h
+        generic/network/PacketType.h
+        generic/network/PacketChannel.h
+        client/game/gameworld/PlayerEntity.cpp
+        client/game/gameworld/PlayerEntity.h
+        client/engine/graphics/Histogram.cpp
+        client/engine/graphics/Histogram.h
+        client/engine/graphics/RectEntity.cpp
+        client/engine/graphics/RectEntity.h
+        generic/gen/MapGenJob.h
+        generic/helpers/Interpolation.h generic/noise/NoiseParams.h generic/noise/NoiseSampler.cpp generic/noise/NoiseSampler.h generic/noise/NoiseSample.cpp generic/noise/NoiseSample.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

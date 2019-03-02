@@ -96,15 +96,15 @@ private:
     void handleChunkGenQueue();
     void handleMeshGenQueue();
 
-    const int GEN_THREADS = 6;
-    const int GEN_QUEUE_SIZE = 16;
+    const int GEN_THREADS = 8;
+    const int GEN_QUEUE_SIZE = 8;
     const int GEN_FINISHED_SIZE = GEN_THREADS * GEN_QUEUE_SIZE;
 
     std::unordered_set<glm::vec3, vec3cmp> pendingGen;
     std::vector<ChunkThreadDef*> genThreads;
     std::vector<ChunkThreadData*> finishedGen;
 
-    const int MESH_THREADS = 6;
+    const int MESH_THREADS = 8;
     const int MESH_QUEUE_SIZE = 8;
     const int MESH_FINISHED_SIZE = GEN_THREADS * GEN_QUEUE_SIZE;
 

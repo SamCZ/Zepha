@@ -9,7 +9,7 @@
 
 World::World(BlockAtlas *atlas) {
     blockAtlas = atlas;
-    mapGen = new MapGen(0);
+    mapGen = new MapGen(1337);
 
     for (int i = 0; i < GEN_THREADS; i++) {
         genThreads.push_back(new ChunkThreadDef(mapGen));
