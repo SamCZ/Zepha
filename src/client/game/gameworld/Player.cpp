@@ -32,8 +32,8 @@ void Player::posUpdate(bool *keys, double delta) {
         moveMult *= 2;
     }
 
-    glm::vec3 frontFlat = glm::normalize(glm::vec3(camera->front.x, 0, camera->front.z));
-    glm::vec3 rightFlat = glm::normalize(glm::vec3(camera->right.x, 0, camera->right.z));
+    glm::vec3 frontFlat = glm::normalize(glm::vec3(camera->getFront()->x, 0, camera->getFront()->z));
+    glm::vec3 rightFlat = glm::normalize(glm::vec3(camera->getRight()->x, 0, camera->getRight()->z));
 
     auto mod = glm::vec3(0, 0, 0);
 

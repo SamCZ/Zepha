@@ -6,30 +6,56 @@
 
 Camera::Camera() = default;
 
-void Camera::create(glm::vec3 up) {
+void Camera::create(float buffWidth, float buffHeight, glm::vec3 up) {
+    this->bufferDimensions = glm::vec2(buffWidth, buffHeight);
+
     this->position = glm::vec3(0, 0, 0);
+
     this->worldUp = up;
     this->yaw = 0;
     this->pitch = 0;
     this->front = glm::vec3(0.0f, 0.0f, -1.0f);
 
-    update();
+    createMatrices();
 }
 
-glm::mat4 Camera::calculateViewMatrix() {
+void Camera::createMatrices() {
+    projectionMatrix = glm::perspective(45.0f, bufferDimensions.x / bufferDimensions.y, 0.1f, 1000.0f);
+    orthographicMatrix = glm::ortho(0.0f, bufferDimensions.x, bufferDimensions.y, 0.0f, 0.0f, 100.0f);
+}
+
+void Camera::changeWindowDimensions(float buffWidth, float buffHeight) {
+    this->bufferDimensions = glm::vec2(buffWidth, buffHeight);
+    createMatrices();
+}
+
+glm::mat4* Camera::getProjectionMatrix() {
+    return &projectionMatrix;
+}
+
+glm::mat4 *Camera::getOrthographicMatrix() {
+    return &orthographicMatrix;
+}
+
+glm::mat4 Camera::getViewMatrix() {
+    update();
     return glm::lookAt(position, position + front, up);
+}
+
+void Camera::setPosition(glm::vec3 pos) {
+    position = pos;
+}
+
+glm::vec3 *Camera::getPosition() {
+    return &position;
 }
 
 void Camera::setYaw(double yaw) {
     this->yaw = yaw;
-
-    update();
 }
 
 void Camera::setPitch(double pitch) {
     this->pitch = pitch;
-
-    update();
 }
 
 void Camera::update() {
@@ -42,12 +68,16 @@ void Camera::update() {
     up = glm::normalize(glm::cross(right, front));
 }
 
-glm::vec3 *Camera::getPosition() {
-    return &position;
+glm::vec3 *Camera::getFront() {
+    return &front;
 }
 
-void Camera::setPosition(glm::vec3 pos) {
-    position = pos;
+glm::vec3 *Camera::getRight() {
+    return &right;
+}
+
+glm::vec2 Camera::getBufferDimensions() {
+    return bufferDimensions;
 }
 
 Camera::~Camera() = default;

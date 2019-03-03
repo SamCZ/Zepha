@@ -27,20 +27,20 @@ public:
     void enableGuiShader();
     void drawGui(Entity* entity);
 
-    void createMatrices();
-
     void end();
 
     Window* getWindow();
     Camera* getCamera();
 
     ~Renderer();
+
+    bool resized;
 private:
     Window* window;
     Camera* camera;
 
-    glm::mat4 projectionMatrix;
-    glm::mat4 orthographicMatrix;
+    glm::mat4* projectionMatrix;
+    glm::mat4* orthographicMatrix;
 
     //World Shader
     Shader* worldShader;

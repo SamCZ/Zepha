@@ -15,11 +15,13 @@
 
 class DebugGui {
 public:
-    DebugGui();
+    DebugGui(glm::vec2 bufferSize);
+
+    void bufferResized(glm::vec2 bufferSize);
 
     void pushGuiObjects(std::vector<Entity*> &list);
     void update(Player* player, World* world, Window* window, BlockAtlas* atlas, double fps, int drawCalls);
-    void positionElements(int bufferWidth, int bufferHeight);
+    void positionElements(glm::vec2 bufferSize);
 
     ~DebugGui();
 

@@ -5,7 +5,7 @@
 #include "DebugGui.h"
 #include "../../engine/graphics/Histogram.h"
 
-DebugGui::DebugGui() {
+DebugGui::DebugGui(glm::vec2 bufferSize) {
     fontTexture = new Texture((char*)"../res/tex/gui/font.png");
     fontTexture->load();
 
@@ -77,10 +77,13 @@ DebugGui::DebugGui() {
     drawCallsText = new HudText(fontTexture);
     drawCallsText->setScale(2);
 
-    positionElements(1920, 1000);
+    positionElements(bufferSize);
 }
 
-void DebugGui::positionElements(int bufferWidth, int bufferHeight) {
+void DebugGui::positionElements(glm::vec2 bufferSize) {
+    auto bufferWidth = (int)bufferSize.x;
+    auto bufferHeight = (int)bufferSize.y;
+
     glm::vec2 crosshairTextPos(bufferWidth / 2 + 22, bufferHeight / 2 - 7);
 
     crosshairText->setPosition(glm::vec3(crosshairTextPos.x, crosshairTextPos.y, 0));
@@ -198,6 +201,10 @@ void DebugGui::update(Player* player, World* world, Window* window, BlockAtlas* 
     crosshairText->set(look);
     auto crosshairScale = crosshairBG->getScale();
     crosshairScale->x = look.size() * 7 * 2 + 10;
+}
+
+void DebugGui::bufferResized(glm::vec2 bufferSize) {
+    positionElements(bufferSize);
 }
 
 DebugGui::~DebugGui() = default;

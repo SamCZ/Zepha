@@ -11,7 +11,9 @@
 
 class GameGui {
 public:
-    explicit GameGui(ClientState* state);
+    GameGui(glm::vec2 bufferSize);
+
+    void bufferResized(glm::vec2 bufferSize);
 
     void pushGuiObjects(std::vector<Entity*> &list);
 

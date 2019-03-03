@@ -9,8 +9,8 @@
 
 GameScene::GameScene(ClientState* state) :
         Scene(state),
-        gui(state),
-        debugGui() {
+        gui(state->renderer->getCamera()->getBufferDimensions()),
+        debugGui(state->renderer->getCamera()->getBufferDimensions()) {
 
     server = new ServerConnection("127.0.0.1", 12345);
     server->init();
@@ -39,15 +39,6 @@ GameScene::GameScene(ClientState* state) :
             }
         }
     }
-//
-//    world->genNewChunk(glm::vec3(0, 0, 0));
-//
-//    world->genNewChunk(glm::vec3(0, 1, 0));
-//    world->genNewChunk(glm::vec3(0, -1, 0));
-//    world->genNewChunk(glm::vec3(1, 0, 0));
-//    world->genNewChunk(glm::vec3(-1, 0, 0));
-//    world->genNewChunk(glm::vec3(0, 0, 1));
-//    world->genNewChunk(glm::vec3(0, 0, -1));
 
     player = new Player();
     player->create(world, state->renderer->getCamera());
@@ -63,6 +54,13 @@ void GameScene::update() {
     auto window = state->renderer->getWindow();
 
     player->update(window->getKeysArray(), state->deltaTime, window->getDeltaX(), window->getDeltaY());
+
+    if (state->renderer->resized) {
+        debugGui.bufferResized(state->renderer->getCamera()->getBufferDimensions());
+        gui.bufferResized(state->renderer->getCamera()->getBufferDimensions());
+
+        state->renderer->resized = false;
+    }
 
     debugGui.update(player, world, window, blockAtlas, state->fps, drawCalls);
     world->update();

@@ -4,16 +4,13 @@
 
 #include "GameGui.h"
 
-GameGui::GameGui(ClientState* state) {
+GameGui::GameGui(glm::vec2 bufferSize) {
     crosshairTexture = new Texture((char*)"../res/tex/gui/crosshair.png");
     crosshairTexture->load();
 
     crosshair = new RectEntity(crosshairTexture);
 
-    float xx = state->renderer->getWindow()->getBufferWidth()/2;
-    float yy = state->renderer->getWindow()->getBufferHeight()/2;
-
-    crosshair->setPosition(glm::vec3(xx - 11, yy - 9, 0));
+    crosshair->setPosition(glm::vec3(bufferSize.x/2 - 11, bufferSize.y/2 - 9, 0));
     crosshair->setScale(22);
 }
 
@@ -24,4 +21,8 @@ void GameGui::pushGuiObjects(std::vector<Entity *> &list) {
 GameGui::~GameGui() {
     delete crosshair;
     delete crosshairTexture;
+}
+
+void GameGui::bufferResized(glm::vec2 bufferSize) {
+    crosshair->setPosition(glm::vec3(bufferSize.x/2 - 11, bufferSize.y/2 - 9, 0));
 }
