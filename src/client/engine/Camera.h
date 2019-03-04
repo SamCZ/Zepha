@@ -9,6 +9,7 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <GLFW/glfw3.h>
+#include "Frustum.h"
 
 class Camera {
 public:
@@ -33,20 +34,35 @@ public:
 
     glm::vec2 getBufferDimensions();
 
+    bool inFrustum(glm::vec3 &p);
+    int inFrustum(FrustumAABB &b);
+
     ~Camera();
 private:
+    //Window Size
     glm::vec2 bufferDimensions;
 
+    //Matrices
     glm::mat4 projectionMatrix;
     glm::mat4 orthographicMatrix;
 
-    glm::vec3 position;
+    //Perspective Matrix Properties
+    float fov = 45.0f;
+    float ratio;
+    float nearClip = 0.1f;
+    float farClip = 1000.0f;
 
+    //View Frustum
+    Frustum frustum;
+
+    //Movement translation variables
     glm::vec3 front;
     glm::vec3 up;
     glm::vec3 right;
     glm::vec3 worldUp;
 
+    //Angle and Position
+    glm::vec3 position;
     double yaw;
     double pitch;
 

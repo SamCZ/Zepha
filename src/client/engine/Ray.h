@@ -15,7 +15,7 @@ class Ray {
 public:
     Ray() = default;
     explicit Ray(Player* player);
-    Ray(glm::vec3 position, float yaw, float pitch);
+    Ray(glm::vec3 pos, float yaw, float pitch);
 
     void step(float scale);
     glm::vec3* getEnd();
@@ -23,9 +23,8 @@ public:
     float getLength();
 private:
     glm::vec3 start;
-    glm::vec3 position;
-    float yaw;
-    float pitch;
+    glm::vec3 pos;
+    glm::vec3 dir;
 };
 
 

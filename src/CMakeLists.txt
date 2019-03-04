@@ -101,6 +101,6 @@ set(ZEUS_SRC_FILES
         client/engine/graphics/RectEntity.cpp
         client/engine/graphics/RectEntity.h
         generic/gen/MapGenJob.h
-        generic/helpers/Interpolation.h generic/noise/NoiseParams.h generic/noise/NoiseSampler.cpp generic/noise/NoiseSampler.h generic/noise/NoiseSample.cpp generic/noise/NoiseSample.h)
+        generic/helpers/Interpolation.h generic/noise/NoiseParams.h generic/noise/NoiseSampler.cpp generic/noise/NoiseSampler.h generic/noise/NoiseSample.cpp generic/noise/NoiseSample.h client/engine/Frustum.cpp client/engine/Frustum.h client/engine/FrustumPlane.cpp client/engine/FrustumPlane.h client/engine/FrustumAABB.cpp client/engine/FrustumAABB.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

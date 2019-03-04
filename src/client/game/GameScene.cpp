@@ -67,6 +67,8 @@ void GameScene::update() {
 }
 
 void GameScene::draw() {
+    auto camera = state->renderer->getCamera();
+
     state->renderer->begin();
     state->renderer->enableWorldShader();
 
@@ -74,9 +76,17 @@ void GameScene::draw() {
 
     drawCalls = 0;
 
-    for (auto &chunk : *world->getMeshChunks()) {
-        state->renderer->draw(chunk.second);
-        drawCalls++;
+    for (auto &chunkPair : *world->getMeshChunks()) {
+        auto chunk = chunkPair.second;
+
+        FrustumAABB bbox(*chunk->getPosition(), glm::vec3(16, 16, 16));
+
+        if (camera->inFrustum(bbox) != Frustum::OUTSIDE) {
+
+            state->renderer->draw(chunk);
+            drawCalls++;
+
+        }
     }
 
     Texture* prevTexture = nullptr;

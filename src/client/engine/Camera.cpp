@@ -20,7 +20,11 @@ void Camera::create(float buffWidth, float buffHeight, glm::vec3 up) {
 }
 
 void Camera::createMatrices() {
-    projectionMatrix = glm::perspective(45.0f, bufferDimensions.x / bufferDimensions.y, 0.1f, 1000.0f);
+    ratio = bufferDimensions.x / bufferDimensions.y;
+
+    projectionMatrix = glm::perspective(fov, ratio, nearClip, farClip);
+    frustum.setCamInternals(fov, ratio, nearClip, farClip);
+
     orthographicMatrix = glm::ortho(0.0f, bufferDimensions.x, bufferDimensions.y, 0.0f, 0.0f, 100.0f);
 }
 
@@ -66,6 +70,8 @@ void Camera::update() {
 
     right = glm::normalize(glm::cross(front, worldUp));
     up = glm::normalize(glm::cross(right, front));
+
+    frustum.update(position, front, up, right);
 }
 
 glm::vec3 *Camera::getFront() {
@@ -78,6 +84,14 @@ glm::vec3 *Camera::getRight() {
 
 glm::vec2 Camera::getBufferDimensions() {
     return bufferDimensions;
+}
+
+bool Camera::inFrustum(glm::vec3 &p) {
+    return frustum.pointInFrustum(p) == Frustum::INSIDE;
+}
+
+int Camera::inFrustum(FrustumAABB &b) {
+    return frustum.boxInFrustum(b);
 }
 
 Camera::~Camera() = default;
