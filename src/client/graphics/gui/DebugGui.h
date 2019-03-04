@@ -20,20 +20,20 @@ public:
     void bufferResized(glm::vec2 bufferSize);
 
     void pushGuiObjects(std::vector<Entity*> &list);
-    void update(Player* player, World* world, Window* window, BlockAtlas* atlas, double fps, int drawCalls);
+    void update(Player* player, World* world, Window* window, BlockAtlas* atlas, double fps, int chunks, int drawCalls);
     void positionElements(glm::vec2 bufferSize);
 
     ~DebugGui();
 
 private:
     Texture *fontTexture;
-    Texture *colorHistTexture, *whiteHistTexture;
+    Texture *colorHistTexture, *whiteHistTexture, *transWhiteHistTexture;
 
     HudText    *dataText, *crosshairText;
     RectEntity *dataBG,   *crosshairBG;
 
     HudText    *chunkUpdateText,      *meshUpdateText,      *fpsText,      *drawCallsText;
-    Histogram  *chunkUpdateHistogram, *meshUpdateHistogram, *fpsHistogram, *drawCallsHistogram;
+    Histogram  *chunkUpdateHistogram, *meshUpdateHistogram, *fpsHistogram, *drawCallsHistogram, *chunkHistogram;
     RectEntity *chunkUpdateBG,        *meshUpdateBG,        *fpsBG,        *drawCallsBG;
 };
 

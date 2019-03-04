@@ -14,14 +14,16 @@ public:
     Histogram(Texture *texture, int length, float maxVal, bool editInPlace);
 
     void push_back(float value);
+    void setMax(float max);
 private:
     Mesh* buildHistogramMesh();
 
-    float maxVal = 0;
     bool dynamicMax = true;
 
     int length = 60;
     int insertionPoint = 0;
+
+    float maxVal = 0;
 
     bool editInPlace = false;
 

@@ -62,7 +62,7 @@ void GameScene::update() {
         state->renderer->resized = false;
     }
 
-    debugGui.update(player, world, window, blockAtlas, state->fps, drawCalls);
+    debugGui.update(player, world, window, blockAtlas, state->fps, (int)world->getMeshChunks()->size(), drawCalls);
     world->update();
 }
 

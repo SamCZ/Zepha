@@ -15,6 +15,9 @@ DebugGui::DebugGui(glm::vec2 bufferSize) {
     whiteHistTexture= new Texture((char*)"../res/tex/gui/histogram_white.png");
     whiteHistTexture->load();
 
+    transWhiteHistTexture= new Texture((char*)"../res/tex/gui/histogram_white_transparent.png");
+    transWhiteHistTexture->load();
+
     //Initialize GUI Objects
 
     dataText = new HudText(fontTexture);
@@ -66,8 +69,11 @@ DebugGui::DebugGui(glm::vec2 bufferSize) {
     fpsText = new HudText(fontTexture);
     fpsText->setScale(2);
 
-    drawCallsHistogram = new Histogram(whiteHistTexture, 240, 0, false);
+    drawCallsHistogram = new Histogram(whiteHistTexture, 240, 1, false);
     drawCallsHistogram->setScale(glm::vec3(1, 20, 1));
+
+    chunkHistogram = new Histogram(transWhiteHistTexture, 240, 0, false);
+    chunkHistogram->setScale(glm::vec3(1, 20, 1));
 
     drawCallsBG = new RectEntity(
             glm::vec4(0.1, 0.1, 0.1, 0.2), glm::vec4(0.1, 0.1, 0.1, 0.2),
@@ -111,6 +117,7 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
 
     drawCallsText->setPosition(glm::vec3(drawCallsPos.x + 4, drawCallsPos.y + 8, 0));
     drawCallsHistogram->setPosition(glm::vec3(drawCallsPos.x + 2, drawCallsPos.y + 60, -1));
+    chunkHistogram->setPosition(glm::vec3(drawCallsPos.x + 2, drawCallsPos.y + 60, -1));
     drawCallsBG->setPosition(glm::vec3(drawCallsPos.x, drawCallsPos.y, -2));
 }
 
@@ -135,6 +142,7 @@ void DebugGui::pushGuiObjects(std::vector<Entity*> &list) {
 
     list.push_back(drawCallsBG);
     list.push_back(drawCallsHistogram);
+    list.push_back(chunkHistogram);
     list.push_back(drawCallsText);
 }
 
@@ -146,7 +154,7 @@ std::string string_float(float val) {
     return s;
 }
 
-void DebugGui::update(Player* player, World* world, Window* window, BlockAtlas* atlas, double fps, int updates) {
+void DebugGui::update(Player* player, World* world, Window* window, BlockAtlas* atlas, double fps, int chunks, int drawCalls) {
     using namespace std;
 
     glm::vec3 round = World::roundVec(*player->getPos());
@@ -181,8 +189,10 @@ void DebugGui::update(Player* player, World* world, Window* window, BlockAtlas* 
     fpsText->set("FPS:" + string_float((float)fps));
     fpsHistogram->push_back((float)fps);
 
-    drawCallsText->set("ChunkDraws:" + to_string(updates));
-    drawCallsHistogram->push_back(updates);
+    drawCallsText->set("MCD:" + to_string(drawCalls) + "," + to_string(chunks));
+    chunkHistogram->push_back(chunks);
+    drawCallsHistogram->setMax(chunks);
+    drawCallsHistogram->push_back(drawCalls);
 
     meshUpdateHistogram->push_back((float)world->lastMeshUpdates);
     meshUpdateText->set("Mesh:" + to_string(world->lastMeshUpdates));

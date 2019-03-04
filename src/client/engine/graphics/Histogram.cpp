@@ -86,3 +86,7 @@ Mesh* Histogram::buildHistogramMesh() {
 
     return m;
 }
+
+void Histogram::setMax(float max) {
+    maxVal = max;
+}
