@@ -35,7 +35,7 @@ void Server::update() {
                 auto player = from->player;
 
                 if (player != nullptr) {
-                    if (p.type == PacketType::PLAYERINFO) {
+                    if (p.type == Packet::PLAYER_INFO) {
 
                         //Update Player Object
                         glm::vec3 newPos = glm::vec3(
@@ -46,7 +46,7 @@ void Server::update() {
                         player->pos = newPos;
 
                         //Send All Clients the new positon
-                        Packet r(PacketType::ENTITYINFO);
+                        Packet r(Packet::ENTITY_INFO);
 
                         Serializer::encodeInt  (r.data, player->peer->index);
                         Serializer::encodeFloat(r.data, newPos.x);
@@ -54,7 +54,7 @@ void Server::update() {
                         Serializer::encodeFloat(r.data, newPos.z);
 
                         for (auto peer : connections.peers) {
-                            r.sendTo(peer->peer, PacketChannel::ENTITYINFO);
+                            r.sendTo(peer->peer, PacketChannel::ENTITY_INFO);
                         }
                     }
                 }

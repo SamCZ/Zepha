@@ -30,7 +30,7 @@ void ServerConnection::update(Player &player, std::vector<PlayerEntity*>& player
             case ENET_EVENT_TYPE_RECEIVE: {
                 Packet p(event.packet);
 
-                if (p.type == PacketType::PLAYERINFO) {
+                if (p.type == Packet::PLAYER_INFO) {
                     glm::vec3 playerPos = glm::vec3(
                             Serializer::decodeFloat(&p.data[0]),
                             Serializer::decodeFloat(&p.data[4]),
@@ -38,7 +38,7 @@ void ServerConnection::update(Player &player, std::vector<PlayerEntity*>& player
                     );
                     player.setPos(playerPos);
                 }
-                else if (p.type == PacketType::ENTITYINFO) {
+                else if (p.type == Packet::ENTITY_INFO) {
                     int peer_id = Serializer::decodeInt(&p.data[0]);
 
                     glm::vec3 playerPos = glm::vec3(
@@ -74,7 +74,7 @@ void ServerConnection::update(Player &player, std::vector<PlayerEntity*>& player
     }
 
     //Send Player Position
-    Packet p(PacketType::PLAYERINFO);
+    Packet p(Packet::PLAYER_INFO);
     Serializer::encodeFloat(p.data, player.getPos()->x);
     Serializer::encodeFloat(p.data, player.getPos()->y);
     Serializer::encodeFloat(p.data, player.getPos()->z);

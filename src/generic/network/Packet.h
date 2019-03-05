@@ -13,18 +13,25 @@
 #include <enet/enet.h>
 
 #include "Serializer.h"
-#include "PacketType.h"
 
 struct Packet {
+    enum {
+        UNDEFINED = 0,
+        HANDSHAKE,
+        AUTHENTICATE,
+        PLAYER_INFO,
+        ENTITY_INFO,
+        CHUNK_INFO
+    };
 
-    Packet();
+    Packet() = default;
     explicit Packet(int p);
     explicit Packet(ENetPacket* packet);
 
     ENetPacket* toENetPacket();
     void sendTo(ENetPeer* peer, int channel);
 
-    int type = PacketType::UNDEFINED;
+    int type = UNDEFINED;
     std::string data;
 
     ~Packet() = default;

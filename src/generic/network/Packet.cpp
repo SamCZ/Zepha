@@ -3,13 +3,8 @@
 //
 
 #include "Packet.h"
-#include "PacketType.h"
 
-Packet::Packet() {
-    this->type = PacketType::UNDEFINED;
-}
-
-Packet::Packet(PacketType::p_type p) {
+Packet::Packet(int p) {
     this->type = p;
 }
 

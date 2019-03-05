@@ -8,7 +8,7 @@
 ServerPeer* ConnectionList::addPeer(ENetPeer *eNetPeer) {
     printf("[INFO] %x:%u connected.\n", eNetPeer->address.host, eNetPeer->address.port);
 
-    auto peer = new ServerPeer {.peer = eNetPeer, .player = nullptr, .index = peers.size()};
+    auto peer = new ServerPeer {.peer = eNetPeer, .player = nullptr, .index = (int)peers.size()};
     eNetPeer->data = (void*)peer;
 
     peers.push_back(peer);
@@ -38,7 +38,7 @@ ServerPlayer* ConnectionList::addPlayer(ServerPeer *peer, std::string uuid) {
 
     //Send Initialization Data
     auto packet = player->getInitPacket();
-    packet.sendTo(peer->peer, PacketChannel::PLAYERINFO);
+    packet.sendTo(peer->peer, PacketChannel::PLAYER_INFO);
 
     players.push_back(player);
 }

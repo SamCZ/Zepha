@@ -76,7 +76,7 @@ void MapGen::buildElevation(MapGenJob &j) {
         j.density[m] = elevation_sample.get(lp)
                      + elevation_variation_sample.get(lp)
                      + elevation_variation_smaller_sample.get(lp)
-                     + ((float)pow(feature_sample.get(lp) + 0.5, 2.0) - 0.5f) * 50 * (feature_scale_sample.get(lp) + 0.5f)
+                     + ((float)pow(feature_sample.get(lp) + 0.5, 2.0) - 0.5f) * 30 * (feature_scale_sample.get(lp) + 0.5f)
                      - ((j.pos.y * 16 + lp.y));
     }
 }

@@ -11,7 +11,6 @@
 
 #include "../engine/Timer.h"
 #include "../../generic/network/Packet.h"
-#include "../../generic/network/PacketType.h"
 #include "../../generic/network/NetHandler.h"
 #include "../game/gameworld/Player.h"
 #include "../game/gameworld/PlayerEntity.h"

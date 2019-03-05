@@ -238,9 +238,9 @@ void World::chunkGenThread(ChunkThreadDef* threadDef) {
         lock.unlock();
 
         if (data != nullptr) {
+            //TODO: WARN: THIS IS DISABLING CLIENT-SIDE MAP GENERATION
             data->chunk = threadDef->mapGen->generate(data->pos);
-//            TODO: WARN: THIS IS DISABLING CLIENT-SIDE MAP GENERATION
-//            auto b = new BlockChunk(new std::vector<int>(4096));
+//            auto b = new BlockChunk(std::vector<int>(4096));
 //            data->chunk = b;
 
             data->done = true;

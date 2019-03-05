@@ -30,8 +30,8 @@ GameScene::GameScene(ClientState* state) :
     //The scene requires the blockAtlas for meshing and handling inputs.
     world = new World(blockAtlas);
 
-    int SIZE = 16;
-    int SIZEV = SIZE;
+    int SIZE = 8;
+    int SIZEV = 8;
     for (int i = -SIZE; i < SIZE; i++) {
         for (int j = -SIZE; j < SIZEV; j++) {
             for (int k = -SIZE; k < SIZE; k++) {
@@ -49,6 +49,7 @@ GameScene::GameScene(ClientState* state) :
 
 
 void GameScene::update() {
+
     server->update(*player, playerEntities);
 
     auto window = state->renderer->getWindow();

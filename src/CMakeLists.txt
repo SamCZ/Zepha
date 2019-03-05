@@ -91,8 +91,6 @@ set(ZEUS_SRC_FILES
         server/ConnectionList.cpp
         server/ConnectionList.h
         server/ServerPeer.h
-        generic/network/PacketType.h
-        generic/network/PacketType.h
         generic/network/PacketChannel.h
         client/game/gameworld/PlayerEntity.cpp
         client/game/gameworld/PlayerEntity.h

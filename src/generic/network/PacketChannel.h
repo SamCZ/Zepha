@@ -7,19 +7,16 @@
 
 
 struct PacketChannel {
-    //Type Definitions
-    typedef int p_channel;
-
     const static int CHANNELS = 12;
 
-    //Packet Channels
-    const static p_channel UNDEFINED    = 0;
-    const static p_channel KEEPALIVE    = 1;
-    const static p_channel AUTHENTICATE = 2;
-    const static p_channel PLAYERINFO   = 3;
-    const static p_channel ENTITYINFO   = 4;
-    const static p_channel WORLDINFO    = 5;
-
+    enum {
+        UNDEFINED = -1,
+        KEEP_ALIVE,
+        AUTHENTICATE,
+        PLAYER_INFO,
+        ENTITY_INFO,
+        WORLD_INFO
+    };
 };
 
 

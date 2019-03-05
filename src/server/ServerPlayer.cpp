@@ -14,7 +14,7 @@ ServerPlayer::~ServerPlayer() {
 }
 
 Packet ServerPlayer::getInitPacket() {
-    Packet p(PacketType::PLAYERINFO);
+    Packet p(Packet::PLAYER_INFO);
 
     Serializer::encodeFloat(p.data, pos.x);
     Serializer::encodeFloat(p.data, pos.y);
