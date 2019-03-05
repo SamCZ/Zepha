@@ -26,15 +26,17 @@ public:
     ~DebugGui();
 
 private:
+    int videoMemAvail, videoMemTotal;
+
     Texture *fontTexture;
     Texture *colorHistTexture, *whiteHistTexture, *transWhiteHistTexture;
 
     HudText    *dataText, *crosshairText;
     RectEntity *dataBG,   *crosshairBG;
 
-    HudText    *chunkUpdateText,      *meshUpdateText,      *fpsText,      *drawCallsText;
-    Histogram  *chunkUpdateHistogram, *meshUpdateHistogram, *fpsHistogram, *drawCallsHistogram, *chunkHistogram;
-    RectEntity *chunkUpdateBG,        *meshUpdateBG,        *fpsBG,        *drawCallsBG;
+    HudText    *chunkUpdateText,      *meshUpdateText,      *fpsText,      *drawCallsText,                       *videoMemoryText;
+    Histogram  *chunkUpdateHistogram, *meshUpdateHistogram, *fpsHistogram, *drawCallsHistogram, *chunkHistogram, *videoMemoryHistogram;
+    RectEntity *chunkUpdateBG,        *meshUpdateBG,        *fpsBG,        *drawCallsBG,                         *videoMemoryBG;
 };
 
 

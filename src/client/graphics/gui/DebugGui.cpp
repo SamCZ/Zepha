@@ -83,6 +83,17 @@ DebugGui::DebugGui(glm::vec2 bufferSize) {
     drawCallsText = new HudText(fontTexture);
     drawCallsText->setScale(2);
 
+    videoMemoryHistogram = new Histogram(whiteHistTexture, 240, 1, true);
+    videoMemoryHistogram->setScale(glm::vec3(1, 32, 1));
+
+    videoMemoryText = new HudText(fontTexture);
+    videoMemoryText->setScale(2);
+
+    videoMemoryBG = new RectEntity(
+            glm::vec4(0.1, 0.1, 0.1, 0.2), glm::vec4(0.1, 0.1, 0.1, 0.2),
+            glm::vec4(0.1, 0.1, 0.1, 0.7), glm::vec4(0.1, 0.1, 0.1, 0.7));
+    videoMemoryBG->setScale(glm::vec3(244, 64, 1));
+
     positionElements(bufferSize);
 }
 
@@ -102,6 +113,7 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
     glm::vec2 chunkUpdatePos(bufferWidth - 254, bufferHeight - 70);
     glm::vec2 fpsPos(10, bufferHeight - 70);
     glm::vec2 drawCallsPos(10, bufferHeight - 70 - 80);
+    glm::vec2 videoMemoryPos(bufferWidth - 254, 10);
 
     meshUpdateText->setPosition(glm::vec3(meshUpdatePos.x + 4, meshUpdatePos.y + 8, 0));
     meshUpdateHistogram->setPosition(glm::vec3(meshUpdatePos.x + 2, meshUpdatePos.y + 60, -1));
@@ -119,6 +131,10 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
     drawCallsHistogram->setPosition(glm::vec3(drawCallsPos.x + 2, drawCallsPos.y + 60, -1));
     chunkHistogram->setPosition(glm::vec3(drawCallsPos.x + 2, drawCallsPos.y + 60, -1));
     drawCallsBG->setPosition(glm::vec3(drawCallsPos.x, drawCallsPos.y, -2));
+
+    videoMemoryText->setPosition(glm::vec3(videoMemoryPos.x + 4, videoMemoryPos.y + 8, 0));
+    videoMemoryHistogram->setPosition(glm::vec3(videoMemoryPos.x + 2, videoMemoryPos.y + 60, -1));
+    videoMemoryBG->setPosition(glm::vec3(videoMemoryPos.x, videoMemoryPos.y, -2));
 }
 
 void DebugGui::pushGuiObjects(std::vector<Entity*> &list) {
@@ -144,6 +160,10 @@ void DebugGui::pushGuiObjects(std::vector<Entity*> &list) {
     list.push_back(drawCallsHistogram);
     list.push_back(chunkHistogram);
     list.push_back(drawCallsText);
+
+    list.push_back(videoMemoryBG);
+    list.push_back(videoMemoryHistogram);
+    list.push_back(videoMemoryText);
 }
 
 std::string string_float(float val) {
@@ -156,6 +176,9 @@ std::string string_float(float val) {
 
 void DebugGui::update(Player* player, World* world, Window* window, BlockAtlas* atlas, double fps, int chunks, int drawCalls) {
     using namespace std;
+
+    glGetIntegerv(0x9048, &videoMemTotal);
+    glGetIntegerv(0x9049, &videoMemAvail);
 
     glm::vec3 round = World::roundVec(*player->getPos());
     round.y -= 2;
@@ -199,6 +222,10 @@ void DebugGui::update(Player* player, World* world, Window* window, BlockAtlas* 
 
     chunkUpdateHistogram->push_back((float)world->lastGenUpdates);
     chunkUpdateText->set("Gen:" + to_string(world->lastGenUpdates));
+
+    videoMemoryHistogram->setMax((float)videoMemTotal / 1024);
+    videoMemoryHistogram->push_back((float)(videoMemTotal - videoMemAvail) / 1024);
+    videoMemoryText->set("Total VRam Usage:\n" + to_string((videoMemTotal - videoMemAvail) / 1024) + "MB, (" + to_string((int)std::round((videoMemTotal - videoMemAvail) / (float)videoMemTotal * 100.0f)) + "%)");
 
     dataText->set(
             "World: " + to_string((int)player->getPos()->x) + "," + to_string((int)player->getPos()->y) + "," + to_string((int)player->getPos()->z) + "\n" +
