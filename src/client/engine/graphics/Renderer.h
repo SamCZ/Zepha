@@ -42,7 +42,7 @@ private:
     glm::mat4* projectionMatrix;
     glm::mat4* orthographicMatrix;
 
-    //World Shader
+    //LocalWorld Shader
     Shader* worldShader;
     GLint uModel, uProj, uView, uOrtho, uGuiModel;
 

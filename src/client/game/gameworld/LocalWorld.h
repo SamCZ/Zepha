@@ -21,7 +21,7 @@
 #include "../../../generic/gen/MapGen.h"
 #include "../../graphics/mesh/MeshChunk.h"
 
-class World {
+class LocalWorld {
 public:
     //Hashing function for glm::vec3 in maps and lists
     struct vec3cmp {
@@ -34,7 +34,7 @@ public:
     static void chunkGenThread(ChunkThreadDef* threadDef);
     static void meshGenThread(MeshThreadDef* threadDef);
 
-    explicit World(BlockAtlas* atlas);
+    explicit LocalWorld(BlockAtlas* atlas);
 
     void genNewChunk(glm::vec3 pos);
     void commitChunk(glm::vec3 pos, BlockChunk *c);

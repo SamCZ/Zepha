@@ -13,7 +13,7 @@
 #include "../../../generic/blocks/BlockAtlas.h"
 #include "../../../generic/gen/MapGen.h"
 
-//Structs for storing the threads used in World, and passing data to and from them.
+//Structs for storing the threads used in LocalWorld, and passing data to and from them.
 
 struct MeshThreadData {
     MeshThreadData(glm::vec3 pos, BlockChunk* chunk, std::vector<bool>* adjacents, BlockAtlas* atlas);

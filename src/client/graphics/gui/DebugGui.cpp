@@ -174,13 +174,13 @@ std::string string_float(float val) {
     return s;
 }
 
-void DebugGui::update(Player* player, World* world, Window* window, BlockAtlas* atlas, double fps, int chunks, int drawCalls) {
+void DebugGui::update(Player* player, LocalWorld* world, Window* window, BlockAtlas* atlas, double fps, int chunks, int drawCalls) {
     using namespace std;
 
     glGetIntegerv(0x9048, &videoMemTotal);
     glGetIntegerv(0x9049, &videoMemAvail);
 
-    glm::vec3 round = World::roundVec(*player->getPos());
+    glm::vec3 round = LocalWorld::roundVec(*player->getPos());
     round.y -= 2;
 
     int block = world->getBlock(round);
@@ -206,8 +206,8 @@ void DebugGui::update(Player* player, World* world, Window* window, BlockAtlas* 
         look = atlas->getBlock(block)->getIdentifier();
     }
 
-    glm::vec3 chk = World::chunkVec(*player->getPos());
-    glm::vec3 loc = World::localVec(*player->getPos());
+    glm::vec3 chk = LocalWorld::chunkVec(*player->getPos());
+    glm::vec3 loc = LocalWorld::localVec(*player->getPos());
 
     fpsText->set("FPS:" + string_float((float)fps));
     fpsHistogram->push_back((float)fps);

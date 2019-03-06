@@ -3,7 +3,7 @@
 //
 
 #include "WorldThreadDefs.h"
-#include "World.h"
+#include "LocalWorld.h"
 
 ChunkThreadData::ChunkThreadData(glm::vec3 pos, BlockAtlas *atlas) {
     this->pos = pos;
@@ -15,7 +15,7 @@ ChunkThreadData::ChunkThreadData(glm::vec3 pos, BlockAtlas *atlas) {
 ChunkThreadDef::ChunkThreadDef(MapGen *mapGen) {
     this->mapGen = mapGen;
 
-    thread = new std::thread(World::chunkGenThread, this);
+    thread = new std::thread(LocalWorld::chunkGenThread, this);
 
     sched_param sch_params{};
     sch_params.sched_priority = 1;
@@ -45,7 +45,7 @@ MeshThreadData::~MeshThreadData() {
 }
 
 MeshThreadDef::MeshThreadDef() {
-    thread = new std::thread(World::meshGenThread, this);
+    thread = new std::thread(LocalWorld::meshGenThread, this);
 
     sched_param sch_params{};
     sch_params.sched_priority = 1;

@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-#include "World.h"
+#include "LocalWorld.h"
 #include "../../engine/Camera.h"
 #include "../../engine/Timer.h"
 
@@ -16,7 +16,7 @@ class Player {
 public:
     Player();
 
-    void create(World* world, Camera* camera);
+    void create(LocalWorld* world, Camera* camera);
 
     void update(bool* keys, double delta, double mouseX, double mouseY);
 
@@ -41,7 +41,7 @@ private:
     glm::vec3 vel;
 
     Camera* camera;
-    World* world;
+    LocalWorld* world;
 
     const float playerHeight = 1.6;
 };

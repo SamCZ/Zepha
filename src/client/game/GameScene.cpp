@@ -28,7 +28,7 @@ GameScene::GameScene(ClientState* state) :
     p.doFile("../res/lua/file.lua");
 
     //The scene requires the blockAtlas for meshing and handling inputs.
-    world = new World(blockAtlas);
+    world = new LocalWorld(blockAtlas);
 
     int SIZE = 16;
     int SIZEV = 8;

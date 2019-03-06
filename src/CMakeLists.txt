@@ -30,8 +30,8 @@ set(ZEUS_SRC_FILES
         generic/blocks/BlockModel.h
         generic/blocks/TextureAtlas.cpp
         generic/blocks/TextureAtlas.h
-        client/game/gameworld/World.cpp
-        client/game/gameworld/World.h
+        client/game/gameworld/LocalWorld.cpp
+        client/game/gameworld/LocalWorld.h
         generic/blocks/BlockChunk.cpp
         generic/blocks/BlockChunk.h
         generic/helpers/ArrayTrans3D.h
@@ -99,6 +99,17 @@ set(ZEUS_SRC_FILES
         client/engine/graphics/RectEntity.cpp
         client/engine/graphics/RectEntity.h
         generic/gen/MapGenJob.h
-        generic/helpers/Interpolation.h generic/noise/NoiseParams.h generic/noise/NoiseSampler.cpp generic/noise/NoiseSampler.h generic/noise/NoiseSample.cpp generic/noise/NoiseSample.h client/engine/Frustum.cpp client/engine/Frustum.h client/engine/FrustumPlane.cpp client/engine/FrustumPlane.h client/engine/FrustumAABB.cpp client/engine/FrustumAABB.h)
+        generic/helpers/Interpolation.h
+        generic/noise/NoiseParams.h
+        generic/noise/NoiseSampler.cpp
+        generic/noise/NoiseSampler.h
+        generic/noise/NoiseSample.cpp
+        generic/noise/NoiseSample.h
+        client/engine/Frustum.cpp
+        client/engine/Frustum.h
+        client/engine/FrustumPlane.cpp
+        client/engine/FrustumPlane.h
+        client/engine/FrustumAABB.cpp
+        client/engine/FrustumAABB.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

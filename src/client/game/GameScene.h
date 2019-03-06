@@ -13,7 +13,7 @@
 
 #include "../lua/LuaParser.h"
 
-#include "gameworld/World.h"
+#include "gameworld/LocalWorld.h"
 #include "gameworld/Player.h"
 
 #include "../network/ServerConnection.h"
@@ -34,7 +34,7 @@ public:
 public:
     ServerConnection* server;
     Player* player;
-    World* world;
+    LocalWorld* world;
     TextureAtlas* textureAtlas;
     BlockAtlas* blockAtlas;
 

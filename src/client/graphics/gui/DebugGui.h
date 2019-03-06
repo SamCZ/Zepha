@@ -20,7 +20,7 @@ public:
     void bufferResized(glm::vec2 bufferSize);
 
     void pushGuiObjects(std::vector<Entity*> &list);
-    void update(Player* player, World* world, Window* window, BlockAtlas* atlas, double fps, int chunks, int drawCalls);
+    void update(Player* player, LocalWorld* world, Window* window, BlockAtlas* atlas, double fps, int chunks, int drawCalls);
     void positionElements(glm::vec2 bufferSize);
 
     ~DebugGui();

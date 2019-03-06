@@ -9,7 +9,7 @@ Player::Player() {
     vel = glm::vec3(0, 0, 0);
 }
 
-void Player::create(World* world, Camera* camera) {
+void Player::create(LocalWorld* world, Camera* camera) {
     this->camera = camera;
     this->world = world;
 }
