@@ -47,27 +47,27 @@ TEST_CASE("Blockchunks", "[networking]") {
                 delete b2;
             }
 
-//            SECTION("BlockChunk Packet Encoding") {
-//                auto p = new Packet(Packet::CHUNKINFO);
-//                p->addString(gzip);
-//
-//                auto byteArr = p->serialize();
-//
-//                auto p2 = Packet::deserialize(byteArr);
-//
-//                int len = Packet::decodeInt(&p2->data[0]);
-//                std::string data(p->data.begin() + 4, p->data.begin() + 4 + len);
-//
-//                auto b2 = new BlockChunk();
-//                REQUIRE(b2->deserialize(data));
-//
-//                for (int j = 0; j < 4096; j++) {
-//                    REQUIRE(b2->getBlock(j) == b->getBlock(j));
-//                }
-//
-//                delete b2;
-//            }
-//
+            SECTION("BlockChunk Packet Encoding") {
+                auto p = Packet(Packet::CHUNK_INFO);
+                Serializer::encodeString(p.data, gzip);
+
+                auto enetP = p.toENetPacket();
+
+                auto p2 = Packet(enetP);
+
+                int len = Serializer::decodeInt(&p2.data[0]);
+                std::string data(p.data.begin() + 4, p.data.begin() + 4 + len);
+
+                auto b2 = new BlockChunk();
+                REQUIRE(b2->deserialize(data));
+
+                for (int j = 0; j < 4096; j++) {
+                    REQUIRE(b2->getBlock(j) == b->getBlock(j));
+                }
+
+                delete b2;
+            }
+
             delete b;
 
             INFO("Iteration " << i << " passed.");

@@ -110,6 +110,6 @@ set(ZEUS_SRC_FILES
         client/engine/FrustumPlane.cpp
         client/engine/FrustumPlane.h
         client/engine/FrustumAABB.cpp
-        client/engine/FrustumAABB.h)
+        client/engine/FrustumAABB.h server/world/World.cpp server/world/World.h server/world/WorldGenStream.cpp server/world/WorldGenStream.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

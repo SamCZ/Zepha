@@ -9,16 +9,19 @@
 #include <string>
 #include "ServerPlayer.h"
 #include "ServerPeer.h"
+#include "world/World.h"
 
 class ConnectionList {
 public:
+    explicit ConnectionList(World* world);
+
     ServerPeer* addPeer(ENetPeer* peer);
     void removePeer(ENetPeer* peer);
 
-    ServerPlayer* addPlayer(ServerPeer* peer, std::string uuid);
+    ServerPlayer* createPlayer(ServerPeer *peer, std::string uuid);
 public:
     std::vector<ServerPeer*> peers;
-    std::vector<ServerPlayer*> players;
+    World* world;
 };
 
 

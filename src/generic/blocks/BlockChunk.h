@@ -15,6 +15,9 @@ class BlockChunk {
 public:
     BlockChunk();
     explicit BlockChunk(std::vector<int> blocks);
+    BlockChunk(std::vector<int> blocks, glm::vec3 pos);
+
+    glm::vec3 pos;
 
     bool adjacent[6] = {false, false, false, false, false, false};
     bool allAdjacentsExist();

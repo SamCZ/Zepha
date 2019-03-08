@@ -17,6 +17,11 @@ BlockChunk::BlockChunk(std::vector<int> blocks) {
     this->blocks = std::move(blocks);
 }
 
+BlockChunk::BlockChunk(std::vector<int> blocks, glm::vec3 pos) {
+    this->blocks = std::move(blocks);
+    this->pos = pos;
+}
+
 int BlockChunk::getBlock(glm::vec3* pos) {
     unsigned int ind = ArrayTrans3D::vecToInd(pos);
     if (ind < 0 || ind >= 4096) return -1;

@@ -22,21 +22,21 @@ LocalWorld::LocalWorld(BlockAtlas *atlas) {
 
 void LocalWorld::genNewChunk(glm::vec3 pos) {
     if (!blockChunks.count(pos)) {
-        pendingGen.insert(pos);
+        pendingGen.push_back(pos);
     }
 }
 
 void LocalWorld::loadChunkPacket(Packet *p) {
-//    auto b = new BlockChunk();
-//
-//    glm::vec3 pos = glm::vec3(Packet::decodeInt(&p->data[0]), Packet::decodeInt(&p->data[4]), Packet::decodeInt(&p->data[8]));
-//
-//    int len = Packet::decodeInt(&p->data[12]);
-//    std::string data(p->data.begin() + 16, p->data.begin() + 16 + len);
-//
-//    b->deserialize(data);
-//
-//    commitChunk(pos, b);
+    auto b = new BlockChunk();
+
+    glm::vec3 pos = glm::vec3(Serializer::decodeInt(&p->data[0]), Serializer::decodeInt(&p->data[4]), Serializer::decodeInt(&p->data[8]));
+
+    int len = Serializer::decodeInt(&p->data[12]);
+    std::string data(p->data.begin() + 16, p->data.begin() + 16 + len);
+
+    b->deserialize(data);
+
+    commitChunk(pos, b);
 }
 
 void LocalWorld::commitChunk(glm::vec3 pos, BlockChunk *c) {
@@ -61,7 +61,7 @@ void LocalWorld::attemptMeshChunk(glm::vec3 pos) {
     thisChunk->adjacent[4] = getAdjacentExists(glm::vec3(pos.x, pos.y, pos.z + 1), pos);
     thisChunk->adjacent[5] = getAdjacentExists(glm::vec3(pos.x, pos.y, pos.z - 1), pos);
 
-    if (thisChunk->allAdjacentsExist()) pendingMesh.insert(pos);
+    if (thisChunk->allAdjacentsExist()) pendingMesh.push_back(pos);
 }
 
 bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
@@ -77,7 +77,7 @@ bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
         if (diff == glm::vec3(0, 0, 1)) chunk->adjacent[4] = true;
         if (diff == glm::vec3(0, 0,-1)) chunk->adjacent[5] = true;
 
-        if (chunk->allAdjacentsExist()) pendingMesh.insert(pos);
+        if (chunk->allAdjacentsExist()) pendingMesh.push_back(pos);
         return true;
     }
     return false;
@@ -133,6 +133,13 @@ std::vector<bool>* LocalWorld::getAdjacentsCull(glm::vec3 pos) {
 }
 
 void LocalWorld::update() {
+//    std::sort(pendingGen.begin(), pendingGen.begin()+min(1000, (int)pendingGen.size()), [](glm::vec3 a, glm::vec3 b) {
+//        return glm::distance(a, glm::vec3(0, 0, 0)) < glm::distance(b, glm::vec3(0, 0, 0));
+//    });
+//    std::sort(pendingMesh.begin(), pendingMesh.end()+min(1000, (int)pendingMesh.size()), [](glm::vec3 a, glm::vec3 b) {
+//        return glm::distance(a, glm::vec3(0, 0, 0)) < glm::distance(b, glm::vec3(0, 0, 0));
+//    });
+//
     handleChunkGenQueue();
     handleMeshGenQueue();
 }

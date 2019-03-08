@@ -5,9 +5,9 @@
 #include "Server.h"
 #include "../generic/blocks/BlockChunk.h"
 
-Server::Server() = default;
+Server::Server() : connections(&world) {};
 
-Server::Server(unsigned short port) {
+Server::Server(unsigned short port) : connections(&world) {
     this->port = port;
 }
 
@@ -20,12 +20,14 @@ void Server::init() {
 void Server::update() {
     Timer loop("");
 
+    world.update();
+
     ENetEvent event;
     while (handler.update(&event) && loop.elapsedNs() < 15L*1000000L) {
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT: {
                 auto peer = connections.addPeer(event.peer);
-                connections.addPlayer(peer, "Aurailus");
+                connections.createPlayer(peer, "Aurailus");
                 break;
             }
             case ENET_EVENT_TYPE_RECEIVE: {
@@ -43,7 +45,7 @@ void Server::update() {
                                 Serializer::decodeFloat(&p.data[4]),
                                 Serializer::decodeFloat(&p.data[8])
                         );
-                        player->pos = newPos;
+                        player->setPos(newPos);
 
                         //Send All Clients the new positon
                         Packet r(Packet::ENTITY_INFO);

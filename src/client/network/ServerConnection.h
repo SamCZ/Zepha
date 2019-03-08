@@ -25,6 +25,7 @@ public:
 
     ~ServerConnection();
 
+    std::vector<Packet> chunkPackets;
 private:
     bool connected = false;
 

@@ -5,7 +5,6 @@
 #ifndef ZEUS_SERVERPEER_H
 #define ZEUS_SERVERPEER_H
 
-
 #include <enet/enet.h>
 
 class ServerPlayer;

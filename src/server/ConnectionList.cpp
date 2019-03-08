@@ -5,6 +5,10 @@
 #include "ConnectionList.h"
 #include "../generic/network/PacketChannel.h"
 
+ConnectionList::ConnectionList(World* world) {
+    this->world = world;
+}
+
 ServerPeer* ConnectionList::addPeer(ENetPeer *eNetPeer) {
     printf("[INFO] %x:%u connected.\n", eNetPeer->address.host, eNetPeer->address.port);
 
@@ -31,14 +35,14 @@ void ConnectionList::removePeer(ENetPeer *eNetPeer) {
     }
 }
 
-ServerPlayer* ConnectionList::addPlayer(ServerPeer *peer, std::string uuid) {
+ServerPlayer* ConnectionList::createPlayer(ServerPeer *peer, std::string uuid) {
     printf("[INFO] Creating player %s for %x:%u.\n", uuid.c_str(), peer->peer->address.host, peer->peer->address.port);
     auto player = new ServerPlayer(peer);
-    player->pos = glm::vec3(-8, 32, -8);
+    player->setPos(glm::vec3(0, 16, 0));
 
     //Send Initialization Data
     auto packet = player->getInitPacket();
     packet.sendTo(peer->peer, PacketChannel::PLAYER_INFO);
 
-    players.push_back(player);
+    world->addPlayer(player);
 }

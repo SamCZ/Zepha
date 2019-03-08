@@ -58,7 +58,7 @@ BlockChunk* MapGen::generate(glm::vec3 pos) {
     buildElevation(j);
     fillChunk(j);
 
-    return new BlockChunk(j.blocks);
+    return new BlockChunk(j.blocks, pos);
 }
 
 void MapGen::buildElevation(MapGenJob &j) {

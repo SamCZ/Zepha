@@ -29,6 +29,7 @@ public:
 private:
     bool alive = true;
 
+    World world;
     NetHandler handler;
     ConnectionList connections;
 
