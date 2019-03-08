@@ -19,8 +19,8 @@ public:
 
     ~GameGui();
 private:
-    Texture* crosshairTexture;
-    Entity* crosshair;
+    Texture* crosshairTexture, *viginetteTexture;
+    Entity* crosshair, *viginette;
 };
 
 

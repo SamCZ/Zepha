@@ -43,8 +43,8 @@ GameScene::GameScene(ClientState* state) :
     player = new Player();
     player->create(world, state->renderer->getCamera());
 
-    debugGui.pushGuiObjects(guiEntities);
     gui.pushGuiObjects(guiEntities);
+    debugGui.pushGuiObjects(guiEntities);
 }
 
 

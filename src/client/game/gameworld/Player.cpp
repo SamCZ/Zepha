@@ -125,6 +125,12 @@ void Player::viewUpdate(double deltaX, double deltaY) {
     yaw += deltaX;
     pitch += deltaY;
 
+    if (yaw > 360.0f) {
+        yaw = 0;
+    }
+    if (yaw < 0) {
+        yaw = 360.0f;
+    }
     if (pitch > 90.0f) {
         pitch = 90.0f;
     }

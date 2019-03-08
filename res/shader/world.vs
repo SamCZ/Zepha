@@ -18,6 +18,7 @@ void main() {
 
     vec4 myColor = vec4(1, 1, 1, 0) * (0.8 + abs(nor.x) * 0.15);
     myColor += nor.y * 0.15;
+    myColor += 0.2;
     myColor.a = 1;
 
     color = myColor;
