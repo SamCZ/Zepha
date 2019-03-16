@@ -21,20 +21,22 @@ public:
     glm::vec3 getPos();
     void setPos(glm::vec3 pos);
 
+    glm::vec3 getChunkPos();
+
+    bool changedChunks = false;
+
     std::pair<glm::vec3, glm::vec3> getBounds();
-    bool isInBounds(glm::vec3 pos);
+    std::pair<glm::vec3, glm::vec3> getOldBounds();
+
+    bool isInBounds(glm::vec3 pos, std::pair<glm::vec3, glm::vec3>& bounds);
 
     ~ServerPlayer();
 
     ServerPeer* peer;
 private:
-    void updateBounds();
-
-    glm::vec3 pos = {0, 0, 0};
-    glm::vec3 lastPos = {0, 0, 0};
-
-    glm::vec3 minBounds = {0, 0, 0};
-    glm::vec3 maxBounds = {0, 0, 0};
+    glm::vec3 chunkPos {0, 0, 0};
+    glm::vec3 lastChunkPos {0, 0, 0};
+    glm::vec3 pos {0, 0, 0};
 };
 
 

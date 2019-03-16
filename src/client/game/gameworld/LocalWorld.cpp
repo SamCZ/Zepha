@@ -5,6 +5,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 
+#include <syscall.h>
 #include "LocalWorld.h"
 
 LocalWorld::LocalWorld(BlockAtlas *atlas) {
@@ -42,6 +43,7 @@ void LocalWorld::loadChunkPacket(Packet *p) {
 void LocalWorld::commitChunk(glm::vec3 pos, BlockChunk *c) {
     if (!blockChunks.count(pos)) {
         blockChunks.insert(std::pair<glm::vec3, BlockChunk *>(pos, c));
+
         attemptMeshChunk(pos);
     }
 }
@@ -61,7 +63,7 @@ void LocalWorld::attemptMeshChunk(glm::vec3 pos) {
     thisChunk->adjacent[4] = getAdjacentExists(glm::vec3(pos.x, pos.y, pos.z + 1), pos);
     thisChunk->adjacent[5] = getAdjacentExists(glm::vec3(pos.x, pos.y, pos.z - 1), pos);
 
-    if (thisChunk->allAdjacentsExist()) pendingMesh.push_back(pos);
+    if (thisChunk->allAdjacentsExist() && !thisChunk->isEmpty()) pendingMesh.push_back(pos);
 }
 
 bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
@@ -77,7 +79,7 @@ bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
         if (diff == glm::vec3(0, 0, 1)) chunk->adjacent[4] = true;
         if (diff == glm::vec3(0, 0,-1)) chunk->adjacent[5] = true;
 
-        if (chunk->allAdjacentsExist()) pendingMesh.push_back(pos);
+        if (chunk->allAdjacentsExist() && !chunk->isEmpty()) pendingMesh.push_back(pos);
         return true;
     }
     return false;
@@ -306,7 +308,7 @@ void LocalWorld::handleMeshGenQueue() {
 
             glm::vec3 pos = threadData->pos * glm::vec3(CHUNK_SIZE);
             meshChunk->setPosition(pos);
-            meshChunks.insert(std::pair<glm::vec3, MeshChunk *>(threadData->pos, meshChunk));
+            meshChunks.insert(std::pair<glm::vec3, MeshChunk*>(threadData->pos, meshChunk));
         }
 
         iter = finishedMesh.erase(iter);

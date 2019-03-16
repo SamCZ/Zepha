@@ -20,6 +20,8 @@ public:
     glm::vec3 pos;
 
     bool adjacent[6] = {false, false, false, false, false, false};
+
+    bool isEmpty();
     bool allAdjacentsExist();
 
     int getBlock(int ind);
@@ -35,6 +37,7 @@ public:
     bool deserialize(std::string gzip);
 private:
     std::vector<int> blocks;
+    bool empty;
 };
 
 #endif //GLPROJECT_BLOCKCHUNK_H

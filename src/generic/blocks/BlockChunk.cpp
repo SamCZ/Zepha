@@ -11,13 +11,24 @@
 
 BlockChunk::BlockChunk() {
     this->blocks = std::vector<int>(4096);
+    this->empty = true;
 }
 
 BlockChunk::BlockChunk(std::vector<int> blocks) {
+    this->empty = true;
+    for (int i : blocks) {
+        if (i != 0) this->empty = false;
+    }
+
     this->blocks = std::move(blocks);
 }
 
 BlockChunk::BlockChunk(std::vector<int> blocks, glm::vec3 pos) {
+    this->empty = true;
+    for (int i : blocks) {
+        if (i != 0) this->empty = false;
+    }
+
     this->blocks = std::move(blocks);
     this->pos = pos;
 }
@@ -40,6 +51,9 @@ int BlockChunk::getBlock(int x, int y, int z) {
 }
 
 bool BlockChunk::setBlock(glm::vec3* pos, int block) {
+
+    //TODO: Update emptiness
+
     unsigned int ind = ArrayTrans3D::vecToInd(pos);
     if (ind < 0 || ind >= 4096) return false;
     if (blocks[ind] != block) {
@@ -51,6 +65,10 @@ bool BlockChunk::setBlock(glm::vec3* pos, int block) {
 
 bool BlockChunk::allAdjacentsExist() {
     return adjacent[0] && adjacent[1] && adjacent[2] && adjacent[3] && adjacent[4] && adjacent[5];
+}
+
+bool BlockChunk::isEmpty() {
+    return empty;
 }
 
 std::vector<int> BlockChunk::rleEncode() {
@@ -82,12 +100,17 @@ void BlockChunk::rleDecode(std::vector<int>& blocksRle) {
 
     int ind = 0;
 
+    this->empty = true;
     for (int i = 0; i < blocksRle.size() / 2; i++) {
         int block = blocksRle[i*2];
         int count = blocksRle[i*2 + 1];
 
         for (int j = 0; j < count; j++) {
             blocks[ind++] = (block);
+
+            if (block != 0) {
+                this->empty = false;
+            }
 
             if (ind >= 4096) return;
         }

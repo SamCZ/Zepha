@@ -39,6 +39,8 @@ private:
 
     std::unordered_set<glm::vec3, vec3cmp> generateQueueMap;
     std::vector<glm::vec3> generateQueueList;
+
+    int generatedChunks = 0;
 };
 
 

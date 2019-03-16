@@ -19,8 +19,11 @@ void ServerConnection::init() {
 
 
 void ServerConnection::update(Player &player, std::vector<PlayerEntity*>& playerEntities) {
+    recvPackets = 0;
+
     ENetEvent event;
     while (handler.update(&event)) {
+        recvPackets++;
 
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT: {
@@ -65,6 +68,10 @@ void ServerConnection::update(Player &player, std::vector<PlayerEntity*>& player
                     }
                     case Packet::CHUNK_INFO: {
                         chunkPackets.push_back(std::move(p));
+                        break;
+                    }
+                    case Packet::SERVER_INFO: {
+                        serverSideChunkGens = Serializer::decodeInt(&p.data[0]);
                         break;
                     }
                     default:

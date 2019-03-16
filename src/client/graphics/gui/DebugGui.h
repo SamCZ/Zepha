@@ -15,12 +15,12 @@
 
 class DebugGui {
 public:
-    DebugGui(glm::vec2 bufferSize);
+    explicit DebugGui(glm::vec2 bufferSize);
 
     void bufferResized(glm::vec2 bufferSize);
 
     void pushGuiObjects(std::vector<Entity*> &list);
-    void update(Player* player, LocalWorld* world, Window* window, BlockAtlas* atlas, double fps, int chunks, int drawCalls);
+    void update(Player* player, LocalWorld* world, Window* window, BlockAtlas* atlas, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
     void positionElements(glm::vec2 bufferSize);
 
     ~DebugGui();
@@ -34,9 +34,10 @@ private:
     HudText    *dataText, *crosshairText;
     RectEntity *dataBG,   *crosshairBG;
 
-    HudText    *chunkUpdateText,      *meshUpdateText,      *fpsText,      *drawCallsText,                       *videoMemoryText;
-    Histogram  *chunkUpdateHistogram, *meshUpdateHistogram, *fpsHistogram, *drawCallsHistogram, *chunkHistogram, *videoMemoryHistogram;
-    RectEntity *chunkUpdateBG,        *meshUpdateBG,        *fpsBG,        *drawCallsBG,                         *videoMemoryBG;
+    HudText    *chunkText, *meshText, *fpsText, *drawsText, *vramText, *ssGenText, *ssPackText;
+    Histogram  *chunkHist, *meshHist, *fpsHist, *drawsHist, *tMeshHist, *vramHist, *ssGenHist, *ssPackHist;
+    RectEntity *chunkBack, *meshBack, *fpsBack, *drawsBack, *vramBack, *ssGenBack, *ssPackBack;
+
 };
 
 

@@ -26,13 +26,12 @@ public:
     ~ServerConnection();
 
     std::vector<Packet> chunkPackets;
+    int serverSideChunkGens;
+    int recvPackets;
 private:
     bool connected = false;
 
     NetHandler handler;
-
-    int sendInterval = 0;
-    int sendCount = 0;
 
     std::string address;
     unsigned short port;

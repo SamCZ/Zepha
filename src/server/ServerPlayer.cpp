@@ -8,7 +8,6 @@
 ServerPlayer::ServerPlayer(ServerPeer *peer) {
     this->peer = peer;
     peer->player = this;
-    updateBounds();
 }
 
 Packet ServerPlayer::getInitPacket() {
@@ -25,33 +24,41 @@ glm::vec3 ServerPlayer::getPos() {
     return pos;
 }
 
+glm::vec3 ServerPlayer::getChunkPos() {
+    return chunkPos;
+}
+
 void ServerPlayer::setPos(glm::vec3 pos) {
-    this->lastPos = this->pos;
     this->pos = pos;
+    glm::vec3 newChunkPos(std::floor(this->pos.x / 16), std::floor(this->pos.y / 16), std::floor(this->pos.z / 16));
 
-    glm::vec3 chunkPos(std::floor(pos.x / 16), std::floor(pos.y / 16), std::floor(pos.z / 16));
-    glm::vec3 lastChunkPos(std::floor(lastPos.x / 16), std::floor(lastPos.y / 16), std::floor(lastPos.z / 16));
-
-    if (chunkPos != lastChunkPos) {
-        updateBounds();
+    if (newChunkPos != chunkPos) {
+        if (!changedChunks) {
+            lastChunkPos = chunkPos;
+            changedChunks = true;
+        }
+        chunkPos = newChunkPos;
     }
 }
 
 std::pair<glm::vec3, glm::vec3> ServerPlayer::getBounds() {
+    glm::vec3 minBounds(chunkPos.x - ACTIVE_RANGE, chunkPos.y - ACTIVE_RANGE, chunkPos.z - ACTIVE_RANGE);
+    glm::vec3 maxBounds(chunkPos.x + ACTIVE_RANGE, chunkPos.y + ACTIVE_RANGE, chunkPos.z + ACTIVE_RANGE);
+
     return {minBounds, maxBounds};
 }
 
-void ServerPlayer::updateBounds() {
-    glm::vec3 chunkPos(std::floor(pos.x / 16), std::floor(pos.y / 16), std::floor(pos.z / 16));
+std::pair<glm::vec3, glm::vec3> ServerPlayer::getOldBounds() {
+    glm::vec3 minBounds(lastChunkPos.x - ACTIVE_RANGE, lastChunkPos.y - ACTIVE_RANGE, lastChunkPos.z - ACTIVE_RANGE);
+    glm::vec3 maxBounds(lastChunkPos.x + ACTIVE_RANGE, lastChunkPos.y + ACTIVE_RANGE, lastChunkPos.z + ACTIVE_RANGE);
 
-    minBounds = glm::vec3(chunkPos.x - ACTIVE_RANGE, chunkPos.y - ACTIVE_RANGE, chunkPos.z - ACTIVE_RANGE);
-    maxBounds = glm::vec3(chunkPos.x + ACTIVE_RANGE, chunkPos.y + ACTIVE_RANGE, chunkPos.z + ACTIVE_RANGE);
+    return {minBounds, maxBounds};
 }
 
-bool ServerPlayer::isInBounds(glm::vec3 pos) {
-    return (pos.x >= minBounds.x && pos.x <= maxBounds.x
-         && pos.y >= minBounds.y && pos.y <= maxBounds.y
-         && pos.z >= minBounds.z && pos.z <= maxBounds.z);
+bool ServerPlayer::isInBounds(glm::vec3 cPos, std::pair<glm::vec3, glm::vec3> &bounds) {
+    return (cPos.x >= bounds.first.x && cPos.x <= bounds.second.x
+         && cPos.y >= bounds.first.y && cPos.y <= bounds.second.y
+         && cPos.z >= bounds.first.z && cPos.z <= bounds.second.z);
 }
 
 ServerPlayer::~ServerPlayer() = default;

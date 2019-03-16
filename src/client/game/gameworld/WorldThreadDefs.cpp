@@ -17,9 +17,9 @@ ChunkThreadDef::ChunkThreadDef(MapGen *mapGen) {
 
     thread = new std::thread(LocalWorld::chunkGenThread, this);
 
-    sched_param sch_params{};
-    sch_params.sched_priority = 1;
-    pthread_setschedparam(thread->native_handle(), SCHED_RR, &sch_params);
+//    sched_param sch_params{};
+//    sch_params.sched_priority = 1;
+//    pthread_setschedparam(thread->native_handle(), SCHED_RR, &sch_params);
 
     thread->detach();
 }
@@ -47,9 +47,9 @@ MeshThreadData::~MeshThreadData() {
 MeshThreadDef::MeshThreadDef() {
     thread = new std::thread(LocalWorld::meshGenThread, this);
 
-    sched_param sch_params{};
-    sch_params.sched_priority = 1;
-    pthread_setschedparam(thread->native_handle(), SCHED_RR, &sch_params);
+//    sched_param sch_params{};
+//    sch_params.sched_priority = 1;
+//    pthread_setschedparam(thread->native_handle(), SCHED_RR, &sch_params);
 
     thread->detach();
 }

@@ -70,7 +70,7 @@ void GameScene::update() {
         world->loadChunkPacket(&p);
     }
 
-    debugGui.update(player, world, window, blockAtlas, state->fps, (int)world->getMeshChunks()->size(), drawCalls);
+    debugGui.update(player, world, window, blockAtlas, state->fps, (int)world->getMeshChunks()->size(), drawCalls, server->serverSideChunkGens, server->recvPackets);
     world->update();
 }
 

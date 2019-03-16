@@ -21,7 +21,8 @@ struct Packet {
         AUTHENTICATE,
         PLAYER_INFO,
         ENTITY_INFO,
-        CHUNK_INFO
+        CHUNK_INFO,
+        SERVER_INFO,
     };
 
     Packet() = default;

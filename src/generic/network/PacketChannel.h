@@ -15,7 +15,8 @@ struct PacketChannel {
         AUTHENTICATE,
         PLAYER_INFO,
         ENTITY_INFO,
-        WORLD_INFO
+        WORLD_INFO,
+        SERVER_INFO
     };
 };
 
