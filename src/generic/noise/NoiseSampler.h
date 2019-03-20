@@ -7,6 +7,7 @@
 
 
 #include "../helpers/PerlinNoise.h"
+#include "../helpers/Simplex.h"
 #include "NoiseSample.h"
 #include "NoiseParams.h"
 
@@ -17,7 +18,6 @@ public:
     NoiseSample sample(glm::vec3 pos, NoiseParams &params);
 
 private:
-    PerlinNoise noise;
     unsigned int seed;
 };
 

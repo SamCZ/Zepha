@@ -5,7 +5,6 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 
-#include <syscall.h>
 #include "LocalWorld.h"
 
 LocalWorld::LocalWorld(BlockAtlas *atlas) {

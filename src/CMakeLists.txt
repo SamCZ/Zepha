@@ -30,8 +30,8 @@ set(ZEUS_SRC_FILES
         generic/blocks/BlockModel.h
         generic/blocks/TextureAtlas.cpp
         generic/blocks/TextureAtlas.h
-        client/game/gameworld/LocalWorld.cpp
-        client/game/gameworld/LocalWorld.h
+        client/game/localworld/LocalWorld.cpp
+        client/game/localworld/LocalWorld.h
         generic/blocks/BlockChunk.cpp
         generic/blocks/BlockChunk.h
         generic/helpers/ArrayTrans3D.h
@@ -52,8 +52,8 @@ set(ZEUS_SRC_FILES
         client/engine/graphics/HudText.h
         client/graphics/gui/DebugGui.cpp
         client/graphics/gui/DebugGui.h
-        client/game/gameworld/Player.cpp
-        client/game/gameworld/Player.h
+        client/game/Player.cpp
+        client/game/Player.h
         client/engine/Ray.cpp
         client/engine/Ray.h
         client/lua/l_register_blockmodel.cpp
@@ -76,8 +76,8 @@ set(ZEUS_SRC_FILES
         server/ServerPlayer.h
         client/network/ServerConnection.cpp
         client/network/ServerConnection.h
-        client/game/gameworld/WorldThreadDefs.cpp
-        client/game/gameworld/WorldThreadDefs.h
+        client/game/localworld/WorldThreadDefs.cpp
+        client/game/localworld/WorldThreadDefs.h
         generic/gen/MapGen.cpp
         generic/gen/MapGen.h
         generic/network/NetHandler.cpp
@@ -92,8 +92,8 @@ set(ZEUS_SRC_FILES
         server/ConnectionList.h
         server/ServerPeer.h
         generic/network/PacketChannel.h
-        client/game/gameworld/PlayerEntity.cpp
-        client/game/gameworld/PlayerEntity.h
+        client/game/entity/PlayerEntity.cpp
+        client/game/entity/PlayerEntity.h
         client/engine/graphics/Histogram.cpp
         client/engine/graphics/Histogram.h
         client/engine/graphics/RectEntity.cpp
@@ -110,6 +110,12 @@ set(ZEUS_SRC_FILES
         client/engine/FrustumPlane.cpp
         client/engine/FrustumPlane.h
         client/engine/FrustumAABB.cpp
-        client/engine/FrustumAABB.h server/world/World.cpp server/world/World.h server/world/WorldGenStream.cpp server/world/WorldGenStream.h)
+        client/engine/FrustumAABB.h
+        server/world/World.cpp
+        server/world/World.h
+        server/world/WorldGenStream.cpp
+        server/world/WorldGenStream.h
+        client/game/localworld/WorldInterpolationStream.cpp
+        client/game/localworld/WorldInterpolationStream.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

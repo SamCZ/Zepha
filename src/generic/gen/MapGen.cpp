@@ -3,6 +3,7 @@
 //
 
 #include "MapGen.h"
+#include "../../client/engine/Timer.h"
 
 MapGen::MapGen(unsigned int seed) : sampler(seed) {
 
@@ -30,7 +31,7 @@ MapGen::MapGen(unsigned int seed) : sampler(seed) {
         .NOISE_V_FACTOR = 0,
         .SAMPLE_H_PRECISION = 1,
         .SAMPLE_V_PRECISION = 1,
-        .NOISE_MULTIPLIER = 200
+        .NOISE_MULTIPLIER = 100
     };
 
     p_elevation_variation = NoiseParams {
@@ -39,7 +40,7 @@ MapGen::MapGen(unsigned int seed) : sampler(seed) {
             .NOISE_V_FACTOR = 0,
             .SAMPLE_H_PRECISION = 1,
             .SAMPLE_V_PRECISION = 1,
-            .NOISE_MULTIPLIER = 100
+            .NOISE_MULTIPLIER = 50
     };
 
     p_elevation_variation_smaller = NoiseParams {
@@ -48,15 +49,19 @@ MapGen::MapGen(unsigned int seed) : sampler(seed) {
             .NOISE_V_FACTOR = 0,
             .SAMPLE_H_PRECISION = 2,
             .SAMPLE_V_PRECISION = 2,
-            .NOISE_MULTIPLIER = 50
+            .NOISE_MULTIPLIER = 25
     };
 }
 
 BlockChunk* MapGen::generate(glm::vec3 pos) {
+    Timer t("Chunk Gen");
+
     MapGenJob j(pos);
 
     buildElevation(j);
     fillChunk(j);
+
+    t.printElapsedMs();
 
     return new BlockChunk(j.blocks, pos);
 }
@@ -74,10 +79,10 @@ void MapGen::buildElevation(MapGenJob &j) {
         ArrayTrans3D::indAssignVec(m, lp);
 
         j.density[m] = elevation_sample.get(lp)
-                     + elevation_variation_sample.get(lp)
-                     + elevation_variation_smaller_sample.get(lp)
-                     + ((float)pow(feature_sample.get(lp) + 0.5, 2.0) - 0.5f) * 30 * (feature_scale_sample.get(lp) + 0.5f)
-                     - ((j.pos.y * 16 + lp.y));
+                       + elevation_variation_sample.get(lp)
+                       + elevation_variation_smaller_sample.get(lp)
+                       + ((float)pow(feature_sample.get(lp) + 0.5, 2.0) - 0.5f) * 15 * (feature_scale_sample.get(lp) + 0.5f)
+                       - ((j.pos.y * 16 + lp.y));
     }
 }
 
@@ -86,6 +91,6 @@ void MapGen::fillChunk(MapGenJob &j) {
 
     for (int m = 0; m < 4096; m++) {
         ArrayTrans3D::indAssignVec(m, lp);
-        j.blocks[m] = j.density[m] > 0 ? 3 : 0;
+        j.blocks[m] = j.density[m] > 0 ? 1 : 0;
     }
 }

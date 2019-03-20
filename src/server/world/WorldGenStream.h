@@ -17,10 +17,11 @@
 class WorldGenStream {
 public:
     static const int THREAD_QUEUE_SIZE = 32;
-    static const int THREADS = 8;
+    static const int THREADS = 4;
     static const int TOTAL_QUEUE_SIZE = THREADS * THREAD_QUEUE_SIZE;
 
-    WorldGenStream();
+    WorldGenStream() : gen(0) {};
+    explicit WorldGenStream(unsigned int seed);
     ~WorldGenStream();
 
     //Attempt to add `pos` to the pre-thread queue.

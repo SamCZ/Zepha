@@ -34,22 +34,21 @@ void NoiseSample::set(glm::vec3 pos, float value) {
     data[(int)pos.x][(int)pos.y][(int)pos.z] = value;
 }
 
-float NoiseSample::get(glm::vec3 pos) {
-    if (pos.x < 0 || pos.y < 0 || pos.z < 0 || pos.x >= 16 || pos.y >= 16|| pos.z >= 16) {
-        std::cerr << "Invalid index [2]" << std::endl;
-        return 0;
-    }
+float NoiseSample::get(glm::vec3& pos) {
+    int xInt = (int)pos.x;
+    int yInt = (int)pos.y;
+    int zInt = (int)pos.z;
 
-    float offsetH = 16.0f / hPrecision;
-    float offsetV = 16.0f / vPrecision;
+    int offsetH = (int)(16.0f / hPrecision);
+    int offsetV = (int)(16.0f / vPrecision);
 
-    auto xBase = (int)std::floor(pos.x / offsetH);
-    auto yBase = (int)std::floor(pos.y / offsetV);
-    auto zBase = (int)std::floor(pos.z / offsetH);
+    auto xBase = xInt / offsetH;
+    auto yBase = yInt / offsetV;
+    auto zBase = zInt / offsetH;
 
-    float xFac = ((int) pos.x % (int) offsetH) / offsetH;
-    float yFac = ((int) pos.y % (int) offsetV) / offsetV;
-    float zFac = ((int) pos.z % (int) offsetH) / offsetH;
+    float xFac = (xInt % offsetH) / (16.0f / hPrecision);
+    float yFac = (yInt % offsetV) / (16.0f / vPrecision);
+    float zFac = (zInt % offsetH) / (16.0f / hPrecision);
 
     auto p000 = data[xBase][yBase][zBase];
     auto p100 = data[xBase + 1][yBase][zBase];

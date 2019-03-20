@@ -9,7 +9,7 @@
 #include <cmath>
 #include <glm.hpp>
 
-#include "../game/gameworld/Player.h"
+#include "../game/Player.h"
 
 class Ray {
 public:

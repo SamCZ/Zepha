@@ -16,6 +16,7 @@ include_directories (
         lib/sol
         lib/gzip-hpp-master/include
         lib/catch
+        lib/simplex
 )
 
 #Include all of the dynamic libraries

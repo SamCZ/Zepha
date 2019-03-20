@@ -23,8 +23,8 @@ void World::addPlayer(ServerPlayer *player) {
     }
 
     std::sort(toGenerate.begin(), toGenerate.end(), [&](glm::vec3 a, glm::vec3 b) {
-        return min(min(abs(a.x - pos.x), abs(a.y - pos.y)), abs(a.z - pos.z)) <
-               min(min(abs(b.x - pos.x), abs(b.y - pos.y)), abs(b.z - pos.z));
+        return max(max(abs(a.x - pos.x), abs(a.y - pos.y)), abs(a.z - pos.z)) <
+               max(max(abs(b.x - pos.x), abs(b.y - pos.y)), abs(b.z - pos.z));
     });
 
     for (glm::vec3 tPos : toGenerate) {

@@ -30,16 +30,6 @@ GameScene::GameScene(ClientState* state) :
     //The scene requires the blockAtlas for meshing and handling inputs.
     world = new LocalWorld(blockAtlas);
 
-//    int SIZE = 16;
-//    int SIZEV = 8;
-//    for (int i = -SIZE; i < SIZE; i++) {
-//        for (int j = -SIZE; j < SIZEV; j++) {
-//            for (int k = -SIZE; k < SIZE; k++) {
-//                world->genNewChunk(glm::vec3(i, j, k));
-//            }
-//        }
-//    }
-
     player = new Player();
     player->create(world, state->renderer->getCamera());
 

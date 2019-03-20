@@ -14,7 +14,7 @@
 
 class World {
 public:
-    World() = default;
+    World(unsigned int seed) : genStream(seed) {};
 
     void addPlayer(ServerPlayer* player);
     void update();

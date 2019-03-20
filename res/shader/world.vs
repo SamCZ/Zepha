@@ -14,12 +14,13 @@ out vec2 fragTex;
 
 void main() {
     gl_Position = projection * view * model * vec4(pos, 1.0);
-//	color = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);
 
     vec4 myColor = vec4(1, 1, 1, 0) * (0.8 + abs(nor.x) * 0.15);
     myColor += nor.y * 0.15;
     myColor += 0.2;
     myColor.a = 1;
+
+    float factor = min(gl_Position.length / 320, 1);
 
     color = myColor;
 	fragTex = tex;
