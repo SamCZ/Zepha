@@ -36,35 +36,7 @@ void World::playerChangedChunks(ServerPlayer *player) {
     auto pos = player->getChunkPos();
     auto oldBounds = player->getOldBounds();
 
-    int chunksToGen = 0;
-
-    for (int i = 0; i < ServerPlayer::ACTIVE_RANGE; i++) {
-        for (int x = (int)pos.x - i; x < (int)pos.x + i; x++) {
-            for (int y = (int)pos.y - i; y < (int)pos.y + i; y++) {
-                for (int z = (int)pos.z - i; z < (int)pos.z + i; z++) {
-                    glm::vec3 cPos(x, y, z);
-                    if (!player->isInBounds(cPos, oldBounds)) {
-                        if (chunkMap.count(cPos)) {
-
-                            //Send the Chunk to the player
-                            Packet r(Packet::CHUNK_INFO);
-
-                            Serializer::encodeInt(r.data, (int)cPos.x);
-                            Serializer::encodeInt(r.data, (int)cPos.y);
-                            Serializer::encodeInt(r.data, (int)cPos.z);
-                            Serializer::encodeString(r.data, chunkMap[cPos]->serialize());
-
-                            r.sendTo(player->peer->peer, PacketChannel::WORLD_INFO);
-                        }
-                        else {
-                            generate(pos);
-                        }
-                        chunksToGen++;
-                    }
-                }
-            }
-        }
-    }
+    //TODO: Generate chunks when the player moves
 
     player->changedChunks = false;
 }
@@ -82,9 +54,7 @@ void World::update() {
         auto it = generateQueueList.begin();
         glm::vec3 pos = *it;
 
-        bool success = genStream.tryToQueue(pos);
-
-        if (success) {
+        if (genStream.tryToQueue(pos)) {
             generateQueueList.erase(it);
             generateQueueMap.erase(pos);
         }

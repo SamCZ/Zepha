@@ -13,6 +13,7 @@
 #include <unordered_set>
 #include "../../generic/blocks/BlockChunk.h"
 #include "../../generic/gen/MapGen.h"
+#include "../../generic/helpers/Vec3Compare.h"
 
 class WorldGenStream {
 public:
@@ -54,15 +55,9 @@ public:
 private:
     static void threadFunction(Thread* thread);
 
-    struct vec3cmp {
-        size_t operator()(const glm::vec3& k)const {
-            return std::hash<float>()(k.x) ^ std::hash<float>()(k.y) ^ std::hash<float>()(k.z);
-        }
-    };
-
     MapGen gen;
     std::vector<glm::vec3> queuedTasks;
-    std::unordered_set<glm::vec3, vec3cmp> queuedMap;
+    std::unordered_set<glm::vec3, Vec3Compare::func> queuedMap;
 };
 
 

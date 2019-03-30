@@ -76,8 +76,6 @@ set(ZEUS_SRC_FILES
         server/ServerPlayer.h
         client/network/ServerConnection.cpp
         client/network/ServerConnection.h
-        client/game/localworld/WorldThreadDefs.cpp
-        client/game/localworld/WorldThreadDefs.h
         generic/gen/MapGen.cpp
         generic/gen/MapGen.h
         generic/network/NetHandler.cpp
@@ -116,6 +114,6 @@ set(ZEUS_SRC_FILES
         server/world/WorldGenStream.cpp
         server/world/WorldGenStream.h
         client/game/localworld/WorldInterpolationStream.cpp
-        client/game/localworld/WorldInterpolationStream.h)
+        client/game/localworld/WorldInterpolationStream.h generic/helpers/Vec3Compare.h generic/helpers/ChunkVec.h client/game/localworld/MeshGenStream.cpp client/game/localworld/MeshGenStream.h generic/helpers/VecUtils.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

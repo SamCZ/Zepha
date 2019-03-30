@@ -54,10 +54,9 @@ void GameScene::update() {
 
     while (!server->chunkPackets.empty()) {
         auto it = server->chunkPackets.begin();
-        Packet p = *it;
+        Packet* p = *it;
         server->chunkPackets.erase(it);
-
-        world->loadChunkPacket(&p);
+        world->loadChunkPacket(p);
     }
 
     debugGui.update(player, world, window, blockAtlas, state->fps, (int)world->getMeshChunks()->size(), drawCalls, server->serverSideChunkGens, server->recvPackets);

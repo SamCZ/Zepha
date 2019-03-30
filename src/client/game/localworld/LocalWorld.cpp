@@ -6,37 +6,17 @@
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 
 #include "LocalWorld.h"
+#include "../../../generic/helpers/VecUtils.h"
 
-LocalWorld::LocalWorld(BlockAtlas *atlas) {
+LocalWorld::LocalWorld(BlockAtlas *atlas) :
+    meshGenStream(atlas),
+    worldGenStream(55) {
+
     blockAtlas = atlas;
-    mapGen = new MapGen(1337);
-
-    for (int i = 0; i < GEN_THREADS; i++) {
-        genThreads.push_back(new ChunkThreadDef(mapGen));
-    }
-
-    for (int i = 0; i < MESH_THREADS; i++) {
-        meshThreads.push_back(new MeshThreadDef());
-    }
-}
-
-void LocalWorld::genNewChunk(glm::vec3 pos) {
-    if (!blockChunks.count(pos)) {
-        pendingGen.push_back(pos);
-    }
 }
 
 void LocalWorld::loadChunkPacket(Packet *p) {
-    auto b = new BlockChunk();
-
-    glm::vec3 pos = glm::vec3(Serializer::decodeInt(&p->data[0]), Serializer::decodeInt(&p->data[4]), Serializer::decodeInt(&p->data[8]));
-
-    int len = Serializer::decodeInt(&p->data[12]);
-    std::string data(p->data.begin() + 16, p->data.begin() + 16 + len);
-
-    b->deserialize(data);
-
-    commitChunk(pos, b);
+    worldGenStream.pushBack(p);
 }
 
 void LocalWorld::commitChunk(glm::vec3 pos, BlockChunk *c) {
@@ -55,28 +35,25 @@ void LocalWorld::attemptMeshChunk(glm::vec3 pos) {
     auto thisChunk = getChunk(pos);
     if (thisChunk == nullptr) return;
 
-    thisChunk->adjacent[0] = getAdjacentExists(glm::vec3(pos.x, pos.y + 1, pos.z), pos);
-    thisChunk->adjacent[1] = getAdjacentExists(glm::vec3(pos.x, pos.y - 1, pos.z), pos);
-    thisChunk->adjacent[2] = getAdjacentExists(glm::vec3(pos.x + 1, pos.y, pos.z), pos);
-    thisChunk->adjacent[3] = getAdjacentExists(glm::vec3(pos.x - 1, pos.y, pos.z), pos);
-    thisChunk->adjacent[4] = getAdjacentExists(glm::vec3(pos.x, pos.y, pos.z + 1), pos);
-    thisChunk->adjacent[5] = getAdjacentExists(glm::vec3(pos.x, pos.y, pos.z - 1), pos);
+    auto vectors = VecUtils::getCardinalVectors();
+    for (int i = 0; i < vectors.size(); i++) {
+        thisChunk->adjacent[i] = getAdjacentExists(pos + vectors[i], pos);
+    }
 
     if (thisChunk->allAdjacentsExist() && !thisChunk->isEmpty()) pendingMesh.push_back(pos);
 }
 
 bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
     auto chunk = getChunk(pos);
-
     glm::vec3 diff = otherPos - pos;
 
     if (chunk != nullptr) {
-        if (diff == glm::vec3(0, 1, 0)) chunk->adjacent[0] = true;
-        if (diff == glm::vec3(0,-1, 0)) chunk->adjacent[1] = true;
-        if (diff == glm::vec3(1, 0, 0)) chunk->adjacent[2] = true;
-        if (diff == glm::vec3(-1,0, 0)) chunk->adjacent[3] = true;
-        if (diff == glm::vec3(0, 0, 1)) chunk->adjacent[4] = true;
-        if (diff == glm::vec3(0, 0,-1)) chunk->adjacent[5] = true;
+        auto vectors = VecUtils::getCardinalVectors();
+        for (int i = 0; i < vectors.size(); i++) {
+            if (diff == vectors[i]) {
+                chunk->adjacent[i] = true;
+            }
+        }
 
         if (chunk->allAdjacentsExist() && !chunk->isEmpty()) pendingMesh.push_back(pos);
         return true;
@@ -86,68 +63,81 @@ bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
 
 std::vector<bool>* LocalWorld::getAdjacentsCull(glm::vec3 pos) {
     auto culls = new std::vector<bool>();
-    culls->reserve(1536);
+    culls->reserve(1536); //256 * 6
 
-    auto top = getChunk(glm::vec3(pos.x, pos.y + 1, pos.z));
-    for (int i = 0; i < 16; i++) {
+    auto vectors = VecUtils::getCardinalVectors();
+    for (int i = 0; i < vectors.size(); i++) {
+        auto chunk = getChunk(pos + vectors[i]);
+
         for (int j = 0; j < 16; j++) {
-            culls->push_back(blockAtlas->getBlock(top->getBlock(i, 0, j))->isCulling());
+            for (int k = 0; k < 16; k++) {
+
+                int x = (i == 0) ? 0 : (i == 1) ? 15 : (i <= 3) ? j : k;
+                int y = (i == 2) ? 0 : (i == 3) ? 15 : j;
+                int z = (i == 4) ? 0 : (i == 5) ? 15 : k;
+
+                auto block = chunk->getBlock(x, y, z);
+                culls->push_back(blockAtlas->getBlock(block)->isCulling());
+            }
         }
     }
-
-    auto bottom = getChunk(glm::vec3(pos.x, pos.y - 1, pos.z));
-    for (int i = 0; i < 16; i++) {
-        for (int j = 0; j < 16; j++) {
-            culls->push_back(blockAtlas->getBlock(bottom->getBlock(i, 15, j))->isCulling());
-        }
-    }
-
-    auto front = getChunk(glm::vec3(pos.x - 1, pos.y, pos.z));
-    for (int i = 0; i < 16; i++) {
-        for (int j = 0; j < 16; j++) {
-            culls->push_back(blockAtlas->getBlock(front->getBlock(15, i, j))->isCulling());
-        }
-    }
-
-    auto back = getChunk(glm::vec3(pos.x + 1, pos.y, pos.z));
-    for (int i = 0; i < 16; i++) {
-        for (int j = 0; j < 16; j++) {
-            culls->push_back(blockAtlas->getBlock(back->getBlock(0, i, j))->isCulling());
-        }
-    }
-
-    auto left = getChunk(glm::vec3(pos.x, pos.y, pos.z - 1));
-    for (int i = 0; i < 16; i++) {
-        for (int j = 0; j < 16; j++) {
-            culls->push_back(blockAtlas->getBlock(left->getBlock(j, i, 15))->isCulling());
-        }
-    }
-
-    auto right = getChunk(glm::vec3(pos.x, pos.y, pos.z + 1));
-    for (int i = 0; i < 16; i++) {
-        for (int j = 0; j < 16; j++) {
-            culls->push_back(blockAtlas->getBlock(right->getBlock(j, i, 0))->isCulling());
-        }
-    }
-
     return culls;
 }
 
 void LocalWorld::update() {
-//    std::sort(pendingGen.begin(), pendingGen.begin()+min(1000, (int)pendingGen.size()), [](glm::vec3 a, glm::vec3 b) {
-//        return glm::distance(a, glm::vec3(0, 0, 0)) < glm::distance(b, glm::vec3(0, 0, 0));
-//    });
-//    std::sort(pendingMesh.begin(), pendingMesh.end()+min(1000, (int)pendingMesh.size()), [](glm::vec3 a, glm::vec3 b) {
-//        return glm::distance(a, glm::vec3(0, 0, 0)) < glm::distance(b, glm::vec3(0, 0, 0));
-//    });
-//
-    handleChunkGenQueue();
-    handleMeshGenQueue();
+    //Create Finished Messages
+    auto finishedMeshes = meshGenStream.update();
+
+    lastMeshUpdates = 0;
+    for (auto mesh : *finishedMeshes) {
+        if (!mesh.vertices->empty()) {
+            auto meshChunk = new MeshChunk();
+            meshChunk->build(mesh.vertices, mesh.indices);
+
+            glm::vec3 pos = mesh.pos * glm::vec3(CHUNK_SIZE);
+            meshChunk->setPosition(pos);
+
+            if (meshChunks.count(mesh.pos)) {
+                MeshChunk* oldChunk = meshChunks.at(mesh.pos);
+                meshChunks.erase(mesh.pos);
+                delete oldChunk;
+            }
+            meshChunks.insert(std::pair<glm::vec3, MeshChunk*>(mesh.pos, meshChunk));
+
+            lastMeshUpdates++;
+        }
+    }
+
+    //Build New Meshes
+    if (meshGenStream.spaceInQueue()) {
+        bool moreSpace = true;
+
+        while (moreSpace && !pendingMesh.empty()) {
+            auto it = pendingMesh.begin();
+            glm::vec3 pos = *it;
+
+            if (!meshGenStream.isQueued(pos)) {
+                moreSpace = meshGenStream.tryToQueue(
+                        std::pair<BlockChunk*, std::vector<bool>*>{getChunk(pos), getAdjacentsCull(pos)});
+            }
+
+            pendingMesh.erase(it);
+        }
+    }
+
+    //Create Finished BlockChunks
+    auto finishedChunks = worldGenStream.update();
+
+    lastGenUpdates = 0;
+    for (auto chunk : finishedChunks) {
+        commitChunk(chunk->pos, chunk);
+        lastGenUpdates++;
+    }
 }
 
 int LocalWorld::getBlock(glm::vec3 pos) {
-    auto chunkPos = LocalWorld::chunkVec(LocalWorld::roundVec(pos));
-    auto local = LocalWorld::localVec(LocalWorld::roundVec(pos));
+    auto chunkPos = ChunkVec::chunkVec(ChunkVec::roundVec(pos));
+    auto local = ChunkVec::localVec(ChunkVec::roundVec(pos));
 
     auto chunk = getChunk(chunkPos);
     if (chunk != nullptr) {
@@ -157,8 +147,8 @@ int LocalWorld::getBlock(glm::vec3 pos) {
 }
 
 void LocalWorld::setBlock(glm::vec3 pos, int block) {
-    auto chunkPos = LocalWorld::chunkVec(LocalWorld::roundVec(pos));
-    auto local = LocalWorld::localVec(LocalWorld::roundVec(pos));
+    auto chunkPos = ChunkVec::chunkVec(ChunkVec::roundVec(pos));
+    auto local = ChunkVec::localVec(ChunkVec::roundVec(pos));
 
     auto chunk = getChunk(chunkPos);
     if (chunk != nullptr) {
@@ -181,178 +171,6 @@ BlockChunk* LocalWorld::getChunk(glm::vec3 chunkPos) {
     return nullptr;
 }
 
-void LocalWorld::handleChunkGenQueue() {
-    for (auto threadDef : genThreads) {
-        std::unique_lock<std::mutex> lock(threadDef->lock, std::defer_lock);
-        lock.lock();
-        for (auto iter = threadDef->tasks.begin(); iter != threadDef->tasks.end();) {
-            if (finishedGen.size() > GEN_FINISHED_SIZE) break;
-            auto threadData = *iter;
-
-            if (threadData->done) {
-                finishedGen.push_back(threadData);
-                iter = threadDef->tasks.erase(iter);
-            } else iter++;
-        }
-
-        while (!pendingGen.empty() && threadDef->tasks.size() < GEN_QUEUE_SIZE) {
-            auto it = pendingGen.begin();
-            glm::vec3 pos = *it;
-            pendingGen.erase(it);
-
-            threadDef->tasks.push_back(new ChunkThreadData(pos, blockAtlas));
-        }
-    }
-
-    Timer t("Chunk Initialization");
-    int genUpdates = 0;
-    for (auto iter = finishedGen.begin(); iter != finishedGen.end(); ) {
-        if (t.elapsedNs() > 4000000) {
-            break;
-        }
-
-        ChunkThreadData* threadData = *iter;
-
-        commitChunk(threadData->pos, threadData->chunk);
-        iter = finishedGen.erase(iter);
-        delete threadData;
-
-        genUpdates++;
-    }
-    lastGenUpdates = genUpdates;
-//    t.printElapsedMs();
-}
-
-//Function that runs on each ChunkGenThread in the chunk generation threadpool.
-//Takes a threadDef object which contains a vector of tasks to do, and infinitely loops, completing tasks and
-//re-inserting them into the vector to be further manipulated by the main thread.
-void LocalWorld::chunkGenThread(ChunkThreadDef* threadDef) {
-    //Infinite loop
-    while (true) {
-        std::unique_lock<std::mutex> lock(threadDef->lock, std::defer_lock);
-        lock.lock();
-
-        //Find the first unfinished task
-        ChunkThreadData* data = nullptr;
-        for (auto iter = threadDef->tasks.begin(); iter != threadDef->tasks.end(); ) {
-            if (!(*iter)->done) {
-                data = (*iter);
-                threadDef->tasks.erase(iter);
-                break;
-            }
-            iter++;
-        }
-
-        lock.unlock();
-
-        if (data != nullptr) {
-            //TODO: WARN: THIS IS DISABLING CLIENT-SIDE MAP GENERATION
-            data->chunk = threadDef->mapGen->generate(data->pos);
-//            auto b = new BlockChunk(std::vector<int>(4096));
-//            data->chunk = b;
-
-            data->done = true;
-
-            lock.lock();
-            threadDef->tasks.push_back(data);
-            lock.unlock();
-        }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
-}
-
-void LocalWorld::handleMeshGenQueue() {
-    for (auto threadDef : meshThreads) {
-        std::unique_lock<std::mutex> lock(threadDef->lock, std::defer_lock);
-        lock.lock();
-        for (auto iter = threadDef->tasks.begin(); iter != threadDef->tasks.end();) {
-            if (finishedMesh.size() > MESH_FINISHED_SIZE) break;
-
-            auto threadData = *iter;
-
-            if (threadData->done) {
-                finishedMesh.push_back(threadData);
-                iter = threadDef->tasks.erase(iter);
-            } else iter++;
-        }
-
-        while (!pendingMesh.empty() && threadDef->tasks.size() < MESH_QUEUE_SIZE) {
-            auto it = pendingMesh.begin();
-            glm::vec3 pos = *it;
-            pendingMesh.erase(it);
-
-            auto blockChunk = getChunk(pos);
-            if (blockChunk != nullptr && blockChunk->allAdjacentsExist()) {
-
-                threadDef->tasks.push_back(new MeshThreadData(pos, blockChunk, getAdjacentsCull(pos), blockAtlas));
-            }
-        }
-    }
-
-    Timer t("Mesh Initialization");
-    int meshUpdates = 0;
-    for (auto iter = finishedMesh.begin(); iter != finishedMesh.end(); ) {
-        if (t.elapsedNs() > 4000000) break;
-
-        MeshThreadData* threadData = *iter;
-
-        if (meshChunks.count(threadData->pos) != 0) {
-            meshChunks.erase(threadData->pos);
-        }
-
-        if (!threadData->vertices->empty()) {
-            auto meshChunk = new MeshChunk();
-            meshChunk->build(threadData->vertices, threadData->indices);
-
-            glm::vec3 pos = threadData->pos * glm::vec3(CHUNK_SIZE);
-            meshChunk->setPosition(pos);
-            meshChunks.insert(std::pair<glm::vec3, MeshChunk*>(threadData->pos, meshChunk));
-        }
-
-        iter = finishedMesh.erase(iter);
-        delete threadData;
-
-        meshUpdates++;
-    }
-    lastMeshUpdates = meshUpdates;
-//    t.printElapsedMs();
-}
-
-//Function that runs on each MeshGenThread in the mesh generation threadpool.
-//Processes tasks and returns meshes in the same vector to be handled by the main thread.
-void LocalWorld::meshGenThread(MeshThreadDef* threadDef) {
-    //Infinite loop
-    while (true) {
-        std::unique_lock<std::mutex> lock(threadDef->lock, std::defer_lock);
-        lock.lock();
-
-        //Find the first unfinished task
-        MeshThreadData* data = nullptr;
-        for (auto iter = threadDef->tasks.begin(); iter != threadDef->tasks.end(); ) {
-            if (!(*iter)->done) {
-                data = (*iter);
-                threadDef->tasks.erase(iter);
-                break;
-            }
-            iter++;
-        }
-
-        lock.unlock();
-
-        if (data != nullptr) {
-            MeshGenerator().build(data->chunk, data->atlas, data->adjacents, *(data->vertices), *(data->indices));
-            data->done = true;
-
-            lock.lock();
-            threadDef->tasks.push_back(data);
-            lock.unlock();
-        }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
-}
-
-std::unordered_map<glm::vec3, MeshChunk*, LocalWorld::vec3cmp>* LocalWorld::getMeshChunks() {
+std::unordered_map<glm::vec3, MeshChunk*, Vec3Compare::func>* LocalWorld::getMeshChunks() {
     return &meshChunks;
 }

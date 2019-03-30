@@ -14,7 +14,7 @@
 
 class World {
 public:
-    World(unsigned int seed) : genStream(seed) {};
+    explicit World(unsigned int seed) : genStream(seed) {};
 
     void addPlayer(ServerPlayer* player);
     void update();
@@ -24,20 +24,14 @@ private:
     void playerChangedChunks(ServerPlayer* player);
     void generate(glm::vec3 pos);
 
-    struct vec3cmp {
-        size_t operator()(const glm::vec3& k)const {
-            return std::hash<float>()(k.x) ^ std::hash<float>()(k.y) ^ std::hash<float>()(k.z);
-        }
-    };
-
     WorldGenStream genStream;
 
     std::vector<ServerPlayer*> players;
 
-    std::unordered_map<glm::vec3, BlockChunk*, vec3cmp> chunkMap;
+    std::unordered_map<glm::vec3, BlockChunk*, Vec3Compare::func> chunkMap;
     std::vector<std::pair<glm::vec3, BlockChunk*>> chunkList;
 
-    std::unordered_set<glm::vec3, vec3cmp> generateQueueMap;
+    std::unordered_set<glm::vec3, Vec3Compare::func> generateQueueMap;
     std::vector<glm::vec3> generateQueueList;
 
     int generatedChunks = 0;

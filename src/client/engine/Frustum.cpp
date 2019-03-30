@@ -2,7 +2,6 @@
 // Created by aurailus on 02/03/19.
 //
 
-#include <glew.h>
 #include "Frustum.h"
 
 void Frustum::setCamInternals(float fov, float ratio, float nearD, float farD) {

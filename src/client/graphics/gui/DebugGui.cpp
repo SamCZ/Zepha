@@ -3,7 +3,7 @@
 //
 
 #include "DebugGui.h"
-#include "../../engine/graphics/Histogram.h"
+#include "../../../generic/helpers/ChunkVec.h"
 
 DebugGui::DebugGui(glm::vec2 bufferSize) {
     fontTexture = new Texture((char*)"../res/tex/gui/font.png");
@@ -220,7 +220,7 @@ void DebugGui::update(Player* player, LocalWorld* world, Window* window, BlockAt
     glGetIntegerv(0x9048, &videoMemTotal);
     glGetIntegerv(0x9049, &videoMemAvail);
 
-    glm::vec3 round = LocalWorld::roundVec(*player->getPos());
+    glm::vec3 round = ChunkVec::roundVec(*player->getPos());
     round.y -= 2;
 
     int block = world->getBlock(round);
@@ -246,8 +246,8 @@ void DebugGui::update(Player* player, LocalWorld* world, Window* window, BlockAt
         look = atlas->getBlock(block)->getIdentifier();
     }
 
-    glm::vec3 chk = LocalWorld::chunkVec(*player->getPos());
-    glm::vec3 loc = LocalWorld::localVec(*player->getPos());
+    glm::vec3 chk = ChunkVec::chunkVec(*player->getPos());
+    glm::vec3 loc = ChunkVec::localVec(*player->getPos());
 
     fpsText->set("FPS:" + string_float((float)fps));
     fpsHist->push_back((float)fps);

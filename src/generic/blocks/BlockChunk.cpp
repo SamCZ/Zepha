@@ -3,7 +3,6 @@
 //
 
 #include "BlockChunk.h"
-#include "../network/Serializer.h"
 
 #include <gzip/compress.hpp>
 #include <gzip/decompress.hpp>
@@ -95,18 +94,17 @@ std::vector<int> BlockChunk::rleEncode() {
     return rle;
 }
 
-void BlockChunk::rleDecode(std::vector<int>& blocksRle) {
-    blocks = std::vector<int>(4096);
-
+void BlockChunk::rleDecode(std::vector<int>& blocksRle, std::vector<int>& buffer) {
     int ind = 0;
 
     this->empty = true;
+
     for (int i = 0; i < blocksRle.size() / 2; i++) {
         int block = blocksRle[i*2];
         int count = blocksRle[i*2 + 1];
 
         for (int j = 0; j < count; j++) {
-            blocks[ind++] = (block);
+            buffer[ind++] = (block);
 
             if (block != 0) {
                 this->empty = false;
@@ -135,8 +133,35 @@ bool BlockChunk::deserialize(std::string gzip) {
         auto str = gzip::decompress(gzip.data(), gzip.length());
         auto rle = Serializer::decodeIntVec(str);
 
-        rleDecode(rle);
+        rleDecode(rle, this->blocks);
         return true;
     }
     return false;
+}
+
+std::vector<int> BlockChunk::deserializeToVec(std::string gzip) {
+    if (gzip::is_compressed(gzip.data(), gzip.length())) {
+
+        auto str = gzip::decompress(gzip.data(), gzip.length());
+        auto rle = Serializer::decodeIntVec(str);
+
+        std::vector<int> vals(4096);
+        int ind = 0;
+
+        for (int i = 0; i < rle.size() / 2; i++) {
+            int block = rle[i*2];
+            int count = rle[i*2 + 1];
+
+            for (int j = 0; j < count; j++) {
+                vals[ind++] = (block);
+
+                if (ind >= 4096) break;
+            }
+        }
+
+        return std::move(vals);
+    }
+
+    std::cerr << "Badly coded packet!" << std::endl;
+    return {};
 }

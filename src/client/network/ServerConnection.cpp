@@ -31,25 +31,25 @@ void ServerConnection::update(Player &player, std::vector<PlayerEntity*>& player
                 break;
             }
             case ENET_EVENT_TYPE_RECEIVE: {
-                Packet p(event.packet);
+                Packet* p = new Packet(event.packet);
 
-                switch (p.type) {
+                switch (p->type) {
                     case Packet::PLAYER_INFO: {
                         glm::vec3 playerPos = glm::vec3(
-                                Serializer::decodeFloat(&p.data[0]),
-                                Serializer::decodeFloat(&p.data[4]),
-                                Serializer::decodeFloat(&p.data[8])
+                                Serializer::decodeFloat(&p->data[0]),
+                                Serializer::decodeFloat(&p->data[4]),
+                                Serializer::decodeFloat(&p->data[8])
                         );
                         player.setPos(playerPos);
                         break;
                     }
                     case Packet::ENTITY_INFO: {
-                        int peer_id = Serializer::decodeInt(&p.data[0]);
+                        int peer_id = Serializer::decodeInt(&p->data[0]);
 
                         glm::vec3 playerPos = glm::vec3(
-                                Serializer::decodeFloat(&p.data[4]),
-                                Serializer::decodeFloat(&p.data[8]),
-                                Serializer::decodeFloat(&p.data[12])
+                                Serializer::decodeFloat(&p->data[4]),
+                                Serializer::decodeFloat(&p->data[8]),
+                                Serializer::decodeFloat(&p->data[12])
                         );
 
                         bool found = false;
@@ -67,11 +67,11 @@ void ServerConnection::update(Player &player, std::vector<PlayerEntity*>& player
                         break;
                     }
                     case Packet::CHUNK_INFO: {
-                        chunkPackets.push_back(std::move(p));
+                        chunkPackets.push_back(p);
                         break;
                     }
                     case Packet::SERVER_INFO: {
-                        serverSideChunkGens = Serializer::decodeInt(&p.data[0]);
+                        serverSideChunkGens = Serializer::decodeInt(&p->data[0]);
                         break;
                     }
                     default:

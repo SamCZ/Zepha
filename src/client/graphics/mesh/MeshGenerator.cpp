@@ -19,14 +19,14 @@ BlockDef* blockData(glm::vec3* pos, BlockChunk* chunk, BlockAtlas* atlas) {
 bool faceOcculudedAt(glm::vec3* pos, BlockChunk* chunk, BlockAtlas* atlas, std::vector<bool>* bools) {
     if (pos->x < 0 || pos->x > 15 || pos->y < 0 || pos->y > 15 || pos->z < 0 || pos->z > 15) {
 
-        if (pos->y == -1) return (*bools)[256 + (int)pos->x * 16 + (int)pos->z];
-        if (pos->y == 16) return (*bools)[(int)pos->x * 16 + (int)pos->z];
+        if (pos->x == -1) return (*bools)[ 256 + (int)pos->y * 16 + (int)pos->z];
+        if (pos->x == 16) return (*bools)[     + (int)pos->y * 16 + (int)pos->z];
 
-        if (pos->x == -1) return (*bools)[512 + (int)pos->y * 16 + (int)pos->z];
-        if (pos->x == 16) return (*bools)[768 + (int)pos->y * 16 + (int)pos->z];
+        if (pos->y == -1) return (*bools)[ 768 + (int)pos->x * 16 + (int)pos->z];
+        if (pos->y == 16) return (*bools)[ 512 + (int)pos->x * 16 + (int)pos->z];
 
-        if (pos->z == -1) return (*bools)[1024 + (int)pos->y * 16 + (int)pos->x];
-        if (pos->z == 16) return (*bools)[1280 + (int)pos->y * 16 + (int)pos->x];
+        if (pos->z == -1) return (*bools)[1280 + (int)pos->y * 16 + (int)pos->x];
+        if (pos->z == 16) return (*bools)[1024 + (int)pos->y * 16 + (int)pos->x];
 
         return false;
     }
