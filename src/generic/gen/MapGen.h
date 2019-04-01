@@ -19,16 +19,21 @@ public:
     explicit MapGen(unsigned int seed);
     BlockChunk* generate(glm::vec3 pos);
 private:
-    void buildElevation(MapGenJob &j);
+    void getDensityMap(MapGenJob &job);
+    void getElevation(MapGenJob &j);
+
     void fillChunk(MapGenJob &j);
 
     NoiseSampler sampler;
 
     NoiseParams p_feature;
     NoiseParams p_feature_scale;
-    NoiseParams p_elevation;
-    NoiseParams p_elevation_variation;
-    NoiseParams p_elevation_variation_smaller;
+    NoiseParams p_density;
+    NoiseParams p_density_variation;
+    NoiseParams p_density_variation_smaller;
+
+    NoiseParams p_flora_feature;
+    NoiseParams p_flora_smaller;
 };
 
 

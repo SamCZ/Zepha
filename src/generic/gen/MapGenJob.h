@@ -12,6 +12,7 @@ struct MapGenJob {
 
     std::vector<int> blocks;
     std::vector<float> density;
+    std::vector<int> depth;
 
     glm::vec3 pos {};
 
@@ -21,6 +22,7 @@ struct MapGenJob {
 
         blocks = std::vector<int>(4096);
         density = std::vector<float>(4096);
+        depth = std::vector<int>(4096);
     }
 };
 
