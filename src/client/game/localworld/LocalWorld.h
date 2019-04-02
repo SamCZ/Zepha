@@ -13,7 +13,6 @@
 #include <vec3.hpp>
 #include <gtc/type_ptr.hpp>
 
-#include "../../../generic/helpers/PerlinNoise.h"
 #include "../../../generic/helpers/ArrayTrans3D.h"
 #include "../../../generic/blocks/BlockAtlas.h"
 #include "../../../generic/blocks/BlockChunk.h"

@@ -73,3 +73,25 @@ float NoiseSample::get(glm::vec3& pos) {
         );
     }
 }
+
+NoiseSample NoiseSample::getSample(noise::module::Module *module, glm::vec3 chunkPos, int hPrecision, int vPrecision, bool flat) {
+    NoiseSample s(hPrecision, vPrecision);
+
+    float offsetH = 16.0f / hPrecision;
+    float offsetV = 16.0f / vPrecision;
+
+    for (int i = 0; i <= hPrecision; i++) {
+        for (int j = 0; j <= vPrecision; j++) {
+            for (int k = 0; k <= hPrecision; k++) {
+
+                double xCoord = (chunkPos.x * 16 + offsetH * i) / 16.0;
+                double yCoord = (flat) ? 0 : (chunkPos.y * 16 + offsetV * j) / 16.0;
+                double zCoord = (chunkPos.z * 16 + offsetH * k) / 16.0;
+
+                s.set(glm::vec3(i, j, k), (float)module->GetValue(xCoord, yCoord, zCoord));
+            }
+        }
+    }
+
+    return std::move(s);
+}

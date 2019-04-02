@@ -2,6 +2,7 @@
 // Created by aurailus on 05/03/19.
 //
 
+#include <algorithm>
 #include "World.h"
 #include "../../generic/network/PacketChannel.h"
 
@@ -23,6 +24,7 @@ void World::addPlayer(ServerPlayer *player) {
     }
 
     std::sort(toGenerate.begin(), toGenerate.end(), [&](glm::vec3 a, glm::vec3 b) {
+        using namespace std;
         return max(max(abs(a.x - pos.x), abs(a.y - pos.y)), abs(a.z - pos.z)) <
                max(max(abs(b.x - pos.x), abs(b.y - pos.y)), abs(b.z - pos.z));
     });

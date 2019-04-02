@@ -21,18 +21,18 @@ TEST_CASE("Blockchunks", "[networking]") {
         for (int i = 0; i < 20; i++) {
             auto b = getRandomChunk();
 
-            SECTION("BlockChunk RLE Encoding") {
-                auto rle = b->rleEncode();
-
-                auto b2 = new BlockChunk();
-                b2->rleDecode(rle);
-
-                for (int j = 0; j < 4096; j++) {
-                    REQUIRE(b2->getBlock(j) == b->getBlock(j));
-                }
-
-                delete b2;
-            }
+//            SECTION("BlockChunk RLE Encoding") {
+//                auto rle = b->rleEncode();
+//
+//                auto b2 = new BlockChunk();
+//                b2->rleDecode(rle);
+//
+//                for (int j = 0; j < 4096; j++) {
+//                    REQUIRE(b2->getBlock(j) == b->getBlock(j));
+//                }
+//
+//                delete b2;
+//            }
 
             auto gzip = b->serialize();
 

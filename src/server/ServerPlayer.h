@@ -12,7 +12,7 @@
 
 class ServerPlayer {
 public:
-    const static int ACTIVE_RANGE = 20;
+    const static int ACTIVE_RANGE = 25;
 
     explicit ServerPlayer(ServerPeer* peer);
 

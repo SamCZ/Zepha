@@ -11,8 +11,10 @@
 
 #include "MapGenJob.h"
 #include "../blocks/BlockChunk.h"
-#include "../noise/NoiseParams.h"
-#include "../noise/NoiseSampler.h"
+
+#include <noise/noise.h>
+
+using namespace noise;
 
 class MapGen {
 public:
@@ -24,16 +26,17 @@ private:
 
     void fillChunk(MapGenJob &j);
 
-    NoiseSampler sampler;
+    unsigned int seed;
 
-    NoiseParams p_feature;
-    NoiseParams p_feature_scale;
-    NoiseParams p_density;
-    NoiseParams p_density_variation;
-    NoiseParams p_density_variation_smaller;
+    module::RidgedMulti terrainMountains;
+    module::Billow terrainFlatBase;
+    module::ScaleBias terrainFlat;
+    module::Perlin terrainType;
+    module::Select terrainFinal;
 
-    NoiseParams p_flora_feature;
-    NoiseParams p_flora_smaller;
+    module::Perlin floraNoise;
+    module::Turbulence floraTurbulence;
+    module::ScaleBias floraFinal;
 };
 
 

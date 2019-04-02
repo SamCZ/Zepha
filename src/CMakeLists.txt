@@ -1,8 +1,6 @@
 set(ZEUS_SRC_FILES
         client/engine/graphics/Mesh.cpp
         client/engine/graphics/Mesh.h
-        generic/helpers/PerlinNoise.cpp
-        generic/helpers/PerlinNoise.h
         client/engine/Entity.cpp
         client/engine/Entity.h
         client/engine/graphics/Shader.cpp
@@ -98,9 +96,6 @@ set(ZEUS_SRC_FILES
         client/engine/graphics/RectEntity.h
         generic/gen/MapGenJob.h
         generic/helpers/Interpolation.h
-        generic/noise/NoiseParams.h
-        generic/noise/NoiseSampler.cpp
-        generic/noise/NoiseSampler.h
         generic/noise/NoiseSample.cpp
         generic/noise/NoiseSample.h
         client/engine/Frustum.cpp
@@ -114,6 +109,11 @@ set(ZEUS_SRC_FILES
         server/world/WorldGenStream.cpp
         server/world/WorldGenStream.h
         client/game/localworld/WorldInterpolationStream.cpp
-        client/game/localworld/WorldInterpolationStream.h generic/helpers/Vec3Compare.h generic/helpers/ChunkVec.h client/game/localworld/MeshGenStream.cpp client/game/localworld/MeshGenStream.h generic/helpers/VecUtils.h)
+        client/game/localworld/WorldInterpolationStream.h
+        generic/helpers/Vec3Compare.h
+        generic/helpers/ChunkVec.h
+        client/game/localworld/MeshGenStream.cpp
+        client/game/localworld/MeshGenStream.h
+        generic/helpers/VecUtils.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

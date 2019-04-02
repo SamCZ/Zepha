@@ -1,74 +1,45 @@
+#include <cmath>
+
 //
 // Created by aurailus on 28/01/19.
 //
 
 #include "MapGen.h"
 #include "../../client/engine/Timer.h"
+#include "../noise/NoiseSample.h"
 
-MapGen::MapGen(unsigned int seed) : sampler(seed) {
+MapGen::MapGen(unsigned int seed) {
+    this->seed = seed;
 
-    p_feature = NoiseParams {
-            .PERLIN_TYPE = NoiseParams::PERLIN_3D,
-            .NOISE_H_FACTOR = 60,
-            .NOISE_V_FACTOR = 100,
-            .SAMPLE_H_PRECISION = 4,
-            .SAMPLE_V_PRECISION = 4,
-            .NOISE_MULTIPLIER = 2
-    };
+    terrainFlatBase.SetFrequency(0.15);
+    terrainFlatBase.SetPersistence(0.4);
 
-    p_feature_scale = NoiseParams {
-            .PERLIN_TYPE = NoiseParams::PERLIN_2D,
-            .NOISE_H_FACTOR = 100,
-            .NOISE_V_FACTOR = 0,
-            .SAMPLE_H_PRECISION = 1,
-            .SAMPLE_V_PRECISION = 1,
-            .NOISE_MULTIPLIER = 1
-    };
+    terrainFlat.SetSourceModule(0, terrainFlatBase);
+    terrainFlat.SetScale(0.125);
+    terrainFlat.SetBias(-0.75);
 
-    p_density = NoiseParams {
-        .PERLIN_TYPE = NoiseParams::PERLIN_2D,
-        .NOISE_H_FACTOR = 2000,
-        .NOISE_V_FACTOR = 0,
-        .SAMPLE_H_PRECISION = 1,
-        .SAMPLE_V_PRECISION = 1,
-        .NOISE_MULTIPLIER = 100
-    };
+    terrainType.SetFrequency(0.05);
+    terrainType.SetPersistence(0.25);
 
-    p_density_variation = NoiseParams {
-            .PERLIN_TYPE = NoiseParams::PERLIN_2D,
-            .NOISE_H_FACTOR = 300,
-            .NOISE_V_FACTOR = 0,
-            .SAMPLE_H_PRECISION = 1,
-            .SAMPLE_V_PRECISION = 1,
-            .NOISE_MULTIPLIER = 50
-    };
+    terrainMountains.SetFrequency(0.1);
 
-    p_density_variation_smaller = NoiseParams {
-            .PERLIN_TYPE = NoiseParams::PERLIN_2D,
-            .NOISE_H_FACTOR = 100,
-            .NOISE_V_FACTOR = 0,
-            .SAMPLE_H_PRECISION = 2,
-            .SAMPLE_V_PRECISION = 2,
-            .NOISE_MULTIPLIER = 25
-    };
+    terrainFinal.SetSourceModule(0, terrainFlat);
+    terrainFinal.SetSourceModule(1, terrainMountains);
 
-    p_flora_feature = NoiseParams {
-            .PERLIN_TYPE = NoiseParams::PERLIN_2D,
-            .NOISE_H_FACTOR = 100,
-            .NOISE_V_FACTOR = 0,
-            .SAMPLE_H_PRECISION = 2,
-            .SAMPLE_V_PRECISION = 2,
-            .NOISE_MULTIPLIER = 1
-    };
+    terrainFinal.SetControlModule(terrainType);
+    terrainFinal.SetBounds(0.0, 1000.0);
+    terrainFinal.SetEdgeFalloff(0.1);
 
-    p_flora_smaller = NoiseParams {
-            .PERLIN_TYPE = NoiseParams::PERLIN_2D,
-            .NOISE_H_FACTOR = 25,
-            .NOISE_V_FACTOR = 0,
-            .SAMPLE_H_PRECISION = 4,
-            .SAMPLE_V_PRECISION = 4,
-            .NOISE_MULTIPLIER = 1
-    };
+    floraNoise.SetFrequency(2);
+    floraNoise.SetOctaveCount(4);
+
+    floraTurbulence.SetSourceModule(0, floraNoise);
+    floraTurbulence.SetFrequency(4.0);
+    floraTurbulence.SetPower(0.125);
+
+    floraFinal.SetSourceModule(0, floraTurbulence);
+    floraFinal.SetScale(3);
+    floraFinal.SetBias(1);
 }
 
 BlockChunk* MapGen::generate(glm::vec3 pos) {
@@ -129,28 +100,19 @@ void MapGen::getElevation(MapGenJob &job) {
 }
 
 void MapGen::getDensityMap(MapGenJob &job) {
-    auto density_sample = sampler.sample(job.pos, p_density);
-    auto density_variation_sample = sampler.sample(job.pos, p_density_variation);
-    auto density_variation_smaller_sample = sampler.sample(job.pos, p_density_variation_smaller);
-    auto feature_sample = sampler.sample(job.pos, p_feature);
-    auto feature_scale_sample = sampler.sample(job.pos, p_feature_scale);
+    auto terrain_2d_sample = NoiseSample::getSample(&terrainFinal, job.pos, 4, 1, true);
 
     glm::vec3 lp;
 
     for (int m = 0; m < 4096; m++) {
         ArrayTrans3D::indAssignVec(m, lp);
 
-        job.density[m] = density_sample.get(lp)
-                       + density_variation_sample.get(lp)
-                       + density_variation_smaller_sample.get(lp)
-                       + ((float)pow(feature_sample.get(lp) + 0.5, 2.0) - 0.5f) * 15
-                       - ((job.pos.y * 16 + lp.y));
+        job.density[m] = terrain_2d_sample.get(lp) * 24.0f - (lp.y + job.pos.y * 16);
     }
 }
 
 void MapGen::fillChunk(MapGenJob &job) {
-    auto flora_sample = sampler.sample(job.pos, p_flora_feature);
-    auto flora_smaller_sample = sampler.sample(job.pos, p_flora_smaller);
+    auto flora_2d_sample = NoiseSample::getSample(&floraFinal, job.pos, 16, 1, true);
 
     glm::vec3 lp;
 
@@ -158,16 +120,15 @@ void MapGen::fillChunk(MapGenJob &job) {
         ArrayTrans3D::indAssignVec(m, lp);
         int d = job.depth[m];
 
-        double grassType = (flora_sample.get(lp) + 0.5) * (flora_smaller_sample.get(lp) + 0.5);
+        int grassType = min((int)std::floor(flora_2d_sample.get(lp)), 5);
 
-        int tallGrass = (int)floor(grassType * 5.0 - 1);
-        if (tallGrass > 0) tallGrass += 5;
-        else tallGrass = 0;
+        if (grassType > 0) grassType += 5;
+        else grassType = 0;
 
         job.blocks[m] = d == 0 ? 0
-                      : d == 1 ? tallGrass
+                      : d == 1 ? grassType
                       : d == 2 ? 1
-                      : d <= 5 ? 2
+                      : d <= 3 ? 2
                       : 3;
     }
 }

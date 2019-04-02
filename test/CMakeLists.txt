@@ -2,6 +2,6 @@ set(ZEUS_TEST_FILES
         tests/BlockChunk.cpp
         tests/NetHandler.cpp
         tests/Serializer.cpp
-        tests/PerlinNoise.cpp)
+        tests/LibNoise.cpp)
 
 add_library (zeusTest ${ZEUS_TEST_FILES})

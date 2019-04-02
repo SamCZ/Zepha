@@ -17,6 +17,7 @@ include_directories (
         lib/gzip-hpp-master/include
         lib/catch
         lib/simplex
+        lib/libnoise
 )
 
 #Include all of the dynamic libraries
@@ -29,6 +30,7 @@ set (ZEUS_LIBRARIES
         lua                     #sol2
         dl z                    #gzip
         enet                    #enet
+        noise                   #libnoise
 )
 
 #Include 'Packages', I don't understand how this works
