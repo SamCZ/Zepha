@@ -8,6 +8,7 @@ Entity::Entity() {
     position = glm::vec3(0, 0, 0);
     scale = glm::vec3(1, 1, 1);
     angle = 0;
+    visible = true;
 }
 
 void Entity::create(Mesh* myMesh) {
@@ -75,4 +76,12 @@ glm::mat4 Entity::getModelMatrix() {
 
 Entity::~Entity() {
     cleanup();
+}
+
+void Entity::setVisible(bool visible) {
+    this->visible = visible;
+}
+
+bool Entity::isVisible() {
+    return visible;
 }

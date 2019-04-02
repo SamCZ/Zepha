@@ -49,6 +49,12 @@ public:
     GameGui gui;
 
     int drawCalls;
+
+    bool F1Down = false;
+    bool F3Down = false;
+
+    bool debugVisible = true;
+    bool hudVisible = true;
 };
 
 

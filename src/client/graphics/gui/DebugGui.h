@@ -25,8 +25,10 @@ public:
 
     ~DebugGui();
 
+    void changeVisibilityState(int state);
 private:
     int videoMemAvail, videoMemTotal;
+    int displayMode;
 
     Texture *fontTexture;
     Texture *colorHistTexture, *whiteHistTexture, *transWhiteHistTexture;
@@ -38,6 +40,9 @@ private:
     Histogram  *chunkHist, *meshHist, *fpsHist, *drawsHist, *tMeshHist, *vramHist, *ssGenHist, *ssPackHist;
     RectEntity *chunkBack, *meshBack, *fpsBack, *drawsBack, *vramBack, *ssGenBack, *ssPackBack;
 
+    std::vector<Entity*> ownedElements;
+
+    bool visible;
 };
 
 

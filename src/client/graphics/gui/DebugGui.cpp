@@ -6,6 +6,8 @@
 #include "../../../generic/helpers/ChunkVec.h"
 
 DebugGui::DebugGui(glm::vec2 bufferSize) {
+    displayMode = 0;
+
     fontTexture = new Texture((char*)"../res/tex/gui/font.png");
     fontTexture->load();
 
@@ -117,6 +119,41 @@ DebugGui::DebugGui(glm::vec2 bufferSize) {
     vramBack->setScale(glm::vec3(244, 64, 1));
 
     positionElements(bufferSize);
+    
+    ownedElements.push_back(dataBG);
+    ownedElements.push_back(dataText);
+
+    ownedElements.push_back(crosshairBG);
+    ownedElements.push_back(crosshairText);
+
+    ownedElements.push_back(chunkBack);
+    ownedElements.push_back(chunkHist);
+    ownedElements.push_back(chunkText);
+
+    ownedElements.push_back(meshBack);
+    ownedElements.push_back(meshHist);
+    ownedElements.push_back(meshText);
+
+    ownedElements.push_back(ssGenBack);
+    ownedElements.push_back(ssGenHist);
+    ownedElements.push_back(ssGenText);
+
+    ownedElements.push_back(ssPackBack);
+    ownedElements.push_back(ssPackHist);
+    ownedElements.push_back(ssPackText);
+
+    ownedElements.push_back(fpsBack);
+    ownedElements.push_back(fpsHist);
+    ownedElements.push_back(fpsText);
+
+    ownedElements.push_back(drawsBack);
+    ownedElements.push_back(drawsHist);
+    ownedElements.push_back(tMeshHist);
+    ownedElements.push_back(drawsText);
+
+    ownedElements.push_back(vramBack);
+    ownedElements.push_back(vramHist);
+    ownedElements.push_back(vramText);
 }
 
 void DebugGui::positionElements(glm::vec2 bufferSize) {
@@ -170,40 +207,9 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
 }
 
 void DebugGui::pushGuiObjects(std::vector<Entity*> &list) {
-    list.push_back(dataBG);
-    list.push_back(dataText);
-
-    list.push_back(crosshairBG);
-    list.push_back(crosshairText);
-
-    list.push_back(chunkBack);
-    list.push_back(chunkHist);
-    list.push_back(chunkText);
-
-    list.push_back(meshBack);
-    list.push_back(meshHist);
-    list.push_back(meshText);
-
-    list.push_back(ssGenBack);
-    list.push_back(ssGenHist);
-    list.push_back(ssGenText);
-
-    list.push_back(ssPackBack);
-    list.push_back(ssPackHist);
-    list.push_back(ssPackText);
-
-    list.push_back(fpsBack);
-    list.push_back(fpsHist);
-    list.push_back(fpsText);
-
-    list.push_back(drawsBack);
-    list.push_back(drawsHist);
-    list.push_back(tMeshHist);
-    list.push_back(drawsText);
-
-    list.push_back(vramBack);
-    list.push_back(vramHist);
-    list.push_back(vramText);
+    for (auto element : ownedElements) {
+        list.push_back(element);
+    }
 }
 
 std::string string_float(float val) {
@@ -288,6 +294,19 @@ void DebugGui::update(Player* player, LocalWorld* world, Window* window, BlockAt
 
 void DebugGui::bufferResized(glm::vec2 bufferSize) {
     positionElements(bufferSize);
+}
+
+//0 = All, 1 = None, 2 = FPS
+void DebugGui::changeVisibilityState(int state) {
+    displayMode = state;
+
+    for (auto elem : ownedElements) {
+        elem->setVisible(displayMode == 0);
+    }
+
+    fpsText->setVisible(displayMode != 1);
+    fpsHist->setVisible(displayMode != 1);
+    fpsBack->setVisible(displayMode != 1);
 }
 
 DebugGui::~DebugGui() = default;

@@ -61,6 +61,25 @@ void GameScene::update() {
 
     debugGui.update(player, world, window, blockAtlas, state->fps, (int)world->getMeshChunks()->size(), drawCalls, server->serverSideChunkGens, server->recvPackets);
     world->update();
+
+    if (window->getKeysArray()[GLFW_KEY_F1]) {
+        if (!F1Down) {
+            F1Down = true;
+            hudVisible = !hudVisible;
+            debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
+            gui.setVisible(hudVisible);
+        }
+    }
+    else F1Down = false;
+
+    if (window->getKeysArray()[GLFW_KEY_F3]) {
+        if (!F3Down) {
+            F3Down = true;
+            debugVisible = !debugVisible;
+            debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
+        }
+    }
+    else F3Down = false;
 }
 
 void GameScene::draw() {
@@ -114,14 +133,16 @@ void GameScene::draw() {
     state->renderer->enableGuiShader();
 
     for (auto &entity : guiEntities) {
-        auto newTexture = entity->getTexture();
+        if (entity->isVisible()) {
+            auto newTexture = entity->getTexture();
 
-        if (newTexture != nullptr && newTexture != prevTexture) {
-            prevTexture = newTexture;
-            newTexture->use();
+            if (newTexture != nullptr && newTexture != prevTexture) {
+                prevTexture = newTexture;
+                newTexture->use();
+            }
+
+            state->renderer->draw(entity);
         }
-
-        state->renderer->draw(entity);
     }
 
     state->renderer->end();

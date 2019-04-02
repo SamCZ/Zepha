@@ -18,9 +18,14 @@ public:
     void pushGuiObjects(std::vector<Entity*> &list);
 
     ~GameGui();
+
+    void setVisible(bool visible);
+    bool isVisible();
 private:
     Texture* crosshairTexture, *viginetteTexture;
     Entity* crosshair, *viginette;
+
+    bool visible;
 };
 
 

@@ -9,19 +9,16 @@ uniform mat4 model;
 uniform mat4 projection;
 uniform mat4 view;
 
-out vec4 color;
+out float fogAlpha;
+out float shading;
+
 out vec2 fragTex;
 
 void main() {
-    gl_Position = projection * view * model * vec4(pos, 1.0);
+    vec4 mvPos = view * model * vec4(pos, 1.0);
+    gl_Position = projection * mvPos;
 
-    vec4 myColor = vec4(1, 1, 1, 0) * (0.8 + abs(nor.x) * 0.15);
-    myColor += nor.y * 0.15;
-    myColor += 0.2;
-    myColor.a = 1;
-
-    float factor = min(gl_Position.length / 320, 1);
-
-    color = myColor;
+    shading = (0.8 + abs(nor.x) * 0.15) + nor.y * 0.15 + 0.2;
+    fogAlpha = distance(vec3(0, 0, 0), vec3(mvPos));
 	fragTex = tex;
 }

@@ -36,6 +36,9 @@ public:
 
     glm::mat4 getModelMatrix();
 
+    void setVisible(bool visible);
+    bool isVisible();
+
     ~Entity();
 protected:
     Mesh* mesh;
@@ -44,6 +47,8 @@ protected:
     glm::vec3 position;
     glm::vec3 scale;
     GLfloat angle;
+
+    bool visible;
 };
 
 

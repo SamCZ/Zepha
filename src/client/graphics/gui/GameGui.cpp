@@ -5,6 +5,8 @@
 #include "GameGui.h"
 
 GameGui::GameGui(glm::vec2 bufferSize) {
+    visible = true;
+
     crosshairTexture = new Texture((char*)"../res/tex/gui/crosshair.png");
     crosshairTexture->load();
 
@@ -36,4 +38,15 @@ GameGui::~GameGui() {
 void GameGui::bufferResized(glm::vec2 bufferSize) {
     crosshair->setPosition(glm::vec3(bufferSize.x/2 - 11, bufferSize.y/2 - 9, 0));
     viginette->setScale(glm::vec3(bufferSize.x, bufferSize.y, 1));
+}
+
+void GameGui::setVisible(bool visible) {
+    this->visible = visible;
+
+    this->crosshair->setVisible(visible);
+    this->viginette->setVisible(visible);
+}
+
+bool GameGui::isVisible() {
+    return visible;
 }
