@@ -18,7 +18,7 @@ void main() {
     vec4 mvPos = view * model * vec4(pos, 1.0);
     gl_Position = projection * mvPos;
 
-    shading = (0.8 + abs(nor.x) * 0.15) + nor.y * 0.15 + 0.2;
+    shading = (0.8 + abs(nor.x) * 0.15) + (nor.y * 0.15) + 0.2;
     fogAlpha = distance(vec3(0, 0, 0), vec3(mvPos));
 	fragTex = tex;
 }

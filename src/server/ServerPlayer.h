@@ -12,9 +12,10 @@
 
 class ServerPlayer {
 public:
-    const static int ACTIVE_RANGE = 25;
+    const static int ACTIVE_RANGE = 24;
 
-    explicit ServerPlayer(ServerPeer* peer);
+    //TODO: Refactor instances of UUID to username, or create seperate username flag
+    explicit ServerPlayer(ServerPeer* peer, std::string uuid);
 
     Packet getInitPacket();
 
@@ -22,6 +23,7 @@ public:
     void setPos(glm::vec3 pos);
 
     glm::vec3 getChunkPos();
+    glm::vec3 getOldPos();
 
     bool changedChunks = false;
 
@@ -30,10 +32,14 @@ public:
 
     bool isInBounds(glm::vec3 pos, std::pair<glm::vec3, glm::vec3>& bounds);
 
+    std::string getUsername();
+
     ~ServerPlayer();
 
     ServerPeer* peer;
 private:
+    std::string username;
+
     glm::vec3 chunkPos {0, 0, 0};
     glm::vec3 lastChunkPos {0, 0, 0};
     glm::vec3 pos {0, 0, 0};

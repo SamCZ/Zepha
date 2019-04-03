@@ -3,6 +3,7 @@
 //
 
 #include <algorithm>
+#include <glm.hpp>
 #include "World.h"
 #include "../../generic/network/PacketChannel.h"
 
@@ -15,9 +16,9 @@ void World::addPlayer(ServerPlayer *player) {
     std::vector<glm::vec3> toGenerate;
     toGenerate.reserve((unsigned long)pow(ServerPlayer::ACTIVE_RANGE, 3));
 
-    for (int i = (int)bounds.first.x; i < (int)bounds.second.x; i++) {
-        for (int j = (int)bounds.first.x; j < (int)bounds.second.x; j++) {
-            for (int k = (int) bounds.first.x; k < (int) bounds.second.x; k++) {
+    for (int i = (int)bounds.first.x; i <= (int)bounds.second.x; i++) {
+        for (int j = (int)bounds.first.y; j <= (int)bounds.second.y; j++) {
+            for (int k = (int) bounds.first.z; k <= (int) bounds.second.z; k++) {
                 toGenerate.emplace_back(i, j, k);
             }
         }
@@ -36,9 +37,36 @@ void World::addPlayer(ServerPlayer *player) {
 
 void World::playerChangedChunks(ServerPlayer *player) {
     auto pos = player->getChunkPos();
+
+    auto bounds = player->getBounds();
     auto oldBounds = player->getOldBounds();
 
-    //TODO: Generate chunks when the player moves
+    std::vector<glm::vec3> toGenerate;
+    toGenerate.reserve((unsigned long)pow(ServerPlayer::ACTIVE_RANGE, 3));
+
+    for (int i = (int)bounds.first.x; i <= (int)bounds.second.x; i++) {
+        for (int j = (int)bounds.first.y; j <= (int)bounds.second.y; j++) {
+            for (int k = (int) bounds.first.z; k <= (int) bounds.second.z; k++) {
+                glm::vec3 tPos(i, j, k);
+                if (!player->isInBounds(tPos, oldBounds)) {
+                    toGenerate.push_back(tPos);
+                }
+            }
+        }
+    }
+
+    std::sort(toGenerate.begin(), toGenerate.end(), [&](glm::vec3 a, glm::vec3 b) {
+        using namespace std;
+        return max(max(abs(a.x - pos.x), abs(a.y - pos.y)), abs(a.z - pos.z)) <
+               max(max(abs(b.x - pos.x), abs(b.y - pos.y)), abs(b.z - pos.z));
+    });
+
+    for (glm::vec3 tPos : toGenerate) {
+        generate(tPos);
+    }
+
+    printf("[INFO] %s moved, generating %d chunks.\n",
+            player->getUsername().c_str(), (int)toGenerate.size());
 
     player->changedChunks = false;
 }

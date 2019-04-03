@@ -16,7 +16,7 @@ uniform sampler2D tex;
 
 void main() {
     vec2 texCoord = fragTex;
-    vec4 color = texture(tex, texCoord) * shading;
+    vec4 color = texture(tex, texCoord) * vec4(vec3(shading), 1);
 
     float near = min(max(fogAlpha - 200, 0) / 100, 1);
     float far = min(max(fogAlpha - 250, 0) / 100, 1);

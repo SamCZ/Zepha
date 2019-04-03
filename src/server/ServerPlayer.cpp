@@ -4,10 +4,12 @@
 
 #include <cmath>
 #include "ServerPlayer.h"
+#include "../generic/helpers/ChunkVec.h"
 
-ServerPlayer::ServerPlayer(ServerPeer *peer) {
+ServerPlayer::ServerPlayer(ServerPeer *peer, std::string uuid) {
     this->peer = peer;
     peer->player = this;
+    this->username = std::move(uuid);
 }
 
 Packet ServerPlayer::getInitPacket() {
@@ -28,9 +30,13 @@ glm::vec3 ServerPlayer::getChunkPos() {
     return chunkPos;
 }
 
+glm::vec3 ServerPlayer::getOldPos() {
+    return lastChunkPos;
+}
+
 void ServerPlayer::setPos(glm::vec3 pos) {
     this->pos = pos;
-    glm::vec3 newChunkPos(std::floor(this->pos.x / 16), std::floor(this->pos.y / 16), std::floor(this->pos.z / 16));
+    glm::vec3 newChunkPos = ChunkVec::chunkVec(pos);
 
     if (newChunkPos != chunkPos) {
         if (!changedChunks) {
@@ -59,6 +65,10 @@ bool ServerPlayer::isInBounds(glm::vec3 cPos, std::pair<glm::vec3, glm::vec3> &b
     return (cPos.x >= bounds.first.x && cPos.x <= bounds.second.x
          && cPos.y >= bounds.first.y && cPos.y <= bounds.second.y
          && cPos.z >= bounds.first.z && cPos.z <= bounds.second.z);
+}
+
+std::string ServerPlayer::getUsername() {
+    return username;
 }
 
 ServerPlayer::~ServerPlayer() = default;
