@@ -21,6 +21,8 @@ public:
     Texture* getTexture();
     glm::vec4* getUVs(std::string* texture);
 private:
+    const int TEX_PADDING = 2;
+
     GLint maxTexSize;
 
     Texture* texture;

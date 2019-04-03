@@ -30,6 +30,17 @@ MapGen::MapGen(unsigned int seed) {
     terrainFinal.SetBounds(0.0, 1000.0);
     terrainFinal.SetEdgeFalloff(0.1);
 
+    grassNoise.SetFrequency(2);
+    grassNoise.SetOctaveCount(4);
+
+    grassTurbulence.SetSourceModule(0, grassNoise);
+    grassTurbulence.SetFrequency(4.0);
+    grassTurbulence.SetPower(0.125);
+
+    grassFinal.SetSourceModule(0, grassTurbulence);
+    grassFinal.SetScale(3);
+    grassFinal.SetBias(1);
+
     floraNoise.SetFrequency(2);
     floraNoise.SetOctaveCount(4);
 
@@ -38,21 +49,19 @@ MapGen::MapGen(unsigned int seed) {
     floraTurbulence.SetPower(0.125);
 
     floraFinal.SetSourceModule(0, floraTurbulence);
-    floraFinal.SetScale(3);
-    floraFinal.SetBias(1);
+    floraFinal.SetScale(3.5);
+    floraFinal.SetBias(3.5);
+
+    floraDensity.SetFrequency(4);
 }
 
 BlockChunk* MapGen::generate(glm::vec3 pos) {
-    Timer t("Chunk Gen");
-
     MapGenJob job(pos);
 
     getDensityMap(job);
     getElevation(job);
 
     fillChunk(job);
-
-    t.printElapsedMs();
 
     return new BlockChunk(job.blocks, pos);
 }
@@ -112,7 +121,9 @@ void MapGen::getDensityMap(MapGenJob &job) {
 }
 
 void MapGen::fillChunk(MapGenJob &job) {
-    auto flora_2d_sample = NoiseSample::getSample(&floraFinal, job.pos, 16, 1, true);
+    auto grass_sample = NoiseSample::getSample(&grassFinal, job.pos, 16, 1, true);
+    auto flora_type_sample = NoiseSample::getSample(&floraFinal, job.pos, 4, 1, true);
+    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 8, 1, true);
 
     glm::vec3 lp;
 
@@ -120,13 +131,22 @@ void MapGen::fillChunk(MapGenJob &job) {
         ArrayTrans3D::indAssignVec(m, lp);
         int d = job.depth[m];
 
-        int grassType = min((int)std::floor(flora_2d_sample.get(lp)), 5);
+        int floraId = 0;
+        bool flower = false;
 
-        if (grassType > 0) grassType += 5;
-        else grassType = 0;
+        if (flora_density_sample.get(lp) > 1) flower = true;
+
+        if (flower) {
+            int flowerType = max(min((int)std::floor(flora_type_sample.get(lp)), 8), 0);
+            floraId = flowerType + 10;
+        }
+        else {
+            int grassType = min((int)std::floor(grass_sample.get(lp)), 5);
+            if (grassType > 0) floraId = grassType + 5;
+        }
 
         job.blocks[m] = d == 0 ? 0
-                      : d == 1 ? grassType
+                      : d == 1 ? floraId
                       : d == 2 ? 1
                       : d <= 3 ? 2
                       : 3;

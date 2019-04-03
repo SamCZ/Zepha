@@ -41,7 +41,7 @@ int Window::initialize() {
 
     //TODO: Fix msaa for texture altases.
     //MSAA
-//    glfwWindowHint(GLFW_SAMPLES, 16);
+//    glfwWindowHint(GLFW_SAMPLES, 4);
 //    glEnable(GL_MULTISAMPLE);
 
     //Create the window

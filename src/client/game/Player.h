@@ -18,7 +18,7 @@ public:
 
     void create(LocalWorld* world, Camera* camera);
 
-    void update(bool* keys, double delta, double mouseX, double mouseY);
+    void update(bool* keys, double delta, double mouseX, double mouseY, bool leftDown, bool rightDown);
 
     void posUpdate(bool *keys, double delta);
     void viewUpdate(double deltaX, double deltaY);
@@ -42,6 +42,9 @@ private:
 
     Camera* camera;
     LocalWorld* world;
+
+    bool flying;
+    bool FDown;
 
     const float playerHeight = 1.6;
 };

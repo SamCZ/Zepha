@@ -240,9 +240,6 @@ void DebugGui::update(Player* player, LocalWorld* world, Window* window, BlockAt
         auto found = world->getBlock(*ray.getEnd());
         if (found > 0) {
             block = found;
-            if (window->mouseIsDown()) {
-                world->setBlock(*ray.getEnd(), 0);
-            }
             break;
         }
     }

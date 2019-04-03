@@ -3,10 +3,13 @@
 //
 
 #include "Player.h"
+#include "../engine/Ray.h"
 
 Player::Player() {
     pos = glm::vec3(0, 0, 0);
     vel = glm::vec3(0, 0, 0);
+    FDown = false;
+    flying = false;
 }
 
 void Player::create(LocalWorld* world, Camera* camera) {
@@ -14,10 +17,28 @@ void Player::create(LocalWorld* world, Camera* camera) {
     this->world = world;
 }
 
-void Player::update(bool *keys, double delta, double mouseX, double mouseY) {
+void Player::update(bool *keys, double delta, double mouseX, double mouseY, bool leftDown, bool rightDown) {
     posUpdate(keys, delta);
     viewUpdate(mouseX, mouseY);
     moveCollide();
+
+    for (Ray ray(this); ray.getLength() < 5; ray.step(0.01)) {
+        auto found = world->getBlock(*ray.getEnd());
+        if (found > 0) {
+            if (leftDown) {
+                world->setBlock(*ray.getEnd(), 0);
+            }
+            break;
+        }
+    }
+
+    if (keys[GLFW_KEY_F]) {
+        if (!FDown) {
+            FDown = true;
+            flying = !flying;
+        }
+    }
+    else FDown = false;
 
     camera->setPosition(pos);
 }
@@ -28,8 +49,13 @@ void Player::posUpdate(bool *keys, double delta) {
     float friction = 0.3f;
 
     double moveMult = moveSpeed * delta;
-    if (keys[GLFW_KEY_LEFT_SHIFT]) {
+    if (keys[GLFW_KEY_LEFT_CONTROL]) {
         moveMult *= 2;
+    }
+
+    if (flying) {
+        moveMult *= 8;
+        friction = 0.15f;
     }
 
     glm::vec3 frontFlat = glm::normalize(glm::vec3(camera->getFront()->x, 0, camera->getFront()->z));
@@ -42,17 +68,27 @@ void Player::posUpdate(bool *keys, double delta) {
     if (keys[GLFW_KEY_D]) mod += rightFlat;
     if (keys[GLFW_KEY_A]) mod -= rightFlat;
 
+    if (flying) {
+        if (keys[GLFW_KEY_SPACE]) mod.y += 1;
+        if (keys[GLFW_KEY_LEFT_SHIFT]) mod.y -= 1;
+    }
+
     if (glm::length(mod) != 0) mod = glm::normalize(mod);
     mod = mod * (float)moveMult;
 
-    glm::vec3 velFlat = glm::vec3(vel.x, 0, vel.z);
-    velFlat = velFlat * (1.0f-friction) + mod * friction;
+    if (!flying) {
+        glm::vec3 velFlat = glm::vec3(vel.x, 0, vel.z);
+        velFlat = velFlat * (1.0f-friction) + mod * friction;
 
-    vel.x = velFlat.x;
-    vel.z = velFlat.z;
+        vel.x = velFlat.x;
+        vel.z = velFlat.z;
 
-    if (keys[GLFW_KEY_SPACE] && collides(glm::vec3(pos.x, pos.y - 0.05, pos.z)) && vel.y >= 0) {
-        vel.y = jumpVel;
+        if (keys[GLFW_KEY_SPACE] && collides(glm::vec3(pos.x, pos.y - 0.05, pos.z)) && vel.y >= 0) {
+            vel.y = jumpVel;
+        }
+    }
+    else {
+        vel = vel * (1.0f-friction) + mod * friction;
     }
 }
 
@@ -66,54 +102,54 @@ bool Player::collides(glm::vec3 pos) {
 }
 
 void Player::moveCollide() {
-    double increment = 0.05;
+    if (!flying) {
+        double increment = 0.05;
 
-    Timer t("Move calculations");
+        if (!collides(glm::vec3(pos.x, pos.y - increment, pos.z))) {
+            vel.y = (float) fmax(vel.y - 0.01, -3);
+        } else if (vel.y < 0) {
+            vel.y = 0;
+        }
 
-    if (!collides(glm::vec3(pos.x, pos.y - increment, pos.z))) {
-        vel.y = (float)fmax(vel.y - 0.01, -3);
+        double moved = 0;
+        for (int i = 0; i < fabs(vel.y) / increment; i++) {
+            double move = fmax(fmin(increment, fabs(vel.y) - moved), 0);
+            moved += increment;
+
+            glm::vec3 newPos = glm::vec3(pos);
+            newPos.y += move * (vel.y < 0 ? -1 : 1);
+
+            if (!collides(newPos))
+                pos = newPos;
+        }
+
+        moved = 0;
+        for (int i = 0; i < fabs(vel.x) / increment; i++) {
+            double move = fmax(fmin(increment, fabs(vel.x) - moved), 0);
+            moved += increment;
+
+            glm::vec3 newPos = glm::vec3(pos);
+            newPos.x += move * (vel.x < 0 ? -1 : 1);
+
+            if (!collides(newPos))
+                pos = newPos;
+        }
+
+        moved = 0;
+        for (int i = 0; i < fabs(vel.z) / increment; i++) {
+            double move = fmax(fmin(increment, fabs(vel.z) - moved), 0);
+            moved += increment;
+
+            glm::vec3 newPos = glm::vec3(pos);
+            newPos.z += move * (vel.z < 0 ? -1 : 1);
+
+            if (!collides(newPos))
+                pos = newPos;
+        }
     }
-    else if (vel.y < 0) {
-        vel.y = 0;
+    else {
+        pos += vel;
     }
-
-    double moved = 0;
-    for (int i = 0; i < fabs(vel.y) / increment; i++) {
-        double move = fmax(fmin(increment, fabs(vel.y) - moved), 0);
-        moved += increment;
-
-        glm::vec3 newPos = glm::vec3(pos);
-        newPos.y += move * (vel.y < 0 ? -1 : 1);
-
-        if (!collides(newPos))
-            pos = newPos;
-    }
-
-    moved = 0;
-    for (int i = 0; i < fabs(vel.x) / increment; i++) {
-        double move = fmax(fmin(increment, fabs(vel.x) - moved), 0);
-        moved += increment;
-
-        glm::vec3 newPos = glm::vec3(pos);
-        newPos.x += move * (vel.x < 0 ? -1 : 1);
-
-        if (!collides(newPos))
-            pos = newPos;
-    }
-
-    moved = 0;
-    for (int i = 0; i < fabs(vel.z) / increment; i++) {
-        double move = fmax(fmin(increment, fabs(vel.z) - moved), 0);
-        moved += increment;
-
-        glm::vec3 newPos = glm::vec3(pos);
-        newPos.z += move * (vel.z < 0 ? -1 : 1);
-
-        if (!collides(newPos))
-            pos = newPos;
-    }
-
-//    t.printElapsedMs();
 }
 
 void Player::viewUpdate(double deltaX, double deltaY) {

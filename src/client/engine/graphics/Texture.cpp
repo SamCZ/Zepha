@@ -32,7 +32,7 @@ void Texture::load() {
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
 
-    glGenerateMipmap(GL_TEXTURE_2D);
+//    glGenerateMipmap(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -50,7 +50,7 @@ void Texture::load(unsigned char* bytes, int width, int height) {
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
 
-    glGenerateMipmap(GL_TEXTURE_2D);
+//    glGenerateMipmap(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }

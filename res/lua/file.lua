@@ -5,7 +5,7 @@ function dump(tbl, indent)
   	if type(k) == "number" then
   		k = "[" .. k .. "]"
   	end
-  	local indentString = string.rep("  ", indent);
+  	local indentString = string.rep("  ", indent)
     local formatting = indentString .. k .. " = "
     if type(v) == "table" then
       print(formatting .. "{")
@@ -340,7 +340,7 @@ textures: The list of textures for the blockmodel. Which textures go where are d
 --]]
 
 -- Ignore this, it is temporary
--- Air
+-- Air [ID 0]
 zeus.register_block("_:air", {
     visible = false,
     culls = false,
@@ -350,7 +350,7 @@ zeus.register_block("_:air", {
 	textures = {"_missing"}
 })
 
--- Grass
+-- Grass [ID 1]
 zeus.register_block("default:grass", {
 	name = "Grass",
 	model = "default:block_side_foliage",
@@ -365,21 +365,21 @@ zeus.register_block("default:grass", {
 	}
 })
 
--- Dirt
+-- Dirt [ID 2]
 zeus.register_block('default:dirt', {
 	name = "Dirt",
 	model = "default:block",
 	textures = {"default_dirt"}
 })
 
--- Stone
+-- Stone [ID 3]
 zeus.register_block('default:stone', {
 	name = "Stone",
 	model = "default:block",
 	textures = {"default_stone"}
 })
 
--- Leaves
+-- Leaves [ID 4]
 zeus.register_block('default:leaves', {
     visible = true,
     culls = false,
@@ -391,7 +391,7 @@ zeus.register_block('default:leaves', {
     }
 })
 
--- Wood
+-- Wood [ID 5]
 zeus.register_block('default:wood', {
     name = "Log",
     model = "default:block",
@@ -402,7 +402,7 @@ zeus.register_block('default:wood', {
     }
 })
 
--- TallGrass
+-- TallGrass [ID 6..10]
 for i=1,5,1 do
     zeus.register_block("default:tallgrass_" .. i, {
         culls = false,
@@ -411,6 +411,37 @@ for i=1,5,1 do
         model = "default:plantlike",
         textures = {
             "default_tallgrass_" .. i,
+        }
+    })
+end
+
+-- Flowers [ID 11..18]
+local flowers = {
+    "rose",
+    "tulip",
+    "viola",
+    "geranium",
+    "mushroom_red",
+    "mushroom_brown",
+    "dandelion_white",
+    "dandelion_yellow"
+}
+
+for ind,flower in ipairs(flowers) do
+
+    local function tchelper(first, rest)
+        return first:upper()..rest:lower()
+    end
+
+    local name = flower:gsub("_", " "):gsub("(%a)([%w_']*)", tchelper)
+
+    zeus.register_block("default:flower_" .. flower, {
+        culls = false,
+        solid = false,
+        name = name,
+        model = "default:plantlike",
+        textures = {
+            "flowers_" .. flower
         }
     })
 end

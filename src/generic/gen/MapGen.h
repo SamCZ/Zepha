@@ -34,9 +34,15 @@ private:
     module::Perlin terrainType;
     module::Select terrainFinal;
 
+    module::Perlin grassNoise;
+    module::Turbulence grassTurbulence;
+    module::ScaleBias grassFinal;
+
     module::Perlin floraNoise;
     module::Turbulence floraTurbulence;
     module::ScaleBias floraFinal;
+
+    module::Perlin floraDensity;
 };
 
 

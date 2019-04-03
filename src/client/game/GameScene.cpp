@@ -43,7 +43,7 @@ void GameScene::update() {
 
     auto window = state->renderer->getWindow();
 
-    player->update(window->getKeysArray(), state->deltaTime, window->getDeltaX(), window->getDeltaY());
+    player->update(window->getKeysArray(), state->deltaTime, window->getDeltaX(), window->getDeltaY(), window->mouseIsDown(), window->mouseIsDown());
 
     if (state->renderer->resized) {
         debugGui.bufferResized(state->renderer->getCamera()->getBufferDimensions());

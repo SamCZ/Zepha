@@ -48,7 +48,7 @@ TextureAtlas::TextureAtlas(const char* directory) {
 
     //Load Missing Texture
     auto msg = TextureRef();
-    strcpy(msg.path, "../tex/_missing.png");
+    strcpy(msg.path, "../res/tex/_missing.png");
     strcpy(msg.name, "_missing.png");
     msg.texData = stbi_load(msg.path, &msg.width, &msg.height, &msg.bitDepth, 4);
     textureRefs.push_back(msg);
@@ -98,14 +98,14 @@ TextureAtlas::TextureAtlas(const char* directory) {
     }
 
     //Add all of the textures to the textureAtlas and store the UVs in the associative array
-    int widthOffset = 0;
-    int heightOffset = 0;
+    int widthOffset = TEX_PADDING;
+    int heightOffset = TEX_PADDING;
     int tallestInRow = 0;
 
     for (auto i : textureRefs) {
-        if (widthOffset + i.width > pageWidth) {
+        if (widthOffset + i.width + TEX_PADDING*2 > pageWidth) {
             widthOffset = 0;
-            heightOffset += tallestInRow;
+            heightOffset += tallestInRow + TEX_PADDING*2;
             tallestInRow = i.height;
         }
         else {
@@ -121,16 +121,25 @@ TextureAtlas::TextureAtlas(const char* directory) {
 
         textures.insert(std::pair<std::string, glm::vec4>(name, uv));
 
-        for (int y = 0; y < i.height; y++) {
-            for (int x = 0; x < i.width; x++) {
-                pageData[(heightOffset + y)*pageWidth*4 + (widthOffset + x)*4 + 0] = i.texData[(y * i.width * 4) + (x * 4) + 0];
-                pageData[(heightOffset + y)*pageWidth*4 + (widthOffset + x)*4 + 1] = i.texData[(y * i.width * 4) + (x * 4) + 1];
-                pageData[(heightOffset + y)*pageWidth*4 + (widthOffset + x)*4 + 2] = i.texData[(y * i.width * 4) + (x * 4) + 2];
-                pageData[(heightOffset + y)*pageWidth*4 + (widthOffset + x)*4 + 3] = i.texData[(y * i.width * 4) + (x * 4) + 3];
+        if (i.width > 0 && i.height > 0) {
+            int xx, yy;
+            for (int y = -TEX_PADDING; y < i.height + TEX_PADDING; y++) {
+                for (int x = -TEX_PADDING; x < i.width + TEX_PADDING; x++) {
+                    yy = std::min(std::max(y, 0), i.height - 1);
+                    xx = std::min(std::max(x, 0), i.width - 1);
+
+                    pageData[(heightOffset + y)*pageWidth*4 + (widthOffset + x)*4 + 0] = i.texData[(yy * i.width * 4) + (xx * 4) + 0];
+                    pageData[(heightOffset + y)*pageWidth*4 + (widthOffset + x)*4 + 1] = i.texData[(yy * i.width * 4) + (xx * 4) + 1];
+                    pageData[(heightOffset + y)*pageWidth*4 + (widthOffset + x)*4 + 2] = i.texData[(yy * i.width * 4) + (xx * 4) + 2];
+                    pageData[(heightOffset + y)*pageWidth*4 + (widthOffset + x)*4 + 3] = i.texData[(yy * i.width * 4) + (xx * 4) + 3];
+                }
             }
         }
+        else {
+            std::cerr << "Failed to load a texture: " << i.name << std::endl;
+        }
 
-        widthOffset += i.width;
+        widthOffset += i.width + TEX_PADDING*2;
     }
 
     stbi_write_png("../textureAtlas.png", pageWidth, pageHeight, 4, pageData, pageWidth*4);
