@@ -28,7 +28,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize) {
     dataBG = new RectEntity(
             glm::vec4(0.1, 0.1, 0.1, 0.4), glm::vec4(0.1, 0.1, 0.1, 0.4),
             glm::vec4(0.1, 0.1, 0.1, 0.3), glm::vec4(0.1, 0.1, 0.1, 0.3));
-    dataBG->setScale(glm::vec3(400, 154, 1));
+    dataBG->setScale(glm::vec3(560, 168, 1));
 
     crosshairText = new HudText(fontTexture);
     crosshairText->setScale(2);
@@ -249,42 +249,49 @@ void DebugGui::update(Player* player, LocalWorld* world, Window* window, BlockAt
         look = atlas->getBlock(block)->getIdentifier();
     }
 
-    glm::vec3* ppos = player->getPos();
-    glm::vec3 rpos = TransPos::roundPos(*ppos);
-    glm::vec3 chk = TransPos::chunkFromGlobal(*player->getPos());
-    glm::vec3 loc = TransPos::chunkLocalFromGlobal(*player->getPos());
-
-    fpsText->set("FPS:" + string_float((float)fps));
+    fpsText->set("FPS: " + string_float((float)fps));
     fpsHist->push_back((float)fps);
 
-    drawsText->set("MCD:" + to_string(drawCalls) + "," + to_string(chunks));
+    drawsText->set("Draws: " + to_string(drawCalls) + ", " + to_string(chunks));
     tMeshHist->push_back(chunks);
     drawsHist->setMax(chunks);
     drawsHist->push_back(drawCalls);
 
     meshHist->push_back((float)world->lastMeshUpdates);
-    meshText->set("Mesh:" + to_string(world->lastMeshUpdates));
+    meshText->set("Mesh: " + to_string(world->lastMeshUpdates));
 
     chunkHist->push_back((float)world->lastGenUpdates);
-    chunkText->set("Gen:" + to_string(world->lastGenUpdates));
+    chunkText->set("Interp: " + to_string(world->lastGenUpdates));
 
     ssGenHist->push_back((float)ssGen);
-    ssGenText->set("Server:" + to_string(ssGen));
+    ssGenText->set("Gen: " + to_string(ssGen));
 
     ssPackHist->push_back((float)ssPack);
-    ssPackText->set("Packets:" + to_string(ssPack));
+    ssPackText->set("RX: " + to_string(ssPack));
 
     vramHist->setMax((float)videoMemTotal / 1024);
     vramHist->push_back((float)(videoMemTotal - videoMemAvail) / 1024);
     vramText->set("Total VRam Usage:\n" + to_string((videoMemTotal - videoMemAvail) / 1024) + "MB, (" + to_string((int)std::round((videoMemTotal - videoMemAvail) / (float)videoMemTotal * 100.0f)) + "%)");
 
+    glm::vec3* ppos = player->getPos();
+    glm::vec3 rpos = TransPos::roundPos(*ppos);
+    glm::vec3 chk = TransPos::chunkFromGlobal(*player->getPos());
+    glm::vec3 loc = TransPos::chunkLocalFromGlobal(*player->getPos());
+    glm::vec3 mpr = TransPos::mapBlockFromGlobal(*player->getPos());
+    glm::vec3 mp = TransPos::mapBlockLocalFromGlobal(*player->getPos());
+    glm::vec3 rpr = TransPos::regionFromGlobal(*player->getPos());
+    glm::vec3 rp = TransPos::regionLocalFromGlobal(*player->getPos());
 
     dataText->set(
-            "Playr: " + string_float(ppos->x) + "," + string_float(ppos->y) + "," + string_float(ppos->z) + "\n" +
-            "Block: " + to_string((int)rpos.x) + "," + to_string((int)rpos.y) + "," + to_string((int)rpos.z) + "\n" +
-            "Local: " + to_string((int)loc.x) + "," + to_string((int)loc.y) + "," + to_string((int)loc.z) + "\n" +
-            "Chunk: " + to_string((int)chk.x) + "," + to_string((int)chk.y) + "," + to_string((int)chk.z) + "\n\n" +
-            "Vel: " + string_float(player->getVel()->x) + "," + string_float(player->getVel()->y) + "," + string_float(player->getVel()->z) + "\n" +
+            "Player: " + to_string((int)rpos.x) + ", " + to_string((int)rpos.y) + ", " + to_string((int)rpos.z) +
+                   " (" + string_float(ppos->x) + ", " + string_float(ppos->y) + ", " + string_float(ppos->z) + ")\n" +
+            "Chunk: " + to_string((int)loc.x) + ", " + to_string((int)loc.y) + ", " + to_string((int)loc.z) +
+                   " (" + to_string((int)chk.x) + ", " + to_string((int)chk.y) + ", " + to_string((int)chk.z) + ")\n" +
+            "MapBlock: " + to_string((int)mp.x) + ", " + to_string((int)mp.y) + ", " + to_string((int)mp.z) +
+                   " (" + to_string((int)mpr.x) + ", " + to_string((int)mpr.y) + ", " + to_string((int)mpr.z) + ")\n" +
+            "Region: " + to_string((int)rp.x) + ", " + to_string((int)rp.y) + ", " + to_string((int)rp.z) +
+                   " (" + to_string((int)rpr.x) + ", " + to_string((int)rpr.y) + ", " + to_string((int)rpr.z) + ")\n\n" +
+            "Vel: " + string_float(player->getVel()->x) + ", " + string_float(player->getVel()->y) + ", " + string_float(player->getVel()->z) + "\n" +
             "Yaw: " + string_float(player->getYaw()) + ", Pitch: " + string_float(player->getPitch()) + "\n\n" +
             "Standing On: " + on);
 
