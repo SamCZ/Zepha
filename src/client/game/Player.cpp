@@ -44,18 +44,25 @@ void Player::update(bool *keys, double delta, double mouseX, double mouseY, bool
 }
 
 void Player::posUpdate(bool *keys, double delta) {
-    float moveSpeed = 5.0f;
+    float moveSpeed = 7.5f;
     float jumpVel = 0.14f;
     float friction = 0.3f;
 
     double moveMult = moveSpeed * delta;
-    if (keys[GLFW_KEY_LEFT_CONTROL]) {
-        moveMult *= 2;
-    }
+
 
     if (flying) {
-        moveMult *= 8;
+        moveMult *= 4;
         friction = 0.15f;
+
+        if (keys[GLFW_KEY_LEFT_CONTROL]) {
+            moveMult *= 2;
+        }
+    }
+    else {
+        if (keys[GLFW_KEY_LEFT_CONTROL]) {
+            moveMult *= 1.5;
+        }
     }
 
     glm::vec3 frontFlat = glm::normalize(glm::vec3(camera->getFront()->x, 0, camera->getFront()->z));
