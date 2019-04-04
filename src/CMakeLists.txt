@@ -110,8 +110,7 @@ set(ZEUS_SRC_FILES
         server/world/WorldGenStream.h
         client/game/localworld/WorldInterpolationStream.cpp
         client/game/localworld/WorldInterpolationStream.h
-        generic/helpers/Vec3Compare.h
-        generic/helpers/ChunkVec.h
+        generic/helpers/TransPos.h
         client/game/localworld/MeshGenStream.cpp
         client/game/localworld/MeshGenStream.h
         generic/helpers/VecUtils.h)

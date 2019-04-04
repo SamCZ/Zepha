@@ -18,10 +18,10 @@
 #include "../../../generic/blocks/BlockChunk.h"
 #include "../../../generic/gen/MapGen.h"
 #include "../../graphics/mesh/MeshChunk.h"
-#include "../../../generic/helpers/Vec3Compare.h"
-#include "../../../generic/helpers/ChunkVec.h"
+#include "../../../generic/helpers/TransPos.h"
 #include "WorldInterpolationStream.h"
 #include "MeshGenStream.h"
+#include "../../../generic/helpers/VecUtils.h"
 
 class LocalWorld {
 public:
@@ -43,7 +43,7 @@ public:
     bool getAdjacentExists(glm::vec3 pos, glm::vec3 myPos);
     std::vector<bool>* getAdjacentsCull(glm::vec3 pos);
 
-    std::unordered_map<glm::vec3, MeshChunk*, Vec3Compare::func>* getMeshChunks();
+    std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc>* getMeshChunks();
 
     BlockChunk* getChunk(glm::vec3 chunkPos);
 
@@ -56,10 +56,10 @@ public:
 private:
     BlockAtlas* blockAtlas;
 
-    std::unordered_map<glm::vec3, BlockChunk*, Vec3Compare::func> blockChunks;
+    std::unordered_map<glm::vec3, BlockChunk*, VecUtils::compareFunc> blockChunks;
     WorldInterpolationStream worldGenStream;
 
-    std::unordered_map<glm::vec3, MeshChunk*, Vec3Compare::func> meshChunks;
+    std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc> meshChunks;
     MeshGenStream meshGenStream;
     std::vector<glm::vec3> pendingMesh;
 };

@@ -11,7 +11,6 @@
 #include <unordered_set>
 #include "../../../generic/blocks/BlockChunk.h"
 #include "../../../generic/gen/MapGen.h"
-#include "../../../generic/helpers/Vec3Compare.h"
 
 class WorldInterpolationStream {
 public:

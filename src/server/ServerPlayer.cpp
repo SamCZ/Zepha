@@ -4,7 +4,7 @@
 
 #include <cmath>
 #include "ServerPlayer.h"
-#include "../generic/helpers/ChunkVec.h"
+#include "../generic/helpers/TransPos.h"
 
 ServerPlayer::ServerPlayer(ServerPeer *peer, std::string uuid) {
     this->peer = peer;
@@ -36,7 +36,7 @@ glm::vec3 ServerPlayer::getOldPos() {
 
 void ServerPlayer::setPos(glm::vec3 pos) {
     this->pos = pos;
-    glm::vec3 newChunkPos = ChunkVec::chunkVec(pos);
+    glm::vec3 newChunkPos = TransPos::chunkFromGlobal(pos);
 
     if (newChunkPos != chunkPos) {
         if (!changedChunks) {

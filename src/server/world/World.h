@@ -11,7 +11,7 @@
 #include "../../generic/blocks/BlockChunk.h"
 #include "../ServerPlayer.h"
 #include "WorldGenStream.h"
-
+#include "../../generic/helpers/VecUtils.h"
 class World {
 public:
     explicit World(unsigned int seed) : genStream(seed) {};
@@ -28,10 +28,10 @@ private:
 
     std::vector<ServerPlayer*> players;
 
-    std::unordered_map<glm::vec3, BlockChunk*, Vec3Compare::func> chunkMap;
+    std::unordered_map<glm::vec3, BlockChunk*, VecUtils::compareFunc> chunkMap;
     std::vector<std::pair<glm::vec3, BlockChunk*>> chunkList;
 
-    std::unordered_set<glm::vec3, Vec3Compare::func> generateQueueMap;
+    std::unordered_set<glm::vec3, VecUtils::compareFunc> generateQueueMap;
     std::vector<glm::vec3> generateQueueList;
 
     int generatedChunks = 0;

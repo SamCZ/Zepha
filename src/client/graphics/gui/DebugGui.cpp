@@ -3,7 +3,7 @@
 //
 
 #include "DebugGui.h"
-#include "../../../generic/helpers/ChunkVec.h"
+#include "../../../generic/helpers/TransPos.h"
 
 DebugGui::DebugGui(glm::vec2 bufferSize) {
     displayMode = 0;
@@ -226,7 +226,7 @@ void DebugGui::update(Player* player, LocalWorld* world, Window* window, BlockAt
     glGetIntegerv(0x9048, &videoMemTotal);
     glGetIntegerv(0x9049, &videoMemAvail);
 
-    glm::vec3 round = ChunkVec::roundVec(*player->getPos());
+    glm::vec3 round = TransPos::roundPos(*player->getPos());
     round.y -= 2;
 
     int block = world->getBlock(round);
@@ -249,8 +249,10 @@ void DebugGui::update(Player* player, LocalWorld* world, Window* window, BlockAt
         look = atlas->getBlock(block)->getIdentifier();
     }
 
-    glm::vec3 chk = ChunkVec::chunkVec(*player->getPos());
-    glm::vec3 loc = ChunkVec::localVec(*player->getPos());
+    glm::vec3* ppos = player->getPos();
+    glm::vec3 rpos = TransPos::roundPos(*ppos);
+    glm::vec3 chk = TransPos::chunkFromGlobal(*player->getPos());
+    glm::vec3 loc = TransPos::chunkLocalFromGlobal(*player->getPos());
 
     fpsText->set("FPS:" + string_float((float)fps));
     fpsHist->push_back((float)fps);
@@ -276,8 +278,10 @@ void DebugGui::update(Player* player, LocalWorld* world, Window* window, BlockAt
     vramHist->push_back((float)(videoMemTotal - videoMemAvail) / 1024);
     vramText->set("Total VRam Usage:\n" + to_string((videoMemTotal - videoMemAvail) / 1024) + "MB, (" + to_string((int)std::round((videoMemTotal - videoMemAvail) / (float)videoMemTotal * 100.0f)) + "%)");
 
+
     dataText->set(
-            "World: " + to_string((int)player->getPos()->x) + "," + to_string((int)player->getPos()->y) + "," + to_string((int)player->getPos()->z) + "\n" +
+            "Playr: " + string_float(ppos->x) + "," + string_float(ppos->y) + "," + string_float(ppos->z) + "\n" +
+            "Block: " + to_string((int)rpos.x) + "," + to_string((int)rpos.y) + "," + to_string((int)rpos.z) + "\n" +
             "Local: " + to_string((int)loc.x) + "," + to_string((int)loc.y) + "," + to_string((int)loc.z) + "\n" +
             "Chunk: " + to_string((int)chk.x) + "," + to_string((int)chk.y) + "," + to_string((int)chk.z) + "\n\n" +
             "Vel: " + string_float(player->getVel()->x) + "," + string_float(player->getVel()->y) + "," + string_float(player->getVel()->z) + "\n" +

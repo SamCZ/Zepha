@@ -10,9 +10,9 @@
 #include <thread>
 #include <unordered_set>
 #include "../../../generic/blocks/BlockChunk.h"
-#include "../../../generic/helpers/Vec3Compare.h"
 #include "../../../generic/blocks/BlockAtlas.h"
 #include "../../graphics/mesh/MeshGenerator.h"
+#include "../../../generic/helpers/VecUtils.h"
 
 class MeshGenStream {
 public:
@@ -74,7 +74,7 @@ private:
     BlockAtlas* atlas;
 
     std::vector<std::pair<BlockChunk*, std::vector<bool>*>> queuedTasks;
-    std::unordered_set<glm::vec3, Vec3Compare::func> queuedMap;
+    std::unordered_set<glm::vec3, VecUtils::compareFunc> queuedMap;
 };
 
 

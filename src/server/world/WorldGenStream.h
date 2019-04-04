@@ -13,7 +13,7 @@
 #include <unordered_set>
 #include "../../generic/blocks/BlockChunk.h"
 #include "../../generic/gen/MapGen.h"
-#include "../../generic/helpers/Vec3Compare.h"
+#include "../../generic/helpers/VecUtils.h"
 
 class WorldGenStream {
 public:
@@ -57,7 +57,7 @@ private:
 
     MapGen gen;
     std::vector<glm::vec3> queuedTasks;
-    std::unordered_set<glm::vec3, Vec3Compare::func> queuedMap;
+    std::unordered_set<glm::vec3, VecUtils::compareFunc> queuedMap;
 };
 
 

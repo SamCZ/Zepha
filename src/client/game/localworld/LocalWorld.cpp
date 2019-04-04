@@ -136,8 +136,8 @@ void LocalWorld::update() {
 }
 
 int LocalWorld::getBlock(glm::vec3 pos) {
-    auto chunkPos = ChunkVec::chunkVec(ChunkVec::roundVec(pos));
-    auto local = ChunkVec::localVec(ChunkVec::roundVec(pos));
+    auto chunkPos = TransPos::chunkFromGlobal(TransPos::roundPos(pos));
+    auto local = TransPos::chunkLocalFromGlobal(TransPos::roundPos(pos));
 
     auto chunk = getChunk(chunkPos);
     if (chunk != nullptr) {
@@ -147,8 +147,8 @@ int LocalWorld::getBlock(glm::vec3 pos) {
 }
 
 void LocalWorld::setBlock(glm::vec3 pos, int block) {
-    auto chunkPos = ChunkVec::chunkVec(ChunkVec::roundVec(pos));
-    auto local = ChunkVec::localVec(ChunkVec::roundVec(pos));
+    auto chunkPos = TransPos::chunkFromGlobal(TransPos::roundPos(pos));
+    auto local = TransPos::chunkLocalFromGlobal(TransPos::roundPos(pos));
 
     auto chunk = getChunk(chunkPos);
     if (chunk != nullptr) {
@@ -171,6 +171,6 @@ BlockChunk* LocalWorld::getChunk(glm::vec3 chunkPos) {
     return nullptr;
 }
 
-std::unordered_map<glm::vec3, MeshChunk*, Vec3Compare::func>* LocalWorld::getMeshChunks() {
+std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc>* LocalWorld::getMeshChunks() {
     return &meshChunks;
 }
