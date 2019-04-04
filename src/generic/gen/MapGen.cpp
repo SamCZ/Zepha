@@ -6,7 +6,7 @@
 
 #include "MapGen.h"
 #include "../../client/engine/Timer.h"
-#include "../noise/NoiseSample.h"
+#include "NoiseSample.h"
 
 MapGen::MapGen(unsigned int seed) {
     this->seed = seed;

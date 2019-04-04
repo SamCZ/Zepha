@@ -96,8 +96,8 @@ set(ZEUS_SRC_FILES
         client/engine/graphics/RectEntity.h
         generic/gen/MapGenJob.h
         generic/helpers/Interpolation.h
-        generic/noise/NoiseSample.cpp
-        generic/noise/NoiseSample.h
+        generic/gen/NoiseSample.cpp
+        generic/gen/NoiseSample.h
         client/engine/Frustum.cpp
         client/engine/Frustum.h
         client/engine/FrustumPlane.cpp
@@ -113,6 +113,6 @@ set(ZEUS_SRC_FILES
         generic/helpers/TransPos.h
         client/game/localworld/MeshGenStream.cpp
         client/game/localworld/MeshGenStream.h
-        generic/helpers/VecUtils.h)
+        generic/helpers/VecUtils.h generic/world/Dimension.cpp generic/world/Dimension.h generic/world/Region.cpp generic/world/Region.h generic/world/MapBlock.cpp generic/world/MapBlock.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})
