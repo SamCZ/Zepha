@@ -54,13 +54,8 @@ Region *Dimension::getRegion(glm::vec3 pos) {
     return regions[pos];
 }
 
-
 Dimension::~Dimension() {
     for (std::pair<glm::vec3, Region*> region : regions) {
         delete region.second;
     }
-}
-
-int Dimension::regionSize() {
-    return (int)regions.size();
 }

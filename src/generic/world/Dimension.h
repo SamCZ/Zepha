@@ -17,8 +17,6 @@ public:
     void addChunk(glm::vec3 pos, BlockChunk* chunk);
     BlockChunk* getChunk(glm::vec3 pos);
 
-    int regionSize();
-
     Region* getRegion(glm::vec3 pos);
 
     ~Dimension();

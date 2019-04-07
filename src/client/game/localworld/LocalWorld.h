@@ -57,9 +57,9 @@ public:
 private:
     BlockAtlas* blockAtlas;
 
-    std::unordered_map<glm::vec3, BlockChunk*, VecUtils::compareFunc> blockChunks;
+//    std::unordered_map<glm::vec3, BlockChunk*, VecUtils::compareFunc> blockChunks;
     WorldInterpolationStream worldGenStream;
-//    Dimension dimension;
+    Dimension dimension;
 
     std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc> meshChunks;
     MeshGenStream meshGenStream;

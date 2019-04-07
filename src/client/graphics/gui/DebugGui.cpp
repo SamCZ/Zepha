@@ -28,7 +28,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize) {
     dataBG = new RectEntity(
             glm::vec4(0.1, 0.1, 0.1, 0.4), glm::vec4(0.1, 0.1, 0.1, 0.4),
             glm::vec4(0.1, 0.1, 0.1, 0.3), glm::vec4(0.1, 0.1, 0.1, 0.3));
-    dataBG->setScale(glm::vec3(560, 168, 1));
+    dataBG->setScale(glm::vec3(560, 208, 1));
 
     crosshairText = new HudText(fontTexture);
     crosshairText->setScale(2);
@@ -302,13 +302,11 @@ void DebugGui::update(Player* player, LocalWorld* world, BlockAtlas* atlas, doub
         std::ostringstream str;
 
         str << "Player: " << string_vec3(playerPos);
-        str << " (" << string_vec3_float(*player->getPos()) << ")" << std::endl;
+        str << " (" << string_vec3_float(*player->getPos()) << ")" << std::endl << std::endl;
 
-        str << "RawChunk: " << string_vec3(chunkPos) << std::endl;
-
-        str << "Chunk: " << string_vec3(posOffsetFromChunk) << std::endl;
+        str << "Chunk: " << string_vec3(posOffsetFromChunk) << " [" << string_vec3(chunkPos) << "]" << std::endl;
         str << "MapBlock: " << string_vec3(posOffsetFromBlock) << std::endl;
-        str << "Region: " << string_vec3(posOffsetFromRegion) << std::endl;
+        str << "Region: " << string_vec3(posOffsetFromRegion) << std::endl << std::endl;
 
         str << "Ch: " << string_vec3(chunkCoordinate) << ", ";
         str << "Mb: " << string_vec3(mapBlockCoordinate) << ", ";
