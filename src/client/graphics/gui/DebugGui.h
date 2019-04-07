@@ -20,14 +20,13 @@ public:
     void bufferResized(glm::vec2 bufferSize);
 
     void pushGuiObjects(std::vector<Entity*> &list);
-    void update(Player* player, LocalWorld* world, Window* window, BlockAtlas* atlas, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
+    void update(Player* player, LocalWorld* world, BlockAtlas* atlas, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
     void positionElements(glm::vec2 bufferSize);
 
     ~DebugGui();
 
     void changeVisibilityState(int state);
 private:
-    int videoMemAvail, videoMemTotal;
     int displayMode;
 
     Texture *fontTexture;

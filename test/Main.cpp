@@ -17,5 +17,6 @@ TEST_CASE("Sanity Check", "[core]") {
 #include "tests/Serializer.cpp"
 #include "tests/Packet.cpp"
 #include "tests/LibNoise.cpp"
+#include "tests/Dimension.cpp"
 
 #pragma clang diagnostic pop

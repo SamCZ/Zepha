@@ -22,6 +22,7 @@
 #include "WorldInterpolationStream.h"
 #include "MeshGenStream.h"
 #include "../../../generic/helpers/VecUtils.h"
+#include "../../../generic/world/Dimension.h"
 
 class LocalWorld {
 public:
@@ -29,10 +30,10 @@ public:
 
     void update();
 
-    //INFO: Pushes chunk to the list unless one already exists, then tries to mesh it.
+    //Pushes chunk to the list unless one already exists, then tries to mesh it.
     void commitChunk(glm::vec3 pos, BlockChunk *c);
 
-    //INFO: Attempts to regenerate a chunk mesh.
+    //Attempts to regenerate a chunk mesh.
     void remeshChunk(glm::vec3 pos);
 
     //TODO: Remove this
@@ -58,6 +59,7 @@ private:
 
     std::unordered_map<glm::vec3, BlockChunk*, VecUtils::compareFunc> blockChunks;
     WorldInterpolationStream worldGenStream;
+//    Dimension dimension;
 
     std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc> meshChunks;
     MeshGenStream meshGenStream;

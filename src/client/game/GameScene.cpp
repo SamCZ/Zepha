@@ -59,7 +59,7 @@ void GameScene::update() {
         world->loadChunkPacket(p);
     }
 
-    debugGui.update(player, world, window, blockAtlas, state->fps, (int)world->getMeshChunks()->size(), drawCalls, server->serverSideChunkGens, server->recvPackets);
+    debugGui.update(player, world, blockAtlas, state->fps, (int)world->getMeshChunks()->size(), drawCalls, server->serverSideChunkGens, server->recvPackets);
     world->update();
 
     if (window->getKeysArray()[GLFW_KEY_F1]) {

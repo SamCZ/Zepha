@@ -20,6 +20,9 @@ void LocalWorld::loadChunkPacket(Packet *p) {
 }
 
 void LocalWorld::commitChunk(glm::vec3 pos, BlockChunk *c) {
+//    dimension.addChunk(pos, c);
+//    attemptMeshChunk(pos);
+
     if (!blockChunks.count(pos)) {
         blockChunks.insert(std::pair<glm::vec3, BlockChunk *>(pos, c));
 
@@ -136,8 +139,8 @@ void LocalWorld::update() {
 }
 
 int LocalWorld::getBlock(glm::vec3 pos) {
-    auto chunkPos = TransPos::chunkFromGlobal(TransPos::roundPos(pos));
-    auto local = TransPos::chunkLocalFromGlobal(TransPos::roundPos(pos));
+    auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
+    auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
 
     auto chunk = getChunk(chunkPos);
     if (chunk != nullptr) {
@@ -147,8 +150,8 @@ int LocalWorld::getBlock(glm::vec3 pos) {
 }
 
 void LocalWorld::setBlock(glm::vec3 pos, int block) {
-    auto chunkPos = TransPos::chunkFromGlobal(TransPos::roundPos(pos));
-    auto local = TransPos::chunkLocalFromGlobal(TransPos::roundPos(pos));
+    auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
+    auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
 
     auto chunk = getChunk(chunkPos);
     if (chunk != nullptr) {

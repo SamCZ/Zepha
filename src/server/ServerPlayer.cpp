@@ -36,7 +36,7 @@ glm::vec3 ServerPlayer::getOldPos() {
 
 void ServerPlayer::setPos(glm::vec3 pos) {
     this->pos = pos;
-    glm::vec3 newChunkPos = TransPos::chunkFromGlobal(pos);
+    glm::vec3 newChunkPos = TransPos::chunkFromVec(pos);
 
     if (newChunkPos != chunkPos) {
         if (!changedChunks) {

@@ -216,88 +216,126 @@ std::string string_float(float val) {
     std::ostringstream out;
     out.precision(2);
     out << std::fixed << val;
-    std::string s = out.str();
-    return s;
+    return out.str();
 }
 
-void DebugGui::update(Player* player, LocalWorld* world, Window* window, BlockAtlas* atlas, double fps, int chunks, int drawCalls, int ssGen, int ssPack) {
-    using namespace std;
+std::string string_float(double val) {
+    return string_float((float)val);
+}
 
-    glGetIntegerv(0x9048, &videoMemTotal);
-    glGetIntegerv(0x9049, &videoMemAvail);
+std::string string_vec3(glm::vec3& vec) {
+    std::ostringstream out;
+    out << (int)vec.x << ", " << (int)vec.y << ", " << (int)vec.z;
+    return out.str();
+}
 
-    glm::vec3 round = TransPos::roundPos(*player->getPos());
-    round.y -= 2;
+std::string string_vec3_float(glm::vec3& vec) {
+    std::ostringstream out;
+    out.precision(2);
+    out << std::fixed << vec.x << ", " << std::fixed << vec.y << ", " << std::fixed << vec.z;
+    return out.str();
+}
 
-    int block = world->getBlock(round);
-    std::string on = "ignore";
-    if (block >= 0) {
-        on = atlas->getBlock(block)->getIdentifier();
+void DebugGui::update(Player* player, LocalWorld* world, BlockAtlas* atlas, double fps, int chunks, int drawCalls, int ssGen, int ssPack) {
+
+    { //VRam Usage Graph (Top Right)
+        int videoMemAvail, videoMemTotal;
+
+        glGetIntegerv(0x9048, &videoMemTotal);
+        glGetIntegerv(0x9049, &videoMemAvail);
+
+        vramHist->setMax((float) videoMemTotal / 1024);
+        vramHist->push_back((float) (videoMemTotal - videoMemAvail) / 1024);
+
+        std::ostringstream str;
+
+        str << "VRam Usage:" << std::endl;
+        str << ((videoMemTotal - videoMemAvail) / 1024) << "MB ";
+        str << "(" << ((int)std::round((videoMemTotal - videoMemAvail) / (float)videoMemTotal * 100.0)) << "%)";
+
+        vramText->set(str.str());
     }
 
-    block = 0;
-    for (Ray ray(player); ray.getLength() < 5; ray.step(0.01)) {
-        auto found = world->getBlock(*ray.getEnd());
-        if (found > 0) {
-            block = found;
-            break;
+    { //Bottom Left Graphs
+        fpsText->set("FPS: " + string_float(fps));
+        fpsHist->push_back((float) fps);
+
+        drawsHist->setMax(chunks);
+        drawsHist->push_back(drawCalls);
+        tMeshHist->push_back(chunks);
+        drawsText->set("Draws: " + to_string(drawCalls) + ", " + to_string(chunks));
+    }
+
+    { //Bottom Right Graphs
+        meshHist->push_back((float)world->lastMeshUpdates);
+        meshText->set("Mesh: " + to_string(world->lastMeshUpdates));
+
+        chunkHist->push_back((float)world->lastGenUpdates);
+        chunkText->set("Interp: " + to_string(world->lastGenUpdates));
+
+        ssGenHist->push_back((float)ssGen);
+        ssGenText->set("Gen: " + to_string(ssGen));
+
+        ssPackHist->push_back((float)ssPack);
+        ssPackText->set("RX: " + to_string(ssPack));
+    }
+
+    { //Top-left Data
+        glm::vec3 footPos = TransPos::roundPos(*player->getPos()) + glm::vec3(0, -2, 0);
+
+        int blockID = world->getBlock(footPos);
+        std::string on = (blockID > 0) ? atlas->getBlock(blockID)->getIdentifier() : "invalid";
+
+        glm::vec3 playerPos = TransPos::roundPos(*player->getPos());
+
+        glm::vec3 chunkPos = TransPos::chunkFromVec(playerPos);
+
+        //Block Coordinates offset from respective container
+        glm::vec3 posOffsetFromChunk = TransPos::chunkLocalFromVec(playerPos);
+        glm::vec3 posOffsetFromBlock = TransPos::mapBlockLocalFromVec(playerPos);
+        glm::vec3 posOffsetFromRegion = TransPos::regionLocalFromVec(playerPos);
+
+        glm::vec3 chunkCoordinate = TransPos::Dimension::chunkOffsetFromMapBlock(chunkPos);
+        glm::vec3 mapBlockCoordinate = TransPos::Dimension::mapBlockOffsetFromRegion(chunkPos);
+        glm::vec3 regionCoordinate = TransPos::Dimension::regionFromVec(chunkPos);
+
+        std::ostringstream str;
+
+        str << "Player: " << string_vec3(playerPos);
+        str << " (" << string_vec3_float(*player->getPos()) << ")" << std::endl;
+
+        str << "RawChunk: " << string_vec3(chunkPos) << std::endl;
+
+        str << "Chunk: " << string_vec3(posOffsetFromChunk) << std::endl;
+        str << "MapBlock: " << string_vec3(posOffsetFromBlock) << std::endl;
+        str << "Region: " << string_vec3(posOffsetFromRegion) << std::endl;
+
+        str << "Ch: " << string_vec3(chunkCoordinate) << ", ";
+        str << "Mb: " << string_vec3(mapBlockCoordinate) << ", ";
+        str << "Rg: " << string_vec3(regionCoordinate) << std::endl;
+
+        str << "Vel: " << string_vec3(*player->getVel()) << std::endl;
+        str << "Yaw: " << string_float(player->getYaw()) << ", ";
+        str << "Pitch: " << string_float(player->getPitch()) << std::endl << std::endl;
+
+        str << "Standing On: " << on << std::endl;
+
+        dataText->set(str.str());
+    }
+
+    { //Crosshair Text
+        int blockID = 0;
+        for (Ray ray(player); ray.getLength() < 5; ray.step(0.01)) {
+            blockID = world->getBlock(*ray.getEnd());
+            if (blockID >= 0) break;
         }
+        if (blockID < 0) blockID = 0;
+
+        std::string look = atlas->getBlock(blockID)->getIdentifier();
+
+        crosshairText->set(look);
+        crosshairBG->getScale()->x = look.size() * 7 * 2 + 10;
     }
-
-    std::string look = "ignore";
-    if (block >= 0) {
-        look = atlas->getBlock(block)->getIdentifier();
-    }
-
-    fpsText->set("FPS: " + string_float((float)fps));
-    fpsHist->push_back((float)fps);
-
-    drawsText->set("Draws: " + to_string(drawCalls) + ", " + to_string(chunks));
-    tMeshHist->push_back(chunks);
-    drawsHist->setMax(chunks);
-    drawsHist->push_back(drawCalls);
-
-    meshHist->push_back((float)world->lastMeshUpdates);
-    meshText->set("Mesh: " + to_string(world->lastMeshUpdates));
-
-    chunkHist->push_back((float)world->lastGenUpdates);
-    chunkText->set("Interp: " + to_string(world->lastGenUpdates));
-
-    ssGenHist->push_back((float)ssGen);
-    ssGenText->set("Gen: " + to_string(ssGen));
-
-    ssPackHist->push_back((float)ssPack);
-    ssPackText->set("RX: " + to_string(ssPack));
-
-    vramHist->setMax((float)videoMemTotal / 1024);
-    vramHist->push_back((float)(videoMemTotal - videoMemAvail) / 1024);
-    vramText->set("Total VRam Usage:\n" + to_string((videoMemTotal - videoMemAvail) / 1024) + "MB, (" + to_string((int)std::round((videoMemTotal - videoMemAvail) / (float)videoMemTotal * 100.0f)) + "%)");
-
-    glm::vec3* ppos = player->getPos();
-    glm::vec3 rpos = TransPos::roundPos(*ppos);
-    glm::vec3 chk = TransPos::chunkFromGlobal(*player->getPos());
-    glm::vec3 loc = TransPos::chunkLocalFromGlobal(*player->getPos());
-    glm::vec3 mpr = TransPos::mapBlockFromGlobal(*player->getPos());
-    glm::vec3 mp = TransPos::mapBlockLocalFromGlobal(*player->getPos());
-    glm::vec3 rpr = TransPos::regionFromGlobal(*player->getPos());
-    glm::vec3 rp = TransPos::regionLocalFromGlobal(*player->getPos());
-
-    dataText->set(
-            "Player: " + to_string((int)rpos.x) + ", " + to_string((int)rpos.y) + ", " + to_string((int)rpos.z) +
-                   " (" + string_float(ppos->x) + ", " + string_float(ppos->y) + ", " + string_float(ppos->z) + ")\n" +
-            "Chunk: " + to_string((int)loc.x) + ", " + to_string((int)loc.y) + ", " + to_string((int)loc.z) +
-                   " (" + to_string((int)chk.x) + ", " + to_string((int)chk.y) + ", " + to_string((int)chk.z) + ")\n" +
-            "MapBlock: " + to_string((int)mp.x) + ", " + to_string((int)mp.y) + ", " + to_string((int)mp.z) +
-                   " (" + to_string((int)mpr.x) + ", " + to_string((int)mpr.y) + ", " + to_string((int)mpr.z) + ")\n" +
-            "Region: " + to_string((int)rp.x) + ", " + to_string((int)rp.y) + ", " + to_string((int)rp.z) +
-                   " (" + to_string((int)rpr.x) + ", " + to_string((int)rpr.y) + ", " + to_string((int)rpr.z) + ")\n\n" +
-            "Vel: " + string_float(player->getVel()->x) + ", " + string_float(player->getVel()->y) + ", " + string_float(player->getVel()->z) + "\n" +
-            "Yaw: " + string_float(player->getYaw()) + ", Pitch: " + string_float(player->getPitch()) + "\n\n" +
-            "Standing On: " + on);
-
-    crosshairText->set(look);
-    auto crosshairScale = crosshairBG->getScale();
-    crosshairScale->x = look.size() * 7 * 2 + 10;
 }
 
 void DebugGui::bufferResized(glm::vec2 bufferSize) {
