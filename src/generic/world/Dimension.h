@@ -9,19 +9,10 @@
 #include <vec3.hpp>
 #include "../helpers/VecUtils.h"
 #include "Region.h"
+#include "RegionHandler.h"
 
-class Dimension {
-public:
-    Dimension() = default;
+class Dimension : public RegionHandler<BlockChunk> {
 
-    void addChunk(glm::vec3 pos, BlockChunk* chunk);
-    BlockChunk* getChunk(glm::vec3 pos);
-
-    Region* getRegion(glm::vec3 pos);
-
-    ~Dimension();
-private:
-    std::unordered_map<glm::vec3, Region*, VecUtils::compareFunc> regions;
 };
 
 
