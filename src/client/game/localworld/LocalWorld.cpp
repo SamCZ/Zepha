@@ -22,12 +22,6 @@ void LocalWorld::loadChunkPacket(Packet *p) {
 void LocalWorld::commitChunk(glm::vec3 pos, BlockChunk *c) {
     dimension.addChunk(pos, c);
     attemptMeshChunk(pos);
-
-//    if (!blockChunks.count(pos)) {
-//        blockChunks.insert(std::pair<glm::vec3, BlockChunk *>(pos, c));
-//
-//        attemptMeshChunk(pos);
-//    }
 }
 
 void LocalWorld::remeshChunk(glm::vec3 pos) {
@@ -169,11 +163,6 @@ bool LocalWorld::solidAt(glm::vec3 pos) {
 
 BlockChunk* LocalWorld::getChunk(glm::vec3 chunkPos) {
     return dimension.getChunk(chunkPos);
-
-//    if (blockChunks.count(chunkPos) == 1) {
-//        return blockChunks[chunkPos];
-//    }
-//    return nullptr;
 }
 
 std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc>* LocalWorld::getMeshChunks() {

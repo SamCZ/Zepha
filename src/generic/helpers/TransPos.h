@@ -11,8 +11,8 @@
 
 namespace TransPos {
     const static int CHUNK_SIZE = 16;
-    const static int MAPBLOCK_SIZE = 8;
-    const static int REGION_SIZE = 8;
+    const static int MAPBLOCK_SIZE = 4;
+    const static int REGION_SIZE = 4;
 
     const static int CHUNK_BLOCK_LENGTH = CHUNK_SIZE;
     const static int MAPBLOCK_BLOCK_LENGTH = CHUNK_BLOCK_LENGTH * MAPBLOCK_SIZE;

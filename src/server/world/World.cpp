@@ -6,8 +6,11 @@
 #include <glm.hpp>
 #include "World.h"
 #include "../../generic/network/PacketChannel.h"
+#include "../../client/engine/Timer.h"
 
 void World::addPlayer(ServerPlayer *player) {
+    Timer t("New Chunk Allocation");
+
     this->players.push_back(player);
 
     auto bounds = player->getBounds();
@@ -33,9 +36,13 @@ void World::addPlayer(ServerPlayer *player) {
     for (glm::vec3 tPos : toGenerate) {
         generate(tPos);
     }
+
+    t.printElapsedMs();
 }
 
 void World::playerChangedChunks(ServerPlayer *player) {
+    Timer t("Movement Allocation");
+
     auto pos = player->getChunkPos();
 
     auto bounds = player->getBounds();
@@ -67,6 +74,7 @@ void World::playerChangedChunks(ServerPlayer *player) {
 
     printf("[INFO] %s moved, generating %d chunks.\n",
             player->getUsername().c_str(), (int)toGenerate.size());
+    t.printElapsedMs();
 
     player->changedChunks = false;
 }
