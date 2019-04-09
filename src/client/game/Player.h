@@ -38,6 +38,8 @@ public:
     glm::vec3* getVel();
     void setVel(glm::vec3 vel);
 
+    glm::vec3* getPointedBlock();
+
     ~Player();
 private:
     glm::vec3 pos;

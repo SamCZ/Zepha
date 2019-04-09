@@ -322,14 +322,14 @@ void DebugGui::update(Player* player, LocalWorld* world, BlockAtlas* atlas, doub
     }
 
     { //Crosshair Text
-        int blockID = 0;
-        for (Ray ray(player); ray.getLength() < Player::LOOK_DISTANCE; ray.step(0.01)) {
-            blockID = world->getBlock(*ray.getEnd());
-            if (blockID >= 0) break;
+        std::string look;
+        auto block = player->getPointedBlock();
+        if (block != nullptr) {
+            look = atlas->getBlock(world->getBlock(*block))->getIdentifier();
         }
-        if (blockID < 0) blockID = 0;
-
-        std::string look = atlas->getBlock(blockID)->getIdentifier();
+        else {
+            look = "invalid";
+        }
 
         crosshairText->set(look);
         crosshairBG->getScale()->x = look.size() * 7 * 2 + 10;

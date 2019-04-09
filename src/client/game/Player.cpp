@@ -244,3 +244,7 @@ float Player::getYaw() {
 float Player::getPitch() {
     return pitch;
 }
+
+glm::vec3* Player::getPointedBlock() {
+    return (pointingAtBlock) ? &pointedBlock : nullptr;
+}
