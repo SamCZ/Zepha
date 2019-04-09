@@ -16,6 +16,7 @@ void l_register_block::api(std::string identifier, sol::table data) {
 
     auto name = data.get<sol::optional<std::string>>("name");
     auto texTable = data.get<sol::optional<sol::table>>("textures");
+    auto selectionBoxTable = data.get<sol::optional<sol::table>>("selection_box");
     auto modelName = data.get_or<std::string>("model", "default:cube");
 
     bool visible = data.get_or("visible", true);
@@ -35,9 +36,20 @@ void l_register_block::api(std::string identifier, sol::table data) {
         return;
     }
 
+    SelectionBox selectionBox;
+    if (!selectionBoxTable) {
+        selectionBox = {{0, 0, 0}, {1, 1, 1}};
+    }
+    else {
+        sol::table box = (*selectionBoxTable)[1];
+
+        selectionBox = {{box[1], box[2], box[3]}, {box[4], box[5], box[6]}};
+    }
+
+
     BlockModel* model = BlockModel::from_lua_def(*modelOptional, *texTable, game->textureAtlas, visible, culls);
 
-    BlockDef* def = new BlockDef(identifier, model, solid);
+    BlockDef* def = new BlockDef(identifier, model, solid, selectionBox);
 
     game->blockAtlas->registerBlock(def);
 }

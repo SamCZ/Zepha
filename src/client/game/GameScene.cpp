@@ -33,7 +33,7 @@ GameScene::GameScene(ClientState* state) :
 
     //Wireframe
     auto e = new Entity;
-    WireframeGenerator w(1, 1, 1, 0.02);
+    WireframeGenerator w({0, 0, 0}, {1, 1, 1}, 0.01);
     auto m = w.build();
     e->create(m);
     e->setPosition({3, 16, 0});

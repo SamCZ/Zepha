@@ -144,3 +144,7 @@ std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::vec3 chunkPos) {
 std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc>* LocalWorld::getMeshChunks() {
     return &meshChunks;
 }
+
+BlockAtlas *LocalWorld::getBlockAtlas() {
+    return blockAtlas;
+}

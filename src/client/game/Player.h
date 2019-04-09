@@ -11,10 +11,12 @@
 #include "localworld/LocalWorld.h"
 #include "../engine/Camera.h"
 #include "../engine/Timer.h"
+#include "entity/WireframeGenerator.h"
 
 class Player {
 public:
-    static constexpr float LOOK_DISTANCE = 8.0f;
+    static constexpr float LOOK_DISTANCE = 6.5f;
+    static constexpr float EYE_HEIGHT = 1.7f;
 
     Player();
 
@@ -46,13 +48,12 @@ private:
     LocalWorld* world;
 
     Entity* wireframe;
+    SelectionBox box;
     glm::vec3 pointedBlock;
     bool pointingAtBlock;
 
     bool flying;
     bool FDown;
-
-    const float playerHeight = 1.6;
 };
 
 

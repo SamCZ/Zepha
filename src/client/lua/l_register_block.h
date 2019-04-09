@@ -6,6 +6,7 @@
 #define ZEUS_LREGISTERBLOCK_H
 
 #include "LuaApi.h"
+#include "../../generic/blocks/SelectionBox.h"
 
 class l_register_block : LuaApi {
 public:

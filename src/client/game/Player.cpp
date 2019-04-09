@@ -24,16 +24,33 @@ void Player::update(bool *keys, double delta, double mouseX, double mouseY, bool
     moveCollide();
 
     for (Ray ray(this); ray.getLength() < Player::LOOK_DISTANCE; ray.step(0.01)) {
-        auto found = world->getBlock(*ray.getEnd());
+        auto rayEnd = *ray.getEnd();
+
+        auto found = world->getBlock(rayEnd);
         if (found > 0) {
-            pointedBlock = TransPos::roundPos(*ray.getEnd());
+            pointedBlock = TransPos::roundPos(rayEnd);
             pointingAtBlock = true;
 
-            if (leftDown) {
-                world->setBlock(*ray.getEnd(), 0);
+            auto sBox = world->getBlockAtlas()->getBlock(found)->getSelectionBox();
+
+            if (rayEnd.x >= pointedBlock.x + sBox.a.x && rayEnd.y >= pointedBlock.y + sBox.a.y && rayEnd.z >= pointedBlock.z + sBox.a.z &&
+                rayEnd.x <= pointedBlock.x + sBox.b.x && rayEnd.y <= pointedBlock.y + sBox.b.y && rayEnd.z <= pointedBlock.z + sBox.b.z) {
+
+                if (sBox != box) {
+                    box = sBox;
+                    auto m = WireframeGenerator(box.a, box.b, 0.01).build();
+                    wireframe->cleanup();
+                    wireframe->create(m);
+                }
+
+                if (leftDown) {
+                    world->setBlock(*ray.getEnd(), 0);
+                }
+
+                break;
             }
-            break;
         }
+
         pointingAtBlock = false;
     }
 
@@ -118,10 +135,10 @@ void Player::posUpdate(bool *keys, double delta) {
 bool Player::collides(glm::vec3 pos) {
     float colSize = 0.4;
 
-    return (world->solidAt(glm::vec3(pos.x - colSize, pos.y - playerHeight, pos.z - colSize)) ||
-            world->solidAt(glm::vec3(pos.x + colSize, pos.y - playerHeight, pos.z - colSize)) ||
-            world->solidAt(glm::vec3(pos.x + colSize, pos.y - playerHeight, pos.z + colSize)) ||
-            world->solidAt(glm::vec3(pos.x - colSize, pos.y - playerHeight, pos.z + colSize)) );
+    return (world->solidAt(glm::vec3(pos.x - colSize, pos.y - EYE_HEIGHT, pos.z - colSize)) ||
+            world->solidAt(glm::vec3(pos.x + colSize, pos.y - EYE_HEIGHT, pos.z - colSize)) ||
+            world->solidAt(glm::vec3(pos.x + colSize, pos.y - EYE_HEIGHT, pos.z + colSize)) ||
+            world->solidAt(glm::vec3(pos.x - colSize, pos.y - EYE_HEIGHT, pos.z + colSize)) );
 }
 
 void Player::moveCollide() {

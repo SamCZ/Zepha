@@ -8,11 +8,12 @@ BlockModel *BlockDef::getModel() {
     return model;
 }
 
-BlockDef::BlockDef(std::string identifier, BlockModel *model, bool solid) {
+BlockDef::BlockDef(std::string identifier, BlockModel *model, bool solid, SelectionBox selectionBox) {
     this->identifier = std::move(identifier);
     this->model = model;
     this->culls = model->culls;
     this->solid = solid;
+    this->selectionBox = selectionBox;
 }
 
 BlockDef::~BlockDef() {
@@ -29,4 +30,8 @@ std::string BlockDef::getIdentifier() {
 
 bool BlockDef::isCulling(){
     return culls;
+}
+
+SelectionBox BlockDef::getSelectionBox() {
+    return selectionBox;
 }

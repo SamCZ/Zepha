@@ -347,7 +347,7 @@ zeus.register_block("_:air", {
     solid = false,
 	name = "Air",
 	model = "default:block",
-	textures = {"_missing"}
+	textures = {"_missing"},
 })
 
 -- Grass [ID 1]
@@ -399,7 +399,7 @@ zeus.register_block('default:wood', {
         "default_log_top",
         "default_log_top",
         "default_log_side"
-    }
+    },
 })
 
 -- TallGrass [ID 6..10]
@@ -411,6 +411,9 @@ for i=1,5,1 do
         model = "default:plantlike",
         textures = {
             "default_tallgrass_" .. i,
+        },
+        selection_box = {
+            {0.15, 0, 0.15, 0.85, 0.25 + i * 0.1, 0.85}
         }
     })
 end
@@ -442,6 +445,9 @@ for ind,flower in ipairs(flowers) do
         model = "default:plantlike",
         textures = {
             "flowers_" .. flower
+        },
+        selection_box = {
+            {0.25, 0, 0.25, 0.75, 0.85, 0.75}
         }
     })
 end

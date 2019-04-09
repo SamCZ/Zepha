@@ -4,6 +4,8 @@
 
 #include "Entity.h"
 
+//todo: convert mesh to a smart pointer to avoid leaks
+
 Entity::Entity() {
     position = glm::vec3(0, 0, 0);
     scale = glm::vec3(1, 1, 1);

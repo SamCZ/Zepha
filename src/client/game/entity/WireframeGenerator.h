@@ -11,7 +11,7 @@
 
 class WireframeGenerator {
 public:
-    WireframeGenerator(float xSize, float ySize, float zSize, float width, glm::vec3 color = {0.1, 0.1, 0.1});
+    WireframeGenerator(glm::vec3 a, glm::vec3 b, float width, glm::vec3 color = {0.1, 0.1, 0.1});
     Mesh* build();
 private:
     std::vector<float> vertices {};
@@ -20,7 +20,8 @@ private:
     void createBox(float x, float y, float z, float xSize, float ySize, float zSize);
 
     glm::vec3 color {};
-    float xSize, ySize, zSize, width;
+    glm::vec3 a {}, b {};
+    float width;
     int indOffset = 0;
 };
 
