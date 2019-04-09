@@ -18,10 +18,10 @@ RectEntity::RectEntity(Texture *texture) {
 
 void RectEntity::createColored(glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::vec4 br) {
     auto vertices = new std::vector<float> {
-            0, 0, 0, 0, tl.w, tl.x, tl.y, tl.z,
-            0, 1, 0, 0, bl.w, bl.x, bl.y, bl.z,
-            1, 1, 0, 1, br.w, br.x, br.y, br.z,
-            1, 0, 0, 1, tr.w, tr.x, tr.y, tr.z,
+            0, 0, 0, 0, tl.x, tl.y, tl.z, tl.w, 0, 0, 0,
+            0, 1, 0, 0, bl.x, bl.y, bl.z, bl.w, 0, 0, 0,
+            1, 1, 0, 0, br.x, br.y, br.z, br.w, 0, 0, 0,
+            1, 0, 0, 0, tr.x, tr.y, tr.z, tr.w, 0, 0, 0,
     };
     auto indices = new std::vector<unsigned int> {
             0, 1, 2, 2, 3, 0
@@ -39,10 +39,10 @@ void RectEntity::createColored(glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::ve
 
 void RectEntity::createTextured(Texture *texture) {
     auto vertices = new std::vector<float> {
-            0, 0, 0, 0, 0, 0, 0, 0,
-            0, 1, 0, 0, 1, 0, 0, 0,
-            1, 1, 0, 1, 1, 0, 0, 0,
-            1, 0, 0, 1, 0, 0, 0, 0,
+            0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+            0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0,
+            1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0,
+            1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,
     };
     auto indices = new std::vector<unsigned int> {
             0, 1, 2, 2, 3, 0

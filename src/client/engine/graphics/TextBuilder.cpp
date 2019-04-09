@@ -68,10 +68,10 @@ Mesh* TextBuilder::build(std::string text) {
         float texPosR = texPosX + texPosWidth - ((p / 128.0f));
 
         auto letterVerts = std::vector<float> {
-                left,             top,     0,  texPosL, texPosY,                 0, 0, 0,
-                left + w - p * 2, top,     0,  texPosR, texPosY,                 0, 0, 0,
-                left + w - p * 2, top + h, 0,  texPosR, texPosY + texPosHeight,  0, 0, 0,
-                left,             top + h, 0,  texPosL, texPosY + texPosHeight,  0, 0, 0,
+                left,             top,     0, 1,  texPosL, texPosY,                 0, 0, 0, 0, 0,
+                left + w - p * 2, top,     0, 1,  texPosR, texPosY,                 0, 0, 0, 0, 0,
+                left + w - p * 2, top + h, 0, 1,  texPosR, texPosY + texPosHeight,  0, 0, 0, 0, 0,
+                left,             top + h, 0, 1,  texPosL, texPosY + texPosHeight,  0, 0, 0, 0, 0,
         };
 
         for (float f : letterVerts) textVertices->push_back(f);

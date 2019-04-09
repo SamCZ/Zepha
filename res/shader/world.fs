@@ -5,23 +5,36 @@
 #define NEAR_FOG vec3(0.40, 0.56, 0.72)
 #define FAR_FOG vec3(0.58, 0.76, 0.94)
 
-in float fogAlpha;
+in float vertDist;
 in float shading;
 
+in float fragUseTex;
+in vec4 color;
 in vec2 fragTex;
 
-out vec4 fragColor;
+out vec4 outColor;
 
 uniform sampler2D tex;
 
 void main() {
-    vec2 texCoord = fragTex;
-    vec4 color = texture(tex, texCoord) * vec4(vec3(shading), 1);
 
-    float near = min(max(fogAlpha - 200, 0) / 100, 1);
-    float far = min(max(fogAlpha - 250, 0) / 100, 1);
-    color = vec4(mix(mix(vec3(color), NEAR_FOG, near), FAR_FOG, far), color.a);
+    //Get Color
+    vec4 fragColor;
 
-    if (color.a > 0.8) fragColor = color;
+    if (fragUseTex > 0.5) {
+        vec2 texCoord = fragTex;
+        fragColor = texture(tex, texCoord) * vec4(vec3(shading), 1);
+    }
+    else {
+        fragColor = color * vec4(vec3(shading), 1);
+    }
+
+    //Apply Fog
+    float near = min(max(vertDist - 200, 0) / 100, 1);
+    float far = min(max(vertDist - 250, 0) / 100, 1);
+
+    fragColor = vec4(mix(mix(vec3(fragColor), NEAR_FOG, near), FAR_FOG, far), fragColor.a);
+
+    if (fragColor.a > 0.8) outColor = fragColor;
     else discard;
 }

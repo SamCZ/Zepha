@@ -93,8 +93,12 @@ void MeshGenerator::addFaces(glm::vec3 &offset, vector<float> &vertices, vector<
             vertices.push_back(vertex->pos->y + offset.y);
             vertices.push_back(vertex->pos->z + offset.z);
 
+            vertices.push_back(1);
+
             vertices.push_back(vertex->tex->x);
             vertices.push_back(vertex->tex->y);
+            vertices.push_back(0);
+            vertices.push_back(0);
 
             vertices.push_back(vertex->nml->x);
             vertices.push_back(vertex->nml->y);

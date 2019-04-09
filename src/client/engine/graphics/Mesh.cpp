@@ -28,14 +28,17 @@ void Mesh::create(std::vector<float>* vertices, std::vector<unsigned int>* indic
 
     glBufferData(GL_ARRAY_BUFFER, vertices->size() * sizeof(float), &vertices->front(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, nullptr);
-    glEnableVertexAttribArray(0); //If dynamic amounts of attrib arrays are needed, then do these before drawing
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 11, nullptr);
+    glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 3));
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(float) * 11, (void*)(sizeof(float) * 3));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 5));
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 11, (void*)(sizeof(float) * 4));
     glEnableVertexAttribArray(2);
+
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 11, (void*)(sizeof(float) * 8));
+    glEnableVertexAttribArray(3);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
