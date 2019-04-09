@@ -41,15 +41,15 @@ void WireframeGenerator::createBox(float x, float y, float z, float xSize, float
     auto c = color;
 
     std::vector<float> myVerts {
-        /*0*/ x + a.x,         y + a.y,         z + a.z,         0, c.x, c.y, c.z, 1, 0, 0, 0,
-        /*1*/ x + a.x + xSize, y + a.y,         z + a.z,         0, c.x, c.y, c.z, 1, 0, 0, 0,
-        /*2*/ x + a.x + xSize, y + a.y,         z + a.z + zSize, 0, c.x, c.y, c.z, 1, 0, 0, 0,
-        /*3*/ x + a.x,         y + a.y,         z + a.z + zSize, 0, c.x, c.y, c.z, 1, 0, 0, 0,
+        /*0*/ x + a.x,         y + a.y,         z + a.z,         0, c.x, c.y, c.z, 0.5, 0, 0, 0,
+        /*1*/ x + a.x + xSize, y + a.y,         z + a.z,         0, c.x, c.y, c.z, 0.5, 0, 0, 0,
+        /*2*/ x + a.x + xSize, y + a.y,         z + a.z + zSize, 0, c.x, c.y, c.z, 0.5, 0, 0, 0,
+        /*3*/ x + a.x,         y + a.y,         z + a.z + zSize, 0, c.x, c.y, c.z, 0.5, 0, 0, 0,
 
-        /*4*/ x + a.x,         y + a.y + ySize, z + a.z,         0, c.x, c.y, c.z, 1, 0, 0, 0,
-        /*5*/ x + a.x + xSize, y + a.y + ySize, z + a.z,         0, c.x, c.y, c.z, 1, 0, 0, 0,
-        /*6*/ x + a.x + xSize, y + a.y + ySize, z + a.z + zSize, 0, c.x, c.y, c.z, 1, 0, 0, 0,
-        /*7*/ x + a.x,         y + a.y + ySize, z + a.z + zSize, 0, c.x, c.y, c.z, 1, 0, 0, 0,
+        /*4*/ x + a.x,         y + a.y + ySize, z + a.z,         0, c.x, c.y, c.z, 0.5, 0, 0, 0,
+        /*5*/ x + a.x + xSize, y + a.y + ySize, z + a.z,         0, c.x, c.y, c.z, 0.5, 0, 0, 0,
+        /*6*/ x + a.x + xSize, y + a.y + ySize, z + a.z + zSize, 0, c.x, c.y, c.z, 0.5, 0, 0, 0,
+        /*7*/ x + a.x,         y + a.y + ySize, z + a.z + zSize, 0, c.x, c.y, c.z, 0.5, 0, 0, 0,
     };
 
     std::vector<unsigned int> myInds {

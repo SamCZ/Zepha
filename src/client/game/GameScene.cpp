@@ -37,7 +37,6 @@ GameScene::GameScene(ClientState* state) :
     auto m = w.build();
     e->create(m);
     e->setPosition({3, 16, 0});
-    entities.push_back(e);
     wireframe = e;
 
     player = new Player();
@@ -143,6 +142,12 @@ void GameScene::draw() {
 
         state->renderer->draw(entity);
     }
+
+    if (wireframe->isVisible()) {
+        state->renderer->draw(wireframe);
+    }
+
+    glClear(GL_DEPTH_BUFFER_BIT);
 
     prevTexture = nullptr;
 

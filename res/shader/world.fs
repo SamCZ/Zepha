@@ -35,6 +35,6 @@ void main() {
 
     fragColor = vec4(mix(mix(vec3(fragColor), NEAR_FOG, near), FAR_FOG, far), fragColor.a);
 
-    if (fragColor.a > 0.8) outColor = fragColor;
+    if (fragColor.a > 0.01) outColor = fragColor;
     else discard;
 }
