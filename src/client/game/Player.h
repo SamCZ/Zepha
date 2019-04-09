@@ -14,9 +14,11 @@
 
 class Player {
 public:
+    static constexpr float LOOK_DISTANCE = 8.0f;
+
     Player();
 
-    void create(LocalWorld* world, Camera* camera);
+    void create(LocalWorld* world, Camera* camera, Entity* wireframe);
 
     void update(bool* keys, double delta, double mouseX, double mouseY, bool leftDown, bool rightDown);
 
@@ -42,6 +44,10 @@ private:
 
     Camera* camera;
     LocalWorld* world;
+
+    Entity* wireframe;
+    glm::vec3 pointedBlock;
+    bool pointingAtBlock;
 
     bool flying;
     bool FDown;

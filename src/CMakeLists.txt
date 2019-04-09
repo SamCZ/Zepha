@@ -113,6 +113,6 @@ set(ZEUS_SRC_FILES
         generic/helpers/TransPos.h
         client/game/localworld/MeshGenStream.cpp
         client/game/localworld/MeshGenStream.h
-        generic/helpers/VecUtils.h generic/world/Dimension.cpp generic/world/Dimension.h generic/world/Region.h generic/world/MapBlock.h generic/world/RegionHandler.h)
+        generic/helpers/VecUtils.h generic/world/Dimension.cpp generic/world/Dimension.h generic/world/Region.h generic/world/MapBlock.h generic/world/RegionHandler.h client/game/entity/WireframeGenerator.cpp client/game/entity/WireframeGenerator.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

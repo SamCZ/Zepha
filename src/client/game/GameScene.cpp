@@ -6,6 +6,7 @@
 
 #include "../lua/l_register_block.h"
 #include "../lua/l_register_blockmodel.h"
+#include "entity/WireframeGenerator.h"
 
 GameScene::GameScene(ClientState* state) :
         Scene(state),
@@ -30,8 +31,17 @@ GameScene::GameScene(ClientState* state) :
     //The scene requires the blockAtlas for meshing and handling inputs.
     world = new LocalWorld(blockAtlas);
 
+    //Wireframe
+    auto e = new Entity;
+    WireframeGenerator w(1, 1, 1, 0.02);
+    auto m = w.build();
+    e->create(m);
+    e->setPosition({3, 16, 0});
+    entities.push_back(e);
+    wireframe = e;
+
     player = new Player();
-    player->create(world, state->renderer->getCamera());
+    player->create(world, state->renderer->getCamera(), wireframe);
 
     gui.pushGuiObjects(guiEntities);
     debugGui.pushGuiObjects(guiEntities);
@@ -108,14 +118,16 @@ void GameScene::draw() {
     Texture* prevTexture = nullptr;
 
     for (auto &entity : entities) {
-        auto newTexture = entity->getTexture();
+        if (entity->isVisible()) {
+            auto newTexture = entity->getTexture();
 
-        if (newTexture != nullptr && newTexture != prevTexture) {
-            prevTexture = newTexture;
-            newTexture->use();
+            if (newTexture != nullptr && newTexture != prevTexture) {
+                prevTexture = newTexture;
+                newTexture->use();
+            }
+
+            state->renderer->draw(entity);
         }
-
-        state->renderer->draw(entity);
     }
 
     prevTexture = nullptr;

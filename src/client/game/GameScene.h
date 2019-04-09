@@ -48,6 +48,8 @@ public:
     DebugGui debugGui;
     GameGui gui;
 
+    Entity* wireframe;
+
     int drawCalls;
 
     bool F1Down = false;

@@ -12,9 +12,10 @@ Player::Player() {
     flying = false;
 }
 
-void Player::create(LocalWorld* world, Camera* camera) {
+void Player::create(LocalWorld* world, Camera* camera, Entity* wireframe) {
     this->camera = camera;
     this->world = world;
+    this->wireframe = wireframe;
 }
 
 void Player::update(bool *keys, double delta, double mouseX, double mouseY, bool leftDown, bool rightDown) {
@@ -22,14 +23,29 @@ void Player::update(bool *keys, double delta, double mouseX, double mouseY, bool
     viewUpdate(mouseX, mouseY);
     moveCollide();
 
-    for (Ray ray(this); ray.getLength() < 5; ray.step(0.01)) {
+    for (Ray ray(this); ray.getLength() < Player::LOOK_DISTANCE; ray.step(0.01)) {
         auto found = world->getBlock(*ray.getEnd());
         if (found > 0) {
+            pointedBlock = TransPos::roundPos(*ray.getEnd());
+            pointingAtBlock = true;
+
             if (leftDown) {
                 world->setBlock(*ray.getEnd(), 0);
             }
             break;
         }
+        pointingAtBlock = false;
+    }
+
+    if (pointingAtBlock && !wireframe->isVisible()) {
+        wireframe->setVisible(true);
+    }
+    else if (!pointingAtBlock && wireframe->isVisible()) {
+        wireframe->setVisible(false);
+    }
+
+    if (pointingAtBlock) {
+        wireframe->setPosition(pointedBlock);
     }
 
     if (keys[GLFW_KEY_F]) {
