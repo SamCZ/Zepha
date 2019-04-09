@@ -31,7 +31,7 @@ void ServerConnection::update(Player &player, std::vector<PlayerEntity*>& player
                 break;
             }
             case ENET_EVENT_TYPE_RECEIVE: {
-                Packet* p = new Packet(event.packet);
+                auto p = new Packet(event.packet);
 
                 switch (p->type) {
                     case Packet::PLAYER_INFO: {

@@ -26,6 +26,8 @@ public:
         std::cerr << "State doesn't define cleanup method!" << std::endl;
     };
 
+    virtual ~Scene() = default;
+
     ClientState* state;
 };
 

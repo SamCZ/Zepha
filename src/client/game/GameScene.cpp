@@ -118,6 +118,8 @@ void GameScene::draw() {
         state->renderer->draw(entity);
     }
 
+    prevTexture = nullptr;
+
     //TEMPORARY
     for (auto &entity : playerEntities) {
         auto newTexture = entity->getTexture();
@@ -129,6 +131,8 @@ void GameScene::draw() {
 
         state->renderer->draw(entity);
     }
+
+    prevTexture = nullptr;
 
     state->renderer->enableGuiShader();
 

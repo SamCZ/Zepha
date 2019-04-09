@@ -20,15 +20,15 @@ bool WorldInterpolationStream::pushBack(Packet *p) {
     queuedTasks.push_back(p);
 }
 
-std::vector<BlockChunk*> WorldInterpolationStream::update() {
-    std::vector<BlockChunk*> finishedChunks;
+std::vector<std::shared_ptr<BlockChunk>> WorldInterpolationStream::update() {
+    std::vector<std::shared_ptr<BlockChunk>> finishedChunks;
 
     for (auto& t : threads) {
         for (auto& u : t.tasks) {
             if (!u.unlocked) continue;
 
             if (u.chunk != nullptr) {
-                finishedChunks.push_back(u.chunk);
+                finishedChunks.push_back(std::shared_ptr<BlockChunk>(u.chunk));
                 u.chunk = nullptr;
             }
 
@@ -36,6 +36,11 @@ std::vector<BlockChunk*> WorldInterpolationStream::update() {
                 auto it = queuedTasks.begin();
                 Packet* p = *it;
                 queuedTasks.erase(it);
+
+                if (p == nullptr) {
+                    cerr << "NULL PACKET IN THE WORLD INTERPOLATION STREAM! (" << __LINE__ << ")" << std::endl;
+                    continue;
+                }
 
                 u.packet = p;
                 //Lock it to allow the thread to edit it.

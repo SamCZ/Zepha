@@ -26,7 +26,7 @@ public:
 
     //Will return a vector of BlockChunk pointers containing finished chunks.
     //Frees up the threads and starts new tasks.
-    std::vector<BlockChunk*> update();
+    std::vector<std::shared_ptr<BlockChunk>> update();
 
     struct Unit {
         Packet* packet = nullptr;

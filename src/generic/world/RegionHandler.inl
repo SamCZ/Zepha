@@ -1,5 +1,5 @@
 template <class T>
-void RegionHandler<T>::addChunk(glm::vec3 pos, T *chunk) {
+void RegionHandler<T>::addChunk(glm::vec3 pos, std::shared_ptr<T> chunk) {
 
     glm::vec3 regionPos = TransPos::Dimension::regionFromVec(pos);
     if (!regions.count(regionPos)) regions.insert({regionPos, new Region<T>(regionPos)});
@@ -12,12 +12,11 @@ void RegionHandler<T>::addChunk(glm::vec3 pos, T *chunk) {
 
     glm::vec3 chunkPos = TransPos::Dimension::chunkOffsetFromMapBlock(pos);
     unsigned int chunkInd = TransPos::chunkIndFromVec(chunkPos);
-    delete (*mapBlock)[chunkInd];
     mapBlock->set(chunkInd, chunk);
 }
 
 template <class T>
-T *RegionHandler<T>::getChunk(glm::vec3 pos) {
+std::shared_ptr<T> RegionHandler<T>::getChunk(glm::vec3 pos) {
 
     glm::vec3 regionPos = TransPos::Dimension::regionFromVec(pos);
     if (!regions.count(regionPos)) return nullptr;

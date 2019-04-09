@@ -15,7 +15,7 @@ Client::Client(int width, int height) {
 }
 
 void Client::start(char* path) {
-//    Start Local Server
+    //Start Local Server
     if (path != nullptr) {
         int pid = fork();
         if (pid == 0) {
@@ -57,10 +57,13 @@ void Client::loop() {
     state->deltaTime = now - timeElapsed;
     timeElapsed = now;
 
-    count ++;
-    if (count == 20) {
+    if (count == 5) {
         Scene* g = new GameScene(state);
         sceneManager.setScene(g); //Main Menu Scene here eventually
+        count = 8;
+    }
+    else {
+        count++;
     }
 
     glfwPollEvents();

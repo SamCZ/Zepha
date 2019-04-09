@@ -121,9 +121,9 @@ void MapGen::getDensityMap(MapGenJob &job) {
 }
 
 void MapGen::fillChunk(MapGenJob &job) {
-    auto grass_sample = NoiseSample::getSample(&grassFinal, job.pos, 16, 1, true);
-    auto flora_type_sample = NoiseSample::getSample(&floraFinal, job.pos, 4, 1, true);
-    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 8, 1, true);
+    auto grass_sample = NoiseSample::getSample(&grassFinal, job.pos, 16, 0, true);
+    auto flora_type_sample = NoiseSample::getSample(&floraFinal, job.pos, 4, 0, true);
+    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 8, 0, true);
 
     glm::vec3 lp;
 

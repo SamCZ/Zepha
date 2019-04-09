@@ -13,7 +13,6 @@ public:
     Mesh();
 
     void create(std::vector<float>* vertices, std::vector<unsigned int>* indices);
-    void create(float *vertices, unsigned int *indices, unsigned int vertCount, unsigned int indCount);
     void draw();
     void cleanup();
 

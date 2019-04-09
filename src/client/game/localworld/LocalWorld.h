@@ -31,7 +31,7 @@ public:
     void update();
 
     //Pushes chunk to the list unless one already exists, then tries to mesh it.
-    void commitChunk(glm::vec3 pos, BlockChunk *c);
+    void commitChunk(glm::vec3 pos, std::shared_ptr<BlockChunk>);
 
     //Attempts to regenerate a chunk mesh.
     void remeshChunk(glm::vec3 pos);
@@ -42,11 +42,10 @@ public:
     void attemptMeshChunk(glm::vec3 pos);
     //This function also updates the chunk that is being checked's adjacent data, so maybe a rename is in order.
     bool getAdjacentExists(glm::vec3 pos, glm::vec3 myPos);
-    std::vector<bool>* getAdjacentsCull(glm::vec3 pos);
 
     std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc>* getMeshChunks();
 
-    BlockChunk* getChunk(glm::vec3 chunkPos);
+    std::shared_ptr<BlockChunk> getChunk(glm::vec3 chunkPos);
 
     int getBlock(glm::vec3 pos);
     void setBlock(glm::vec3 pos, int block);

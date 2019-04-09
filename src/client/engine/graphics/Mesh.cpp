@@ -12,11 +12,7 @@ Mesh::Mesh() {
 }
 
 void Mesh::create(std::vector<float>* vertices, std::vector<unsigned int>* indices) {
-    create(&(*vertices)[0], &(*indices)[0], (unsigned int)vertices->size(), (unsigned int)indices->size());
-}
-
-void Mesh::create(float *vertices, unsigned int *indices, unsigned int vertCount, unsigned int indCount) {
-    this->indCount = indCount;
+    this->indCount = (int)indices->size();
 
     glGenVertexArrays(1, &VAO);
 
@@ -25,22 +21,20 @@ void Mesh::create(float *vertices, unsigned int *indices, unsigned int vertCount
     glGenBuffers(1, &IBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
-    //Have to multiply by indCount because indices is a pointer to *one* number, not the entire array.
-    //Could also be sizeof(unsigned int) * indCount
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indCount, indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indCount * sizeof(unsigned int), &indices->front(), GL_STATIC_DRAW);
 
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertCount, vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices->size() * sizeof(float), &vertices->front(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 8, nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, nullptr);
     glEnableVertexAttribArray(0); //If dynamic amounts of attrib arrays are needed, then do these before drawing
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 8, (void*)(sizeof(vertices[0]) * 3));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 3));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 8, (void*)(sizeof(vertices[0]) * 5));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 5));
     glEnableVertexAttribArray(2);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);

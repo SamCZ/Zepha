@@ -13,6 +13,7 @@
 #include "../../../generic/blocks/BlockAtlas.h"
 #include "../../graphics/mesh/MeshGenerator.h"
 #include "../../../generic/helpers/VecUtils.h"
+#include "../../../generic/world/Dimension.h"
 
 class MeshGenStream {
 public:
@@ -20,15 +21,14 @@ public:
     static const int THREADS = 4;
     static const int TOTAL_QUEUE_SIZE = THREADS * THREAD_QUEUE_SIZE;
 
-    MeshGenStream();
-    explicit MeshGenStream(BlockAtlas* atlas);
+    explicit MeshGenStream(BlockAtlas& a, Dimension& d);
     ~MeshGenStream();
 
     bool spaceInQueue();
     bool isQueued(glm::vec3 pos);
     //Attempt to add `pos` to the pre-thread queue.
     //Will return a boolean stating if there is more space left in the queue.
-    bool tryToQueue(std::pair<BlockChunk*, std::vector<bool>*> data);
+    bool tryToQueue(glm::vec3 pos);
 
     struct MeshDetails {
         std::vector<float>* vertices;
@@ -47,7 +47,7 @@ public:
     std::vector<MeshDetails>* update();
 
     struct Unit {
-        BlockChunk* chunk = nullptr;
+        std::shared_ptr<BlockChunk> chunk = nullptr;
         std::vector<bool>* adjacent = nullptr;
 
         std::vector<float>* vertices = nullptr;
@@ -57,9 +57,9 @@ public:
     };
 
     struct Thread {
-        explicit Thread(BlockAtlas* atlas);
+        explicit Thread(BlockAtlas &atlas);
 
-        BlockAtlas* atlas;
+        BlockAtlas &atlas;
 
         std::thread* thread;
         bool keepAlive = true;
@@ -69,11 +69,13 @@ public:
 
     std::vector<Thread> threads;
 private:
+    std::vector<bool>* getAdjacentsCull(glm::vec3 pos);
     static void threadFunction(Thread* thread);
 
-    BlockAtlas* atlas;
+    Dimension& dimension;
+    BlockAtlas& atlas;
 
-    std::vector<std::pair<BlockChunk*, std::vector<bool>*>> queuedTasks;
+    std::vector<glm::vec3> queuedTasks;
     std::unordered_set<glm::vec3, VecUtils::compareFunc> queuedMap;
 };
 

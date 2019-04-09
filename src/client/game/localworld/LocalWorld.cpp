@@ -9,7 +9,7 @@
 #include "../../../generic/helpers/VecUtils.h"
 
 LocalWorld::LocalWorld(BlockAtlas *atlas) :
-    meshGenStream(atlas),
+    meshGenStream(*atlas, dimension),
     worldGenStream(55) {
 
     blockAtlas = atlas;
@@ -19,7 +19,7 @@ void LocalWorld::loadChunkPacket(Packet *p) {
     worldGenStream.pushBack(p);
 }
 
-void LocalWorld::commitChunk(glm::vec3 pos, BlockChunk *c) {
+void LocalWorld::commitChunk(glm::vec3 pos, std::shared_ptr<BlockChunk> c) {
     dimension.addChunk(pos, c);
     attemptMeshChunk(pos);
 }
@@ -58,29 +58,6 @@ bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
     return false;
 }
 
-std::vector<bool>* LocalWorld::getAdjacentsCull(glm::vec3 pos) {
-    auto culls = new std::vector<bool>();
-    culls->reserve(1536); //256 * 6
-
-    auto vectors = VecUtils::getCardinalVectors();
-    for (int i = 0; i < vectors.size(); i++) {
-        auto chunk = getChunk(pos + vectors[i]);
-
-        for (int j = 0; j < 16; j++) {
-            for (int k = 0; k < 16; k++) {
-
-                int x = (i == 0) ? 0 : (i == 1) ? 15 : (i <= 3) ? j : k;
-                int y = (i == 2) ? 0 : (i == 3) ? 15 : j;
-                int z = (i == 4) ? 0 : (i == 5) ? 15 : k;
-
-                auto block = chunk->getBlock(x, y, z);
-                culls->push_back(blockAtlas->getBlock(block)->isCulling());
-            }
-        }
-    }
-    return culls;
-}
-
 void LocalWorld::update() {
     //Create Finished Messages
     auto finishedMeshes = meshGenStream.update();
@@ -114,8 +91,7 @@ void LocalWorld::update() {
             glm::vec3 pos = *it;
 
             if (!meshGenStream.isQueued(pos)) {
-                moreSpace = meshGenStream.tryToQueue(
-                        std::pair<BlockChunk*, std::vector<bool>*>{getChunk(pos), getAdjacentsCull(pos)});
+                moreSpace = meshGenStream.tryToQueue(pos);
             }
 
             pendingMesh.erase(it);
@@ -161,7 +137,7 @@ bool LocalWorld::solidAt(glm::vec3 pos) {
     return blockAtlas->getBlock(blockId)->isSolid();
 }
 
-BlockChunk* LocalWorld::getChunk(glm::vec3 chunkPos) {
+std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::vec3 chunkPos) {
     return dimension.getChunk(chunkPos);
 }
 

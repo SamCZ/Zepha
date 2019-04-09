@@ -27,15 +27,15 @@ bool WorldGenStream::tryToQueue(glm::vec3 pos) {
     return sizeOfQueue + 1 < TOTAL_QUEUE_SIZE;
 }
 
-std::vector<BlockChunk*> WorldGenStream::update() {
-    std::vector<BlockChunk*> finishedChunks;
+std::vector<std::shared_ptr<BlockChunk>> WorldGenStream::update() {
+    std::vector<std::shared_ptr<BlockChunk>> finishedChunks;
 
     for (auto& t : threads) {
         for (auto& u : t.tasks) {
             if (!u.unlocked) continue;
 
             if (u.chunk != nullptr) {
-                finishedChunks.push_back(u.chunk);
+                finishedChunks.push_back(std::shared_ptr<BlockChunk>(u.chunk));
                 u.chunk = nullptr;
             }
 

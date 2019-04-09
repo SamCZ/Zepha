@@ -45,4 +45,6 @@ ServerPlayer* ConnectionList::createPlayer(ServerPeer *peer, std::string uuid) {
     packet.sendTo(peer->peer, PacketChannel::PLAYER_INFO);
 
     world->addPlayer(player);
+
+    return player;
 }

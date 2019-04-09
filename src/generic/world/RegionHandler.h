@@ -15,8 +15,8 @@ class RegionHandler {
 public:
     RegionHandler() = default;
 
-    void addChunk(glm::vec3 pos, T* chunk);
-    T* getChunk(glm::vec3 pos);
+    void addChunk(glm::vec3 pos, std::shared_ptr<T> chunk);
+    std::shared_ptr<T> getChunk(glm::vec3 pos);
 
     Region<T>* getRegion(glm::vec3 pos);
 

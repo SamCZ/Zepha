@@ -48,15 +48,15 @@ void ServerPlayer::setPos(glm::vec3 pos) {
 }
 
 std::pair<glm::vec3, glm::vec3> ServerPlayer::getBounds() {
-    glm::vec3 minBounds(chunkPos.x - ACTIVE_RANGE, chunkPos.y - ACTIVE_RANGE, chunkPos.z - ACTIVE_RANGE);
-    glm::vec3 maxBounds(chunkPos.x + ACTIVE_RANGE, chunkPos.y + ACTIVE_RANGE, chunkPos.z + ACTIVE_RANGE);
+    glm::vec3 minBounds(chunkPos.x - ACTIVE_RANGE_H, chunkPos.y - ACTIVE_RANGE_H, chunkPos.z - ACTIVE_RANGE_H);
+    glm::vec3 maxBounds(chunkPos.x + ACTIVE_RANGE_H, chunkPos.y + ACTIVE_RANGE_H, chunkPos.z + ACTIVE_RANGE_H);
 
     return {minBounds, maxBounds};
 }
 
 std::pair<glm::vec3, glm::vec3> ServerPlayer::getOldBounds() {
-    glm::vec3 minBounds(lastChunkPos.x - ACTIVE_RANGE, lastChunkPos.y - ACTIVE_RANGE, lastChunkPos.z - ACTIVE_RANGE);
-    glm::vec3 maxBounds(lastChunkPos.x + ACTIVE_RANGE, lastChunkPos.y + ACTIVE_RANGE, lastChunkPos.z + ACTIVE_RANGE);
+    glm::vec3 minBounds(lastChunkPos.x - ACTIVE_RANGE_H, lastChunkPos.y - ACTIVE_RANGE_H, lastChunkPos.z - ACTIVE_RANGE_H);
+    glm::vec3 maxBounds(lastChunkPos.x + ACTIVE_RANGE_H, lastChunkPos.y + ACTIVE_RANGE_H, lastChunkPos.z + ACTIVE_RANGE_H);
 
     return {minBounds, maxBounds};
 }

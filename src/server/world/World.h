@@ -12,9 +12,11 @@
 #include "../ServerPlayer.h"
 #include "WorldGenStream.h"
 #include "../../generic/helpers/VecUtils.h"
+#include "../../generic/world/Dimension.h"
+
 class World {
 public:
-    explicit World(unsigned int seed) : genStream(seed) {};
+    explicit World(unsigned int seed);
 
     void addPlayer(ServerPlayer* player);
     void update();
@@ -23,18 +25,20 @@ public:
 private:
     void playerChangedChunks(ServerPlayer* player);
     void generate(glm::vec3 pos);
+    void sendChunk(glm::vec3 pos, ServerPeer& peer);
 
     WorldGenStream genStream;
 
     std::vector<ServerPlayer*> players;
 
-    std::unordered_map<glm::vec3, BlockChunk*, VecUtils::compareFunc> chunkMap;
-    std::vector<std::pair<glm::vec3, BlockChunk*>> chunkList;
+    Dimension dimension;
 
     std::unordered_set<glm::vec3, VecUtils::compareFunc> generateQueueMap;
     std::vector<glm::vec3> generateQueueList;
 
     int generatedChunks = 0;
+
+    std::vector<glm::vec3> generateOrder;
 };
 
 

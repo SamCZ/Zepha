@@ -23,11 +23,13 @@ Scene* SceneManager::getScene() {
 }
 
 void SceneManager::cleanupScene() {
-    scene->cleanup();
-    delete scene;
-    scene = nullptr;
+    if (scene != nullptr) {
+        scene->cleanup();
+        delete scene;
+        scene = nullptr;
+    }
 }
 
 SceneManager::~SceneManager() {
-    if (scene != nullptr) cleanupScene();
+    cleanupScene();
 }

@@ -12,7 +12,8 @@
 
 class ServerPlayer {
 public:
-    const static int ACTIVE_RANGE = 24;
+    const static int ACTIVE_RANGE_H = 25;
+    const static int ACTIVE_RANGE_V = 8;
 
     //TODO: Refactor instances of UUID to username, or create seperate username flag
     explicit ServerPlayer(ServerPeer* peer, std::string uuid);

@@ -27,14 +27,14 @@ const int CHUNK_SIZE = 16;
 class MeshGenerator {
 public:
     MeshGenerator();
-    void build(BlockChunk* chunk, BlockAtlas* atlas, std::vector<bool>* adjacents,
-               std::vector<float> &vertices, std::vector<unsigned int> &indices);
+    void build(const std::shared_ptr<BlockChunk> &chunk, BlockAtlas &atlas, std::vector<bool> &adjacents,
+          std::vector<float> &vertices, std::vector<unsigned int> &indices);
 
     ~MeshGenerator();
 private:
     unsigned int indOffset;
 
-    void addFaces(glm::vec3 &offset, vector<float>* vertices, vector<unsigned int>* indices, vector<MeshPart*>* meshParts);
+    void addFaces(glm::vec3 &offset, vector<float> &vertices, vector<unsigned int> &indices, vector<MeshPart*> &meshParts);
 
     void cleanup();
 };
