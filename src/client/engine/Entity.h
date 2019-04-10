@@ -6,49 +6,50 @@
 #define GLPROJECT_ENTITY_H
 
 #include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
 #include <iostream>
+#include <gtc/matrix_transform.hpp>
 
 #include "graphics/Mesh.h"
 #include "graphics/Texture.h"
+#include "Drawable.h"
 
-class Entity {
+class Entity : public Drawable {
 public:
     Entity();
+    explicit Entity(Mesh* mesh);
+    Entity(Mesh* mesh, Texture* texture);
 
-    void create(Mesh* mesh);
-    void create(Mesh* mesh, Texture* texture);
-    void draw();
-    void cleanup();
+    void setMesh(Mesh* mesh);
+    void setMesh(Mesh* mesh, Texture* texture);
+
+    void draw(Renderer& renderer) override;
 
     void setTexture(Texture* texture);
     Texture* getTexture();
 
-    void setPosition(glm::vec3 position);
-    glm::vec3* getPosition();
+    void setPos(glm::vec3 position);
+    glm::vec3 getPos();
 
-    void setAngle(GLfloat angle);
-    GLfloat* getAngle();
+    void setAngle(float angle);
+    float getAngle();
 
     void setScale(float scale);
     void setScale(glm::vec3 scale);
-    glm::vec3* getScale();
+    glm::vec3 getScale();
 
     glm::mat4 getModelMatrix();
 
-    void setVisible(bool visible);
-    bool isVisible();
+    void cleanup();
+    ~Entity() override;
 
-    ~Entity();
 protected:
+    glm::vec3 position {0, 0, 0};
+    glm::vec3 scale {1, 1, 1};
+    GLfloat angle = 0;
+
+private:
     Mesh* mesh;
     Texture* texture;
-
-    glm::vec3 position;
-    glm::vec3 scale;
-    GLfloat angle;
-
-    bool visible;
 };
 
 

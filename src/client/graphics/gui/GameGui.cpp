@@ -15,28 +15,20 @@ GameGui::GameGui(glm::vec2 bufferSize) {
 
     crosshair = new RectEntity(crosshairTexture);
 
-    crosshair->setPosition(glm::vec3(bufferSize.x/2 - 11, bufferSize.y/2 - 9, 0));
+    crosshair->setPos(glm::vec3(bufferSize.x / 2 - 11, bufferSize.y / 2 - 9, 0));
     crosshair->setScale(22);
+
+    addDrawable(crosshair);
 
     viginette = new RectEntity(viginetteTexture);
     viginette->setScale(glm::vec3(bufferSize.x, bufferSize.y, 1));
-    viginette->setPosition(glm::vec3(0, 0, -5));
-}
+    viginette->setPos(glm::vec3(0, 0, -5));
 
-void GameGui::pushGuiObjects(std::vector<Entity *> &list) {
-    list.push_back(viginette);
-    list.push_back(crosshair);
-}
-
-GameGui::~GameGui() {
-    delete crosshair;
-    delete crosshairTexture;
-    delete viginette;
-    delete viginetteTexture;
+    addDrawable(viginette);
 }
 
 void GameGui::bufferResized(glm::vec2 bufferSize) {
-    crosshair->setPosition(glm::vec3(bufferSize.x/2 - 11, bufferSize.y/2 - 9, 0));
+    crosshair->setPos(glm::vec3(bufferSize.x / 2 - 11, bufferSize.y / 2 - 9, 0));
     viginette->setScale(glm::vec3(bufferSize.x, bufferSize.y, 1));
 }
 
@@ -49,4 +41,9 @@ void GameGui::setVisible(bool visible) {
 
 bool GameGui::isVisible() {
     return visible;
+}
+
+GameGui::~GameGui() {
+    delete crosshairTexture;
+    delete viginetteTexture;
 }

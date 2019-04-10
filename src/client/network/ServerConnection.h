@@ -14,13 +14,14 @@
 #include "../../generic/network/NetHandler.h"
 #include "../game/Player.h"
 #include "../game/entity/PlayerEntity.h"
+#include "../engine/DrawableGroup.h"
 
 class ServerConnection {
 public:
-    ServerConnection(std::string address, unsigned short port);
+    ServerConnection(std::string address, unsigned short port, std::vector<Drawable*> &entities);
 
     void init();
-    void update(Player &player, std::vector<PlayerEntity*>& playerEntities);
+    void update(Player &player);
     void cleanup();
 
     ~ServerConnection();
@@ -30,6 +31,8 @@ public:
     int recvPackets;
 private:
     bool connected = false;
+
+    DrawableGroup* entities;
 
     NetHandler handler;
 

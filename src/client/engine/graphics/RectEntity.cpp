@@ -30,7 +30,7 @@ void RectEntity::createColored(glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::ve
     auto m = new Mesh();
     m->create(vertices, indices);
 
-    create(m);
+    setMesh(m);
 
     delete vertices;
     delete indices;
@@ -51,7 +51,7 @@ void RectEntity::createTextured(Texture *texture) {
     auto m = new Mesh();
     m->create(vertices, indices);
 
-    create(m, texture);
+    setMesh(m, texture);
 
     delete vertices;
     delete indices;

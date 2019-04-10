@@ -38,12 +38,12 @@ PlayerEntity::PlayerEntity(glm::vec3 pos, int peer_id) {
     auto m = new Mesh();
     m->create(vertices, indices);
 
-    create(m, crosshairTexture);
+    setMesh(m, crosshairTexture);
 
     delete vertices;
     delete indices;
 
-    this->setPosition(pos);
+    this->setPos(pos);
     this->setScale(0.5);
 }
 

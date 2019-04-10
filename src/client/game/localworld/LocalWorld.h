@@ -39,6 +39,7 @@ public:
     bool getAdjacentExists(glm::vec3 pos, glm::vec3 myPos);
 
     std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc>* getMeshChunks();
+    int render(Renderer& render);
     std::shared_ptr<BlockChunk> getChunk(glm::vec3 chunkPos);
 
     int getBlock(glm::vec3 pos);
@@ -52,7 +53,6 @@ public:
 private:
     BlockAtlas* blockAtlas;
 
-//    std::unordered_map<glm::vec3, BlockChunk*, VecUtils::compareFunc> blockChunks;
     WorldInterpolationStream worldGenStream;
     Dimension dimension;
 

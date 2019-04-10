@@ -5,11 +5,11 @@
 #ifndef SRC_RENDERER_H
 #define SRC_RENDERER_H
 
+#include "Mesh.h"
 #include "Shader.h"
 #include "../Window.h"
 #include "../Camera.h"
-#include "../Entity.h"
-
+#include "Texture.h"
 #include <ext.hpp>
 
 class Renderer {
@@ -20,13 +20,9 @@ public:
     void update();
 
     void begin();
-
-    void enableWorldShader();
-    void draw(Entity* entity);
-
-    void enableGuiShader();
-    void drawGui(Entity* entity);
-
+    void beginGUI();
+    void setModelMatrix(glm::mat4& modelMatrix);
+    void enableTexture(Texture* texture);
     void end();
 
     Window* getWindow();
@@ -36,17 +32,21 @@ public:
 
     bool resized;
 private:
+    void enableWorldShader();
+    void enableGuiShader();
+
     Window* window;
     Camera* camera;
 
     glm::mat4* projectionMatrix;
     glm::mat4* orthographicMatrix;
 
-    //LocalWorld Shader
-    Shader* worldShader;
+    Texture* activeTexture;
+
+    Shader *worldShader, *guiShader;
     GLint uModel, uProj, uView, uOrtho, uGuiModel;
 
-    Shader* guiShader;
+    bool mode; //false = world, true = gui
 };
 
 

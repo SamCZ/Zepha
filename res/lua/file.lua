@@ -362,21 +362,35 @@ zeus.register_block("default:grass", {
         "default_grass_side",
         "default_grass_side",
         "default_grass_float",
-	}
+	},
+    toughness = {
+        hand = 3,
+        shovel = 1,
+        pick = 2
+    },
 })
 
 -- Dirt [ID 2]
 zeus.register_block('default:dirt', {
 	name = "Dirt",
 	model = "default:block",
-	textures = {"default_dirt"}
+	textures = {"default_dirt"},
+    toughness = {
+        hand = 3,
+        shovel = 1,
+        pick = 2
+    },
 })
 
 -- Stone [ID 3]
 zeus.register_block('default:stone', {
 	name = "Stone",
 	model = "default:block",
-	textures = {"default_stone"}
+	textures = {"default_stone"},
+    toughness = {
+        hand = 14,
+        pick = 3
+    },
 })
 
 -- Leaves [ID 4]
@@ -388,7 +402,11 @@ zeus.register_block('default:leaves', {
     textures = {
         "default_leaves",
         "default_leaves_puff"
-    }
+    },
+    toughness = {
+        hand = 1,
+        axe = 0.2,
+    },
 })
 
 -- Wood [ID 5]
@@ -399,6 +417,10 @@ zeus.register_block('default:wood', {
         "default_log_top",
         "default_log_top",
         "default_log_side"
+    },
+    toughness = {
+        hand = 5,
+        axe = 3,
     },
 })
 
@@ -413,7 +435,10 @@ for i=1,5,1 do
             "default_tallgrass_" .. i,
         },
         selection_box = {
-            {0.15, 0, 0.15, 0.85, 0.25 + i * 0.1, 0.85}
+            {1/16, 0, 1/16, 15/16, 0.30 + i * 0.1, 15/16}
+        },
+        toughness = {
+            hand = 0
         }
     })
 end
@@ -430,7 +455,7 @@ local flowers = {
     "dandelion_yellow"
 }
 
-for ind,flower in ipairs(flowers) do
+for _,flower in ipairs(flowers) do
 
     local function tchelper(first, rest)
         return first:upper()..rest:lower()
@@ -447,7 +472,10 @@ for ind,flower in ipairs(flowers) do
             "flowers_" .. flower
         },
         selection_box = {
-            {0.25, 0, 0.25, 0.75, 0.85, 0.75}
+            {4/16, 0, 4/16, 12/16, 14/16, 12/16}
+        },
+        toughness = {
+            hand = 0
         }
     })
 end

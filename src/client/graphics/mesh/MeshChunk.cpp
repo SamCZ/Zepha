@@ -4,17 +4,13 @@
 
 #include "MeshChunk.h"
 
-MeshChunk::MeshChunk() {
-    ready = false;
-}
-
-bool MeshChunk::isReady() {
-    return ready;
-}
-
 void MeshChunk::build(std::vector<float> *vertices, std::vector<unsigned int> *indices) {
-    auto *mesh = new Mesh();
+    auto mesh = new Mesh();
     mesh->create(vertices, indices);
-    this->create(mesh);
-    ready = true;
+
+    this->setMesh(mesh);
+}
+
+void MeshChunk::setPos(glm::vec3 pos) {
+    Entity::setPos(pos * glm::vec3(TransPos::CHUNK_SIZE));
 }

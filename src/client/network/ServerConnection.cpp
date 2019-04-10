@@ -4,9 +4,13 @@
 
 #include "ServerConnection.h"
 
-ServerConnection::ServerConnection(std::string address, unsigned short port) {
+
+ServerConnection::ServerConnection(std::string address, unsigned short port, std::vector<Drawable *> &entities) {
     this->port = port;
     this->address = std::move(address);
+
+    this->entities = new DrawableGroup();
+    entities.push_back(this->entities);
 }
 
 void ServerConnection::init() {
@@ -18,7 +22,7 @@ void ServerConnection::init() {
 }
 
 
-void ServerConnection::update(Player &player, std::vector<PlayerEntity*>& playerEntities) {
+void ServerConnection::update(Player &player) {
     recvPackets = 0;
 
     ENetEvent event;
@@ -53,16 +57,19 @@ void ServerConnection::update(Player &player, std::vector<PlayerEntity*>& player
                         );
 
                         bool found = false;
-                        for (auto plrEnt : playerEntities) {
-                            if (plrEnt->peer_id == peer_id) {
-                                plrEnt->setPosition(playerPos);
+                        for (auto ent : entities->getChildren()) {
+                            auto playerEntity = (PlayerEntity*)ent;
+
+                            if (playerEntity->peer_id == peer_id) {
+
+                                playerEntity->setPos(playerPos);
                                 found = true;
                                 break;
                             }
                         }
 
                         if (!found) {
-                            playerEntities.push_back(new PlayerEntity(playerPos, peer_id));
+                            entities->addDrawable(new PlayerEntity(playerPos, peer_id));
                         }
                         break;
                     }

@@ -67,9 +67,7 @@ void LocalWorld::update() {
         if (!mesh.vertices->empty()) {
             auto meshChunk = new MeshChunk();
             meshChunk->build(mesh.vertices, mesh.indices);
-
-            glm::vec3 pos = mesh.pos * glm::vec3(CHUNK_SIZE);
-            meshChunk->setPosition(pos);
+            meshChunk->setPos(mesh.pos);
 
             if (meshChunks.count(mesh.pos)) {
                 MeshChunk* oldChunk = meshChunks.at(mesh.pos);
@@ -147,4 +145,21 @@ std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc>* LocalWorld::ge
 
 BlockAtlas *LocalWorld::getBlockAtlas() {
     return blockAtlas;
+}
+
+int LocalWorld::render(Renderer &renderer) {
+    int count = 0;
+
+    for (auto &chunkPair : meshChunks) {
+        auto chunk = chunkPair.second;
+
+        FrustumAABB bbox(chunk->getPos(), glm::vec3(16, 16, 16));
+
+        if (renderer.getCamera()->inFrustum(bbox) != Frustum::OUTSIDE) {
+            chunk->draw(renderer);
+            count++;
+        }
+    }
+
+    return count;
 }

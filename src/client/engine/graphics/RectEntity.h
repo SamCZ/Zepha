@@ -10,7 +10,7 @@
 
 class RectEntity : public Entity {
 public:
-    RectEntity();
+    RectEntity() = default;
 
     explicit RectEntity(glm::vec4 color);
     RectEntity(glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::vec4 br);

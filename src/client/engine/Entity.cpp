@@ -4,25 +4,31 @@
 
 #include "Entity.h"
 
-//todo: convert mesh to a smart pointer to avoid leaks
-
 Entity::Entity() {
-    position = glm::vec3(0, 0, 0);
-    scale = glm::vec3(1, 1, 1);
-    angle = 0;
-    visible = true;
+    this->mesh = nullptr;
+    this->texture = nullptr;
 }
 
-void Entity::create(Mesh* myMesh) {
+Entity::Entity(Mesh* mesh) {
+    setMesh(mesh);
+}
+
+Entity::Entity(Mesh* mesh, Texture* texture) {
+    setMesh(mesh, texture);
+}
+
+void Entity::setMesh(Mesh* myMesh) {
+    cleanup();
     this->mesh = myMesh;
 }
 
-void Entity::create(Mesh* myMesh, Texture* texture) {
+void Entity::setMesh(Mesh* myMesh, Texture* texture) {
+    cleanup();
     this->mesh = myMesh;
     this->texture = texture;
 }
 
-void Entity::setTexture(Texture *texture) {
+void Entity::setTexture(Texture* texture) {
     this->texture = texture;
 };
 
@@ -30,28 +36,31 @@ Texture* Entity::getTexture() {
     return texture;
 }
 
-void Entity::draw() {
-    mesh->draw();
+void Entity::draw(Renderer& renderer) {
+    if (visible) {
+        auto mm = getModelMatrix();
+
+        renderer.setModelMatrix(mm);
+        if (texture != nullptr) renderer.enableTexture(texture);
+
+        mesh->draw();
+    }
 }
 
-void Entity::cleanup() {
-    this->mesh->cleanup();
-}
-
-void Entity::setPosition(glm::vec3 position) {
+void Entity::setPos(glm::vec3 position) {
     this->position = position;
 }
 
-glm::vec3* Entity::getPosition() {
-    return &position;
+glm::vec3 Entity::getPos() {
+    return position;
 }
 
-void Entity::setAngle(GLfloat angle) {
+void Entity::setAngle(float angle) {
     this->angle = angle;
 }
 
-GLfloat* Entity::getAngle() {
-    return &angle;
+float Entity::getAngle() {
+    return angle;
 }
 
 void Entity::setScale(float scale) {
@@ -62,8 +71,8 @@ void Entity::setScale(glm::vec3 scale) {
     this->scale = scale;
 }
 
-glm::vec3* Entity::getScale() {
-    return &scale;
+glm::vec3 Entity::getScale() {
+    return scale;
 }
 
 glm::mat4 Entity::getModelMatrix() {
@@ -76,14 +85,11 @@ glm::mat4 Entity::getModelMatrix() {
     return model;
 }
 
+void Entity::cleanup() {
+    delete mesh;
+    mesh = nullptr;
+}
+
 Entity::~Entity() {
     cleanup();
-}
-
-void Entity::setVisible(bool visible) {
-    this->visible = visible;
-}
-
-bool Entity::isVisible() {
-    return visible;
 }

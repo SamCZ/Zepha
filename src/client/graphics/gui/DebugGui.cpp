@@ -120,40 +120,40 @@ DebugGui::DebugGui(glm::vec2 bufferSize) {
 
     positionElements(bufferSize);
     
-    ownedElements.push_back(dataBG);
-    ownedElements.push_back(dataText);
+    addDrawable(dataBG);
+    addDrawable(dataText);
 
-    ownedElements.push_back(crosshairBG);
-    ownedElements.push_back(crosshairText);
+    addDrawable(crosshairBG);
+    addDrawable(crosshairText);
 
-    ownedElements.push_back(chunkBack);
-    ownedElements.push_back(chunkHist);
-    ownedElements.push_back(chunkText);
+    addDrawable(chunkBack);
+    addDrawable(chunkHist);
+    addDrawable(chunkText);
 
-    ownedElements.push_back(meshBack);
-    ownedElements.push_back(meshHist);
-    ownedElements.push_back(meshText);
+    addDrawable(meshBack);
+    addDrawable(meshHist);
+    addDrawable(meshText);
 
-    ownedElements.push_back(ssGenBack);
-    ownedElements.push_back(ssGenHist);
-    ownedElements.push_back(ssGenText);
+    addDrawable(ssGenBack);
+    addDrawable(ssGenHist);
+    addDrawable(ssGenText);
 
-    ownedElements.push_back(ssPackBack);
-    ownedElements.push_back(ssPackHist);
-    ownedElements.push_back(ssPackText);
+    addDrawable(ssPackBack);
+    addDrawable(ssPackHist);
+    addDrawable(ssPackText);
 
-    ownedElements.push_back(fpsBack);
-    ownedElements.push_back(fpsHist);
-    ownedElements.push_back(fpsText);
+    addDrawable(fpsBack);
+    addDrawable(fpsHist);
+    addDrawable(fpsText);
 
-    ownedElements.push_back(drawsBack);
-    ownedElements.push_back(drawsHist);
-    ownedElements.push_back(tMeshHist);
-    ownedElements.push_back(drawsText);
+    addDrawable(drawsBack);
+    addDrawable(drawsHist);
+    addDrawable(tMeshHist);
+    addDrawable(drawsText);
 
-    ownedElements.push_back(vramBack);
-    ownedElements.push_back(vramHist);
-    ownedElements.push_back(vramText);
+    addDrawable(vramBack);
+    addDrawable(vramHist);
+    addDrawable(vramText);
 }
 
 void DebugGui::positionElements(glm::vec2 bufferSize) {
@@ -162,11 +162,11 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
 
     glm::vec2 crosshairTextPos(bufferWidth / 2 + 22, bufferHeight / 2 - 7);
 
-    crosshairText->setPosition(glm::vec3(crosshairTextPos.x, crosshairTextPos.y, 0));
-    crosshairBG->setPosition(glm::vec3(crosshairTextPos.x - 4, crosshairTextPos.y - 4, -1));
+    crosshairText->setPos(glm::vec3(crosshairTextPos.x, crosshairTextPos.y, 0));
+    crosshairBG->setPos(glm::vec3(crosshairTextPos.x - 4, crosshairTextPos.y - 4, -1));
 
-    dataText->setPosition(glm::vec3(10, 10, 0));
-    dataBG->setPosition(glm::vec3(6, 6, -1));
+    dataText->setPos(glm::vec3(10, 10, 0));
+    dataBG->setPos(glm::vec3(6, 6, -1));
 
     glm::vec2 ssPackPos(bufferWidth - 254, bufferHeight - 70 - 240);
     glm::vec2 ssGenPos(bufferWidth - 254, bufferHeight - 70 - 160);
@@ -176,40 +176,34 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
     glm::vec2 drawCallsPos(10, bufferHeight - 70 - 80);
     glm::vec2 videoMemoryPos(bufferWidth - 254, 10);
 
-    ssGenText->setPosition(glm::vec3(ssGenPos.x + 4, ssGenPos.y + 8, 0));
-    ssGenHist->setPosition(glm::vec3(ssGenPos.x + 2, ssGenPos.y + 60, -1));
-    ssGenBack->setPosition(glm::vec3(ssGenPos.x, ssGenPos.y, -2));
+    ssGenText->setPos(glm::vec3(ssGenPos.x + 4, ssGenPos.y + 8, 0));
+    ssGenHist->setPos(glm::vec3(ssGenPos.x + 2, ssGenPos.y + 60, -1));
+    ssGenBack->setPos(glm::vec3(ssGenPos.x, ssGenPos.y, -2));
 
-    ssPackText->setPosition(glm::vec3(ssPackPos.x + 4, ssPackPos.y + 8, 0));
-    ssPackHist->setPosition(glm::vec3(ssPackPos.x + 2, ssPackPos.y + 60, -1));
-    ssPackBack->setPosition(glm::vec3(ssPackPos.x, ssPackPos.y, -2));
+    ssPackText->setPos(glm::vec3(ssPackPos.x + 4, ssPackPos.y + 8, 0));
+    ssPackHist->setPos(glm::vec3(ssPackPos.x + 2, ssPackPos.y + 60, -1));
+    ssPackBack->setPos(glm::vec3(ssPackPos.x, ssPackPos.y, -2));
 
-    meshText->setPosition(glm::vec3(meshUpdatePos.x + 4, meshUpdatePos.y + 8, 0));
-    meshHist->setPosition(glm::vec3(meshUpdatePos.x + 2, meshUpdatePos.y + 60, -1));
-    meshBack->setPosition(glm::vec3(meshUpdatePos.x, meshUpdatePos.y, -2));
+    meshText->setPos(glm::vec3(meshUpdatePos.x + 4, meshUpdatePos.y + 8, 0));
+    meshHist->setPos(glm::vec3(meshUpdatePos.x + 2, meshUpdatePos.y + 60, -1));
+    meshBack->setPos(glm::vec3(meshUpdatePos.x, meshUpdatePos.y, -2));
 
-    chunkText->setPosition(glm::vec3(chunkUpdatePos.x + 4, chunkUpdatePos.y + 8, 0));
-    chunkHist->setPosition(glm::vec3(chunkUpdatePos.x + 2, chunkUpdatePos.y + 60, -1));
-    chunkBack->setPosition(glm::vec3(chunkUpdatePos.x, chunkUpdatePos.y, -2));
+    chunkText->setPos(glm::vec3(chunkUpdatePos.x + 4, chunkUpdatePos.y + 8, 0));
+    chunkHist->setPos(glm::vec3(chunkUpdatePos.x + 2, chunkUpdatePos.y + 60, -1));
+    chunkBack->setPos(glm::vec3(chunkUpdatePos.x, chunkUpdatePos.y, -2));
 
-    fpsText->setPosition(glm::vec3(fpsPos.x + 4, fpsPos.y + 8, 0));
-    fpsHist->setPosition(glm::vec3(fpsPos.x + 2, fpsPos.y + 60, -1));
-    fpsBack->setPosition(glm::vec3(fpsPos.x, fpsPos.y, -2));
+    fpsText->setPos(glm::vec3(fpsPos.x + 4, fpsPos.y + 8, 0));
+    fpsHist->setPos(glm::vec3(fpsPos.x + 2, fpsPos.y + 60, -1));
+    fpsBack->setPos(glm::vec3(fpsPos.x, fpsPos.y, -2));
 
-    drawsText->setPosition(glm::vec3(drawCallsPos.x + 4, drawCallsPos.y + 8, 0));
-    drawsHist->setPosition(glm::vec3(drawCallsPos.x + 2, drawCallsPos.y + 60, -1));
-    tMeshHist->setPosition(glm::vec3(drawCallsPos.x + 2, drawCallsPos.y + 60, -1));
-    drawsBack->setPosition(glm::vec3(drawCallsPos.x, drawCallsPos.y, -2));
+    drawsText->setPos(glm::vec3(drawCallsPos.x + 4, drawCallsPos.y + 8, 0));
+    drawsHist->setPos(glm::vec3(drawCallsPos.x + 2, drawCallsPos.y + 60, -1));
+    tMeshHist->setPos(glm::vec3(drawCallsPos.x + 2, drawCallsPos.y + 60, -1));
+    drawsBack->setPos(glm::vec3(drawCallsPos.x, drawCallsPos.y, -2));
 
-    vramText->setPosition(glm::vec3(videoMemoryPos.x + 4, videoMemoryPos.y + 8, 0));
-    vramHist->setPosition(glm::vec3(videoMemoryPos.x + 2, videoMemoryPos.y + 60, -1));
-    vramBack->setPosition(glm::vec3(videoMemoryPos.x, videoMemoryPos.y, -2));
-}
-
-void DebugGui::pushGuiObjects(std::vector<Entity*> &list) {
-    for (auto element : ownedElements) {
-        list.push_back(element);
-    }
+    vramText->setPos(glm::vec3(videoMemoryPos.x + 4, videoMemoryPos.y + 8, 0));
+    vramHist->setPos(glm::vec3(videoMemoryPos.x + 2, videoMemoryPos.y + 60, -1));
+    vramBack->setPos(glm::vec3(videoMemoryPos.x, videoMemoryPos.y, -2));
 }
 
 std::string string_float(float val) {
@@ -332,7 +326,9 @@ void DebugGui::update(Player* player, LocalWorld* world, BlockAtlas* atlas, doub
         }
 
         crosshairText->set(look);
-        crosshairBG->getScale()->x = look.size() * 7 * 2 + 10;
+        auto scale = crosshairBG->getScale();
+        scale.x = look.size() * 7 * 2 + 10;
+        crosshairBG->setScale(scale);
     }
 }
 
@@ -344,13 +340,11 @@ void DebugGui::bufferResized(glm::vec2 bufferSize) {
 void DebugGui::changeVisibilityState(int state) {
     displayMode = state;
 
-    for (auto elem : ownedElements) {
-        elem->setVisible(displayMode == 0);
+    for (auto elem : children) {
+        ((Entity*)elem)->setVisible(displayMode == 0);
     }
 
     fpsText->setVisible(displayMode != 1);
     fpsHist->setVisible(displayMode != 1);
     fpsBack->setVisible(displayMode != 1);
 }
-
-DebugGui::~DebugGui() = default;

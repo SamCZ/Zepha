@@ -9,10 +9,12 @@
 #include "../Entity.h"
 #include "TextBuilder.h"
 
+//todo: Un-publicize Entity
+
 class HudText : public Entity {
 public:
-    HudText();
-    HudText(Texture* texture);
+    HudText() = default;
+    explicit HudText(Texture* texture);
 
     void set(std::string text);
 private:

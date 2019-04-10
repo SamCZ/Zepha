@@ -11,7 +11,7 @@
 class PlayerEntity : public Entity {
 public:
     PlayerEntity(glm::vec3 pos, int peer_id);
-    ~PlayerEntity();
+    ~PlayerEntity() override;
 
     int peer_id;
 private:

@@ -27,7 +27,6 @@ public:
     explicit GameScene(ClientState* state);
 
     void update() override;
-
     void draw() override;
 
     void cleanup() override;
@@ -38,17 +37,11 @@ public:
     TextureAtlas* textureAtlas;
     BlockAtlas* blockAtlas;
 
-    //Entities to be drawn with entity shaders
-    std::vector<Entity*> entities;
+    std::vector<Drawable*> entities;
+    std::vector<Drawable*> gui;
 
-    std::vector<PlayerEntity*> playerEntities;
-
-    //GUI Related things
-    std::vector<Entity*> guiEntities;
     DebugGui debugGui;
-    GameGui gui;
-
-    Entity* wireframe;
+    GameGui gameGui;
 
     int drawCalls;
 

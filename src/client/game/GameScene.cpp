@@ -10,11 +10,8 @@
 
 GameScene::GameScene(ClientState* state) :
         Scene(state),
-        gui(state->renderer->getCamera()->getBufferDimensions()),
+        gameGui(state->renderer->getCamera()->getBufferDimensions()),
         debugGui(state->renderer->getCamera()->getBufferDimensions()) {
-
-    server = new ServerConnection("127.0.0.1", 12345);
-    server->init();
 
     textureAtlas = new TextureAtlas("../res/tex");
     blockAtlas = new BlockAtlas(textureAtlas);
@@ -32,23 +29,25 @@ GameScene::GameScene(ClientState* state) :
     world = new LocalWorld(blockAtlas);
 
     //Wireframe
-    auto e = new Entity;
+    auto wireframe = new Entity;
     WireframeGenerator w({0, 0, 0}, {1, 1, 1}, 0.01);
-    auto m = w.build();
-    e->create(m);
-    e->setPosition({3, 16, 0});
-    wireframe = e;
+    wireframe->setMesh(w.build());
+    wireframe->setPos({3, 16, 0});
+    entities.push_back(wireframe);
 
     player = new Player();
     player->create(world, state->renderer->getCamera(), wireframe);
 
-    gui.pushGuiObjects(guiEntities);
-    debugGui.pushGuiObjects(guiEntities);
+    server = new ServerConnection("127.0.0.1", 12345, entities);
+    server->init();
+
+    gui.push_back(&gameGui);
+    gui.push_back(&debugGui);
 }
 
 
 void GameScene::update() {
-    server->update(*player, playerEntities);
+    server->update(*player);
 
     auto window = state->renderer->getWindow();
 
@@ -56,7 +55,7 @@ void GameScene::update() {
 
     if (state->renderer->resized) {
         debugGui.bufferResized(state->renderer->getCamera()->getBufferDimensions());
-        gui.bufferResized(state->renderer->getCamera()->getBufferDimensions());
+        gameGui.bufferResized(state->renderer->getCamera()->getBufferDimensions());
 
         state->renderer->resized = false;
     }
@@ -76,7 +75,7 @@ void GameScene::update() {
             F1Down = true;
             hudVisible = !hudVisible;
             debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
-            gui.setVisible(hudVisible);
+            gameGui.setVisible(hudVisible);
         }
     }
     else F1Down = false;
@@ -92,78 +91,24 @@ void GameScene::update() {
 }
 
 void GameScene::draw() {
-    auto camera = state->renderer->getCamera();
-
-    state->renderer->begin();
-    state->renderer->enableWorldShader();
-
-    textureAtlas->getTexture()->use();
+    auto &renderer = *state->renderer;
+    auto &camera = *renderer.getCamera();
 
     drawCalls = 0;
 
-    for (auto &chunkPair : *world->getMeshChunks()) {
-        auto chunk = chunkPair.second;
+    renderer.begin();
+    renderer.enableTexture(textureAtlas->getTexture());
 
-        FrustumAABB bbox(*chunk->getPosition(), glm::vec3(16, 16, 16));
+    drawCalls = world->render(renderer);
 
-        if (camera->inFrustum(bbox) != Frustum::OUTSIDE) {
-
-            state->renderer->draw(chunk);
-            drawCalls++;
-
-        }
+    for (auto entity : entities) {
+        entity->draw(renderer);
     }
 
-    Texture* prevTexture = nullptr;
+    state->renderer->beginGUI();
 
-    for (auto &entity : entities) {
-        if (entity->isVisible()) {
-            auto newTexture = entity->getTexture();
-
-            if (newTexture != nullptr && newTexture != prevTexture) {
-                prevTexture = newTexture;
-                newTexture->use();
-            }
-
-            state->renderer->draw(entity);
-        }
-    }
-
-    prevTexture = nullptr;
-
-    //TEMPORARY
-    for (auto &entity : playerEntities) {
-        auto newTexture = entity->getTexture();
-
-        if (newTexture != nullptr && newTexture != prevTexture) {
-            prevTexture = newTexture;
-            newTexture->use();
-        }
-
-        state->renderer->draw(entity);
-    }
-
-    if (wireframe->isVisible()) {
-        state->renderer->draw(wireframe);
-    }
-
-    glClear(GL_DEPTH_BUFFER_BIT);
-
-    prevTexture = nullptr;
-
-    state->renderer->enableGuiShader();
-
-    for (auto &entity : guiEntities) {
-        if (entity->isVisible()) {
-            auto newTexture = entity->getTexture();
-
-            if (newTexture != nullptr && newTexture != prevTexture) {
-                prevTexture = newTexture;
-                newTexture->use();
-            }
-
-            state->renderer->draw(entity);
-        }
+    for (auto entity : gui) {
+        entity->draw(renderer);
     }
 
     state->renderer->end();

@@ -15,7 +15,7 @@ Histogram::Histogram(Texture *texture, int length, float maxVal, bool editInPlac
     this->insertionPoint = 0;
 
     setTexture(texture);
-    mesh = new Mesh();
+    setMesh(new Mesh());
 }
 
 void Histogram::push_back(float value) {
@@ -40,11 +40,8 @@ void Histogram::push_back(float value) {
         }
     }
 
-    cleanup();
-    delete mesh;
-
     Mesh* mesh = buildHistogramMesh();
-    create(mesh);
+    setMesh(mesh);
 }
 
 Mesh* Histogram::buildHistogramMesh() {

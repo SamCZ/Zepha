@@ -8,6 +8,8 @@
 
 #include "../Entity.h"
 
+//TODO: Un-publicize entity
+
 class Histogram : public Entity {
 public:
     Histogram() = default;

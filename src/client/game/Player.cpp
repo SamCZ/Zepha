@@ -41,7 +41,7 @@ void Player::update(bool *keys, double delta, double mouseX, double mouseY, bool
                 }
                 auto m = WireframeGenerator(box.a, box.b, 0.003f + ray.getLength()*0.002f).build();
                 wireframe->cleanup();
-                wireframe->create(m);
+                wireframe->setMesh(m);
 
                 if (leftDown) {
                     world->setBlock(*ray.getEnd(), 0);
@@ -62,7 +62,7 @@ void Player::update(bool *keys, double delta, double mouseX, double mouseY, bool
     }
 
     if (pointingAtBlock) {
-        wireframe->setPosition(pointedBlock);
+        wireframe->setPos(pointedBlock);
     }
 
     if (keys[GLFW_KEY_F]) {

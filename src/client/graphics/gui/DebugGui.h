@@ -10,20 +10,17 @@
 #include "../../engine/Window.h"
 #include "../../engine/Ray.h"
 #include "../../engine/graphics/RectEntity.h"
-
+#include "../../engine/DrawableGroup.h"
 #include <sstream>
 
-class DebugGui {
+class DebugGui : public DrawableGroup {
 public:
     explicit DebugGui(glm::vec2 bufferSize);
 
     void bufferResized(glm::vec2 bufferSize);
 
-    void pushGuiObjects(std::vector<Entity*> &list);
     void update(Player* player, LocalWorld* world, BlockAtlas* atlas, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
     void positionElements(glm::vec2 bufferSize);
-
-    ~DebugGui();
 
     void changeVisibilityState(int state);
 private:
@@ -38,8 +35,6 @@ private:
     HudText    *chunkText, *meshText, *fpsText, *drawsText, *vramText, *ssGenText, *ssPackText;
     Histogram  *chunkHist, *meshHist, *fpsHist, *drawsHist, *tMeshHist, *vramHist, *ssGenHist, *ssPackHist;
     RectEntity *chunkBack, *meshBack, *fpsBack, *drawsBack, *vramBack, *ssGenBack, *ssPackBack;
-
-    std::vector<Entity*> ownedElements;
 
     bool visible;
 };

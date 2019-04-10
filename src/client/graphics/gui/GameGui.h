@@ -8,16 +8,15 @@
 #include "../../engine/graphics/RectEntity.h"
 #include "../../engine/Entity.h"
 #include "../../ClientState.h"
+#include "../../engine/DrawableGroup.h"
 
-class GameGui {
+class GameGui : public DrawableGroup {
 public:
-    GameGui(glm::vec2 bufferSize);
+    explicit GameGui(glm::vec2 bufferSize);
 
     void bufferResized(glm::vec2 bufferSize);
 
-    void pushGuiObjects(std::vector<Entity*> &list);
-
-    ~GameGui();
+    ~GameGui() override;
 
     void setVisible(bool visible);
     bool isVisible();
