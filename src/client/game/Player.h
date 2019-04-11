@@ -16,15 +16,15 @@
 class Player {
 public:
     static constexpr float LOOK_DISTANCE = 6.5f;
-    static constexpr float EYE_HEIGHT = 1.7f;
+    static constexpr float EYE_HEIGHT = 1.65f;
 
     Player();
 
     void create(LocalWorld* world, Camera* camera, Entity* wireframe);
 
-    void update(bool* keys, double delta, double mouseX, double mouseY, bool leftDown, bool rightDown);
+    void update(InputManager &input, double delta, double mouseX, double mouseY);
 
-    void posUpdate(bool *keys, double delta);
+    void posUpdate(InputManager &input, double delta);
     void viewUpdate(double deltaX, double deltaY);
     bool collides(glm::vec3 pos);
     void moveCollide();
@@ -41,6 +41,10 @@ public:
     glm::vec3* getPointedBlock();
 
     ~Player();
+
+    bool pointingAtBlock;
+    float digPercentage;
+    glm::vec3 pointedBlock;
 private:
     glm::vec3 pos;
     float yaw, pitch;
@@ -51,11 +55,8 @@ private:
 
     Entity* wireframe;
     SelectionBox box;
-    glm::vec3 pointedBlock;
-    bool pointingAtBlock;
 
     bool flying;
-    bool FDown;
 };
 
 

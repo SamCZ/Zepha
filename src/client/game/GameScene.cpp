@@ -51,7 +51,7 @@ void GameScene::update() {
 
     auto window = state->renderer->getWindow();
 
-    player->update(window->getKeysArray(), state->deltaTime, window->getDeltaX(), window->getDeltaY(), window->mouseIsDown(), window->mouseIsDown());
+    player->update(window->input, state->deltaTime, window->getDeltaX(), window->getDeltaY());
 
     if (state->renderer->resized) {
         debugGui.bufferResized(state->renderer->getCamera()->getBufferDimensions());
@@ -70,24 +70,16 @@ void GameScene::update() {
     debugGui.update(player, world, blockAtlas, state->fps, (int)world->getMeshChunks()->size(), drawCalls, server->serverSideChunkGens, server->recvPackets);
     world->update();
 
-    if (window->getKeysArray()[GLFW_KEY_F1]) {
-        if (!F1Down) {
-            F1Down = true;
-            hudVisible = !hudVisible;
-            debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
-            gameGui.setVisible(hudVisible);
-        }
+    if (window->input.isKeyPressed(GLFW_KEY_F1)) {
+        hudVisible = !hudVisible;
+        debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
+        gameGui.setVisible(hudVisible);
     }
-    else F1Down = false;
 
-    if (window->getKeysArray()[GLFW_KEY_F3]) {
-        if (!F3Down) {
-            F3Down = true;
-            debugVisible = !debugVisible;
-            debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
-        }
+    if (window->input.isKeyPressed(GLFW_KEY_F3)) {
+        debugVisible = !debugVisible;
+        debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
     }
-    else F3Down = false;
 }
 
 void GameScene::draw() {

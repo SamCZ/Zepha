@@ -8,6 +8,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <cstdio>
+#include "InputManager.h"
 
 class Window {
 public:
@@ -24,9 +25,6 @@ public:
 
     bool getShouldClose();
 
-    bool* getKeysArray();
-    bool mouseIsDown();
-
     double getDeltaX();
     double getDeltaY();
 
@@ -34,6 +32,7 @@ public:
 
     ~Window();
 
+    InputManager input;
 private:
     GLFWwindow *mainWindow;
 
@@ -41,10 +40,9 @@ private:
     GLint centerX, centerY;
     bool mouseLocked;
 
-    GLint bufferWidth, bufferHeight;
-
     bool keys[1024];
-    bool mouseDown;
+
+    GLint bufferWidth, bufferHeight;
 
     //Static so that GLFW can run callback
     static void handleKeys(GLFWwindow* glfwWindow, int key, int code, int action, int mode);

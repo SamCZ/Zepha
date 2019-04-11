@@ -28,7 +28,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize) {
     dataBG = new RectEntity(
             glm::vec4(0.1, 0.1, 0.1, 0.4), glm::vec4(0.1, 0.1, 0.1, 0.4),
             glm::vec4(0.1, 0.1, 0.1, 0.3), glm::vec4(0.1, 0.1, 0.1, 0.3));
-    dataBG->setScale(glm::vec3(560, 208, 1));
+    dataBG->setScale(glm::vec3(560, 260, 1));
 
     crosshairText = new HudText(fontTexture);
     crosshairText->setScale(2);
@@ -310,7 +310,11 @@ void DebugGui::update(Player* player, LocalWorld* world, BlockAtlas* atlas, doub
         str << "Yaw: " << string_float(player->getYaw()) << ", ";
         str << "Pitch: " << string_float(player->getPitch()) << std::endl << std::endl;
 
-        str << "Standing On: " << on << std::endl;
+        str << "Standing On: " << on << std::endl << std::endl;
+
+        str << "Pointing: " << (player->pointingAtBlock ? "yes" : "no") << ", ";
+        str << "PointedBlock: " << string_vec3(player->pointedBlock) << std::endl;
+        str << "BreakState: " << string_float(player->digPercentage);
 
         dataText->set(str.str());
     }

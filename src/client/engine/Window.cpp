@@ -14,13 +14,7 @@ Window::Window(GLint windowWidth, GLint windowHeight) {
     centerY = height / 2;
 
     mouseLocked = true;
-    mouseDown = false;
-
     resized = false;
-
-    for (bool &key : keys) {
-        key = false;
-    }
 }
 
 int Window::initialize() {
@@ -107,7 +101,9 @@ void Window::update() {
         }
     }
 
-    mouseDown = glfwGetMouseButton(mainWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+    input.update(keys);
+    input.updateLeftMouse(glfwGetMouseButton(mainWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS);
+    input.updateRightMouse(glfwGetMouseButton(mainWindow, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS);
 }
 
 double Window::getDeltaX() {
@@ -118,13 +114,7 @@ double Window::getDeltaY() {
     return deltaY;
 }
 
-bool Window::mouseIsDown() {
-    return mouseDown;
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-void Window::handleKeys(GLFWwindow* glfwWindow, int key, int code, int action, int mode) {
+void Window::handleKeys(GLFWwindow* glfwWindow, int key, int, int action, int) {
     auto window = static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
 
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -141,14 +131,13 @@ void Window::handleKeys(GLFWwindow* glfwWindow, int key, int code, int action, i
     }
 }
 
-void Window::handleResize(GLFWwindow *glfwWindow, int width, int height) {
+void Window::handleResize(GLFWwindow *glfwWindow, int, int) {
     auto window = static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
 
     glfwGetFramebufferSize(glfwWindow, &window->bufferWidth, &window->bufferHeight);
     glViewport(0, 0, window->bufferWidth, window->bufferHeight);
     window->resized = true;
 }
-#pragma clang diagnostic pop
 
 Window::~Window() {
     glfwDestroyWindow(mainWindow);
@@ -165,10 +154,6 @@ GLfloat  Window::getBufferHeight() {
 
 bool Window::getShouldClose() {
     return (bool)glfwWindowShouldClose(mainWindow);
-}
-
-bool *Window::getKeysArray() {
-    return keys;
 }
 
 void Window::swapBuffers() {

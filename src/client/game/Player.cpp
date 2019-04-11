@@ -8,8 +8,10 @@
 Player::Player() {
     pos = glm::vec3(0, 0, 0);
     vel = glm::vec3(0, 0, 0);
-    FDown = false;
+    pointedBlock = glm::vec3(0, 0, 0);
     flying = false;
+    digPercentage = 0;
+    pointingAtBlock = false;
 }
 
 void Player::create(LocalWorld* world, Camera* camera, Entity* wireframe) {
@@ -18,65 +20,79 @@ void Player::create(LocalWorld* world, Camera* camera, Entity* wireframe) {
     this->wireframe = wireframe;
 }
 
-void Player::update(bool *keys, double delta, double mouseX, double mouseY, bool leftDown, bool rightDown) {
-    posUpdate(keys, delta);
+void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
+    posUpdate(input, delta);
     viewUpdate(mouseX, mouseY);
     moveCollide();
 
+    bool found = false;
+    glm::vec3 foundPos {};
+
     for (Ray ray(this); ray.getLength() < Player::LOOK_DISTANCE; ray.step(0.01)) {
         auto rayEnd = *ray.getEnd();
+        auto pointedAt = TransPos::roundPos(rayEnd);
 
-        auto found = world->getBlock(rayEnd);
-        if (found > 0) {
-            pointedBlock = TransPos::roundPos(rayEnd);
-            pointingAtBlock = true;
+        auto at = world->getBlock(rayEnd);
+        if (at > 0) {
+            auto sBox = world->getBlockAtlas()->getBlock(at)->getSelectionBox();
 
-            auto sBox = world->getBlockAtlas()->getBlock(found)->getSelectionBox();
-
-            if (rayEnd.x >= pointedBlock.x + sBox.a.x && rayEnd.y >= pointedBlock.y + sBox.a.y && rayEnd.z >= pointedBlock.z + sBox.a.z &&
-                rayEnd.x <= pointedBlock.x + sBox.b.x && rayEnd.y <= pointedBlock.y + sBox.b.y && rayEnd.z <= pointedBlock.z + sBox.b.z) {
+            if (rayEnd.x >= pointedAt.x + sBox.a.x && rayEnd.y >= pointedAt.y + sBox.a.y && rayEnd.z >= pointedAt.z + sBox.a.z &&
+                rayEnd.x <= pointedAt.x + sBox.b.x && rayEnd.y <= pointedAt.y + sBox.b.y && rayEnd.z <= pointedAt.z + sBox.b.z) {
 
                 if (sBox != box) {
                     box = sBox;
                 }
-                auto m = WireframeGenerator(box.a, box.b, 0.003f + ray.getLength()*0.002f).build();
+
+                auto m = WireframeGenerator(box.a, box.b, 0.003f + ray.getLength() * 0.002f).build();
                 wireframe->cleanup();
                 wireframe->setMesh(m);
+                wireframe->setPos(pointedBlock);
 
-                if (leftDown) {
-                    world->setBlock(*ray.getEnd(), 0);
+                if (!wireframe->isVisible()) {
+                    wireframe->setVisible(true);
                 }
 
+                found = true;
+                foundPos = pointedAt;
                 break;
             }
         }
-
-        pointingAtBlock = false;
     }
 
-    if (pointingAtBlock && !wireframe->isVisible()) {
-        wireframe->setVisible(true);
-    }
-    else if (!pointingAtBlock && wireframe->isVisible()) {
-        wireframe->setVisible(false);
-    }
+    if (found) {
+        pointingAtBlock = true;
 
-    if (pointingAtBlock) {
-        wireframe->setPos(pointedBlock);
-    }
+        if (foundPos != pointedBlock) {
+            pointedBlock = foundPos;
+            digPercentage = 0;
+        }
 
-    if (keys[GLFW_KEY_F]) {
-        if (!FDown) {
-            FDown = true;
-            flying = !flying;
+        if (input.isMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
+            digPercentage += delta * 30;
+        }
+
+        if (digPercentage >= 1) {
+            world->setBlock(pointedBlock, 0);
+            digPercentage = 0;
         }
     }
-    else FDown = false;
+    else {
+        pointingAtBlock = false;
+        digPercentage = 0;
+
+        if (wireframe->isVisible()) {
+            wireframe->setVisible(false);
+        }
+    }
+
+    if (input.isKeyPressed(GLFW_KEY_F)) {
+        flying = !flying;
+    }
 
     camera->setPosition(pos);
 }
 
-void Player::posUpdate(bool *keys, double delta) {
+void Player::posUpdate(InputManager &input, double delta) {
     float moveSpeed = 7.5f;
     float jumpVel = 0.14f;
     float friction = 0.3f;
@@ -88,12 +104,12 @@ void Player::posUpdate(bool *keys, double delta) {
         moveMult *= 4;
         friction = 0.15f;
 
-        if (keys[GLFW_KEY_LEFT_CONTROL]) {
+        if (input.isKeyDown(GLFW_KEY_LEFT_CONTROL)) {
             moveMult *= 2;
         }
     }
     else {
-        if (keys[GLFW_KEY_LEFT_CONTROL]) {
+        if (input.isKeyDown(GLFW_KEY_LEFT_CONTROL)) {
             moveMult *= 1.5;
         }
     }
@@ -103,14 +119,14 @@ void Player::posUpdate(bool *keys, double delta) {
 
     auto mod = glm::vec3(0, 0, 0);
 
-    if (keys[GLFW_KEY_W]) mod += frontFlat;
-    if (keys[GLFW_KEY_S]) mod -= frontFlat;
-    if (keys[GLFW_KEY_D]) mod += rightFlat;
-    if (keys[GLFW_KEY_A]) mod -= rightFlat;
+    if (input.isKeyDown(GLFW_KEY_W)) mod += frontFlat;
+    if (input.isKeyDown(GLFW_KEY_S)) mod -= frontFlat;
+    if (input.isKeyDown(GLFW_KEY_D)) mod += rightFlat;
+    if (input.isKeyDown(GLFW_KEY_A)) mod -= rightFlat;
 
     if (flying) {
-        if (keys[GLFW_KEY_SPACE]) mod.y += 1;
-        if (keys[GLFW_KEY_LEFT_SHIFT]) mod.y -= 1;
+        if (input.isKeyDown(GLFW_KEY_SPACE)) mod.y += 1;
+        if (input.isKeyDown(GLFW_KEY_LEFT_SHIFT)) mod.y -= 1;
     }
 
     if (glm::length(mod) != 0) mod = glm::normalize(mod);
@@ -123,7 +139,7 @@ void Player::posUpdate(bool *keys, double delta) {
         vel.x = velFlat.x;
         vel.z = velFlat.z;
 
-        if (keys[GLFW_KEY_SPACE] && collides(glm::vec3(pos.x, pos.y - 0.05, pos.z)) && vel.y >= 0) {
+        if (input.isKeyDown(GLFW_KEY_SPACE) && collides(glm::vec3(pos.x, pos.y - 0.05, pos.z)) && vel.y >= 0) {
             vel.y = jumpVel;
         }
     }
@@ -133,7 +149,7 @@ void Player::posUpdate(bool *keys, double delta) {
 }
 
 bool Player::collides(glm::vec3 pos) {
-    float colSize = 0.4;
+    float colSize = 0.3;
 
     return (world->solidAt(glm::vec3(pos.x - colSize, pos.y - EYE_HEIGHT, pos.z - colSize)) ||
             world->solidAt(glm::vec3(pos.x + colSize, pos.y - EYE_HEIGHT, pos.z - colSize)) ||

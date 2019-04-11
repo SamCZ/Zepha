@@ -13,6 +13,7 @@ MapGen::MapGen(unsigned int seed) {
 
     terrainFlatBase.SetFrequency(0.15);
     terrainFlatBase.SetPersistence(0.4);
+    terrainFlatBase.SetOctaveCount(4);
 
     terrainFlat.SetSourceModule(0, terrainFlatBase);
     terrainFlat.SetScale(0.125);
@@ -20,8 +21,10 @@ MapGen::MapGen(unsigned int seed) {
 
     terrainType.SetFrequency(0.05);
     terrainType.SetPersistence(0.25);
+    terrainType.SetOctaveCount(4);
 
     terrainMountains.SetFrequency(0.1);
+    terrainMountains.SetOctaveCount(4);
 
     terrainFinal.SetSourceModule(0, terrainFlat);
     terrainFinal.SetSourceModule(1, terrainMountains);
@@ -31,7 +34,7 @@ MapGen::MapGen(unsigned int seed) {
     terrainFinal.SetEdgeFalloff(0.1);
 
     grassNoise.SetFrequency(2);
-    grassNoise.SetOctaveCount(4);
+    grassNoise.SetOctaveCount(3);
 
     grassTurbulence.SetSourceModule(0, grassNoise);
     grassTurbulence.SetFrequency(4.0);
@@ -42,7 +45,7 @@ MapGen::MapGen(unsigned int seed) {
     grassFinal.SetBias(1);
 
     floraNoise.SetFrequency(2);
-    floraNoise.SetOctaveCount(4);
+    floraNoise.SetOctaveCount(3);
 
     floraTurbulence.SetSourceModule(0, floraNoise);
     floraTurbulence.SetFrequency(4.0);
