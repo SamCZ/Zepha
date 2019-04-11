@@ -363,6 +363,11 @@ zeus.register_block("default:grass", {
         "default_grass_side",
         "default_grass_float",
 	},
+    lowdef_textures = {
+        "default_grass_top",
+        "default_dirt",
+        "default_grass_side"
+    },
     toughness = {
         hand = 3,
         shovel = 1,
@@ -403,6 +408,9 @@ zeus.register_block('default:leaves', {
         "default_leaves",
         "default_leaves_puff"
     },
+    lowdef_textures = {
+        "default_leaves_opaque",
+    },
     toughness = {
         hand = 1,
         axe = 0.2,
@@ -434,6 +442,7 @@ for i=1,5,1 do
         textures = {
             "default_tallgrass_" .. i,
         },
+        lowdef_render = false,
         selection_box = {
             {1/16, 0, 1/16, 15/16, 0.30 + i * 0.1, 15/16}
         },
@@ -471,6 +480,7 @@ for _,flower in ipairs(flowers) do
         textures = {
             "flowers_" .. flower
         },
+        lowdef_render = false,
         selection_box = {
             {4/16, 0, 4/16, 12/16, 14/16, 12/16}
         },

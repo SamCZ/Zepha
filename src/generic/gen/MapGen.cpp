@@ -118,7 +118,6 @@ void MapGen::getDensityMap(MapGenJob &job) {
 
     for (int m = 0; m < 4096; m++) {
         ArrayTrans3D::indAssignVec(m, lp);
-
         job.density[m] = terrain_2d_sample.get(lp) * 24.0f - (lp.y + job.pos.y * 16);
     }
 }
