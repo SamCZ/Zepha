@@ -8,20 +8,26 @@
 
 #include "../../engine/graphics/Mesh.h"
 #include <vec3.hpp>
+#include "../../../client/engine/Entity.h"
 
-class WireframeGenerator {
+class WireframeEntity : public Entity {
 public:
-    WireframeGenerator(glm::vec3 a, glm::vec3 b, float width, glm::vec3 color = {0.1, 0.1, 0.1});
-    Mesh* build();
+    WireframeEntity() = default;
+    WireframeEntity(glm::vec3 posA, glm::vec3 posB, float width, glm::vec3 color = {0.1, 0.1, 0.1});
+
+    void updateMesh(glm::vec3 posA, glm::vec3 posB, float width, glm::vec3 color = {0.1, 0.1, 0.1});
 private:
     std::vector<float> vertices {};
     std::vector<unsigned int> indices {};
 
+    void buildMesh();
     void createBox(float x, float y, float z, float xSize, float ySize, float zSize);
 
     glm::vec3 color {};
-    glm::vec3 a {}, b {};
-    float width;
+    glm::vec3 a {};
+    glm::vec3 b {};
+
+    float width = 0.5;
     int indOffset = 0;
 };
 

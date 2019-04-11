@@ -6,7 +6,7 @@
 
 #include "../lua/l_register_block.h"
 #include "../lua/l_register_blockmodel.h"
-#include "entity/WireframeGenerator.h"
+#include "entity/WireframeEntity.h"
 
 GameScene::GameScene(ClientState* state) :
         Scene(state),
@@ -29,10 +29,7 @@ GameScene::GameScene(ClientState* state) :
     world = new LocalWorld(blockAtlas);
 
     //Wireframe
-    auto wireframe = new Entity;
-    WireframeGenerator w({0, 0, 0}, {1, 1, 1}, 0.01);
-    wireframe->setMesh(w.build());
-    wireframe->setPos({3, 16, 0});
+    auto wireframe = new WireframeEntity({0, 0, 0}, {1, 1, 1}, 0.01);
     entities.push_back(wireframe);
 
     player = new Player();

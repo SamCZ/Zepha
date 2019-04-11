@@ -11,7 +11,7 @@
 #include "localworld/LocalWorld.h"
 #include "../engine/Camera.h"
 #include "../engine/Timer.h"
-#include "entity/WireframeGenerator.h"
+#include "entity/WireframeEntity.h"
 
 class Player {
 public:
@@ -20,7 +20,7 @@ public:
 
     Player();
 
-    void create(LocalWorld* world, Camera* camera, Entity* wireframe);
+    void create(LocalWorld* world, Camera* camera, WireframeEntity* wireframe);
 
     void update(InputManager &input, double delta, double mouseX, double mouseY);
 
@@ -53,7 +53,7 @@ private:
     Camera* camera;
     LocalWorld* world;
 
-    Entity* wireframe;
+    WireframeEntity* wireframe;
     SelectionBox box;
 
     bool flying;

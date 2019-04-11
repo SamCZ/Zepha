@@ -14,7 +14,7 @@ Player::Player() {
     pointingAtBlock = false;
 }
 
-void Player::create(LocalWorld* world, Camera* camera, Entity* wireframe) {
+void Player::create(LocalWorld* world, Camera* camera, WireframeEntity* wireframe) {
     this->camera = camera;
     this->world = world;
     this->wireframe = wireframe;
@@ -43,14 +43,10 @@ void Player::update(InputManager &input, double delta, double mouseX, double mou
                     box = sBox;
                 }
 
-                auto m = WireframeGenerator(box.a, box.b, 0.003f + ray.getLength() * 0.002f).build();
-                wireframe->cleanup();
-                wireframe->setMesh(m);
-                wireframe->setPos(pointedBlock);
+                wireframe->updateMesh(box.a, box.b, 0.003f + ray.getLength() * 0.002f, glm::vec3(0.1));
+                wireframe->setPos(pointedAt);
 
-                if (!wireframe->isVisible()) {
-                    wireframe->setVisible(true);
-                }
+                if (!wireframe->isVisible()) wireframe->setVisible(true);
 
                 found = true;
                 foundPos = pointedAt;
