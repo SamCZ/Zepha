@@ -8,7 +8,7 @@
 #include <vector>
 #include <sol.hpp>
 #include "MeshPart.h"
-#include "../../client/graphics/mesh/Vertex.h"
+#include "../../client/graphics/mesh/MeshVertex.h"
 
 using namespace std; //Just to preserve my sanity
 

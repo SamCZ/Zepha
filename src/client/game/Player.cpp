@@ -14,10 +14,11 @@ Player::Player() {
     pointingAtBlock = false;
 }
 
-void Player::create(LocalWorld* world, Camera* camera, WireframeEntity* wireframe) {
+void Player::create(LocalWorld *world, Camera *camera, WireframeEntity *wireframe, BlockModelEntity *blockBreak) {
     this->camera = camera;
     this->world = world;
     this->wireframe = wireframe;
+    this->blockBreak = blockBreak;
 }
 
 void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
@@ -34,7 +35,8 @@ void Player::update(InputManager &input, double delta, double mouseX, double mou
 
         auto at = world->getBlock(rayEnd);
         if (at > 0) {
-            auto sBox = world->getBlockAtlas()->getBlock(at)->getSelectionBox();
+            auto def = world->getBlockAtlas()->getBlock(at);
+            auto sBox = def->getSelectionBox();
 
             if (rayEnd.x >= pointedAt.x + sBox.a.x && rayEnd.y >= pointedAt.y + sBox.a.y && rayEnd.z >= pointedAt.z + sBox.a.z &&
                 rayEnd.x <= pointedAt.x + sBox.b.x && rayEnd.y <= pointedAt.y + sBox.b.y && rayEnd.z <= pointedAt.z + sBox.b.z) {
@@ -45,6 +47,9 @@ void Player::update(InputManager &input, double delta, double mouseX, double mou
 
                 wireframe->updateMesh(box.a, box.b, 0.003f + ray.getLength() * 0.002f, glm::vec3(0.1));
                 wireframe->setPos(pointedAt);
+
+                blockBreak->setModel(*def->getModel());
+                blockBreak->setPos(pointedAt + glm::vec3(0, 0, 0));
 
                 if (!wireframe->isVisible()) wireframe->setVisible(true);
 
@@ -94,7 +99,6 @@ void Player::posUpdate(InputManager &input, double delta) {
     float friction = 0.3f;
 
     double moveMult = moveSpeed * delta;
-
 
     if (flying) {
         moveMult *= 4;

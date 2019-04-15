@@ -151,11 +151,11 @@ Texture* TextureAtlas::getTexture() {
     return texture;
 }
 
-glm::vec4* TextureAtlas::getUVs(std::string* texture) {
-    if (textures.count(*texture) == 0) {
-        std::cout << "Texture '" << *texture << "' Not found in textureAtlas! Terminating." << std::endl;
+glm::vec4 TextureAtlas::getUVs(std::string &texture) {
+    if (textures.count(texture) == 0) {
+        std::cout << "Texture '" << texture << "' Not found in textureAtlas! Terminating." << std::endl;
         throw std::exception();
     }
-    return &textures.at(*texture);
+    return textures.at(texture);
 }
 #pragma clang diagnostic pop

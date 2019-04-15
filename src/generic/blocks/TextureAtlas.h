@@ -19,7 +19,7 @@ public:
     explicit TextureAtlas(const char* directory);
 
     Texture* getTexture();
-    glm::vec4* getUVs(std::string* texture);
+    glm::vec4 getUVs(std::string &texture);
 private:
     const int TEX_PADDING = 2;
 

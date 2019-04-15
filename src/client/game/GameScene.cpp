@@ -7,6 +7,7 @@
 #include "../lua/l_register_block.h"
 #include "../lua/l_register_blockmodel.h"
 #include "entity/WireframeEntity.h"
+#include "entity/BlockModelEntity.h"
 
 GameScene::GameScene(ClientState* state) :
         Scene(state),
@@ -28,12 +29,15 @@ GameScene::GameScene(ClientState* state) :
     //The scene requires the blockAtlas for meshing and handling inputs.
     world = new LocalWorld(blockAtlas);
 
+    auto blockBreak = new BlockModelEntity(textureAtlas);
+    entities.push_back(blockBreak);
+
     //Wireframe
     auto wireframe = new WireframeEntity({0, 0, 0}, {1, 1, 1}, 0.01);
     entities.push_back(wireframe);
 
     player = new Player();
-    player->create(world, state->renderer->getCamera(), wireframe);
+    player->create(world, state->renderer->getCamera(), wireframe, blockBreak);
 
     server = new ServerConnection("127.0.0.1", 12345, entities);
     server->init();

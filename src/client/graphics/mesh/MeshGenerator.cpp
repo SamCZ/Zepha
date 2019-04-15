@@ -85,32 +85,29 @@ void MeshGenerator::build(const std::shared_ptr<BlockChunk> &chunk, BlockAtlas &
 void MeshGenerator::addFaces(glm::vec3 &offset, vector<float> &vertices, vector<unsigned int> &indices, vector<MeshPart*> &meshParts) {
     for (MeshPart *mp : meshParts) {
 
-        MeshVertexIter *vertexIter = mp->getVertexIterator();
-        while (vertexIter->hasNext()) {
-            Vertex *vertex = vertexIter->next();
+        for (MeshVertex &vertex : mp->vertices) {
 
-            vertices.push_back(vertex->pos->x + offset.x);
-            vertices.push_back(vertex->pos->y + offset.y);
-            vertices.push_back(vertex->pos->z + offset.z);
+            vertices.push_back(vertex.pos.x + offset.x);
+            vertices.push_back(vertex.pos.y + offset.y);
+            vertices.push_back(vertex.pos.z + offset.z);
 
             vertices.push_back(1);
 
-            vertices.push_back(vertex->tex->x);
-            vertices.push_back(vertex->tex->y);
+            vertices.push_back(vertex.tex.x);
+            vertices.push_back(vertex.tex.y);
             vertices.push_back(0);
             vertices.push_back(0);
 
-            vertices.push_back(vertex->nml->x);
-            vertices.push_back(vertex->nml->y);
-            vertices.push_back(vertex->nml->z);
+            vertices.push_back(vertex.nml.x);
+            vertices.push_back(vertex.nml.y);
+            vertices.push_back(vertex.nml.z);
         }
 
-        MeshIndexIter *indexIter = mp->getIndexIterator();
-        while (indexIter->hasNext()) {
-            unsigned int index = indexIter->next();
+        for (unsigned int index : mp->indices) {
             indices.push_back(indOffset + index);
         }
-        indOffset += mp->getVertexCount();
+
+        indOffset += mp->vertices.size();
     }
 }
 

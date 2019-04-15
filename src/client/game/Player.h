@@ -12,6 +12,7 @@
 #include "../engine/Camera.h"
 #include "../engine/Timer.h"
 #include "entity/WireframeEntity.h"
+#include "entity/BlockModelEntity.h"
 
 class Player {
 public:
@@ -20,7 +21,7 @@ public:
 
     Player();
 
-    void create(LocalWorld* world, Camera* camera, WireframeEntity* wireframe);
+    void create(LocalWorld* world, Camera* camera, WireframeEntity* wireframe, BlockModelEntity* blockBreak);
 
     void update(InputManager &input, double delta, double mouseX, double mouseY);
 
@@ -53,7 +54,8 @@ private:
     Camera* camera;
     LocalWorld* world;
 
-    WireframeEntity* wireframe;
+    WireframeEntity *wireframe;
+    BlockModelEntity *blockBreak;
     SelectionBox box;
 
     bool flying;

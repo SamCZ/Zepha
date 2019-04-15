@@ -101,30 +101,30 @@ BlockModel* BlockModel::from_lua_def(sol::table model, sol::table textures, Text
 
         std::string texture = textures.get_or<std::string>(min(tex, texturesLength), "_missing");
 
-        auto vertices = new std::vector<Vertex*>;
-        auto indices = new std::vector<unsigned int>;
+        std::vector<MeshVertex> vertices;
+        std::vector<unsigned int> indices;
 
         for (int i = 1; i <= points.size()/5; i++) {
             int o = (i-1) * 5 + 1;
 
-            glm::vec3* pos = new glm::vec3((float)points[o], (float)points[o+1], (float)points[o+2]);
-            glm::vec2* tex = new glm::vec2((float)points[o+3], (float)points[o+4]);
+            glm::vec3 pos((float)points[o], (float)points[o+1], (float)points[o+2]);
+            glm::vec2 tex((float)points[o+3], (float)points[o+4]);
 
-            vertices->push_back(new Vertex(pos, nullptr, tex));
+            vertices.push_back({pos, {0, 0, 0}, tex, {0, 0}});
         }
 
         int ind = 0;
         for (int i = 1; i <= points.size()/20; i++) {
-            indices->push_back(ind);
-            indices->push_back(ind + 1);
-            indices->push_back(ind + 2);
-            indices->push_back(ind + 2);
-            indices->push_back(ind + 3);
-            indices->push_back(ind);
+            indices.push_back(ind);
+            indices.push_back(ind + 1);
+            indices.push_back(ind + 2);
+            indices.push_back(ind + 2);
+            indices.push_back(ind + 3);
+            indices.push_back(ind);
             ind += 4;
         }
 
-        auto mp = new MeshPart(vertices, indices, texture.c_str(), atlas);
+        auto mp = new MeshPart(std::move(vertices), std::move(indices), texture, atlas);
 
         if      (face == "top")    topFaces.push_back(mp);
         else if (face == "bottom") bottomFaces.push_back(mp);

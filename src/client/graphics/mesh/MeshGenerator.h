@@ -20,9 +20,7 @@
 #include "../../../generic/blocks/BlockAtlas.h"
 #include "../../../generic/helpers/ArrayTrans3D.h"
 #include "../../../generic/blocks/BlockModel.h"
-#include "Vertex.h"
-
-const int CHUNK_SIZE = 16;
+#include "MeshVertex.h"
 
 class MeshGenerator {
 public:
