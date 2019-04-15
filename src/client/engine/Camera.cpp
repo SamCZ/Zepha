@@ -22,8 +22,8 @@ void Camera::create(float buffWidth, float buffHeight, glm::vec3 up) {
 void Camera::createMatrices() {
     ratio = bufferDimensions.x / bufferDimensions.y;
 
-    projectionMatrix = glm::perspective(fov, ratio, nearClip, farClip);
-    frustum.setCamInternals(fov, ratio, nearClip, farClip);
+    projectionMatrix = glm::perspective(glm::radians(fov), ratio, nearClip, farClip);
+    frustum.setCamInternals(glm::radians(fov), ratio, nearClip, farClip);
 
     orthographicMatrix = glm::ortho(0.0f, bufferDimensions.x, bufferDimensions.y, 0.0f, 0.0f, 100.0f);
 }

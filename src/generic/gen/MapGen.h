@@ -43,6 +43,8 @@ private:
     module::ScaleBias floraFinal;
 
     module::Perlin floraDensity;
+
+    module::Perlin biomeTemp;
 };
 
 

@@ -56,6 +56,10 @@ MapGen::MapGen(unsigned int seed) {
     floraFinal.SetBias(3.5);
 
     floraDensity.SetFrequency(4);
+
+    biomeTemp.SetFrequency(0.1);
+    biomeTemp.SetOctaveCount(12);
+    biomeTemp.SetPersistence(0.40);
 }
 
 BlockChunk* MapGen::generate(glm::vec3 pos) {
@@ -127,30 +131,43 @@ void MapGen::fillChunk(MapGenJob &job) {
     auto flora_type_sample = NoiseSample::getSample(&floraFinal, job.pos, 4, 0, true);
     auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 8, 0, true);
 
+    auto biome_sample = NoiseSample::getSample(&biomeTemp, job.pos, 2, 0, true);
+
     glm::vec3 lp;
 
     for (int m = 0; m < 4096; m++) {
         ArrayTrans3D::indAssignVec(m, lp);
         int d = job.depth[m];
 
-        int floraId = 0;
-        bool flower = false;
+        int grass = 1, dirt = 2, stone = 3;
 
-        if (flora_density_sample.get(lp) > 1) flower = true;
-
-        if (flower) {
-            int flowerType = max(min((int)std::floor(flora_type_sample.get(lp)), 8), 0);
-            floraId = flowerType + 10;
+        if (false) {
+            grass = 19;
+            dirt = 19;
+            stone = 20;
         }
-        else {
-            int grassType = min((int)std::floor(grass_sample.get(lp)), 5);
-            if (grassType > 0) floraId = grassType + 5;
+
+        int flora = 0;
+
+        if (true) {
+            bool flower = false;
+
+            if (flora_density_sample.get(lp) > 1) flower = true;
+
+            if (flower) {
+                int flowerType = max(min((int)std::floor(flora_type_sample.get(lp)), 8), 0);
+                flora = flowerType + 10;
+            }
+            else {
+                int grassType = min((int)std::floor(grass_sample.get(lp)), 5);
+                if (grassType > 0) flora = grassType + 5;
+            }
         }
 
         job.blocks[m] = d == 0 ? 0
-                      : d == 1 ? floraId
-                      : d == 2 ? 1
-                      : d <= 3 ? 2
-                      : 3;
+                      : d == 1 ? flora
+                      : d == 2 ? grass
+                      : d <= 3 ? dirt
+                      : stone;
     }
 }

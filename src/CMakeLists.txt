@@ -22,8 +22,7 @@ set(ZEUS_SRC_FILES
         generic/blocks/MeshPart.cpp
         generic/blocks/MeshPart.h
         generic/blocks/MeshMod.h
-        client/graphics/mesh/Vertex.cpp
-        client/graphics/mesh/Vertex.h
+        client/graphics/mesh/MeshVertex.h
         generic/blocks/BlockModel.cpp
         generic/blocks/BlockModel.h
         generic/blocks/TextureAtlas.cpp
@@ -113,6 +112,6 @@ set(ZEUS_SRC_FILES
         generic/helpers/TransPos.h
         client/game/localworld/MeshGenStream.cpp
         client/game/localworld/MeshGenStream.h
-        generic/helpers/VecUtils.h generic/world/Dimension.cpp generic/world/Dimension.h generic/world/Region.h generic/world/MapBlock.h generic/world/RegionHandler.h client/game/entity/WireframeEntity.cpp client/game/entity/WireframeEntity.h generic/blocks/SelectionBox.h client/engine/Drawable.h client/engine/DrawableGroup.cpp client/engine/DrawableGroup.h client/engine/InputManager.cpp client/engine/InputManager.h)
+        generic/helpers/VecUtils.h generic/world/Dimension.cpp generic/world/Dimension.h generic/world/Region.h generic/world/MapBlock.h generic/world/RegionHandler.h client/game/entity/WireframeEntity.cpp client/game/entity/WireframeEntity.h generic/blocks/SelectionBox.h client/engine/Drawable.h client/engine/DrawableGroup.cpp client/engine/DrawableGroup.h client/engine/InputManager.cpp client/engine/InputManager.h client/game/entity/BlockModelEntity.cpp client/game/entity/BlockModelEntity.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

@@ -8,13 +8,10 @@ void Frustum::setCamInternals(float fov, float ratio, float nearD, float farD) {
     this->nearD = nearD;
     this->farD  = farD;
 
-    //TODO: Discover why the FOV for the frustum plane has to be bigger than the Camera's FOV
-    fov += 10;
-
-    nearH = std::tan(glm::radians(fov)) * nearD;
+    nearH = std::tan(fov) * nearD;
     nearW = nearH * ratio;
 
-    farH = std::tan(glm::radians(fov)) * farD;
+    farH = std::tan(fov) * farD;
     farW = farH * ratio;
 }
 
