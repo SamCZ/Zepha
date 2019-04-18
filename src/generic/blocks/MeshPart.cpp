@@ -4,7 +4,7 @@
 
 #include "MeshPart.h"
 
-MeshPart::MeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, std::string texture, TextureAtlas* atlas) {
+MeshPart::MeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, std::string texture, DynamicAtlas& atlas) {
 
     this->vertices = std::move(vertices);
     this->indices = std::move(indices);
@@ -35,7 +35,7 @@ MeshPart::MeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> i
         p3->nml = normal;
     }
 
-    auto uv = atlas->getUVs(texture);
+    auto uv = atlas.getTextureUVs(texture);
 
     //Iterate through the vertices to adjust the texture coordinates to fit the textureAtlas.
     for (MeshVertex &vertex : this->vertices) {

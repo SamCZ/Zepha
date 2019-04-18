@@ -11,22 +11,26 @@
 
 class Texture {
 public:
-    Texture();
+    Texture() = default;
+    explicit Texture(std::string file);
 
-    explicit Texture(char* fileLocation);
+    void loadFromFile(std::string file);
+    void loadFromBytes(unsigned char* bytes, int width, int height);
+    void updateTexture(int x, int y, int width, int height, unsigned char* bytes);
 
-    void load();
-    void load(unsigned char* bytes, int width, int height);
-    void use();
+    void enable();
+    void enable(unsigned int texSlot);
     void clear();
 
     ~Texture();
 
-private:
-    GLuint textureID;
-    int width, height, bitDepth;
+protected:
+    unsigned int textureID = 0;
+    int width = 0;
+    int height = 0;
+    int bitDepth = 0;
 
-    const char* fileLocation;
+    std::string fileLocation;
 };
 
 

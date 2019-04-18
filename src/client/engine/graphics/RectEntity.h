@@ -15,10 +15,14 @@ public:
     explicit RectEntity(glm::vec4 color);
     RectEntity(glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::vec4 br);
 
+    void setTexture(Texture* texture);
+
     explicit RectEntity(Texture* texture);
 private:
     void createColored(glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::vec4 br);
     void createTextured(Texture* texture);
+
+    using Entity::setTexture;
 };
 
 

@@ -4,7 +4,7 @@
 
 #include "BlockModelEntity.h"
 
-BlockModelEntity::BlockModelEntity(TextureAtlas* texAtlas) {
+BlockModelEntity::BlockModelEntity(DynamicAtlas* texAtlas) {
     this->texAtlas = texAtlas;
     auto m = new Mesh();
     setMesh(m);
@@ -41,7 +41,7 @@ void BlockModelEntity::addFaces(unsigned int &indOffset, vector<float> &vertices
     n += 0.005f;
     if (n > 7) n = 0;
 
-    auto uv = texAtlas->getUVs(tex);
+    auto uv = texAtlas->getTextureUVs(tex);
 
     for (MeshPart *mp : meshParts) {
 

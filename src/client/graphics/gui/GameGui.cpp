@@ -8,10 +8,7 @@ GameGui::GameGui(glm::vec2 bufferSize) {
     visible = true;
 
     crosshairTexture = new Texture((char*)"../res/tex/gui/crosshair.png");
-    crosshairTexture->load();
-
     viginetteTexture = new Texture((char*)"../res/tex/gui/viginette.png");
-    viginetteTexture->load();
 
     crosshair = new RectEntity(crosshairTexture);
 

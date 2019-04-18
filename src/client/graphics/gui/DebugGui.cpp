@@ -9,16 +9,13 @@ DebugGui::DebugGui(glm::vec2 bufferSize) {
     displayMode = 0;
 
     fontTexture = new Texture((char*)"../res/tex/gui/font.png");
-    fontTexture->load();
-
     colorHistTexture = new Texture((char*)"../res/tex/gui/histogram.png");
-    colorHistTexture->load();
-
     whiteHistTexture= new Texture((char*)"../res/tex/gui/histogram_white.png");
-    whiteHistTexture->load();
-
     transWhiteHistTexture= new Texture((char*)"../res/tex/gui/histogram_white_transparent.png");
-    transWhiteHistTexture->load();
+
+    texAtlas = new RectEntity(glm::vec4(0, 0, 0, 1));
+    texAtlas->setScale({512, 512, 1});
+    texAtlas->setPos({8, 300, 0});
 
     //Initialize GUI Objects
 
@@ -119,7 +116,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize) {
     vramBack->setScale(glm::vec3(244, 64, 1));
 
     positionElements(bufferSize);
-    
+
     addDrawable(dataBG);
     addDrawable(dataText);
 
@@ -154,6 +151,8 @@ DebugGui::DebugGui(glm::vec2 bufferSize) {
     addDrawable(vramBack);
     addDrawable(vramHist);
     addDrawable(vramText);
+
+    addDrawable(texAtlas);
 }
 
 void DebugGui::positionElements(glm::vec2 bufferSize) {
@@ -351,4 +350,8 @@ void DebugGui::changeVisibilityState(int state) {
     fpsText->setVisible(displayMode != 1);
     fpsHist->setVisible(displayMode != 1);
     fpsBack->setVisible(displayMode != 1);
+}
+
+void DebugGui::setAtlasTexture(Texture* tex) {
+    texAtlas->setTexture(tex);
 }

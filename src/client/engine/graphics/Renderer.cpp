@@ -100,7 +100,7 @@ void Renderer::setModelMatrix(glm::mat4& modelMatrix) {
 void Renderer::enableTexture(Texture *texture) {
     if (texture != activeTexture) {
         activeTexture = texture;
-        texture->use();
+        texture->enable();
     }
 }
 

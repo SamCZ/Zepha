@@ -17,6 +17,8 @@ class DebugGui : public DrawableGroup {
 public:
     explicit DebugGui(glm::vec2 bufferSize);
 
+    void setAtlasTexture(Texture* tex);
+
     void bufferResized(glm::vec2 bufferSize);
 
     void update(Player* player, LocalWorld* world, BlockAtlas* atlas, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
@@ -28,6 +30,8 @@ private:
 
     Texture *fontTexture;
     Texture *colorHistTexture, *whiteHistTexture, *transWhiteHistTexture;
+
+    RectEntity *texAtlas;
 
     HudText    *dataText, *crosshairText;
     RectEntity *dataBG,   *crosshairBG;

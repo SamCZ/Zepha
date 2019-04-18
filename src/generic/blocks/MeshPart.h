@@ -15,14 +15,11 @@
 #include <gtx/normal.hpp>
 
 #include "MeshMod.h"
-#include "TextureAtlas.h"
 #include "../../client/graphics/mesh/MeshVertex.h"
-
-class MeshVertexIter;
-class MeshIndexIter;
+#include "../../client/engine/graphics/TextureAtlas.h"
 
 struct MeshPart {
-    MeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, std::string texture, TextureAtlas* atlas);
+    MeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, std::string texture, DynamicAtlas& atlas);
 
     std::vector<MeshVertex> vertices;
     std::vector<unsigned int> indices;

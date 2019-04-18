@@ -8,7 +8,6 @@ PlayerEntity::PlayerEntity(glm::vec3 pos, int peer_id) {
     this->peer_id = peer_id;
 
     this->crosshairTexture = new Texture((char*)"../res/tex/gui/crosshair_clean.png");
-    crosshairTexture->load();
 
     auto vertices = new std::vector<float> {
             -0.5, -0.5, 0, 1, 0, 0, 0, 0, 0, 0, 0,

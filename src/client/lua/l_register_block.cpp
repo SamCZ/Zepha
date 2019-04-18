@@ -47,11 +47,11 @@ void l_register_block::api(std::string identifier, sol::table data) {
     }
 
 
-    BlockModel* model = BlockModel::from_lua_def(*modelOptional, *texTable, game->textureAtlas, visible, culls);
+    BlockModel* model = BlockModel::from_lua_def(*modelOptional, *texTable, *game->textures, visible, culls);
 
     BlockDef* def = new BlockDef(identifier, model, solid, selectionBox);
 
-    game->blockAtlas->registerBlock(def);
+    game->blocks->registerBlock(def);
 }
 
 l_register_block::l_register_block(GameScene *game, LuaParser *parser) : LuaApi(game, parser) {

@@ -8,7 +8,7 @@ BlockAtlas::BlockAtlas() {
     textureAtlas = nullptr;
 }
 
-BlockAtlas::BlockAtlas(TextureAtlas *textureAtlas) {
+BlockAtlas::BlockAtlas(DynamicAtlas *textureAtlas) {
     this->textureAtlas = textureAtlas;
 }
 

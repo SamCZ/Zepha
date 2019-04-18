@@ -8,12 +8,12 @@
 
 #include <vector>
 #include "BlockDef.h"
-#include "TextureAtlas.h"
+#include "../../client/engine/graphics/TextureAtlas.h"
 
 class BlockAtlas {
 public:
     BlockAtlas();
-    explicit BlockAtlas(TextureAtlas* textureAtlas);
+    explicit BlockAtlas(DynamicAtlas* textureAtlas);
 
     void registerBlock(BlockDef* def);
     BlockDef* getBlock(int id);
@@ -21,7 +21,7 @@ public:
     ~BlockAtlas();
 private:
     std::vector<BlockDef*> definitions;
-    TextureAtlas* textureAtlas;
+    DynamicAtlas* textureAtlas;
 };
 
 

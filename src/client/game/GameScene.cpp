@@ -14,8 +14,12 @@ GameScene::GameScene(ClientState* state) :
         gameGui(state->renderer->getCamera()->getBufferDimensions()),
         debugGui(state->renderer->getCamera()->getBufferDimensions()) {
 
-    textureAtlas = new TextureAtlas("../res/tex");
-    blockAtlas = new BlockAtlas(textureAtlas);
+
+    textures = new DynamicAtlas(512);
+    textures->loadFromDirectory("../res/tex/game");
+    blocks = new BlockAtlas(textures);
+
+    debugGui.setAtlasTexture(&textures->getTexture());
 
     LuaParser p;
     p.init();
@@ -27,9 +31,11 @@ GameScene::GameScene(ClientState* state) :
     p.doFile("../res/lua/file.lua");
 
     //The scene requires the blockAtlas for meshing and handling inputs.
-    world = new LocalWorld(blockAtlas);
+    //TODO: make this use contentmgr
+    world = new LocalWorld(blocks);
 
-    auto blockBreak = new BlockModelEntity(textureAtlas);
+    //TODO: make this use contentmgr
+    auto blockBreak = new BlockModelEntity(textures);
     entities.push_back(blockBreak);
 
     //Wireframe
@@ -68,7 +74,8 @@ void GameScene::update() {
         world->loadChunkPacket(p);
     }
 
-    debugGui.update(player, world, blockAtlas, state->fps, (int)world->getMeshChunks()->size(), drawCalls, server->serverSideChunkGens, server->recvPackets);
+    //TODO: Make this use contentmgr
+    debugGui.update(player, world, blocks, state->fps, (int)world->getMeshChunks()->size(), drawCalls, server->serverSideChunkGens, server->recvPackets);
     world->update();
 
     if (window->input.isKeyPressed(GLFW_KEY_F1)) {
@@ -90,8 +97,8 @@ void GameScene::draw() {
     drawCalls = 0;
 
     renderer.begin();
-    renderer.enableTexture(textureAtlas->getTexture());
 
+    renderer.enableTexture(&textures->getTexture());
     drawCalls = world->render(renderer);
 
     for (auto entity : entities) {

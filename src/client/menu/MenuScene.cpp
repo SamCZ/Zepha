@@ -6,7 +6,6 @@
 
 MenuScene::MenuScene(ClientState *state) : Scene(state) {
     fontTexture = new Texture((char*)"../res/tex/gui/font.png");
-    fontTexture->load();
 
     auto alphaText = new HudText(fontTexture);
     alphaText->set("Zeus Alpha 0.01");

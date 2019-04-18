@@ -10,16 +10,10 @@
 #include "../engine/graphics/Renderer.h"
 #include "../graphics/gui/DebugGui.h"
 #include "../graphics/gui/GameGui.h"
-
 #include "../lua/LuaParser.h"
-
 #include "localworld/LocalWorld.h"
 #include "Player.h"
-
 #include "../network/ServerConnection.h"
-
-#include "../../generic/blocks/TextureAtlas.h"
-#include "../../generic/blocks/BlockAtlas.h"
 #include "entity/PlayerEntity.h"
 
 class GameScene : public Scene {
@@ -34,14 +28,17 @@ public:
     ServerConnection* server;
     Player* player;
     LocalWorld* world;
-    TextureAtlas* textureAtlas;
-    BlockAtlas* blockAtlas;
+
+    BlockAtlas* blocks;
+    DynamicAtlas* textures;
 
     std::vector<Drawable*> entities;
     std::vector<Drawable*> gui;
 
     DebugGui debugGui;
     GameGui gameGui;
+
+    int c = 0;
 
     int drawCalls;
 

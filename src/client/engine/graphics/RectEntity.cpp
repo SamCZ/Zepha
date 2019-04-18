@@ -57,4 +57,8 @@ void RectEntity::createTextured(Texture *texture) {
     delete indices;
 }
 
+void RectEntity::setTexture(Texture *texture) {
+    createTextured(texture);
+}
+
 
