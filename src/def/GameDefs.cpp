@@ -5,16 +5,17 @@
 #include "GameDefs.h"
 
 GameDefs::GameDefs(std::string tex_path) {
-    textures = TextureAtlas(512);
-    textures.loadFromDirectory(std::move(tex_path));
+    textureAtlas = TextureAtlas(512);
+    textureAtlas.loadFromDirectory(std::move(tex_path));
+//    textureAtlas.loadFromDirectory("../res/tex/gui");
 
-    blocks = BlockAtlas(&textures);
+    blockAtlas = BlockAtlas(&textureAtlas);
 }
 
-BlockAtlas &GameDefs::getBlockAtlas() {
-    return blocks;
+BlockAtlas &GameDefs::blocks() {
+    return blockAtlas;
 }
 
-TextureAtlas &GameDefs::getTextureAtlas() {
-    return textures;
+TextureAtlas &GameDefs::textures() {
+    return textureAtlas;
 }

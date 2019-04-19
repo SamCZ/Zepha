@@ -22,10 +22,11 @@
 #include "MeshGenStream.h"
 #include "../../../util/Vec.h"
 #include "../../../world/Dimension.h"
+#include "../../../def/GameDefs.h"
 
 class LocalWorld {
 public:
-    explicit LocalWorld(BlockAtlas* atlas);
+    explicit LocalWorld(GameDefs& defs);
 
     void update();
 
@@ -46,11 +47,11 @@ public:
 
     bool solidAt(glm::vec3 pos);
 
-    BlockAtlas* getBlockAtlas();
+//    BlockAtlas* blocks();
 
     int lastGenUpdates = 0, lastMeshUpdates = 0;
 private:
-    BlockAtlas* blockAtlas;
+    GameDefs& defs;
 
     WorldInterpolationStream worldGenStream;
     Dimension dimension;

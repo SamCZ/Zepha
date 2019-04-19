@@ -7,15 +7,15 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-MeshGenStream::MeshGenStream(BlockAtlas &a, Dimension &d) :
-    atlas(a),
-    dimension(d) {
+MeshGenStream::MeshGenStream(GameDefs &defs, Dimension &dimension) :
+    defs(defs),
+    dimension(dimension) {
 
     queuedTasks.reserve((unsigned long) TOTAL_QUEUE_SIZE);
 
     threads.reserve(THREADS);
     for (int i = 0; i < THREADS; i++) {
-        threads.emplace_back(atlas);
+        threads.emplace_back(defs.blocks());
     }
 }
 
@@ -72,7 +72,6 @@ MeshGenStream::Thread::Thread(BlockAtlas &atlas) :
     atlas(atlas) {
 
     thread = new std::thread(MeshGenStream::threadFunction, this);
-    thread->detach();
 }
 
 void MeshGenStream::threadFunction(MeshGenStream::Thread *thread) {
@@ -107,7 +106,6 @@ MeshGenStream::~MeshGenStream() {
     for (auto& t : threads) {
         t.keepAlive = false;
         t.thread->join();
-        delete t.thread;
     }
 }
 
@@ -127,7 +125,7 @@ std::vector<bool>* MeshGenStream::getAdjacentsCull(glm::vec3 pos) {
                 int z = (i == 4) ? 0 : (i == 5) ? 15 : k;
 
                 auto block = chunk->getBlock(x, y, z);
-                culls->push_back(atlas.getBlock(block)->isCulling());
+                culls->push_back(defs.blocks().getBlock(block)->isCulling());
             }
         }
     }

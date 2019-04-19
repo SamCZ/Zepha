@@ -5,7 +5,7 @@
 #include "DebugGui.h"
 #include "../../../util/TransPos.h"
 
-DebugGui::DebugGui(glm::vec2 bufferSize) {
+DebugGui::DebugGui(glm::vec2 bufferSize, Texture* tex) {
     displayMode = 0;
 
     fontTexture = new Texture((char*)"../res/tex/gui/font.png");
@@ -13,7 +13,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize) {
     whiteHistTexture= new Texture((char*)"../res/tex/gui/histogram_white.png");
     transWhiteHistTexture= new Texture((char*)"../res/tex/gui/histogram_white_transparent.png");
 
-    texAtlas = new RectEntity(glm::vec4(0, 0, 0, 1));
+    texAtlas = new RectEntity(tex);
     texAtlas->setScale({512, 512, 1});
     texAtlas->setPos({8, 300, 0});
 
@@ -350,8 +350,4 @@ void DebugGui::changeVisibilityState(int state) {
     fpsText->setVisible(displayMode != 1);
     fpsHist->setVisible(displayMode != 1);
     fpsBack->setVisible(displayMode != 1);
-}
-
-void DebugGui::setAtlasTexture(Texture* tex) {
-    texAtlas->setTexture(tex);
 }

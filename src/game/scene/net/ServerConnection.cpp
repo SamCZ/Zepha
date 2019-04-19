@@ -5,15 +5,16 @@
 #include "ServerConnection.h"
 
 
-ServerConnection::ServerConnection(std::string address, unsigned short port, std::vector<Drawable *> &entities) {
+ServerConnection::ServerConnection(std::string address, unsigned short port) {
     this->port = port;
     this->address = std::move(address);
 
     this->entities = new DrawableGroup();
-    entities.push_back(this->entities);
 }
 
-void ServerConnection::init() {
+void ServerConnection::init(std::vector<Drawable*> &entities) {
+    entities.push_back(this->entities);
+
     handler = NetHandler(address, port, 3, 3000);
 
     if (handler.getState() != NetHandler::CLIENT) {

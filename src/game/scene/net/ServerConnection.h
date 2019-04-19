@@ -18,9 +18,9 @@
 
 class ServerConnection {
 public:
-    ServerConnection(std::string address, unsigned short port, std::vector<Drawable*> &entities);
+    ServerConnection(std::string address, unsigned short port);
 
-    void init();
+    void init(std::vector<Drawable*> &entities);
     void update(Player &player);
     void cleanup();
 

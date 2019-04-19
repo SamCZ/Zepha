@@ -15,9 +15,7 @@
 
 class DebugGui : public DrawableGroup {
 public:
-    explicit DebugGui(glm::vec2 bufferSize);
-
-    void setAtlasTexture(Texture* tex);
+    explicit DebugGui(glm::vec2 bufferSize, Texture* tex);
 
     void bufferResized(glm::vec2 bufferSize);
 

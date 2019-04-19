@@ -13,13 +13,13 @@ public:
     GameDefs() = default;
     explicit GameDefs(std::string tex_path);
 
-    BlockAtlas& getBlockAtlas();
-    TextureAtlas& getTextureAtlas();
+    BlockAtlas& blocks();
+    TextureAtlas& textures();
 
     ~GameDefs() = default;
 private:
-    TextureAtlas textures;
-    BlockAtlas blocks;
+    TextureAtlas textureAtlas;
+    BlockAtlas blockAtlas;
 };
 
 

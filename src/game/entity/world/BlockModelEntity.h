@@ -8,10 +8,11 @@
 
 #include "../../../game/entity/Entity.h"
 #include "../../../def/block/graph/BlockModel.h"
+#include "../../../def/GameDefs.h"
 
 class BlockModelEntity : public Entity {
 public:
-    explicit BlockModelEntity(TextureAtlas *texAtlas);
+    explicit BlockModelEntity(GameDefs &defs);
 
     void setModel(BlockModel& model);
     void clearModel();
@@ -20,7 +21,7 @@ private:
 
     float n = 0;
 
-    TextureAtlas *texAtlas;
+    GameDefs& defs;
 };
 
 

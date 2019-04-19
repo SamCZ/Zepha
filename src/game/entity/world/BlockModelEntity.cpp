@@ -4,8 +4,8 @@
 
 #include "BlockModelEntity.h"
 
-BlockModelEntity::BlockModelEntity(TextureAtlas* texAtlas) {
-    this->texAtlas = texAtlas;
+BlockModelEntity::BlockModelEntity(GameDefs& defs) :
+    defs(defs) {
     auto m = new Mesh();
     setMesh(m);
 }
@@ -41,7 +41,7 @@ void BlockModelEntity::addFaces(unsigned int &indOffset, vector<float> &vertices
     n += 0.005f;
     if (n > 7) n = 0;
 
-    auto uv = texAtlas->getTextureUVs(tex);
+    auto uv = defs.textures().getTextureUVs(tex);
 
     for (MeshPart *mp : meshParts) {
 

@@ -8,19 +8,17 @@
 #include "LocalWorld.h"
 #include "../../../util/Vec.h"
 
-LocalWorld::LocalWorld(BlockAtlas *atlas) :
-    meshGenStream(*atlas, dimension),
-    worldGenStream(55) {
-
-    blockAtlas = atlas;
-}
+LocalWorld::LocalWorld(GameDefs& defs) :
+    meshGenStream(defs, dimension),
+    worldGenStream(55),
+    defs(defs) {}
 
 void LocalWorld::loadChunkPacket(Packet *p) {
     worldGenStream.pushBack(p);
 }
 
 void LocalWorld::commitChunk(glm::vec3 pos, std::shared_ptr<BlockChunk> c) {
-    dimension.addChunk(pos, c);
+    dimension.addChunk(pos, std::move(c));
     attemptMeshChunk(pos);
 }
 
@@ -100,7 +98,7 @@ void LocalWorld::update() {
     auto finishedChunks = worldGenStream.update();
 
     lastGenUpdates = 0;
-    for (auto chunk : finishedChunks) {
+    for (const auto &chunk : finishedChunks) {
         commitChunk(chunk->pos, chunk);
         lastGenUpdates++;
     }
@@ -132,7 +130,7 @@ void LocalWorld::setBlock(glm::vec3 pos, int block) {
 bool LocalWorld::solidAt(glm::vec3 pos) {
     int blockId = getBlock(pos);
     if (blockId == -1) return true;
-    return blockAtlas->getBlock(blockId)->isSolid();
+    return defs.blocks().getBlock(blockId)->isSolid();
 }
 
 std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::vec3 chunkPos) {
@@ -143,9 +141,9 @@ std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc>* LocalWorld::ge
     return &meshChunks;
 }
 
-BlockAtlas *LocalWorld::getBlockAtlas() {
-    return blockAtlas;
-}
+//BlockAtlas *LocalWorld::blocks() {
+//    return blockAtlas;
+//}
 
 int LocalWorld::render(Renderer &renderer) {
     int count = 0;

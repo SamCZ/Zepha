@@ -56,7 +56,6 @@ WorldInterpolationStream::Thread::Thread(MapGen *gen) {
     this->gen = gen;
 
     thread = std::thread(WorldInterpolationStream::threadFunction, this);
-    thread.detach();
 }
 
 void WorldInterpolationStream::threadFunction(WorldInterpolationStream::Thread *thread) {

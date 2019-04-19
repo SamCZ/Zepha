@@ -21,7 +21,7 @@ public:
 
     Player();
 
-    void create(LocalWorld* world, Camera* camera, WireframeEntity* wireframe, BlockModelEntity* blockBreak);
+    void create(LocalWorld* world, GameDefs* defs, Camera* camera, WireframeEntity* wireframe, BlockModelEntity* blockBreak);
 
     void update(InputManager &input, double delta, double mouseX, double mouseY);
 
@@ -52,6 +52,7 @@ private:
     glm::vec3 vel;
 
     Camera* camera;
+    GameDefs* defs;
     LocalWorld* world;
 
     WireframeEntity *wireframe;

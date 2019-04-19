@@ -14,6 +14,7 @@
 #include "graph/MeshGenerator.h"
 #include "../../../util/Vec.h"
 #include "../../../world/Dimension.h"
+#include "../../../def/GameDefs.h"
 
 class MeshGenStream {
 public:
@@ -21,7 +22,7 @@ public:
     static const int THREADS = 4;
     static const int TOTAL_QUEUE_SIZE = THREADS * THREAD_QUEUE_SIZE;
 
-    explicit MeshGenStream(BlockAtlas& a, Dimension& d);
+    explicit MeshGenStream(GameDefs& defs, Dimension& dimension);
     ~MeshGenStream();
 
     bool spaceInQueue();
@@ -73,7 +74,7 @@ private:
     static void threadFunction(Thread* thread);
 
     Dimension& dimension;
-    BlockAtlas& atlas;
+    GameDefs& defs;
 
     std::vector<glm::vec3> queuedTasks;
     std::unordered_set<glm::vec3, VecUtils::compareFunc> queuedMap;

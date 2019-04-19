@@ -15,6 +15,9 @@
 #include "world/Player.h"
 #include "net/ServerConnection.h"
 #include "../entity/world/PlayerEntity.h"
+#include "../entity/world/WireframeEntity.h"
+#include "../entity/world/BlockModelEntity.h"
+#include "../../def/GameDefs.h"
 
 class GameScene : public Scene {
 public:
@@ -25,20 +28,17 @@ public:
 
     void cleanup() override;
 public:
-    ServerConnection* server;
-    Player* player;
-    LocalWorld* world;
+    GameDefs defs;
 
-    BlockAtlas* blocks;
-    TextureAtlas* textures;
+    ServerConnection server;
+    Player player;
+    LocalWorld world;
 
     std::vector<Drawable*> entities;
     std::vector<Drawable*> gui;
 
     DebugGui debugGui;
     GameGui gameGui;
-
-    int c = 0;
 
     int drawCalls;
 

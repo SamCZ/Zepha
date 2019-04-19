@@ -58,7 +58,8 @@ TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) {
         data[i * 4 + 3] = 0;
     }
 
-    t.loadFromBytes(data, width, height);
+    t = new Texture();
+    t->loadFromBytes(data, width, height);
 
     createMissingTexture();
 
@@ -140,7 +141,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::addTexture(unsigned char* data, std::str
     ref->tileX = (int)space.x;
     ref->tileY = (int)space.y;
 
-    t.updateTexture((int)space.x * 16, (int)space.y * 16, pixelWidth, pixelHeight, data);
+    t->updateTexture((int)space.x * 16, (int)space.y * 16, pixelWidth, pixelHeight, data);
 
     ref->uv = {(space.x * 16) / width, (space.y * 16) / height,
                (space.x * 16 + pixelWidth) / width, (space.y * 16 + pixelHeight) / height};
@@ -150,7 +151,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::addTexture(unsigned char* data, std::str
 }
 
 Texture &TextureAtlas::getTexture() {
-    return t;
+    return *t;
 }
 
 glm::vec4 TextureAtlas::getTextureUVs(std::string& name) {

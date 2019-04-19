@@ -32,7 +32,7 @@ private:
     glm::vec2 findSpace(int w, int h);
 
     unsigned int width = 0, height = 0;
-    Texture t;
+    Texture* t = nullptr;
 
     std::vector<bool> empty;
     std::map<std::string, std::shared_ptr<AtlasRef>> textures;

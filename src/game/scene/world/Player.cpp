@@ -14,11 +14,12 @@ Player::Player() {
     pointingAtBlock = false;
 }
 
-void Player::create(LocalWorld *world, Camera *camera, WireframeEntity *wireframe, BlockModelEntity *blockBreak) {
+void Player::create(LocalWorld *world, GameDefs *defs, Camera *camera, WireframeEntity *wireframe, BlockModelEntity *blockBreak) {
     this->camera = camera;
     this->world = world;
     this->wireframe = wireframe;
     this->blockBreak = blockBreak;
+    this->defs = defs;
 }
 
 void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
@@ -35,7 +36,7 @@ void Player::update(InputManager &input, double delta, double mouseX, double mou
 
         auto at = world->getBlock(rayEnd);
         if (at > 0) {
-            auto def = world->getBlockAtlas()->getBlock(at);
+            auto def = defs->blocks().getBlock(at);
             auto sBox = def->getSelectionBox();
 
             if (rayEnd.x >= pointedAt.x + sBox.a.x && rayEnd.y >= pointedAt.y + sBox.a.y && rayEnd.z >= pointedAt.z + sBox.a.z &&
