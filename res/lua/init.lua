@@ -19,32 +19,6 @@ function dump(tbl, indent)
   end
 end
 
---[[
-
-**Mesh Creation**
-
-The function zeus.register_blockmodel creates a blockmodel for use by blocks.
-The first argument is the name of the model, which should be prefixed by the mod name and then a colon.
-The next argument is a table of mesh parts. A mesh part is a table with mesh information in it.
-The allowed information is as follows
-
-face: which part of the block this mesh part is for, accepted strings are:
-"top", "bottom", "left", "right", "front", "back", "nocull"
-
-tex: The index of the textures array to use for texturing the mesh part
-
-points: the points defining the mesh part. The format is defined by the mode property.
-
-mode: Must be one of the following, default is "simple"
-
-- simple:
-The first five points are the top left vertice, the next five are the bottom right.
-
-- vertex:
-Define 5 positional coordinates for each face.
-
---]]
-
 -- Create cube model
 zeus.register_blockmodel("default:block", {
     {
