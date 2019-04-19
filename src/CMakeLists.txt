@@ -127,6 +127,6 @@ set(ZEUS_SRC_FILES
         def/texture/AtlasRef.cpp
         def/texture/AtlasRef.h
         world/region/MapBlock.cpp
-        world/region/MapBlock.h)
+        world/region/MapBlock.h def/GameDefs.cpp def/GameDefs.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

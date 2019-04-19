@@ -305,7 +305,7 @@ void DebugGui::update(Player* player, LocalWorld* world, BlockAtlas* atlas, doub
         str << "Mb: " << string_vec3(mapBlockCoordinate) << ", ";
         str << "Rg: " << string_vec3(regionCoordinate) << std::endl;
 
-        str << "Vel: " << string_vec3(*player->getVel()) << std::endl;
+        str << "Vel: " << string_vec3_float(*player->getVel()) << std::endl;
         str << "Yaw: " << string_float(player->getYaw()) << ", ";
         str << "Pitch: " << string_float(player->getPitch()) << std::endl << std::endl;
 

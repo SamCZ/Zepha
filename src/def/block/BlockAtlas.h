@@ -13,7 +13,7 @@
 class BlockAtlas {
 public:
     BlockAtlas();
-    explicit BlockAtlas(DynamicAtlas* textureAtlas);
+    explicit BlockAtlas(TextureAtlas* textureAtlas);
 
     void registerBlock(BlockDef* def);
     BlockDef* getBlock(int id);
@@ -21,7 +21,7 @@ public:
     ~BlockAtlas();
 private:
     std::vector<BlockDef*> definitions;
-    DynamicAtlas* textureAtlas;
+    TextureAtlas* textureAtlas;
 };
 
 

@@ -30,7 +30,7 @@ public:
     LocalWorld* world;
 
     BlockAtlas* blocks;
-    DynamicAtlas* textures;
+    TextureAtlas* textures;
 
     std::vector<Drawable*> entities;
     std::vector<Drawable*> gui;

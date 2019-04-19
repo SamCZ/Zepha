@@ -14,10 +14,10 @@
 #include "../../game/graph/Texture.h"
 #include "AtlasRef.h"
 
-class DynamicAtlas {
+class TextureAtlas {
 public:
-    DynamicAtlas() = default;
-    explicit DynamicAtlas(unsigned int width, unsigned int height = 0);
+    TextureAtlas() = default;
+    explicit TextureAtlas(unsigned int width, unsigned int height = 0);
 
     void loadFromDirectory(std::string dirStr);
 
@@ -26,7 +26,7 @@ public:
     std::shared_ptr<AtlasRef> addTexture(unsigned char* data, std::string name, int pixelWidth, int pixelHeight);
     glm::vec4 getTextureUVs(std::string& name);
 
-    ~DynamicAtlas();
+    ~TextureAtlas();
 private:
     void createMissingTexture();
     glm::vec2 findSpace(int w, int h);

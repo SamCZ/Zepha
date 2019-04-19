@@ -4,7 +4,7 @@
 
 #include "MeshPart.h"
 
-MeshPart::MeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, std::string texture, DynamicAtlas& atlas) {
+MeshPart::MeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, std::string texture, TextureAtlas& atlas) {
 
     this->vertices = std::move(vertices);
     this->indices = std::move(indices);

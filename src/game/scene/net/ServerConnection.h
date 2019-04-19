@@ -27,8 +27,8 @@ public:
     ~ServerConnection();
 
     std::vector<Packet*> chunkPackets;
-    int serverSideChunkGens;
-    int recvPackets;
+    int serverSideChunkGens = 0;
+    int recvPackets = 0;
 private:
     bool connected = false;
 

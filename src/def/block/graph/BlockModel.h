@@ -30,7 +30,7 @@ public:
 
     ~BlockModel();
 
-    static BlockModel* from_lua_def(sol::table model, sol::table textures, DynamicAtlas& atlas, bool visible, bool culls);
+    static BlockModel* from_lua_def(sol::table model, sol::table textures, TextureAtlas& atlas, bool visible, bool culls);
 };
 
 

@@ -15,7 +15,7 @@ GameScene::GameScene(ClientState* state) :
         debugGui(state->renderer->getCamera()->getBufferDimensions()) {
 
 
-    textures = new DynamicAtlas(512);
+    textures = new TextureAtlas(512);
     textures->loadFromDirectory("../res/tex/game");
     blocks = new BlockAtlas(textures);
 

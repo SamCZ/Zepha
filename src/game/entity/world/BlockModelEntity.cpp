@@ -4,7 +4,7 @@
 
 #include "BlockModelEntity.h"
 
-BlockModelEntity::BlockModelEntity(DynamicAtlas* texAtlas) {
+BlockModelEntity::BlockModelEntity(TextureAtlas* texAtlas) {
     this->texAtlas = texAtlas;
     auto m = new Mesh();
     setMesh(m);

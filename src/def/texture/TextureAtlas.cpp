@@ -14,7 +14,7 @@
 #include <stb_image.h>
 #include <stb_image_write.h>
 
-void DynamicAtlas::createMissingTexture() {
+void TextureAtlas::createMissingTexture() {
     auto *data = new unsigned char[16 * 4 * 16];
     for (int i = 0; i < 16 * 16; i++) {
         unsigned char r = 0;
@@ -35,7 +35,7 @@ void DynamicAtlas::createMissingTexture() {
 }
 
 //Height is optional and defaults to 0
-DynamicAtlas::DynamicAtlas(unsigned int width, unsigned int height) {
+TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) {
 //    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
 //    std::cout << "This GPU's max texture size is: " << maxTexSize / 4 << "px^2." << std::endl;
 //
@@ -65,7 +65,7 @@ DynamicAtlas::DynamicAtlas(unsigned int width, unsigned int height) {
     delete[] data;
 }
 
-void DynamicAtlas::loadFromDirectory(std::string dirStr) {
+void TextureAtlas::loadFromDirectory(std::string dirStr) {
     cf_dir_t dir;
     cf_dir_open(&dir, (dirStr).c_str());
 
@@ -85,7 +85,7 @@ void DynamicAtlas::loadFromDirectory(std::string dirStr) {
     cf_dir_close(&dir);
 }
 
-glm::vec2 DynamicAtlas::findSpace(int w, int h) {
+glm::vec2 TextureAtlas::findSpace(int w, int h) {
     for (int j = 0; j < (height / 16) - (h - 1); j++) {
         for (int i = 0; i < (width / 16) - (w - 1); i++) {
             if (empty[j * (width / 16) + i]) {
@@ -117,7 +117,7 @@ glm::vec2 DynamicAtlas::findSpace(int w, int h) {
     return glm::vec2(-1, -1);
 }
 
-std::shared_ptr<AtlasRef> DynamicAtlas::addTexture(unsigned char* data, std::string name, int pixelWidth, int pixelHeight) {
+std::shared_ptr<AtlasRef> TextureAtlas::addTexture(unsigned char* data, std::string name, int pixelWidth, int pixelHeight) {
     auto ref = std::make_shared<AtlasRef>();
 
     ref->name = name;
@@ -149,16 +149,16 @@ std::shared_ptr<AtlasRef> DynamicAtlas::addTexture(unsigned char* data, std::str
     return ref;
 }
 
-Texture &DynamicAtlas::getTexture() {
+Texture &TextureAtlas::getTexture() {
     return t;
 }
 
-glm::vec4 DynamicAtlas::getTextureUVs(std::string& name) {
+glm::vec4 TextureAtlas::getTextureUVs(std::string& name) {
     if (!textures.count(name)) {
-        std::cerr << "Invalid texture name (at DynamicAtlas.cpp line " << __LINE__ << "): " << name << std::endl;
+        std::cerr << "Invalid texture name (at TextureAtlas.cpp line " << __LINE__ << "): " << name << std::endl;
         return {0, 0, 0, 0};
     }
     return textures.at(name)->uv;
 }
 
-DynamicAtlas::~DynamicAtlas() = default;
+TextureAtlas::~TextureAtlas() = default;

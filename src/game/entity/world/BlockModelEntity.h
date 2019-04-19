@@ -11,7 +11,7 @@
 
 class BlockModelEntity : public Entity {
 public:
-    explicit BlockModelEntity(DynamicAtlas *texAtlas);
+    explicit BlockModelEntity(TextureAtlas *texAtlas);
 
     void setModel(BlockModel& model);
     void clearModel();
@@ -20,7 +20,7 @@ private:
 
     float n = 0;
 
-    DynamicAtlas *texAtlas;
+    TextureAtlas *texAtlas;
 };
 
 

@@ -84,7 +84,7 @@ BlockModel::~BlockModel() {
     noCulledFaces.clear();
 }
 
-BlockModel* BlockModel::from_lua_def(sol::table model, sol::table textures, DynamicAtlas& atlas, bool visible, bool culls) {
+BlockModel* BlockModel::from_lua_def(sol::table model, sol::table textures, TextureAtlas& atlas, bool visible, bool culls) {
     vector<MeshPart*> leftFaces, rightFaces, topFaces, bottomFaces, frontFaces, backFaces, noCulledFaces;
 
     for (auto meshPartPair : model) {

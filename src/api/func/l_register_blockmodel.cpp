@@ -11,25 +11,6 @@ void l_register_blockmodel::api(std::string identifier, sol::table data) {
     }
 
     (*parser->getModule())["registered_blockmodels"][identifier] = data;
-
-//    for (auto it : data) {
-//        sol::table meshPart = it.second;
-//
-//        auto pointsOptional = meshPart.get<sol::optional<sol::table>>("points");
-//
-//        if (pointsOptional) {
-//
-//            sol::table points = *pointsOptional;
-//            float tex         = meshPart.get_or<float>("tex", 0);
-//            std::string face  = meshPart.get_or<std::string>("face", "nocull");
-//            std::string mode  = meshPart.get_or<std::string>("mode", "simple");
-//
-//            std::cout << meshPart.get<std::string>("face") << std::endl;
-//        }
-//        else {
-//            printf("Invalid MeshPart!\n");
-//        }
-//    }
 }
 
 l_register_blockmodel::l_register_blockmodel(GameScene* game, LuaParser* parser) : LuaApi(game, parser) {
