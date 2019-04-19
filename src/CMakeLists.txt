@@ -35,10 +35,10 @@ set(ZEUS_SRC_FILES
         game/scene/GameScene.h
         game/graph/Renderer.cpp
         game/graph/Renderer.h
-        api/LuaParser.cpp
-        api/LuaParser.h
-        api/func/l_register_block.cpp
-        api/func/l_register_block.h
+        api/LuaApi.cpp
+        api/LuaApi.h
+        api/func/LModuleRegister.cpp
+        api/func/LModuleRegister.h
         game/entity/hud/TextBuilder.cpp
         game/entity/hud/TextBuilder.h
         game/entity/hud/TextBuilder.cpp
@@ -50,10 +50,6 @@ set(ZEUS_SRC_FILES
         game/scene/world/Player.h
         util/Ray.cpp
         util/Ray.h
-        api/func/l_register_blockmodel.cpp
-        api/func/l_register_blockmodel.h
-        api/LuaApi.cpp
-        api/LuaApi.h
         game/Game.cpp
         game/Game.h
         game/graph/scene/SceneManager.cpp

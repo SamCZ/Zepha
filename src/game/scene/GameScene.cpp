@@ -4,9 +4,6 @@
 
 #include "GameScene.h"
 
-#include "../../api/func/l_register_block.h"
-#include "../../api/func/l_register_blockmodel.h"
-
 GameScene::GameScene(ClientState* state) : Scene(state),
         defs("../res/tex/game"),
         world(defs),
@@ -14,16 +11,6 @@ GameScene::GameScene(ClientState* state) : Scene(state),
 
         gameGui(state->renderer->getCamera()->getBufferDimensions()),
         debugGui(state->renderer->getCamera()->getBufferDimensions(),  &defs.textures().getTexture()) {
-
-    LuaParser p;
-    p.init();
-
-    //TODO: Remove
-    //Register APIs here
-    l_register_block(this, &p);
-    l_register_blockmodel(this, &p);
-
-    p.doFile("../res/lua/file.lua");
 
     auto blockBreak = new BlockModelEntity(defs);
     entities.push_back(blockBreak);

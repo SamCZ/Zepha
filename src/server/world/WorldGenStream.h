@@ -4,9 +4,9 @@
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+
 #ifndef ZEUS_WORLDGENSTREAM_H
 #define ZEUS_WORLDGENSTREAM_H
-
 
 #include <vec3.hpp>
 #include <thread>

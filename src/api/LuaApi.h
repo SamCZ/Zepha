@@ -1,20 +1,35 @@
 //
-// Created by aurailus on 01/01/19.
+// Created by aurailus on 17/12/18.
 //
 
-#ifndef ZEUS_LUAAPI_H
-#define ZEUS_LUAAPI_H
+#ifndef ZEUS_LUAPARSER_H
+#define ZEUS_LUAPARSER_H
 
-#include "LuaParser.h"
-#include "../game/scene/GameScene.h"
+#include <string>
+#include <sol.hpp>
+#include <iostream>
+
+#include "func/LModuleRegister.h"
+
+class GameDefs;
 
 class LuaApi {
 public:
-    LuaApi(GameScene* game, LuaParser* parser);
+    LuaApi() = default;
 
-    GameScene* game;
-    LuaParser* parser;
+    void init(GameDefs& defs);
+
+    sol::table* getModule();
+    sol::state* getState();
+
+    void doFile(std::string file);
+
+    sol::state L;
+    sol::table Z;
+
+    ~LuaApi() = default;
+private:
 };
 
 
-#endif //ZEUS_LUAAPI_H
+#endif //ZEUS_LUAPARSER_H

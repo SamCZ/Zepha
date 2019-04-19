@@ -5,15 +5,14 @@
 #ifndef ZEUS_LREGISTERBLOCK_H
 #define ZEUS_LREGISTERBLOCK_H
 
-#include "../LuaApi.h"
 #include "../../def/block/graph/SelectionBox.h"
+#include <sol.hpp>
 
-class l_register_block : LuaApi {
+class GameDefs;
+
+class LModuleRegister {
 public:
-    l_register_block(GameScene* game, LuaParser* parser);
-
-private:
-    void api(std::string identifer, sol::table data);
+    LModuleRegister(sol::state& lua, sol::table& zeus, GameDefs& defs);
 };
 
 

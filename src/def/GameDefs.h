@@ -7,6 +7,7 @@
 
 #include "texture/TextureAtlas.h"
 #include "block/BlockAtlas.h"
+#include "../api/LuaApi.h"
 
 class GameDefs {
 public:
@@ -20,6 +21,7 @@ public:
 private:
     TextureAtlas textureAtlas;
     BlockAtlas blockAtlas;
+    LuaApi luaApi;
 };
 
 

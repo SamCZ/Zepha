@@ -10,7 +10,6 @@
 #include "../graph/Renderer.h"
 #include "../entity/hud/DebugGui.h"
 #include "../entity/hud/GameGui.h"
-#include "../../api/LuaParser.h"
 #include "world/LocalWorld.h"
 #include "world/Player.h"
 #include "net/ServerConnection.h"

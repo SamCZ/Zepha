@@ -53,8 +53,8 @@ MapGen::MapGen(unsigned int seed) {
     floraTurbulence.SetPower(0.125);
 
     floraFinal.SetSourceModule(0, floraTurbulence);
-    floraFinal.SetScale(3.5);
-    floraFinal.SetBias(3.5);
+    floraFinal.SetScale(4);
+    floraFinal.SetBias(4);
 
     floraDensity.SetFrequency(4);
 
@@ -142,27 +142,23 @@ void MapGen::fillChunk(MapGenJob &job) {
 
         int grass = 1, dirt = 2, stone = 3;
 
-        if (false) {
-            grass = 19;
-            dirt = 19;
-            stone = 20;
-        }
+//        grass = 19;
+//        dirt = 19;
+//        stone = 20;
 
         int flora = 0;
 
-        if (true) {
-            bool flower = false;
+        bool flower = false;
 
-            if (flora_density_sample.get(lp) > 1) flower = true;
+        if (flora_density_sample.get(lp) >= 1) flower = true;
 
-            if (flower) {
-                int flowerType = max(min((int)std::floor(flora_type_sample.get(lp)), 8), 0);
-                flora = flowerType + 10;
-            }
-            else {
-                int grassType = min((int)std::floor(grass_sample.get(lp)), 5);
-                if (grassType > 0) flora = grassType + 5;
-            }
+        if (flower) {
+            int flowerType = max(min((int)std::floor(flora_type_sample.get(lp)), 8), 0);
+            flora = flowerType + 10;
+        }
+        else {
+            int grassType = min((int)std::floor(grass_sample.get(lp)), 5);
+            if (grassType > 0) flora = grassType + 5;
         }
 
         job.blocks[m] = d == 0 ? 0
