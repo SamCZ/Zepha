@@ -4,7 +4,7 @@
 //
 
 #include <catch.hpp>
-#include "../../../src/generic/blocks/BlockChunk.h"
+#include "../../src/world/chunk/BlockChunk.h"
 
 BlockChunk* getRandomChunk() {
     auto v = std::vector<int>(4096);

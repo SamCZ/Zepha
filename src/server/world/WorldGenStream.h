@@ -11,9 +11,9 @@
 #include <vec3.hpp>
 #include <thread>
 #include <unordered_set>
-#include "../../generic/blocks/BlockChunk.h"
-#include "../../generic/gen/MapGen.h"
-#include "../../generic/helpers/VecUtils.h"
+#include "../../world/chunk/BlockChunk.h"
+#include "../../def/gen/MapGen.h"
+#include "../../util/Vec.h"
 
 class WorldGenStream {
 public:

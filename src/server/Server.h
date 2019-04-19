@@ -9,12 +9,12 @@
 #include <vector>
 #include <iostream>
 
-#include "ServerPlayer.h"
-#include "../generic/network/Packet.h"
-#include "../client/engine/Timer.h"
-#include "../generic/network/NetHandler.h"
-#include "ConnectionList.h"
-#include "ServerPeer.h"
+#include "player/ServerPlayer.h"
+#include "../util/net/Packet.h"
+#include "../util/Timer.h"
+#include "../util/net/NetHandler.h"
+#include "conn/ConnectionList.h"
+#include "conn/ServerPeer.h"
 
 class Server {
 public:

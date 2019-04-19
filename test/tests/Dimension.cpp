@@ -3,7 +3,7 @@
 //
 
 #include <catch.hpp>
-#include "../../src/generic/world/Dimension.h"
+#include "../../src/world/Dimension.h"
 
 TEST_CASE("Dimension", "[world]") {
 

@@ -4,7 +4,7 @@
 
 #include <catch.hpp>
 #include <iostream>
-#include "../../../src/generic/network/Serializer.h"
+#include "../../src/util/net/Serializer.h"
 
 TEST_CASE("Serializer", "[networking]") {
 

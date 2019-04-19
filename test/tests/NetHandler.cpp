@@ -7,7 +7,7 @@
 //
 
 #include <catch.hpp>
-#include "../../../src/generic/network/NetHandler.h"
+#include "../../src/util/net/NetHandler.h"
 
 TEST_CASE("NetHandler", "[networking]") {
 

@@ -1,0 +1,17 @@
+//
+// Created by aurailus on 06/01/19.
+//
+
+#ifndef ZEUS_CLIENTSTATE_H
+#define ZEUS_CLIENTSTATE_H
+
+#include "graph/Renderer.h"
+
+struct ClientState {
+    Renderer* renderer;
+
+    double fps = 0;
+    double deltaTime;
+};
+
+#endif //ZEUS_CLIENTSTATE_H

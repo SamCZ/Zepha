@@ -4,7 +4,7 @@
 
 #include <catch.hpp>
 #include <enet/enet.h>
-#include "../../src/generic/network/Packet.h"
+#include "../../src/util/net/Packet.h"
 
 TEST_CASE("Packet <-> ENetPacket", "[networking]") {
     enet_initialize();

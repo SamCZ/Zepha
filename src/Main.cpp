@@ -3,9 +3,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #pragma clang diagnostic pop
 
-#include "client/Client.h"
+#include "game/Game.h"
 #include "server/Server.h"
-#include "generic/network/Serializer.h"
+#include "util/net/Serializer.h"
 
 int main(int argc, char* argv[]) {
     std::string start = "client";
@@ -14,12 +14,12 @@ int main(int argc, char* argv[]) {
     }
 
     if (start == "client") {
-        Client c(1366, 768);
+        Game c(1366, 768);
         c.start(nullptr);
     }
 
     else if (start == "local") {
-        Client c(1366, 768);
+        Game c(1366, 768);
         c.start(argv[0]); //TODO: Get this to client some other way
     }
 
