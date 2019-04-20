@@ -32,7 +32,7 @@ public:
 private:
     unsigned int indOffset;
 
-    void addFaces(glm::vec3 &offset, vector<float> &vertices, vector<unsigned int> &indices, vector<MeshPart*> &meshParts);
+    void addFaces(glm::vec3 &offset, vector<float> &vertices, vector<unsigned int> &indices, vector<MeshPart> &meshParts);
 
     void cleanup();
 };

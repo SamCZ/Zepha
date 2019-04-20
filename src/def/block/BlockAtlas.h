@@ -15,12 +15,10 @@ public:
     BlockAtlas();
     explicit BlockAtlas(TextureAtlas* textureAtlas);
 
-    void registerBlock(BlockDef* def);
-    BlockDef* getBlock(int id);
-
-    ~BlockAtlas();
+    void registerBlock(BlockDef def);
+    BlockDef& getBlock(int id);
 private:
-    std::vector<BlockDef*> definitions;
+    std::vector<BlockDef> definitions;
     TextureAtlas* textureAtlas;
 };
 

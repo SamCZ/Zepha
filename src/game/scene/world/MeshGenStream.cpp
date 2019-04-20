@@ -125,7 +125,7 @@ std::vector<bool>* MeshGenStream::getAdjacentsCull(glm::vec3 pos) {
                 int z = (i == 4) ? 0 : (i == 5) ? 15 : k;
 
                 auto block = chunk->getBlock(x, y, z);
-                culls->push_back(defs.blocks().getBlock(block)->isCulling());
+                culls->push_back(defs.blocks().getBlock(block).isCulling());
             }
         }
     }

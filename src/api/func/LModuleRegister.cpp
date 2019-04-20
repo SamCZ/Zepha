@@ -14,10 +14,10 @@ LModuleRegister::LModuleRegister(sol::state &lua, sol::table &zeus, GameDefs &de
     // # Register BlockModel
     // `zeus.register_blockmodel(string identifier, table definition)`
     //
-    // This function takes a block model lua definition, and adds it to the zeus.registered_blockmodels global table
-    // with the key supplied as the identifier to that value. There is no requirements for the definition table in this
-    // function, but for it to be well formed and usable in `register_block`, it should be an array-table of face
-    // tables, which contain the following information:
+    // Definition is stored as `zeus.registered_blockmodels[identifier] = definition`.
+    // There are no requirements for the contents of the definition table in this function, but for it to be well
+    // formed and usable in `register_block`, it should be an array-table of face tables, which contain the following
+    // information:
     //
     // face:    One of "left", "right", "front", "back", "top", "bottom", or "nocull". Used when determining which parts
     //          of the model to cull.
@@ -83,10 +83,10 @@ LModuleRegister::LModuleRegister(sol::state &lua, sol::table &zeus, GameDefs &de
                 sbox = {{def[1], def[2], def[3]}, {def[4], def[5], def[6]}};
             }
 
-            BlockModel* blockModel = BlockModel::from_lua_def(*model, *textures, defs.textures(), visible, culls);
-            BlockDef* def = new BlockDef(identifier, blockModel, solid, sbox);
+            BlockModel blockModel = BlockModel::from_lua_def(*model, *textures, defs.textures(), visible, culls);
+            BlockDef def(identifier, std::move(blockModel), solid, sbox);
 
-            defs.blocks().registerBlock(def);
+            defs.blocks().registerBlock(std::move(def));
         }
         catch (const std::string& e) {
             std::cerr << "Exception on register_block: " << e << std::endl;

@@ -10,27 +10,19 @@
 #include "MeshPart.h"
 #include "../../../game/scene/world/graph/MeshVertex.h"
 
-using namespace std; //Just to preserve my sanity
-
 struct BlockModel {
-public:
+    std::vector<MeshPart> leftFaces;
+    std::vector<MeshPart> rightFaces;
+    std::vector<MeshPart> topFaces;
+    std::vector<MeshPart> bottomFaces;
+    std::vector<MeshPart> frontFaces;
+    std::vector<MeshPart> backFaces;
+    std::vector<MeshPart> noCulledFaces;
 
-    //MeshPart Vectors for each face. The vector may be empty but it may not contain null pointers.
-    vector<MeshPart*> leftFaces, rightFaces, topFaces, bottomFaces, frontFaces, backFaces, noCulledFaces;
-    bool culls, visible, nullModel;
+    bool culls;
+    bool visible;
 
-    BlockModel(bool culls, bool visible);
-
-    BlockModel(vector<MeshPart*> leftFaces, vector<MeshPart*> rightFaces, vector<MeshPart*> topFaces,
-               vector<MeshPart*> bottomFaces, vector<MeshPart*> frontFaces, vector<MeshPart*> backFaces,
-               vector<MeshPart*> noCulledFaces, bool culls, bool visible);
-
-    BlockModel(MeshPart* leftFace, MeshPart* rightFace, MeshPart* topFace, MeshPart* bottomFace, MeshPart* frontFace,
-               MeshPart* backFace, MeshPart* noCulledFace, bool culls, bool visible);
-
-    ~BlockModel();
-
-    static BlockModel* from_lua_def(sol::table model, sol::table textures, TextureAtlas& atlas, bool visible, bool culls);
+    static BlockModel from_lua_def(sol::table model, sol::table textures, TextureAtlas& atlas, bool visible, bool culls);
 };
 
 

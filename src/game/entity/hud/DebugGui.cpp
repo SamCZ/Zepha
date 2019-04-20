@@ -277,7 +277,7 @@ void DebugGui::update(Player* player, LocalWorld* world, BlockAtlas* atlas, doub
         glm::vec3 footPos = TransPos::roundPos(*player->getPos()) + glm::vec3(0, -2, 0);
 
         int blockID = world->getBlock(footPos);
-        std::string on = (blockID > 0) ? atlas->getBlock(blockID)->getIdentifier() : "invalid";
+        std::string on = (blockID > 0) ? atlas->getBlock(blockID).getIdentifier() : "invalid";
 
         glm::vec3 playerPos = TransPos::roundPos(*player->getPos());
 
@@ -322,7 +322,7 @@ void DebugGui::update(Player* player, LocalWorld* world, BlockAtlas* atlas, doub
         std::string look;
         auto block = player->getPointedBlock();
         if (block != nullptr) {
-            look = atlas->getBlock(world->getBlock(*block))->getIdentifier();
+            look = atlas->getBlock(world->getBlock(*block)).getIdentifier();
         }
         else {
             look = "invalid";

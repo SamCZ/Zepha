@@ -35,17 +35,17 @@ void BlockModelEntity::clearModel() {
     setMesh(m);
 }
 
-void BlockModelEntity::addFaces(unsigned int &indOffset, vector<float> &vertices, vector<unsigned int> &indices, vector<MeshPart *> &meshParts) {
-    std::string tex("default_crack_" + to_string((int)round(n)));
+void BlockModelEntity::addFaces(unsigned int &indOffset, std::vector<float> &vertices, std::vector<unsigned int> &indices, std::vector<MeshPart> &meshParts) {
+    std::string tex("default_crack_" + std::to_string((int)std::round(n)));
 
     n += 0.005f;
     if (n > 7) n = 0;
 
     auto uv = defs.textures().getTextureUVs(tex);
 
-    for (MeshPart *mp : meshParts) {
+    for (const MeshPart& mp : meshParts) {
 
-        for (MeshVertex &vertex : mp->vertices) {
+        for (const MeshVertex &vertex : mp.vertices) {
 
             glm::vec3 pushed_pos = vertex.pos;
             pushed_pos += glm::normalize(vertex.nml) * 0.0005f;
@@ -66,10 +66,10 @@ void BlockModelEntity::addFaces(unsigned int &indOffset, vector<float> &vertices
             vertices.push_back(vertex.nml.z);
         }
 
-        for (unsigned int index : mp->indices) {
+        for (unsigned int index : mp.indices) {
             indices.push_back(indOffset + index);
         }
 
-        indOffset += mp->vertices.size();
+        indOffset += mp.vertices.size();
     }
 }

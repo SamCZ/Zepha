@@ -12,20 +12,18 @@
 class BlockDef {
 
 public:
-    BlockDef(std::string identifier, BlockModel* model, bool solid, SelectionBox selectionBox);
+    BlockDef(std::string identifier, BlockModel model, bool solid, SelectionBox selectionBox);
 
     bool         isCulling();
     bool         isSolid();
-    BlockModel*  getModel();
+    BlockModel&  getModel();
     std::string  getIdentifier();
     SelectionBox getSelectionBox();
-
-    ~BlockDef();
 private:
     bool culls;
     bool solid;
     SelectionBox selectionBox;
-    BlockModel* model;
+    BlockModel model;
     std::string identifier;
 };
 

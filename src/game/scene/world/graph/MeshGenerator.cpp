@@ -8,11 +8,11 @@ MeshGenerator::MeshGenerator() {
     indOffset = 0;
 }
 
-BlockDef* blockData(int ind, BlockChunk &chunk, BlockAtlas& atlas) {
+BlockDef& blockData(int ind, BlockChunk &chunk, BlockAtlas& atlas) {
     return atlas.getBlock(chunk.getBlock(ind));
 }
 
-BlockDef* blockData(glm::vec3 &pos, BlockChunk &chunk, BlockAtlas &atlas) {
+BlockDef& blockData(glm::vec3 &pos, BlockChunk &chunk, BlockAtlas &atlas) {
     return atlas.getBlock(chunk.getBlock(&pos));
 }
 
@@ -30,7 +30,7 @@ bool faceOcculudedAt(glm::vec3 &pos, BlockChunk &chunk, BlockAtlas &atlas, std::
 
         return false;
     }
-    return blockData(pos, chunk, atlas)->isCulling();
+    return blockData(pos, chunk, atlas).isCulling();
 }
 
 void MeshGenerator::build(const std::shared_ptr<BlockChunk> &chunk, BlockAtlas &atlas, std::vector<bool> &adjacents,
@@ -45,36 +45,36 @@ void MeshGenerator::build(const std::shared_ptr<BlockChunk> &chunk, BlockAtlas &
     glm::vec3 check;
 
     for (int i = 0; i < 4096; i++) {
-        if (blockData(i, *chunk, atlas)->getModel()->visible) {
+        if (blockData(i, *chunk, atlas).getModel().visible) {
 
             VecUtils::indAssignVec(i, off);
-            BlockModel* model = blockData(i, *chunk, atlas)->getModel();
+            BlockModel& model = blockData(i, *chunk, atlas).getModel();
 
             check.x = off.x - 1; check.y = off.y; check.z = off.z;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(off, vertices, indices, model->leftFaces);
+                addFaces(off, vertices, indices, model.leftFaces);
 
             check.x = off.x + 1; check.y = off.y; check.z = off.z;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(off, vertices, indices, model->rightFaces);
+                addFaces(off, vertices, indices, model.rightFaces);
 
             check.x = off.x; check.y = off.y - 1; check.z = off.z;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(off, vertices, indices, model->bottomFaces);
+                addFaces(off, vertices, indices, model.bottomFaces);
 
             check.x = off.x; check.y = off.y + 1; check.z = off.z;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(off, vertices, indices, model->topFaces);
+                addFaces(off, vertices, indices, model.topFaces);
 
             check.x = off.x; check.y = off.y; check.z = off.z - 1;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(off, vertices, indices, model->backFaces);
+                addFaces(off, vertices, indices, model.backFaces);
 
             check.x = off.x; check.y = off.y; check.z = off.z + 1;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(off, vertices, indices, model->frontFaces);
+                addFaces(off, vertices, indices, model.frontFaces);
 
-            addFaces(off, vertices, indices, model->noCulledFaces);
+            addFaces(off, vertices, indices, model.noCulledFaces);
         }
     }
 
@@ -82,10 +82,10 @@ void MeshGenerator::build(const std::shared_ptr<BlockChunk> &chunk, BlockAtlas &
     indices.shrink_to_fit();
 }
 
-void MeshGenerator::addFaces(glm::vec3 &offset, vector<float> &vertices, vector<unsigned int> &indices, vector<MeshPart*> &meshParts) {
-    for (MeshPart *mp : meshParts) {
+void MeshGenerator::addFaces(glm::vec3 &offset, vector<float> &vertices, vector<unsigned int> &indices, vector<MeshPart> &meshParts) {
+    for (const MeshPart& mp : meshParts) {
 
-        for (MeshVertex &vertex : mp->vertices) {
+        for (const MeshVertex &vertex : mp.vertices) {
 
             vertices.push_back(vertex.pos.x + offset.x);
             vertices.push_back(vertex.pos.y + offset.y);
@@ -103,11 +103,11 @@ void MeshGenerator::addFaces(glm::vec3 &offset, vector<float> &vertices, vector<
             vertices.push_back(vertex.nml.z);
         }
 
-        for (unsigned int index : mp->indices) {
+        for (unsigned int index : mp.indices) {
             indices.push_back(indOffset + index);
         }
 
-        indOffset += mp->vertices.size();
+        indOffset += mp.vertices.size();
     }
 }
 

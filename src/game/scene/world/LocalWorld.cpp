@@ -130,7 +130,7 @@ void LocalWorld::setBlock(glm::vec3 pos, int block) {
 bool LocalWorld::solidAt(glm::vec3 pos) {
     int blockId = getBlock(pos);
     if (blockId == -1) return true;
-    return defs.blocks().getBlock(blockId)->isSolid();
+    return defs.blocks().getBlock(blockId).isSolid();
 }
 
 std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::vec3 chunkPos) {
