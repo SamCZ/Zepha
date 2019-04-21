@@ -157,7 +157,7 @@ Texture &TextureAtlas::getTexture() {
 glm::vec4 TextureAtlas::getTextureUVs(std::string& name) {
     if (!textures.count(name)) {
         std::cerr << "Invalid texture name (at TextureAtlas.cpp line " << __LINE__ << "): " << name << std::endl;
-        return {0, 0, 0, 0};
+        return textures.at("_missing")->uv;
     }
     return textures.at(name)->uv;
 }

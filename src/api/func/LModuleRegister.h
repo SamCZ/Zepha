@@ -6,6 +6,8 @@
 #define ZEUS_LREGISTERBLOCK_H
 
 #include "../../def/block/graph/SelectionBox.h"
+#include "../../def/block/BlockDef.h"
+#include "../../def/block/BlockAtlas.h"
 #include <sol.hpp>
 
 class GameDefs;

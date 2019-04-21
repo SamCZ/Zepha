@@ -4,8 +4,6 @@
 
 #include "GameDefs.h"
 
-#include "../api/func/LModuleRegister.h"
-
 GameDefs::GameDefs(std::string tex_path) {
     textureAtlas = TextureAtlas(512);
     textureAtlas.loadFromDirectory(std::move(tex_path));

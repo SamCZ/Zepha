@@ -3,7 +3,6 @@
 //
 
 #include "LuaApi.h"
-
 #include "../def/GameDefs.h"
 
 void LuaApi::init(GameDefs& defs) {

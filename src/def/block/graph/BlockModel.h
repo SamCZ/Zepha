@@ -22,7 +22,7 @@ struct BlockModel {
     bool culls;
     bool visible;
 
-    static BlockModel from_lua_def(sol::table model, sol::table textures, TextureAtlas& atlas, bool visible, bool culls);
+    static BlockModel create(sol::table model, std::vector<std::string> textures, TextureAtlas& atlas, bool visible, bool culls);
 };
 
 
