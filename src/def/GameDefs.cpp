@@ -12,7 +12,7 @@ GameDefs::GameDefs(std::string tex_path) {
     blockAtlas = BlockAtlas();
 
     luaApi.init(*this);
-    luaApi.doFile("../res/lua/default/init.lua");
+    luaApi.loadMod("../res/lua/default/init.lua");
 }
 
 BlockAtlas &GameDefs::blocks() {

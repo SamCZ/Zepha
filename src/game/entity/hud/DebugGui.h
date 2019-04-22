@@ -19,7 +19,7 @@ public:
 
     void bufferResized(glm::vec2 bufferSize);
 
-    void update(Player* player, LocalWorld* world, BlockAtlas* atlas, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
+    void update(Player& player, LocalWorld& world, GameDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
     void positionElements(glm::vec2 bufferSize);
 
     void changeVisibilityState(int state);

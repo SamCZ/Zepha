@@ -5,8 +5,11 @@
 #include "LuaApi.h"
 #include "../def/GameDefs.h"
 
+//todo: add security using doFileSandboxed
+
 void LuaApi::init(GameDefs& defs) {
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math);
+    lua.script_file("/home/aurailus/C++/GlProject/res/lua/util.lua");
 
     zeus = lua.create_table();
     lua["zeus"] = zeus;
@@ -17,15 +20,7 @@ void LuaApi::init(GameDefs& defs) {
     LModuleUtil(lua, zeus, defs);
 }
 
-sol::table* LuaApi::getModule() {
-    return &zeus;
-}
-
-sol::state* LuaApi::getState() {
-    return &lua;
-}
-
-void LuaApi::doFile(std::string file) {
+void LuaApi::loadMod(std::string file) {
     lua.script_file(file);
 }
 

@@ -229,7 +229,7 @@ std::string string_vec3_float(glm::vec3& vec) {
     return out.str();
 }
 
-void DebugGui::update(Player* player, LocalWorld* world, BlockAtlas* atlas, double fps, int chunks, int drawCalls, int ssGen, int ssPack) {
+void DebugGui::update(Player& player, LocalWorld& world, GameDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack) {
 
     { //VRam Usage Graph (Top Right)
         int videoMemAvail, videoMemTotal;
@@ -260,11 +260,11 @@ void DebugGui::update(Player* player, LocalWorld* world, BlockAtlas* atlas, doub
     }
 
     { //Bottom Right Graphs
-        meshHist->push_back((float)world->lastMeshUpdates);
-        meshText->set("Mesh: " + to_string(world->lastMeshUpdates));
+        meshHist->push_back((float)world.lastMeshUpdates);
+        meshText->set("Mesh: " + to_string(world.lastMeshUpdates));
 
-        chunkHist->push_back((float)world->lastGenUpdates);
-        chunkText->set("Interp: " + to_string(world->lastGenUpdates));
+        chunkHist->push_back((float)world.lastGenUpdates);
+        chunkText->set("Interp: " + to_string(world.lastGenUpdates));
 
         ssGenHist->push_back((float)ssGen);
         ssGenText->set("Gen: " + to_string(ssGen));
@@ -274,12 +274,12 @@ void DebugGui::update(Player* player, LocalWorld* world, BlockAtlas* atlas, doub
     }
 
     { //Top-left Data
-        glm::vec3 footPos = TransPos::roundPos(*player->getPos()) + glm::vec3(0, -2, 0);
+        glm::vec3 footPos = TransPos::roundPos(*player.getPos()) + glm::vec3(0, -2, 0);
 
-        int blockID = world->getBlock(footPos);
-        std::string on = (blockID > 0) ? atlas->getBlock(blockID).getIdentifier() : "invalid";
+        int blockID = world.getBlock(footPos);
+        std::string on = (blockID > 0) ? defs.blocks().getBlock(blockID).getIdentifier() : "invalid";
 
-        glm::vec3 playerPos = TransPos::roundPos(*player->getPos());
+        glm::vec3 playerPos = TransPos::roundPos(*player.getPos());
 
         glm::vec3 chunkPos = TransPos::chunkFromVec(playerPos);
 
@@ -295,7 +295,7 @@ void DebugGui::update(Player* player, LocalWorld* world, BlockAtlas* atlas, doub
         std::ostringstream str;
 
         str << "Player: " << string_vec3(playerPos);
-        str << " (" << string_vec3_float(*player->getPos()) << ")" << std::endl << std::endl;
+        str << " (" << string_vec3_float(*player.getPos()) << ")" << std::endl << std::endl;
 
         str << "Chunk: " << string_vec3(posOffsetFromChunk) << " [" << string_vec3(chunkPos) << "]" << std::endl;
         str << "MapBlock: " << string_vec3(posOffsetFromBlock) << std::endl;
@@ -305,24 +305,24 @@ void DebugGui::update(Player* player, LocalWorld* world, BlockAtlas* atlas, doub
         str << "Mb: " << string_vec3(mapBlockCoordinate) << ", ";
         str << "Rg: " << string_vec3(regionCoordinate) << std::endl;
 
-        str << "Vel: " << string_vec3_float(*player->getVel()) << std::endl;
-        str << "Yaw: " << string_float(player->getYaw()) << ", ";
-        str << "Pitch: " << string_float(player->getPitch()) << std::endl << std::endl;
+        str << "Vel: " << string_vec3_float(*player.getVel()) << std::endl;
+        str << "Yaw: " << string_float(player.getYaw()) << ", ";
+        str << "Pitch: " << string_float(player.getPitch()) << std::endl << std::endl;
 
         str << "Standing On: " << on << std::endl << std::endl;
 
-        str << "Pointing: " << (player->pointingAtBlock ? "yes" : "no") << ", ";
-        str << "PointedBlock: " << string_vec3(player->pointedBlock) << std::endl;
-        str << "BreakState: " << string_float(player->digPercentage);
+        str << "Pointing: " << (player.pointingAtBlock ? "yes" : "no") << ", ";
+        str << "PointedBlock: " << string_vec3(player.pointedBlock) << std::endl;
+        str << "BreakState: " << string_float(player.digPercentage);
 
         dataText->set(str.str());
     }
 
     { //Crosshair Text
         std::string look;
-        auto block = player->getPointedBlock();
+        auto block = player.getPointedBlock();
         if (block != nullptr) {
-            look = atlas->getBlock(world->getBlock(*block)).getIdentifier();
+            look = defs.blocks().getBlock(world.getBlock(*block)).getIdentifier();
         }
         else {
             look = "invalid";

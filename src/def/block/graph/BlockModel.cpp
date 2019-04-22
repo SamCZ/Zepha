@@ -19,8 +19,7 @@ BlockModel BlockModel::create(sol::table model, std::vector<std::string> texture
             //This value is sanitized later
             std::string face = meshPart.get_or<std::string>("face", "nocull");
 
-            //TODO: Validate that tex is greater than 0
-            int tex = (int)meshPart.get_or<float>("tex", 1);
+            int tex = std::max((int)meshPart.get_or<float>("tex", 1), 1);
 
             auto oPoints = meshPart.get<sol::optional<sol::table>>("points");
             if (!oPoints) throw "Meshpart is missing points field";

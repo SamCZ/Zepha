@@ -49,8 +49,7 @@ void GameScene::update() {
         world.loadChunkPacket(p);
     }
 
-    //TODO: Make this use contentmgr
-    debugGui.update(&player, &world, &defs.blocks(), state->fps, (int)world.getMeshChunks()->size(), drawCalls, server.serverSideChunkGens, server.recvPackets);
+    debugGui.update(player, world, defs, state->fps, (int)world.getMeshChunks()->size(), drawCalls, server.serverSideChunkGens, server.recvPackets);
     world.update();
 
     if (window->input.isKeyPressed(GLFW_KEY_F1)) {
@@ -90,5 +89,5 @@ void GameScene::draw() {
 }
 
 void GameScene::cleanup() {
-    //TODO: Clean up
+    //No pointers to clean up at this point
 }

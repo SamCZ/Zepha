@@ -20,10 +20,7 @@ public:
 
     void init(GameDefs& defs);
 
-    sol::table* getModule();
-    sol::state* getState();
-
-    void doFile(std::string file);
+    void loadMod(std::string file);
 
     sol::state lua;
     sol::table zeus;
