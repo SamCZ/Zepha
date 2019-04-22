@@ -32,7 +32,8 @@ MapGen::MapGen(unsigned int seed) {
 
     terrainFinal.SetControlModule(terrainType);
     terrainFinal.SetBounds(0.0, 1000.0);
-    terrainFinal.SetEdgeFalloff(0.1);
+//    terrainFinal.SetEdgeFalloff(0.1);
+    terrainFinal.SetEdgeFalloff(0.01);
 
     grassNoise.SetFrequency(2);
     grassNoise.SetOctaveCount(3);
@@ -131,7 +132,7 @@ void MapGen::getDensityMap(MapGenJob &job) {
 void MapGen::fillChunk(MapGenJob &job) {
     auto grass_sample = NoiseSample::getSample(&grassFinal, job.pos, 16, 0, true);
     auto flora_type_sample = NoiseSample::getSample(&floraFinal, job.pos, 4, 0, true);
-    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 8, 0, true);
+    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 16, 0, true);
 
     auto biome_sample = NoiseSample::getSample(&biomeTemp, job.pos, 2, 0, true);
 
@@ -142,10 +143,6 @@ void MapGen::fillChunk(MapGenJob &job) {
         int d = job.depth[m];
 
         int grass = 1, dirt = 2, stone = 3;
-
-//        grass = 19;
-//        dirt = 19;
-//        stone = 20;
 
         int flora = 0;
 
@@ -171,7 +168,7 @@ void MapGen::fillChunk(MapGenJob &job) {
 }
 
 void MapGen::addTrees(MapGenJob &job) {
-    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 8, 0, true);
+    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 16, 0, true);
 
     glm::vec3 lp;
 
