@@ -70,6 +70,7 @@ BlockChunk* MapGen::generate(glm::vec3 pos) {
     getElevation(job);
 
     fillChunk(job);
+    addTrees(job);
 
     return new BlockChunk(job.blocks, pos);
 }
@@ -166,5 +167,33 @@ void MapGen::fillChunk(MapGenJob &job) {
                       : d == 2 ? grass
                       : d <= 3 ? dirt
                       : stone;
+    }
+}
+
+void MapGen::addTrees(MapGenJob &job) {
+    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 8, 0, true);
+
+    glm::vec3 lp;
+
+    for (int m = 0; m < 4096; m++) {
+        VecUtils::indAssignVec(m, lp);
+        int d = job.depth[m];
+
+        if (d == 1 && flora_density_sample.get(lp) <= -1) {
+            glm::vec3 p = lp;
+
+            addBlock(p, 5, job);
+            addBlock(p + glm::vec3( 1,  0,  0), 4, job);
+            addBlock(p + glm::vec3(-1,  0,  0), 4, job);
+            addBlock(p + glm::vec3( 0,  0,  1), 4, job);
+            addBlock(p + glm::vec3( 0,  0, -1), 4, job);
+            addBlock(p + glm::vec3( 0,  1,  0), 4, job);
+        }
+    }
+}
+
+void MapGen::addBlock(glm::vec3 lp, int block, MapGenJob &j) {
+    if (lp.x >= 0 && lp.x < 16 && lp.y >= 0 && lp.y < 16 && lp.z >= 0 && lp.z < 16) {
+        j.blocks[VecUtils::vecToInd(&lp)] = block;
     }
 }

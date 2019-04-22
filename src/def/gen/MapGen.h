@@ -23,8 +23,10 @@ public:
 private:
     void getDensityMap(MapGenJob &job);
     void getElevation(MapGenJob &j);
-
     void fillChunk(MapGenJob &j);
+    void addTrees(MapGenJob &j);
+
+    void addBlock(glm::vec3 lp, int block, MapGenJob &j);
 
     unsigned int seed;
 
