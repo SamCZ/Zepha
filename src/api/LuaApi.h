@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include "func/LModuleRegister.h"
+#include "func/LModuleUtil.h"
 
 class GameDefs;
 
@@ -24,8 +25,10 @@ public:
 
     void doFile(std::string file);
 
-    sol::state L;
-    sol::table Z;
+    sol::state lua;
+    sol::table zeus;
+
+    int DoFileSandboxed(std::string file);
 
     ~LuaApi() = default;
 private:

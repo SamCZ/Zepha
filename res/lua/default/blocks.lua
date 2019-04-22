@@ -1,17 +1,4 @@
-local path = "/home/aurailus/C++/GlProject/res/lua/default/";
-
--- Temporarily generate Air in the lua file
--- TODO: Move this to C++
--- Air [ID 0]
-zeus.register_block("_:air", {
-    visible = false,
-    culls = false,
-    solid = false,
-    name = "Air",
-    model = "default:block",
-    textures = {"_missing"},
-})
-
+local path = zeus.get_path("default");
 
 --Grass, dirt, stone
 dofile(path .. "blocks/ground.lua");

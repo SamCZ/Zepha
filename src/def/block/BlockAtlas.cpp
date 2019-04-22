@@ -5,11 +5,12 @@
 #include "BlockAtlas.h"
 
 BlockAtlas::BlockAtlas() {
-    textureAtlas = nullptr;
-}
-
-BlockAtlas::BlockAtlas(TextureAtlas *textureAtlas) {
-    this->textureAtlas = textureAtlas;
+    //Register Air Node
+    BlockModel nullModel;
+    nullModel.visible = false;
+    nullModel.culls = false;
+    BlockDef air("builtin:air", nullModel, false, {{0, 0, 0}, {1, 1, 1}});
+    registerBlock(std::move(air));
 }
 
 void BlockAtlas::registerBlock(BlockDef def) {
@@ -21,7 +22,6 @@ BlockDef& BlockAtlas::getBlock(int id) {
         return definitions.at((unsigned long)id);
     }
 
-    //TODO: Remove hardcoded reference to air
-    std::cerr << "Block ID #" << id << " (undefined) requested! Returnin air." << std::endl;
+    std::cerr << "Block ID #" << id << " (undefined) requested! Returning air." << std::endl;
     return definitions.at(0);
 }

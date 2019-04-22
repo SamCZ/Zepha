@@ -6,22 +6,30 @@
 #include "../def/GameDefs.h"
 
 void LuaApi::init(GameDefs& defs) {
-    L.open_libraries(sol::lib::base, sol::lib::package, sol::lib::string);
+    lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math);
 
-    Z = L.create_table();
-    L["zeus"] = Z;
+    zeus = lua.create_table();
+    lua["zeus"] = zeus;
 
-    LModuleRegister(L, Z, defs);
+    lua.set_function("dofile", &LuaApi::DoFileSandboxed, this);
+
+    LModuleRegister(lua, zeus, defs);
+    LModuleUtil(lua, zeus, defs);
 }
 
 sol::table* LuaApi::getModule() {
-    return &Z;
+    return &zeus;
 }
 
 sol::state* LuaApi::getState() {
-    return &L;
+    return &lua;
 }
 
 void LuaApi::doFile(std::string file) {
-    L.script_file(file);
+    lua.script_file(file);
+}
+
+int LuaApi::DoFileSandboxed(std::string file) {
+    std::cout << file << std::endl;
+    lua.script_file(file);
 }

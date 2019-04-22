@@ -1,4 +1,4 @@
-local path = "/home/aurailus/C++/GlProject/res/lua/default/";
+local path = zeus.get_path("default");
 
 dofile(path .. "models/block.lua");
 dofile(path .. "models/block_foliage.lua");
