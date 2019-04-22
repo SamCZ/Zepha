@@ -9,7 +9,7 @@
 #include <gzip/utils.hpp>
 
 BlockChunk::BlockChunk() {
-    this->blocks = std::vector<int>(4096);
+    this->blocks = std::vector<int>((unsigned long)pow(TransPos::CHUNK_SIZE, 3));
     this->empty = true;
 }
 
@@ -34,18 +34,18 @@ BlockChunk::BlockChunk(std::vector<int> blocks, glm::vec3 pos) {
 
 int BlockChunk::getBlock(glm::vec3* pos) {
     unsigned int ind = VecUtils::vecToInd(pos);
-    if (ind < 0 || ind >= 4096) return -1;
+    if (ind < 0 || ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return -1;
     return blocks[ind];
 }
 
 int BlockChunk::getBlock(int ind) {
-    if (ind < 0 || ind >= 4096) return -1;
+    if (ind < 0 || ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return -1;
     return blocks[ind];
 }
 
 int BlockChunk::getBlock(int x, int y, int z) {
     unsigned int ind = VecUtils::vecToInd(x, y, z);
-    if (ind < 0 || ind >= 4096) return -1;
+    if (ind < 0 || ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return -1;
     return blocks[ind];
 }
 
@@ -54,7 +54,7 @@ bool BlockChunk::setBlock(glm::vec3* pos, int block) {
     //TODO: Update emptiness
 
     unsigned int ind = VecUtils::vecToInd(pos);
-    if (ind < 0 || ind >= 4096) return false;
+    if (ind < 0 || ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return false;
     if (blocks[ind] != block) {
         blocks[ind] = block;
         return true;
@@ -76,7 +76,7 @@ std::vector<int> BlockChunk::rleEncode() {
     int block = blocks[0];
     int length = 1;
 
-    for (int i = 1; i < 4096; i++) {
+    for (int i = 1; i < (int)pow(TransPos::CHUNK_SIZE, 3); i++) {
         if (blocks[i] == block) {
             length++;
         }
@@ -110,7 +110,7 @@ void BlockChunk::rleDecode(std::vector<int>& blocksRle, std::vector<int>& buffer
                 this->empty = false;
             }
 
-            if (ind >= 4096) return;
+            if (ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return;
         }
     }
 }
@@ -144,7 +144,7 @@ std::vector<int> BlockChunk::deserializeToVec(std::string gzip) {
         auto str = gzip::decompress(gzip.data(), gzip.length());
         auto rle = Serializer::decodeIntVec(str);
 
-        std::vector<int> vals(4096);
+        std::vector<int> vals((unsigned long)pow(TransPos::CHUNK_SIZE, 3));
         int ind = 0;
 
         for (int i = 0; i < rle.size() / 2; i++) {
@@ -154,7 +154,7 @@ std::vector<int> BlockChunk::deserializeToVec(std::string gzip) {
             for (int j = 0; j < count; j++) {
                 vals[ind++] = (block);
 
-                if (ind >= 4096) break;
+                if (ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) break;
             }
         }
 

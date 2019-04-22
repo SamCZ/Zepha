@@ -5,7 +5,7 @@
 #include "ConnectionList.h"
 #include "../../util/net/PacketChannel.h"
 
-ConnectionList::ConnectionList(World* world) {
+ConnectionList::ConnectionList(ServerWorld* world) {
     this->world = world;
 }
 

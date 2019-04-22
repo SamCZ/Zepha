@@ -94,8 +94,8 @@ set(ZEUS_SRC_FILES
         game/graph/frustum/FrustumPlane.h
         game/graph/frustum/FrustumAABB.cpp
         game/graph/frustum/FrustumAABB.h
-        world/World.cpp
-        world/World.h
+        server/world/ServerWorld.cpp
+        server/world/ServerWorld.h
         server/world/WorldGenStream.cpp
         server/world/WorldGenStream.h
         game/scene/world/WorldInterpolationStream.cpp
@@ -122,7 +122,9 @@ set(ZEUS_SRC_FILES
         def/texture/TextureAtlas.h
         def/texture/AtlasRef.cpp
         def/texture/AtlasRef.h
-        world/region/MapBlock.cpp
-        world/region/MapBlock.h def/GameDefs.cpp def/GameDefs.h api/func/LModuleUtil.cpp api/func/LModuleUtil.h)
+        world/region/MapBlock.h def/GameDefs.cpp
+        def/GameDefs.h
+        api/func/LModuleUtil.cpp
+        api/func/LModuleUtil.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

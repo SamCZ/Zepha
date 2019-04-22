@@ -18,7 +18,6 @@
 
 class Server {
 public:
-    Server();
     explicit Server(unsigned short port);
 
     void init();
@@ -29,7 +28,7 @@ public:
 private:
     bool alive = true;
 
-    World world {55};
+    ServerWorld world;
     NetHandler handler;
     ConnectionList connections;
 

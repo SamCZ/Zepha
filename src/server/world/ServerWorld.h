@@ -8,29 +8,28 @@
 
 #include <unordered_map>
 #include <unordered_set>
-#include "chunk/BlockChunk.h"
-#include "../server/player/ServerPlayer.h"
-#include "../server/world/WorldGenStream.h"
-#include "../util/Vec.h"
-#include "Dimension.h"
+#include "../../world/chunk/BlockChunk.h"
+#include "../player/ServerPlayer.h"
+#include "WorldGenStream.h"
+#include "../../util/Vec.h"
+#include "../../world/Dimension.h"
 
-class World {
+class ServerWorld {
 public:
-    explicit World(unsigned int seed);
+    explicit ServerWorld(unsigned int seed);
 
     void addPlayer(ServerPlayer* player);
     void update();
 
-    ~World() = default;
+    ~ServerWorld() = default;
 private:
     void playerChangedChunks(ServerPlayer* player);
     void generate(glm::vec3 pos);
     void sendChunk(glm::vec3 pos, ServerPeer& peer);
 
-    WorldGenStream genStream;
-
     std::vector<ServerPlayer*> players;
 
+    WorldGenStream genStream;
     Dimension dimension;
 
     std::unordered_set<glm::vec3, VecUtils::compareFunc> generateQueueMap;
@@ -38,6 +37,7 @@ private:
 
     int generatedChunks = 0;
 
+    //Static vector of chunks to place around players
     std::vector<glm::vec3> generateOrder;
 };
 

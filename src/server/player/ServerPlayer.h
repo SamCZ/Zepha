@@ -9,11 +9,13 @@
 #include <vec3.hpp>
 #include "../conn/ServerPeer.h"
 #include "../../util/net/Packet.h"
+#include "../../util/TransPos.h"
 
 class ServerPlayer {
 public:
-    const static int ACTIVE_RANGE_H = 25;
-    const static int ACTIVE_RANGE_V = 8;
+    //This 16 shouldn't be converted to TransPos::CHUNK_SIZE, it's just so that my brain can gauge the distance easier.
+    const static int ACTIVE_RANGE_H = (26 * 16) / TransPos::CHUNK_SIZE;
+    const static int ACTIVE_RANGE_V = (8 * 16)  / TransPos::CHUNK_SIZE;
 
     //TODO: Refactor instances of UUID to username, or create seperate username flag
     explicit ServerPlayer(ServerPeer* peer, std::string uuid);

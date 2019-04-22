@@ -10,7 +10,7 @@
 #include <vec3.hpp>
 
 namespace TransPos {
-    const static int CHUNK_SIZE = 16;
+    const static int CHUNK_SIZE = 32; //Must be a multiple of 16
     const static int MAPBLOCK_SIZE = 4;
     const static int REGION_SIZE = 4;
 
@@ -21,12 +21,12 @@ namespace TransPos {
     const static int MAPBLOCK_CHUNK_LENGTH = MAPBLOCK_SIZE;
     const static int REGION_CHUNK_LENGTH = MAPBLOCK_CHUNK_LENGTH * REGION_SIZE;
 
-    static glm::vec3 roundPos(glm::vec3 vec) {
+    static inline glm::vec3 roundPos(glm::vec3 vec) {
         return { floor(vec.x), floor(vec.y), floor(vec.z) };
     }
 
     namespace {
-        glm::vec3 localFromGlobal(glm::vec3 &pos, int size) {
+        inline glm::vec3 localFromGlobal(glm::vec3 &pos, int size) {
             auto round = roundPos(pos);
             glm::vec3 out;
             out.x = (round.x < 0) ? ((size - 1) + (((int) round.x + 1) % size)) : (((int) round.x) % size);
@@ -35,7 +35,7 @@ namespace TransPos {
             return out;
         }
 
-        glm::vec3 sectionFromGlobal(glm::vec3 pos, int size) {
+        inline glm::vec3 sectionFromGlobal(glm::vec3 pos, int size) {
             auto round = roundPos(pos);
             return {std::floor(round.x / size), std::floor(round.y / size), std::floor(round.z / size)};
         }

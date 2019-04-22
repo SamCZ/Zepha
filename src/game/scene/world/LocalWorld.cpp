@@ -151,7 +151,7 @@ int LocalWorld::render(Renderer &renderer) {
     for (auto &chunkPair : meshChunks) {
         auto chunk = chunkPair.second;
 
-        FrustumAABB bbox(chunk->getPos(), glm::vec3(16, 16, 16));
+        FrustumAABB bbox(chunk->getPos(), glm::vec3(TransPos::CHUNK_SIZE));
 
         if (renderer.getCamera()->inFrustum(bbox) != Frustum::OUTSIDE) {
             chunk->draw(renderer);

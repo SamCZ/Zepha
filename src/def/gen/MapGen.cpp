@@ -79,19 +79,19 @@ void MapGen::getElevation(MapGenJob &job) {
 
     MapGenJob* otherJob = nullptr;
 
-    for (int i = 0; i < 256; i++) {
-        int x = i % 16;
-        int z = i / 16;
+    for (int i = 0; i < pow(TransPos::CHUNK_SIZE, 2); i++) {
+        int x = i % TransPos::CHUNK_SIZE;
+        int z = i / TransPos::CHUNK_SIZE;
 
         int knownDepth = 16;
 
-        if (job.density[VecUtils::vecToInd(x, 15, z)] > 0) {
+        if (job.density[VecUtils::vecToInd(x, (TransPos::CHUNK_SIZE - 1), z)] > 0) {
             if (otherJob == nullptr) {
                 otherJob = new MapGenJob(glm::vec3(job.pos.x, job.pos.y + 1, job.pos.z));
                 getDensityMap(*otherJob);
             }
 
-            for (int j = 0; j < 16; j++) {
+            for (int j = 0; j < TransPos::CHUNK_SIZE; j++) {
                 int otherInd = VecUtils::vecToInd(x, j, z);
 
                 if (otherJob->density[otherInd] <= 0) {
@@ -102,7 +102,7 @@ void MapGen::getElevation(MapGenJob &job) {
         }
         else knownDepth = 0;
 
-        for (int y = 15; y >= 0; y--) {
+        for (int y = (TransPos::CHUNK_SIZE - 1); y >= 0; y--) {
             int ind = VecUtils::vecToInd(x, y, z);
 
             if (job.density[ind] > 0) {
@@ -122,9 +122,9 @@ void MapGen::getDensityMap(MapGenJob &job) {
 
     glm::vec3 lp;
 
-    for (int m = 0; m < 4096; m++) {
+    for (int m = 0; m < (int)pow(TransPos::CHUNK_SIZE, 3); m++) {
         VecUtils::indAssignVec(m, lp);
-        job.density[m] = terrain_2d_sample.get(lp) * 24.0f - (lp.y + job.pos.y * 16);
+        job.density[m] = terrain_2d_sample.get(lp) * 24.0f - (lp.y + job.pos.y * TransPos::CHUNK_SIZE);
     }
 }
 
@@ -137,7 +137,7 @@ void MapGen::fillChunk(MapGenJob &job) {
 
     glm::vec3 lp;
 
-    for (int m = 0; m < 4096; m++) {
+    for (int m = 0; m < (int)pow(TransPos::CHUNK_SIZE, 3); m++) {
         VecUtils::indAssignVec(m, lp);
         int d = job.depth[m];
 
@@ -175,7 +175,7 @@ void MapGen::addTrees(MapGenJob &job) {
 
     glm::vec3 lp;
 
-    for (int m = 0; m < 4096; m++) {
+    for (int m = 0; m < (int)pow(TransPos::CHUNK_SIZE, 3); m++) {
         VecUtils::indAssignVec(m, lp);
         int d = job.depth[m];
 
@@ -193,7 +193,7 @@ void MapGen::addTrees(MapGenJob &job) {
 }
 
 void MapGen::addBlock(glm::vec3 lp, int block, MapGenJob &j) {
-    if (lp.x >= 0 && lp.x < 16 && lp.y >= 0 && lp.y < 16 && lp.z >= 0 && lp.z < 16) {
+    if (lp.x >= 0 && lp.x < TransPos::CHUNK_SIZE && lp.y >= 0 && lp.y < TransPos::CHUNK_SIZE && lp.z >= 0 && lp.z < TransPos::CHUNK_SIZE) {
         j.blocks[VecUtils::vecToInd(&lp)] = block;
     }
 }

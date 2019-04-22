@@ -18,7 +18,7 @@ namespace VecUtils {
         }
     };
 
-    static std::array<glm::vec3, 6> getCardinalVectors() {
+    static inline std::array<glm::vec3, 6> getCardinalVectors() {
         return {
             glm::vec3(1, 0, 0), glm::vec3(-1, 0, 0),
             glm::vec3(0, 1, 0), glm::vec3(0, -1, 0),
@@ -26,14 +26,14 @@ namespace VecUtils {
         };
     };
 
-    static void indAssignVec(int ind, glm::vec3& vec) {
+    static inline void indAssignVec(int ind, glm::vec3& vec) {
         vec.z = ind / (TransPos::CHUNK_SIZE * TransPos::CHUNK_SIZE);
         ind -= ((int)vec.z * TransPos::CHUNK_SIZE * TransPos::CHUNK_SIZE);
         vec.y = ind / TransPos::CHUNK_SIZE;
         vec.x = ind % TransPos::CHUNK_SIZE;
     }
 
-    static glm::vec3* indToVec(int ind) {
+    static inline glm::vec3* indToVec(int ind) {
         int z = ind / (TransPos::CHUNK_SIZE * TransPos::CHUNK_SIZE);
         ind -= (z * TransPos::CHUNK_SIZE * TransPos::CHUNK_SIZE);
         int y = ind / TransPos::CHUNK_SIZE;
@@ -41,11 +41,11 @@ namespace VecUtils {
         return new glm::vec3(x, y, z);
     }
 
-    static unsigned int vecToInd(int x, int y, int z) {
+    static inline unsigned int vecToInd(int x, int y, int z) {
         return (unsigned int)(x + TransPos::CHUNK_SIZE * (y + TransPos::CHUNK_SIZE * z));
     }
 
-    static unsigned int vecToInd(glm::vec3* vec) {
+    static inline unsigned int vecToInd(glm::vec3* vec) {
         return vecToInd((int)vec->x, (int)vec->y, (int)vec->z);
     }
 };

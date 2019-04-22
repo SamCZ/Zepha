@@ -7,6 +7,7 @@
 
 #include <vec3.hpp>
 #include <vector>
+#include "../../util/TransPos.h"
 
 struct MapGenJob {
 
@@ -20,9 +21,9 @@ struct MapGenJob {
 
         this->pos = pos;
 
-        blocks = std::vector<int>(4096);
-        density = std::vector<float>(4096);
-        depth = std::vector<int>(4096);
+        blocks = std::vector<int>((unsigned long)pow(TransPos::CHUNK_SIZE, 3));
+        density = std::vector<float>((unsigned long)pow(TransPos::CHUNK_SIZE, 3));
+        depth = std::vector<int>((unsigned long)pow(TransPos::CHUNK_SIZE, 3));
     }
 };
 

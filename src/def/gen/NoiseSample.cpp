@@ -5,6 +5,7 @@
 #include <cmath>
 #include "NoiseSample.h"
 #include "../../util/Interp.h"
+#include "../../util/TransPos.h"
 
 NoiseSample::NoiseSample(int hPrecision, int vPrecision) {
     this->hPrecision = hPrecision;
@@ -26,11 +27,6 @@ NoiseSample::NoiseSample(int hPrecision, int vPrecision) {
 }
 
 void NoiseSample::set(glm::vec3 pos, float value) {
-    if (pos.x < 0 || pos.y < 0 || pos.z < 0 || pos.x > hPrecision || pos.y > vPrecision || pos.z > hPrecision) {
-        std::cerr << "Invalid index [1]" << std::endl;
-        return;
-    }
-
     data[(int)pos.x][(int)pos.y][(int)pos.z] = value;
 }
 
@@ -39,16 +35,16 @@ float NoiseSample::get(glm::vec3& pos) {
     int yInt = (int)pos.y;
     int zInt = (int)pos.z;
 
-    int offsetH = (int)(16.0f / hPrecision);
-    int offsetV = (int)(16.0f / vPrecision);
+    int offsetH = (int)((float)TransPos::CHUNK_SIZE / hPrecision);
+    int offsetV = (int)((float)TransPos::CHUNK_SIZE / vPrecision);
 
     auto xBase = xInt / offsetH;
     auto yBase = yInt / offsetV;
     auto zBase = zInt / offsetH;
 
-    float xFac = (xInt % offsetH) / (16.0f / hPrecision);
-    float yFac = (yInt % offsetV) / (16.0f / vPrecision);
-    float zFac = (zInt % offsetH) / (16.0f / hPrecision);
+    float xFac = (xInt % offsetH) / ((float)TransPos::CHUNK_SIZE / hPrecision);
+    float yFac = (yInt % offsetV) / ((float)TransPos::CHUNK_SIZE / vPrecision);
+    float zFac = (zInt % offsetH) / ((float)TransPos::CHUNK_SIZE / hPrecision);
 
     auto p000 = data[xBase][yBase][zBase];
     auto p100 = data[xBase + 1][yBase][zBase];
@@ -77,16 +73,17 @@ float NoiseSample::get(glm::vec3& pos) {
 NoiseSample NoiseSample::getSample(noise::module::Module *module, glm::vec3 chunkPos, int hPrecision, int vPrecision, bool flat) {
     NoiseSample s(hPrecision, vPrecision);
 
-    float offsetH = 16.0f / hPrecision;
-    float offsetV = 16.0f / vPrecision;
+    float offsetH = (float)TransPos::CHUNK_SIZE / hPrecision;
+    float offsetV = (float)TransPos::CHUNK_SIZE / vPrecision;
 
     for (int i = 0; i <= hPrecision; i++) {
         for (int j = 0; j <= vPrecision; j++) {
             for (int k = 0; k <= hPrecision; k++) {
 
-                double xCoord = (chunkPos.x * 16 + offsetH * i) / 16.0;
-                double yCoord = (flat) ? 0 : (chunkPos.y * 16 + offsetV * j) / 16.0;
-                double zCoord = (chunkPos.z * 16 + offsetH * k) / 16.0;
+                //16s here are constant factor scaling, not to be based on the Chunk size.
+                double xCoord = (chunkPos.x * TransPos::CHUNK_SIZE + offsetH * i) / 16;
+                double yCoord = (flat) ? 0 : (chunkPos.y * TransPos::CHUNK_SIZE + offsetV * j) / 16;
+                double zCoord = (chunkPos.z * TransPos::CHUNK_SIZE + offsetH * k) / 16;
 
                 s.set(glm::vec3(i, j, k), (float)module->GetValue(xCoord, yCoord, zCoord));
             }

@@ -111,18 +111,18 @@ MeshGenStream::~MeshGenStream() {
 
 std::vector<bool>* MeshGenStream::getAdjacentsCull(glm::vec3 pos) {
     auto culls = new std::vector<bool>();
-    culls->reserve(1536); //256 * 6
+    culls->reserve((TransPos::CHUNK_SIZE*TransPos::CHUNK_SIZE) * 6); //256 * 6
 
     auto vectors = VecUtils::getCardinalVectors();
     for (int i = 0; i < vectors.size(); i++) {
         auto chunk = dimension.getChunk(pos + vectors[i]);
 
-        for (int j = 0; j < 16; j++) {
-            for (int k = 0; k < 16; k++) {
+        for (int j = 0; j < TransPos::CHUNK_SIZE; j++) {
+            for (int k = 0; k < TransPos::CHUNK_SIZE; k++) {
 
-                int x = (i == 0) ? 0 : (i == 1) ? 15 : (i <= 3) ? j : k;
-                int y = (i == 2) ? 0 : (i == 3) ? 15 : j;
-                int z = (i == 4) ? 0 : (i == 5) ? 15 : k;
+                int x = (i == 0) ? 0 : (i == 1) ? (TransPos::CHUNK_SIZE-1) : (i <= 3) ? j : k;
+                int y = (i == 2) ? 0 : (i == 3) ? (TransPos::CHUNK_SIZE-1) : j;
+                int z = (i == 4) ? 0 : (i == 5) ? (TransPos::CHUNK_SIZE-1) : k;
 
                 auto block = chunk->getBlock(x, y, z);
                 culls->push_back(defs.blocks().getBlock(block).isCulling());

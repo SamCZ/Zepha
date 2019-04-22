@@ -4,11 +4,10 @@
 
 #include "Server.h"
 
-Server::Server() : connections(&world) {};
-
-Server::Server(unsigned short port) : connections(&world) {
-    this->port = port;
-}
+Server::Server(unsigned short port) :
+    world(55),
+    connections(&world),
+    port(port) {}
 
 void Server::init() {
     handler = NetHandler(port, 32);

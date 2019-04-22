@@ -4,11 +4,11 @@
 
 #include <algorithm>
 #include <glm.hpp>
-#include "World.h"
-#include "../util/net/PacketChannel.h"
-#include "../util/Timer.h"
+#include "ServerWorld.h"
+#include "../../util/net/PacketChannel.h"
+#include "../../util/Timer.h"
 
-World::World(unsigned int seed) : genStream(seed) {
+ServerWorld::ServerWorld(unsigned int seed) : genStream(seed) {
     //Pregenerate chunk generation order
     generateOrder.reserve((unsigned long)pow(ServerPlayer::ACTIVE_RANGE_H * 2, 3));
 
@@ -27,10 +27,10 @@ World::World(unsigned int seed) : genStream(seed) {
         }
     }
 
-    std::cout << "Generated Chunk Queue is " << generateOrder.size() << " chunks long.";
+    std::cout << "Generated Chunk Queue is " << generateOrder.size() << " chunks long." << std::endl;
 }
 
-void World::addPlayer(ServerPlayer *player) {
+void ServerWorld::addPlayer(ServerPlayer *player) {
     Timer t("New Chunk Allocation");
 
     this->players.push_back(player);
@@ -51,7 +51,7 @@ void World::addPlayer(ServerPlayer *player) {
     t.printElapsedMs();
 }
 
-void World::playerChangedChunks(ServerPlayer *player) {
+void ServerWorld::playerChangedChunks(ServerPlayer *player) {
     Timer t("Movement Allocation");
 
     auto pos = player->getChunkPos();
@@ -81,14 +81,14 @@ void World::playerChangedChunks(ServerPlayer *player) {
     player->changedChunks = false;
 }
 
-void World::generate(glm::vec3 pos) {
+void ServerWorld::generate(glm::vec3 pos) {
     if(!generateQueueMap.count(pos) && !dimension.getChunk(pos)) {
         generateQueueMap.insert(pos);
         generateQueueList.push_back(pos);
     }
 }
 
-void World::update() {
+void ServerWorld::update() {
     while (!generateQueueList.empty()) {
         auto it = generateQueueList.begin();
         glm::vec3 pos = *it;
@@ -103,7 +103,7 @@ void World::update() {
     auto finished = genStream.update();
     generatedChunks = (int)finished.size();
 
-    for (auto chunk : finished) {
+    for (const auto &chunk : finished) {
         dimension.addChunk(chunk->pos, chunk);
 
         for (auto player : players) {
@@ -128,7 +128,7 @@ void World::update() {
     }
 }
 
-void World::sendChunk(glm::vec3 pos, ServerPeer &peer) {
+void ServerWorld::sendChunk(glm::vec3 pos, ServerPeer &peer) {
     auto chunk = dimension.getChunk(pos);
     if (chunk != nullptr) {
         auto serialized = chunk->serialize();

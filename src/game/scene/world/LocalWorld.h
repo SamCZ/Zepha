@@ -47,8 +47,6 @@ public:
 
     bool solidAt(glm::vec3 pos);
 
-//    BlockAtlas* blocks();
-
     int lastGenUpdates = 0, lastMeshUpdates = 0;
 private:
     GameDefs& defs;

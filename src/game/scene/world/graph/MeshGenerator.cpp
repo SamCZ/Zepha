@@ -17,16 +17,17 @@ BlockDef& blockData(glm::vec3 &pos, BlockChunk &chunk, BlockAtlas &atlas) {
 }
 
 bool faceOcculudedAt(glm::vec3 &pos, BlockChunk &chunk, BlockAtlas &atlas, std::vector<bool> &bools) {
-    if (pos.x < 0 || pos.x > 15 || pos.y < 0 || pos.y > 15 || pos.z < 0 || pos.z > 15) {
+    auto off = TransPos::CHUNK_SIZE*TransPos::CHUNK_SIZE; //CHUNK_SIZE ^ 2
+    if (pos.x < 0 || pos.x >= TransPos::CHUNK_SIZE || pos.y < 0 || pos.y >= TransPos::CHUNK_SIZE || pos.z < 0 || pos.z >= TransPos::CHUNK_SIZE) {
 
-        if (pos.x == -1) return bools[ 256 + (int)pos.y * 16 + (int)pos.z];
-        if (pos.x == 16) return bools[     + (int)pos.y * 16 + (int)pos.z];
+        if (pos.x == -1) return bools[off + (int)pos.y * TransPos::CHUNK_SIZE + (int)pos.z];
+        if (pos.x == TransPos::CHUNK_SIZE) return bools[    + (int)pos.y * TransPos::CHUNK_SIZE + (int)pos.z];
 
-        if (pos.y == -1) return bools[ 768 + (int)pos.x * 16 + (int)pos.z];
-        if (pos.y == 16) return bools[ 512 + (int)pos.x * 16 + (int)pos.z];
+        if (pos.y == -1) return bools[off*3 + (int)pos.x * TransPos::CHUNK_SIZE + (int)pos.z];
+        if (pos.y == TransPos::CHUNK_SIZE) return bools[off*2 + (int)pos.x * TransPos::CHUNK_SIZE + (int)pos.z];
 
-        if (pos.z == -1) return bools[1280 + (int)pos.y * 16 + (int)pos.x];
-        if (pos.z == 16) return bools[1024 + (int)pos.y * 16 + (int)pos.x];
+        if (pos.z == -1) return bools[off*5 + (int)pos.y * TransPos::CHUNK_SIZE + (int)pos.x];
+        if (pos.z == TransPos::CHUNK_SIZE) return bools[off*4 + (int)pos.y * TransPos::CHUNK_SIZE + (int)pos.x];
 
         return false;
     }
@@ -44,7 +45,7 @@ void MeshGenerator::build(const std::shared_ptr<BlockChunk> &chunk, BlockAtlas &
     glm::vec3 off;
     glm::vec3 check;
 
-    for (int i = 0; i < 4096; i++) {
+    for (int i = 0; i < (int)pow(TransPos::CHUNK_SIZE, 3); i++) {
         if (blockData(i, *chunk, atlas).getModel().visible) {
 
             VecUtils::indAssignVec(i, off);
