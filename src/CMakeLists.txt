@@ -107,7 +107,6 @@ set(ZEUS_SRC_FILES
         world/Dimension.cpp
         world/Dimension.h
         world/region/Region.h
-        world/region/RegionHandler.h
         game/entity/world/WireframeEntity.cpp
         game/entity/world/WireframeEntity.h
         def/block/graph/SelectionBox.h
@@ -125,6 +124,6 @@ set(ZEUS_SRC_FILES
         world/region/MapBlock.h def/GameDefs.cpp
         def/GameDefs.h
         api/func/LModuleUtil.cpp
-        api/func/LModuleUtil.h)
+        api/func/LModuleUtil.h world/region/Region.cpp world/region/MapBlock.cpp)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

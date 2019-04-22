@@ -11,39 +11,19 @@
 #include "../../util/TransPos.h"
 #include "../chunk/BlockChunk.h"
 
-template <class C>
 class MapBlock {
 public:
     explicit MapBlock(glm::vec3 pos);
 
-    std::shared_ptr<C> operator[](int index);
-    void set(int index, std::shared_ptr<C> chunk);
+    std::shared_ptr<BlockChunk> operator[](int index);
+    void set(int index, std::shared_ptr<BlockChunk> chunk);
 
     ~MapBlock() = default;
 private:
     glm::vec3 pos {};
 
     const static int arrayLength = TransPos::MAPBLOCK_SIZE * TransPos::MAPBLOCK_SIZE * TransPos::MAPBLOCK_SIZE;
-    std::array<std::shared_ptr<C>, arrayLength> blockChunks;
+    std::array<std::shared_ptr<BlockChunk>, arrayLength> blockChunks;
 };
-
-template<class C>
-MapBlock<C>::MapBlock(glm::vec3 pos) {
-    for (int i = 0; i < arrayLength; i++) {
-        blockChunks[i] = nullptr;
-    }
-
-    this->pos = pos;
-}
-
-template<class C>
-std::shared_ptr<C> MapBlock<C>::operator[](int index) {
-    return blockChunks[index];
-}
-
-template<class C>
-void MapBlock<C>::set(int index, std::shared_ptr<C> chunk) {
-    blockChunks[index] = chunk;
-}
 
 #endif //ZEUS_MAPBLOCK_H

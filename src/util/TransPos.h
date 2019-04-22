@@ -45,21 +45,21 @@ namespace TransPos {
 
     //Return a local position vector relative to the respective structure
 
-    static glm::vec3 regionLocalFromVec(glm::vec3 vec) {
+    static inline glm::vec3 regionLocalFromVec(glm::vec3 vec) {
         return localFromGlobal(vec, REGION_BLOCK_LENGTH);
     }
 
-    static glm::vec3 mapBlockLocalFromVec(glm::vec3 vec) {
+    static inline glm::vec3 mapBlockLocalFromVec(glm::vec3 vec) {
         return localFromGlobal(vec, MAPBLOCK_BLOCK_LENGTH);
     }
 
-    static glm::vec3 chunkLocalFromVec(glm::vec3 vec) {
+    static inline glm::vec3 chunkLocalFromVec(glm::vec3 vec) {
         return localFromGlobal(vec, CHUNK_BLOCK_LENGTH);
     }
 
     //Returns the Chunk Position from a pos vector
 
-    static glm::vec3 chunkFromVec(glm::vec3 vec) {
+    static inline glm::vec3 chunkFromVec(glm::vec3 vec) {
         return sectionFromGlobal(vec, CHUNK_BLOCK_LENGTH);
     }
 
@@ -67,17 +67,17 @@ namespace TransPos {
         //Used to get the chunk position from a global coordinate in Dimension
 
         //Retrieve the region pos from a block pos
-        static glm::vec3 regionFromVec(glm::vec3 vec) {
+        static inline glm::vec3 regionFromVec(glm::vec3 vec) {
             return sectionFromGlobal(vec, REGION_CHUNK_LENGTH);
         }
 
         //Retrieve the offset of a mapblock from it's region using a chunk position
-        static glm::vec3 mapBlockOffsetFromRegion(glm::vec3 vec) {
+        static inline glm::vec3 mapBlockOffsetFromRegion(glm::vec3 vec) {
             return sectionFromGlobal(localFromGlobal(vec, REGION_CHUNK_LENGTH), MAPBLOCK_CHUNK_LENGTH);
         }
 
         //Retrieve the offset of a chunk from it's mapblock using a chunk position
-        static glm::vec3 chunkOffsetFromMapBlock(glm::vec3 vec) {
+        static inline glm::vec3 chunkOffsetFromMapBlock(glm::vec3 vec) {
             return localFromGlobal(vec, MAPBLOCK_CHUNK_LENGTH);
         }
     }
@@ -86,11 +86,11 @@ namespace TransPos {
 
     // Used to get indices from various vectors
 
-    static unsigned int mapBlockIndFromVec(glm::vec3 vec) {
+    static inline unsigned int mapBlockIndFromVec(glm::vec3 vec) {
         return (unsigned int)(vec.x + REGION_SIZE * (vec.y + REGION_SIZE * vec.z));
     }
 
-    static unsigned int chunkIndFromVec(glm::vec3 vec) {
+    static inline unsigned int chunkIndFromVec(glm::vec3 vec) {
         return (unsigned int)(vec.x + MAPBLOCK_SIZE * (vec.y + MAPBLOCK_SIZE * vec.z));
     }
 };
