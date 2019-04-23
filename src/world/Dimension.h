@@ -13,16 +13,19 @@
 
 class Dimension {
 public:
+    typedef std::unordered_map<glm::vec3, Region*, VecUtils::compareFunc> region_map;
+
     Dimension() = default;
 
     void addChunk(glm::vec3 pos, std::shared_ptr<BlockChunk> chunk);
     std::shared_ptr<BlockChunk> getChunk(glm::vec3 pos);
 
     Region* getRegion(glm::vec3 pos);
+    region_map& getRegions();
 
     ~Dimension();
 private:
-    std::unordered_map<glm::vec3, Region*, VecUtils::compareFunc> regions;
+    region_map regions;
 };
 
 

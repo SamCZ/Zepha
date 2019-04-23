@@ -13,14 +13,16 @@
 
 class Region {
 public:
-    explicit Region(glm::vec3 pos);
+    Region(glm::vec3 pos, glm::vec3 rawPos);
 
     MapBlock* operator[](int index);
     void set(int index, MapBlock* block);
 
+    glm::vec3 getRawPos();
+
     ~Region();
 private:
-    glm::vec3 pos {};
+    glm::vec3 pos {}, rawPos {};
 
     const static int arrayLength = TransPos::REGION_SIZE * TransPos::REGION_SIZE * TransPos::REGION_SIZE;
     std::array<MapBlock*, arrayLength> mapBlocks {};

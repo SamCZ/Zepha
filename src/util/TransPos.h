@@ -71,6 +71,11 @@ namespace TransPos {
             return sectionFromGlobal(vec, REGION_CHUNK_LENGTH);
         }
 
+        //Retrieve the raw (chunk pos of bottom left corner) pos of a region
+        static inline glm::vec3 regionRawFromRegionVec(glm::vec3 vec) {
+            return vec * glm::vec3(REGION_CHUNK_LENGTH);
+        }
+
         //Retrieve the offset of a mapblock from it's region using a chunk position
         static inline glm::vec3 mapBlockOffsetFromRegion(glm::vec3 vec) {
             return sectionFromGlobal(localFromGlobal(vec, REGION_CHUNK_LENGTH), MAPBLOCK_CHUNK_LENGTH);

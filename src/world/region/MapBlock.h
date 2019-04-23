@@ -13,14 +13,14 @@
 
 class MapBlock {
 public:
-    explicit MapBlock(glm::vec3 pos);
+    MapBlock(glm::vec3 pos, glm::vec3 rawPos);
 
     std::shared_ptr<BlockChunk> operator[](int index);
     void set(int index, std::shared_ptr<BlockChunk> chunk);
 
     ~MapBlock() = default;
 private:
-    glm::vec3 pos {};
+    glm::vec3 pos {}, rawPos {};
 
     const static int arrayLength = TransPos::MAPBLOCK_SIZE * TransPos::MAPBLOCK_SIZE * TransPos::MAPBLOCK_SIZE;
     std::array<std::shared_ptr<BlockChunk>, arrayLength> blockChunks;

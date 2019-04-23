@@ -4,12 +4,13 @@
 
 #include "MapBlock.h"
 
-MapBlock::MapBlock(glm::vec3 pos) {
+MapBlock::MapBlock(glm::vec3 pos, glm::vec3 rawPos) :
+    pos(pos),
+    rawPos(rawPos) {
+
     for (int i = 0; i < arrayLength; i++) {
         blockChunks[i] = nullptr;
     }
-
-    this->pos = pos;
 }
 
 std::shared_ptr<BlockChunk> MapBlock::operator[](int index) {

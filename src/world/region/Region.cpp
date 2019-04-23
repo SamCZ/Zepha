@@ -4,12 +4,13 @@
 
 #include "Region.h"
 
-Region::Region(glm::vec3 pos) {
+Region::Region(glm::vec3 pos, glm::vec3 rawPos) :
+    pos(pos),
+    rawPos(rawPos) {
+
     for (int i = 0; i < arrayLength; i++) {
         mapBlocks[i] = nullptr;
     }
-
-    this->pos = pos;
 }
 
 MapBlock *Region::operator[](int index) {
@@ -18,6 +19,10 @@ MapBlock *Region::operator[](int index) {
 
 void Region::set(int index, MapBlock *block) {
     mapBlocks[index] = block;
+}
+
+glm::vec3 Region::getRawPos() {
+    return rawPos;
 }
 
 Region::~Region() {

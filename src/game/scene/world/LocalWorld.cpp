@@ -56,7 +56,7 @@ bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
     return false;
 }
 
-void LocalWorld::update() {
+void LocalWorld::update(glm::vec3 playerChunkPos) {
     //Create Finished Messages
     auto finishedMeshes = meshGenStream.update();
 
@@ -102,6 +102,15 @@ void LocalWorld::update() {
         commitChunk(chunk->pos, chunk);
         lastGenUpdates++;
     }
+
+    //Delete far-out regions
+//    int toDelete = 0;
+//    for (const auto &region : dimension.getRegions()) {
+//        glm::vec3 middlePos = region.second->getRawPos() + glm::vec3(TransPos::REGION_CHUNK_LENGTH / 2);
+//        float dist = glm::distance(middlePos, playerChunkPos);
+//        if (dist > 64) toDelete++;
+//    }
+//    std::cout << toDelete << ", " << dimension.getRegions().size() << std::endl;
 }
 
 int LocalWorld::getBlock(glm::vec3 pos) {
@@ -141,21 +150,22 @@ std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc>* LocalWorld::ge
     return &meshChunks;
 }
 
-//BlockAtlas *LocalWorld::blocks() {
-//    return blockAtlas;
-//}
-
-int LocalWorld::render(Renderer &renderer) {
+int LocalWorld::render(Renderer &renderer, glm::vec3 playerChunkPos) {
     int count = 0;
 
     for (auto &chunkPair : meshChunks) {
         auto chunk = chunkPair.second;
 
-        FrustumAABB bbox(chunk->getPos(), glm::vec3(TransPos::CHUNK_SIZE));
+        auto diffVec = chunkPair.first - playerChunkPos;
+        float distance = max(abs(diffVec.x), max(abs(diffVec.y), abs(diffVec.z)));
 
-        if (renderer.getCamera()->inFrustum(bbox) != Frustum::OUTSIDE) {
-            chunk->draw(renderer);
-            count++;
+        if (distance < 8) {
+            FrustumAABB bbox(chunk->getPos(), glm::vec3(TransPos::CHUNK_SIZE));
+
+            if (renderer.getCamera()->inFrustum(bbox) != Frustum::OUTSIDE) {
+                chunk->draw(renderer);
+                count++;
+            }
         }
     }
 
