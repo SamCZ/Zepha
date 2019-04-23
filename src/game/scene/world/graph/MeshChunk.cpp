@@ -14,3 +14,7 @@ void MeshChunk::build(std::vector<float> *vertices, std::vector<unsigned int> *i
 void MeshChunk::setPos(glm::vec3 pos) {
     Entity::setPos(pos * glm::vec3(TransPos::CHUNK_SIZE));
 }
+
+glm::vec3 MeshChunk::getPos() {
+    return Entity::getPos() / glm::vec3(TransPos::CHUNK_SIZE);
+}

@@ -6,7 +6,7 @@
 
 GameScene::GameScene(ClientState* state) : Scene(state),
         defs("../res/tex/game"),
-        world(defs),
+        world(defs, &playerChunkPos),
         server("127.0.0.1", 12345),
 
         gameGui(state->renderer->getCamera()->getBufferDimensions()),
@@ -31,6 +31,8 @@ GameScene::GameScene(ClientState* state) : Scene(state),
 void GameScene::update() {
     server.update(player);
 
+    playerChunkPos = TransPos::roundPos(*player.getPos() / glm::vec3(TransPos::CHUNK_SIZE));
+
     auto window = state->renderer->getWindow();
 
     player.update(window->input, state->deltaTime, window->getDeltaX(), window->getDeltaY());
@@ -49,8 +51,8 @@ void GameScene::update() {
         world.loadChunkPacket(p);
     }
 
-    debugGui.update(player, world, defs, state->fps, (int)world.getMeshChunks()->size(), drawCalls, server.serverSideChunkGens, server.recvPackets);
-    world.update(TransPos::roundPos(*player.getPos() / glm::vec3(16.0f)));
+    debugGui.update(player, world, defs, state->fps, world.getMeshChunkCount(), drawCalls, server.serverSideChunkGens, server.recvPackets);
+    world.update();
 
     if (window->input.isKeyPressed(GLFW_KEY_F1)) {
         hudVisible = !hudVisible;
@@ -73,7 +75,7 @@ void GameScene::draw() {
     renderer.begin();
 
     renderer.enableTexture(&defs.textures().getTexture());
-    drawCalls = world.render(renderer, TransPos::roundPos(*player.getPos() / glm::vec3(16.0f)));
+    drawCalls = world.render(renderer);
 
     for (auto entity : entities) {
         entity->draw(renderer);

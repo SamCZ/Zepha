@@ -4,52 +4,91 @@
 
 #include "Dimension.h"
 
-void Dimension::addChunk(glm::vec3 pos, std::shared_ptr<BlockChunk> chunk) {
+Dimension::Dimension(glm::vec3 *playerPos) {
+    this->playerPos = playerPos;
+}
 
-    glm::vec3 regionPos = TransPos::Dimension::regionFromVec(pos);
-    glm::vec3 regionRawPos = TransPos::Dimension::regionRawFromRegionVec(pos);
+void Dimension::addBlockChunk(std::shared_ptr<BlockChunk> chunk) {
+    if (blockChunks.count(chunk->pos)) {
+        auto oldChunk = blockChunks[chunk->pos];
+        chunk->meshChunk = oldChunk->meshChunk;
+        chunk->meshChunkIter = oldChunk->meshChunkIter;
+        blockChunks.erase(chunk->pos);
+    }
+    blockChunks.insert({chunk->pos, chunk});
+}
 
-    if (!regions.count(regionPos)) regions.insert({regionPos, new Region(regionPos, regionRawPos)});
-    Region* region = regions[regionPos];
+void Dimension::addMeshChunk(MeshChunk* meshChunk) {
+    auto blockChunk = blockChunks[meshChunk->getPos()];
 
-    glm::vec3 mapBlockPos = TransPos::Dimension::mapBlockOffsetFromRegion(pos);
-    unsigned int mapBlockInd = TransPos::mapBlockIndFromVec(mapBlockPos);
+    if (!blockChunk) {
+        blockChunk = std::make_shared<BlockChunk>();
+        addBlockChunk(blockChunk);
+    }
+    else if (blockChunk->meshChunk != nullptr) {
+        meshChunks.erase(blockChunk->meshChunkIter);
+        delete blockChunk->meshChunk;
+    }
 
-    //TODO: Don't use 0, 0, 0
-    if ((*region)[mapBlockInd] == nullptr) region->set(mapBlockInd, new MapBlock(mapBlockPos, {0, 0, 0}));
-    MapBlock* mapBlock = (*region)[mapBlockInd];
-
-    glm::vec3 chunkPos = TransPos::Dimension::chunkOffsetFromMapBlock(pos);
-    unsigned int chunkInd = TransPos::chunkIndFromVec(chunkPos);
-    mapBlock->set(chunkInd, std::move(chunk));
+    blockChunk->meshChunk = meshChunk;
+    meshChunks.push_back(meshChunk);
+    blockChunk->meshChunkIter = (std::list<MeshChunk*>::iterator) --meshChunks.end();
 }
 
 std::shared_ptr<BlockChunk> Dimension::getChunk(glm::vec3 pos) {
-
-    glm::vec3 regionPos = TransPos::Dimension::regionFromVec(pos);
-    if (!regions.count(regionPos)) return nullptr;
-    Region* region = regions[regionPos];
-
-    glm::vec3 mapBlockPos = TransPos::Dimension::mapBlockOffsetFromRegion(pos);
-    unsigned int mapBlockInd = TransPos::mapBlockIndFromVec(mapBlockPos);
-    if ((*region)[mapBlockInd] == nullptr) return nullptr;
-    MapBlock* mapBlock = (*region)[mapBlockInd];
-
-    glm::vec3 chunkPos = TransPos::Dimension::chunkOffsetFromMapBlock(pos);
-    unsigned int chunkInd = TransPos::chunkIndFromVec(chunkPos);
-    return (*mapBlock)[chunkInd];
-}
-
-Region* Dimension::getRegion(glm::vec3 pos) {
-    return regions[pos];
-}
-
-Dimension::region_map &Dimension::getRegions() {
-    return regions;
+    if (blockChunks.count(pos)) {
+        return blockChunks.at(pos);
+    }
+    return nullptr;
 }
 
 Dimension::~Dimension() {
-    for (const auto &region : regions) {
-        delete region.second;
+    for (auto chunk : blockChunks) {
+        delete chunk.second->meshChunk;
     }
+}
+
+void Dimension::update() {
+    for (auto it = blockChunks.begin(); it != blockChunks.end();) {
+        auto chunk = it->second;
+        auto pos = it->first;
+
+        //TODO: Figure out why there are NULL CHUNKS in the map
+        if (chunk != nullptr) {
+            auto diffVec = pos - *playerPos;
+            float distance = max(abs(diffVec.x), max(abs(diffVec.y), abs(diffVec.z)));
+
+            if (distance > 16) {
+                if (chunk->meshChunk != nullptr) {
+                    meshChunks.erase(chunk->meshChunkIter);
+                    delete chunk->meshChunk;
+                }
+                it = blockChunks.erase(it);
+            } else {
+                it++;
+            }
+        }
+        else {
+            it = blockChunks.erase(it);
+        }
+    }
+}
+
+int Dimension::render(Renderer &renderer) {
+    int count = 0;
+
+    for (auto &chunk : meshChunks) {
+        FrustumAABB bbox(chunk->getPos() * glm::vec3(TransPos::CHUNK_SIZE), glm::vec3(TransPos::CHUNK_SIZE));
+
+        if (renderer.getCamera()->inFrustum(bbox) != Frustum::OUTSIDE) {
+            chunk->draw(renderer);
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int Dimension::getMeshChunkCount() {
+    return (int)meshChunks.size();
 }

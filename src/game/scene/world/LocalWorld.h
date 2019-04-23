@@ -26,9 +26,9 @@
 
 class LocalWorld {
 public:
-    explicit LocalWorld(GameDefs& defs);
+    explicit LocalWorld(GameDefs& defs, glm::vec3* playerPos);
 
-    void update(glm::vec3 playerChunkPos);
+    void update();
 
     void commitChunk(glm::vec3 pos, std::shared_ptr<BlockChunk>);
     void remeshChunk(glm::vec3 pos);
@@ -38,8 +38,9 @@ public:
     void attemptMeshChunk(glm::vec3 pos);
     bool getAdjacentExists(glm::vec3 pos, glm::vec3 myPos);
 
-    std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc>* getMeshChunks();
-    int render(Renderer& render, glm::vec3 playerChunkPos);
+//    std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc>* getMeshChunks();
+    int render(Renderer& render);
+    int getMeshChunkCount();
     std::shared_ptr<BlockChunk> getChunk(glm::vec3 chunkPos);
 
     int getBlock(glm::vec3 pos);

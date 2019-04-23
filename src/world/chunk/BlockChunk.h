@@ -8,9 +8,11 @@
 #include <vec3.hpp>
 #include <vector>
 #include <iostream>
+#include <list>
 #include "../../util/Vec.h"
 #include "../../util/net/Packet.h"
 #include "../../util/Vec.h"
+#include "../../game/scene/world/graph/MeshChunk.h"
 
 class BlockChunk {
 public:
@@ -38,6 +40,9 @@ public:
     bool deserialize(std::string gzip);
 
     static std::vector<int> deserializeToVec(std::string gzip);
+
+    MeshChunk* meshChunk = nullptr;
+    std::list<MeshChunk*>::iterator meshChunkIter;
 private:
     std::vector<int> blocks;
     bool empty;

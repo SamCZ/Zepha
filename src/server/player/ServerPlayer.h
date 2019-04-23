@@ -14,8 +14,8 @@
 class ServerPlayer {
 public:
     //This 16 shouldn't be converted to TransPos::CHUNK_SIZE, it's just so that my brain can gauge the distance easier.
-    const static int ACTIVE_RANGE_H = (16 * 16) / TransPos::CHUNK_SIZE;
-    const static int ACTIVE_RANGE_V = (8 * 16)  / TransPos::CHUNK_SIZE;
+    const static int ACTIVE_RANGE_H = 16;
+    const static int ACTIVE_RANGE_V = 6;
 
     //TODO: Refactor instances of UUID to username, or create seperate username flag
     explicit ServerPlayer(ServerPeer* peer, std::string uuid);

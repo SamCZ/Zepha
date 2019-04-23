@@ -29,6 +29,8 @@ public:
 public:
     GameDefs defs;
 
+    glm::vec3 playerChunkPos;
+
     ServerConnection server;
     Player player;
     LocalWorld world;

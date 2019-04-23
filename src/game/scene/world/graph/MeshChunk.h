@@ -16,11 +16,11 @@ public:
     MeshChunk() = default;
     void build(std::vector<float> *vertices, std::vector<unsigned int> *indices);
     void setPos(glm::vec3 pos);
+    glm::vec3 getPos();
 public:
     using Entity::setMesh;
     using Entity::draw;
 
-    using Entity::getPos;
     using Entity::getModelMatrix;
 };
 

@@ -59,8 +59,14 @@ std::vector<MeshGenStream::MeshDetails>* MeshGenStream::update() {
                 u.chunk = dimension.getChunk(pos);
                 u.adjacent = getAdjacentsCull(pos);
 
-                //Lock it in to allow the thread to edit it.
-                u.unlocked = false;
+                if (u.adjacent == nullptr) {
+                    //Some of the adjacent chunks have been GC'd since the task was queued
+                    u.chunk = nullptr;
+                }
+                else {
+                    //Lock it in to allow the thread to edit it.
+                    u.unlocked = false;
+                }
             }
         }
     }
@@ -116,6 +122,10 @@ std::vector<bool>* MeshGenStream::getAdjacentsCull(glm::vec3 pos) {
     auto vectors = VecUtils::getCardinalVectors();
     for (int i = 0; i < vectors.size(); i++) {
         auto chunk = dimension.getChunk(pos + vectors[i]);
+
+        if (chunk == nullptr) {
+            return nullptr;
+        }
 
         for (int j = 0; j < TransPos::CHUNK_SIZE; j++) {
             for (int k = 0; k < TransPos::CHUNK_SIZE; k++) {

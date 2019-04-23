@@ -10,22 +10,30 @@
 #include <unordered_map>
 #include "region/Region.h"
 #include "../util/Vec.h"
+#include "../game/scene/world/graph/MeshChunk.h"
 
 class Dimension {
 public:
-    typedef std::unordered_map<glm::vec3, Region*, VecUtils::compareFunc> region_map;
+    typedef std::unordered_map<glm::vec3, std::shared_ptr<BlockChunk>, VecUtils::compareFunc> chunk_map;
 
     Dimension() = default;
+    explicit Dimension(glm::vec3* playerPos);
 
-    void addChunk(glm::vec3 pos, std::shared_ptr<BlockChunk> chunk);
+    void addBlockChunk(std::shared_ptr<BlockChunk> chunk);
+    void addMeshChunk(MeshChunk* chunk);
+
+    void update();
+
+    int render(Renderer &renderer);
+    int getMeshChunkCount();
+
     std::shared_ptr<BlockChunk> getChunk(glm::vec3 pos);
-
-    Region* getRegion(glm::vec3 pos);
-    region_map& getRegions();
 
     ~Dimension();
 private:
-    region_map regions;
+    glm::vec3* playerPos = nullptr;
+    std::list<MeshChunk*> meshChunks;
+    chunk_map blockChunks;
 };
 
 

@@ -104,7 +104,7 @@ void ServerWorld::update() {
     generatedChunks = (int)finished.size();
 
     for (const auto &chunk : finished) {
-        dimension.addChunk(chunk->pos, chunk);
+        dimension.addBlockChunk(chunk);
 
         for (auto player : players) {
             auto bounds = player->getBounds();
