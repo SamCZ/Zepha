@@ -33,7 +33,7 @@ MapGen::MapGen(unsigned int seed) {
     terrainFinal.SetControlModule(terrainType);
     terrainFinal.SetBounds(0.0, 1000.0);
 //    terrainFinal.SetEdgeFalloff(0.1);
-    terrainFinal.SetEdgeFalloff(0.01);
+    terrainFinal.SetEdgeFalloff(0.02);
 
     grassNoise.SetFrequency(2);
     grassNoise.SetOctaveCount(3);
@@ -119,7 +119,7 @@ void MapGen::getElevation(MapGenJob &job) {
 }
 
 void MapGen::getDensityMap(MapGenJob &job) {
-    auto terrain_2d_sample = NoiseSample::getSample(&terrainFinal, job.pos, 4, 1, true);
+    auto terrain_2d_sample = NoiseSample::getSample(&terrainFinal, job.pos, 8, 1, true);
 
     glm::vec3 lp;
 

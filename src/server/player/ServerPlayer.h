@@ -13,7 +13,6 @@
 
 class ServerPlayer {
 public:
-    //This 16 shouldn't be converted to TransPos::CHUNK_SIZE, it's just so that my brain can gauge the distance easier.
     const static int ACTIVE_RANGE_H = 16;
     const static int ACTIVE_RANGE_V = 6;
 
