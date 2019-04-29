@@ -63,10 +63,13 @@ void TextEntity::set(std::string text) {
                     }
 
                     indOffset += 4;
+                    up += h + 2;
+                }
+                else {
+                    up += h / 2;
                 }
 
                 width = 0;
-                up += h + 2;
             }
             else {
                 width += w - getWidthSubtract((int)letter - 32) * 2;
@@ -74,12 +77,17 @@ void TextEntity::set(std::string text) {
         }
     }
 
+    int lineLength = 0;
+
     for (char letter : this->text) {
         if (letter == '\n') {
-            top += h + 2;
+            top += (lineLength > 0) ? h + 2 : h / 2;
+            lineLength = 0;
             left = 0;
             continue;
         }
+
+        lineLength++;
 
         int baseIndex = (int)letter - 32;
         int p = getWidthSubtract(baseIndex);
