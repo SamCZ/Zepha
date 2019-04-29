@@ -4,61 +4,60 @@
 
 #include "DebugGui.h"
 
-DebugGui::DebugGui(glm::vec2 bufferSize, Texture* tex) {
-    displayMode = 0;
+DebugGui::DebugGui(glm::vec2 bufferSize, Texture* tex) :
+    displayMode(0),
 
-    fontTexture         = new Texture("../res/tex/gui/font.png");
-    colorHistTexture    = new Texture("../res/tex/gui/histogram.png");
-    whiteHistTexture    = new Texture("../res/tex/gui/histogram_white.png");
+    fontTexture("../res/tex/gui/font.png"),
+    coloredGraphTexture("../res/tex/gui/histogram.png"),
+    monochromeGraphTexture("../res/tex/gui/histogram_white.png"),
 
-    atlasTex = new TextureRect(tex);
-    atlasTex->setScale({256, 256, 1});
+    atlasTex(tex),
+    crosshairText(&fontTexture, true),
+    dataText(&fontTexture, true),
 
-    crosshairText = new TextEntity(fontTexture, true);
+    chunkUpdatesGraph("Interp",     120, 64, &monochromeGraphTexture, &fontTexture),
+    meshUpdatesGraph ("Mesh",       120, 64, &monochromeGraphTexture, &fontTexture),
+    serverGenGraph   ("Gen",        120, 64, &monochromeGraphTexture, &fontTexture),
+    serverPacketGraph("Packets",    120, 64, &monochromeGraphTexture, &fontTexture),
 
-    dataText = new TextEntity(fontTexture, true);
+    fpsGraph         ("FPS",        244, 64, 120, 60, &coloredGraphTexture   , &fontTexture),
+    drawCallsGraph   ("Draw Calls", 244, 64, 120, 0,  &monochromeGraphTexture, &fontTexture),
+    vRamGraph        ("VRam",       244, 64, 120, 1,  &monochromeGraphTexture, &fontTexture) {
 
-    chunkUpdatesGraph = new StatGraph("Interp",     120, 64, whiteHistTexture, fontTexture);
-    meshUpdatesGraph  = new StatGraph("Mesh",       120, 64, whiteHistTexture, fontTexture);
-    serverGenGraph    = new StatGraph("Gen",        120, 64, whiteHistTexture, fontTexture);
-    serverPacketGraph = new StatGraph("Packets",    120, 64, whiteHistTexture, fontTexture);
-
-    fpsGraph          = new StatGraph("FPS",        244, 64, 120, 60, colorHistTexture, fontTexture);
-    drawCallsGraph    = new StatGraph("Draw Calls", 244, 64, 120, 0,  whiteHistTexture, fontTexture);
-    vRamGraph         = new StatGraph("VRam",       244, 64, 120, 1,  whiteHistTexture, fontTexture);
+    atlasTex.setScale({256, 256, 1});
 
     positionElements(bufferSize);
 
-    addDrawable(dataText);
-    addDrawable(crosshairText);
+    children.push_back(&dataText);
+    children.push_back(&crosshairText);
 
-    addDrawable(chunkUpdatesGraph);
-    addDrawable(meshUpdatesGraph);
-    addDrawable(serverGenGraph);
-    addDrawable(serverPacketGraph);
-    addDrawable(fpsGraph);
-    addDrawable(drawCallsGraph);
-    addDrawable(vRamGraph);
+    children.push_back(&chunkUpdatesGraph);
+    children.push_back(&meshUpdatesGraph);
+    children.push_back(&serverGenGraph);
+    children.push_back(&serverPacketGraph);
+    children.push_back(&fpsGraph);
+    children.push_back(&drawCallsGraph);
+    children.push_back(&vRamGraph);
 
-    addDrawable(atlasTex);
+    children.push_back(&atlasTex);
 }
 
 void DebugGui::positionElements(glm::vec2 bufferSize) {
     auto bufferWidth  = (int)bufferSize.x;
     auto bufferHeight = (int)bufferSize.y;
 
-    crosshairText->setPos({bufferWidth / 2 + 22, bufferHeight / 2 - 7, 0});
-    atlasTex->setPos({8, 350, 0});
+    crosshairText.setPos({bufferWidth / 2 + 22, bufferHeight / 2 - 7, 0});
+    atlasTex.setPos({8, 350, 0});
 
-    dataText->setPos(glm::vec3(10, 10, 0));
+    dataText.setPos(glm::vec3(10, 10, 0));
 
-    serverGenGraph    -> setPosition({bufferWidth - 254, bufferHeight - 70 - 160});
-    serverPacketGraph -> setPosition({bufferWidth - 254, bufferHeight - 70 - 240});
-    meshUpdatesGraph  -> setPosition({bufferWidth - 254, bufferHeight - 70 - 80 });
-    chunkUpdatesGraph -> setPosition({bufferWidth - 254, bufferHeight - 70      });
-    fpsGraph          -> setPosition({10,                bufferHeight - 70      });
-    drawCallsGraph    -> setPosition({10,                bufferHeight - 70 - 80 });
-    vRamGraph         -> setPosition({bufferWidth - 254, 10                     });
+    serverGenGraph   .setPosition({bufferWidth - 254, bufferHeight - 70 - 160});
+    serverPacketGraph.setPosition({bufferWidth - 254, bufferHeight - 70 - 240});
+    meshUpdatesGraph .setPosition({bufferWidth - 254, bufferHeight - 70 - 80 });
+    chunkUpdatesGraph.setPosition({bufferWidth - 254, bufferHeight - 70      });
+    fpsGraph         .setPosition({10,                bufferHeight - 70      });
+    drawCallsGraph   .setPosition({10,                bufferHeight - 70 - 80 });
+    vRamGraph        .setPosition({bufferWidth - 254, 10                     });
 }
 
 void DebugGui::update(Player& player, LocalWorld& world, GameDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack) {
@@ -69,22 +68,22 @@ void DebugGui::update(Player& player, LocalWorld& world, GameDefs& defs, double 
         glGetIntegerv(0x9048, &videoMemTotal);
         glGetIntegerv(0x9049, &videoMemAvail);
 
-        vRamGraph->update(static_cast<int>(std::round(
+        vRamGraph.update(static_cast<int>(std::round(
                 (videoMemTotal - videoMemAvail) / static_cast<float>(videoMemTotal) * 100.0))
                 / 100.0f);
     }
 
     { //Bottom Left Graphs
-        fpsGraph->update(static_cast<float>(fps));
-        drawCallsGraph->update(drawCalls);
+        fpsGraph.update(static_cast<float>(fps));
+        drawCallsGraph.update(drawCalls);
     }
 
     { //Bottom Right Graphs
-        meshUpdatesGraph->update(world.lastMeshUpdates);
-        chunkUpdatesGraph->update(world.lastGenUpdates);
+        meshUpdatesGraph.update(world.lastMeshUpdates);
+        chunkUpdatesGraph.update(world.lastGenUpdates);
 
-        serverGenGraph->update(static_cast<float>(ssGen));
-        serverPacketGraph->update(static_cast<float>(ssPack));
+        serverGenGraph.update(static_cast<float>(ssGen));
+        serverPacketGraph.update(static_cast<float>(ssPack));
     }
 
     { //Top-left Data
@@ -131,7 +130,7 @@ void DebugGui::update(Player& player, LocalWorld& world, GameDefs& defs, double 
         str << "PointedBlock: " << vecToString(player.pointedBlock) << std::endl;
         str << "BreakState: " << floatToString(player.digPercentage);
 
-        dataText->set(str.str());
+        dataText.set(str.str());
     }
 
     { //Crosshair Text
@@ -142,7 +141,13 @@ void DebugGui::update(Player& player, LocalWorld& world, GameDefs& defs, double 
         }
         else look = "invalid";
 
-        crosshairText->set(look);
+        crosshairText.set(look);
+    }
+}
+
+void DebugGui::draw(Renderer &renderer) {
+    for (auto elem : children) {
+        elem->draw(renderer);
     }
 }
 
@@ -158,5 +163,5 @@ void DebugGui::changeVisibilityState(int state) {
         elem->setVisible(displayMode == 0);
     }
 
-    fpsGraph->setVisible(displayMode != 1);
+    fpsGraph.setVisible(displayMode != 1);
 }

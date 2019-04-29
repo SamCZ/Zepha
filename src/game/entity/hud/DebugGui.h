@@ -16,35 +16,38 @@
 #include "GraphEntity.h"
 #include "TextEntity.h"
 
-class DebugGui : public DrawableGroup {
+class DebugGui : public Drawable {
 public:
     explicit DebugGui(glm::vec2 bufferSize, Texture* tex);
 
     void bufferResized(glm::vec2 bufferSize);
 
     void update(Player& player, LocalWorld& world, GameDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
-    void positionElements(glm::vec2 bufferSize);
+    void draw(Renderer &renderer) override;
 
     void changeVisibilityState(int state);
 private:
+    void positionElements(glm::vec2 bufferSize);
+    std::vector<Drawable*> children;
+
     int displayMode;
 
-    Texture *fontTexture;
-    Texture *colorHistTexture, *whiteHistTexture;
+    Texture fontTexture;
+    Texture coloredGraphTexture;
+    Texture monochromeGraphTexture;
 
-    TextureRect *atlasTex;
+    TextureRect atlasTex;
 
-    TextEntity *crosshairText;
-    TextEntity *dataText;
+    TextEntity crosshairText;
+    TextEntity dataText;
     
-    StatGraph *chunkUpdatesGraph;
-    StatGraph *meshUpdatesGraph;
-    StatGraph *fpsGraph;
-    StatGraph *drawCallsGraph;
-    StatGraph *vRamGraph;
-    StatGraph *serverGenGraph;
-    StatGraph *serverPacketGraph;
+    StatGraph chunkUpdatesGraph;
+    StatGraph meshUpdatesGraph;
+    StatGraph fpsGraph;
+    StatGraph drawCallsGraph;
+    StatGraph vRamGraph;
+    StatGraph serverGenGraph;
+    StatGraph serverPacketGraph;
 };
-
 
 #endif //ZEUS_DEBUGGUI_H
