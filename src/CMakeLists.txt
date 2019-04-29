@@ -39,11 +39,8 @@ set(ZEUS_SRC_FILES
         api/LuaApi.h
         api/func/LModuleRegister.cpp
         api/func/LModuleRegister.h
-        game/entity/hud/TextBuilder.cpp
-        game/entity/hud/TextBuilder.h
-        game/entity/hud/TextBuilder.cpp
-        game/entity/hud/HudText.cpp
-        game/entity/hud/HudText.h
+        game/entity/hud/TextEntity.cpp
+        game/entity/hud/TextEntity.h
         game/entity/hud/DebugGui.cpp
         game/entity/hud/DebugGui.h
         game/scene/world/Player.cpp
@@ -80,10 +77,10 @@ set(ZEUS_SRC_FILES
         util/net/PacketChannel.h
         game/entity/world/PlayerEntity.cpp
         game/entity/world/PlayerEntity.h
-        game/entity/hud/Histogram.cpp
-        game/entity/hud/Histogram.h
-        game/entity/hud/RectEntity.cpp
-        game/entity/hud/RectEntity.h
+        game/entity/hud/GraphEntity.cpp
+        game/entity/hud/GraphEntity.h
+        game/entity/hud/TextureRect.cpp
+        game/entity/hud/TextureRect.h
         def/gen/MapGenJob.h
         util/Interp.h
         def/gen/NoiseSample.cpp
@@ -124,6 +121,6 @@ set(ZEUS_SRC_FILES
         world/region/MapBlock.h def/GameDefs.cpp
         def/GameDefs.h
         api/func/LModuleUtil.cpp
-        api/func/LModuleUtil.h world/region/Region.cpp world/region/MapBlock.cpp)
+        api/func/LModuleUtil.h world/region/Region.cpp world/region/MapBlock.cpp game/entity/hud/StatGraph.cpp game/entity/hud/StatGraph.h util/Util.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

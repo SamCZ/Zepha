@@ -2,21 +2,21 @@
 // Created by aurailus on 10/02/19.
 //
 
-#include "RectEntity.h"
+#include "TextureRect.h"
 
-RectEntity::RectEntity(glm::vec4 color) {
+TextureRect::TextureRect(glm::vec4 color) {
     createColored(color, color, color, color);
 }
 
-RectEntity::RectEntity(glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::vec4 br) {
+TextureRect::TextureRect(glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::vec4 br) {
     createColored(tl, tr, bl, br);
 }
 
-RectEntity::RectEntity(Texture *texture) {
+TextureRect::TextureRect(Texture *texture) {
     createTextured(texture);
 }
 
-void RectEntity::createColored(glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::vec4 br) {
+void TextureRect::createColored(glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::vec4 br) {
     auto vertices = new std::vector<float> {
             0, 0, 0, 0, tl.x, tl.y, tl.z, tl.w, 0, 0, 0,
             0, 1, 0, 0, bl.x, bl.y, bl.z, bl.w, 0, 0, 0,
@@ -37,7 +37,7 @@ void RectEntity::createColored(glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::ve
 }
 
 
-void RectEntity::createTextured(Texture *texture) {
+void TextureRect::createTextured(Texture *texture) {
     auto vertices = new std::vector<float> {
             0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
             0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0,
@@ -57,7 +57,7 @@ void RectEntity::createTextured(Texture *texture) {
     delete indices;
 }
 
-void RectEntity::setTexture(Texture *texture) {
+void TextureRect::setTexture(Texture *texture) {
     createTextured(texture);
 }
 

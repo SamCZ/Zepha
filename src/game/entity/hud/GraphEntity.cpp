@@ -2,9 +2,9 @@
 // Created by aurailus on 08/02/19.
 //
 
-#include "Histogram.h"
+#include "GraphEntity.h"
 
-Histogram::Histogram(Texture *texture, int length, float maxVal, bool editInPlace) {
+GraphEntity::GraphEntity(Texture *texture, int length, float maxVal, bool editInPlace) {
     this->length = length;
     this->maxVal = maxVal;
     this->dynamicMax = (maxVal <= 0);
@@ -18,7 +18,7 @@ Histogram::Histogram(Texture *texture, int length, float maxVal, bool editInPlac
     setMesh(new Mesh());
 }
 
-void Histogram::push_back(float value) {
+void GraphEntity::push_back(float value) {
     if (editInPlace) {
         insertionPoint++;
         if (insertionPoint >= length) insertionPoint = 0;
@@ -44,7 +44,7 @@ void Histogram::push_back(float value) {
     setMesh(mesh);
 }
 
-Mesh* Histogram::buildHistogramMesh() {
+Mesh* GraphEntity::buildHistogramMesh() {
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
 
@@ -84,6 +84,6 @@ Mesh* Histogram::buildHistogramMesh() {
     return m;
 }
 
-void Histogram::setMax(float max) {
+void GraphEntity::setMax(float max) {
     maxVal = max;
 }

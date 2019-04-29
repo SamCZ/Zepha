@@ -13,7 +13,7 @@
 
 class ServerPlayer {
 public:
-    const static int ACTIVE_RANGE_H = 16;
+    const static int ACTIVE_RANGE_H = 6;
     const static int ACTIVE_RANGE_V = 6;
 
     //TODO: Refactor instances of UUID to username, or create seperate username flag

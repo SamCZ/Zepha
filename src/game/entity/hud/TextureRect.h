@@ -8,16 +8,16 @@
 
 #include "../Entity.h"
 
-class RectEntity : public Entity {
+class TextureRect : public Entity {
 public:
-    RectEntity() = default;
+    TextureRect() = default;
 
-    explicit RectEntity(glm::vec4 color);
-    RectEntity(glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::vec4 br);
+    explicit TextureRect(glm::vec4 color);
+    TextureRect(glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::vec4 br);
 
     void setTexture(Texture* texture);
 
-    explicit RectEntity(Texture* texture);
+    explicit TextureRect(Texture* texture);
 private:
     void createColored(glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::vec4 br);
     void createTextured(Texture* texture);

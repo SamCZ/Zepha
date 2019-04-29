@@ -10,10 +10,10 @@
 
 //TODO: Un-publicize entity
 
-class Histogram : public Entity {
+class GraphEntity : public Entity {
 public:
-    Histogram() = default;
-    Histogram(Texture *texture, int length, float maxVal, bool editInPlace);
+    GraphEntity() = default;
+    GraphEntity(Texture *texture, int length, float maxVal, bool editInPlace);
 
     void push_back(float value);
     void setMax(float max);

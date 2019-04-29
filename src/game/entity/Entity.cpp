@@ -5,8 +5,8 @@
 #include "Entity.h"
 
 Entity::Entity() {
-    this->mesh = nullptr;
-    this->texture = nullptr;
+    mesh = nullptr;
+    texture = nullptr;
 }
 
 Entity::Entity(Mesh* mesh) {

@@ -10,14 +10,14 @@ GameGui::GameGui(glm::vec2 bufferSize) {
     crosshairTexture = new Texture((char*)"../res/tex/gui/crosshair.png");
     viginetteTexture = new Texture((char*)"../res/tex/gui/viginette.png");
 
-    crosshair = new RectEntity(crosshairTexture);
+    crosshair = new TextureRect(crosshairTexture);
 
     crosshair->setPos(glm::vec3(bufferSize.x / 2 - 11, bufferSize.y / 2 - 9, 0));
     crosshair->setScale(22);
 
     addDrawable(crosshair);
 
-    viginette = new RectEntity(viginetteTexture);
+    viginette = new TextureRect(viginetteTexture);
     viginette->setScale(glm::vec3(bufferSize.x, bufferSize.y, 1));
     viginette->setPos(glm::vec3(0, 0, -5));
 

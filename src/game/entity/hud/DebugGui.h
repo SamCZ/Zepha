@@ -5,13 +5,16 @@
 #ifndef ZEUS_DEBUGGUI_H
 #define ZEUS_DEBUGGUI_H
 
-#include "Histogram.h"
-#include "HudText.h"
-#include "../../graph/window/Window.h"
-#include "../../../util/Ray.h"
-#include "RectEntity.h"
-#include "../../graph/drawable/DrawableGroup.h"
 #include <sstream>
+#include "../../graph/window/Window.h"
+#include "../../graph/drawable/DrawableGroup.h"
+#include "../../../util/TransPos.h"
+#include "../../../util/Util.h"
+#include "../../../util/Ray.h"
+#include "StatGraph.h"
+#include "TextureRect.h"
+#include "GraphEntity.h"
+#include "TextEntity.h"
 
 class DebugGui : public DrawableGroup {
 public:
@@ -27,18 +30,20 @@ private:
     int displayMode;
 
     Texture *fontTexture;
-    Texture *colorHistTexture, *whiteHistTexture, *transWhiteHistTexture;
+    Texture *colorHistTexture, *whiteHistTexture;
 
-    RectEntity *texAtlas;
+    TextureRect *atlasTex;
 
-    HudText    *dataText, *crosshairText;
-    RectEntity *dataBG,   *crosshairBG;
-
-    HudText    *chunkText, *meshText, *fpsText, *drawsText, *vramText, *ssGenText, *ssPackText;
-    Histogram  *chunkHist, *meshHist, *fpsHist, *drawsHist, *tMeshHist, *vramHist, *ssGenHist, *ssPackHist;
-    RectEntity *chunkBack, *meshBack, *fpsBack, *drawsBack, *vramBack, *ssGenBack, *ssPackBack;
-
-    bool visible;
+    TextEntity *crosshairText;
+    TextEntity *dataText;
+    
+    StatGraph *chunkUpdatesGraph;
+    StatGraph *meshUpdatesGraph;
+    StatGraph *fpsGraph;
+    StatGraph *drawCallsGraph;
+    StatGraph *vRamGraph;
+    StatGraph *serverGenGraph;
+    StatGraph *serverPacketGraph;
 };
 
 

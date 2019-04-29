@@ -5,7 +5,7 @@
 #ifndef ZEUS_GAMEGUI_H
 #define ZEUS_GAMEGUI_H
 
-#include "RectEntity.h"
+#include "TextureRect.h"
 #include "../Entity.h"
 #include "../../ClientState.h"
 #include "../../graph/drawable/DrawableGroup.h"
