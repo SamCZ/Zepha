@@ -24,7 +24,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize, Texture* tex) :
     drawCallsGraph   ("Draw Calls", 244, 64, 120, 0,  &monochromeGraphTexture, &fontTexture),
     vRamGraph        ("VRam",       244, 64, 120, 1,  &monochromeGraphTexture, &fontTexture) {
 
-    atlasTex.setScale({256, 256, 1});
+    atlasTex.setScale({512, 512, 1});
 
     positionElements(bufferSize);
 

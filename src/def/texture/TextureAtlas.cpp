@@ -14,59 +14,48 @@
 #include <stb_image.h>
 #include <stb_image_write.h>
 
-void TextureAtlas::createMissingTexture() {
-    auto *data = new unsigned char[16 * 4 * 16];
-    for (int i = 0; i < 16 * 16; i++) {
-        unsigned char r = 0;
-        unsigned char g = 0;
-        unsigned char b = 0;
-
-        if ((i % 16 < 8) ^ ((i / 16) < 8)) {
-            r = 255;
-            b = 255;
-        }
-
-        data[i * 4 + 0] = r;
-        data[i * 4 + 1] = g;
-        data[i * 4 + 2] = b;
-        data[i * 4 + 3] = 255;
-    }
-    addTexture(data, "_missing", 16, 16);
-}
-
 //Height is optional and defaults to 0
-TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) {
-//    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
-//    std::cout << "This GPU's max texture size is: " << maxTexSize / 4 << "px^2." << std::endl;
-//
-//    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texUnits);
-//    std::cout << "This GPU supports " << texUnits << " texture units." << std::endl;
+TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) :
+    pageWidth(width),
+    pageHeight((height == 0 ? width : height)),
+    pageTileWidth(pageWidth / 16),
+    pageTileHeight(pageHeight / 16),
+    atlasData(new unsigned char[pageWidth * 4 * pageHeight]) {
 
-    height = ((height == 0) ? width : height);
-    width = width;
+    int maxTexSize, texUnits;
 
-    this->width = width;
-    this->height = height;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
+    std::cout << "This GPU's max texture size is: " << maxTexSize / 4 << "px^2." << std::endl;
 
-    empty = std::vector<bool>((width / 16) * (height / 16), true);
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texUnits);
+    std::cout << "This GPU supports " << texUnits << " texture units." << std::endl;
 
-    auto* data = new unsigned char[width*4 * height];
-    for (int i = 0; i < width * height; i++) {
-        data[i * 4 + 0] = 0;
-        data[i * 4 + 1] = 0;
-        data[i * 4 + 2] = 0;
-        data[i * 4 + 3] = 0;
-    }
+    empty = std::vector<bool>(pageTileWidth * pageTileHeight, true);
+    for (int i = 0; i < pageWidth * 4 * pageHeight; i++) atlasData[i] = 0;
 
     t = new Texture();
-    t->loadFromBytes(data, width, height);
+    t->loadFromBytes(atlasData, pageWidth, pageHeight);
 
-    createMissingTexture();
-
-    delete[] data;
+    createMissingImage();
 }
 
-void TextureAtlas::loadFromDirectory(std::string dirStr) {
+void TextureAtlas::createMissingImage() {
+    auto *data = new unsigned char[16 * 4 * 16];
+    for (int i = 0; i < 16 * 16; i++) {
+
+        unsigned char m = 0;
+        if ((i % 16 < 8) ^ ((i / 16) < 8)) m = 255;
+
+        data[i * 4 + 0] = m;
+        data[i * 4 + 1] = 0;
+        data[i * 4 + 2] = m;
+        data[i * 4 + 3] = 255;
+    }
+
+    addImage(data, "_missing", 16, 16);
+}
+
+void TextureAtlas::loadDirectory(std::string dirStr) {
     cf_dir_t dir;
     cf_dir_open(&dir, (dirStr).c_str());
 
@@ -77,24 +66,39 @@ void TextureAtlas::loadFromDirectory(std::string dirStr) {
         if (!file.is_dir && strcmp(file.ext, ".png") == 0) {
             int width, height;
             unsigned char* data = stbi_load(file.path, &width, &height, nullptr, 4);
-            addTexture(data, std::string(file.name).substr(0, std::string(file.name).size() - 4), width, height);
+            addImage(data, std::string(file.name).substr(0, std::string(file.name).size() - 4), width, height);
             delete[] data;
         }
 
         cf_dir_next(&dir);
     }
     cf_dir_close(&dir);
+
+    std::string trypls("default_grass_top");
+    tryMakeGraphics(trypls);
+    trypls = "default_sand";
+    tryMakeGraphics(trypls);
+    trypls = "default_log_side";
+    tryMakeGraphics(trypls);
+    trypls = "default_leaves";
+    tryMakeGraphics(trypls);
+    trypls = "default_grass_float";
+    tryMakeGraphics(trypls);
+    trypls = "_missing";
+    tryMakeGraphics(trypls);
+    trypls = "default_leaves_puff";
+    tryMakeGraphics(trypls);
 }
 
-glm::vec2 TextureAtlas::findSpace(int w, int h) {
-    for (int j = 0; j < (height / 16) - (h - 1); j++) {
-        for (int i = 0; i < (width / 16) - (w - 1); i++) {
-            if (empty[j * (width / 16) + i]) {
+glm::vec2 TextureAtlas::findImageSpace(int w, int h) {
+    for (int j = 0; j < pageTileHeight - (h - 1); j++) {
+        for (int i = 0; i < pageTileWidth - (w - 1); i++) {
+            if (empty[j * pageTileWidth + i]) {
                 bool space = true;
 
                 for (int k = 0; k < h; k++) {
                     for (int l = 0; l < w; l++) {
-                        if (!empty[(j + k) * (width / 16) + (i + l)]) {
+                        if (!empty[(j + k) * pageTileWidth + (i + l)]) {
                             space = false;
                             break;
                         }
@@ -106,7 +110,7 @@ glm::vec2 TextureAtlas::findSpace(int w, int h) {
                 if (space) {
                     for (int k = 0; k < h; k++) {
                         for (int l = 0; l < w; l++) {
-                            empty[(j + k) * (width / 16) + (i + l)] = false;
+                            empty[(j + k) * pageTileWidth + (i + l)] = false;
                         }
                     }
                     return glm::vec2(i, j);
@@ -118,48 +122,120 @@ glm::vec2 TextureAtlas::findSpace(int w, int h) {
     return glm::vec2(-1, -1);
 }
 
-std::shared_ptr<AtlasRef> TextureAtlas::addTexture(unsigned char* data, std::string name, int pixelWidth, int pixelHeight) {
+std::shared_ptr<AtlasRef> TextureAtlas::addImage(unsigned char *data, std::string name, int texWidth, int texHeight) {
     auto ref = std::make_shared<AtlasRef>();
 
     ref->name = name;
-    ref->width = pixelWidth;
-    ref->height = pixelHeight;
+    ref->width = texWidth;
+    ref->height = texHeight;
 
-    int tileWidth = (int)std::ceil(pixelWidth / 16.0f);
-    int tileHeight = (int)std::ceil(pixelHeight / 16.0f);
+    auto tileWidth = static_cast<int>(std::ceil(texWidth / 16.0f));
+    auto tileHeight = static_cast<int>(std::ceil(texHeight / 16.0f));
 
     ref->tileWidth = tileWidth;
     ref->tileHeight = tileHeight;
 
-    auto space = findSpace(tileWidth, tileHeight);
+    auto space = findImageSpace(tileWidth, tileHeight);
 
     if (space.x < 0) {
         std::cerr << "Failed to find space in dynamic atlas." << std::endl;
         return nullptr;
     }
 
-    ref->tileX = (int)space.x;
-    ref->tileY = (int)space.y;
+    ref->tileX = static_cast<int>(space.x);
+    ref->tileY = static_cast<int>(space.y);
 
-    t->updateTexture((int)space.x * 16, (int)space.y * 16, pixelWidth, pixelHeight, data);
+    updateAtlas(static_cast<int>(space.x), static_cast<int>(space.y), texWidth, texHeight, data);
 
-    ref->uv = {(space.x * 16) / width, (space.y * 16) / height,
-               (space.x * 16 + pixelWidth) / width, (space.y * 16 + pixelHeight) / height};
+    ref->uv = {space.x / pageTileWidth, space.y / pageTileHeight,
+              (space.x * 16 + texWidth) / pageWidth, (space.y * 16 + texHeight) / pageHeight};
 
     textures.insert({name, ref});
     return ref;
 }
 
-Texture &TextureAtlas::getTexture() {
+void TextureAtlas::updateAtlas(int tileX, int tileY, int texWidth, int texHeight, unsigned char *data) {
+    int baseX = tileX * 16;
+    int baseY = tileY * 16;
+
+    t->updateTexture(baseX, baseY, texWidth, texHeight, data);
+
+    for (int i = 0; i < texWidth * texHeight * 4; i++) {
+        int xx = (i / 4) % texWidth;
+        int yy = (i / 4) / texWidth;
+        int of = i % 4;
+
+        atlasData[(baseX + xx + (baseY + yy) * pageWidth) * 4 + of] = data[(xx + yy * texWidth) * 4 + of];
+    }
+
+    t->loadFromBytes(atlasData, pageWidth, pageHeight);
+}
+
+TextureAtlas::RawTexData TextureAtlas::getSubImageBytes(std::string &name) {
+    glm::vec4 uvs;
+
+    if (textures.count(name)) {
+        uvs = textures[name]->uv;
+    }
+    else {
+        std::cerr << "Invalid base texture " << name << "." << std::endl;
+        uvs = textures["_missing"]->uv;
+    }
+
+    RawTexData data {};
+    data.width = static_cast<int>((uvs.z - uvs.x) * pageWidth);
+    data.height = static_cast<int>((uvs.w - uvs.y) * pageHeight);
+
+    auto pixels = new unsigned char[data.width * data.height * 4];
+
+    int x = static_cast<int>(uvs.x * pageWidth);
+    int y = static_cast<int>(uvs.y * pageWidth);
+
+    for (int i = 0; i < data.width * data.height; i++) {
+        int xx = x + (i % data.width);
+        int yy = y + (i / data.width);
+
+        pixels[i * 4 + 0] = atlasData[xx * 4     + yy * (pageWidth * 4)];
+        pixels[i * 4 + 1] = atlasData[xx * 4 + 1 + yy * (pageWidth * 4)];
+        pixels[i * 4 + 2] = atlasData[xx * 4 + 2 + yy * (pageWidth * 4)];
+        pixels[i * 4 + 3] = atlasData[xx * 4 + 3 + yy * (pageWidth * 4)];
+    }
+
+    data.data = pixels;
+
+    return data;
+}
+
+glm::vec4 TextureAtlas::tryMakeGraphics(std::string &name) {
+    RawTexData base = getSubImageBytes(name);
+
+    std::string crackStr("default_crack_7");
+    RawTexData crack = getSubImageBytes(crackStr);
+
+    for (int i = 0; i < base.width * base.height; i++) {
+        float alpha = crack.data[i * 4 + 3] / 255.f;
+
+        base.data[i * 4 + 0] = static_cast<unsigned char>(base.data[i * 4 + 0] * (1 - alpha) + crack.data[i * 4 + 0] * alpha);
+        base.data[i * 4 + 1] = static_cast<unsigned char>(base.data[i * 4 + 1] * (1 - alpha) + crack.data[i * 4 + 1] * alpha);
+        base.data[i * 4 + 2] = static_cast<unsigned char>(base.data[i * 4 + 2] * (1 - alpha) + crack.data[i * 4 + 2] * alpha);
+    }
+
+    addImage(base.data, name + "_grayscale", base.width, base.height);
+
+    delete [] base.data;
+
+    return textures[name + "_grayscale"]->uv;
+}
+
+Texture &TextureAtlas::getAtlasTexture() {
     return *t;
 }
 
-glm::vec4 TextureAtlas::getTextureUVs(std::string& name) {
+glm::vec4 TextureAtlas::getTextureUVs(std::string &name) {
     if (!textures.count(name)) {
-        std::cerr << "Invalid texture name (at TextureAtlas.cpp line " << __LINE__ << "): " << name << std::endl;
-        return textures.at("_missing")->uv;
+        return tryMakeGraphics(name);
     }
-    return textures.at(name)->uv;
+    return textures[name]->uv;
 }
 
 TextureAtlas::~TextureAtlas() = default;

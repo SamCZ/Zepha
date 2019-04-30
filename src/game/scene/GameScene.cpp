@@ -10,7 +10,7 @@ GameScene::GameScene(ClientState* state) : Scene(state),
         server("127.0.0.1", 12345),
 
         gameGui(state->renderer->getCamera()->getBufferDimensions()),
-        debugGui(state->renderer->getCamera()->getBufferDimensions(),  &defs.textures().getTexture()) {
+        debugGui(state->renderer->getCamera()->getBufferDimensions(),  &defs.textures().getAtlasTexture()) {
 
     auto blockBreak = new BlockModelEntity(defs);
     entities.push_back(blockBreak);
@@ -74,7 +74,7 @@ void GameScene::draw() {
 
     renderer.begin();
 
-    renderer.enableTexture(&defs.textures().getTexture());
+    renderer.enableTexture(&defs.textures().getAtlasTexture());
     drawCalls = world.render(renderer);
 
     for (auto entity : entities) {

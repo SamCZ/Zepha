@@ -23,6 +23,8 @@ void Texture::loadFromFile(std::string file) {
 }
 
 void Texture::loadFromBytes(unsigned char* bytes, int width, int height) {
+    if (textureID != 0) clear();
+
     this->width = width;
     this->height = height;
 

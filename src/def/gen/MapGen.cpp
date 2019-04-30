@@ -112,6 +112,7 @@ void MapGen::getElevation(MapGenJob &job) {
             else knownDepth = 0;
 
             job.depth[ind] = knownDepth;
+            job.depthFloat[ind] = knownDepth + (job.density[ind] - (int)job.density[ind]);
         }
     }
 
@@ -141,6 +142,7 @@ void MapGen::fillChunk(MapGenJob &job) {
     for (int m = 0; m < (int)pow(TransPos::CHUNK_SIZE, 3); m++) {
         VecUtils::indAssignVec(m, lp);
         int d = job.depth[m];
+//        float g = job.depthFloat[m];
 
         int grass = 1, dirt = 2, stone = 3;
 
@@ -159,9 +161,10 @@ void MapGen::fillChunk(MapGenJob &job) {
             if (grassType > 0) flora = grassType + 5;
         }
 
-        job.blocks[m] = d == 0 ? 0
-                      : d == 1 ? flora
-                      : d == 2 ? grass
+        job.blocks[m] = d <= 0 ? 0
+                      : d <= 1 ? flora
+//                      : d <= 1.5f+1 ? 21
+                      : d <= 2 ? grass
                       : d <= 3 ? dirt
                       : stone;
     }
