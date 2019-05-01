@@ -29,6 +29,8 @@ GameScene::GameScene(ClientState* state) : Scene(state),
 
 
 void GameScene::update() {
+    defs.textures().update();
+
     server.update(player);
 
     playerChunkPos = TransPos::roundPos(*player.getPos() / glm::vec3(TransPos::CHUNK_SIZE));

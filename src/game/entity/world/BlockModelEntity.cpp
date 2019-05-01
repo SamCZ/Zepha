@@ -10,24 +10,33 @@ BlockModelEntity::BlockModelEntity(GameDefs& defs) :
     setMesh(m);
 }
 
-void BlockModelEntity::setModel(BlockModel &model) {
-    auto m = new Mesh();
+void BlockModelEntity::setModel(unsigned int blockID, unsigned short crackLevel) {
+    if (blockID != this->blockID || crackLevel != this->crackLevel) {
+        this->blockID = blockID;
+        this->crackLevel = crackLevel;
 
-    std::vector<float> vertices;
-    std::vector<unsigned int> indices;
+        auto model = defs.blocks().getBlock(blockID).getModel();
+        auto m = new Mesh();
 
-    unsigned int indOffset = 0;
+        std::vector<float> vertices;
+        std::vector<unsigned int> indices;
 
-    addFaces(indOffset, vertices, indices, model.leftFaces);
-    addFaces(indOffset, vertices, indices, model.rightFaces);
-    addFaces(indOffset, vertices, indices, model.topFaces);
-    addFaces(indOffset, vertices, indices, model.bottomFaces);
-    addFaces(indOffset, vertices, indices, model.frontFaces);
-    addFaces(indOffset, vertices, indices, model.backFaces);
-    addFaces(indOffset, vertices, indices, model.noCulledFaces);
+        unsigned int indOffset = 0;
 
-    m->create(&vertices, &indices);
-    setMesh(m);
+        crackedFaces.clear();
+        std::cout << "Making model" << std::endl;
+
+        addFaces(indOffset, vertices, indices, model.leftFaces);
+        addFaces(indOffset, vertices, indices, model.rightFaces);
+        addFaces(indOffset, vertices, indices, model.topFaces);
+        addFaces(indOffset, vertices, indices, model.bottomFaces);
+        addFaces(indOffset, vertices, indices, model.frontFaces);
+        addFaces(indOffset, vertices, indices, model.backFaces);
+        addFaces(indOffset, vertices, indices, model.noCulledFaces);
+
+        m->create(&vertices, &indices);
+        setMesh(m);
+    }
 }
 
 void BlockModelEntity::clearModel() {
@@ -36,14 +45,17 @@ void BlockModelEntity::clearModel() {
 }
 
 void BlockModelEntity::addFaces(unsigned int &indOffset, std::vector<float> &vertices, std::vector<unsigned int> &indices, std::vector<MeshPart> &meshParts) {
-    std::string tex("default_crack_" + std::to_string((int)std::round(n)));
-
-    n += 0.005f;
-    if (n > 7) n = 0;
-
-    auto uv = defs.textures().getTextureUVs(tex);
 
     for (const MeshPart& mp : meshParts) {
+        glm::vec4 uv;
+        auto ref = defs.textures().generateCrackImage(mp.texture->name, crackLevel);
+        if (ref == nullptr) {
+            std::string missing("_missing");
+            uv = defs.textures().getTextureRef(missing)->uv;
+        }
+        uv = ref->uv;
+
+        crackedFaces.push_back(ref);
 
         for (const MeshVertex &vertex : mp.vertices) {
 

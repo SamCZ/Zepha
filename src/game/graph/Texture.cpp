@@ -46,7 +46,6 @@ void Texture::loadFromBytes(unsigned char* bytes, int width, int height) {
 void Texture::updateTexture(int x, int y, int width, int height, unsigned char *bytes) {
     glBindTexture(GL_TEXTURE_2D, textureID);
     glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 

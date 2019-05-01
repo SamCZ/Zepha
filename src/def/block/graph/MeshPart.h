@@ -24,6 +24,8 @@ struct MeshPart {
     std::vector<MeshVertex> vertices;
     std::vector<unsigned int> indices;
 
+    std::shared_ptr<AtlasRef> texture;
+
     MeshMod meshMod;
     float modValue;
 };

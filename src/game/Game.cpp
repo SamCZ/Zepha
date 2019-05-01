@@ -19,12 +19,12 @@ void Game::start(char* path) {
         int pid = fork();
         if (pid == 0) {
             char *arr[] = {
-                    (char *) "xterm",
-                    (char *) "-iconic",
-                    (char *) "-e",
+                    (char*) "xterm",
+                    (char*) "-iconic",
+                    (char*) "-e",
                     path,
-                    (char *) "server",
-                    (char *) nullptr};
+                    (char*) "server",
+                    (char*) nullptr};
 
             execvp("xterm", arr);
         } else {

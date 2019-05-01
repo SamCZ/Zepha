@@ -35,7 +35,8 @@ MeshPart::MeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> i
         p3->nml = normal;
     }
 
-    auto uv = atlas.getTextureUVs(texture);
+    this->texture = atlas.getTextureRef(texture);
+    auto uv = this->texture->uv;
 
     //Iterate through the vertices to adjust the texture coordinates to fit the textureAtlas.
     for (MeshVertex &vertex : this->vertices) {

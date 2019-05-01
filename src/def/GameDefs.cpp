@@ -5,9 +5,9 @@
 #include "GameDefs.h"
 
 GameDefs::GameDefs(std::string tex_path) {
-    textureAtlas = TextureAtlas(128);
+    textureAtlas = TextureAtlas(256);
     textureAtlas.loadDirectory(std::move(tex_path));
-//    textureAtlas.loadFromDirectory("../res/tex/gui");
+//    textureAtlas.loadDirectory("../res/tex/gui");
 
     blockAtlas = BlockAtlas();
 

@@ -3,13 +3,10 @@ set (CMAKE_CXX_STANDARD 14)
 set (PROJECT_NAME "Zeus")
 
 #set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,undefined")
-#set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize-recover=address")
 
 project (${PROJECT_NAME})
 
 #Include all of the library headers
-#This should be refactored in the future to use a GLOB with standardized folders
-
 include_directories (
         lib/glew/include/GL
         lib/glfw_linux/include
@@ -24,26 +21,23 @@ include_directories (
 )
 
 #Include all of the dynamic libraries
-
 set (ZEUS_LIBRARIES
-        ${OPENGL_gl_LIBRARY}    #opengl
-        glfw                    #glfw
-        libGLEW.so              #glew
-        pthread                 #std::thread
-        lua                     #sol2
-        dl z                    #gzip
-        enet                    #enet
-        noise                   #libnoise
+    ${OPENGL_gl_LIBRARY}    #opengl
+    glfw                    #glfw
+    libGLEW.so              #glew
+    pthread                 #std::thread
+    lua                     #sol2
+    dl z                    #gzip
+    enet                    #enet
+    noise                   #libnoise
 )
 
 #Include 'Packages', I don't understand how this works
-
 find_package (OpenGL REQUIRED)
 find_package (glfw3 REQUIRED)
 link_directories (lib/glew/lib)
 
 #Configure Main Executable
-
 add_subdirectory(src)
 
 set(MAIN_EXEC_NAME "ZeusApp")
@@ -53,7 +47,6 @@ target_link_libraries(${MAIN_EXEC_NAME} zeusCore)
 target_link_libraries(${MAIN_EXEC_NAME} ${ZEUS_LIBRARIES})
 
 #Configure Test Executable
-
 add_subdirectory(test)
 
 set(TEST_EXEC_NAME "ZeusTest")

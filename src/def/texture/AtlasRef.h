@@ -10,16 +10,18 @@
 #include <string>
 
 struct AtlasRef {
-    int tileX;
-    int tileY;
-    int tileWidth;
-    int tileHeight;
+    int tileX = 0;
+    int tileY = 0;
+    int tileWidth = 0;
+    int tileHeight = 0;
 
-    glm::vec4 uv;
-    std::string name;
+    bool base = false;
 
-    int width;
-    int height;
+    glm::vec4 uv {};
+    std::string name = "";
+
+    int width = 0;
+    int height = 0;
 };
 
 

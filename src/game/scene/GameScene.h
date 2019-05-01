@@ -5,7 +5,6 @@
 #ifndef SRC_GAMEWORLD_H
 #define SRC_GAMEWORLD_H
 
-
 #include "../graph/scene/Scene.h"
 #include "../graph/Renderer.h"
 #include "../entity/hud/DebugGui.h"

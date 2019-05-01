@@ -27,6 +27,9 @@ void Player::update(InputManager &input, double delta, double mouseX, double mou
     viewUpdate(mouseX, mouseY);
     moveCollide();
 
+    crackLevel += 0.05f;
+    if (crackLevel >= 8) crackLevel = 0;
+
     bool found = false;
     glm::vec3 foundPos {};
 
@@ -36,8 +39,7 @@ void Player::update(InputManager &input, double delta, double mouseX, double mou
 
         auto at = world->getBlock(rayEnd);
         if (at > 0) {
-            auto& def = defs->blocks().getBlock(at);
-            auto sBox = def.getSelectionBox();
+            auto sBox = defs->blocks().getBlock(at).getSelectionBox();
 
             if (rayEnd.x >= pointedAt.x + sBox.a.x && rayEnd.y >= pointedAt.y + sBox.a.y && rayEnd.z >= pointedAt.z + sBox.a.z &&
                 rayEnd.x <= pointedAt.x + sBox.b.x && rayEnd.y <= pointedAt.y + sBox.b.y && rayEnd.z <= pointedAt.z + sBox.b.z) {
@@ -49,7 +51,7 @@ void Player::update(InputManager &input, double delta, double mouseX, double mou
                 wireframe->updateMesh(box.a, box.b, 0.003f + ray.getLength() * 0.002f, glm::vec3(0.1));
                 wireframe->setPos(pointedAt);
 
-                blockBreak->setModel(def.getModel());
+                blockBreak->setModel(static_cast<unsigned int>(at), static_cast<u_short>(crackLevel));
                 blockBreak->setPos(pointedAt + glm::vec3(0, 0, 0));
 
                 if (!wireframe->isVisible()) wireframe->setVisible(true);

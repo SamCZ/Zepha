@@ -20,12 +20,14 @@ public:
     explicit TextureAtlas(unsigned int width, unsigned int height = 0);
 
     void loadDirectory(std::string dirStr);
+    void update();
 
     Texture& getAtlasTexture();
 
-    std::shared_ptr<AtlasRef> addImage(unsigned char *data, std::string name, int texWidth, int texHeight);
+    std::shared_ptr<AtlasRef> addImage(unsigned char *data, std::string name, bool base, int texWidth, int texHeight);
+    std::shared_ptr<AtlasRef> generateCrackImage(std::string &name, unsigned short crackLevel);
 
-    glm::vec4 getTextureUVs(std::string &name);
+    std::shared_ptr<AtlasRef> getTextureRef(std::string &name);
 
     ~TextureAtlas();
 private:
@@ -36,12 +38,13 @@ private:
     };
 
     RawTexData getSubImageBytes(std::string &name);
-    glm::vec4 tryMakeGraphics(std::string &name);
 
     glm::vec2 findImageSpace(int w, int h);
 
     void createMissingImage();
     void updateAtlas(int tileX, int tileY, int texWidth, int texHeight, unsigned char *data);
+
+    void deleteImage(std::shared_ptr<AtlasRef> ref);
 
     unsigned int pageWidth = 0;
     unsigned int pageHeight = 0;

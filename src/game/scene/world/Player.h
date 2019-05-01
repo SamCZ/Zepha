@@ -59,7 +59,9 @@ private:
     BlockModelEntity *blockBreak;
     SelectionBox box;
 
-    bool flying;
+    float crackLevel = 0;
+
+    bool flying = false;
 };
 
 

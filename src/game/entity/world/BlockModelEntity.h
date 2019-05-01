@@ -14,12 +14,15 @@ class BlockModelEntity : public Entity {
 public:
     explicit BlockModelEntity(GameDefs &defs);
 
-    void setModel(BlockModel& model);
+    void setModel(unsigned int blockID, unsigned short crackLevel);
     void clearModel();
 private:
     void addFaces(unsigned int &indOffset, std::vector<float> &vertices, std::vector<unsigned int> &indices, std::vector<MeshPart> &meshParts);
 
-    float n = 0;
+    std::vector<std::shared_ptr<AtlasRef>> crackedFaces;
+
+    unsigned int blockID;
+    unsigned int crackLevel;
 
     GameDefs& defs;
 };
