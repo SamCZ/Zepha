@@ -24,7 +24,6 @@ void BlockModelEntity::setModel(unsigned int blockID, unsigned short crackLevel)
         unsigned int indOffset = 0;
 
         crackedFaces.clear();
-        std::cout << "Making model" << std::endl;
 
         addFaces(indOffset, vertices, indices, model.leftFaces);
         addFaces(indOffset, vertices, indices, model.rightFaces);
@@ -65,14 +64,11 @@ void BlockModelEntity::addFaces(unsigned int &indOffset, std::vector<float> &ver
             vertices.push_back(pushed_pos.x);
             vertices.push_back(pushed_pos.y);
             vertices.push_back(pushed_pos.z);
-
             vertices.push_back(1);
-
             vertices.push_back(uv.x + ((uv.z - uv.x) * vertex.texUVs.x));
             vertices.push_back(uv.y + ((uv.w - uv.y) * vertex.texUVs.y));
             vertices.push_back(0);
             vertices.push_back(0);
-
             vertices.push_back(vertex.nml.x);
             vertices.push_back(vertex.nml.y);
             vertices.push_back(vertex.nml.z);

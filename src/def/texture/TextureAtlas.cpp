@@ -93,14 +93,14 @@ void TextureAtlas::loadDirectory(std::string dirStr) {
 void TextureAtlas::update() {
     auto it = textures.cbegin();
 
-//    while (it != textures.cend()) {
-//        auto curr = it++;
-//
-//        if (!curr->second->base && curr->second.unique()) {
-//            deleteImage(curr->second);
-//            textures.erase(curr);
-//        }
-//    }
+    while (it != textures.cend()) {
+        auto curr = it++;
+
+        if (!curr->second->base && curr->second.unique()) {
+            deleteImage(curr->second);
+            textures.erase(curr);
+        }
+    }
 }
 
 glm::vec2 TextureAtlas::findImageSpace(int w, int h) {
@@ -137,10 +137,8 @@ glm::vec2 TextureAtlas::findImageSpace(int w, int h) {
 
 std::shared_ptr<AtlasRef> TextureAtlas::addImage(unsigned char *data, std::string name, bool base, int texWidth, int texHeight) {
     std::shared_ptr<AtlasRef> ref;
-    if (textures.count(name) != 0) {
-        deleteImage(textures[name]);
-        ref = textures[name];
-    }
+
+    if (textures.count(name) != 0) ref = textures[name];
     else ref = std::make_shared<AtlasRef>();
 
     ref->name = name;
@@ -176,22 +174,23 @@ std::shared_ptr<AtlasRef> TextureAtlas::addImage(unsigned char *data, std::strin
 }
 
 void TextureAtlas::deleteImage(std::shared_ptr<AtlasRef> ref) {
-    //For Debugging
-//    auto data = new unsigned char[ref->width * ref->height * 4];
-//
-//    for (int i = 0; i < ref->width * ref->height * 4; i++) {
-//        data[i] = 0;
-//    }
-//
-//    updateAtlas(ref->tileX, ref->tileY, ref->width, ref->height, data);
-//    delete[] data;
-//
-//    for (auto i = ref->tileX; i < ref->tileX + ref->tileWidth; i++) {
-//        for (auto j = ref->tileY; j < ref->tileY + ref->tileHeight; j++) {
-//            empty[j * pageTileWidth + i] = true;
-//        }
-//    }
+    std::cout << ref->name << std::endl;
 
+    //For Debugging
+    auto data = new unsigned char[ref->width * ref->height * 4];
+
+    for (int i = 0; i < ref->width * ref->height * 4; i++) {
+        data[i] = 0;
+    }
+
+    updateAtlas(ref->tileX, ref->tileY, ref->width, ref->height, data);
+    delete[] data;
+
+    for (auto i = ref->tileX; i < ref->tileX + ref->tileWidth; i++) {
+        for (auto j = ref->tileY; j < ref->tileY + ref->tileHeight; j++) {
+            empty[j * pageTileWidth + i] = true;
+        }
+    }
 }
 
 void TextureAtlas::updateAtlas(int tileX, int tileY, int texWidth, int texHeight, unsigned char *data) {
