@@ -5,22 +5,12 @@
 #include "Player.h"
 #include "../../../util/Ray.h"
 
-Player::Player() {
-    pos = glm::vec3(0, 0, 0);
-    vel = glm::vec3(0, 0, 0);
-    pointedBlock = glm::vec3(0, 0, 0);
-    flying = false;
-    digPercentage = 0;
-    pointingAtBlock = false;
-}
-
-void Player::create(LocalWorld *world, GameDefs *defs, Camera *camera, WireframeEntity *wireframe, BlockModelEntity *blockBreak) {
-    this->camera = camera;
-    this->world = world;
-    this->wireframe = wireframe;
-    this->blockBreak = blockBreak;
-    this->defs = defs;
-}
+Player::Player(LocalWorld* world, GameDefs* defs, Camera* camera, WireframeEntity* wireframe, DrawableGroup* blockBreakEntities) :
+    world(world),
+    camera(camera),
+    wireframe(wireframe),
+    blockBreakEntities(blockBreakEntities),
+    defs(defs) {}
 
 void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
     posUpdate(input, delta);
@@ -29,6 +19,33 @@ void Player::update(InputManager &input, double delta, double mouseX, double mou
 
     crackLevel += 0.05f;
     if (crackLevel >= 8) crackLevel = 0;
+
+    auto& blockBreakList = blockBreakEntities->getChildren();
+
+    auto it = blockBreakList.cbegin();
+    while (it != blockBreakList.cend()) {
+        auto curr = it++;
+        auto blockModel = (BlockModelEntity*)(*curr);
+
+        int crack = blockModel->crackLevel;
+
+        blockModel->time += delta;
+        if (blockModel->time > 15 && blockModel->crackLevel == 7) {
+            crack = 6;
+            blockModel->time = 0;
+        }
+        else if (blockModel->time > 2) {
+            crack = blockModel->crackLevel - 1;
+            blockModel->time = 0;
+        }
+        if (crack >= 0) {
+            blockModel->setModel(blockModel->blockID, static_cast<u_short>(crack));
+        }
+        else {
+            delete *curr;
+            it = blockBreakList.erase(curr);
+        }
+    }
 
     bool found = false;
     glm::vec3 foundPos {};
@@ -48,11 +65,30 @@ void Player::update(InputManager &input, double delta, double mouseX, double mou
                     box = sBox;
                 }
 
-                wireframe->updateMesh(box.a, box.b, 0.003f + ray.getLength() * 0.002f, glm::vec3(0.1));
+                wireframe->updateMesh(box.a, box.b, 0.005f + ray.getLength() * 0.002f, glm::vec3(0.0));
                 wireframe->setPos(pointedAt);
 
-                blockBreak->setModel(static_cast<unsigned int>(at), static_cast<u_short>(crackLevel));
-                blockBreak->setPos(pointedAt + glm::vec3(0, 0, 0));
+                if (currentBlockBreak == nullptr || currentBlockBreak->getPos() != pointedAt) {
+                    bool foundModel = false;
+                    for (auto block : blockBreakList) {
+                        auto blockModel = (BlockModelEntity*)block;
+                        if (blockModel->blockPos == pointedAt) {
+                            foundModel = true;
+                            currentBlockBreak = blockModel;
+                            currentBlockBreak->setModel(static_cast<u_int>(at), 7);
+                            break;
+                        }
+                    }
+                    if (!foundModel) {
+                        currentBlockBreak = new BlockModelEntity(*defs, pointedAt);
+                        currentBlockBreak->setModel(static_cast<unsigned int>(at), static_cast<u_short>(7));
+                        currentBlockBreak->setPos(pointedAt);
+                        blockBreakEntities->addDrawable(currentBlockBreak);
+                    }
+                }
+                else {
+                    currentBlockBreak->setModel(static_cast<unsigned int>(at), static_cast<u_short>(7));
+                }
 
                 if (!wireframe->isVisible()) wireframe->setVisible(true);
 
@@ -120,7 +156,7 @@ void Player::posUpdate(InputManager &input, double delta) {
     glm::vec3 frontFlat = glm::normalize(glm::vec3(camera->getFront()->x, 0, camera->getFront()->z));
     glm::vec3 rightFlat = glm::normalize(glm::vec3(camera->getRight()->x, 0, camera->getRight()->z));
 
-    auto mod = glm::vec3(0, 0, 0);
+    glm::vec3 mod(0, 0, 0);
 
     if (input.isKeyDown(GLFW_KEY_W)) mod += frontFlat;
     if (input.isKeyDown(GLFW_KEY_S)) mod -= frontFlat;
@@ -220,24 +256,15 @@ void Player::viewUpdate(double deltaX, double deltaY) {
     yaw += deltaX;
     pitch += deltaY;
 
-    if (yaw > 360.0f) {
-        yaw = 0;
-    }
-    if (yaw < 0) {
-        yaw = 360.0f;
-    }
-    if (pitch > 90.0f) {
-        pitch = 90.0f;
-    }
-    if (pitch < -90.0f) {
-        pitch = -90.0f;
-    }
+    if (yaw > 360.f) yaw = 0;
+    if (yaw < 0.f)   yaw = 360.f;
+
+    if (pitch > 90.f)  pitch = 90.f;
+    if (pitch < -90.f) pitch = -90.f;
 
     camera->setYaw(yaw);
     camera->setPitch(pitch);
 }
-
-Player::~Player() = default;
 
 glm::vec3 *Player::getPos() {
     return &pos;

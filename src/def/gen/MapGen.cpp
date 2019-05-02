@@ -12,6 +12,10 @@
 MapGen::MapGen(unsigned int seed) {
     this->seed = seed;
 
+    terrainGeneralElevation.SetFrequency(0.05);
+    terrainGeneralElevation.SetPersistence(0.4);
+    terrainGeneralElevation.SetOctaveCount(6);
+
     terrainFlatBase.SetFrequency(0.15);
     terrainFlatBase.SetPersistence(0.4);
     terrainFlatBase.SetOctaveCount(4);
@@ -27,13 +31,16 @@ MapGen::MapGen(unsigned int seed) {
     terrainMountains.SetFrequency(0.1);
     terrainMountains.SetOctaveCount(4);
 
-    terrainFinal.SetSourceModule(0, terrainFlat);
-    terrainFinal.SetSourceModule(1, terrainMountains);
+    terrainPreElevation.SetSourceModule(0, terrainFlat);
+    terrainPreElevation.SetSourceModule(1, terrainMountains);
 
-    terrainFinal.SetControlModule(terrainType);
-    terrainFinal.SetBounds(0.0, 1000.0);
-//    terrainFinal.SetEdgeFalloff(0.1);
-    terrainFinal.SetEdgeFalloff(0.02);
+    terrainPreElevation.SetControlModule(terrainType);
+    terrainPreElevation.SetBounds(0.0, 1000.0);
+    terrainPreElevation.SetEdgeFalloff(0.1);
+//    terrainPreElevation.SetEdgeFalloff(0.02);
+
+    terrainFinal.SetSourceModule(0, terrainPreElevation);
+    terrainFinal.SetSourceModule(1, terrainGeneralElevation);
 
     grassNoise.SetFrequency(2);
     grassNoise.SetOctaveCount(3);

@@ -4,10 +4,10 @@
 
 #include "BlockModelEntity.h"
 
-BlockModelEntity::BlockModelEntity(GameDefs& defs) :
-    defs(defs) {
-    auto m = new Mesh();
-    setMesh(m);
+BlockModelEntity::BlockModelEntity(GameDefs& defs, glm::vec3 blockPos) :
+    defs(defs),
+    blockPos(blockPos) {
+    setMesh(new Mesh());
 }
 
 void BlockModelEntity::setModel(unsigned int blockID, unsigned short crackLevel) {
@@ -57,9 +57,8 @@ void BlockModelEntity::addFaces(unsigned int &indOffset, std::vector<float> &ver
         crackedFaces.push_back(ref);
 
         for (const MeshVertex &vertex : mp.vertices) {
-
             glm::vec3 pushed_pos = vertex.pos;
-            pushed_pos += glm::normalize(vertex.nml) * 0.0005f;
+            pushed_pos += glm::normalize(vertex.nml) * 0.003f;
 
             vertices.push_back(pushed_pos.x);
             vertices.push_back(pushed_pos.y);

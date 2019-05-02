@@ -37,6 +37,8 @@ public:
     std::vector<Drawable*> entities;
     std::vector<Drawable*> gui;
 
+    DrawableGroup blockBreakEntities;
+
     DebugGui debugGui;
     GameGui gameGui;
 

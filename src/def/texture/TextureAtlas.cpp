@@ -174,17 +174,15 @@ std::shared_ptr<AtlasRef> TextureAtlas::addImage(unsigned char *data, std::strin
 }
 
 void TextureAtlas::deleteImage(std::shared_ptr<AtlasRef> ref) {
-    std::cout << ref->name << std::endl;
-
     //For Debugging
-    auto data = new unsigned char[ref->width * ref->height * 4];
-
-    for (int i = 0; i < ref->width * ref->height * 4; i++) {
-        data[i] = 0;
-    }
-
-    updateAtlas(ref->tileX, ref->tileY, ref->width, ref->height, data);
-    delete[] data;
+//    auto data = new unsigned char[ref->width * ref->height * 4];
+//
+//    for (int i = 0; i < ref->width * ref->height * 4; i++) {
+//        data[i] = 0;
+//    }
+//
+//    updateAtlas(ref->tileX, ref->tileY, ref->width, ref->height, data);
+//    delete[] data;
 
     for (auto i = ref->tileX; i < ref->tileX + ref->tileWidth; i++) {
         for (auto j = ref->tileY; j < ref->tileY + ref->tileHeight; j++) {
@@ -250,7 +248,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::generateCrackImage(std::string &name, un
     RawTexData crack = getSubImageBytes(crackStr);
 
     for (int i = 0; i < base.width * base.height; i++) {
-        float alpha = crack.data[i * 4 + 3] / 255.f;
+        float alpha = crack.data[i * 4 + 3] / 255.f * (crackLevel / 16.f + 0.5f);
 
         base.data[i * 4 + 0] = static_cast<unsigned char>(base.data[i * 4 + 0] * (1 - alpha) + crack.data[i * 4 + 0] * alpha);
         base.data[i * 4 + 1] = static_cast<unsigned char>(base.data[i * 4 + 1] * (1 - alpha) + crack.data[i * 4 + 1] * alpha);

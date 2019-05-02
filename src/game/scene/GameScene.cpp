@@ -5,21 +5,18 @@
 #include "GameScene.h"
 
 GameScene::GameScene(ClientState* state) : Scene(state),
-        defs("../res/tex/game"),
-        world(defs, &playerChunkPos),
-        server("127.0.0.1", 12345),
+    defs("../res/tex/game"),
+    world(defs, &playerChunkPos),
+    server("127.0.0.1", 12345),
 
-        gameGui(state->renderer->getCamera()->getBufferDimensions()),
-        debugGui(state->renderer->getCamera()->getBufferDimensions(),  &defs.textures().getAtlasTexture()) {
+    gameGui(state->renderer->getCamera()->getBufferDimensions()),
+    debugGui(state->renderer->getCamera()->getBufferDimensions(),  &defs.textures().getAtlasTexture()) {
 
-    auto blockBreak = new BlockModelEntity(defs);
-    entities.push_back(blockBreak);
-
-    //Wireframe
     auto wireframe = new WireframeEntity({0, 0, 0}, {1, 1, 1}, 0.01);
     entities.push_back(wireframe);
 
-    player.create(&world, &defs, state->renderer->getCamera(), wireframe, blockBreak);
+    player = Player(&world, &defs, state->renderer->getCamera(), wireframe, &blockBreakEntities);
+    entities.push_back(&blockBreakEntities);
 
     gui.push_back(&gameGui);
     gui.push_back(&debugGui);
@@ -30,13 +27,11 @@ GameScene::GameScene(ClientState* state) : Scene(state),
 
 void GameScene::update() {
     defs.textures().update();
-
     server.update(player);
-
-    playerChunkPos = TransPos::roundPos(*player.getPos() / glm::vec3(TransPos::CHUNK_SIZE));
 
     auto window = state->renderer->getWindow();
 
+    playerChunkPos = TransPos::roundPos(*player.getPos() / glm::vec3(TransPos::CHUNK_SIZE));
     player.update(window->input, state->deltaTime, window->getDeltaX(), window->getDeltaY());
 
     if (state->renderer->resized) {

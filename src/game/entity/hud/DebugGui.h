@@ -36,7 +36,7 @@ private:
     Texture coloredGraphTexture;
     Texture monochromeGraphTexture;
 
-    TextureRect atlasTex;
+//    TextureRect atlasTex;
 
     TextEntity crosshairText;
     TextEntity dataText;

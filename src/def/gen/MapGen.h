@@ -30,11 +30,13 @@ private:
 
     unsigned int seed;
 
+    module::Perlin terrainGeneralElevation;
     module::RidgedMulti terrainMountains;
     module::Billow terrainFlatBase;
     module::ScaleBias terrainFlat;
     module::Perlin terrainType;
-    module::Select terrainFinal;
+    module::Select terrainPreElevation;
+    module::Add terrainFinal;
 
     module::Perlin grassNoise;
     module::Turbulence grassTurbulence;
