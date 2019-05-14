@@ -4,7 +4,6 @@
 
 #include "StatGraph.h"
 
-
 StatGraph::StatGraph(std::string title, int graphLength, int graphScale, Texture *graphTex, Texture *textTex) {
     construct(std::move(title), 244, 64, graphLength, graphScale, graphTex, textTex);
 }
@@ -14,6 +13,8 @@ StatGraph::StatGraph(std::string title, int xSize, int ySize, int graphLength, i
 }
 
 void StatGraph::construct(std::string title, int xSize, int ySize, int graphLength, int graphScale, Texture *graphTex, Texture *textTex) {
+    for (int i = 0; i < 10; i++) history[i] = 0;
+
     background = new TextureRect({0.1, 0.1, 0.1, 0.2}, {0.1, 0.1, 0.1, 0.2}, {0.1, 0.1, 0.1, 0.7}, {0.1, 0.1, 0.1, 0.7});
     background->setScale({xSize, ySize, 1});
 
@@ -37,11 +38,19 @@ void StatGraph::setPosition(glm::vec2 pos) {
 void StatGraph::update(float value) {
     graph->push_back(value);
 
-    std::string stringVal = (value == static_cast<int>(value))
-            ? std::to_string(static_cast<int>(value))
-            : Util::floatToString(value);
+    history[ind] = value;
+    if (++ind >= 10) {
+        ind = 0;
 
-    text->set(title + ": " + stringVal);
+        float val = 0;
+        for (float i : history) val += i / 10;
+
+        std::string stringVal = (value == static_cast<int>(value))
+                                ? std::to_string(static_cast<int>(value))
+                                : Util::floatToString(value);
+
+        text->set(title + ": " + stringVal);
+    }
 }
 
 void StatGraph::draw(Renderer &renderer) {

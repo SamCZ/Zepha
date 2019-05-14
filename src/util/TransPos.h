@@ -10,7 +10,7 @@
 #include <vec3.hpp>
 
 namespace TransPos {
-    const static int CHUNK_SIZE = 32; //Must be a multiple of 16
+    const static int CHUNK_SIZE = 16; //Must be a multiple of 16
     const static int MAPBLOCK_SIZE = 4;
     const static int REGION_SIZE = 4;
 

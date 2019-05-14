@@ -50,22 +50,22 @@ void InputManager::update(bool* keys) {
 
 void InputManager::updateLeftMouse(bool down) {
     if (down) {
-        if (!leftPressed) leftPressed = true;
+        if (!leftDown) leftPressed = true;
         leftDown = true;
     }
     else {
-        if (!leftReleased) leftReleased = true;
+        if (leftDown) leftReleased = true;
         leftDown = false;
     }
 }
 
 void InputManager::updateRightMouse(bool down){
     if (down) {
-        if (!rightPressed) rightPressed = true;
+        if (!leftDown) rightPressed = true;
         rightDown = true;
     }
     else {
-        if (!rightReleased) rightReleased = true;
+        if (leftDown) rightReleased = true;
         rightDown = false;
     }
 }
@@ -83,19 +83,19 @@ bool InputManager::isKeyReleased(int key) {
 }
 
 bool InputManager::isMouseDown(int button) {
-    if (button == GLFW_MOUSE_BUTTON_LEFT) return leftDown;
+    if      (button == GLFW_MOUSE_BUTTON_LEFT)  return leftDown;
     else if (button == GLFW_MOUSE_BUTTON_RIGHT) return rightDown;
     return false;
 }
 
 bool InputManager::isMousePressed(int button) {
-    if (button == GLFW_MOUSE_BUTTON_LEFT) return leftPressed;
+    if      (button == GLFW_MOUSE_BUTTON_LEFT)  return leftPressed;
     else if (button == GLFW_MOUSE_BUTTON_RIGHT) return rightPressed;
     return false;
 }
 
-bool InputManager::isMouseReleased(int button){
-    if (button == GLFW_MOUSE_BUTTON_LEFT) return leftReleased;
+bool InputManager::isMouseReleased(int button) {
+    if      (button == GLFW_MOUSE_BUTTON_LEFT)  return leftReleased;
     else if (button == GLFW_MOUSE_BUTTON_RIGHT) return rightReleased;
     return false;
 }

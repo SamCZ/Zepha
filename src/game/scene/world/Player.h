@@ -12,8 +12,9 @@
 #include "../../graph/Camera.h"
 #include "../../../util/Timer.h"
 #include "../../entity/world/WireframeEntity.h"
-#include "../../entity/world/BlockModelEntity.h"
+#include "../../entity/world/BlockCrackEntity.h"
 #include "../../graph/drawable/DrawableGroup.h"
+#include "../../../world/block/PosBlock.h"
 
 class Player {
 public:
@@ -21,7 +22,7 @@ public:
     static constexpr float EYE_HEIGHT = 1.65f;
 
     Player() = default;
-    Player(LocalWorld* world, GameDefs* defs, Camera* camera, WireframeEntity* wireframe, DrawableGroup* blockBreakEntities);
+    Player(LocalWorld* world, GameDefs* defs, Camera* camera, WireframeEntity* wireframe);
 
     void update(InputManager &input, double delta, double mouseX, double mouseY);
 
@@ -39,29 +40,24 @@ public:
     glm::vec3* getVel();
     void setVel(glm::vec3 vel);
 
-    glm::vec3* getPointedBlock();
+    PosBlock& getPointedThing();
 
     ~Player() = default;
 
-    bool pointingAtBlock = false;
-    float digPercentage = 0;
-    glm::vec3 pointedBlock {};
+    double breakInterval = 0;
 private:
     glm::vec3 pos {};
+    glm::vec3 vel {};
     float yaw = 0;
     float pitch = 0;
-    glm::vec3 vel {};
 
     Camera* camera = nullptr;
     GameDefs* defs = nullptr;
     LocalWorld* world = nullptr;
 
-    WireframeEntity* wireframe = nullptr;
-    BlockModelEntity* currentBlockBreak = nullptr;
-    DrawableGroup* blockBreakEntities = nullptr;
-    SelectionBox box;
+    PosBlock pointedThing;
 
-    float crackLevel = 0;
+    WireframeEntity* wireframe = nullptr;
 
     bool flying = false;
 };

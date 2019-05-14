@@ -10,8 +10,8 @@
 #include "graph/SelectionBox.h"
 
 class BlockDef {
-
 public:
+    BlockDef() = default;
     BlockDef(std::string identifier, BlockModel model, bool solid, SelectionBox selectionBox);
 
     bool         isCulling();
@@ -20,8 +20,8 @@ public:
     std::string  getIdentifier();
     SelectionBox getSelectionBox();
 private:
-    bool culls;
-    bool solid;
+    bool culls = false;
+    bool solid = false;
     SelectionBox selectionBox;
     BlockModel model;
     std::string identifier;

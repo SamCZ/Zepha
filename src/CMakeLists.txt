@@ -112,8 +112,8 @@ set(ZEUS_SRC_FILES
     game/graph/drawable/DrawableGroup.h
     game/graph/window/InputManager.cpp
     game/graph/window/InputManager.h
-    game/entity/world/BlockModelEntity.cpp
-    game/entity/world/BlockModelEntity.h
+        game/entity/world/BlockCrackEntity.cpp
+        game/entity/world/BlockCrackEntity.h
     def/texture/TextureAtlas.cpp
     def/texture/TextureAtlas.h
     def/texture/AtlasRef.h
@@ -126,6 +126,6 @@ set(ZEUS_SRC_FILES
     game/entity/hud/StatGraph.cpp
     game/entity/hud/StatGraph.h
     util/Util.h
-)
+        world/block/PosBlock.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

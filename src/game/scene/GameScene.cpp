@@ -15,8 +15,7 @@ GameScene::GameScene(ClientState* state) : Scene(state),
     auto wireframe = new WireframeEntity({0, 0, 0}, {1, 1, 1}, 0.01);
     entities.push_back(wireframe);
 
-    player = Player(&world, &defs, state->renderer->getCamera(), wireframe, &blockBreakEntities);
-    entities.push_back(&blockBreakEntities);
+    player = Player(&world, &defs, state->renderer->getCamera(), wireframe);
 
     gui.push_back(&gameGui);
     gui.push_back(&debugGui);
@@ -49,7 +48,7 @@ void GameScene::update() {
     }
 
     debugGui.update(player, world, defs, state->fps, world.getMeshChunkCount(), drawCalls, server.serverSideChunkGens, server.recvPackets);
-    world.update();
+    world.update(state->deltaTime);
 
     if (window->input.isKeyPressed(GLFW_KEY_F1)) {
         hudVisible = !hudVisible;

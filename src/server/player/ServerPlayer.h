@@ -13,6 +13,8 @@
 
 class ServerPlayer {
 public:
+//    const static int ACTIVE_RANGE_H = 3;
+//    const static int ACTIVE_RANGE_V = 3;
     const static int ACTIVE_RANGE_H = 12;
     const static int ACTIVE_RANGE_V = 6;
 

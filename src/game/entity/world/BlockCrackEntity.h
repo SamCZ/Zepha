@@ -10,19 +10,21 @@
 #include "../../../def/block/graph/BlockModel.h"
 #include "../../../def/GameDefs.h"
 
-class BlockModelEntity : public Entity {
+class BlockCrackEntity : public Entity {
 public:
-    explicit BlockModelEntity(GameDefs &defs, glm::vec3 blockPos);
+    explicit BlockCrackEntity(GameDefs &defs, glm::vec3 blockPos, unsigned int blockID);
 
-    void setModel(unsigned int blockID, unsigned short crackLevel);
-    void clearModel();
+    void update();
+    void setNewDamage(float damage);
 
     glm::vec3 blockPos;
     unsigned int blockID;
-    unsigned short crackLevel;
-
+    float targetDamage = 0;
+    float damage = 0;
     double time = 0;
 private:
+    short crackLevel = -1;
+
     void addFaces(unsigned int &indOffset, std::vector<float> &vertices, std::vector<unsigned int> &indices, std::vector<MeshPart> &meshParts);
 
     std::vector<std::shared_ptr<AtlasRef>> crackedFaces;

@@ -43,39 +43,45 @@ void MeshGenerator::build(const std::shared_ptr<BlockChunk> &chunk, BlockAtlas &
     indices.reserve(50000);
 
     glm::vec3 off;
+    glm::vec3 vis;
     glm::vec3 check;
 
     for (int i = 0; i < (int)pow(TransPos::CHUNK_SIZE, 3); i++) {
         if (blockData(i, *chunk, atlas).getModel().visible) {
 
             VecUtils::indAssignVec(i, off);
+            vis = off;
+//            if (chunk->getBlock(i) >= 6 && chunk->getBlock(i) <= 10) {
+//                vis += glm::vec3((((double)rand() / RAND_MAX) - 0.5f) / 3.f, 0, (((double)rand() / RAND_MAX) - 0.5f) / 3.f);
+//            }
+
             BlockModel& model = blockData(i, *chunk, atlas).getModel();
 
             check.x = off.x - 1; check.y = off.y; check.z = off.z;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(off, vertices, indices, model.leftFaces);
+                addFaces(vis, vertices, indices, model.leftFaces);
 
             check.x = off.x + 1; check.y = off.y; check.z = off.z;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(off, vertices, indices, model.rightFaces);
+                addFaces(vis, vertices, indices, model.rightFaces);
 
             check.x = off.x; check.y = off.y - 1; check.z = off.z;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(off, vertices, indices, model.bottomFaces);
+                addFaces(vis, vertices, indices, model.bottomFaces);
 
             check.x = off.x; check.y = off.y + 1; check.z = off.z;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(off, vertices, indices, model.topFaces);
+                addFaces(vis, vertices, indices, model.topFaces);
 
             check.x = off.x; check.y = off.y; check.z = off.z - 1;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(off, vertices, indices, model.backFaces);
+                addFaces(vis, vertices, indices, model.backFaces);
 
             check.x = off.x; check.y = off.y; check.z = off.z + 1;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(off, vertices, indices, model.frontFaces);
+                addFaces(vis, vertices, indices, model.frontFaces);
 
-            addFaces(off, vertices, indices, model.noCulledFaces);
+            addFaces(vis, vertices, indices, model.noCulledFaces);
         }
     }
 

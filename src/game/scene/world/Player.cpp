@@ -5,11 +5,10 @@
 #include "Player.h"
 #include "../../../util/Ray.h"
 
-Player::Player(LocalWorld* world, GameDefs* defs, Camera* camera, WireframeEntity* wireframe, DrawableGroup* blockBreakEntities) :
+Player::Player(LocalWorld* world, GameDefs* defs, Camera* camera, WireframeEntity* wireframe) :
     world(world),
     camera(camera),
     wireframe(wireframe),
-    blockBreakEntities(blockBreakEntities),
     defs(defs) {}
 
 void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
@@ -17,112 +16,55 @@ void Player::update(InputManager &input, double delta, double mouseX, double mou
     viewUpdate(mouseX, mouseY);
     moveCollide();
 
-    crackLevel += 0.05f;
-    if (crackLevel >= 8) crackLevel = 0;
-
-    auto& blockBreakList = blockBreakEntities->getChildren();
-
-    auto it = blockBreakList.cbegin();
-    while (it != blockBreakList.cend()) {
-        auto curr = it++;
-        auto blockModel = (BlockModelEntity*)(*curr);
-
-        int crack = blockModel->crackLevel;
-
-        blockModel->time += delta;
-        if (blockModel->time > 15 && blockModel->crackLevel == 7) {
-            crack = 6;
-            blockModel->time = 0;
-        }
-        else if (blockModel->time > 2) {
-            crack = blockModel->crackLevel - 1;
-            blockModel->time = 0;
-        }
-        if (crack >= 0) {
-            blockModel->setModel(blockModel->blockID, static_cast<u_short>(crack));
-        }
-        else {
-            delete *curr;
-            it = blockBreakList.erase(curr);
-        }
-    }
-
     bool found = false;
     glm::vec3 foundPos {};
 
     for (Ray ray(this); ray.getLength() < Player::LOOK_DISTANCE; ray.step(0.01)) {
         auto rayEnd = *ray.getEnd();
-        auto pointedAt = TransPos::roundPos(rayEnd);
+        auto pointedPos = TransPos::roundPos(rayEnd);
 
-        auto at = world->getBlock(rayEnd);
-        if (at > 0) {
-            auto sBox = defs->blocks().getBlock(at).getSelectionBox();
+        auto blockID = world->getBlock(rayEnd);
+        if (blockID > 0) {
+            auto sBox = defs->blocks().getBlock(blockID).getSelectionBox();
 
-            if (rayEnd.x >= pointedAt.x + sBox.a.x && rayEnd.y >= pointedAt.y + sBox.a.y && rayEnd.z >= pointedAt.z + sBox.a.z &&
-                rayEnd.x <= pointedAt.x + sBox.b.x && rayEnd.y <= pointedAt.y + sBox.b.y && rayEnd.z <= pointedAt.z + sBox.b.z) {
+            if (rayEnd.x >= pointedPos.x + sBox.a.x && rayEnd.y >= pointedPos.y + sBox.a.y && rayEnd.z >= pointedPos.z + sBox.a.z &&
+                rayEnd.x <= pointedPos.x + sBox.b.x && rayEnd.y <= pointedPos.y + sBox.b.y && rayEnd.z <= pointedPos.z + sBox.b.z) {
 
-                if (sBox != box) {
-                    box = sBox;
-                }
+                this->pointedThing = {pointedPos, static_cast<unsigned int>(blockID), *defs };
 
-                wireframe->updateMesh(box.a, box.b, 0.005f + ray.getLength() * 0.002f, glm::vec3(0.0));
-                wireframe->setPos(pointedAt);
-
-                if (currentBlockBreak == nullptr || currentBlockBreak->getPos() != pointedAt) {
-                    bool foundModel = false;
-                    for (auto block : blockBreakList) {
-                        auto blockModel = (BlockModelEntity*)block;
-                        if (blockModel->blockPos == pointedAt) {
-                            foundModel = true;
-                            currentBlockBreak = blockModel;
-                            currentBlockBreak->setModel(static_cast<u_int>(at), 7);
-                            break;
-                        }
-                    }
-                    if (!foundModel) {
-                        currentBlockBreak = new BlockModelEntity(*defs, pointedAt);
-                        currentBlockBreak->setModel(static_cast<unsigned int>(at), static_cast<u_short>(7));
-                        currentBlockBreak->setPos(pointedAt);
-                        blockBreakEntities->addDrawable(currentBlockBreak);
-                    }
-                }
-                else {
-                    currentBlockBreak->setModel(static_cast<unsigned int>(at), static_cast<u_short>(7));
-                }
-
+                wireframe->updateMesh(sBox.a, sBox.b, 0.005f + ray.getLength() * 0.002f, glm::vec3(0.0));
+                wireframe->setPos(pointedPos);
                 if (!wireframe->isVisible()) wireframe->setVisible(true);
 
                 found = true;
-                foundPos = pointedAt;
+                foundPos = pointedPos;
                 break;
             }
         }
     }
 
     if (found) {
-        pointingAtBlock = true;
-
-        if (foundPos != pointedBlock) {
-            pointedBlock = foundPos;
-            digPercentage = 0;
-        }
-
         if (input.isMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
-            digPercentage += delta * 30;
+            if (breakInterval == 0) {
+                world->damageBlock(pointedThing.pos, 0.55);
+            }
+            breakInterval += delta;
+            if (breakInterval > 0.4) breakInterval = 0;
         }
-
-        if (digPercentage >= 1) {
-            world->setBlock(pointedBlock, 0);
-            digPercentage = 0;
+        else {
+            if (breakInterval > 0) breakInterval += delta;
+            if (breakInterval > 0.4) breakInterval = 0;
         }
     }
     else {
-        pointingAtBlock = false;
-        digPercentage = 0;
+        breakInterval = 0;
+    }
 
-        if (wireframe->isVisible()) {
-            wireframe->setVisible(false);
-        }
+    auto block = static_cast<unsigned int>(world->getBlock(pointedThing.pos));
+    if (!found || block != pointedThing.blockID) {
+        pointedThing.blockID = block;
+        pointedThing.blockDef = defs->blocks().getBlock(block);
+        wireframe->setVisible(false);
     }
 
     if (input.isKeyPressed(GLFW_KEY_F)) {
@@ -291,6 +233,6 @@ float Player::getPitch() {
     return pitch;
 }
 
-glm::vec3* Player::getPointedBlock() {
-    return (pointingAtBlock) ? &pointedBlock : nullptr;
+PosBlock& Player::getPointedThing() {
+    return pointedThing;
 }

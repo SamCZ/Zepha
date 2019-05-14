@@ -14,7 +14,7 @@
 #include "net/ServerConnection.h"
 #include "../entity/world/PlayerEntity.h"
 #include "../entity/world/WireframeEntity.h"
-#include "../entity/world/BlockModelEntity.h"
+#include "../entity/world/BlockCrackEntity.h"
 #include "../../def/GameDefs.h"
 
 class GameScene : public Scene {
@@ -36,8 +36,6 @@ public:
 
     std::vector<Drawable*> entities;
     std::vector<Drawable*> gui;
-
-    DrawableGroup blockBreakEntities;
 
     DebugGui debugGui;
     GameGui gameGui;

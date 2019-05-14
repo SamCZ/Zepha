@@ -6,7 +6,6 @@
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 
 #include "LocalWorld.h"
-#include "../../../util/Vec.h"
 
 LocalWorld::LocalWorld(GameDefs& defs, glm::vec3* playerPos) :
     dimension(playerPos),
@@ -14,15 +13,124 @@ LocalWorld::LocalWorld(GameDefs& defs, glm::vec3* playerPos) :
     worldGenStream(55),
     defs(defs) {}
 
+void LocalWorld::update(double delta) {
+    finishMeshes();
+    queueMeshes();
+    finishChunks();
+
+    updateBlockDamages(delta);
+    dimension.update();
+}
+
+void LocalWorld::damageBlock(glm::vec3 pos, float amount) {
+    BlockCrackEntity* block = nullptr;
+    for (auto test : crackedBlocks) {
+        if (test->blockPos == pos) {
+            block = test;
+            break;
+        }
+    }
+    if (block == nullptr) {
+        auto blockID = static_cast<unsigned int>(getBlock(pos));
+        block = new BlockCrackEntity(defs, pos, blockID);
+        crackedBlocks.push_back(block);
+    }
+
+    block->setNewDamage(block->targetDamage + amount);
+    block->time = 0;
+}
+
+void LocalWorld::finishMeshes() {
+    lastMeshUpdates = 0;
+    auto finishedMeshes = meshGenStream.update();
+
+    for (auto mesh : *finishedMeshes) {
+        if (!mesh.vertices->empty()) {
+            auto meshChunk = new MeshChunk();
+            meshChunk->build(mesh.vertices, mesh.indices);
+            meshChunk->setPos(mesh.pos);
+
+            if (meshChunks.count(mesh.pos)) {
+                MeshChunk* oldChunk = meshChunks.at(mesh.pos);
+                meshChunks.erase(mesh.pos);
+                delete oldChunk;
+            }
+            dimension.addMeshChunk(meshChunk);
+            lastMeshUpdates++;
+        }
+    }
+}
+void LocalWorld::queueMeshes() {
+    if (meshGenStream.spaceInQueue()) {
+        bool moreSpace = true;
+
+        while (moreSpace && !pendingMesh.empty()) {
+            auto it = pendingMesh.begin();
+            glm::vec3 pos = *it;
+
+            if (!meshGenStream.isQueued(pos)) {
+                moreSpace = meshGenStream.tryToQueue(pos);
+            }
+
+            pendingMesh.erase(it);
+        }
+    }
+}
+void LocalWorld::finishChunks() {
+    auto finishedChunks = worldGenStream.update();
+
+    lastGenUpdates = 0;
+    for (const auto &chunk : finishedChunks) {
+        commitChunk(chunk->pos, chunk);
+        lastGenUpdates++;
+    }
+}
+void LocalWorld::updateBlockDamages(double delta) {
+    auto it = crackedBlocks.cbegin();
+    while (it != crackedBlocks.cend()) {
+        bool deleteMe = false;
+
+        auto curr = it++;
+        auto block = *curr;
+
+        block->time += delta;
+
+        if (block->damage >= 1) {
+            setBlock(block->blockPos, 0);
+            deleteMe = true;
+        }
+
+        if (block->time > 2) {
+            block->update();
+            block->setNewDamage(block->targetDamage - 0.1f);
+            block->time = 0;
+        }
+
+        if (block->damage < 0 || block->blockID != getBlock(block->blockPos)) {
+            deleteMe = true;
+        }
+
+        if (deleteMe) {
+            delete *curr;
+            it = crackedBlocks.erase(curr);
+        }
+        else {
+            block->update();
+        }
+    }
+}
+
+
 void LocalWorld::loadChunkPacket(Packet *p) {
     worldGenStream.pushBack(p);
 }
-
+std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::vec3 chunkPos) {
+    return dimension.getChunk(chunkPos);
+}
 void LocalWorld::commitChunk(glm::vec3 pos, std::shared_ptr<BlockChunk> c) {
     dimension.addBlockChunk(std::move(c));
     attemptMeshChunk(pos);
 }
-
 void LocalWorld::remeshChunk(glm::vec3 pos) {
     attemptMeshChunk(pos);
 }
@@ -38,7 +146,6 @@ void LocalWorld::attemptMeshChunk(glm::vec3 pos) {
 
     if (thisChunk->allAdjacentsExist() && !thisChunk->isEmpty()) pendingMesh.push_back(pos);
 }
-
 bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
     auto chunk = getChunk(pos);
     glm::vec3 diff = otherPos - pos;
@@ -57,55 +164,17 @@ bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
     return false;
 }
 
-void LocalWorld::update() {
-    //Create Finished Messages
-    auto finishedMeshes = meshGenStream.update();
+int LocalWorld::render(Renderer &renderer) {
+    auto count = dimension.render(renderer);
 
-    lastMeshUpdates = 0;
-    for (auto mesh : *finishedMeshes) {
-        if (!mesh.vertices->empty()) {
-            auto meshChunk = new MeshChunk();
-            meshChunk->build(mesh.vertices, mesh.indices);
-            meshChunk->setPos(mesh.pos);
-
-            if (meshChunks.count(mesh.pos)) {
-                MeshChunk* oldChunk = meshChunks.at(mesh.pos);
-                meshChunks.erase(mesh.pos);
-                delete oldChunk;
-            }
-//            meshChunks.insert(std::pair<glm::vec3, MeshChunk*>(mesh.pos, meshChunk));
-            dimension.addMeshChunk(meshChunk);
-
-            lastMeshUpdates++;
-        }
+    for (auto block : crackedBlocks) {
+        block->draw(renderer);
     }
 
-    //Build New Meshes
-    if (meshGenStream.spaceInQueue()) {
-        bool moreSpace = true;
-
-        while (moreSpace && !pendingMesh.empty()) {
-            auto it = pendingMesh.begin();
-            glm::vec3 pos = *it;
-
-            if (!meshGenStream.isQueued(pos)) {
-                moreSpace = meshGenStream.tryToQueue(pos);
-            }
-
-            pendingMesh.erase(it);
-        }
-    }
-
-    //Create Finished BlockChunks
-    auto finishedChunks = worldGenStream.update();
-
-    lastGenUpdates = 0;
-    for (const auto &chunk : finishedChunks) {
-        commitChunk(chunk->pos, chunk);
-        lastGenUpdates++;
-    }
-
-    dimension.update();
+    return count;
+}
+int LocalWorld::getMeshChunkCount() {
+    return dimension.getMeshChunkCount();
 }
 
 int LocalWorld::getBlock(glm::vec3 pos) {
@@ -118,7 +187,6 @@ int LocalWorld::getBlock(glm::vec3 pos) {
     }
     return -1;
 }
-
 void LocalWorld::setBlock(glm::vec3 pos, int block) {
     auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
     auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
@@ -130,21 +198,8 @@ void LocalWorld::setBlock(glm::vec3 pos, int block) {
         }
     }
 }
-
 bool LocalWorld::solidAt(glm::vec3 pos) {
     int blockId = getBlock(pos);
     if (blockId == -1) return true;
     return defs.blocks().getBlock(blockId).isSolid();
-}
-
-std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::vec3 chunkPos) {
-    return dimension.getChunk(chunkPos);
-}
-
-int LocalWorld::getMeshChunkCount() {
-    return dimension.getMeshChunkCount();
-}
-
-int LocalWorld::render(Renderer &renderer) {
-    dimension.render(renderer);
 }

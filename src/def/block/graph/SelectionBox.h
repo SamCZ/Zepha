@@ -18,6 +18,11 @@ public:
         set(a, b);
     }
 
+    SelectionBox& operator=(const SelectionBox &s) {
+        a = s.a;
+        b = s.b;
+    }
+
     bool operator==(const SelectionBox &o) {
         return (a == o.a && b == o.b);
     }
