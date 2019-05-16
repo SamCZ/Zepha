@@ -18,7 +18,7 @@
 
 class ServerConnection {
 public:
-    ServerConnection(std::string address, unsigned short port);
+    ServerConnection(std::string address, unsigned short port, TextureAtlas& atlas);
 
     void init(std::vector<Drawable*> &entities);
     void update(Player &player);
@@ -30,7 +30,9 @@ public:
     int serverSideChunkGens = 0;
     int recvPackets = 0;
 private:
+    std::shared_ptr<AtlasRef> playerFrontTex, playerBackTex, shadowTex;
     bool connected = false;
+    int id = 0;
 
     DrawableGroup* entities;
 

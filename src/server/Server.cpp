@@ -38,23 +38,22 @@ void Server::update() {
                     if (p.type == Packet::PLAYER_INFO) {
 
                         //Update Player Object
-                        glm::vec3 newPos = glm::vec3(
-                                Serializer::decodeFloat(&p.data[0]),
-                                Serializer::decodeFloat(&p.data[4]),
-                                Serializer::decodeFloat(&p.data[8])
-                        );
+                        auto newPos = Serializer::decodeFloatVec3(&p.data[0]);
+                        auto angle = Serializer::decodeFloat(&p.data[12]);
+
                         player->setPos(newPos);
+                        player->setAngle(angle);
 
                         //Send All Clients the new positon
                         Packet r(Packet::ENTITY_INFO);
 
-                        Serializer::encodeInt  (r.data, player->peer->index);
-                        Serializer::encodeFloat(r.data, newPos.x);
-                        Serializer::encodeFloat(r.data, newPos.y - 1.0f);
-                        Serializer::encodeFloat(r.data, newPos.z);
+                        Serializer::encodeInt      (r.data, player->peer->index);
+                        Serializer::encodeFloatVec3(r.data, newPos);
+                        Serializer::encodeFloat    (r.data, angle);
 
                         for (auto peer : connections.peers) {
-                            r.sendTo(peer->peer, PacketChannel::ENTITY_INFO);
+                            if (peer->index != player->peer->index)
+                                r.sendTo(peer->peer, PacketChannel::ENTITY_INFO);
                         }
                     }
                 }

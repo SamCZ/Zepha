@@ -8,32 +8,31 @@
 #include "../../def/block/BlockDef.h"
 #include "../../def/GameDefs.h"
 
-struct PosBlock {
-    PosBlock() = default;
-    PosBlock(const PosBlock &o) = default;
+struct PointedThing {
+    PointedThing() = default;
+    PointedThing(const PointedThing &o) = default;
 
-    PosBlock(glm::vec3 pos, unsigned int blockID, GameDefs& defs) :
-        blockDef(defs.blocks().getBlock(blockID)),
-        blockID(blockID),
-        pos(pos) {}
-
-    PosBlock& operator=(const PosBlock &o) {
+    PointedThing& operator=(const PointedThing &o) {
         this->blockDef = o.blockDef;
         this->blockID = o.blockID;
         this->pos = o.pos;
     }
 
-    bool operator==(const PosBlock &o) {
+    bool operator==(const PointedThing &o) {
         return (blockID == o.blockID && pos == o.pos);
     }
 
-    bool operator!=(const PosBlock &o) {
+    bool operator!=(const PointedThing &o) {
         return (blockID != o.blockID || pos != o.pos);
     }
 
-    BlockDef blockDef;
+public:
+    //Properties
     unsigned int blockID = 0;
+    BlockDef* blockDef = nullptr;
+
     glm::vec3 pos {};
+    SelectionBox::Face face = SelectionBox::NONE;
 };
 
 #endif //ZEUS_POSBLOCK_H

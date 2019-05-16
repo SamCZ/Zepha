@@ -22,13 +22,13 @@ namespace Util {
         return floatToString((float)val);
     }
 
-    static std::string vecToString(glm::vec3& vec) {
+    static std::string vecToString(glm::vec3 vec) {
         std::ostringstream out;
         out << (int)vec.x << ", " << (int)vec.y << ", " << (int)vec.z;
         return out.str();
     }
 
-    static std::string floatVecToString(glm::vec3& vec) {
+    static std::string floatVecToString(glm::vec3 vec) {
         std::ostringstream out;
         out.precision(2);
         out << std::fixed << vec.x << ", " << std::fixed << vec.y << ", " << std::fixed << vec.z;

@@ -5,9 +5,9 @@
 #include "GameScene.h"
 
 GameScene::GameScene(ClientState* state) : Scene(state),
-    defs("../res/tex/game"),
+    defs("../res/tex"),
     world(defs, &playerChunkPos),
-    server("127.0.0.1", 12345),
+    server("127.0.0.1", 12345, defs.textures()),
 
     gameGui(state->renderer->getCamera()->getBufferDimensions()),
     debugGui(state->renderer->getCamera()->getBufferDimensions(),  &defs.textures().getAtlasTexture()) {
@@ -30,7 +30,7 @@ void GameScene::update() {
 
     auto window = state->renderer->getWindow();
 
-    playerChunkPos = TransPos::roundPos(*player.getPos() / glm::vec3(TransPos::CHUNK_SIZE));
+    playerChunkPos = TransPos::roundPos(player.getPos() / glm::vec3(TransPos::CHUNK_SIZE));
     player.update(window->input, state->deltaTime, window->getDeltaX(), window->getDeltaY());
 
     if (state->renderer->resized) {

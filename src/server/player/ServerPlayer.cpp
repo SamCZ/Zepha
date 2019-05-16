@@ -15,9 +15,8 @@ ServerPlayer::ServerPlayer(ServerPeer *peer, std::string uuid) {
 Packet ServerPlayer::getInitPacket() {
     Packet p(Packet::PLAYER_INFO);
 
-    Serializer::encodeFloat(p.data, pos.x);
-    Serializer::encodeFloat(p.data, pos.y);
-    Serializer::encodeFloat(p.data, pos.z);
+    Serializer::encodeInt(p.data, peer->index);
+    Serializer::encodeFloatVec3(p.data, pos);
 
     return p;
 }
@@ -69,6 +68,10 @@ bool ServerPlayer::isInBounds(glm::vec3 cPos, std::pair<glm::vec3, glm::vec3> &b
 
 std::string ServerPlayer::getUsername() {
     return username;
+}
+
+void ServerPlayer::setAngle(float angle) {
+    this->angle = angle;
 }
 
 ServerPlayer::~ServerPlayer() = default;

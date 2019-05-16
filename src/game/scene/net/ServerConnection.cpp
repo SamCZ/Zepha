@@ -5,11 +5,18 @@
 #include "ServerConnection.h"
 
 
-ServerConnection::ServerConnection(std::string address, unsigned short port) {
-    this->port = port;
-    this->address = std::move(address);
+ServerConnection::ServerConnection(std::string address, unsigned short port, TextureAtlas &atlas) :
+    port(port),
+    address(std::move(address)) {
 
-    this->entities = new DrawableGroup();
+    std::string front("player_front");
+    std::string back("player_back");
+    std::string shadow("player_shadow");
+    playerFrontTex = atlas.getTextureRef(front);
+    playerBackTex = atlas.getTextureRef(back);
+    shadowTex = atlas.getTextureRef(shadow);
+
+    entities = new DrawableGroup();
 }
 
 void ServerConnection::init(std::vector<Drawable*> &entities) {
@@ -21,7 +28,6 @@ void ServerConnection::init(std::vector<Drawable*> &entities) {
         exit(EXIT_FAILURE);
     }
 }
-
 
 void ServerConnection::update(Player &player) {
     recvPackets = 0;
@@ -40,22 +46,17 @@ void ServerConnection::update(Player &player) {
 
                 switch (p->type) {
                     case Packet::PLAYER_INFO: {
-                        glm::vec3 playerPos = glm::vec3(
-                                Serializer::decodeFloat(&p->data[0]),
-                                Serializer::decodeFloat(&p->data[4]),
-                                Serializer::decodeFloat(&p->data[8])
-                        );
+                        this->id = Serializer::decodeInt(&p->data[0]);
+                        auto playerPos = Serializer::decodeFloatVec3(&p->data[4]);
                         player.setPos(playerPos);
                         break;
                     }
                     case Packet::ENTITY_INFO: {
                         int peer_id = Serializer::decodeInt(&p->data[0]);
+                        if (peer_id == id) break;
 
-                        glm::vec3 playerPos = glm::vec3(
-                                Serializer::decodeFloat(&p->data[4]),
-                                Serializer::decodeFloat(&p->data[8]),
-                                Serializer::decodeFloat(&p->data[12])
-                        );
+                        auto playerPos = Serializer::decodeFloatVec3(&p->data[4]);
+                        auto playerAngle = Serializer::decodeFloat(&p->data[16]);
 
                         bool found = false;
                         for (auto ent : entities->getChildren()) {
@@ -64,13 +65,15 @@ void ServerConnection::update(Player &player) {
                             if (playerEntity->peer_id == peer_id) {
 
                                 playerEntity->setPos(playerPos);
+                                playerEntity->setAngle(-playerAngle);
+
                                 found = true;
                                 break;
                             }
                         }
 
                         if (!found) {
-                            entities->addDrawable(new PlayerEntity(playerPos, peer_id));
+                            entities->addDrawable(new PlayerEntity(playerPos, peer_id, playerFrontTex, playerBackTex, shadowTex));
                         }
                         break;
                     }
@@ -101,9 +104,10 @@ void ServerConnection::update(Player &player) {
 
     //Send Player Position
     Packet p(Packet::PLAYER_INFO);
-    Serializer::encodeFloat(p.data, player.getPos()->x);
-    Serializer::encodeFloat(p.data, player.getPos()->y);
-    Serializer::encodeFloat(p.data, player.getPos()->z);
+    Serializer::encodeFloat(p.data, player.getPos().x);
+    Serializer::encodeFloat(p.data, player.getPos().y - Player::EYE_HEIGHT);
+    Serializer::encodeFloat(p.data, player.getPos().z);
+    Serializer::encodeFloat(p.data, player.getYaw());
     p.sendTo(handler.getPeer(), 0);
 }
 

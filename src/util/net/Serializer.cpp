@@ -27,14 +27,26 @@ void Serializer::encodeString(string &target, string str) {
     target += str;
 }
 
+void Serializer::encodeFloatVec3(string &target, glm::vec3 vec) {
+    encodeFloat(target, vec.x);
+    encodeFloat(target, vec.y);
+    encodeFloat(target, vec.z);
+}
+
+void Serializer::encodeIntVec3(string &target, glm::vec3 vec) {
+    encodeInt(target, static_cast<int>(vec.x));
+    encodeInt(target, static_cast<int>(vec.y));
+    encodeInt(target, static_cast<int>(vec.z));
+}
+
 void Serializer::encodeIntVec(string &target, vector<int> &vec) {
-    //Use a reinterpret cast to speed things up
+    //Used a reinterpret cast to speed things up
     target.reserve(target.length() + vec.size() * 4);
     target += string(reinterpret_cast<const char*>(&vec[0]), vec.size()*4);
 }
 
 void Serializer::encodeFloatVec(string &target, vector<float> &vec){
-    //Use a reinterpret cast to speed things up
+    //Used a reinterpret cast to speed things up
     target.reserve(target.length() + vec.size() * 4);
     target += string(reinterpret_cast<const char*>(&vec[0]), vec.size()*4);
 }
@@ -68,13 +80,29 @@ string Serializer::decodeString(char *stringStart) {
 }
 
 vector<int> Serializer::decodeIntVec(string &string) {
-    //Reverse the conversion done to vectors in the encode*Vec classes using reinterpret_cast.
+    //Reverse dthe conversion done to vectors in the encode*Vec classes using reinterpret_cast.
     return std::vector<int>(reinterpret_cast<const int*>(&string[0]),
                             reinterpret_cast<const int*>(&string[string.size()]));
 }
 
 vector<float> Serializer::decodeFloatVec(string &string) {
-    //Reverse the conversion done to vectors in the encode*Vec classes using reinterpret_cast.
+    //Reversed the conversion done to vectors in the encode*Vec classes using reinterpret_cast.
     return std::vector<float>(reinterpret_cast<const float*>(&string[0]),
                               reinterpret_cast<const float*>(&string[string.size()]));
+}
+
+glm::vec3 Serializer::decodeFloatVec3(char *vecStart) {
+    glm::vec3 o;
+    o.x = decodeFloat(vecStart);
+    o.y = decodeFloat(vecStart + 4);
+    o.z = decodeFloat(vecStart + 8);
+    return o;
+}
+
+glm::vec3 Serializer::decodeIntVec3(char *vecStart) {
+    glm::vec3 o;
+    o.x = decodeInt(vecStart);
+    o.y = decodeInt(vecStart + 4);
+    o.z = decodeInt(vecStart + 8);
+    return o;
 }

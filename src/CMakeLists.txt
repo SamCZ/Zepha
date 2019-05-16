@@ -126,6 +126,6 @@ set(ZEUS_SRC_FILES
     game/entity/hud/StatGraph.cpp
     game/entity/hud/StatGraph.h
     util/Util.h
-        world/block/PosBlock.h)
+        world/block/PointedThing.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

@@ -39,7 +39,7 @@ int Window::initialize() {
 //    glEnable(GL_MULTISAMPLE);
 
     //Create the window
-    mainWindow = glfwCreateWindow(width, height, "Zeus Alpha", nullptr, nullptr);
+    mainWindow = glfwCreateWindow(width, height, "Zeus", nullptr, nullptr);
 
     if (!mainWindow) {
         printf("GLFW window failed");

@@ -14,11 +14,12 @@
 #include "../../entity/world/WireframeEntity.h"
 #include "../../entity/world/BlockCrackEntity.h"
 #include "../../graph/drawable/DrawableGroup.h"
-#include "../../../world/block/PosBlock.h"
+#include "../../../world/block/PointedThing.h"
 
 class Player {
 public:
     static constexpr float LOOK_DISTANCE = 6.5f;
+    static constexpr float LOOK_PRECISION = 0.01f;
     static constexpr float EYE_HEIGHT = 1.65f;
 
     Player() = default;
@@ -28,19 +29,21 @@ public:
 
     void posUpdate(InputManager &input, double delta);
     void viewUpdate(double deltaX, double deltaY);
+    void pointerUpdate(InputManager &input, double delta);
+
     bool collides(glm::vec3 pos);
     void moveCollide();
 
-    glm::vec3* getPos();
+    glm::vec3 getPos();
     void setPos(glm::vec3 pos);
 
     float getYaw();
     float getPitch();
 
-    glm::vec3* getVel();
+    glm::vec3 getVel();
     void setVel(glm::vec3 vel);
 
-    PosBlock& getPointedThing();
+    PointedThing& getPointedThing();
 
     ~Player() = default;
 
@@ -55,7 +58,7 @@ private:
     GameDefs* defs = nullptr;
     LocalWorld* world = nullptr;
 
-    PosBlock pointedThing;
+    PointedThing pointedThing;
 
     WireframeEntity* wireframe = nullptr;
 

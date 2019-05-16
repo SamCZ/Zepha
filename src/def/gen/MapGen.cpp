@@ -127,7 +127,7 @@ void MapGen::getElevation(MapGenJob &job) {
 }
 
 void MapGen::getDensityMap(MapGenJob &job) {
-    auto terrain_2d_sample = NoiseSample::getSample(&terrainFinal, job.pos, 8, 1, true);
+    auto terrain_2d_sample = NoiseSample::getSample(&terrainFinal, job.pos, 4, 1, true);
 
     glm::vec3 lp;
 
@@ -138,11 +138,11 @@ void MapGen::getDensityMap(MapGenJob &job) {
 }
 
 void MapGen::fillChunk(MapGenJob &job) {
-    auto grass_sample = NoiseSample::getSample(&grassFinal, job.pos, 16, 0, true);
-    auto flora_type_sample = NoiseSample::getSample(&floraFinal, job.pos, 4, 0, true);
-    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 16, 0, true);
+    auto grass_sample = NoiseSample::getSample(&grassFinal, job.pos, 8, 0, true);
+    auto flora_type_sample = NoiseSample::getSample(&floraFinal, job.pos, 2, 0, true);
+    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 8, 0, true);
 
-    auto biome_sample = NoiseSample::getSample(&biomeTemp, job.pos, 2, 0, true);
+//    auto biome_sample = NoiseSample::getSample(&biomeTemp, job.pos, 1, 0, true);
 
     glm::vec3 lp;
 
@@ -178,7 +178,7 @@ void MapGen::fillChunk(MapGenJob &job) {
 }
 
 void MapGen::addTrees(MapGenJob &job) {
-    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 16, 0, true);
+    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 8, 0, true);
 
     glm::vec3 lp;
 

@@ -17,7 +17,6 @@ out vec4 outColor;
 uniform sampler2D tex;
 
 void main() {
-
     //Get Color
     vec4 fragColor;
 

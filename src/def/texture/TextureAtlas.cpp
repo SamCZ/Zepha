@@ -269,6 +269,7 @@ Texture &TextureAtlas::getAtlasTexture() {
 
 std::shared_ptr<AtlasRef> TextureAtlas::getTextureRef(std::string &name) {
     if (!textures.count(name)) {
+        std::cerr << "INVALID TEXTURE " << std::endl;
 //        return tryMakeGraphics(name);
     }
     return textures[name];

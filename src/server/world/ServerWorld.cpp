@@ -74,8 +74,13 @@ void ServerWorld::playerChangedChunks(ServerPlayer *player) {
         }
     }
 
-    printf("[INFO] %s moved, generating %d chunks.\n",
-            player->getUsername().c_str(), generated);
+    printf("[INFO] %s moved to %d, %d, %d, generating %d chunks.\n",
+           player->getUsername().c_str(),
+           static_cast<int>(pos.x),
+           static_cast<int>(pos.y),
+           static_cast<int>(pos.x),
+           generated);
+
     t.printElapsedMs();
 
     player->changedChunks = false;

@@ -4,6 +4,6 @@ set(ZEUS_TEST_FILES
         tests/Serializer.cpp
         tests/LibNoise.cpp
         tests/Dimension.cpp
-        tests/List.cpp)
+        tests/List.cpp tests/Intersects.cpp)
 
 add_library (zeusTest ${ZEUS_TEST_FILES})

@@ -1,11 +1,9 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
-
-//
-// Created by aurailus on 31/01/19.
-//
-
+#define STB_IMAGE_IMPLEMENTATION
 #define CATCH_CONFIG_MAIN
+#pragma clang diagnostic pop
+
 #include <catch.hpp>
 
 TEST_CASE("Sanity Check", "[core]") {
@@ -19,5 +17,4 @@ TEST_CASE("Sanity Check", "[core]") {
 #include "tests/LibNoise.cpp"
 #include "tests/Dimension.cpp"
 #include "tests/List.cpp"
-
-#pragma clang diagnostic pop
+#include "tests/Intersects.cpp"

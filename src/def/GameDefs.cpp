@@ -6,8 +6,9 @@
 
 GameDefs::GameDefs(std::string tex_path) {
     textureAtlas = TextureAtlas(1024);
-    textureAtlas.loadDirectory(std::move(tex_path));
-    textureAtlas.loadDirectory("../res/tex/gui");
+    textureAtlas.loadDirectory(tex_path + "/game");
+    textureAtlas.loadDirectory(tex_path + "/gui");
+    textureAtlas.loadDirectory(tex_path + "/ent");
 
     blockAtlas = BlockAtlas();
 

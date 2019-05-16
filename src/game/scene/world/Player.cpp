@@ -14,64 +14,8 @@ Player::Player(LocalWorld* world, GameDefs* defs, Camera* camera, WireframeEntit
 void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
     posUpdate(input, delta);
     viewUpdate(mouseX, mouseY);
+    pointerUpdate(input, delta);
     moveCollide();
-
-    bool found = false;
-    glm::vec3 foundPos {};
-
-    for (Ray ray(this); ray.getLength() < Player::LOOK_DISTANCE; ray.step(0.01)) {
-        auto rayEnd = *ray.getEnd();
-        auto pointedPos = TransPos::roundPos(rayEnd);
-
-        auto blockID = world->getBlock(rayEnd);
-        if (blockID > 0) {
-            auto sBox = defs->blocks().getBlock(blockID).getSelectionBox();
-
-            if (rayEnd.x >= pointedPos.x + sBox.a.x && rayEnd.y >= pointedPos.y + sBox.a.y && rayEnd.z >= pointedPos.z + sBox.a.z &&
-                rayEnd.x <= pointedPos.x + sBox.b.x && rayEnd.y <= pointedPos.y + sBox.b.y && rayEnd.z <= pointedPos.z + sBox.b.z) {
-
-                this->pointedThing = {pointedPos, static_cast<unsigned int>(blockID), *defs };
-
-                wireframe->updateMesh(sBox.a, sBox.b, 0.005f + ray.getLength() * 0.002f, glm::vec3(0.0));
-                wireframe->setPos(pointedPos);
-                if (!wireframe->isVisible()) wireframe->setVisible(true);
-
-                found = true;
-                foundPos = pointedPos;
-                break;
-            }
-        }
-    }
-
-    if (found) {
-        if (input.isMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
-            if (breakInterval == 0) {
-                world->damageBlock(pointedThing.pos, 0.55);
-            }
-            breakInterval += delta;
-            if (breakInterval > 0.4) breakInterval = 0;
-        }
-        else {
-            if (breakInterval > 0) breakInterval += delta;
-            if (breakInterval > 0.4) breakInterval = 0;
-        }
-    }
-    else {
-        breakInterval = 0;
-    }
-
-    auto block = static_cast<unsigned int>(world->getBlock(pointedThing.pos));
-    if (!found || block != pointedThing.blockID) {
-        pointedThing.blockID = block;
-        pointedThing.blockDef = defs->blocks().getBlock(block);
-        wireframe->setVisible(false);
-    }
-
-    if (input.isKeyPressed(GLFW_KEY_F)) {
-        flying = !flying;
-    }
-
-    camera->setPosition(pos);
 }
 
 void Player::posUpdate(InputManager &input, double delta) {
@@ -80,6 +24,10 @@ void Player::posUpdate(InputManager &input, double delta) {
     float friction = 0.3f;
 
     double moveMult = moveSpeed * delta;
+
+    if (input.isKeyPressed(GLFW_KEY_F)) {
+        flying = !flying;
+    }
 
     if (flying) {
         moveMult *= 4;
@@ -126,6 +74,76 @@ void Player::posUpdate(InputManager &input, double delta) {
     }
     else {
         vel = vel * (1.0f-friction) + mod * friction;
+    }
+}
+
+void Player::viewUpdate(double deltaX, double deltaY) {
+    float turnSpeed = 0.1f;
+
+    deltaX *= turnSpeed;
+    deltaY *= turnSpeed;
+
+    yaw += deltaX;
+    pitch += deltaY;
+
+    if (yaw > 360.f) yaw = 0;
+    if (yaw < 0.f)   yaw = 360.f;
+
+    if (pitch > 90.f)  pitch = 90.f;
+    if (pitch < -90.f) pitch = -90.f;
+
+    camera->setYaw(yaw);
+    camera->setPitch(pitch);
+    camera->setPosition(pos);
+}
+
+void Player::pointerUpdate(InputManager &input, double delta) {
+    bool found = false;
+
+    for (Ray ray(this); ray.getLength() < Player::LOOK_DISTANCE; ray.step(LOOK_PRECISION)) {
+        auto rayEnd = *ray.getEnd();
+        auto pointedPos = TransPos::roundPos(rayEnd);
+
+        auto blockID = world->getBlock(rayEnd);
+        if (blockID > 0) {
+            auto sBox = defs->blocks().getBlock(blockID).getSelectionBox();
+            SelectionBox::Face intersects = sBox.intersects(*ray.getEnd(), pointedPos);
+
+            if (intersects != SelectionBox::NONE) {
+                pointedThing.blockID = static_cast<unsigned int>(blockID);
+                pointedThing.blockDef = &defs->blocks().getBlock(blockID);
+                pointedThing.pos = pointedPos;
+                pointedThing.face = intersects;
+
+                wireframe->updateMesh(sBox.a, sBox.b, 0.0020f + ray.getLength() * 0.0020f, glm::vec3(0.0));
+                wireframe->setPos(pointedPos);
+                if (!wireframe->isVisible()) wireframe->setVisible(true);
+
+                found = true;
+                break;
+            }
+        }
+    }
+
+    if (found) {
+        if (input.isMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
+            if (breakInterval == 0) {
+                world->damageBlock(pointedThing.pos, 0.55);
+            }
+            breakInterval += delta;
+            if (breakInterval > 0.4) breakInterval = 0;
+        }
+        else {
+            if (breakInterval > 0) breakInterval += delta;
+            if (breakInterval > 0.4) breakInterval = 0;
+        }
+        if (input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
+            world->setBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face), 3);
+        }
+    }
+    else {
+        if (wireframe->isVisible()) wireframe->setVisible(false);
+        breakInterval = 0;
     }
 }
 
@@ -189,27 +207,8 @@ void Player::moveCollide() {
     }
 }
 
-void Player::viewUpdate(double deltaX, double deltaY) {
-    float turnSpeed = 0.1f;
-
-    deltaX *= turnSpeed;
-    deltaY *= turnSpeed;
-
-    yaw += deltaX;
-    pitch += deltaY;
-
-    if (yaw > 360.f) yaw = 0;
-    if (yaw < 0.f)   yaw = 360.f;
-
-    if (pitch > 90.f)  pitch = 90.f;
-    if (pitch < -90.f) pitch = -90.f;
-
-    camera->setYaw(yaw);
-    camera->setPitch(pitch);
-}
-
-glm::vec3 *Player::getPos() {
-    return &pos;
+glm::vec3 Player::getPos() {
+    return pos;
 }
 
 void Player::setPos(glm::vec3 pos) {
@@ -217,8 +216,8 @@ void Player::setPos(glm::vec3 pos) {
     camera->setPosition(pos);
 }
 
-glm::vec3 *Player::getVel() {
-    return &vel;
+glm::vec3 Player::getVel() {
+    return vel;
 }
 
 void Player::setVel(glm::vec3 vel) {
@@ -233,6 +232,6 @@ float Player::getPitch() {
     return pitch;
 }
 
-PosBlock& Player::getPointedThing() {
+PointedThing& Player::getPointedThing() {
     return pointedThing;
 }

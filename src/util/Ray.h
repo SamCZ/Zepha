@@ -8,7 +8,6 @@
 #include <vec3.hpp>
 #include <cmath>
 #include <glm.hpp>
-
 #include "../game/scene/world/Player.h"
 
 class Ray {

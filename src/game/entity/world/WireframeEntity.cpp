@@ -53,18 +53,19 @@ void WireframeEntity::buildMesh() {
 void WireframeEntity::createBox(float x, float y, float z, float xSize, float ySize, float zSize) {
     float hw = (width/2.0f);
     float w = width;
-    auto c = color;
+    auto  c = color;
+    float al = 1;
 
     std::vector<float> myVerts {
-    /*0*/ x - hw + a.x,             y - hw + a.y,             z - hw + a.z,             0, c.x, c.y, c.z, 0.5, 0, 0, 0,
-    /*1*/ x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z,             0, c.x, c.y, c.z, 0.5, 0, 0, 0,
-    /*2*/ x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z + zSize + w, 0, c.x, c.y, c.z, 0.5, 0, 0, 0,
-    /*3*/ x - hw + a.x,             y - hw + a.y,             z - hw + a.z + zSize + w, 0, c.x, c.y, c.z, 0.5, 0, 0, 0,
+    /*0*/ x - hw + a.x,             y - hw + a.y,             z - hw + a.z,             0, c.x, c.y, c.z, al, 0, 0, 0,
+    /*1*/ x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z,             0, c.x, c.y, c.z, al, 0, 0, 0,
+    /*2*/ x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z + zSize + w, 0, c.x, c.y, c.z, al, 0, 0, 0,
+    /*3*/ x - hw + a.x,             y - hw + a.y,             z - hw + a.z + zSize + w, 0, c.x, c.y, c.z, al, 0, 0, 0,
 
-    /*4*/ x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z,             0, c.x, c.y, c.z, 0.5, 0, 0, 0,
-    /*5*/ x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z,             0, c.x, c.y, c.z, 0.5, 0, 0, 0,
-    /*6*/ x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w, 0, c.x, c.y, c.z, 0.5, 0, 0, 0,
-    /*7*/ x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z + zSize + w, 0, c.x, c.y, c.z, 0.5, 0, 0, 0,
+    /*4*/ x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z,             0, c.x, c.y, c.z, al, 0, 0, 0,
+    /*5*/ x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z,             0, c.x, c.y, c.z, al, 0, 0, 0,
+    /*6*/ x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w, 0, c.x, c.y, c.z, al, 0, 0, 0,
+    /*7*/ x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z + zSize + w, 0, c.x, c.y, c.z, al, 0, 0, 0,
     };
 
     std::vector<unsigned int> myInds {

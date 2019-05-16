@@ -87,12 +87,12 @@ void DebugGui::update(Player& player, LocalWorld& world, GameDefs& defs, double 
     }
 
     { //Top-left Data
-        glm::vec3 footPos = TransPos::roundPos(*player.getPos()) + glm::vec3(0, -2, 0);
+        glm::vec3 footPos = TransPos::roundPos(player.getPos()) + glm::vec3(0, -2, 0);
 
         int blockID = world.getBlock(footPos);
         std::string on = (blockID > 0) ? defs.blocks().getBlock(blockID).getIdentifier() : "invalid";
 
-        glm::vec3 playerPos = TransPos::roundPos(*player.getPos());
+        glm::vec3 playerPos = TransPos::roundPos(player.getPos());
 
         glm::vec3 chunkPos = TransPos::chunkFromVec(playerPos);
 
@@ -110,7 +110,7 @@ void DebugGui::update(Player& player, LocalWorld& world, GameDefs& defs, double 
         using namespace Util;
 
         str << "Player: " << vecToString(playerPos);
-        str << " (" << floatVecToString(*player.getPos()) << ")" << std::endl << std::endl;
+        str << " (" << floatVecToString(player.getPos()) << ")" << std::endl << std::endl;
 
         str << "Chunk: " << vecToString(posOffsetFromChunk) << " [" << vecToString(chunkPos) << "]" << std::endl;
         str << "MapBlock: " << vecToString(posOffsetFromBlock) << std::endl;
@@ -120,7 +120,7 @@ void DebugGui::update(Player& player, LocalWorld& world, GameDefs& defs, double 
         str << "Mb: " << vecToString(mapBlockCoordinate) << ", ";
         str << "Rg: " << vecToString(regionCoordinate) << std::endl;
 
-        str << "Vel: " << floatVecToString(*player.getVel()) << std::endl;
+        str << "Vel: " << floatVecToString(player.getVel()) << std::endl;
         str << "Yaw: " << floatToString(player.getYaw()) << ", ";
         str << "Pitch: " << floatToString(player.getPitch()) << std::endl << std::endl;
 
@@ -133,9 +133,24 @@ void DebugGui::update(Player& player, LocalWorld& world, GameDefs& defs, double 
     }
 
     { //Crosshair Text
-        std::string look;
-        auto block = player.getPointedThing().blockDef.getIdentifier();
-        crosshairText.set(look);
+        auto thing = player.getPointedThing();
+
+        std::string face = (thing.face == SelectionBox::TOP)    ? "TOP" :
+                           (thing.face == SelectionBox::BOTTOM) ? "BOTTOM" :
+                           (thing.face == SelectionBox::LEFT)   ? "LEFT" :
+                           (thing.face == SelectionBox::RIGHT)  ? "RIGHT" :
+                           (thing.face == SelectionBox::FRONT)  ? "FRONT" :
+                           (thing.face == SelectionBox::BACK)   ? "BACK" :
+                           "NONE";
+
+        std::ostringstream crossText;
+
+        if (thing.blockDef != nullptr) {
+            crossText << thing.blockDef->getIdentifier() << std::endl;
+        }
+        crossText << face << std::endl;
+
+        crosshairText.set(crossText.str());
     }
 }
 

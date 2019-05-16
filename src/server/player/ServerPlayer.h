@@ -15,7 +15,7 @@ class ServerPlayer {
 public:
 //    const static int ACTIVE_RANGE_H = 3;
 //    const static int ACTIVE_RANGE_V = 3;
-    const static int ACTIVE_RANGE_H = 12;
+    const static int ACTIVE_RANGE_H = 8;
     const static int ACTIVE_RANGE_V = 6;
 
     //TODO: Refactor instances of UUID to username, or create seperate username flag
@@ -25,6 +25,7 @@ public:
 
     glm::vec3 getPos();
     void setPos(glm::vec3 pos);
+    void setAngle(float angle);
 
     glm::vec3 getChunkPos();
     glm::vec3 getOldPos();
@@ -44,9 +45,11 @@ public:
 private:
     std::string username;
 
-    glm::vec3 chunkPos {0, 0, 0};
-    glm::vec3 lastChunkPos {0, 0, 0};
-    glm::vec3 pos {0, 0, 0};
+    glm::vec3 chunkPos {0, 2, 0};
+    glm::vec3 lastChunkPos {0, 2, 0};
+    glm::vec3 pos {0, 32, 0};
+
+    float angle;
 };
 
 

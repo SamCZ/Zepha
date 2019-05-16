@@ -19,7 +19,7 @@ Ray::Ray(glm::vec3 pos, float yaw, float pitch) {
 }
 
 Ray::Ray(Player* player) {
-    this->start = *player->getPos();
+    this->start = player->getPos();
     this->pos = start;
 
     float yawR = glm::radians(player->getYaw() + 90);

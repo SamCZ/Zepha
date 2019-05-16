@@ -59,13 +59,13 @@ void InputManager::updateLeftMouse(bool down) {
     }
 }
 
-void InputManager::updateRightMouse(bool down){
+void InputManager::updateRightMouse(bool down) {
     if (down) {
-        if (!leftDown) rightPressed = true;
+        if (!rightDown) rightPressed = true;
         rightDown = true;
     }
     else {
-        if (leftDown) rightReleased = true;
+        if (rightDown) rightReleased = true;
         rightDown = false;
     }
 }

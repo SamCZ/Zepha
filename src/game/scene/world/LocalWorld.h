@@ -23,7 +23,7 @@
 #include "../../../util/Vec.h"
 #include "../../../world/Dimension.h"
 #include "../../../def/GameDefs.h"
-#include "../../../world/block/PosBlock.h"
+#include "../../../world/block/PointedThing.h"
 #include "../../entity/world/BlockCrackEntity.h"
 
 class LocalWorld {
