@@ -28,7 +28,7 @@ public:
 public:
     GameDefs defs;
 
-    glm::vec3 playerChunkPos;
+    glm::vec3 playerPos;
 
     ServerConnection server;
     Player player;

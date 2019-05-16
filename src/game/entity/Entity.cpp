@@ -4,10 +4,7 @@
 
 #include "Entity.h"
 
-Entity::Entity() {
-    mesh = nullptr;
-    texture = nullptr;
-}
+Entity::Entity() = default;
 
 Entity::Entity(Mesh* mesh) {
     setMesh(mesh);

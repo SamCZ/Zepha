@@ -45,7 +45,7 @@ public:
 
     //Will return a vector of MeshDetails pointers containing finished meshes.
     //Frees up the threads and starts new tasks.
-    std::vector<MeshDetails>* update();
+    std::vector<MeshDetails> update();
 
     struct Unit {
         std::shared_ptr<BlockChunk> chunk = nullptr;

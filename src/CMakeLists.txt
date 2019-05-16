@@ -126,6 +126,6 @@ set(ZEUS_SRC_FILES
     game/entity/hud/StatGraph.cpp
     game/entity/hud/StatGraph.h
     util/Util.h
-        world/block/PointedThing.h)
+        world/block/PointedThing.h game/entity/world/ParticleEntity.cpp game/entity/world/ParticleEntity.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

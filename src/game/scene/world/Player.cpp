@@ -5,11 +5,11 @@
 #include "Player.h"
 #include "../../../util/Ray.h"
 
-Player::Player(LocalWorld* world, GameDefs* defs, Camera* camera, WireframeEntity* wireframe) :
+Player::Player(LocalWorld& world, GameDefs& defs, Camera& camera) :
     world(world),
     camera(camera),
-    wireframe(wireframe),
-    defs(defs) {}
+    defs(defs),
+    wireframe(WireframeEntity({0, 0, 0}, {1, 1, 1}, 0.01)) {}
 
 void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
     posUpdate(input, delta);
@@ -43,8 +43,8 @@ void Player::posUpdate(InputManager &input, double delta) {
         }
     }
 
-    glm::vec3 frontFlat = glm::normalize(glm::vec3(camera->getFront()->x, 0, camera->getFront()->z));
-    glm::vec3 rightFlat = glm::normalize(glm::vec3(camera->getRight()->x, 0, camera->getRight()->z));
+    glm::vec3 frontFlat = glm::normalize(glm::vec3(camera.getFront().x, 0, camera.getFront().z));
+    glm::vec3 rightFlat = glm::normalize(glm::vec3(camera.getRight().x, 0, camera.getRight().z));
 
     glm::vec3 mod(0, 0, 0);
 
@@ -92,9 +92,9 @@ void Player::viewUpdate(double deltaX, double deltaY) {
     if (pitch > 90.f)  pitch = 90.f;
     if (pitch < -90.f) pitch = -90.f;
 
-    camera->setYaw(yaw);
-    camera->setPitch(pitch);
-    camera->setPosition(pos);
+    camera.setYaw(yaw);
+    camera.setPitch(pitch);
+    camera.setPos(pos);
 }
 
 void Player::pointerUpdate(InputManager &input, double delta) {
@@ -104,20 +104,20 @@ void Player::pointerUpdate(InputManager &input, double delta) {
         auto rayEnd = *ray.getEnd();
         auto pointedPos = TransPos::roundPos(rayEnd);
 
-        auto blockID = world->getBlock(rayEnd);
+        auto blockID = world.getBlock(rayEnd);
         if (blockID > 0) {
-            auto sBox = defs->blocks().getBlock(blockID).getSelectionBox();
+            auto sBox = defs.blocks().getBlock(blockID).getSelectionBox();
             SelectionBox::Face intersects = sBox.intersects(*ray.getEnd(), pointedPos);
 
             if (intersects != SelectionBox::NONE) {
                 pointedThing.blockID = static_cast<unsigned int>(blockID);
-                pointedThing.blockDef = &defs->blocks().getBlock(blockID);
+                pointedThing.blockDef = &defs.blocks().getBlock(blockID);
                 pointedThing.pos = pointedPos;
                 pointedThing.face = intersects;
 
-                wireframe->updateMesh(sBox.a, sBox.b, 0.0020f + ray.getLength() * 0.0020f, glm::vec3(0.0));
-                wireframe->setPos(pointedPos);
-                if (!wireframe->isVisible()) wireframe->setVisible(true);
+                wireframe.updateMesh(sBox.a, sBox.b, 0.0020f + ray.getLength() * 0.0020f, glm::vec3(0.0));
+                wireframe.setPos(pointedPos);
+                if (!wireframe.isVisible()) wireframe.setVisible(true);
 
                 found = true;
                 break;
@@ -128,7 +128,7 @@ void Player::pointerUpdate(InputManager &input, double delta) {
     if (found) {
         if (input.isMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
             if (breakInterval == 0) {
-                world->damageBlock(pointedThing.pos, 0.55);
+                world.damageBlock(pointedThing.pos, 0.55);
             }
             breakInterval += delta;
             if (breakInterval > 0.4) breakInterval = 0;
@@ -138,11 +138,11 @@ void Player::pointerUpdate(InputManager &input, double delta) {
             if (breakInterval > 0.4) breakInterval = 0;
         }
         if (input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
-            world->setBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face), 3);
+            world.setBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face), 3);
         }
     }
     else {
-        if (wireframe->isVisible()) wireframe->setVisible(false);
+        if (wireframe.isVisible()) wireframe.setVisible(false);
         breakInterval = 0;
     }
 }
@@ -150,10 +150,10 @@ void Player::pointerUpdate(InputManager &input, double delta) {
 bool Player::collides(glm::vec3 pos) {
     float colSize = 0.3;
 
-    return (world->solidAt(glm::vec3(pos.x - colSize, pos.y - EYE_HEIGHT, pos.z - colSize)) ||
-            world->solidAt(glm::vec3(pos.x + colSize, pos.y - EYE_HEIGHT, pos.z - colSize)) ||
-            world->solidAt(glm::vec3(pos.x + colSize, pos.y - EYE_HEIGHT, pos.z + colSize)) ||
-            world->solidAt(glm::vec3(pos.x - colSize, pos.y - EYE_HEIGHT, pos.z + colSize)) );
+    return (world.solidAt(glm::vec3(pos.x - colSize, pos.y - EYE_HEIGHT, pos.z - colSize)) ||
+            world.solidAt(glm::vec3(pos.x + colSize, pos.y - EYE_HEIGHT, pos.z - colSize)) ||
+            world.solidAt(glm::vec3(pos.x + colSize, pos.y - EYE_HEIGHT, pos.z + colSize)) ||
+            world.solidAt(glm::vec3(pos.x - colSize, pos.y - EYE_HEIGHT, pos.z + colSize)) );
 }
 
 void Player::moveCollide() {
@@ -213,7 +213,7 @@ glm::vec3 Player::getPos() {
 
 void Player::setPos(glm::vec3 pos) {
     this->pos = pos;
-    camera->setPosition(pos);
+    camera.setPos(pos);
 }
 
 glm::vec3 Player::getVel() {
@@ -234,4 +234,8 @@ float Player::getPitch() {
 
 PointedThing& Player::getPointedThing() {
     return pointedThing;
+}
+
+void Player::draw(Renderer &renderer) {
+    wireframe.draw(renderer);
 }

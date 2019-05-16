@@ -48,8 +48,8 @@ protected:
     GLfloat angle = 0;
 
 private:
-    Mesh* mesh;
-    Texture* texture;
+    Mesh* mesh = nullptr;
+    Texture* texture = nullptr;
 };
 
 

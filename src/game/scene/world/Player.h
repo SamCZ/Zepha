@@ -16,14 +16,13 @@
 #include "../../graph/drawable/DrawableGroup.h"
 #include "../../../world/block/PointedThing.h"
 
-class Player {
+class Player : public Drawable {
 public:
     static constexpr float LOOK_DISTANCE = 6.5f;
     static constexpr float LOOK_PRECISION = 0.01f;
     static constexpr float EYE_HEIGHT = 1.65f;
 
-    Player() = default;
-    Player(LocalWorld* world, GameDefs* defs, Camera* camera, WireframeEntity* wireframe);
+    Player(LocalWorld& world, GameDefs& defs, Camera& camera);
 
     void update(InputManager &input, double delta, double mouseX, double mouseY);
 
@@ -43,26 +42,23 @@ public:
     glm::vec3 getVel();
     void setVel(glm::vec3 vel);
 
+    void draw(Renderer& renderer) override;
+
     PointedThing& getPointedThing();
-
-    ~Player() = default;
-
-    double breakInterval = 0;
 private:
+    Camera& camera;
+    GameDefs& defs;
+    LocalWorld& world;
+
     glm::vec3 pos {};
     glm::vec3 vel {};
+    bool flying = false;
     float yaw = 0;
     float pitch = 0;
 
-    Camera* camera = nullptr;
-    GameDefs* defs = nullptr;
-    LocalWorld* world = nullptr;
-
     PointedThing pointedThing;
-
-    WireframeEntity* wireframe = nullptr;
-
-    bool flying = false;
+    WireframeEntity wireframe;
+    double breakInterval = 0;
 };
 
 

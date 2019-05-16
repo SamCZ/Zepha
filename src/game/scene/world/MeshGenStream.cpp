@@ -35,15 +35,15 @@ bool MeshGenStream::tryToQueue(glm::vec3 pos) {
     return sizeOfQueue + 1 < TOTAL_QUEUE_SIZE;
 }
 
-std::vector<MeshGenStream::MeshDetails>* MeshGenStream::update() {
-    auto finishedChunks = new std::vector<MeshDetails>;
+std::vector<MeshGenStream::MeshDetails> MeshGenStream::update() {
+    std::vector<MeshDetails> finishedChunks;
 
     for (auto& t : threads) {
         for (auto& u : t.tasks) {
             if (!u.unlocked) continue;
 
             if (u.chunk != nullptr) {
-                finishedChunks->emplace_back(u.vertices, u.indices, u.chunk->pos);
+                finishedChunks.emplace_back(u.vertices, u.indices, u.chunk->pos);
                 u.chunk = nullptr;
             }
 
@@ -68,7 +68,7 @@ std::vector<MeshGenStream::MeshDetails>* MeshGenStream::update() {
         }
     }
 
-    return finishedChunks;
+    return std::move(finishedChunks);
 }
 
 #pragma clang diagnostic push

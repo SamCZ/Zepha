@@ -37,7 +37,7 @@ glm::mat4* Camera::getProjectionMatrix() {
     return &projectionMatrix;
 }
 
-glm::mat4 *Camera::getOrthographicMatrix() {
+glm::mat4* Camera::getOrthographicMatrix() {
     return &orthographicMatrix;
 }
 
@@ -46,12 +46,12 @@ glm::mat4 Camera::getViewMatrix() {
     return glm::lookAt(position, position + front, up);
 }
 
-void Camera::setPosition(glm::vec3 pos) {
+void Camera::setPos(glm::vec3 pos) {
     position = pos;
 }
 
-glm::vec3 *Camera::getPosition() {
-    return &position;
+glm::vec3 Camera::getPos() {
+    return position;
 }
 
 void Camera::setYaw(double yaw) {
@@ -74,12 +74,12 @@ void Camera::update() {
     frustum.update(position, front, up, right);
 }
 
-glm::vec3 *Camera::getFront() {
-    return &front;
+glm::vec3 Camera::getFront() {
+    return front;
 }
 
-glm::vec3 *Camera::getRight() {
-    return &right;
+glm::vec3 Camera::getRight() {
+    return right;
 }
 
 glm::vec2 Camera::getBufferDimensions() {

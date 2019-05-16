@@ -57,15 +57,15 @@ void WireframeEntity::createBox(float x, float y, float z, float xSize, float yS
     float al = 1;
 
     std::vector<Vertex> myVerts {
-    /*0*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z            }, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
-    /*1*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z            }, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
-    /*2*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z + zSize + w}, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
-    /*3*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z + zSize + w}, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
+    /*0*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z            }, 0, {c, al}, {}},
+    /*1*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z            }, 0, {c, al}, {}},
+    /*2*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z + zSize + w}, 0, {c, al}, {}},
+    /*3*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z + zSize + w}, 0, {c, al}, {}},
 
-    /*4*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z            }, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
-    /*5*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z            }, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
-    /*6*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
-    /*7*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
+    /*4*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z            }, 0, {c, al}, {}},
+    /*5*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z            }, 0, {c, al}, {}},
+    /*6*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, 0, {c, al}, {}},
+    /*7*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, 0, {c, al}, {}},
     };
 
     std::vector<unsigned int> myInds {

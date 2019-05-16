@@ -13,8 +13,8 @@ WorldInterpolationStream::WorldInterpolationStream(unsigned int seed) : gen(seed
     }
 }
 
-bool WorldInterpolationStream::pushBack(Packet *p) {
-    queuedTasks.push_back(p);
+bool WorldInterpolationStream::pushBack(Packet p) {
+    queuedTasks.push_back(std::move(p));
 }
 
 std::vector<std::shared_ptr<BlockChunk>> WorldInterpolationStream::update() {
@@ -31,10 +31,8 @@ std::vector<std::shared_ptr<BlockChunk>> WorldInterpolationStream::update() {
 
             if (!queuedTasks.empty()) {
                 auto it = queuedTasks.begin();
-                Packet* p = *it;
+                u.packet = *it;
                 queuedTasks.erase(it);
-
-                u.packet = p;
                 //Lock it to allow the thread to edit it.
                 u.unlocked = false;
             }
@@ -61,17 +59,14 @@ void WorldInterpolationStream::threadFunction(WorldInterpolationStream::Thread *
             if (!u.unlocked) {
                 noJobs = false;
 
-                auto pos = Serializer::decodeIntVec3(&u.packet->data[0]);
-                int len = Serializer::decodeInt(&u.packet->data[12]);
+                auto pos = Serializer::decodeIntVec3(&u.packet.data[0]);
+                int len = Serializer::decodeInt(&u.packet.data[12]);
 
-                std::string data(u.packet->data.begin() + 16, u.packet->data.begin() + 16 + len);
+                std::string data(u.packet.data.begin() + 16, u.packet.data.begin() + 16 + len);
 
                 u.chunk = new BlockChunk;
                 u.chunk->pos = pos;
                 u.chunk->deserialize(data);
-
-                delete u.packet;
-                u.packet = nullptr;
 
                 u.unlocked = true;
                 break;

@@ -16,15 +16,17 @@
 #include "../../../def/block/BlockAtlas.h"
 #include "../../../world/chunk/BlockChunk.h"
 #include "../../../def/gen/MapGen.h"
-#include "graph/MeshChunk.h"
 #include "../../../util/TransPos.h"
-#include "WorldInterpolationStream.h"
-#include "MeshGenStream.h"
 #include "../../../util/Vec.h"
 #include "../../../world/Dimension.h"
 #include "../../../def/GameDefs.h"
 #include "../../../world/block/PointedThing.h"
+#include "../../../game/graph/drawable/DrawableGroup.h"
 #include "../../entity/world/BlockCrackEntity.h"
+#include "../../entity/world/ParticleEntity.h"
+#include "graph/MeshChunk.h"
+#include "WorldInterpolationStream.h"
+#include "MeshGenStream.h"
 
 class LocalWorld {
 public:
@@ -37,13 +39,12 @@ public:
     void finishChunks();
     void updateBlockDamages(double delta);
 
-    void loadChunkPacket(Packet* p);
+    void loadChunkPacket(Packet p);
     std::shared_ptr<BlockChunk> getChunk(glm::vec3 chunkPos);
     void commitChunk(glm::vec3 pos, std::shared_ptr<BlockChunk>);
     void remeshChunk(glm::vec3 pos);
 
     void damageBlock(glm::vec3 pos, float amount);
-//    float getBlockDamage(glm::vec3 pos);
 
     void attemptMeshChunk(glm::vec3 pos);
     bool getAdjacentExists(glm::vec3 pos, glm::vec3 myPos);
@@ -58,11 +59,14 @@ public:
     int lastGenUpdates = 0, lastMeshUpdates = 0;
 private:
     GameDefs& defs;
+    glm::vec3* playerPos;
+    glm::vec3 playerChunkPos {};
 
     WorldInterpolationStream worldGenStream;
     Dimension dimension;
 
     std::vector<BlockCrackEntity*> crackedBlocks;
+    std::vector<ParticleEntity*> particles;
 
     std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc> meshChunks;
     MeshGenStream meshGenStream;

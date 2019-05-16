@@ -18,8 +18,8 @@ public:
 
     void changeWindowDimensions(float buffWidth, float buffHeight);
 
-    glm::vec3* getPosition();
-    void setPosition(glm::vec3 pos);
+    glm::vec3 getPos();
+    void setPos(glm::vec3 pos);
 
     void setYaw(double yaw);
     void setPitch(double pitch);
@@ -29,8 +29,8 @@ public:
 
     glm::mat4 getViewMatrix();
 
-    glm::vec3* getFront();
-    glm::vec3* getRight();
+    glm::vec3 getFront();
+    glm::vec3 getRight();
 
     glm::vec2 getBufferDimensions();
 

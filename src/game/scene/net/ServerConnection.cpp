@@ -42,21 +42,21 @@ void ServerConnection::update(Player &player) {
                 break;
             }
             case ENET_EVENT_TYPE_RECEIVE: {
-                auto p = new Packet(event.packet);
+                Packet p(event.packet);
 
-                switch (p->type) {
+                switch (p.type) {
                     case Packet::PLAYER_INFO: {
-                        this->id = Serializer::decodeInt(&p->data[0]);
-                        auto playerPos = Serializer::decodeFloatVec3(&p->data[4]);
+                        this->id = Serializer::decodeInt(&p.data[0]);
+                        auto playerPos = Serializer::decodeFloatVec3(&p.data[4]);
                         player.setPos(playerPos);
                         break;
                     }
                     case Packet::ENTITY_INFO: {
-                        int peer_id = Serializer::decodeInt(&p->data[0]);
+                        int peer_id = Serializer::decodeInt(&p.data[0]);
                         if (peer_id == id) break;
 
-                        auto playerPos = Serializer::decodeFloatVec3(&p->data[4]);
-                        auto playerAngle = Serializer::decodeFloat(&p->data[16]);
+                        auto playerPos = Serializer::decodeFloatVec3(&p.data[4]);
+                        auto playerAngle = Serializer::decodeFloat(&p.data[16]);
 
                         bool found = false;
                         for (auto ent : entities->getChildren()) {
@@ -78,11 +78,11 @@ void ServerConnection::update(Player &player) {
                         break;
                     }
                     case Packet::CHUNK_INFO: {
-                        chunkPackets.push_back(p);
+                        chunkPackets.push_back(std::move(p));
                         break;
                     }
                     case Packet::SERVER_INFO: {
-                        serverSideChunkGens = Serializer::decodeInt(&p->data[0]);
+                        serverSideChunkGens = Serializer::decodeInt(&p.data[0]);
                         break;
                     }
                     default:

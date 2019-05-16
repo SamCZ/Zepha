@@ -15,7 +15,7 @@ Packet::Packet(ENetPacket *packet) {
     this->data = packetData.substr(4, packetData.length() - 4);
 }
 
-ENetPacket *Packet::toENetPacket() {
+ENetPacket* Packet::toENetPacket() {
     std::string serialized;
     Serializer::encodeInt(serialized, this->type);
     serialized += this->data;
@@ -27,4 +27,6 @@ ENetPacket *Packet::toENetPacket() {
 void Packet::sendTo(ENetPeer *peer, int channel) {
     ENetPacket* enet = toENetPacket();
     enet_peer_send(peer, (enet_uint8)channel, enet);
+    //TODO: test
+//    enet_packet_destroy(enet);
 }

@@ -8,18 +8,25 @@
 #include "LocalWorld.h"
 
 LocalWorld::LocalWorld(GameDefs& defs, glm::vec3* playerPos) :
-    dimension(playerPos),
+    playerPos(playerPos),
+    dimension(&playerChunkPos),
     meshGenStream(defs, dimension),
     worldGenStream(55),
     defs(defs) {}
 
 void LocalWorld::update(double delta) {
+    playerChunkPos = TransPos::roundPos(*playerPos / glm::vec3(TransPos::CHUNK_SIZE));
+
     finishMeshes();
     queueMeshes();
     finishChunks();
 
     updateBlockDamages(delta);
     dimension.update();
+
+    for (auto &p: particles) {
+        p->update(delta, *playerPos);
+    }
 }
 
 void LocalWorld::damageBlock(glm::vec3 pos, float amount) {
@@ -38,13 +45,19 @@ void LocalWorld::damageBlock(glm::vec3 pos, float amount) {
 
     block->setNewDamage(block->targetDamage + amount);
     block->time = 0;
+
+    auto def = defs.blocks().getBlock(getBlock(pos));
+    for (int i = 0; i < 20; i++) {
+        auto p = new ParticleEntity(pos, def);
+        particles.push_back(p);
+    }
 }
 
 void LocalWorld::finishMeshes() {
     lastMeshUpdates = 0;
     auto finishedMeshes = meshGenStream.update();
 
-    for (auto mesh : *finishedMeshes) {
+    for (auto mesh : finishedMeshes) {
         if (!mesh.vertices->empty()) {
             auto meshChunk = new MeshChunk();
             meshChunk->build(*mesh.vertices, *mesh.indices);
@@ -60,6 +73,7 @@ void LocalWorld::finishMeshes() {
         }
     }
 }
+
 void LocalWorld::queueMeshes() {
     if (meshGenStream.spaceInQueue()) {
         bool moreSpace = true;
@@ -121,8 +135,8 @@ void LocalWorld::updateBlockDamages(double delta) {
 }
 
 
-void LocalWorld::loadChunkPacket(Packet *p) {
-    worldGenStream.pushBack(p);
+void LocalWorld::loadChunkPacket(Packet p) {
+    worldGenStream.pushBack(std::move(p));
 }
 std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::vec3 chunkPos) {
     return dimension.getChunk(chunkPos);
@@ -167,9 +181,8 @@ bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
 int LocalWorld::render(Renderer &renderer) {
     auto count = dimension.render(renderer);
 
-    for (auto block : crackedBlocks) {
-        block->draw(renderer);
-    }
+    for (auto block : crackedBlocks) block->draw(renderer);
+    for (auto &p : particles) p->draw(renderer);
 
     return count;
 }

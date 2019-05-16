@@ -6,19 +6,18 @@
 
 GameScene::GameScene(ClientState* state) : Scene(state),
     defs("../res/tex"),
-    world(defs, &playerChunkPos),
+    world(defs, &playerPos),
     server("127.0.0.1", 12345, defs.textures()),
+
+    player(world, defs, *state->renderer->getCamera()),
 
     gameGui(state->renderer->getCamera()->getBufferDimensions()),
     debugGui(state->renderer->getCamera()->getBufferDimensions(),  &defs.textures().getAtlasTexture()) {
 
-    auto wireframe = new WireframeEntity({0, 0, 0}, {1, 1, 1}, 0.01);
-    entities.push_back(wireframe);
-
-    player = Player(&world, &defs, state->renderer->getCamera(), wireframe);
-
     gui.push_back(&gameGui);
     gui.push_back(&debugGui);
+
+    entities.push_back(&player);
 
     server.init(entities);
 }
@@ -30,7 +29,7 @@ void GameScene::update() {
 
     auto window = state->renderer->getWindow();
 
-    playerChunkPos = TransPos::roundPos(player.getPos() / glm::vec3(TransPos::CHUNK_SIZE));
+    playerPos = player.getPos();
     player.update(window->input, state->deltaTime, window->getDeltaX(), window->getDeltaY());
 
     if (state->renderer->resized) {
@@ -40,12 +39,9 @@ void GameScene::update() {
         state->renderer->resized = false;
     }
 
-    while (!server.chunkPackets.empty()) {
-        auto it = server.chunkPackets.begin();
-        Packet* p = *it;
-        server.chunkPackets.erase(it);
-        world.loadChunkPacket(p);
-    }
+    for (int i = 0; i < server.chunkPackets.size(); i++)
+        world.loadChunkPacket(std::move(server.chunkPackets[i]));
+    server.chunkPackets.clear();
 
     debugGui.update(player, world, defs, state->fps, world.getMeshChunkCount(), drawCalls, server.serverSideChunkGens, server.recvPackets);
     world.update(state->deltaTime);

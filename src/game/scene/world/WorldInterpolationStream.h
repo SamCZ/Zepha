@@ -22,14 +22,14 @@ public:
     ~WorldInterpolationStream();
 
     //Add `p` to the pre-thread queue.
-    bool pushBack(Packet* p);
+    bool pushBack(Packet p);
 
     //Will return a vector of BlockChunk pointers containing finished chunks.
     //Frees up the threads and starts new tasks.
     std::vector<std::shared_ptr<BlockChunk>> update();
 
     struct Unit {
-        Packet* packet = nullptr;
+        Packet packet;
         BlockChunk* chunk = nullptr;
 
         bool unlocked = true;
@@ -51,7 +51,7 @@ private:
     static void threadFunction(Thread* thread);
 
     MapGen gen;
-    std::vector<Packet*> queuedTasks;
+    std::vector<Packet> queuedTasks;
 };
 
 

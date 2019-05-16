@@ -105,6 +105,15 @@ void DebugGui::update(Player& player, LocalWorld& world, GameDefs& defs, double 
         glm::vec3 mapBlockCoordinate = TransPos::Dimension::mapBlockOffsetFromRegion(chunkPos);
         glm::vec3 regionCoordinate = TransPos::Dimension::regionFromVec(chunkPos);
 
+        auto thing = player.getPointedThing();
+        std::string face = (thing.face == SelectionBox::TOP)    ? "TOP" :
+                           (thing.face == SelectionBox::BOTTOM) ? "BOTTOM" :
+                           (thing.face == SelectionBox::LEFT)   ? "LEFT" :
+                           (thing.face == SelectionBox::RIGHT)  ? "RIGHT" :
+                           (thing.face == SelectionBox::FRONT)  ? "FRONT" :
+                           (thing.face == SelectionBox::BACK)   ? "BACK" :
+                           "NONE";
+
         std::ostringstream str;
 
         using namespace Util;
@@ -126,8 +135,9 @@ void DebugGui::update(Player& player, LocalWorld& world, GameDefs& defs, double 
 
         str << "Standing On: " << on << std::endl << std::endl;
 
-        str << "Pointing: " << (player.getPointedThing().blockID > 0 ? "yes" : "no") << ", ";
-        str << "PointedBlock: " << vecToString(player.getPointedThing().pos) << std::endl;
+        if (thing.blockDef != nullptr) str << "Pointing At: " << thing.blockDef->getIdentifier() << ", " << std::endl;
+        str << "Pointed Position: " << vecToString(thing.pos) << std::endl;
+        str << "Pointed Face: " << face << std::endl;
 
         dataText.set(str.str());
     }
@@ -135,21 +145,8 @@ void DebugGui::update(Player& player, LocalWorld& world, GameDefs& defs, double 
     { //Crosshair Text
         auto thing = player.getPointedThing();
 
-        std::string face = (thing.face == SelectionBox::TOP)    ? "TOP" :
-                           (thing.face == SelectionBox::BOTTOM) ? "BOTTOM" :
-                           (thing.face == SelectionBox::LEFT)   ? "LEFT" :
-                           (thing.face == SelectionBox::RIGHT)  ? "RIGHT" :
-                           (thing.face == SelectionBox::FRONT)  ? "FRONT" :
-                           (thing.face == SelectionBox::BACK)   ? "BACK" :
-                           "NONE";
-
         std::ostringstream crossText;
-
-        if (thing.blockDef != nullptr) {
-            crossText << thing.blockDef->getIdentifier() << std::endl;
-        }
-        crossText << face << std::endl;
-
+        if (thing.blockDef != nullptr) crossText << thing.blockDef->getIdentifier() << std::endl;
         crosshairText.set(crossText.str());
     }
 }

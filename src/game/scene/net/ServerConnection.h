@@ -26,7 +26,7 @@ public:
 
     ~ServerConnection();
 
-    std::vector<Packet*> chunkPackets;
+    std::vector<Packet> chunkPackets;
     int serverSideChunkGens = 0;
     int recvPackets = 0;
 private:
