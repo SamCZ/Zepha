@@ -18,7 +18,7 @@ TextEntity::TextEntity(Texture *texture, bool background, int scale) :
 void TextEntity::set(std::string text) {
     this->text = std::move(text);
 
-    std::vector<float> textVertices;
+    std::vector<Vertex> textVertices;
     std::vector<unsigned int> textIndices;
 
     float texPosWidth  = 1/128.0f * (float)w;
@@ -40,27 +40,23 @@ void TextEntity::set(std::string text) {
                 }
 
                 if (width > 1) {
-                    std::vector<float> vertices{
-                            -1, -1 + up, 0, 0, 0.1, 0.1, 0.1, 0.3, 0, 0, 0,
-                            -1, h + 1 + up, 0, 0, 0.1, 0.1, 0.1, 0.3, 0, 0, 0,
-                            width, h + 1 + up, 0, 0, 0.1, 0.1, 0.1, 0.3, 0, 0, 0,
-                            width, -1 + up, 0, 0, 0.1, 0.1, 0.1, 0.3, 0, 0, 0,
+                    std::vector<Vertex> vertices {
+                        {{-1,    -1 + up,     0}, 0, {0.1, 0.1, 0.1, 0.3}, {0, 0, 0}},
+                        {{-1,     h + 1 + up, 0}, 0, {0.1, 0.1, 0.1, 0.3}, {0, 0, 0}},
+                        {{width,  h + 1 + up, 0}, 0, {0.1, 0.1, 0.1, 0.3}, {0, 0, 0}},
+                        {{width, -1 + up,     0}, 0, {0.1, 0.1, 0.1, 0.3}, {0, 0, 0}},
                     };
-                    std::vector<unsigned int> indices{
-                            0 + indOffset,
-                            1 + indOffset,
-                            2 + indOffset,
-                            2 + indOffset,
-                            3 + indOffset,
-                            0 + indOffset
+                    std::vector<unsigned int> indices {
+                        0 + indOffset,
+                        1 + indOffset,
+                        2 + indOffset,
+                        2 + indOffset,
+                        3 + indOffset,
+                        0 + indOffset
                     };
 
-                    for (auto v : vertices) {
-                        textVertices.push_back(v);
-                    }
-                    for (auto i : indices) {
-                        textIndices.push_back(i);
-                    }
+                    textVertices.insert(textVertices.end(), vertices.begin(), vertices.end());
+                    textIndices.insert(textIndices.end(), indices.begin(), indices.end());
 
                     indOffset += 4;
                     up += h + 2;
@@ -98,14 +94,14 @@ void TextEntity::set(std::string text) {
         float texPosL = texPosX + (p / 128.0f);
         float texPosR = texPosX + texPosWidth - ((p / 128.0f));
 
-        auto letterVerts = std::vector<float> {
-                left,             top,     0, 1,  texPosL, texPosY,                 0, 0, 0, 0, 0,
-                left + w - p * 2, top,     0, 1,  texPosR, texPosY,                 0, 0, 0, 0, 0,
-                left + w - p * 2, top + h, 0, 1,  texPosR, texPosY + texPosHeight,  0, 0, 0, 0, 0,
-                left,             top + h, 0, 1,  texPosL, texPosY + texPosHeight,  0, 0, 0, 0, 0,
+        auto letterVerts = std::vector<Vertex> {
+             {{left,             top,     0}, 1, {texPosL, texPosY,                 0, 0}, {0, 0, 0}},
+             {{left + w - p * 2, top,     0}, 1, {texPosR, texPosY,                 0, 0}, {0, 0, 0}},
+             {{left + w - p * 2, top + h, 0}, 1, {texPosR, texPosY + texPosHeight,  0, 0}, {0, 0, 0}},
+             {{left,             top + h, 0}, 1, {texPosL, texPosY + texPosHeight,  0, 0}, {0, 0, 0}},
         };
 
-        for (float f : letterVerts) textVertices.push_back(f);
+        textVertices.insert(textVertices.end(), letterVerts.begin(), letterVerts.end());
 
         textIndices.push_back(    indOffset);
         textIndices.push_back(3 + indOffset);
@@ -120,7 +116,7 @@ void TextEntity::set(std::string text) {
     }
 
     Mesh* m = new Mesh();
-    m->create(&textVertices, &textIndices);
+    m->create(textVertices, textIndices);
     setMesh(m);
 }
 

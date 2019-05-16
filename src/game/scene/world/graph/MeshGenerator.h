@@ -26,15 +26,11 @@ class MeshGenerator {
 public:
     MeshGenerator();
     void build(const std::shared_ptr<BlockChunk> &chunk, BlockAtlas &atlas, std::vector<bool> &adjacents,
-          std::vector<float> &vertices, std::vector<unsigned int> &indices);
-
-    ~MeshGenerator();
+          std::vector<Vertex> &vertices, std::vector<unsigned int> &indices);
 private:
     unsigned int indOffset;
 
-    void addFaces(glm::vec3 &offset, vector<float> &vertices, vector<unsigned int> &indices, vector<MeshPart> &meshParts);
-
-    void cleanup();
+    void addFaces(glm::vec3 &offset, vector<Vertex> &vertices, vector<unsigned int> &indices, vector<MeshPart> &meshParts);
 };
 
 #endif //GLPROJECT_MESHGENERATOR_H

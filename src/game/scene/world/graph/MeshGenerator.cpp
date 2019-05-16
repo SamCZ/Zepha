@@ -35,7 +35,7 @@ bool faceOcculudedAt(glm::vec3 &pos, BlockChunk &chunk, BlockAtlas &atlas, std::
 }
 
 void MeshGenerator::build(const std::shared_ptr<BlockChunk> &chunk, BlockAtlas &atlas, std::vector<bool> &adjacents,
-        std::vector<float> &vertices, std::vector<unsigned int> &indices) {
+        std::vector<Vertex> &vertices, std::vector<unsigned int> &indices) {
 
     Timer t("Mesh Generation");
 
@@ -89,25 +89,11 @@ void MeshGenerator::build(const std::shared_ptr<BlockChunk> &chunk, BlockAtlas &
     indices.shrink_to_fit();
 }
 
-void MeshGenerator::addFaces(glm::vec3 &offset, vector<float> &vertices, vector<unsigned int> &indices, vector<MeshPart> &meshParts) {
+void MeshGenerator::addFaces(glm::vec3 &offset, vector<Vertex> &vertices, vector<unsigned int> &indices, vector<MeshPart> &meshParts) {
     for (const MeshPart& mp : meshParts) {
 
         for (const MeshVertex &vertex : mp.vertices) {
-
-            vertices.push_back(vertex.pos.x + offset.x);
-            vertices.push_back(vertex.pos.y + offset.y);
-            vertices.push_back(vertex.pos.z + offset.z);
-
-            vertices.push_back(1);
-
-            vertices.push_back(vertex.tex.x);
-            vertices.push_back(vertex.tex.y);
-            vertices.push_back(0);
-            vertices.push_back(0);
-
-            vertices.push_back(vertex.nml.x);
-            vertices.push_back(vertex.nml.y);
-            vertices.push_back(vertex.nml.z);
+            vertices.push_back({{vertex.pos + offset}, 1, {vertex.tex.x, vertex.tex.y, 0, 0}, vertex.nml});
         }
 
         for (unsigned int index : mp.indices) {
@@ -116,12 +102,4 @@ void MeshGenerator::addFaces(glm::vec3 &offset, vector<float> &vertices, vector<
 
         indOffset += mp.vertices.size();
     }
-}
-
-void MeshGenerator::cleanup() {
-
-}
-
-MeshGenerator::~MeshGenerator() {
-    cleanup();
 }

@@ -45,7 +45,7 @@ void GraphEntity::push_back(float value) {
 }
 
 Mesh* GraphEntity::buildHistogramMesh() {
-    std::vector<float> vertices;
+    std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
     unsigned int indOffset = 0;
@@ -58,14 +58,14 @@ Mesh* GraphEntity::buildHistogramMesh() {
         float h = num / maxVal;
         float sec = (float)std::round(9 - fmin(h, 1)*9) * 0.1f;
 
-        auto columnVerts = std::vector<float> {
-            xOffset,    -h, 0, 1, age,       sec,       0, 0, 0, 0, 0,
-            xOffset + 1,-h, 0, 1, age+0.01f, sec,       0, 0, 0, 0, 0,
-            xOffset + 1, 0, 0, 1, age+0.01f, sec+0.10f, 0, 0, 0, 0, 0,
-            xOffset,     0, 0, 1, age,       sec+0.10f, 0, 0, 0, 0, 0,
+        auto columnVerts = std::vector<Vertex> {
+            {{xOffset,    -h, 0}, 1, {age,       sec,       0, 0}, {0, 0, 0}},
+            {{xOffset + 1,-h, 0}, 1, {age+0.01f, sec,       0, 0}, {0, 0, 0}},
+            {{xOffset + 1, 0, 0}, 1, {age+0.01f, sec+0.10f, 0, 0}, {0, 0, 0}},
+            {{xOffset,     0, 0}, 1, {age,       sec+0.10f, 0, 0}, {0, 0, 0}},
         };
 
-        for (float f : columnVerts) vertices.push_back(f);
+        vertices.insert(vertices.end(), columnVerts.begin(), columnVerts.end());
 
         indices.push_back(    indOffset);
         indices.push_back(3 + indOffset);
@@ -79,7 +79,7 @@ Mesh* GraphEntity::buildHistogramMesh() {
     }
 
     auto m = new Mesh();
-    m->create(&vertices, &indices);
+    m->create(vertices, indices);
 
     return m;
 }

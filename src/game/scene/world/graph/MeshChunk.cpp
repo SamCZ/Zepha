@@ -4,7 +4,7 @@
 
 #include "MeshChunk.h"
 
-void MeshChunk::build(std::vector<float> *vertices, std::vector<unsigned int> *indices) {
+void MeshChunk::build(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices) {
     auto mesh = new Mesh();
     mesh->create(vertices, indices);
 

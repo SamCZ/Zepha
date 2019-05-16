@@ -46,7 +46,7 @@ void WireframeEntity::buildMesh() {
     createBox(b.x, 0,   0, 0, 0, b.z);
 
     auto m = new Mesh();
-    m->create(&vertices, &indices);
+    m->create(vertices, indices);
     setMesh(m);
 }
 
@@ -56,16 +56,16 @@ void WireframeEntity::createBox(float x, float y, float z, float xSize, float yS
     auto  c = color;
     float al = 1;
 
-    std::vector<float> myVerts {
-    /*0*/ x - hw + a.x,             y - hw + a.y,             z - hw + a.z,             0, c.x, c.y, c.z, al, 0, 0, 0,
-    /*1*/ x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z,             0, c.x, c.y, c.z, al, 0, 0, 0,
-    /*2*/ x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z + zSize + w, 0, c.x, c.y, c.z, al, 0, 0, 0,
-    /*3*/ x - hw + a.x,             y - hw + a.y,             z - hw + a.z + zSize + w, 0, c.x, c.y, c.z, al, 0, 0, 0,
+    std::vector<Vertex> myVerts {
+    /*0*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z            }, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
+    /*1*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z            }, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
+    /*2*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z + zSize + w}, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
+    /*3*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z + zSize + w}, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
 
-    /*4*/ x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z,             0, c.x, c.y, c.z, al, 0, 0, 0,
-    /*5*/ x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z,             0, c.x, c.y, c.z, al, 0, 0, 0,
-    /*6*/ x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w, 0, c.x, c.y, c.z, al, 0, 0, 0,
-    /*7*/ x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z + zSize + w, 0, c.x, c.y, c.z, al, 0, 0, 0,
+    /*4*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z            }, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
+    /*5*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z            }, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
+    /*6*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
+    /*7*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, 0, {c.x, c.y, c.z, al}, {0, 0, 0}},
     };
 
     std::vector<unsigned int> myInds {
@@ -77,13 +77,8 @@ void WireframeEntity::createBox(float x, float y, float z, float xSize, float yS
         1, 5, 6, 6, 2, 1,
     };
 
-    for (auto f : myVerts) {
-        vertices.push_back(f);
-    }
-
-    for (auto i : myInds) {
-        indices.push_back(i + indOffset);
-    }
+    vertices.insert(vertices.end(), myVerts.begin(), myVerts.end());
+    for (auto i : myInds) indices.push_back(i + indOffset);
 
     indOffset += 8;
 }

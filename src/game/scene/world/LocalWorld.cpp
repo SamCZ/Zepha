@@ -47,7 +47,7 @@ void LocalWorld::finishMeshes() {
     for (auto mesh : *finishedMeshes) {
         if (!mesh.vertices->empty()) {
             auto meshChunk = new MeshChunk();
-            meshChunk->build(mesh.vertices, mesh.indices);
+            meshChunk->build(*mesh.vertices, *mesh.indices);
             meshChunk->setPos(mesh.pos);
 
             if (meshChunks.count(mesh.pos)) {

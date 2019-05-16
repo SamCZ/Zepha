@@ -14,7 +14,7 @@
 class MeshChunk : Entity {
 public:
     MeshChunk() = default;
-    void build(std::vector<float> *vertices, std::vector<unsigned int> *indices);
+    void build(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
     void setPos(glm::vec3 pos);
     glm::vec3 getPos();
 public:

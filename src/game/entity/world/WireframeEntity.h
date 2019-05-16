@@ -5,8 +5,8 @@
 #ifndef ZEUS_WIREFRAMEGENERATOR_H
 #define ZEUS_WIREFRAMEGENERATOR_H
 
-#include "../../graph/Mesh.h"
 #include <vec3.hpp>
+#include "../../graph/Mesh.h"
 #include "../Entity.h"
 
 class WireframeEntity : public Entity {
@@ -16,7 +16,7 @@ public:
 
     void updateMesh(glm::vec3 posA, glm::vec3 posB, float width, glm::vec3 color = {0.25, 0.25, 0.25});
 private:
-    std::vector<float> vertices {};
+    std::vector<Vertex> vertices {};
     std::vector<unsigned int> indices {};
 
     void buildMesh();

@@ -78,7 +78,7 @@ void ServerWorld::playerChangedChunks(ServerPlayer *player) {
            player->getUsername().c_str(),
            static_cast<int>(pos.x),
            static_cast<int>(pos.y),
-           static_cast<int>(pos.x),
+           static_cast<int>(pos.z),
            generated);
 
     t.printElapsedMs();

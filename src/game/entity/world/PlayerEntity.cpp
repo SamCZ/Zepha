@@ -14,22 +14,22 @@ PlayerEntity::PlayerEntity(glm::vec3 pos, int peer_id, std::shared_ptr<AtlasRef>
     auto bUV = this->playerBackTex->uv;
     auto sUV = this->shadowTex->uv;
 
-    std::vector<float> vertices {
+    std::vector<Vertex> vertices {
         //Front
-         0.001, 2, -0.5, 1, fUV.x, fUV.y, 0, 0, 0, 0, 0,
-         0.001, 0, -0.5, 1, fUV.x, fUV.w, 0, 0, 0, 0, 0,
-         0.001, 0,  0.5, 1, fUV.z, fUV.w, 0, 0, 0, 0, 0,
-         0.001, 2,  0.5, 1, fUV.z, fUV.y, 0, 0, 0, 0, 0,
+        {{0.001, 2, -0.5}, 1, {fUV.x, fUV.y, 0, 0}, {0, 0, 0}},
+        {{0.001, 0, -0.5}, 1, {fUV.x, fUV.w, 0, 0}, {0, 0, 0}},
+        {{0.001, 0,  0.5}, 1, {fUV.z, fUV.w, 0, 0}, {0, 0, 0}},
+        {{0.001, 2,  0.5}, 1, {fUV.z, fUV.y, 0, 0}, {0, 0, 0}},
         //Back
-        -0.001, 2, -0.5, 1, bUV.x, bUV.y, 0, 0, 0, 0, 0,
-        -0.001, 0, -0.5, 1, bUV.x, bUV.w, 0, 0, 0, 0, 0,
-        -0.001, 0,  0.5, 1, bUV.z, bUV.w, 0, 0, 0, 0, 0,
-        -0.001, 2,  0.5, 1, bUV.z, bUV.y, 0, 0, 0, 0, 0,
+        {{-0.001, 2, -0.5}, 1, {bUV.x, bUV.y, 0, 0}, {0, 0, 0}},
+        {{-0.001, 0, -0.5}, 1, {bUV.x, bUV.w, 0, 0}, {0, 0, 0}},
+        {{-0.001, 0,  0.5}, 1, {bUV.z, bUV.w, 0, 0}, {0, 0, 0}},
+        {{-0.001, 2,  0.5}, 1, {bUV.z, bUV.y, 0, 0}, {0, 0, 0}},
         //Shadow
-        -0.5, 0, -0.5, 1, sUV.x, sUV.y, 0, 0, 0, 0, 0,
-        -0.5, 0,  0.5, 1, sUV.x, sUV.w, 0, 0, 0, 0, 0,
-         0.5, 0,  0.5, 1, sUV.z, sUV.w, 0, 0, 0, 0, 0,
-         0.5, 0, -0.5, 1, sUV.z, sUV.y, 0, 0, 0, 0, 0,
+        {{-0.5, 0, -0.5}, 1, {sUV.x, sUV.y, 0, 0}, {0, 0, 0}},
+        {{-0.5, 0,  0.5}, 1, {sUV.x, sUV.w, 0, 0}, {0, 0, 0}},
+        {{ 0.5, 0,  0.5}, 1, {sUV.z, sUV.w, 0, 0}, {0, 0, 0}},
+        {{ 0.5, 0, -0.5}, 1, {sUV.z, sUV.y, 0, 0}, {0, 0, 0}},
     };
     std::vector<unsigned int> indices {
         0, 1, 2, 2, 3, 0,
@@ -43,7 +43,7 @@ PlayerEntity::PlayerEntity(glm::vec3 pos, int peer_id, std::shared_ptr<AtlasRef>
     };
 
     auto m = new Mesh();
-    m->create(&vertices, &indices);
+    m->create(vertices, indices);
     this->setMesh(m);
     this->setPos(pos);
 }
