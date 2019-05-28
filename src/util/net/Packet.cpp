@@ -27,6 +27,4 @@ ENetPacket* Packet::toENetPacket() {
 void Packet::sendTo(ENetPeer *peer, int channel) {
     ENetPacket* enet = toENetPacket();
     enet_peer_send(peer, (enet_uint8)channel, enet);
-    //TODO: test
-//    enet_packet_destroy(enet);
 }

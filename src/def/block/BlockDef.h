@@ -23,8 +23,8 @@ private:
     bool culls = false;
     bool solid = false;
     SelectionBox selectionBox;
-    BlockModel model;
-    std::string identifier;
+    BlockModel   model;
+    std::string  identifier;
 };
 
 

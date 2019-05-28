@@ -14,8 +14,8 @@ BlockCrackEntity::BlockCrackEntity(GameDefs &defs, glm::vec3 blockPos, unsigned 
 }
 
 void BlockCrackEntity::update() {
-    if (targetDamage > damage) damage = static_cast<float>(fmin(targetDamage, damage + 0.1));
-    else if (targetDamage < damage) damage = static_cast<float>(fmax(targetDamage, damage - 0.1));
+    if (targetDamage > damage) damage = static_cast<float>(fmin(targetDamage, damage + 0.2));
+    else if (targetDamage < damage) damage = static_cast<float>(fmax(targetDamage, damage - 0.2));
 
     auto crackLevel = static_cast<unsigned short>(std::max(std::min(static_cast<int>(std::floor(damage * 8)), 7), 0));
 

@@ -17,10 +17,7 @@
 class Game {
 public:
     Game();
-    Game(int width, int height);
-
-    void start(char* path);
-
+    Game(int width, int height, char* path);
     ~Game();
 
 private:

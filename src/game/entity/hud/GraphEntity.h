@@ -8,8 +8,6 @@
 
 #include "../Entity.h"
 
-//TODO: Un-publicize entity
-
 class GraphEntity : public Entity {
 public:
     GraphEntity() = default;

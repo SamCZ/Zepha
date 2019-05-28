@@ -16,6 +16,8 @@ public:
     void update(double delta, glm::vec3 player);
     void draw(Renderer& renderer) override;
 
+    float time = 0;
+private:
     glm::vec3 velocity {};
 };
 

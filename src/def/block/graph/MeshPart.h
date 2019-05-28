@@ -19,7 +19,7 @@
 #include "../../texture/TextureAtlas.h"
 
 struct MeshPart {
-    MeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, std::string texture, TextureAtlas& atlas);
+    MeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, std::shared_ptr<AtlasRef> texture);
 
     std::vector<MeshVertex> vertices;
     std::vector<unsigned int> indices;

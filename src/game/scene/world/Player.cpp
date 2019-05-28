@@ -126,19 +126,22 @@ void Player::pointerUpdate(InputManager &input, double delta) {
     }
 
     if (found) {
+        const static float DAMAGE = 0.25f;
+        const static float INTERVAL = 0.1f;
+
         if (input.isMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
             if (breakInterval == 0) {
-                world.damageBlock(pointedThing.pos, 0.55);
+                world.damageBlock(pointedThing.pos, DAMAGE);
             }
             breakInterval += delta;
-            if (breakInterval > 0.4) breakInterval = 0;
+            if (breakInterval > INTERVAL) breakInterval = 0;
         }
         else {
             if (breakInterval > 0) breakInterval += delta;
-            if (breakInterval > 0.4) breakInterval = 0;
+            if (breakInterval > INTERVAL) breakInterval = 0;
         }
         if (input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
-            world.setBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face), 3);
+            world.setBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face), 5);
         }
     }
     else {

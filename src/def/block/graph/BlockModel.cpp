@@ -52,8 +52,12 @@ BlockModel BlockModel::create(sol::table model, std::vector<std::string> texture
                 ind += 4;
             }
 
-            MeshPart partObject(std::move(vertices), std::move(indices),
-                    textures[std::min(tex - 1, (int)textures.size() - 1)], atlas);
+            auto texture = textures[std::min(tex - 1, (int)textures.size() - 1)];
+            auto textureRef = atlas.getTextureRef(texture);
+
+            blockModel.textureRefs.insert(textureRef);
+
+            MeshPart partObject(std::move(vertices), std::move(indices), textureRef);
 
             if      (face == "top")    blockModel.topFaces.push_back(partObject);
             else if (face == "bottom") blockModel.bottomFaces.push_back(partObject);

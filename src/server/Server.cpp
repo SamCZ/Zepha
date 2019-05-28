@@ -7,11 +7,10 @@
 Server::Server(unsigned short port) :
     world(55),
     connections(&world),
-    port(port) {}
+    port(port),
+    handler(port, 32) {
 
-void Server::init() {
-    handler = NetHandler(port, 32);
-
+    //Some signal to turn off alive is needed to shut down the server gracefully
     while (alive) update();
 }
 
@@ -25,7 +24,8 @@ void Server::update() {
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT: {
                 auto peer = connections.addPeer(event.peer);
-                connections.createPlayer(peer, "Aurailus");
+                //TODO: Get an actual username / uuid
+                connections.createPlayer(peer, "1234567890", "Aurailus");
                 break;
             }
             case ENET_EVENT_TYPE_RECEIVE: {

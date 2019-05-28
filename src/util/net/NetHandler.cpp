@@ -13,6 +13,7 @@ NetHandler::NetHandler() {
 
 NetHandler::NetHandler(std::string host_address, unsigned short host_port) {
     initClient(std::move(host_address), host_port, 3, 3);
+    bool initialized = true;
 }
 
 NetHandler::NetHandler(std::string host_address, unsigned short host_port, int attempts, int timeout) {
@@ -110,11 +111,12 @@ ENetPeer* NetHandler::getPeer() {
 }
 
 NetHandler::~NetHandler() {
-    //TODO: This causes a weird bug The destructor is called on initialization for some reason
-//    if (host != nullptr) {
-//        enet_host_destroy(host);
-//    }
-//    if (getState() != UNINITIALIZED) {
-//        enet_deinitialize();
-//    }
+    if (initialized) {
+        if (host != nullptr) {
+            enet_host_destroy(host);
+        }
+        if (getState() != UNINITIALIZED) {
+            enet_deinitialize();
+        }
+    }
 }

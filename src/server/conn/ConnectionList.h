@@ -18,7 +18,7 @@ public:
     ServerPeer* addPeer(ENetPeer* peer);
     void removePeer(ENetPeer* peer);
 
-    ServerPlayer* createPlayer(ServerPeer *peer, std::string uuid);
+    ServerPlayer* createPlayer(ServerPeer *peer, std::string uuid, std::string username);
 public:
     std::vector<ServerPeer*> peers;
     ServerWorld* world;

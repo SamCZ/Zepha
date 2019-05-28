@@ -6,10 +6,12 @@
 #include "ServerPlayer.h"
 #include "../../util/TransPos.h"
 
-ServerPlayer::ServerPlayer(ServerPeer *peer, std::string uuid) {
-    this->peer = peer;
+ServerPlayer::ServerPlayer(ServerPeer *peer, std::string uuid, std::string username) :
+    peer(peer),
+    uuid(std::move(uuid)),
+    username(std::move(username)) {
+
     peer->player = this;
-    this->username = std::move(uuid);
 }
 
 Packet ServerPlayer::getInitPacket() {

@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <sol.hpp>
+#include <set>
 #include "MeshPart.h"
 #include "../../../game/scene/world/graph/MeshVertex.h"
 
@@ -18,6 +19,8 @@ struct BlockModel {
     std::vector<MeshPart> frontFaces;
     std::vector<MeshPart> backFaces;
     std::vector<MeshPart> noCulledFaces;
+
+    std::set<std::shared_ptr<AtlasRef>> textureRefs;
 
     bool culls;
     bool visible;

@@ -49,11 +49,11 @@ Dimension::~Dimension() {
 }
 
 void Dimension::update() {
+    //TODO: Figure out why there are NULL CHUNKS in the map
     for (auto it = blockChunks.begin(); it != blockChunks.end();) {
         auto chunk = it->second;
         auto pos = it->first;
 
-        //TODO: Figure out why there are NULL CHUNKS in the map
         if (chunk != nullptr) {
             auto diffVec = pos - *playerPos;
             float distance = max(abs(diffVec.x), max(abs(diffVec.y), abs(diffVec.z)));
@@ -69,6 +69,7 @@ void Dimension::update() {
             }
         }
         else {
+            std::cerr << "null chunk" << std::endl;
             it = blockChunks.erase(it);
         }
     }

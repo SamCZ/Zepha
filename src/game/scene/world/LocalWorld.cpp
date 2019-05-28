@@ -24,9 +24,15 @@ void LocalWorld::update(double delta) {
     updateBlockDamages(delta);
     dimension.update();
 
-    for (auto &p: particles) {
-        p->update(delta, *playerPos);
+    auto end = particles.begin();
+    for (auto i = particles.begin(); i < particles.end(); i++) {
+        (*i)->update(delta, *playerPos);
+        if ((*i)->time > 1) {
+            end = i;
+            delete (*i);
+        }
     }
+    if (end != particles.begin()) particles.erase(particles.begin(), end + 1);
 }
 
 void LocalWorld::damageBlock(glm::vec3 pos, float amount) {
@@ -47,7 +53,7 @@ void LocalWorld::damageBlock(glm::vec3 pos, float amount) {
     block->time = 0;
 
     auto def = defs.blocks().getBlock(getBlock(pos));
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 40 * amount; i++) {
         auto p = new ParticleEntity(pos, def);
         particles.push_back(p);
     }
@@ -136,7 +142,7 @@ void LocalWorld::updateBlockDamages(double delta) {
 
 
 void LocalWorld::loadChunkPacket(Packet p) {
-    worldGenStream.pushBack(std::move(p));
+    worldGenStream.pushBack(p);
 }
 std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::vec3 chunkPos) {
     return dimension.getChunk(chunkPos);

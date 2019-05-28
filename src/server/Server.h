@@ -20,7 +20,6 @@ class Server {
 public:
     explicit Server(unsigned short port);
 
-    void init();
     void update();
     void cleanup();
 

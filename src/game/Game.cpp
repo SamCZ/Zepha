@@ -9,11 +9,9 @@
 
 Game::Game() = default;
 
-Game::Game(int width, int height) {
-    renderer = new Renderer(width, height);
-}
+Game::Game(int width, int height, char* path) :
+    renderer(new Renderer(width, height)) {
 
-void Game::start(char* path) {
     //Start Local Server
     if (path != nullptr) {
         int pid = fork();

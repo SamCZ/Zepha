@@ -26,6 +26,7 @@ private:
     void initServer(unsigned short port, short max_clients);
     void initClient(std::string host_address, unsigned short host_port, int connection_attempts, int connection_timeout);
 
+    bool initialized = false; //Not default constructed.
     int state = UNINITIALIZED;
 
     ENetPeer* peer;
