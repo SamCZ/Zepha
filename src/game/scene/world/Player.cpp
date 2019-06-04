@@ -141,7 +141,7 @@ void Player::pointerUpdate(InputManager &input, double delta) {
             if (breakInterval > INTERVAL) breakInterval = 0;
         }
         if (input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
-            world.setBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face), 5);
+            world.attemptSetBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face), 5);
         }
     }
     else {

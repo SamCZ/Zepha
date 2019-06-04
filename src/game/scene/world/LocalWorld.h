@@ -28,9 +28,11 @@
 #include "WorldInterpolationStream.h"
 #include "MeshGenStream.h"
 
+class ServerConnection;
+
 class LocalWorld {
 public:
-    explicit LocalWorld(GameDefs& defs, glm::vec3* playerPos);
+    LocalWorld(GameDefs& defs, glm::vec3* playerPos, ServerConnection* server);
 
     void update(double delta);
 
@@ -53,7 +55,12 @@ public:
     int getMeshChunkCount();
 
     int getBlock(glm::vec3 pos);
+
+    //Called by the Client
+    void attemptSetBlock(glm::vec3 pos, int block);
+    //Called form ServerConnection
     void setBlock(glm::vec3 pos, int block);
+
     bool solidAt(glm::vec3 pos);
 
     int lastGenUpdates = 0, lastMeshUpdates = 0;
@@ -61,6 +68,8 @@ private:
     GameDefs& defs;
     glm::vec3* playerPos;
     glm::vec3 playerChunkPos {};
+
+    ServerConnection* server;
 
     WorldInterpolationStream worldGenStream;
     Dimension dimension;

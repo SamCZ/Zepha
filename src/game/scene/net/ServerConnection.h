@@ -12,17 +12,20 @@
 #include "../../../util/Timer.h"
 #include "../../../util/net/Packet.h"
 #include "../../../util/net/NetHandler.h"
-#include "../world/Player.h"
 #include "../../entity/world/PlayerEntity.h"
 #include "../../graph/drawable/DrawableGroup.h"
+#include "../world/Player.h"
+#include "../world/LocalWorld.h"
 
 class ServerConnection {
 public:
     ServerConnection(std::string address, unsigned short port, TextureAtlas& atlas);
 
-    void init(std::vector<Drawable*> &entities);
+    void init(std::vector<Drawable*> &entities, LocalWorld* world);
     void update(Player &player);
     void cleanup();
+
+    void setBlock(glm::vec3 pos, int block);
 
     ~ServerConnection();
 
@@ -35,6 +38,7 @@ private:
     int id = 0;
 
     DrawableGroup* entities;
+    LocalWorld* world;
 
     NetHandler handler;
 

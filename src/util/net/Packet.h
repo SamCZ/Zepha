@@ -23,6 +23,7 @@ struct Packet {
         ENTITY_INFO,
         CHUNK_INFO,
         SERVER_INFO,
+        BLOCK_SET
     };
 
     Packet() = default;

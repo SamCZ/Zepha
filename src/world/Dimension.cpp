@@ -93,3 +93,11 @@ int Dimension::render(Renderer &renderer) {
 int Dimension::getMeshChunkCount() {
     return (int)meshChunks.size();
 }
+
+void Dimension::setBlock(glm::vec3 pos, int block) {
+    auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
+    auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
+
+    auto chunk = getChunk(chunkPos);
+    if (chunk != nullptr) chunk->setBlock(&local, block);
+}

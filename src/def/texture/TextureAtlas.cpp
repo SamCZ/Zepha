@@ -53,6 +53,7 @@ void TextureAtlas::createMissingImage() {
     }
 
     addImage(data, "_missing", true, 16, 16);
+    delete [] data;
 }
 
 void TextureAtlas::loadDirectory(std::string dirStr) {
@@ -67,27 +68,12 @@ void TextureAtlas::loadDirectory(std::string dirStr) {
             int width, height;
             unsigned char* data = stbi_load(file.path, &width, &height, nullptr, 4);
             addImage(data, std::string(file.name).substr(0, std::string(file.name).size() - 4), true, width, height);
-            delete[] data;
+            delete data;
         }
 
         cf_dir_next(&dir);
     }
     cf_dir_close(&dir);
-
-//    std::string trypls("default_grass_top");
-//    generateCrackImage(trypls);
-//    trypls = "default_sand";
-//    generateCrackImage(trypls);
-//    trypls = "default_log_side";
-//    generateCrackImage(trypls);
-//    trypls = "default_leaves";
-//    generateCrackImage(trypls);
-//    trypls = "default_grass_float";
-//    generateCrackImage(trypls);
-//    trypls = "_missing";
-//    generateCrackImage(trypls);
-//    trypls = "default_leaves_puff";
-//    generateCrackImage(trypls);
 }
 
 void TextureAtlas::update() {
@@ -275,4 +261,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::getTextureRef(std::string &name) {
     return textures[name];
 }
 
-TextureAtlas::~TextureAtlas() = default;
+TextureAtlas::~TextureAtlas() {
+//    delete[] atlasData;
+//    delete t;
+};

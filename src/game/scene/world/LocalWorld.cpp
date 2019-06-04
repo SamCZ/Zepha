@@ -6,12 +6,14 @@
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 
 #include "LocalWorld.h"
+#include "../net/ServerConnection.h"
 
-LocalWorld::LocalWorld(GameDefs& defs, glm::vec3* playerPos) :
+LocalWorld::LocalWorld(GameDefs& defs, glm::vec3* playerPos, ServerConnection* server) :
     playerPos(playerPos),
     dimension(&playerChunkPos),
     meshGenStream(defs, dimension),
     worldGenStream(55),
+    server(server),
     defs(defs) {}
 
 void LocalWorld::update(double delta) {
@@ -116,7 +118,7 @@ void LocalWorld::updateBlockDamages(double delta) {
         block->time += delta;
 
         if (block->damage >= 1) {
-            setBlock(block->blockPos, 0);
+            attemptSetBlock(block->blockPos, 0);
             deleteMe = true;
         }
 
@@ -206,17 +208,18 @@ int LocalWorld::getBlock(glm::vec3 pos) {
     }
     return -1;
 }
-void LocalWorld::setBlock(glm::vec3 pos, int block) {
-    auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
-    auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
 
-    auto chunk = getChunk(chunkPos);
-    if (chunk != nullptr) {
-        if (chunk->setBlock(&local, block)) {
-            remeshChunk(chunkPos);
-        }
-    }
+void LocalWorld::attemptSetBlock(glm::vec3 pos, int block) {
+    server->setBlock(pos, block);
+    dimension.setBlock(pos, block);
+    remeshChunk(TransPos::chunkFromVec(TransPos::roundPos(pos)));
 }
+
+void LocalWorld::setBlock(glm::vec3 pos, int block) {
+    dimension.setBlock(pos, block);
+    remeshChunk(TransPos::chunkFromVec(TransPos::roundPos(pos)));
+}
+
 bool LocalWorld::solidAt(glm::vec3 pos) {
     int blockId = getBlock(pos);
     if (blockId == -1) return true;

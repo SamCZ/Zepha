@@ -6,27 +6,21 @@
 #include "InputManager.h"
 
 InputManager::InputManager() {
-    for (bool &key : keysDown) {
-        key = false;
-    }
+    for (bool &key : keysDown) key = false;
+    for (bool &key : keysPressed) key = false;
+    for (bool &key : keysReleased) key = false;
 
-    for (bool &key : keysPressed) {
-        key = false;
-    }
-
-    for (bool &key : keysReleased) {
-        key = false;
-    }
+    leftDown = false;
+    rightDown = false;
+    leftPressed = false;
+    rightPressed = false;
+    leftReleased = false;
+    rightReleased = false;
 }
 
 void InputManager::update(bool* keys) {
-    for (bool &key : keysPressed) {
-        key = false;
-    }
-
-    for (bool &key : keysReleased) {
-        key = false;
-    }
+    for (bool &key : keysPressed) key = false;
+    for (bool &key : keysReleased) key = false;
 
     for (int i = 0; i < 1024; i++) {
         bool key = keys[i];

@@ -23,6 +23,7 @@ public:
     void addMeshChunk(MeshChunk* chunk);
 
     void update();
+    void setBlock(glm::vec3 pos, int block);
 
     int render(Renderer &renderer);
     int getMeshChunkCount();

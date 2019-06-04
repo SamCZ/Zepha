@@ -7,6 +7,7 @@
 #include "ServerWorld.h"
 #include "../../util/net/PacketChannel.h"
 #include "../../util/Timer.h"
+#include "../../util/Util.h"
 
 ServerWorld::ServerWorld(unsigned int seed) : genStream(seed) {
     //Pregenerate chunk generation order
@@ -52,7 +53,7 @@ void ServerWorld::addPlayer(ServerPlayer *player) {
 }
 
 void ServerWorld::playerChangedChunks(ServerPlayer *player) {
-    Timer t("Movement Allocation");
+    Timer t("[INFO] Movement Allocation");
 
     auto pos = player->getChunkPos();
 
@@ -141,14 +142,31 @@ void ServerWorld::sendChunk(glm::vec3 pos, ServerPeer &peer) {
 
         Packet r(Packet::CHUNK_INFO);
 
-        Serializer::encodeInt(r.data, (int) chunk->pos.x);
-        Serializer::encodeInt(r.data, (int) chunk->pos.y);
-        Serializer::encodeInt(r.data, (int) chunk->pos.z);
+        Serializer::encodeIntVec3(r.data, pos);
         Serializer::encodeString(r.data, serialized);
 
-        r.sendTo(peer.peer, PacketChannel::WORLD_INFO);
+        r.sendTo(peer.peer, PacketChannel::CHUNKS);
     }
     else {
+        //BUG: If the null chunks are on the client, The Null chunks have to happen there, cause the chunks are serialized before sending.
         std::cerr << "Tried to send null chunk at " << pos.x << ", " << pos.y << ", " << pos.z << std::endl;
+    }
+}
+
+void ServerWorld::setBlock(glm::vec3 pos, int block) {
+    dimension.setBlock(pos, block);
+
+    Packet b(Packet::BLOCK_SET);
+    Serializer::encodeIntVec3(b.data, pos);
+    Serializer::encodeInt(b.data, block);
+
+    auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
+
+    for (auto player : players) {
+        auto bounds = player->getBounds();
+
+        if (player->isInBounds(chunkPos, bounds)) {
+            b.sendTo(player->peer->peer, PacketChannel::BLOCK_UPDATES);
+        }
     }
 }

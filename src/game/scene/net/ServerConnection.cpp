@@ -19,8 +19,10 @@ ServerConnection::ServerConnection(std::string address, unsigned short port, Tex
     entities = new DrawableGroup();
 }
 
-void ServerConnection::init(std::vector<Drawable*> &entities) {
+
+void ServerConnection::init(std::vector<Drawable *> &entities, LocalWorld *world) {
     entities.push_back(this->entities);
+    this->world = world;
 
     handler = NetHandler(address, port, 3, 3000);
 
@@ -77,6 +79,12 @@ void ServerConnection::update(Player &player) {
                         }
                         break;
                     }
+                    case Packet::BLOCK_SET: {
+                        auto pos = Serializer::decodeIntVec3(&p.data[0]);
+                        auto block = Serializer::decodeInt(&p.data[12]);
+                        world->setBlock(pos, block);
+                        break;
+                    }
                     case Packet::CHUNK_INFO: {
                         chunkPackets.push_back(std::move(p));
                         break;
@@ -108,7 +116,7 @@ void ServerConnection::update(Player &player) {
     Serializer::encodeFloat(p.data, player.getPos().y - Player::EYE_HEIGHT);
     Serializer::encodeFloat(p.data, player.getPos().z);
     Serializer::encodeFloat(p.data, player.getYaw());
-    p.sendTo(handler.getPeer(), 0);
+    p.sendTo(handler.getPeer(), PacketChannel::PLAYER_INFO);
 }
 
 void ServerConnection::cleanup() {
@@ -117,4 +125,11 @@ void ServerConnection::cleanup() {
 
 ServerConnection::~ServerConnection() {
     cleanup();
+}
+
+void ServerConnection::setBlock(glm::vec3 pos, int block) {
+    Packet p(Packet::BLOCK_SET);
+    Serializer::encodeIntVec3(p.data, pos);
+    Serializer::encodeInt(p.data, block);
+    p.sendTo(handler.getPeer(), PacketChannel::BLOCK_UPDATES);
 }

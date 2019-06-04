@@ -6,8 +6,8 @@
 
 GameScene::GameScene(ClientState* state) : Scene(state),
     defs("../res/tex"),
-    world(defs, &playerPos),
     server("127.0.0.1", 12345, defs.textures()),
+    world(defs, &playerPos, &server),
 
     player(world, defs, *state->renderer->getCamera()),
 
@@ -19,7 +19,7 @@ GameScene::GameScene(ClientState* state) : Scene(state),
 
     entities.push_back(&player);
 
-    server.init(entities);
+    server.init(entities, &world);
 }
 
 
@@ -39,8 +39,7 @@ void GameScene::update() {
         state->renderer->resized = false;
     }
 
-    for (int i = 0; i < server.chunkPackets.size(); i++)
-        world.loadChunkPacket(std::move(server.chunkPackets[i]));
+    for (auto &chunkPacket : server.chunkPackets) world.loadChunkPacket(chunkPacket);
     server.chunkPackets.clear();
 
     debugGui.update(player, world, defs, state->fps, world.getMeshChunkCount(), drawCalls, server.serverSideChunkGens, server.recvPackets);

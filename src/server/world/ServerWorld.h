@@ -21,6 +21,8 @@ public:
     void addPlayer(ServerPlayer* player);
     void update();
 
+    void setBlock(glm::vec3 pos, int block);
+
     ~ServerWorld() = default;
 private:
     void playerChangedChunks(ServerPlayer* player);

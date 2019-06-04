@@ -14,17 +14,11 @@ public:
         this->state = state;
     };
 
-    virtual void update() {
-        std::cerr << "State doesn't define update method!" << std::endl;
-    };
+    virtual void update() {};
 
-    virtual void draw() {
-        std::cerr << "State doesn't define draw method!" << std::endl;
-    };
+    virtual void draw() {};
 
-    virtual void cleanup() {
-        std::cerr << "State doesn't define cleanup method!" << std::endl;
-    };
+    virtual void cleanup() {};
 
     virtual ~Scene() = default;
 
