@@ -118,7 +118,7 @@ void LocalWorld::updateBlockDamages(double delta) {
         block->time += delta;
 
         if (block->damage >= 1) {
-            attemptSetBlock(block->blockPos, 0);
+            localSetBlock(block->blockPos, 0);
             deleteMe = true;
         }
 
@@ -194,6 +194,7 @@ int LocalWorld::render(Renderer &renderer) {
 
     return count;
 }
+
 int LocalWorld::getMeshChunkCount() {
     return dimension.getMeshChunkCount();
 }
@@ -209,10 +210,10 @@ int LocalWorld::getBlock(glm::vec3 pos) {
     return -1;
 }
 
-void LocalWorld::attemptSetBlock(glm::vec3 pos, int block) {
+void LocalWorld::localSetBlock(glm::vec3 pos, int block) {
     server->setBlock(pos, block);
-    dimension.setBlock(pos, block);
-    remeshChunk(TransPos::chunkFromVec(TransPos::roundPos(pos)));
+//    dimension.setBlock(pos, block);
+//    remeshChunk(TransPos::chunkFromVec(TransPos::roundPos(pos)));
 }
 
 void LocalWorld::setBlock(glm::vec3 pos, int block) {

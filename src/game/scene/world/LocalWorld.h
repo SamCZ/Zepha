@@ -57,7 +57,7 @@ public:
     int getBlock(glm::vec3 pos);
 
     //Called by the Client
-    void attemptSetBlock(glm::vec3 pos, int block);
+    void localSetBlock(glm::vec3 pos, int block);
     //Called form ServerConnection
     void setBlock(glm::vec3 pos, int block);
 
