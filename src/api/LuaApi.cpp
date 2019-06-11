@@ -3,11 +3,11 @@
 //
 
 #include "LuaApi.h"
-#include "../def/GameDefs.h"
+#include "../def/LocalDefs.h"
 
 //todo: add security using doFileSandboxed
 
-void LuaApi::init(GameDefs& defs) {
+void LuaApi::init(LocalDefs& defs) {
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math);
     lua.script_file("/home/aurailus/C++/GlProject/res/lua/util.lua");
 

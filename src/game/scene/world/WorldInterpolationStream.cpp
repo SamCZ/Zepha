@@ -4,7 +4,7 @@
 
 #include "WorldInterpolationStream.h"
 
-WorldInterpolationStream::WorldInterpolationStream(unsigned int seed) : gen(seed) {
+WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, LocalDefs& defs) : gen(seed) {
     queuedTasks.reserve(1024);
 
     threads.reserve(THREADS);

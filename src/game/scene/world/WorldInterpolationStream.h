@@ -17,8 +17,7 @@ public:
     static const int THREAD_QUEUE_SIZE = 32;
     static const int THREADS = 4;
 
-    WorldInterpolationStream() : gen(0) {};
-    explicit WorldInterpolationStream(unsigned int seed);
+    WorldInterpolationStream(unsigned int seed,  LocalDefs& defs);
     ~WorldInterpolationStream();
 
     //Add `p` to the pre-thread queue.

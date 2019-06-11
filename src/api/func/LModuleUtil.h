@@ -5,16 +5,16 @@
 #ifndef ZEUS_LMODULEUTIL_H
 #define ZEUS_LMODULEUTIL_H
 
-#include "../../def/block/graph/SelectionBox.h"
-#include "../../def/block/BlockDef.h"
-#include "../../def/block/BlockAtlas.h"
+#include "../../def/block/SelectionBox.h"
+#include "../../def/block/client/LocalBlockDef.h"
+#include "../../def/block/client/LocalBlockAtlas.h"
 #include <sol.hpp>
 
-class GameDefs;
+class LocalDefs;
 
 class LModuleUtil {
 public:
-    LModuleUtil(sol::state& lua, sol::table& zeus, GameDefs& defs);
+    LModuleUtil(sol::state& lua, sol::table& zeus, LocalDefs& defs);
 };
 
 

@@ -7,11 +7,11 @@
 
 
 #include "../Entity.h"
-#include "../../../def/block/BlockDef.h"
+#include "../../../def/block/client/LocalBlockDef.h"
 
 class ParticleEntity : public Entity {
 public:
-    ParticleEntity(glm::vec3 pos, BlockDef& block);
+    ParticleEntity(glm::vec3 pos, LocalBlockDef& block);
 
     void update(double delta, glm::vec3 player);
     void draw(Renderer& renderer) override;

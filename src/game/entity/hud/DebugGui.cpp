@@ -60,7 +60,7 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
     vRamGraph        .setPosition({bufferWidth - 254, 10                     });
 }
 
-void DebugGui::update(Player& player, LocalWorld& world, GameDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack) {
+void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack) {
 
     { //VRam Usage Graph (Top Right)
         int videoMemAvail, videoMemTotal;
@@ -90,7 +90,7 @@ void DebugGui::update(Player& player, LocalWorld& world, GameDefs& defs, double 
         glm::vec3 footPos = TransPos::roundPos(player.getPos()) + glm::vec3(0, -2, 0);
 
         int blockID = world.getBlock(footPos);
-        std::string on = (blockID > 0) ? defs.blocks().getBlock(blockID).getIdentifier() : "invalid";
+        std::string on = (blockID > 0) ? defs.blocks().fromIndex(blockID).getIdentifier() : "invalid";
 
         glm::vec3 playerPos = TransPos::roundPos(player.getPos());
 

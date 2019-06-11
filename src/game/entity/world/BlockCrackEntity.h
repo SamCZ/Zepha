@@ -7,12 +7,12 @@
 
 
 #include "../../../game/entity/Entity.h"
-#include "../../../def/block/graph/BlockModel.h"
-#include "../../../def/GameDefs.h"
+#include "../../../def/block/client/LocalBlockModel.h"
+#include "../../../def/LocalDefs.h"
 
 class BlockCrackEntity : public Entity {
 public:
-    explicit BlockCrackEntity(GameDefs &defs, glm::vec3 blockPos, unsigned int blockID);
+    explicit BlockCrackEntity(LocalDefs &defs, glm::vec3 blockPos, unsigned int blockID);
 
     void update();
     void setNewDamage(float damage);
@@ -25,10 +25,10 @@ public:
 private:
     short crackLevel = -1;
 
-    void addFaces(unsigned int &indOffset, std::vector<Vertex> &vertices, std::vector<unsigned int> &indices, std::vector<MeshPart> &meshParts);
+    void addFaces(unsigned int &indOffset, std::vector<Vertex> &vertices, std::vector<unsigned int> &indices, std::vector<LocalMeshPart> &meshParts);
 
     std::vector<std::shared_ptr<AtlasRef>> crackedFaces;
-    GameDefs& defs;
+    LocalDefs& defs;
 };
 
 

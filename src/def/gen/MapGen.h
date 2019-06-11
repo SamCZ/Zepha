@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "MapGenJob.h"
+#include "../LocalDefs.h"
 #include "../../world/chunk/BlockChunk.h"
 
 #include <noise/noise.h>
@@ -21,6 +22,11 @@ public:
     explicit MapGen(unsigned int seed);
     BlockChunk* generate(glm::vec3 pos);
 private:
+    int GRASS_BLOCK = 0, DIRT_BLOCK = 0, STONE_BLOCK = 0;
+    int PLANT_STEM_BLOCK = 0, LEAVES_BLOCK = 0;
+    int TALLGRASSES[5];
+    int FLOWERS[9];
+
     void getDensityMap(MapGenJob &job);
     void getElevation(MapGenJob &j);
     void fillChunk(MapGenJob &j);

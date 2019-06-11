@@ -5,7 +5,7 @@
 #include "BlockCrackEntity.h"
 
 
-BlockCrackEntity::BlockCrackEntity(GameDefs &defs, glm::vec3 blockPos, unsigned int blockID) :
+BlockCrackEntity::BlockCrackEntity(LocalDefs &defs, glm::vec3 blockPos, unsigned int blockID) :
     defs(defs),
     blockPos(blockPos),
     blockID(blockID) {
@@ -22,7 +22,7 @@ void BlockCrackEntity::update() {
     if (crackLevel != this->crackLevel) {
         this->crackLevel = crackLevel;
 
-        auto model = defs.blocks().getBlock(blockID).getModel();
+        auto model = defs.blocks().fromIndex(blockID).getModel();
         auto m = new Mesh();
 
         std::vector<Vertex> vertices;
@@ -32,13 +32,9 @@ void BlockCrackEntity::update() {
 
         crackedFaces.clear();
 
-        addFaces(indOffset, vertices, indices, model.leftFaces);
-        addFaces(indOffset, vertices, indices, model.rightFaces);
-        addFaces(indOffset, vertices, indices, model.topFaces);
-        addFaces(indOffset, vertices, indices, model.bottomFaces);
-        addFaces(indOffset, vertices, indices, model.frontFaces);
-        addFaces(indOffset, vertices, indices, model.backFaces);
-        addFaces(indOffset, vertices, indices, model.noCulledFaces);
+        for (int i = 0; i < 7; i++) {
+            addFaces(indOffset, vertices, indices, model.parts[i]);
+        }
 
         m->create(vertices, indices);
         setMesh(m);
@@ -49,8 +45,8 @@ void BlockCrackEntity::setNewDamage(float damage) {
     this->targetDamage = damage;
 }
 
-void BlockCrackEntity::addFaces(unsigned int &indOffset, std::vector<Vertex> &vertices, std::vector<unsigned int> &indices, std::vector<MeshPart> &meshParts) {
-    for (const MeshPart& mp : meshParts) {
+void BlockCrackEntity::addFaces(unsigned int &indOffset, std::vector<Vertex> &vertices, std::vector<unsigned int> &indices, std::vector<LocalMeshPart> &meshParts) {
+    for (const LocalMeshPart& mp : meshParts) {
         glm::vec4 uv;
         auto ref = defs.textures().generateCrackImage(mp.texture->name, crackLevel);
         if (ref == nullptr) {

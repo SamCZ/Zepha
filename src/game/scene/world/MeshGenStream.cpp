@@ -4,7 +4,7 @@
 
 #include "MeshGenStream.h"
 
-MeshGenStream::MeshGenStream(GameDefs &defs, Dimension &dimension) :
+MeshGenStream::MeshGenStream(LocalDefs &defs, Dimension &dimension) :
     defs(defs),
     dimension(dimension) {
 
@@ -73,7 +73,7 @@ std::vector<MeshGenStream::MeshDetails> MeshGenStream::update() {
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-MeshGenStream::Thread::Thread(BlockAtlas &atlas) : atlas(atlas) {
+MeshGenStream::Thread::Thread(LocalBlockAtlas &atlas) : atlas(atlas) {
     thread = new std::thread(MeshGenStream::threadFunction, this);
 }
 #pragma clang diagnostic pop
@@ -133,7 +133,7 @@ std::vector<bool>* MeshGenStream::getAdjacentsCull(glm::vec3 pos) {
                 int z = (i == 4) ? 0 : (i == 5) ? (TransPos::CHUNK_SIZE-1) : k;
 
                 auto block = chunk->getBlock(x, y, z);
-                culls->push_back(defs.blocks().getBlock(block).isCulling());
+                culls->push_back(defs.blocks().fromIndex(block).isCulling());
             }
         }
     }

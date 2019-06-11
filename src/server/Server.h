@@ -27,6 +27,7 @@ public:
 private:
     bool alive = true;
 
+    ServerDefs defs;
     ServerWorld world;
     NetHandler handler;
     ConnectionList connections;

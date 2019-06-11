@@ -12,6 +12,9 @@
 MapGen::MapGen(unsigned int seed) {
     this->seed = seed;
 
+//    GRASS_BLOCK = defs.blocks().fromIndex(1);
+
+
     terrainGeneralElevation.SetFrequency(0.05);
     terrainGeneralElevation.SetPersistence(0.4);
     terrainGeneralElevation.SetOctaveCount(6);
@@ -37,7 +40,6 @@ MapGen::MapGen(unsigned int seed) {
     terrainPreElevation.SetControlModule(terrainType);
     terrainPreElevation.SetBounds(0.0, 1000.0);
     terrainPreElevation.SetEdgeFalloff(0.1);
-//    terrainPreElevation.SetEdgeFalloff(0.02);
 
     terrainFinal.SetSourceModule(0, terrainPreElevation);
     terrainFinal.SetSourceModule(1, terrainGeneralElevation);

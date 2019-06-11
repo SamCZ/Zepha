@@ -5,8 +5,8 @@
 #ifndef ZEUS_POSBLOCK_H
 #define ZEUS_POSBLOCK_H
 
-#include "../../def/block/BlockDef.h"
-#include "../../def/GameDefs.h"
+#include "../../def/block/client/LocalBlockDef.h"
+#include "../../def/LocalDefs.h"
 
 struct PointedThing {
     PointedThing() = default;
@@ -29,7 +29,7 @@ struct PointedThing {
 public:
     //Properties
     unsigned int blockID = 0;
-    BlockDef* blockDef = nullptr;
+    LocalBlockDef* blockDef = nullptr;
 
     glm::vec3 pos {};
     SelectionBox::Face face = SelectionBox::NONE;

@@ -5,7 +5,7 @@
 #include "Player.h"
 #include "../../../util/Ray.h"
 
-Player::Player(LocalWorld& world, GameDefs& defs, Camera& camera) :
+Player::Player(LocalWorld& world, LocalDefs& defs, Camera& camera) :
     world(world),
     camera(camera),
     defs(defs),
@@ -106,12 +106,12 @@ void Player::pointerUpdate(InputManager &input, double delta) {
 
         auto blockID = world.getBlock(rayEnd);
         if (blockID > 0) {
-            auto sBox = defs.blocks().getBlock(blockID).getSelectionBox();
+            auto sBox = defs.blocks().fromIndex(blockID).getSelectionBox();
             SelectionBox::Face intersects = sBox.intersects(*ray.getEnd(), pointedPos);
 
             if (intersects != SelectionBox::NONE) {
                 pointedThing.blockID = static_cast<unsigned int>(blockID);
-                pointedThing.blockDef = &defs.blocks().getBlock(blockID);
+                pointedThing.blockDef = &defs.blocks().fromIndex(blockID);
                 pointedThing.pos = pointedPos;
                 pointedThing.face = intersects;
 

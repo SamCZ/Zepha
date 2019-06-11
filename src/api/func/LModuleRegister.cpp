@@ -3,15 +3,15 @@
 //
 
 #include "LModuleRegister.h"
-#include "../../def/GameDefs.h"
+#include "../../def/LocalDefs.h"
 
-LModuleRegister::LModuleRegister(sol::state &lua, sol::table &zeus, GameDefs &defs) {
+LModuleRegister::LModuleRegister(sol::state &lua, sol::table &zeus, LocalDefs &defs) {
 
     //Define registered_blockmodels table
     zeus["registered_blockmodels"] = lua.create_table();
 
     //
-    // # Register BlockModel
+    // # Register LocalBlockModel
     // `zeus.register_blockmodel(string identifier, table definition)`
     //
     // Definition is stored as `zeus.registered_blockmodels[identifier] = definition`.
@@ -97,8 +97,8 @@ LModuleRegister::LModuleRegister(sol::state &lua, sol::table &zeus, GameDefs &de
                 sbox = {{def[1], def[2], def[3]}, {def[4], def[5], def[6]}};
             }
 
-            BlockModel blockModel = BlockModel::create(*model, texturesVector, defs.textures(), visible, culls);
-            BlockDef def(identifier, std::move(blockModel), solid, sbox);
+            LocalBlockModel blockModel = LocalBlockModel::create(*model, texturesVector, defs.textures(), visible, culls);
+            LocalBlockDef def(identifier, std::move(blockModel), solid, sbox);
 
             defs.blocks().registerBlock(std::move(def));
         }

@@ -8,15 +8,15 @@ MeshGenerator::MeshGenerator() {
     indOffset = 0;
 }
 
-BlockDef& blockData(int ind, BlockChunk &chunk, BlockAtlas& atlas) {
-    return atlas.getBlock(chunk.getBlock(ind));
+LocalBlockDef& blockData(int ind, BlockChunk &chunk, LocalBlockAtlas& atlas) {
+    return atlas.fromIndex(chunk.getBlock(ind));
 }
 
-BlockDef& blockData(glm::vec3 &pos, BlockChunk &chunk, BlockAtlas &atlas) {
-    return atlas.getBlock(chunk.getBlock(&pos));
+LocalBlockDef& blockData(glm::vec3 &pos, BlockChunk &chunk, LocalBlockAtlas &atlas) {
+    return atlas.fromIndex(chunk.getBlock(&pos));
 }
 
-bool faceOcculudedAt(glm::vec3 &pos, BlockChunk &chunk, BlockAtlas &atlas, std::vector<bool> &bools) {
+bool faceOcculudedAt(glm::vec3 &pos, BlockChunk &chunk, LocalBlockAtlas &atlas, std::vector<bool> &bools) {
     auto off = TransPos::CHUNK_SIZE*TransPos::CHUNK_SIZE; //CHUNK_SIZE ^ 2
     if (pos.x < 0 || pos.x >= TransPos::CHUNK_SIZE || pos.y < 0 || pos.y >= TransPos::CHUNK_SIZE || pos.z < 0 || pos.z >= TransPos::CHUNK_SIZE) {
 
@@ -34,7 +34,7 @@ bool faceOcculudedAt(glm::vec3 &pos, BlockChunk &chunk, BlockAtlas &atlas, std::
     return blockData(pos, chunk, atlas).isCulling();
 }
 
-void MeshGenerator::build(const std::shared_ptr<BlockChunk> &chunk, BlockAtlas &atlas, std::vector<bool> &adjacents,
+void MeshGenerator::build(const std::shared_ptr<BlockChunk> &chunk, LocalBlockAtlas &atlas, std::vector<bool> &adjacents,
         std::vector<Vertex> &vertices, std::vector<unsigned int> &indices) {
 
     Timer t("Mesh Generation");
@@ -51,37 +51,39 @@ void MeshGenerator::build(const std::shared_ptr<BlockChunk> &chunk, BlockAtlas &
 
             VecUtils::indAssignVec(i, off);
             vis = off;
-//            if (chunk->getBlock(i) >= 6 && chunk->getBlock(i) <= 10) {
+//            if (chunk->getBlock(i) >= 6 && chunk->fromIndex(i) <= 10) {
 //                vis += glm::vec3((((double)rand() / RAND_MAX) - 0.5f) / 3.f, 0, (((double)rand() / RAND_MAX) - 0.5f) / 3.f);
 //            }
 
-            BlockModel& model = blockData(i, *chunk, atlas).getModel();
+            //TODO: Better way to do this, surely
+
+            LocalBlockModel& model = blockData(i, *chunk, atlas).getModel();
 
             check.x = off.x - 1; check.y = off.y; check.z = off.z;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(vis, vertices, indices, model.leftFaces);
+                addFaces(vis, vertices, indices, model.parts[XNEG]);
 
             check.x = off.x + 1; check.y = off.y; check.z = off.z;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(vis, vertices, indices, model.rightFaces);
+                addFaces(vis, vertices, indices, model.parts[XPOS]);
 
             check.x = off.x; check.y = off.y - 1; check.z = off.z;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(vis, vertices, indices, model.bottomFaces);
+                addFaces(vis, vertices, indices, model.parts[YNEG]);
 
             check.x = off.x; check.y = off.y + 1; check.z = off.z;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(vis, vertices, indices, model.topFaces);
+                addFaces(vis, vertices, indices, model.parts[YPOS]);
 
             check.x = off.x; check.y = off.y; check.z = off.z - 1;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(vis, vertices, indices, model.backFaces);
+                addFaces(vis, vertices, indices, model.parts[ZNEG]);
 
             check.x = off.x; check.y = off.y; check.z = off.z + 1;
             if (!faceOcculudedAt(check, *chunk, atlas, adjacents))
-                addFaces(vis, vertices, indices, model.frontFaces);
+                addFaces(vis, vertices, indices, model.parts[ZPOS]);
 
-            addFaces(vis, vertices, indices, model.noCulledFaces);
+            addFaces(vis, vertices, indices, model.parts[NO_CULL]);
         }
     }
 
@@ -89,8 +91,8 @@ void MeshGenerator::build(const std::shared_ptr<BlockChunk> &chunk, BlockAtlas &
     indices.shrink_to_fit();
 }
 
-void MeshGenerator::addFaces(glm::vec3 &offset, vector<Vertex> &vertices, vector<unsigned int> &indices, vector<MeshPart> &meshParts) {
-    for (const MeshPart& mp : meshParts) {
+void MeshGenerator::addFaces(glm::vec3 &offset, vector<Vertex> &vertices, vector<unsigned int> &indices, vector<LocalMeshPart> &meshParts) {
+    for (const LocalMeshPart& mp : meshParts) {
 
         for (const MeshVertex &vertex : mp.vertices) {
             vertices.push_back({{vertex.pos + offset}, 1, {vertex.tex.x, vertex.tex.y, 0, 0}, vertex.nml});

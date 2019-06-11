@@ -5,7 +5,8 @@
 #include "Server.h"
 
 Server::Server(unsigned short port) :
-    world(55),
+    defs(),
+    world(55, defs),
     connections(&world),
     port(port),
     handler(port, 32) {

@@ -9,7 +9,7 @@
 #include "../../util/Timer.h"
 #include "../../util/Util.h"
 
-ServerWorld::ServerWorld(unsigned int seed) : genStream(seed) {
+ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs) : genStream(seed, defs.blocks()) {
     //Pregenerate chunk generation order
     generateOrder.reserve((unsigned long)pow(ServerPlayer::ACTIVE_RANGE_H * 2, 3));
 

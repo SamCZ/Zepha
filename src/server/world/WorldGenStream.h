@@ -11,9 +11,10 @@
 #include <vec3.hpp>
 #include <thread>
 #include <unordered_set>
-#include "../../world/chunk/BlockChunk.h"
-#include "../../def/gen/MapGen.h"
 #include "../../util/Vec.h"
+#include "../../def/gen/MapGen.h"
+#include "../../world/chunk/BlockChunk.h"
+#include "../../def/block/server/ServerBlockAtlas.h"
 
 class WorldGenStream {
 public:
@@ -21,8 +22,7 @@ public:
     static const int THREADS = 4;
     static const int TOTAL_QUEUE_SIZE = THREADS * THREAD_QUEUE_SIZE;
 
-    WorldGenStream() : gen(0) {};
-    explicit WorldGenStream(unsigned int seed);
+    explicit WorldGenStream(unsigned int seed, ServerBlockAtlas& atlas);
     ~WorldGenStream();
 
     //Attempt to add `pos` to the pre-thread queue.

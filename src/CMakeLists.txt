@@ -15,16 +15,16 @@ set(ZEUS_SRC_FILES
     game/scene/world/graph/MeshGenerator.h
     util/Timer.cpp
     util/Timer.h
-    def/block/BlockAtlas.cpp
-    def/block/BlockAtlas.h
-    def/block/BlockDef.cpp
-    def/block/BlockDef.h
-    def/block/graph/MeshPart.cpp
-    def/block/graph/MeshPart.h
-    def/block/graph/MeshMod.h
+        def/block/client/LocalBlockAtlas.cpp
+        def/block/client/LocalBlockAtlas.h
+        def/block/client/LocalBlockDef.cpp
+        def/block/client/LocalBlockDef.h
+        def/block/client/LocalMeshPart.cpp
+        def/block/client/LocalMeshPart.h
+        def/block/MeshMod.h
     game/scene/world/graph/MeshVertex.h
-    def/block/graph/BlockModel.cpp
-    def/block/graph/BlockModel.h
+        def/block/client/LocalBlockModel.cpp
+        def/block/client/LocalBlockModel.h
     game/scene/world/LocalWorld.cpp
     game/scene/world/LocalWorld.h
     world/chunk/BlockChunk.cpp
@@ -106,7 +106,7 @@ set(ZEUS_SRC_FILES
     world/region/Region.h
     game/entity/world/WireframeEntity.cpp
     game/entity/world/WireframeEntity.h
-    def/block/graph/SelectionBox.h
+        def/block/SelectionBox.h
     game/graph/drawable/Drawable.h
     game/graph/drawable/DrawableGroup.cpp
     game/graph/drawable/DrawableGroup.h
@@ -117,8 +117,8 @@ set(ZEUS_SRC_FILES
     def/texture/TextureAtlas.cpp
     def/texture/TextureAtlas.h
     def/texture/AtlasRef.h
-    world/region/MapBlock.h def/GameDefs.cpp
-    def/GameDefs.h
+    world/region/MapBlock.h def/LocalDefs.cpp
+        def/LocalDefs.h
     api/func/LModuleUtil.cpp
     api/func/LModuleUtil.h
     world/region/Region.cpp
@@ -126,6 +126,6 @@ set(ZEUS_SRC_FILES
     game/entity/hud/StatGraph.cpp
     game/entity/hud/StatGraph.h
     util/Util.h
-        world/block/PointedThing.h game/entity/world/ParticleEntity.cpp game/entity/world/ParticleEntity.h)
+        world/block/PointedThing.h game/entity/world/ParticleEntity.cpp game/entity/world/ParticleEntity.h def/ServerDefs.cpp def/ServerDefs.h def/block/server/ServerBlockAtlas.cpp def/block/server/ServerBlockAtlas.h def/block/server/ServerBlockDef.cpp def/block/server/ServerBlockDef.h def/block/server/ServerBlockModel.cpp def/block/server/ServerBlockModel.h util/Dir.h def/block/server/ServerMeshPart.cpp def/block/server/ServerMeshPart.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

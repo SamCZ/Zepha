@@ -8,11 +8,11 @@
 #include "LocalWorld.h"
 #include "../net/ServerConnection.h"
 
-LocalWorld::LocalWorld(GameDefs& defs, glm::vec3* playerPos, ServerConnection* server) :
+LocalWorld::LocalWorld(LocalDefs& defs, glm::vec3* playerPos, ServerConnection* server) :
     playerPos(playerPos),
     dimension(&playerChunkPos),
     meshGenStream(defs, dimension),
-    worldGenStream(55),
+    worldGenStream(55, defs),
     server(server),
     defs(defs) {}
 
@@ -54,7 +54,7 @@ void LocalWorld::damageBlock(glm::vec3 pos, float amount) {
     block->setNewDamage(block->targetDamage + amount);
     block->time = 0;
 
-    auto def = defs.blocks().getBlock(getBlock(pos));
+    auto def = defs.blocks().fromIndex(getBlock(pos));
     for (int i = 0; i < 40 * amount; i++) {
         auto p = new ParticleEntity(pos, def);
         particles.push_back(p);
@@ -224,5 +224,5 @@ void LocalWorld::setBlock(glm::vec3 pos, int block) {
 bool LocalWorld::solidAt(glm::vec3 pos) {
     int blockId = getBlock(pos);
     if (blockId == -1) return true;
-    return defs.blocks().getBlock(blockId).isSolid();
+    return defs.blocks().fromIndex(blockId).isSolid();
 }

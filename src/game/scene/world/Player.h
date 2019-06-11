@@ -22,7 +22,7 @@ public:
     static constexpr float LOOK_PRECISION = 0.01f;
     static constexpr float EYE_HEIGHT = 1.65f;
 
-    Player(LocalWorld& world, GameDefs& defs, Camera& camera);
+    Player(LocalWorld& world, LocalDefs& defs, Camera& camera);
 
     void update(InputManager &input, double delta, double mouseX, double mouseY);
 
@@ -47,7 +47,7 @@ public:
     PointedThing& getPointedThing();
 private:
     Camera& camera;
-    GameDefs& defs;
+    LocalDefs& defs;
     LocalWorld& world;
 
     glm::vec3 pos {};

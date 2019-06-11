@@ -12,13 +12,13 @@
 #include "func/LModuleRegister.h"
 #include "func/LModuleUtil.h"
 
-class GameDefs;
+class LocalDefs;
 
 class LuaApi {
 public:
     LuaApi() = default;
 
-    void init(GameDefs& defs);
+    void init(LocalDefs& defs);
 
     void loadMod(std::string file);
 

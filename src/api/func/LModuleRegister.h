@@ -5,16 +5,16 @@
 #ifndef ZEUS_LREGISTERBLOCK_H
 #define ZEUS_LREGISTERBLOCK_H
 
-#include "../../def/block/graph/SelectionBox.h"
-#include "../../def/block/BlockDef.h"
-#include "../../def/block/BlockAtlas.h"
+#include "../../def/block/SelectionBox.h"
+#include "../../def/block/client/LocalBlockDef.h"
+#include "../../def/block/client/LocalBlockAtlas.h"
 #include <sol.hpp>
 
-class GameDefs;
+class LocalDefs;
 
 class LModuleRegister {
 public:
-    LModuleRegister(sol::state& lua, sol::table& zeus, GameDefs& defs);
+    LModuleRegister(sol::state& lua, sol::table& zeus, LocalDefs& defs);
 };
 
 

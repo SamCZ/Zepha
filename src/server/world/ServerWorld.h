@@ -13,10 +13,11 @@
 #include "WorldGenStream.h"
 #include "../../util/Vec.h"
 #include "../../world/Dimension.h"
+#include "../../def/ServerDefs.h"
 
 class ServerWorld {
 public:
-    explicit ServerWorld(unsigned int seed);
+    explicit ServerWorld(unsigned int seed, ServerDefs& defs);
 
     void addPlayer(ServerPlayer* player);
     void update();

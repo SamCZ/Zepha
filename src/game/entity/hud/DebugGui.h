@@ -22,7 +22,7 @@ public:
 
     void bufferResized(glm::vec2 bufferSize);
 
-    void update(Player& player, LocalWorld& world, GameDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
+    void update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
     void draw(Renderer &renderer) override;
 
     void changeVisibilityState(int state);

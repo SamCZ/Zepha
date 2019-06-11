@@ -28,7 +28,7 @@ TEST_CASE("Blockchunks", "[networking]") {
 //                b2->rleDecode(rle);
 //
 //                for (int j = 0; j < 4096; j++) {
-//                    REQUIRE(b2->getBlock(j) == b->getBlock(j));
+//                    REQUIRE(b2->getBlock(j) == b->fromIndex(j));
 //                }
 //
 //                delete b2;

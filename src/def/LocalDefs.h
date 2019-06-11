@@ -6,21 +6,21 @@
 #define ZEUS_GAMEDEFS_H
 
 #include "texture/TextureAtlas.h"
-#include "block/BlockAtlas.h"
+#include "block/client/LocalBlockAtlas.h"
 #include "../api/LuaApi.h"
 
-class GameDefs {
+class LocalDefs {
 public:
-    GameDefs() = default;
-    explicit GameDefs(std::string tex_path);
+    LocalDefs() = default;
+    explicit LocalDefs(std::string tex_path);
 
-    BlockAtlas& blocks();
+    LocalBlockAtlas& blocks();
     TextureAtlas& textures();
 
-    ~GameDefs() = default;
+    ~LocalDefs() = default;
 private:
     TextureAtlas textureAtlas;
-    BlockAtlas blockAtlas;
+    LocalBlockAtlas blockAtlas;
     LuaApi luaApi;
 };
 

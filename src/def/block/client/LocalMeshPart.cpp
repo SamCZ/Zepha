@@ -2,9 +2,9 @@
 // Created by aurailus on 02/12/18.
 //
 
-#include "MeshPart.h"
+#include "LocalMeshPart.h"
 
-MeshPart::MeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, std::shared_ptr<AtlasRef> texture) {
+LocalMeshPart::LocalMeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, std::shared_ptr<AtlasRef> texture) {
 
     this->vertices = std::move(vertices);
     this->indices = std::move(indices);

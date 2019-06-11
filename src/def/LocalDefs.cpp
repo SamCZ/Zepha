@@ -2,24 +2,24 @@
 // Created by aurailus on 18/04/19.
 //
 
-#include "GameDefs.h"
+#include "LocalDefs.h"
 
-GameDefs::GameDefs(std::string tex_path) {
+LocalDefs::LocalDefs(std::string tex_path) {
     textureAtlas = TextureAtlas(1024);
     textureAtlas.loadDirectory(tex_path + "/game");
     textureAtlas.loadDirectory(tex_path + "/gui");
     textureAtlas.loadDirectory(tex_path + "/ent");
 
-    blockAtlas = BlockAtlas();
+    blockAtlas = LocalBlockAtlas();
 
     luaApi.init(*this);
     luaApi.loadMod("../res/lua/default/init.lua");
 }
 
-BlockAtlas &GameDefs::blocks() {
+LocalBlockAtlas &LocalDefs::blocks() {
     return blockAtlas;
 }
 
-TextureAtlas &GameDefs::textures() {
+TextureAtlas &LocalDefs::textures() {
     return textureAtlas;
 }

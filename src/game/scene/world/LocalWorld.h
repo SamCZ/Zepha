@@ -13,13 +13,13 @@
 #include <vec3.hpp>
 #include <gtc/type_ptr.hpp>
 
-#include "../../../def/block/BlockAtlas.h"
+#include "../../../def/block/client/LocalBlockAtlas.h"
 #include "../../../world/chunk/BlockChunk.h"
 #include "../../../def/gen/MapGen.h"
 #include "../../../util/TransPos.h"
 #include "../../../util/Vec.h"
 #include "../../../world/Dimension.h"
-#include "../../../def/GameDefs.h"
+#include "../../../def/LocalDefs.h"
 #include "../../../world/block/PointedThing.h"
 #include "../../../game/graph/drawable/DrawableGroup.h"
 #include "../../entity/world/BlockCrackEntity.h"
@@ -32,7 +32,7 @@ class ServerConnection;
 
 class LocalWorld {
 public:
-    LocalWorld(GameDefs& defs, glm::vec3* playerPos, ServerConnection* server);
+    LocalWorld(LocalDefs& defs, glm::vec3* playerPos, ServerConnection* server);
 
     void update(double delta);
 
@@ -65,7 +65,7 @@ public:
 
     int lastGenUpdates = 0, lastMeshUpdates = 0;
 private:
-    GameDefs& defs;
+    LocalDefs& defs;
     glm::vec3* playerPos;
     glm::vec3 playerChunkPos {};
 

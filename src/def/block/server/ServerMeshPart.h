@@ -1,12 +1,12 @@
 //
-// Created by aurailus on 02/12/18.
+// Created by aurailus on 10/06/19.
 //
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
 
-#ifndef GLPROJECT_MESHPART_H
-#define GLPROJECT_MESHPART_H
+#ifndef ZEUS_SERVERMESHPART_H
+#define ZEUS_SERVERMESHPART_H
 
 #define GLM_ENABLE_EXPERIMENTAL
 
@@ -14,23 +14,24 @@
 #include <vec4.hpp>
 #include <gtx/normal.hpp>
 
-#include "MeshMod.h"
+#include "../MeshMod.h"
 #include "../../../game/scene/world/graph/MeshVertex.h"
 #include "../../texture/TextureAtlas.h"
 
-struct MeshPart {
-    MeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, std::shared_ptr<AtlasRef> texture);
+struct ServerMeshPart {
+    ServerMeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, std::string texture);
 
     std::vector<MeshVertex> vertices;
     std::vector<unsigned int> indices;
 
-    std::shared_ptr<AtlasRef> texture;
+    std::string texture;
 
     MeshMod meshMod;
     float modValue;
 };
 
 
-#endif //GLPROJECT_MESHPART_H
+
+#endif //ZEUS_SERVERMESHPART_H
 
 #pragma clang diagnostic pop

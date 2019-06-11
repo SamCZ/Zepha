@@ -10,7 +10,7 @@
 #include <iostream>
 #include <vec3.hpp>
 #include <glm.hpp>
-#include "../../../util/Util.h"
+#include "../../util/Util.h"
 
 class SelectionBox {
 public:

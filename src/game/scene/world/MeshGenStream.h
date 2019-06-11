@@ -10,11 +10,11 @@
 #include <thread>
 #include <unordered_set>
 #include "../../../world/chunk/BlockChunk.h"
-#include "../../../def/block/BlockAtlas.h"
+#include "../../../def/block/client/LocalBlockAtlas.h"
 #include "graph/MeshGenerator.h"
 #include "../../../util/Vec.h"
 #include "../../../world/Dimension.h"
-#include "../../../def/GameDefs.h"
+#include "../../../def/LocalDefs.h"
 
 class MeshGenStream {
 public:
@@ -22,7 +22,7 @@ public:
     static const int THREADS = 4;
     static const int TOTAL_QUEUE_SIZE = THREADS * THREAD_QUEUE_SIZE;
 
-    explicit MeshGenStream(GameDefs& defs, Dimension& dimension);
+    explicit MeshGenStream(LocalDefs& defs, Dimension& dimension);
     ~MeshGenStream();
 
     bool spaceInQueue();
@@ -58,9 +58,9 @@ public:
     };
 
     struct Thread {
-        explicit Thread(BlockAtlas &atlas);
+        explicit Thread(LocalBlockAtlas &atlas);
 
-        BlockAtlas &atlas;
+        LocalBlockAtlas &atlas;
 
         std::thread* thread;
         bool keepAlive = true;
@@ -74,7 +74,7 @@ private:
     static void threadFunction(Thread* thread);
 
     Dimension& dimension;
-    GameDefs& defs;
+    LocalDefs& defs;
 
     std::vector<glm::vec3> queuedTasks;
     std::unordered_set<glm::vec3, VecUtils::compareFunc> queuedMap;

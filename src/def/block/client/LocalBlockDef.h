@@ -6,24 +6,24 @@
 #define GLPROJECT_BLOCKDEF_H
 
 #include <string>
-#include "graph/BlockModel.h"
-#include "graph/SelectionBox.h"
+#include "LocalBlockModel.h"
+#include "../SelectionBox.h"
 
-class BlockDef {
+class LocalBlockDef {
 public:
-    BlockDef() = default;
-    BlockDef(std::string identifier, BlockModel model, bool solid, SelectionBox selectionBox);
+    LocalBlockDef() = default;
+    LocalBlockDef(std::string identifier, LocalBlockModel model, bool solid, SelectionBox selectionBox);
 
     bool         isCulling();
     bool         isSolid();
-    BlockModel&  getModel();
+    LocalBlockModel&  getModel();
     std::string  getIdentifier();
     SelectionBox getSelectionBox();
 private:
     bool culls = false;
     bool solid = false;
     SelectionBox selectionBox;
-    BlockModel   model;
+    LocalBlockModel   model;
     std::string  identifier;
 };
 
