@@ -135,7 +135,7 @@ void ServerWorld::update() {
 }
 
 void ServerWorld::sendChunk(glm::vec3 pos, ServerPeer &peer) {
-    ///TODO: Remove null check once bug is fixed
+    //TODO: Remove null check once bug is fixed
     auto chunk = dimension.getChunk(pos);
     if (chunk != nullptr) {
         auto serialized = chunk->serialize();

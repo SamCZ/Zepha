@@ -33,7 +33,6 @@ int Window::initialize() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    //TODO: Fix msaa for texture altases.
     //MSAA
 //    glfwWindowHint(GLFW_SAMPLES, 4);
 //    glEnable(GL_MULTISAMPLE);

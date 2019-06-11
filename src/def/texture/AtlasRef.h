@@ -17,6 +17,7 @@ struct AtlasRef {
 
     bool base = false;
 
+    glm::vec4 pos {};
     glm::vec4 uv {};
     std::string name = "";
 

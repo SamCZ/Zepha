@@ -149,8 +149,9 @@ std::shared_ptr<AtlasRef> TextureAtlas::addImage(unsigned char *data, std::strin
         ref->tileX = static_cast<int>(space.x);
         ref->tileY = static_cast<int>(space.y);
 
-        ref->uv = {space.x / pageTileWidth, space.y / pageTileHeight,
-                   (space.x * 16 + texWidth) / pageWidth, (space.y * 16 + texHeight) / pageHeight};
+        ref->pos = {space.x * 16, space.y * 16, space.x * 16 + texWidth, space.y * 16 + texHeight};
+        ref->uv = {(space.x * 16 + 0.05) / pageWidth, (space.y * 16 + 0.05) / pageHeight,
+                   (space.x * 16 + texWidth - 0.05) / pageWidth, (space.y * 16 + texHeight - 0.05) / pageHeight};
 
         textures.insert({name, ref});
     }
@@ -193,28 +194,25 @@ void TextureAtlas::updateAtlas(int tileX, int tileY, int texWidth, int texHeight
 }
 
 TextureAtlas::RawTexData TextureAtlas::getSubImageBytes(std::string &name) {
-    glm::vec4 uvs;
+    glm::vec4 pos;
 
     if (textures.count(name)) {
-        uvs = textures[name]->uv;
+        pos = textures[name]->pos;
     }
     else {
         std::cerr << "Invalid base texture " << name << "." << std::endl;
-        uvs = textures["_missing"]->uv;
+        pos = textures["_missing"]->pos;
     }
 
     RawTexData data {};
-    data.width = static_cast<int>((uvs.z - uvs.x) * pageWidth);
-    data.height = static_cast<int>((uvs.w - uvs.y) * pageHeight);
+    data.width = static_cast<int>(pos.z - pos.x);
+    data.height = static_cast<int>(pos.w - pos.y);
 
     auto pixels = new unsigned char[data.width * data.height * 4];
 
-    int x = static_cast<int>(uvs.x * pageWidth);
-    int y = static_cast<int>(uvs.y * pageWidth);
-
     for (int i = 0; i < data.width * data.height; i++) {
-        int xx = x + (i % data.width);
-        int yy = y + (i / data.width);
+        int xx = static_cast<int>(pos.x) + (i % data.width);
+        int yy = static_cast<int>(pos.y) + (i / data.width);
 
         pixels[i * 4 + 0] = atlasData[xx * 4     + yy * (pageWidth * 4)];
         pixels[i * 4 + 1] = atlasData[xx * 4 + 1 + yy * (pageWidth * 4)];
@@ -261,7 +259,6 @@ std::shared_ptr<AtlasRef> TextureAtlas::getTextureRef(std::string &name) {
     return textures[name];
 }
 
-TextureAtlas::~TextureAtlas() {
+TextureAtlas::~TextureAtlas() = default;
 //    delete[] atlasData;
 //    delete t;
-};
