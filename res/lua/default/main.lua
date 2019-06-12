@@ -1,7 +1,4 @@
-print([[----------------------
-   LUA API Starting
-  Hello Zeus ]] .. (zeus.is_server() and "Server" or "Client") .. [[!
-----------------------]]);
+print("Hello from default, Zeus " .. (zeus.is_server() and "Server" or "Client") .. "!");
 
 local path = zeus.get_path("default");
 
@@ -10,7 +7,7 @@ dofile(path .. "blocks.lua");
 
 -- API DOCUMENTATION --
 
--- # Register LocalBlockModel
+-- # Register BlockModel
 -- `zeus.register_blockmodel(string identifier, table definition)`
 --
 -- Definition is stored as `zeus.registered_blockmodels[identifier] = definition`.
@@ -39,3 +36,8 @@ dofile(path .. "blocks.lua");
 --         0, 1, 0, 0, 0
 --     }
 -- }
+
+-- # Register Block
+-- `zeus.register_block(string identifier, table definition)`
+--
+--

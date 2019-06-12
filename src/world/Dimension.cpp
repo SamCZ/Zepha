@@ -69,7 +69,7 @@ void Dimension::update() {
             }
         }
         else {
-            std::cerr << "null chunk" << std::endl;
+            std::cout << Log::err << "Deleted Null Chunk in Dimension." << Log::endl;
             it = blockChunks.erase(it);
         }
     }

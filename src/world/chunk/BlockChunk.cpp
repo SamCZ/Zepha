@@ -161,6 +161,6 @@ std::vector<int> BlockChunk::deserializeToVec(std::string gzip) {
         return std::move(vals);
     }
 
-    std::cerr << "Badly coded packet!" << std::endl;
+    std::cout << Log::err << "Badly coded packet!" << Log::endl;
     return {};
 }

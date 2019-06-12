@@ -13,6 +13,6 @@ int LuaParser::DoFileSandboxed(std::string file) {
         lua.script_file(file);
     }
     else {
-        std::cerr << "\"" + file + "\" is outside of the sandbox and cannot be loaded!" << std::endl;
+        std::cout << Log::err << "Error opening \"" + file + "\", access denied." << Log::endl;
     }
 }

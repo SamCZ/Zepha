@@ -5,7 +5,6 @@
 #include "TextureAtlas.h"
 #include <stb_image.h>
 #include <stb_image_write.h>
-#include <cute_files.h>
 
 //Height is optional and defaults to 0
 TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) :
@@ -18,10 +17,10 @@ TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) :
     int maxTexSize, texUnits;
 
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
-    std::cout << "This GPU's max texture size is: " << maxTexSize / 4 << "px^2." << std::endl;
+    std::cout << Log::info << "This GPU's max texture size is: " << maxTexSize / 4 << "px^2." << Log::endl;
 
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texUnits);
-    std::cout << "This GPU supports " << texUnits << " texture units." << std::endl;
+    std::cout << Log::info << "This GPU supports " << texUnits << " texture units." << Log::endl;
 
     empty = std::vector<bool>(pageTileWidth * pageTileHeight, true);
     for (int i = 0; i < pageWidth * 4 * pageHeight; i++) atlasData[i] = 0;
@@ -135,7 +134,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::addImage(unsigned char *data, std::strin
         auto space = findImageSpace(tileWidth, tileHeight);
 
         if (space.x < 0) {
-            std::cerr << "Failed to find space in dynamic atlas." << std::endl;
+            std::cout << Log::err << "Failed to find space in dynamic atlas." << Log::endl;
             return nullptr;
         }
 
@@ -193,7 +192,7 @@ TextureAtlas::RawTexData TextureAtlas::getSubImageBytes(std::string &name) {
         pos = textures[name]->pos;
     }
     else {
-        std::cerr << "Invalid base texture " << name << "." << std::endl;
+        std::cout << Log::err << "Invalid base texture \"" << name << "\"." << Log::endl;
         pos = textures["_missing"]->pos;
     }
 
@@ -246,7 +245,7 @@ Texture &TextureAtlas::getAtlasTexture() {
 
 std::shared_ptr<AtlasRef> TextureAtlas::getTextureRef(std::string &name) {
     if (!textures.count(name)) {
-        std::cerr << "INVALID TEXTURE " << std::endl;
+        std::cout << Log::err << "Invalid texture name: \"" << name << "\"." << Log::endl;
 //        return tryMakeGraphics(name);
     }
     return textures[name];

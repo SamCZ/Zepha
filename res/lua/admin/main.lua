@@ -1,1 +1,1 @@
-print("Hello from Admin")
+print("Hello from admin!")

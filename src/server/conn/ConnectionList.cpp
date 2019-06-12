@@ -10,7 +10,7 @@ ConnectionList::ConnectionList(ServerWorld* world) {
 }
 
 ServerPeer* ConnectionList::addPeer(ENetPeer *eNetPeer) {
-    printf("[INFO] %x:%u connected.\n", eNetPeer->address.host, eNetPeer->address.port);
+    std::cout << Log::info << eNetPeer->address.host << ":" << eNetPeer->address.port << " connected." << Log::endl;
 
     auto peer = new ServerPeer {.peer = eNetPeer, .player = nullptr, .index = (int)peers.size()};
     eNetPeer->data = (void*)peer;
@@ -20,7 +20,7 @@ ServerPeer* ConnectionList::addPeer(ENetPeer *eNetPeer) {
 }
 
 void ConnectionList::removePeer(ENetPeer *eNetPeer) {
-    printf("[INFO] %x:%u disconnected.\n", eNetPeer->address.host, eNetPeer->address.port);
+    std::cout << Log::info << eNetPeer->address.host << ":" << eNetPeer->address.port << " disconnected." << Log::endl;
 
     auto peer = (ServerPeer*)eNetPeer->data;
     eNetPeer->data = nullptr;
@@ -36,8 +36,10 @@ void ConnectionList::removePeer(ENetPeer *eNetPeer) {
 }
 
 ServerPlayer* ConnectionList::createPlayer(ServerPeer *peer, std::string uuid, std::string username) {
-    printf("[INFO] Creating player %s for %x:%u.\n", uuid.c_str(), peer->peer->address.host, peer->peer->address.port);
-    auto player = new ServerPlayer(peer, uuid, username);
+    std::cout << Log::info << "Creating player " << uuid << " for "
+              << peer->peer->address.host << ":" << peer->peer->address.port << "." << Log::endl;
+
+    auto player = new ServerPlayer(peer, uuid, std::move(username));
     player->setPos(glm::vec3(0, 16, 0));
 
     //Send Initialization Data

@@ -8,6 +8,7 @@
 #include <sol.hpp>
 #include <iostream>
 #include "../util/Path.h"
+#include "../util/Log.h"
 
 class LuaParser {
 public:

@@ -7,8 +7,11 @@
 
 #include "game/Game.h"
 #include "server/Server.h"
+#include "util/Log.h"
 
 int main(int argc, char* argv[]) {
+    std::cout << Log::info << "Zeus Engine Version 0.0.1 Pre-Alpha" << Log::endl;
+
     std::string arg = "client";
     if (argc >= 2) arg = argv[1];
 

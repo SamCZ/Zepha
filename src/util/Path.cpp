@@ -13,7 +13,7 @@ Path::Path(std::string path_string) {
         }
         else {
             auto token = path_string.substr(0, end);
-            if (token == "..") tokens.pop_back();
+            if (token == "..") { if (!tokens.empty()) tokens.pop_back(); }
             else if (!token.empty() && token != ".") tokens.push_back(std::move(token));
 
             path_string = path_string.substr(end + 1, path_string.length() - end - 1);

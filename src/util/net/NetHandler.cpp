@@ -45,7 +45,7 @@ void NetHandler::initServer(unsigned short port, short max_clients) {
         return;
     }
 
-    printf("[INFO] Started server.\n");
+    std::cout << Log::info << "Server Started. Listening for clients." << Log::endl;
 }
 
 void NetHandler::initClient(std::string host_address, unsigned short host_port, int attempts, int timeout) {
@@ -81,19 +81,20 @@ void NetHandler::initClient(std::string host_address, unsigned short host_port, 
 
         ENetEvent event;
         if (enet_host_service(host, &event, (enet_uint32)timeout) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
-            printf("Connected to %x:%u.\n", event.peer->address.host, event.peer->address.port);
+            std::cout << Log::info << "Connected to "
+                      << event.peer->address.host << ":" << event.peer->address.port << "." << Log::endl;
             state = CLIENT;
             break;
         } else {
             enet_peer_reset(peer);
             if (attempt < attempts) {
-                printf("[INFO] Failed to connect to peer, retrying.\n");
+                std::cout << Log::info << "Failed to connect to peer, retrying." << Log::endl;
             }
         }
     }
 
     if (state == FAILED_CONNECT) {
-        fprintf(stderr, "[FATAL] Failed to connect to peer.\n");
+        std::cout << Log::err << "Failed to connect to peer." << Log::endl;
         return;
     }
 }

@@ -40,7 +40,8 @@ void ServerConnection::update(Player &player) {
 
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT: {
-                printf("[INFO] Connected to server %x:%u.\n", event.peer->address.host, event.peer->address.port);
+                std::cout << Log::info << "Connected to server "
+                          << event.peer->address.host << ":" << event.peer->address.port << "." << Log::endl;
                 break;
             }
             case ENET_EVENT_TYPE_RECEIVE: {
@@ -101,7 +102,8 @@ void ServerConnection::update(Player &player) {
                 break;
             }
             case ENET_EVENT_TYPE_DISCONNECT: {
-                printf("[INFO] Disconnected from server %x:%u\n", event.peer->address.host, event.peer->address.port);
+                std::cout << Log::info << "Disconnected from server "
+                          << event.peer->address.host << ":" << event.peer->address.port << "." << Log::endl;
                 break;
             }
 

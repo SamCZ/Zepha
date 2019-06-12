@@ -28,7 +28,7 @@ ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs) : genStream(seed, 
         }
     }
 
-    std::cout << "[INFO] Generated Chunk Queue is " << generateOrder.size() << " chunks long." << std::endl;
+//    std::cout << Log::info << "Chunk Queue is " << generateOrder.size() << " chunks long." << Log::endl;
 }
 
 void ServerWorld::addPlayer(ServerPlayer *player) {
@@ -53,7 +53,7 @@ void ServerWorld::addPlayer(ServerPlayer *player) {
 }
 
 void ServerWorld::playerChangedChunks(ServerPlayer *player) {
-//    Timer t("[INFO] Movement Allocation");
+//    Timer t("Movement Allocation");
 
     auto pos = player->getChunkPos();
 
@@ -75,12 +75,14 @@ void ServerWorld::playerChangedChunks(ServerPlayer *player) {
         }
     }
 
-//    printf("[INFO] %s moved to %d, %d, %d, generating %d chunks.\n",
+// printf("%s %s moved to %d, %d, %d, generating %d chunks. %s",
+//           Log::info,
 //           player->getUsername().c_str(),
 //           static_cast<int>(pos.x),
 //           static_cast<int>(pos.y),
 //           static_cast<int>(pos.z),
-//           generated);
+//           generated,
+//           Log::endl);
 
 //    t.printElapsedMs();
 
@@ -149,7 +151,7 @@ void ServerWorld::sendChunk(glm::vec3 pos, ServerPeer &peer) {
     }
     else {
         //BUG: If the null chunks are on the client, The Null chunks have to happen there, cause the chunks are serialized before sending.
-        std::cerr << "Tried to send null chunk at " << pos.x << ", " << pos.y << ", " << pos.z << std::endl;
+        std::cout << Log::err << "Tried to send null chunk at " << pos.x << ", " << pos.y << ", " << pos.z << Log::endl;
     }
 }
 

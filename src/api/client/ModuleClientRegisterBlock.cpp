@@ -16,7 +16,7 @@ ModuleClientRegisterBlock::ModuleClientRegisterBlock(sol::state &lua, sol::table
             zeus["registered_blockmodels"][identifier] = data;
         }
         catch (const std::string& e) {
-            std::cerr << "Exception on register_blockmodel: " << e << std::endl;
+            std::cout << Log::err << "Exception on register_blockmodel: " << e << Log::endl;
         }
     });
 
@@ -65,7 +65,7 @@ ModuleClientRegisterBlock::ModuleClientRegisterBlock(sol::state &lua, sol::table
             defs.blocks().registerBlock(std::move(def));
         }
         catch (const std::string& e) {
-            std::cerr << "Exception on register_block: " << e << std::endl;
+            std::cout << Log::err << "Exception on register_block: " << e << Log::endl;
         }
     });
 }

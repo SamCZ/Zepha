@@ -9,8 +9,10 @@
 #include <vec2.hpp>
 #include <glew.h>
 #include <tgmath.h>
-#include <memory>
 #include <map>
+#include <memory>
+#include <cute_files.h>
+#include "../../util/Log.h"
 #include "../../game/graph/Texture.h"
 #include "AtlasRef.h"
 

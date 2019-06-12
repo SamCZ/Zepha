@@ -75,7 +75,7 @@ ServerBlockModel ServerBlockModel::create(sol::table model, std::vector<std::str
         });
     }
     catch (const std::string& e) {
-        std::cerr << "Exception on LocalBlockModel constructor: " << e << std::endl;
+        std::cout << Log::err << "Exception on ServerBlockModel constructor: " << e << Log::endl;
     }
 
     return std::move(blockModel);

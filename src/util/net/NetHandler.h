@@ -9,6 +9,7 @@
 #include <iostream>
 #include <enet/enet.h>
 #include "PacketChannel.h"
+#include "../Log.h"
 
 class NetHandler {
 public:

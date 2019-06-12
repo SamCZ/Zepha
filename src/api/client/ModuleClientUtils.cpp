@@ -38,7 +38,7 @@ ModuleClientUtils::ModuleClientUtils(sol::state &lua, sol::table &zeus, LocalDef
             return "/home/aurailus/C++/GlProject/res/lua/" + modname + "/";
         }
         catch (const std::string& e) {
-            std::cerr << "Exception on get_path: " << e << std::endl;
+            std::cout << Log::err << "Exception on get_path: " << e << Log::endl;
         }
     });
 

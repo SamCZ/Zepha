@@ -80,7 +80,7 @@ LocalBlockModel LocalBlockModel::create(sol::table model, std::vector<std::strin
         });
     }
     catch (const std::string& e) {
-        std::cerr << "Exception on LocalBlockModel constructor: " << e << std::endl;
+        std::cout << Log::err << "Exception on LocalBlockModel constructor: " << e << Log::endl;
     }
 
     return std::move(blockModel);

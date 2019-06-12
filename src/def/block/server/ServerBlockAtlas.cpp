@@ -25,7 +25,7 @@ ServerBlockDef& ServerBlockAtlas::fromIndex(int id) {
         return definitions.at((unsigned long)id);
     }
 
-    std::cerr << "Block ID #" << id << " (undefined) requested! Returning air." << std::endl;
+    std::cout << Log::err << "Block ID #" << id << " (undefined) requested! Returning air." << Log::endl;
     return definitions.at(0);
 }
 
@@ -34,6 +34,6 @@ ServerBlockDef &ServerBlockAtlas::fromIdentifier(std::string identifier) {
         return definitions.at(static_cast<unsigned long>(identifierIndexTable.at(identifier)));
     }
 
-    std::cerr << "Block Identifier \"" << identifier << "\" (undefined) requested! Returning air." << std::endl;
+    std::cout << Log::err << "Block Identifier \"" << identifier << "\" (undefined) requested! Returning air." << Log::endl;
     return definitions.at(0);
 }
