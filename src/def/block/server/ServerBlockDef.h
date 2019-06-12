@@ -8,27 +8,16 @@
 #include <string>
 #include "../SelectionBox.h"
 #include "ServerBlockModel.h"
+#include "../BlockDef.h"
 
-class ServerBlockDef {
+class ServerBlockDef : public BlockDef {
 public:
     ServerBlockDef() = default;
-    ServerBlockDef(std::string identifier, ServerBlockModel model, bool solid, SelectionBox selectionBox);
-
-    std::string getIdentifier();
-
-    bool isCulling();
-    bool isSolid();
+    ServerBlockDef(std::string identifier, int index, ServerBlockModel model, bool solid, SelectionBox selectionBox);
 
     ServerBlockModel& getModel();
-    SelectionBox getSelectionBox();
 private:
-    std::string identifier;
-
-    bool culls = false;
-    bool solid = false;
-
     ServerBlockModel model;
-    SelectionBox selectionBox;
 };
 
 

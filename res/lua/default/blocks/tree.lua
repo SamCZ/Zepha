@@ -1,4 +1,3 @@
--- Leaves [ID 4]
 zeus.register_block('default:leaves', {
     visible = true,
     culls = false,
@@ -17,7 +16,6 @@ zeus.register_block('default:leaves', {
     },
 })
 
--- Wood [ID 5]
 zeus.register_block('default:wood', {
     name = "Log",
     model = "default:block",

@@ -2,45 +2,13 @@
 // Created by aurailus on 18/12/18.
 //
 
-#include "LModuleRegister.h"
+#include "ModuleClientRegisterBlock.h"
 #include "../../def/LocalDefs.h"
 
-LModuleRegister::LModuleRegister(sol::state &lua, sol::table &zeus, LocalDefs &defs) {
+ModuleClientRegisterBlock::ModuleClientRegisterBlock(sol::state &lua, sol::table &zeus, LocalDefs &defs) {
 
     //Define registered_blockmodels table
     zeus["registered_blockmodels"] = lua.create_table();
-
-    //
-    // # Register LocalBlockModel
-    // `zeus.register_blockmodel(string identifier, table definition)`
-    //
-    // Definition is stored as `zeus.registered_blockmodels[identifier] = definition`.
-    // There are no requirements for the contents of the definition table in this function, but for it to be well
-    // formed and usable in `register_block`, it should be an array-table of face tables, which contain the following
-    // information:
-    //
-    // face:    One of "left", "right", "front", "back", "top", "bottom", or "nocull". Used when determining which parts
-    //          of the model to cull.
-    //
-    // tex:     The texture index which this face uses. What textures these refer to are defined in the `register_block`
-    //          `textures` table. The index must be greater than or equal to 1.
-    //
-    // points:  An array of integers that define one or more quads. Each quad is defined by 20 numbers or 4 vertices,
-    //          in the format of x, y, z, tex_coord_x, tex_coord_y. The vertices are indexed in the order
-    //          0, 1, 2, 2, 3, 0.
-    //
-    // ## Example
-    // {
-    //     face = "left"
-    //     tex = 3,
-    //     points = {
-    //         0, 0, 0, 0, 1,
-    //         0, 0, 1, 1, 1,
-    //         0, 1, 1, 1, 0,
-    //         0, 1, 0, 0, 0
-    //     }
-    // }
-    //
 
     zeus.set_function("register_blockmodel", [&](std::string identifier, sol::table data) {
         try {
@@ -52,12 +20,6 @@ LModuleRegister::LModuleRegister(sol::state &lua, sol::table &zeus, LocalDefs &d
         }
     });
 
-    //
-    // # Register Block
-    // `zeus.register_block(string identifier, table definition)`
-    //
-    //
-    //
     zeus.set_function("register_block", [&](std::string identifier, sol::table data) {
         try {
             if (identifier.length() == 0) throw "No Identifier";
@@ -98,7 +60,7 @@ LModuleRegister::LModuleRegister(sol::state &lua, sol::table &zeus, LocalDefs &d
             }
 
             LocalBlockModel blockModel = LocalBlockModel::create(*model, texturesVector, defs.textures(), visible, culls);
-            LocalBlockDef def(identifier, std::move(blockModel), solid, sbox);
+            LocalBlockDef def(identifier, defs.blocks().definitionsSize(), std::move(blockModel), solid, sbox);
 
             defs.blocks().registerBlock(std::move(def));
         }

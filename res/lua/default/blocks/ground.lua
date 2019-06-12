@@ -1,4 +1,3 @@
--- Grass [ID 1]
 zeus.register_block("default:grass", {
     name = "Grass",
     model = "default:block_foliage",
@@ -23,7 +22,6 @@ zeus.register_block("default:grass", {
     },
 })
 
--- Dirt [ID 2]
 zeus.register_block('default:dirt', {
     name = "Dirt",
     model = "default:block",
@@ -35,7 +33,6 @@ zeus.register_block('default:dirt', {
     },
 })
 
--- Stone [ID 3]
 zeus.register_block('default:stone', {
     name = "Stone",
     model = "default:block",

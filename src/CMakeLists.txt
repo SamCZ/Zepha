@@ -35,10 +35,10 @@ set(ZEUS_SRC_FILES
     game/scene/GameScene.h
     game/graph/Renderer.cpp
     game/graph/Renderer.h
-    api/LuaApi.cpp
-    api/LuaApi.h
-    api/func/LModuleRegister.cpp
-    api/func/LModuleRegister.h
+        api/client/LocalLuaParser.cpp
+        api/client/LocalLuaParser.h
+        api/client/ModuleClientRegisterBlock.cpp
+        api/client/ModuleClientRegisterBlock.h
     game/entity/hud/TextEntity.cpp
     game/entity/hud/TextEntity.h
     game/entity/hud/DebugGui.cpp
@@ -119,13 +119,13 @@ set(ZEUS_SRC_FILES
     def/texture/AtlasRef.h
     world/region/MapBlock.h def/LocalDefs.cpp
         def/LocalDefs.h
-    api/func/LModuleUtil.cpp
-    api/func/LModuleUtil.h
+        api/client/ModuleClientUtils.cpp
+        api/client/ModuleClientUtils.h
     world/region/Region.cpp
     world/region/MapBlock.cpp
     game/entity/hud/StatGraph.cpp
     game/entity/hud/StatGraph.h
     util/Util.h
-        world/block/PointedThing.h game/entity/world/ParticleEntity.cpp game/entity/world/ParticleEntity.h def/ServerDefs.cpp def/ServerDefs.h def/block/server/ServerBlockAtlas.cpp def/block/server/ServerBlockAtlas.h def/block/server/ServerBlockDef.cpp def/block/server/ServerBlockDef.h def/block/server/ServerBlockModel.cpp def/block/server/ServerBlockModel.h util/Dir.h def/block/server/ServerMeshPart.cpp def/block/server/ServerMeshPart.h)
+        world/block/PointedThing.h game/entity/world/ParticleEntity.cpp game/entity/world/ParticleEntity.h def/ServerDefs.cpp def/ServerDefs.h def/block/server/ServerBlockAtlas.cpp def/block/server/ServerBlockAtlas.h def/block/server/ServerBlockDef.cpp def/block/server/ServerBlockDef.h def/block/server/ServerBlockModel.cpp def/block/server/ServerBlockModel.h util/Dir.h def/block/server/ServerMeshPart.cpp def/block/server/ServerMeshPart.h def/block/BlockAtlas.h def/block/BlockDef.h api/LuaParser.cpp api/LuaParser.h api/server/ServerLuaParser.cpp api/server/ServerLuaParser.h api/server/ModuleServerUtils.cpp api/server/ModuleServerUtils.h api/server/ModuleServerRegisterBlock.cpp api/server/ModuleServerRegisterBlock.h util/Path.cpp util/Path.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

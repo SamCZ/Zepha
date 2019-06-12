@@ -4,29 +4,10 @@
 
 #include "LocalBlockDef.h"
 
+LocalBlockDef::LocalBlockDef(std::string identifier, int index, LocalBlockModel model, bool solid, SelectionBox selectionBox) :
+    BlockDef(std::move(identifier), index, model.culls, solid, selectionBox),
+    model(std::move(model)) {}
+
 LocalBlockModel& LocalBlockDef::getModel() {
     return model;
-}
-
-LocalBlockDef::LocalBlockDef(std::string identifier, LocalBlockModel model, bool solid, SelectionBox selectionBox) :
-    identifier(std::move(identifier)),
-    culls(model.culls),
-    model(std::move(model)),
-    solid(solid),
-    selectionBox(selectionBox) {}
-
-bool LocalBlockDef::isSolid() {
-    return solid;
-}
-
-std::string LocalBlockDef::getIdentifier() {
-    return identifier;
-}
-
-bool LocalBlockDef::isCulling() {
-    return culls;
-}
-
-SelectionBox LocalBlockDef::getSelectionBox() {
-    return selectionBox;
 }

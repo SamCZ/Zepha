@@ -28,11 +28,11 @@ ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs) : genStream(seed, 
         }
     }
 
-    std::cout << "Generated Chunk Queue is " << generateOrder.size() << " chunks long." << std::endl;
+    std::cout << "[INFO] Generated Chunk Queue is " << generateOrder.size() << " chunks long." << std::endl;
 }
 
 void ServerWorld::addPlayer(ServerPlayer *player) {
-    Timer t("New Chunk Allocation");
+//    Timer t("New Chunk Allocation");
 
     this->players.push_back(player);
 
@@ -49,11 +49,11 @@ void ServerWorld::addPlayer(ServerPlayer *player) {
         }
     }
 
-    t.printElapsedMs();
+//    t.printElapsedMs();
 }
 
 void ServerWorld::playerChangedChunks(ServerPlayer *player) {
-    Timer t("[INFO] Movement Allocation");
+//    Timer t("[INFO] Movement Allocation");
 
     auto pos = player->getChunkPos();
 
@@ -75,14 +75,14 @@ void ServerWorld::playerChangedChunks(ServerPlayer *player) {
         }
     }
 
-    printf("[INFO] %s moved to %d, %d, %d, generating %d chunks.\n",
-           player->getUsername().c_str(),
-           static_cast<int>(pos.x),
-           static_cast<int>(pos.y),
-           static_cast<int>(pos.z),
-           generated);
+//    printf("[INFO] %s moved to %d, %d, %d, generating %d chunks.\n",
+//           player->getUsername().c_str(),
+//           static_cast<int>(pos.x),
+//           static_cast<int>(pos.y),
+//           static_cast<int>(pos.z),
+//           generated);
 
-    t.printElapsedMs();
+//    t.printElapsedMs();
 
     player->changedChunks = false;
 }

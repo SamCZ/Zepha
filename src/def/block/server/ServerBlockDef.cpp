@@ -4,29 +4,10 @@
 
 #include "ServerBlockDef.h"
 
+ServerBlockDef::ServerBlockDef(std::string identifier, int index, ServerBlockModel model, bool solid, SelectionBox selectionBox) :
+        BlockDef(std::move(identifier), index, model.culls, solid, selectionBox),
+        model(std::move(model)) {}
+
 ServerBlockModel& ServerBlockDef::getModel() {
     return model;
-}
-
-ServerBlockDef::ServerBlockDef(std::string identifier, ServerBlockModel model, bool solid, SelectionBox selectionBox) :
-        identifier(std::move(identifier)),
-        solid(solid),
-        culls(model.culls),
-        model(std::move(model)),
-        selectionBox(selectionBox) {}
-
-bool ServerBlockDef::isSolid() {
-    return solid;
-}
-
-std::string ServerBlockDef::getIdentifier() {
-    return identifier;
-}
-
-bool ServerBlockDef::isCulling() {
-    return culls;
-}
-
-SelectionBox ServerBlockDef::getSelectionBox() {
-    return selectionBox;
 }

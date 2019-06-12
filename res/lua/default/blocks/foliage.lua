@@ -1,4 +1,3 @@
--- TallGrass [ID 6..10]
 for i=1,5,1 do
     zeus.register_block("default:tallgrass_" .. i, {
         culls = false,
@@ -18,7 +17,6 @@ for i=1,5,1 do
     })
 end
 
--- Flowers [ID 11..18]
 local flowers = {
     "rose",
     "tulip",

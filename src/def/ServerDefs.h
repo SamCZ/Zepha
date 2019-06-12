@@ -5,8 +5,9 @@
 #ifndef ZEUS_SERVERDEFS_H
 #define ZEUS_SERVERDEFS_H
 
+
 #include "block/server/ServerBlockAtlas.h"
-#include "../api/LuaApi.h"
+#include "../api/server/ServerLuaParser.h"
 
 class ServerDefs {
 public:
@@ -17,7 +18,7 @@ public:
     ~ServerDefs() = default;
 private:
     ServerBlockAtlas blockAtlas;
-//    LuaApi luaApi;
+    ServerLuaParser lua;
 };
 
 

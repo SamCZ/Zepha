@@ -7,12 +7,17 @@
 ServerBlockAtlas::ServerBlockAtlas() {
     //Register Air Node
     ServerBlockModel nullModel; nullModel.visible = false, nullModel.culls = false;
-    ServerBlockDef air("builtin:air", nullModel, false, {{0, 0, 0}, {1, 1, 1}});
+    ServerBlockDef air("builtin:air", static_cast<int>(definitions.size()), nullModel, false, {{0, 0, 0}, {1, 1, 1}});
     registerBlock(std::move(air));
+}
+
+int ServerBlockAtlas::definitionsSize() {
+    return static_cast<int>(definitions.size());
 }
 
 void ServerBlockAtlas::registerBlock(ServerBlockDef def) {
     definitions.push_back(def);
+    identifierIndexTable.insert({def.getIdentifier(), def.getIndex()});
 }
 
 ServerBlockDef& ServerBlockAtlas::fromIndex(int id) {

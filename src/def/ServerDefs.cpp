@@ -4,12 +4,13 @@
 
 #include "ServerDefs.h"
 
-ServerDefs::ServerDefs() {
+ServerDefs::ServerDefs() :
+    lua("/home/aurailus/C++/GlProject/res/lua/") {
 
     blockAtlas = ServerBlockAtlas();
 
-//    luaApi.init(*this);
-//    luaApi.loadMod("../res/lua/default/init.lua");
+    lua.init(*this);
+//    lua.loadMod("../res/lua/default/init.lua");
 }
 
 ServerBlockAtlas &ServerDefs::blocks() {

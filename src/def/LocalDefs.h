@@ -7,7 +7,7 @@
 
 #include "texture/TextureAtlas.h"
 #include "block/client/LocalBlockAtlas.h"
-#include "../api/LuaApi.h"
+#include "../api/client/LocalLuaParser.h"
 
 class LocalDefs {
 public:
@@ -21,7 +21,7 @@ public:
 private:
     TextureAtlas textureAtlas;
     LocalBlockAtlas blockAtlas;
-    LuaApi luaApi;
+    LocalLuaParser lua;
 };
 
 

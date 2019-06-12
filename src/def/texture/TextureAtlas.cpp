@@ -2,17 +2,10 @@
 // Created by aurailus on 16/04/19.
 //
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedMacroInspection"
-#define CUTE_FILES_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#pragma clang diagnostic pop
-
 #include "TextureAtlas.h"
-
-#include <cute_files.h>
 #include <stb_image.h>
 #include <stb_image_write.h>
+#include <cute_files.h>
 
 //Height is optional and defaults to 0
 TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) :

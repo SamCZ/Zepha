@@ -9,15 +9,18 @@
 #include <vector>
 #include "LocalBlockDef.h"
 #include "../../texture/TextureAtlas.h"
+#include "../BlockAtlas.h"
 
-class LocalBlockAtlas {
+class LocalBlockAtlas : public BlockAtlas {
 public:
     LocalBlockAtlas();
 
     void registerBlock(LocalBlockDef def);
 
-    LocalBlockDef& fromIndex(int id);
-    LocalBlockDef& fromIdentifier(std::string identifier);
+    int definitionsSize() override;
+
+    LocalBlockDef& fromIndex(int id) override;
+    LocalBlockDef& fromIdentifier(std::string identifier) override;
 private:
     const static int AIR = 0;
 

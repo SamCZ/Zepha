@@ -12,11 +12,9 @@
 
 class LocalDefs;
 
-class LModuleUtil {
+class ModuleClientUtils {
 public:
-    LModuleUtil(sol::state& lua, sol::table& zeus, LocalDefs& defs);
+    ModuleClientUtils(sol::state& lua, sol::table& zeus, LocalDefs& defs);
 };
-
-
 
 #endif //ZEUS_LMODULEUTIL_H

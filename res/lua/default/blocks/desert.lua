@@ -1,4 +1,3 @@
--- Sand [ID 19]
 zeus.register_block('default:sand', {
     name = "Sand",
     model = "default:block",
@@ -10,7 +9,6 @@ zeus.register_block('default:sand', {
     },
 })
 
--- Sandstone [ID 20]
 zeus.register_block('default:sandstone', {
     name = "Sandstone",
     model = "default:block",

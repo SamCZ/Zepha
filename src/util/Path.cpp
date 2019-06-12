@@ -32,5 +32,5 @@ std::string Path::to_string() {
 bool Path::contains(Path other) {
     std::string sMe = to_string();
     std::string sOther = other.to_string();
-    return (sMe.substr(0, sOther.length()) == sOther);
+    return (sOther.substr(0, sMe.length()) == sMe);
 }

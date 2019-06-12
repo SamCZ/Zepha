@@ -12,9 +12,9 @@
 
 class LocalDefs;
 
-class LModuleRegister {
+class ModuleClientRegisterBlock {
 public:
-    LModuleRegister(sol::state& lua, sol::table& zeus, LocalDefs& defs);
+    ModuleClientRegisterBlock(sol::state& lua, sol::table& zeus, LocalDefs& defs);
 };
 
 

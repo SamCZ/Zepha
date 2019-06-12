@@ -8,23 +8,16 @@
 #include <string>
 #include "LocalBlockModel.h"
 #include "../SelectionBox.h"
+#include "../BlockDef.h"
 
-class LocalBlockDef {
+class LocalBlockDef : public BlockDef {
 public:
     LocalBlockDef() = default;
-    LocalBlockDef(std::string identifier, LocalBlockModel model, bool solid, SelectionBox selectionBox);
+    LocalBlockDef(std::string identifier, int index, LocalBlockModel model, bool solid, SelectionBox selectionBox);
 
-    bool         isCulling();
-    bool         isSolid();
     LocalBlockModel&  getModel();
-    std::string  getIdentifier();
-    SelectionBox getSelectionBox();
 private:
-    bool culls = false;
-    bool solid = false;
-    SelectionBox selectionBox;
-    LocalBlockModel   model;
-    std::string  identifier;
+    LocalBlockModel model;
 };
 
 

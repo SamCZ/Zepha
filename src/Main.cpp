@@ -1,6 +1,8 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
 #define STB_IMAGE_IMPLEMENTATION
+#define CUTE_FILES_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #pragma clang diagnostic pop
 
 #include "game/Game.h"
