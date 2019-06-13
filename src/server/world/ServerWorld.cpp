@@ -9,7 +9,10 @@
 #include "../../util/Timer.h"
 #include "../../util/Util.h"
 
-ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs) : genStream(seed, defs.blocks()) {
+ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs) :
+    seed(seed),
+    defs(defs) {
+
     //Pregenerate chunk generation order
     generateOrder.reserve((unsigned long)pow(ServerPlayer::ACTIVE_RANGE_H * 2, 3));
 
@@ -27,9 +30,12 @@ ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs) : genStream(seed, 
             }
         }
     }
-
-//    std::cout << Log::info << "Chunk Queue is " << generateOrder.size() << " chunks long." << Log::endl;
 }
+
+void ServerWorld::init() {
+    genStream = new WorldGenStream(seed, defs.blocks());
+}
+
 
 void ServerWorld::addPlayer(ServerPlayer *player) {
 //    Timer t("New Chunk Allocation");
@@ -101,14 +107,14 @@ void ServerWorld::update() {
         auto it = generateQueueList.begin();
         glm::vec3 pos = *it;
 
-        if (genStream.tryToQueue(pos)) {
+        if (genStream->tryToQueue(pos)) {
             generateQueueList.erase(it);
             generateQueueMap.erase(pos);
         }
         else break;
     }
 
-    auto finished = genStream.update();
+    auto finished = genStream->update();
     generatedChunks = (int)finished.size();
 
     for (const auto &chunk : finished) {
@@ -156,6 +162,21 @@ void ServerWorld::sendChunk(glm::vec3 pos, ServerPeer &peer) {
 }
 
 void ServerWorld::setBlock(glm::vec3 pos, int block) {
+    auto oldBlock = getBlock(pos);
+
+    if (block == 0) {
+        auto def = defs.blocks().fromIndex(oldBlock);
+        if (def.callbacks.count(Callback::DESTRUCT)) {
+            def.callbacks[Callback::DESTRUCT](defs.lua().vecToTable(pos));
+        }
+    }
+    else {
+        auto def = defs.blocks().fromIndex(block);
+        if (def.callbacks.count(Callback::CONSTRUCT)) {
+            def.callbacks[Callback::CONSTRUCT](defs.lua().vecToTable(pos));
+        }
+    }
+
     dimension.setBlock(pos, block);
 
     Packet b(Packet::BLOCK_SET);
@@ -171,4 +192,25 @@ void ServerWorld::setBlock(glm::vec3 pos, int block) {
             b.sendTo(player->peer->peer, PacketChannel::BLOCK_UPDATES);
         }
     }
+
+    if (block == 0) {
+        auto def = defs.blocks().fromIndex(oldBlock);
+        if (def.callbacks.count(Callback::AFTER_DESTRUCT)) {
+            def.callbacks[Callback::AFTER_DESTRUCT](defs.lua().vecToTable(pos));
+        }
+    }
+    else {
+        auto def = defs.blocks().fromIndex(block);
+        if (def.callbacks.count(Callback::AFTER_CONSTRUCT)) {
+            def.callbacks[Callback::AFTER_CONSTRUCT](defs.lua().vecToTable(pos));
+        }
+    }
+}
+
+int ServerWorld::getBlock(glm::vec3 pos) {
+    return dimension.getBlock(pos);
+}
+
+ServerWorld::~ServerWorld() {
+    delete genStream;
 }

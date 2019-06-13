@@ -10,16 +10,14 @@
 #include <cute_files.h>
 #include "../LuaParser.h"
 
-#include "ModuleClientRegisterBlock.h"
-#include "ModuleClientUtils.h"
-
 class LocalDefs;
+class LocalWorld;
 
 class LocalLuaParser : public LuaParser {
 public:
     explicit LocalLuaParser(std::string mod_root);
 
-    void init(LocalDefs& defs);
+    void init(LocalDefs& defs, LocalWorld& world);
 
     ~LocalLuaParser() = default;
 };

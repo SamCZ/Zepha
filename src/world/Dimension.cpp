@@ -101,3 +101,12 @@ void Dimension::setBlock(glm::vec3 pos, int block) {
     auto chunk = getChunk(chunkPos);
     if (chunk != nullptr) chunk->setBlock(&local, block);
 }
+
+int Dimension::getBlock(glm::vec3 pos) {
+    auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
+    auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
+
+    auto chunk = getChunk(chunkPos);
+    if (chunk != nullptr) return chunk->getBlock(&local);
+    return -1;
+}

@@ -27,5 +27,5 @@ zeus.register_block('default:wood', {
     toughness = {
         hand = 5,
         axe = 3,
-    },
+    }
 })

@@ -5,9 +5,14 @@
 #include "LocalLuaParser.h"
 #include "../../def/LocalDefs.h"
 
+#include "ModuleClientRegisterBlock.h"
+#include "ModuleClientUtils.h"
+#include "ModuleClientRegisterBlockModel.h"
+#include "ModuleClientGetSetBlock.h"
+
 LocalLuaParser::LocalLuaParser(std::string mod_root) : LuaParser(std::move(mod_root)) {}
 
-void LocalLuaParser::init(LocalDefs& defs) {
+void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world) {
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math);
 
     zeus = lua.create_table();
@@ -16,7 +21,9 @@ void LocalLuaParser::init(LocalDefs& defs) {
     lua.set_function("dofile", &LocalLuaParser::DoFileSandboxed, this);
 
     ModuleClientUtils(lua, zeus, defs);
+    ModuleClientRegisterBlockModel(lua, zeus, defs);
     ModuleClientRegisterBlock(lua, zeus, defs);
+    ModuleClientGetSetBlock(lua, zeus, defs, world);
 
     //LOAD MODS
 

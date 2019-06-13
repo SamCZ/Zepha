@@ -9,16 +9,21 @@
 #include "block/server/ServerBlockAtlas.h"
 #include "../api/server/ServerLuaParser.h"
 
+class ServerWorld;
+
 class ServerDefs {
 public:
     ServerDefs();
 
     ServerBlockAtlas& blocks();
+    ServerLuaParser& lua();
+
+    void init(ServerWorld& world);
 
     ~ServerDefs() = default;
 private:
     ServerBlockAtlas blockAtlas;
-    ServerLuaParser lua;
+    ServerLuaParser luaApi;
 };
 
 

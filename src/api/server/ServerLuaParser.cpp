@@ -5,9 +5,14 @@
 #include "ServerLuaParser.h"
 #include "../../def/ServerDefs.h"
 
+#include "ModuleServerRegisterBlock.h"
+#include "ModuleServerUtils.h"
+#include "ModuleServerRegisterBlockModel.h"
+#include "ModuleServerGetSetBlock.h"
+
 ServerLuaParser::ServerLuaParser(std::string mod_root) : LuaParser(std::move(mod_root)) {}
 
-void ServerLuaParser::init(ServerDefs& defs) {
+void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world) {
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math);
 
     zeus = lua.create_table();
@@ -16,7 +21,9 @@ void ServerLuaParser::init(ServerDefs& defs) {
     lua.set_function("dofile", &ServerLuaParser::DoFileSandboxed, this);
 
     ModuleServerUtils(lua, zeus, defs);
+    ModuleServerRegisterBlockModel(lua, zeus, defs);
     ModuleServerRegisterBlock(lua, zeus, defs);
+    ModuleServerGetSetBlock(lua, zeus, defs, world);
 
     //LOAD MODS
 

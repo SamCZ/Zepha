@@ -40,5 +40,5 @@ zeus.register_block('default:stone', {
     toughness = {
         hand = 14,
         pick = 3
-    },
+    }
 })

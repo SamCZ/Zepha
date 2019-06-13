@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
         Game g(1366, 768, (arg == "local") ? argv[0] : nullptr);
     }
 
-    if (arg == "server" || arg == "local") {
+    if (arg == "server") {
         Server s(12345);
     }
 

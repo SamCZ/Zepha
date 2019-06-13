@@ -7,6 +7,7 @@
 
 #include <sol.hpp>
 #include <iostream>
+#include <vec3.hpp>
 #include "../util/Path.h"
 #include "../util/Log.h"
 
@@ -15,10 +16,13 @@ public:
     explicit LuaParser(std::string root);
     std::string root;
     Path root_path;
-protected:
+
     sol::state lua;
     sol::table zeus;
 
+    sol::table vecToTable(glm::vec3 vec);
+
+protected:
     int DoFileSandboxed(std::string file);
 };
 

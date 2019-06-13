@@ -19,10 +19,11 @@ using namespace noise;
 
 class MapGen {
 public:
+    MapGen() = default;
+    MapGen(const MapGen& mapGen);
     MapGen(unsigned int seed, BlockAtlas& atlas);
     BlockChunk* generate(glm::vec3 pos);
 private:
-
     void getDensityMap(MapGenJob &job);
     void getElevation(MapGenJob &j);
     void fillChunk(MapGenJob &j);
@@ -30,13 +31,13 @@ private:
 
     void addBlock(glm::vec3 lp, int block, MapGenJob &j);
 
-    unsigned int seed;
+    unsigned int seed = 0;
 
     int AIR = 0;
     int GRASS_BLOCK = 0, DIRT_BLOCK = 0, STONE_BLOCK = 0;
     int PLANT_STEM_BLOCK = 0, LEAVES_BLOCK = 0;
-    int TALLGRASSES[6];
-    int FLOWERS[8];
+    int TALLGRASSES[6] = {0, 0, 0, 0, 0, 0};
+    int FLOWERS[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
     module::Perlin terrainGeneralElevation;
     module::RidgedMulti terrainMountains;

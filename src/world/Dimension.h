@@ -24,6 +24,7 @@ public:
 
     void update();
     void setBlock(glm::vec3 pos, int block);
+    int getBlock(glm::vec3 pos);
 
     int render(Renderer &renderer);
     int getMeshChunkCount();

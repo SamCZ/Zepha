@@ -19,12 +19,15 @@ class ServerWorld {
 public:
     explicit ServerWorld(unsigned int seed, ServerDefs& defs);
 
-    void addPlayer(ServerPlayer* player);
+    void init();
     void update();
 
-    void setBlock(glm::vec3 pos, int block);
+    void addPlayer(ServerPlayer* player);
 
-    ~ServerWorld() = default;
+    void setBlock(glm::vec3 pos, int block);
+    int getBlock(glm::vec3 pos);
+
+    ~ServerWorld();
 private:
     void playerChangedChunks(ServerPlayer* player);
     void generate(glm::vec3 pos);
@@ -32,13 +35,15 @@ private:
 
     std::vector<ServerPlayer*> players;
 
-    WorldGenStream genStream;
+    WorldGenStream* genStream;
     Dimension dimension;
 
     std::unordered_set<glm::vec3, VecUtils::compareFunc> generateQueueMap;
     std::vector<glm::vec3> generateQueueList;
 
     int generatedChunks = 0;
+    unsigned int seed;
+    ServerDefs& defs;
 
     //Static vector of chunks to place around players
     std::vector<glm::vec3> generateOrder;

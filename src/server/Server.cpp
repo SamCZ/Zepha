@@ -11,6 +11,9 @@ Server::Server(unsigned short port) :
     port(port),
     handler(port, 32) {
 
+    defs.init(world);
+    world.init();
+
     //Some signal to turn off alive is needed to shut down the server gracefully
     while (alive) update();
 }
@@ -69,6 +72,20 @@ void Server::update() {
                         case Packet::BLOCK_SET: {
                             auto pos = Serializer::decodeIntVec3(&p.data[0]);
                             auto block = Serializer::decodeInt(&p.data[12]);
+
+                            if (block == 0) {
+                                auto def = defs.blocks().fromIndex(world.getBlock(pos));
+                                if (def.callbacks.count(Callback::BREAK)) {
+                                    def.callbacks[Callback::BREAK](defs.lua().vecToTable(pos));
+                                }
+                            }
+                            else {
+                                auto def = defs.blocks().fromIndex(block);
+                                if (def.callbacks.count(Callback::PLACE)) {
+                                    def.callbacks[Callback::PLACE](defs.lua().vecToTable(pos));
+                                }
+                            }
+
                             world.setBlock(pos, block);
 
                             break;

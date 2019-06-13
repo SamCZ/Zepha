@@ -5,7 +5,7 @@
 #include "LocalDefs.h"
 
 LocalDefs::LocalDefs(std::string tex_path) :
-    lua("/home/aurailus/C++/GlProject/res/lua/") {
+    luaApi("/home/aurailus/C++/GlProject/res/lua/") {
 
     textureAtlas = TextureAtlas(1024);
     textureAtlas.loadDirectory(tex_path + "/game");
@@ -13,8 +13,10 @@ LocalDefs::LocalDefs(std::string tex_path) :
     textureAtlas.loadDirectory(tex_path + "/ent");
 
     blockAtlas = LocalBlockAtlas();
+}
 
-    lua.init(*this);
+void LocalDefs::init(LocalWorld &world) {
+    luaApi.init(*this, world);
 }
 
 LocalBlockAtlas &LocalDefs::blocks() {
@@ -23,4 +25,8 @@ LocalBlockAtlas &LocalDefs::blocks() {
 
 TextureAtlas &LocalDefs::textures() {
     return textureAtlas;
+}
+
+LocalLuaParser &LocalDefs::lua() {
+    return luaApi;
 }

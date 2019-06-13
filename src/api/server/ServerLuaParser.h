@@ -8,16 +8,14 @@
 #include "../LuaParser.h"
 #include <cute_files.h>
 
-#include "ModuleServerRegisterBlock.h"
-#include "ModuleServerUtils.h"
-
 class ServerDefs;
+class ServerWorld;
 
 class ServerLuaParser : public LuaParser {
 public:
     explicit ServerLuaParser(std::string mod_root);
 
-    void init(ServerDefs& defs);
+    void init(ServerDefs& defs, ServerWorld& world);
 
     ~ServerLuaParser() = default;
 };

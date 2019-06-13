@@ -12,9 +12,12 @@ LocalWorld::LocalWorld(LocalDefs& defs, glm::vec3* playerPos, ServerConnection* 
     playerPos(playerPos),
     dimension(&playerChunkPos),
     meshGenStream(defs, dimension),
-    worldGenStream(55, defs),
     server(server),
     defs(defs) {}
+
+void LocalWorld::init() {
+    worldGenStream = new WorldInterpolationStream(55, defs);
+}
 
 void LocalWorld::update(double delta) {
     playerChunkPos = TransPos::roundPos(*playerPos / glm::vec3(TransPos::CHUNK_SIZE));
@@ -99,7 +102,7 @@ void LocalWorld::queueMeshes() {
     }
 }
 void LocalWorld::finishChunks() {
-    auto finishedChunks = worldGenStream.update();
+    auto finishedChunks = worldGenStream->update();
 
     lastGenUpdates = 0;
     for (const auto &chunk : finishedChunks) {
@@ -144,7 +147,7 @@ void LocalWorld::updateBlockDamages(double delta) {
 
 
 void LocalWorld::loadChunkPacket(Packet p) {
-    worldGenStream.pushBack(p);
+    worldGenStream->pushBack(p);
 }
 std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::vec3 chunkPos) {
     return dimension.getChunk(chunkPos);
@@ -211,9 +214,22 @@ int LocalWorld::getBlock(glm::vec3 pos) {
 }
 
 void LocalWorld::localSetBlock(glm::vec3 pos, int block) {
+    if (block == 0) {
+        auto def = defs.blocks().fromIndex(getBlock(pos));
+        if (def.callbacks.count(Callback::BREAK_CLIENT)) {
+            def.callbacks[Callback::BREAK_CLIENT](defs.lua().vecToTable(pos));
+        }
+    }
+    else {
+        auto def = defs.blocks().fromIndex(block);
+        if (def.callbacks.count(Callback::PLACE_CLIENT)) {
+            def.callbacks[Callback::PLACE_CLIENT](defs.lua().vecToTable(pos));
+        }
+    }
+
     server->setBlock(pos, block);
-//    dimension.setBlock(pos, block);
-//    remeshChunk(TransPos::chunkFromVec(TransPos::roundPos(pos)));
+    dimension.setBlock(pos, block);
+    remeshChunk(TransPos::chunkFromVec(TransPos::roundPos(pos)));
 }
 
 void LocalWorld::setBlock(glm::vec3 pos, int block) {

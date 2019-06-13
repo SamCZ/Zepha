@@ -14,6 +14,9 @@ GameScene::GameScene(ClientState* state) : Scene(state),
     gameGui(state->renderer->getCamera()->getBufferDimensions()),
     debugGui(state->renderer->getCamera()->getBufferDimensions(),  &defs.textures().getAtlasTexture()) {
 
+    defs.init(world);
+    world.init();
+
     gui.push_back(&gameGui);
     gui.push_back(&debugGui);
 

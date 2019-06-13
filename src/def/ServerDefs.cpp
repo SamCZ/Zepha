@@ -5,14 +5,17 @@
 #include "ServerDefs.h"
 
 ServerDefs::ServerDefs() :
-    lua("/home/aurailus/C++/GlProject/res/lua/") {
+    luaApi("/home/aurailus/C++/GlProject/res/lua/") {
+}
 
-    blockAtlas = ServerBlockAtlas();
-
-    lua.init(*this);
-//    lua.loadMod("../res/lua/default/init.lua");
+void ServerDefs::init(ServerWorld &world) {
+    luaApi.init(*this, world);
 }
 
 ServerBlockAtlas &ServerDefs::blocks() {
     return blockAtlas;
+}
+
+ServerLuaParser &ServerDefs::lua() {
+    return luaApi;
 }

@@ -34,6 +34,7 @@ class LocalWorld {
 public:
     LocalWorld(LocalDefs& defs, glm::vec3* playerPos, ServerConnection* server);
 
+    void init();
     void update(double delta);
 
     void finishMeshes();
@@ -71,7 +72,7 @@ private:
 
     ServerConnection* server;
 
-    WorldInterpolationStream worldGenStream;
+    WorldInterpolationStream* worldGenStream;
     Dimension dimension;
 
     std::vector<BlockCrackEntity*> crackedBlocks;

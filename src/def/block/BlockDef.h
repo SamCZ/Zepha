@@ -7,7 +7,10 @@
 
 
 #include <string>
+#include <unordered_map>
+#include <sol.hpp>
 #include "SelectionBox.h"
+#include "../../api/Callback.h"
 
 class BlockDef {
 public:
@@ -26,6 +29,8 @@ public:
     bool isSolid() { return solid; };
 
     SelectionBox getSelectionBox() { return selectionBox; };
+
+    std::unordered_map<int /*Callback*/, sol::function> callbacks;
 protected:
     std::string identifier;
     int index;
