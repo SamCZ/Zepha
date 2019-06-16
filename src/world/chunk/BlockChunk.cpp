@@ -3,37 +3,38 @@
 //
 
 #include "BlockChunk.h"
+#include "../../util/Util.h"
 
 #include <gzip/compress.hpp>
 #include <gzip/decompress.hpp>
 #include <gzip/utils.hpp>
 
-BlockChunk::BlockChunk() {
-    this->blocks = std::vector<int>((unsigned long)pow(TransPos::CHUNK_SIZE, 3));
-    this->empty = true;
-}
+BlockChunk::BlockChunk() :
+    blocks(static_cast<unsigned long>(pow(TransPos::CHUNK_SIZE, 3))),
+    empty(true),
+    renderedEmpty(true),
+    fullBlocks(0) {}
 
-BlockChunk::BlockChunk(std::vector<int> blocks) {
-    this->empty = true;
-    for (int i : blocks) {
-        if (i != 0) this->empty = false;
+BlockChunk::BlockChunk(std::vector<int> blocks) : BlockChunk(std::move(blocks), {0, 0, 0}) {}
+
+BlockChunk::BlockChunk(std::vector<int> blocks, glm::vec3 pos) :
+    empty(true),
+    renderedEmpty(true),
+    blocks(std::move(blocks)),
+    pos(pos) {
+
+    for (int i : this->blocks) {
+        if (i != 0) {
+            empty = false;
+            fullBlocks ++;
+        }
     }
 
-    this->blocks = std::move(blocks);
+    renderedEmpty = true;
 }
 
-BlockChunk::BlockChunk(std::vector<int> blocks, glm::vec3 pos) {
-    this->empty = true;
-    for (int i : blocks) {
-        if (i != 0) this->empty = false;
-    }
-
-    this->blocks = std::move(blocks);
-    this->pos = pos;
-}
-
-int BlockChunk::getBlock(glm::vec3* pos) {
-    unsigned int ind = VecUtils::vecToInd(pos);
+int BlockChunk::getBlock(const glm::vec3& pos) {
+    auto ind = VecUtils::vecToInd(pos);
     if (ind < 0 || ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return -1;
     return blocks[ind];
 }
@@ -43,19 +44,24 @@ int BlockChunk::getBlock(int ind) {
     return blocks[ind];
 }
 
-int BlockChunk::getBlock(int x, int y, int z) {
-    unsigned int ind = VecUtils::vecToInd(x, y, z);
-    if (ind < 0 || ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return -1;
-    return blocks[ind];
-}
-
-bool BlockChunk::setBlock(glm::vec3* pos, int block) {
-
-    //TODO: Update emptiness
-
-    unsigned int ind = VecUtils::vecToInd(pos);
+bool BlockChunk::setBlock(const glm::vec3& pos, int block) {
+    auto ind = VecUtils::vecToInd(pos);
     if (ind < 0 || ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return false;
+
     if (blocks[ind] != block) {
+        if (block == 0) {
+            this->fullBlocks--;
+            if (this->fullBlocks == 0) {
+                this->empty = true;
+                this->renderedEmpty = false;
+            }
+        }
+        else if (blocks[ind] == 0) {
+            this->fullBlocks++;
+            this->empty = false;
+            this->renderedEmpty = true;
+        }
+
         blocks[ind] = block;
         return true;
     }
@@ -66,8 +72,10 @@ bool BlockChunk::allAdjacentsExist() {
     return adjacent[0] && adjacent[1] && adjacent[2] && adjacent[3] && adjacent[4] && adjacent[5];
 }
 
-bool BlockChunk::isEmpty() {
-    return empty;
+bool BlockChunk::shouldRender() {
+    bool should = !empty || !renderedEmpty;
+    renderedEmpty = true;
+    return should;
 }
 
 std::vector<int> BlockChunk::rleEncode() {

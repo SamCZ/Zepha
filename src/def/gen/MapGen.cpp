@@ -215,6 +215,6 @@ void MapGen::addTrees(MapGenJob &job) {
 
 void MapGen::addBlock(glm::vec3 lp, int block, MapGenJob &j) {
     if (lp.x >= 0 && lp.x < TransPos::CHUNK_SIZE && lp.y >= 0 && lp.y < TransPos::CHUNK_SIZE && lp.z >= 0 && lp.z < TransPos::CHUNK_SIZE) {
-        j.blocks[VecUtils::vecToInd(&lp)] = block;
+        j.blocks[VecUtils::vecToInd(lp)] = block;
     }
 }

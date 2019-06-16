@@ -125,14 +125,16 @@ std::vector<bool>* MeshGenStream::getAdjacentsCull(glm::vec3 pos) {
             return nullptr;
         }
 
+        glm::vec3 checkPos;
         for (int j = 0; j < TransPos::CHUNK_SIZE; j++) {
             for (int k = 0; k < TransPos::CHUNK_SIZE; k++) {
+                checkPos = {
+                    (i == 0) ? 0 : (i == 1) ? (TransPos::CHUNK_SIZE-1) : (i <= 3) ? j : k,
+                    (i == 2) ? 0 : (i == 3) ? (TransPos::CHUNK_SIZE-1) : j,
+                    (i == 4) ? 0 : (i == 5) ? (TransPos::CHUNK_SIZE-1) : k
+                };
 
-                int x = (i == 0) ? 0 : (i == 1) ? (TransPos::CHUNK_SIZE-1) : (i <= 3) ? j : k;
-                int y = (i == 2) ? 0 : (i == 3) ? (TransPos::CHUNK_SIZE-1) : j;
-                int z = (i == 4) ? 0 : (i == 5) ? (TransPos::CHUNK_SIZE-1) : k;
-
-                auto block = chunk->getBlock(x, y, z);
+                auto block = chunk->getBlock(checkPos);
                 culls->push_back(defs.blocks().fromIndex(block).isCulling());
             }
         }

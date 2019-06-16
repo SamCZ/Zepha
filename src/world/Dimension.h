@@ -21,6 +21,7 @@ public:
 
     void addBlockChunk(std::shared_ptr<BlockChunk> chunk);
     void addMeshChunk(MeshChunk* chunk);
+    void removeMeshChunk(const glm::vec3& pos);
 
     void update();
     void setBlock(glm::vec3 pos, int block);

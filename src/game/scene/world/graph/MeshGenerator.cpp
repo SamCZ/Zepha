@@ -13,7 +13,7 @@ LocalBlockDef& blockData(int ind, BlockChunk &chunk, LocalBlockAtlas& atlas) {
 }
 
 LocalBlockDef& blockData(glm::vec3 &pos, BlockChunk &chunk, LocalBlockAtlas &atlas) {
-    return atlas.fromIndex(chunk.getBlock(&pos));
+    return atlas.fromIndex(chunk.getBlock(pos));
 }
 
 bool faceOcculudedAt(glm::vec3 &pos, BlockChunk &chunk, LocalBlockAtlas &atlas, std::vector<bool> &bools) {

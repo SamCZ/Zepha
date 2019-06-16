@@ -74,13 +74,11 @@ void LocalWorld::finishMeshes() {
             meshChunk->build(*mesh.vertices, *mesh.indices);
             meshChunk->setPos(mesh.pos);
 
-            if (meshChunks.count(mesh.pos)) {
-                MeshChunk* oldChunk = meshChunks.at(mesh.pos);
-                meshChunks.erase(mesh.pos);
-                delete oldChunk;
-            }
             dimension.addMeshChunk(meshChunk);
             lastMeshUpdates++;
+        }
+        else {
+            dimension.removeMeshChunk(mesh.pos);
         }
     }
 }
@@ -169,7 +167,7 @@ void LocalWorld::attemptMeshChunk(glm::vec3 pos) {
         thisChunk->adjacent[i] = getAdjacentExists(pos + vectors[i], pos);
     }
 
-    if (thisChunk->allAdjacentsExist() && !thisChunk->isEmpty()) pendingMesh.push_back(pos);
+    if (thisChunk->allAdjacentsExist() && thisChunk->shouldRender()) pendingMesh.push_back(pos);
 }
 bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
     auto chunk = getChunk(pos);
@@ -183,7 +181,7 @@ bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
             }
         }
 
-        if (chunk->allAdjacentsExist() && !chunk->isEmpty()) pendingMesh.push_back(pos);
+        if (chunk->allAdjacentsExist() && chunk->shouldRender()) pendingMesh.push_back(pos);
         return true;
     }
     return false;
@@ -207,9 +205,7 @@ int LocalWorld::getBlock(glm::vec3 pos) {
     auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
 
     auto chunk = getChunk(chunkPos);
-    if (chunk != nullptr) {
-        return chunk->getBlock(&local);
-    }
+    if (chunk != nullptr) return chunk->getBlock(local);
     return -1;
 }
 

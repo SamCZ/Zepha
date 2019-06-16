@@ -45,8 +45,8 @@ namespace VecUtils {
         return (unsigned int)(x + TransPos::CHUNK_SIZE * (y + TransPos::CHUNK_SIZE * z));
     }
 
-    static inline unsigned int vecToInd(glm::vec3* vec) {
-        return vecToInd((int)vec->x, (int)vec->y, (int)vec->z);
+    static inline unsigned int vecToInd(const glm::vec3& vec) {
+        return (unsigned int)(vec.x + TransPos::CHUNK_SIZE * (vec.y + TransPos::CHUNK_SIZE * vec.z));
     }
 };
 

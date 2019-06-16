@@ -99,7 +99,7 @@ void Dimension::setBlock(glm::vec3 pos, int block) {
     auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
 
     auto chunk = getChunk(chunkPos);
-    if (chunk != nullptr) chunk->setBlock(&local, block);
+    if (chunk != nullptr) chunk->setBlock(local, block);
 }
 
 int Dimension::getBlock(glm::vec3 pos) {
@@ -107,6 +107,17 @@ int Dimension::getBlock(glm::vec3 pos) {
     auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
 
     auto chunk = getChunk(chunkPos);
-    if (chunk != nullptr) return chunk->getBlock(&local);
+    if (chunk != nullptr) return chunk->getBlock(local);
     return -1;
+}
+
+void Dimension::removeMeshChunk(const glm::vec3& pos) {
+    auto blockChunk = blockChunks[pos];
+
+    if (blockChunk->meshChunk != nullptr) {
+        meshChunks.erase(blockChunk->meshChunkIter);
+        delete blockChunk->meshChunk;
+        blockChunk->meshChunk = nullptr;
+    }
+
 }

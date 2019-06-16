@@ -78,7 +78,6 @@ private:
     std::vector<BlockCrackEntity*> crackedBlocks;
     std::vector<ParticleEntity*> particles;
 
-    std::unordered_map<glm::vec3, MeshChunk*, VecUtils::compareFunc> meshChunks;
     MeshGenStream meshGenStream;
     std::vector<glm::vec3> pendingMesh;
 };

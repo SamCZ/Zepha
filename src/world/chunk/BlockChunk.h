@@ -21,18 +21,13 @@ public:
     explicit BlockChunk(std::vector<int> blocks);
     BlockChunk(std::vector<int> blocks, glm::vec3 pos);
 
-    glm::vec3 pos;
-
-    bool adjacent[6] = {false, false, false, false, false, false};
-
-    bool isEmpty();
+    bool shouldRender();
     bool allAdjacentsExist();
 
     int getBlock(int ind);
-    int getBlock(glm::vec3* pos);
-    int getBlock(int x, int y, int z);
+    int getBlock(const glm::vec3& pos);
 
-    bool setBlock(glm::vec3* pos, int ind);
+    bool setBlock(const glm::vec3& pos, int ind);
 
     std::vector<int> rleEncode();
     void rleDecode(std::vector<int>& blocksRle, std::vector<int>& buffer);
@@ -42,10 +37,16 @@ public:
 
     static std::vector<int> deserializeToVec(std::string gzip);
 
+    glm::vec3 pos;
+    bool adjacent[6] = {false, false, false, false, false, false};
+
     MeshChunk* meshChunk = nullptr;
     std::list<MeshChunk*>::iterator meshChunkIter;
+
+    bool renderedEmpty;
 private:
     std::vector<int> blocks;
+    unsigned short fullBlocks;
     bool empty;
 };
 
