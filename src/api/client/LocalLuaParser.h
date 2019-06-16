@@ -5,10 +5,9 @@
 #ifndef ZEUS_LOCALLUAPARSER_H
 #define ZEUS_LOCALLUAPARSER_H
 
-#include <string>
-#include <iostream>
-#include <cute_files.h>
 #include "../LuaParser.h"
+#include <cute_files.h>
+#include <list>
 
 class LocalDefs;
 class LocalWorld;
@@ -18,6 +17,15 @@ public:
     explicit LocalLuaParser(std::string mod_root);
 
     void init(LocalDefs& defs, LocalWorld& world);
+    void update();
+
+    struct DelayedFunction {
+        sol::function function;
+        std::vector<sol::object> args;
+        float timeout;
+        float initial_timeout;
+    };
+    std::list<DelayedFunction> delayed_functions;
 
     ~LocalLuaParser() = default;
 };

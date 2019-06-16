@@ -13,14 +13,17 @@ class LocalDefs {
 public:
     explicit LocalDefs(std::string tex_path);
 
-    void init(LocalWorld& world);
-
     LocalBlockAtlas& blocks();
     TextureAtlas& textures();
     LocalLuaParser& lua();
 
+    void init(LocalWorld& world);
+    void update(float delta);
+
     ~LocalDefs() = default;
 private:
+    float delta = 0;
+
     TextureAtlas textureAtlas;
     LocalBlockAtlas blockAtlas;
     LocalLuaParser luaApi;

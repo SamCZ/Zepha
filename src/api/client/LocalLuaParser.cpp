@@ -9,6 +9,7 @@
 #include "ModuleClientUtils.h"
 #include "ModuleClientRegisterBlockModel.h"
 #include "ModuleClientGetSetBlock.h"
+#include "ModuleClientDelay.h"
 
 LocalLuaParser::LocalLuaParser(std::string mod_root) : LuaParser(std::move(mod_root)) {}
 
@@ -24,6 +25,7 @@ void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world) {
     ModuleClientRegisterBlockModel(lua, zeus, defs);
     ModuleClientRegisterBlock(lua, zeus, defs);
     ModuleClientGetSetBlock(lua, zeus, defs, world);
+    ModuleClientDelay(lua, zeus, defs, delayed_functions);
 
     //LOAD MODS
 
@@ -57,4 +59,21 @@ void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world) {
         cf_dir_next(&mods_dir);
     }
     cf_dir_close(&mods_dir);
+}
+
+void LocalLuaParser::update() {
+    auto it = delayed_functions.begin();
+    while (it != delayed_functions.end()) {
+        DelayedFunction& f = *it;
+        f.timeout -= 0.048f;
+        if (f.timeout <= 0) {
+            if (f.function(sol::as_args(f.args))) {
+                f.timeout = f.initial_timeout;
+            } else {
+                it = delayed_functions.erase(it);
+                continue;
+            }
+        }
+        it++;
+    }
 }

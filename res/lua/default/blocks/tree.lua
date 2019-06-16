@@ -13,7 +13,7 @@ zeus.register_block('default:leaves', {
     toughness = {
         hand = 1,
         axe = 0.2,
-    },
+    }
 })
 
 zeus.register_block('default:wood', {

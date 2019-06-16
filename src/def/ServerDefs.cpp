@@ -19,3 +19,11 @@ ServerBlockAtlas &ServerDefs::blocks() {
 ServerLuaParser &ServerDefs::lua() {
     return luaApi;
 }
+
+void ServerDefs::update(float delta) {
+    this->delta += delta;
+    while (this->delta > 48) {
+        luaApi.update();
+        this->delta -= 48;
+    }
+}

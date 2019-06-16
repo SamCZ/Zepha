@@ -19,7 +19,7 @@ zeus.register_block("default:grass", {
         hand = 3,
         shovel = 1,
         pick = 2
-    },
+    }
 })
 
 zeus.register_block('default:dirt', {
@@ -30,7 +30,7 @@ zeus.register_block('default:dirt', {
         hand = 3,
         shovel = 1,
         pick = 2
-    },
+    }
 })
 
 zeus.register_block('default:stone', {

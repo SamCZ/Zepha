@@ -27,6 +27,7 @@ GameScene::GameScene(ClientState* state) : Scene(state),
 
 
 void GameScene::update() {
+    defs.update(static_cast<float>(state->deltaTime) * 1000);
     defs.textures().update();
     server.update(player);
 

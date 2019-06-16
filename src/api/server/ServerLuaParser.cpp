@@ -9,6 +9,7 @@
 #include "ModuleServerUtils.h"
 #include "ModuleServerRegisterBlockModel.h"
 #include "ModuleServerGetSetBlock.h"
+#include "ModuleServerDelay.h"
 
 ServerLuaParser::ServerLuaParser(std::string mod_root) : LuaParser(std::move(mod_root)) {}
 
@@ -24,6 +25,7 @@ void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world) {
     ModuleServerRegisterBlockModel(lua, zeus, defs);
     ModuleServerRegisterBlock(lua, zeus, defs);
     ModuleServerGetSetBlock(lua, zeus, defs, world);
+    ModuleServerDelay(lua, zeus, defs, delayed_functions);
 
     //LOAD MODS
 
@@ -57,4 +59,21 @@ void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world) {
         cf_dir_next(&mods_dir);
     }
     cf_dir_close(&mods_dir);
+}
+
+void ServerLuaParser::update() {
+    auto it = delayed_functions.begin();
+    while (it != delayed_functions.end()) {
+        DelayedFunction& f = *it;
+        f.timeout -= 0.048f;
+        if (f.timeout <= 0) {
+            if (f.function(sol::as_args(f.args))) {
+                f.timeout = f.initial_timeout;
+            } else {
+                it = delayed_functions.erase(it);
+                continue;
+            }
+        }
+        it++;
+    }
 }

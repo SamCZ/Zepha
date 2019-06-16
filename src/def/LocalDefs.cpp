@@ -30,3 +30,11 @@ TextureAtlas &LocalDefs::textures() {
 LocalLuaParser &LocalDefs::lua() {
     return luaApi;
 }
+
+void LocalDefs::update(float delta) {
+    this->delta += delta;
+    while (this->delta > 48) {
+        luaApi.update();
+        this->delta -= 48;
+    }
+}

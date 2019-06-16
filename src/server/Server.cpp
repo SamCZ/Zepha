@@ -22,6 +22,7 @@ void Server::update() {
     Timer loop("");
 
     world.update();
+    defs.update(16); //TODO: Calculate the real delta.
 
     ENetEvent event;
     while (handler.update(&event) && loop.elapsedNs() < 15L*1000000L) {
@@ -73,6 +74,8 @@ void Server::update() {
                             auto pos = Serializer::decodeIntVec3(&p.data[0]);
                             auto block = Serializer::decodeInt(&p.data[12]);
 
+                            world.setBlock(pos, block);
+
                             if (block == 0) {
                                 auto def = defs.blocks().fromIndex(world.getBlock(pos));
                                 if (def.callbacks.count(Callback::BREAK)) {
@@ -85,8 +88,6 @@ void Server::update() {
                                     def.callbacks[Callback::PLACE](defs.lua().vecToTable(pos));
                                 }
                             }
-
-                            world.setBlock(pos, block);
 
                             break;
                         }

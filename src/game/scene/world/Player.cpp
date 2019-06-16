@@ -141,7 +141,8 @@ void Player::pointerUpdate(InputManager &input, double delta) {
             if (breakInterval > INTERVAL) breakInterval = 0;
         }
         if (input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
-            world.localSetBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face), 5);
+            world.localSetBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face),
+                    defs.blocks().fromIdentifier("default:sandstone").getIndex());
         }
     }
     else {
