@@ -33,12 +33,12 @@ void Camera::changeWindowDimensions(float buffWidth, float buffHeight) {
     createMatrices();
 }
 
-glm::mat4* Camera::getProjectionMatrix() {
-    return &projectionMatrix;
+glm::mat4 Camera::getProjectionMatrix() {
+    return projectionMatrix;
 }
 
-glm::mat4* Camera::getOrthographicMatrix() {
-    return &orthographicMatrix;
+glm::mat4 Camera::getOrthographicMatrix() {
+    return orthographicMatrix;
 }
 
 glm::mat4 Camera::getViewMatrix() {

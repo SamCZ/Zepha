@@ -10,12 +10,15 @@
 #include "window/Window.h"
 #include "Camera.h"
 #include "Texture.h"
+#include "WorldUniforms.h"
+#include "GuiUniforms.h"
 #include <ext.hpp>
 
 class Renderer {
 public:
     Renderer();
     Renderer(GLint winWidth, GLint winHeight);
+
 
     void update();
 
@@ -35,16 +38,17 @@ private:
     void enableWorldShader();
     void enableGuiShader();
 
-    Window* window;
-    Camera* camera;
+    Window window;
+    Camera camera;
 
-    glm::mat4* projectionMatrix;
-    glm::mat4* orthographicMatrix;
-
+    glm::vec4 clearColor {0.58f, 0.76f, 0.94f, 1.0f};
     Texture* activeTexture;
 
-    Shader *worldShader, *guiShader;
-    GLint uModel, uProj, uView, uOrtho, uGuiModel;
+    Shader worldShader;
+    WorldUniforms wu;
+
+    Shader guiShader;
+    GuiUniforms gu;
 
     bool mode; //false = world, true = gui
 };

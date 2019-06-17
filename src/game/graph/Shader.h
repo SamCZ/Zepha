@@ -21,7 +21,7 @@ public:
 
     std::string readFile(const char* fileLocation);
 
-    GLint getUniformLocation(const char* name);
+    GLint getUniform(const char *name);
 
     void useShader();
 

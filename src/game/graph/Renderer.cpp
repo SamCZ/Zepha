@@ -6,38 +6,29 @@
 
 Renderer::Renderer() : Renderer(1366, 768) {};
 
-Renderer::Renderer(GLint winWidth, GLint winHeight) {
-    mode = false;
-    activeTexture = nullptr;
+Renderer::Renderer(GLint winWidth, GLint winHeight) :
+    mode(false),
+    activeTexture(nullptr),
 
-    //Create window
-    window = new Window(winWidth, winHeight);
-    window->initialize();
+    window(winWidth, winHeight) {
 
-    //Create camera
-    camera = new Camera();
-    camera->create(window->getBufferWidth(), window->getBufferHeight(), glm::vec3(0, 1, 0));
+    window.initialize();
+    camera.create(window.getBufferWidth(), window.getBufferHeight(), glm::vec3(0, 1, 0));
 
-    //Assign matrices
-    projectionMatrix = camera->getProjectionMatrix();
-    orthographicMatrix = camera->getOrthographicMatrix();
+    worldShader = Shader();
+    worldShader.createFromFile("../res/shader/world.vs", "../res/shader/world.fs");
 
-    //Initialize world shader
-    worldShader = new Shader();
-    worldShader->createFromFile("../res/shader/world.vs", "../res/shader/world.fs");
+    wu.matrix = camera.getProjectionMatrix();
+    wu.proj   = worldShader.getUniform("projection");
+    wu.model  = worldShader.getUniform("model");
+    wu.view   = worldShader.getUniform("view");
 
-    //Get world shader uniforms
-    uProj = worldShader->getUniformLocation("projection");
-    uModel = worldShader->getUniformLocation("model");
-    uView = worldShader->getUniformLocation("view");
+    guiShader = Shader();
+    guiShader.createFromFile("../res/shader/gui.vs", "../res/shader/gui.fs");
 
-    //Initialize GUI shader
-    guiShader = new Shader();
-    guiShader->createFromFile("../res/shader/gui.vs", "../res/shader/gui.fs");
-
-    //Get GUI shader uniforms
-    uOrtho = guiShader->getUniformLocation("ortho");
-    uGuiModel = guiShader->getUniformLocation("model");
+    gu.matrix = camera.getOrthographicMatrix();
+    gu.ortho  = guiShader.getUniform("ortho");
+    gu.model  = guiShader.getUniform("model");
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
@@ -45,16 +36,19 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) {
 }
 
 void Renderer::update() {
-    window->update();
-    if (window->resized) {
+    window.update();
+
+    if (window.resized) {
         resized = true;
-        camera->changeWindowDimensions(window->getBufferWidth(), window->getBufferHeight());
-        window->resized = false;
+        camera.changeWindowDimensions(window.getBufferWidth(), window.getBufferHeight());
+        window.resized = false;
+        wu.matrix = camera.getProjectionMatrix();
+        gu.matrix = camera.getOrthographicMatrix();
     }
 }
 
 void Renderer::begin() {
-    glClearColor(0.58f, 0.76f, 0.94f, 1.0f);
+    glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
@@ -69,34 +63,34 @@ void Renderer::beginGUI() {
 
 void Renderer::end() {
     Shader::clearShader();
-    window->swapBuffers();
+    window.swapBuffers();
 }
 
 Window *Renderer::getWindow() {
-    return window;
+    return &window;
 }
 
 Camera *Renderer::getCamera() {
-    return camera;
+    return &camera;
 }
 
 void Renderer::enableWorldShader() {
-    worldShader->useShader();
+    worldShader.useShader();
     mode = false;
 
-    glUniformMatrix4fv(uProj, 1, GL_FALSE, glm::value_ptr(*projectionMatrix));
-    glUniformMatrix4fv(uView, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
+    glUniformMatrix4fv(wu.proj, 1, GL_FALSE, glm::value_ptr(wu.matrix));
+    glUniformMatrix4fv(wu.view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
 }
 
 void Renderer::enableGuiShader() {
-    guiShader->useShader();
+    guiShader.useShader();
     mode = true;
 
-    glUniformMatrix4fv(uOrtho, 1, GL_FALSE, glm::value_ptr(*orthographicMatrix));
+    glUniformMatrix4fv(gu.ortho, 1, GL_FALSE, glm::value_ptr(gu.matrix));
 }
 
 void Renderer::setModelMatrix(glm::mat4& modelMatrix) {
-    glUniformMatrix4fv((mode) ? uGuiModel : uModel, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+    glUniformMatrix4fv((mode) ? gu.model : wu.model, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 }
 
 void Renderer::enableTexture(Texture *texture) {
@@ -107,9 +101,6 @@ void Renderer::enableTexture(Texture *texture) {
 }
 
 Renderer::~Renderer() {
-    worldShader->cleanup();
-    delete worldShader;
-
-    guiShader->cleanup();
-    delete guiShader;
+    worldShader.cleanup();
+    guiShader.cleanup();
 }

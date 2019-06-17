@@ -24,8 +24,8 @@ public:
     void setYaw(double yaw);
     void setPitch(double pitch);
 
-    glm::mat4* getProjectionMatrix();
-    glm::mat4* getOrthographicMatrix();
+    glm::mat4 getProjectionMatrix();
+    glm::mat4 getOrthographicMatrix();
 
     glm::mat4 getViewMatrix();
 
