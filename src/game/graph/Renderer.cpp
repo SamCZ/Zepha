@@ -21,7 +21,6 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
@@ -114,8 +113,11 @@ void Renderer::update() {
 }
 
 void Renderer::beginWorldDrawCalls() {
+    activeTexture = nullptr;
+
     glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
 
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -149,21 +151,20 @@ void Renderer::endWorldDrawCalls() {
                       0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y),
                       GL_DEPTH_BUFFER_BIT, GL_NEAREST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
+void Renderer::beginGUIDrawCalls() {
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
+
+    guiShader.use();
+    glUniformMatrix4fv(gu.ortho, 1, GL_FALSE, glm::value_ptr(gu.matrix));
+}
+
+void Renderer::swapBuffers() {
     Shader::clearShader();
     window.swapBuffers();
 }
-
-//void Renderer::beginGUI() {
-//    glClear(GL_DEPTH_BUFFER_BIT);
-//    glDisable(GL_DEPTH_TEST);
-//    enableGuiShader();
-//}
-//
-//void Renderer::end() {
-//    Shader::clearShader();
-//    window.swapBuffers();
-//}
 
 Window *Renderer::getWindow() {
     return &window;
@@ -172,13 +173,6 @@ Window *Renderer::getWindow() {
 Camera *Renderer::getCamera() {
     return &camera;
 }
-
-//void Renderer::enableGuiShader() {
-//    guiShader.use();
-//    mode = true;
-//
-//    glUniformMatrix4fv(gu.ortho, 1, GL_FALSE, glm::value_ptr(gu.matrix));
-//}
 
 void Renderer::renderQuad() {
     if (quadVAO == 0) {

@@ -59,7 +59,7 @@ void Dimension::update() {
             float distance = max(abs(diffVec.x), max(abs(diffVec.y), abs(diffVec.z)));
 
             //TODO: Don't hard code this number
-            if (distance > 30) {
+            if (distance > 24) {
                 if (chunk->meshChunk != nullptr) {
                     meshChunks.erase(chunk->meshChunkIter);
                     delete chunk->meshChunk;

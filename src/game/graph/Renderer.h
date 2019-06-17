@@ -26,9 +26,8 @@ public:
 
     void beginWorldDrawCalls();
     void endWorldDrawCalls();
-
-//    void beginGUI();
-//    void end();
+    void beginGUIDrawCalls();
+    void swapBuffers();
 
     void setModelMatrix(glm::mat4& modelMatrix);
     void enableTexture(Texture* texture);
@@ -40,7 +39,6 @@ public:
 
     bool resized;
 private:
-//    void enableGuiShader();
     void renderQuad();
 
     unsigned int quadVAO = 0, quadVBO;
@@ -51,8 +49,8 @@ private:
     unsigned int gBuffer;
     unsigned int gPosition, gNormal, gColorSpec;
 
-//    glm::vec4 clearColor {0.58f, 0.76f, 0.94f, 1.0f};
-    glm::vec4 clearColor {0.0f, 0.0f, 0.0f, 1.0f};
+//    glm::vec4 clearColor {0.0f, 0.0f, 0.0f, 1.0f};
+    glm::vec4 clearColor {0.58f, 0.76f, 0.94f, 1.0f};
     Texture* activeTexture;
 
     Shader worldGeometryShader;

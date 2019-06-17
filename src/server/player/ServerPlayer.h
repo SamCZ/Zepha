@@ -13,8 +13,8 @@
 
 class ServerPlayer {
 public:
-    const static int ACTIVE_RANGE_H = 16;
-    const static int ACTIVE_RANGE_V = 8;
+    const static int ACTIVE_RANGE_H = 24;
+    const static int ACTIVE_RANGE_V = 12;
 
     explicit ServerPlayer(ServerPeer* peer, std::string uuid, std::string username);
 

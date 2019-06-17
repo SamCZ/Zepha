@@ -14,11 +14,11 @@ out vec3 fragPos;
 out vec3 normal;
 
 void main() {
-    vec4 worldPos = model * vec4(aPos, 1.0);
+    vec4 modelViewPos = view * model * vec4(aPos, 1.0);
 
-    fragPos = worldPos.xyz;
+    fragPos = modelViewPos.xyz;
     texCoords = aTexCoords.xy;
     normal = transpose(inverse(mat3(model))) * aNormal;
 
-    gl_Position = projection * view * worldPos;
+    gl_Position = projection * modelViewPos;
 }

@@ -11,7 +11,10 @@ in vec3 normal;
 uniform sampler2D tex;
 
 void main() {
+    vec4 spec = texture(tex, texCoords);
+    if (spec.a < 0.1) discard;
+
     gPosition = vec4(fragPos, 1);
     gNormal = vec4(normalize(normal), 1);
-    gSpecular = texture(tex, texCoords);
+    gSpecular = spec;
 }
