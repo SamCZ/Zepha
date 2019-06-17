@@ -24,13 +24,20 @@
 
 class MeshGenerator {
 public:
-    MeshGenerator();
-    void build(const std::shared_ptr<BlockChunk> &chunk, LocalBlockAtlas &atlas, std::vector<bool> &adjacents,
-          std::vector<Vertex> &vertices, std::vector<unsigned int> &indices);
+    MeshGenerator(std::vector<Vertex> &vertices, std::vector<unsigned int> &indices,
+                  LocalBlockAtlas& atlas, const BlockChunk& chunk, const std::vector<bool>& adj);
 private:
-    unsigned int indOffset;
+    bool faceOcculudedAt(const glm::vec3 &pos, const std::vector<bool> &adj);
+    void addFaces(const glm::vec3 &positon, const vector<LocalMeshPart> &meshParts);
+    LocalBlockDef& getDef(int ind);
+    LocalBlockDef& getDef(const glm::vec3 &pos);
 
-    void addFaces(glm::vec3 &offset, vector<Vertex> &vertices, vector<unsigned int> &indices, vector<LocalMeshPart> &meshParts);
+    unsigned int indOffset = 0;
+    const BlockChunk& chunk;
+    LocalBlockAtlas& atlas;
+    std::vector<Vertex>& vertices;
+    std::vector<unsigned int>& indices;
+
 };
 
 #endif //GLPROJECT_MESHGENERATOR_H

@@ -58,7 +58,8 @@ void Dimension::update() {
             auto diffVec = pos - *playerPos;
             float distance = max(abs(diffVec.x), max(abs(diffVec.y), abs(diffVec.z)));
 
-            if (distance > 16) {
+            //TODO: Don't hard code this number
+            if (distance > 30) {
                 if (chunk->meshChunk != nullptr) {
                     meshChunks.erase(chunk->meshChunkIter);
                     delete chunk->meshChunk;

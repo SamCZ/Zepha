@@ -90,7 +90,7 @@ void MeshGenStream::threadFunction(MeshGenStream::Thread *thread) {
                 u.vertices = new std::vector<Vertex>();
                 u.indices = new std::vector<unsigned int>();
 
-                MeshGenerator().build(u.chunk, thread->atlas, *u.adjacent, *u.vertices, *u.indices);
+                MeshGenerator(*u.vertices, *u.indices, thread->atlas, *u.chunk, *u.adjacent);
 
                 delete u.adjacent;
 
