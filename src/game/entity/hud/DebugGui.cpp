@@ -11,7 +11,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize, Texture* tex) :
     coloredGraphTexture("../res/tex/gui/histogram.png"),
     monochromeGraphTexture("../res/tex/gui/histogram_white.png"),
 
-    atlasTex(tex),
+//    atlasTex(tex),
     crosshairText(&fontTexture, true),
     dataText(&fontTexture, true),
 
@@ -24,7 +24,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize, Texture* tex) :
     drawCallsGraph   ("Draw Calls", 244, 64, 120, 0,  &monochromeGraphTexture, &fontTexture),
     vRamGraph        ("VRam",       244, 64, 120, 1,  &monochromeGraphTexture, &fontTexture) {
 
-    atlasTex.setScale({512, 512, 1});
+//    atlasTex.setScale({512, 512, 1});
 
     positionElements(bufferSize);
 
@@ -39,7 +39,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize, Texture* tex) :
     children.push_back(&drawCallsGraph);
     children.push_back(&vRamGraph);
 
-    children.push_back(&atlasTex);
+//    children.push_back(&atlasTex);
 }
 
 void DebugGui::positionElements(glm::vec2 bufferSize) {
@@ -47,7 +47,7 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
     auto bufferHeight = (int)bufferSize.y;
 
     crosshairText.setPos({bufferWidth / 2 + 22, bufferHeight / 2 - 7, 0});
-    atlasTex.setPos({8, 350, 0});
+//    atlasTex.setPos({8, 350, 0});
 
     dataText.setPos(glm::vec3(10, 10, 0));
 

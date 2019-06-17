@@ -47,7 +47,7 @@ private:
     Camera camera;
 
     unsigned int gBuffer;
-    unsigned int gPosition, gNormal, gColorSpec;
+    unsigned int gPosition, gNormal, gColorSpec, rboDepth;
 
 //    glm::vec4 clearColor {0.0f, 0.0f, 0.0f, 1.0f};
     glm::vec4 clearColor {0.58f, 0.76f, 0.94f, 1.0f};

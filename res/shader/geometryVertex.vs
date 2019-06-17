@@ -1,7 +1,6 @@
 #version 330 core
 
 layout (location = 0) in vec3  aPos;
-layout (location = 1) in float aUseTex; /* Unused */
 layout (location = 2) in vec4  aTexCoords;
 layout (location = 3) in vec3  aNormal;
 
@@ -18,7 +17,7 @@ void main() {
 
     fragPos = modelViewPos.xyz;
     texCoords = aTexCoords.xy;
-    normal = transpose(inverse(mat3(model))) * aNormal;
+    normal = transpose(inverse(mat3(model))) * normalize(aNormal);
 
     gl_Position = projection * modelViewPos;
 }

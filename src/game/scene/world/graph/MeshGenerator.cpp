@@ -27,11 +27,11 @@ MeshGenerator::MeshGenerator(std::vector<Vertex> &vertices, std::vector<unsigned
             VecUtils::indAssignVec(i, off);
 
             // Add TallGrass offsets
-            // TODO: Make this acknowlege MeshMods
+            // TODO: Make this acknowlege MeshMods & Be based on position instead of pure random
             vis = off;
-            if (chunk.getBlock(i) >= 6 && chunk.getBlock(i) <= 10) {
-                vis += glm::vec3((((double)rand() / RAND_MAX) - 0.5f) / 3.f, 0, (((double)rand() / RAND_MAX) - 0.5f) / 3.f);
-            }
+//            if (chunk.getBlock(i) >= 6 && chunk.getBlock(i) <= 10) {
+//                vis += glm::vec3((((double)rand() / RAND_MAX) - 0.5f) / 3.f, 0, (((double)rand() / RAND_MAX) - 0.5f) / 3.f);
+//            }
 
             LocalBlockModel& model = getDef(i).getModel();
             if (model.visible) {
