@@ -15,6 +15,10 @@ struct WorldUniforms {
     GLint proj;
     GLint model;
     GLint view;
+
+    GLint gPosition;
+    GLint gNormal;
+    GLint gColorSpec;
 };
 
 

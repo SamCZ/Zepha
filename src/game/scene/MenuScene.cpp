@@ -31,15 +31,15 @@ void MenuScene::update() {
 }
 
 void MenuScene::draw() {
-    state->renderer->begin();
-    state->renderer->beginGUI();
-
-
-    for (auto &element : entities) {
-        element->draw(*state->renderer);
-    }
-
-    state->renderer->end();
+//    state->renderer->beginWorldDrawCalls();
+//    state->renderer->beginGUI();
+//
+//
+//    for (auto &element : entities) {
+//        element->draw(*state->renderer);
+//    }
+//
+//    state->renderer->end();
 }
 
 void MenuScene::cleanup() {

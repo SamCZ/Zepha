@@ -74,7 +74,7 @@ int Window::initialize() {
     glfwSetWindowSizeCallback(mainWindow, handleResize);
     glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-    glfwMaximizeWindow(mainWindow);
+//    glfwMaximizeWindow(mainWindow);
 
     return 0;
 }
@@ -143,12 +143,9 @@ Window::~Window() {
     glfwTerminate();
 }
 
-GLfloat Window::getBufferWidth() {
-    return bufferWidth;
-}
 
-GLfloat  Window::getBufferHeight() {
-    return bufferHeight;
+glm::vec2 Window::getSize() {
+    return {bufferWidth, bufferHeight};
 }
 
 bool Window::getShouldClose() {

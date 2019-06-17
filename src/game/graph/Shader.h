@@ -23,7 +23,7 @@ public:
 
     GLint getUniform(const char *name);
 
-    void useShader();
+    void use();
 
     static void clearShader() {
         glUseProgram(0);

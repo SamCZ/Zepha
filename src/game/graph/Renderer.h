@@ -19,14 +19,19 @@ public:
     Renderer();
     Renderer(GLint winWidth, GLint winHeight);
 
+    void createWorldShader();
+    void createGUIShader();
 
     void update();
 
-    void begin();
-    void beginGUI();
+    void beginWorldDrawCalls();
+    void endWorldDrawCalls();
+
+//    void beginGUI();
+//    void end();
+
     void setModelMatrix(glm::mat4& modelMatrix);
     void enableTexture(Texture* texture);
-    void end();
 
     Window* getWindow();
     Camera* getCamera();
@@ -35,16 +40,23 @@ public:
 
     bool resized;
 private:
-    void enableWorldShader();
-    void enableGuiShader();
+//    void enableGuiShader();
+    void renderQuad();
+
+    unsigned int quadVAO = 0, quadVBO;
 
     Window window;
     Camera camera;
 
-    glm::vec4 clearColor {0.58f, 0.76f, 0.94f, 1.0f};
+    unsigned int gBuffer;
+    unsigned int gPosition, gNormal, gColorSpec;
+
+//    glm::vec4 clearColor {0.58f, 0.76f, 0.94f, 1.0f};
+    glm::vec4 clearColor {0.0f, 0.0f, 0.0f, 1.0f};
     Texture* activeTexture;
 
-    Shader worldShader;
+    Shader worldGeometryShader;
+    Shader worldLightingShader;
     WorldUniforms wu;
 
     Shader guiShader;

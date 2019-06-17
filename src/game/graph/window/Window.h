@@ -7,6 +7,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <vec2.hpp>
 #include <cstdio>
 #include "InputManager.h"
 
@@ -19,8 +20,7 @@ public:
 
     void update();
 
-    GLfloat getBufferWidth();
-    GLfloat getBufferHeight();
+    glm::vec2 getSize();
     bool resized;
 
     bool getShouldClose();

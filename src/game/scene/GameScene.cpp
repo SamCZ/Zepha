@@ -67,22 +67,23 @@ void GameScene::draw() {
 
     drawCalls = 0;
 
-    renderer.begin();
+    renderer.beginWorldDrawCalls();
 
     renderer.enableTexture(&defs.textures().getAtlasTexture());
+
     drawCalls = world.render(renderer);
 
-    for (auto entity : entities) {
-        entity->draw(renderer);
-    }
+    for (auto entity : entities) entity->draw(renderer);
 
-    state->renderer->beginGUI();
+    renderer.endWorldDrawCalls();
 
-    for (auto entity : gui) {
-        entity->draw(renderer);
-    }
-
-    state->renderer->end();
+//    state->renderer->beginGUI();
+//
+//    for (auto entity : gui) {
+//        entity->draw(renderer);
+//    }
+//
+//    state->renderer->end();
 }
 
 void GameScene::cleanup() {

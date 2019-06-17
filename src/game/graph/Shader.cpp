@@ -72,7 +72,7 @@ void Shader::compileShader(const char *vertexSource, const char *fragmentSource)
     }
 }
 
-void Shader::useShader() {
+void Shader::use() {
     glUseProgram(shaderID);
 }
 
