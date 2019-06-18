@@ -142,8 +142,8 @@ std::shared_ptr<AtlasRef> TextureAtlas::addImage(unsigned char *data, std::strin
         ref->tileY = static_cast<int>(space.y);
 
         ref->pos = {space.x * 16, space.y * 16, space.x * 16 + texWidth, space.y * 16 + texHeight};
-        ref->uv = {(space.x * 16 + 0.05) / pageWidth, (space.y * 16 + 0.05) / pageHeight,
-                   (space.x * 16 + texWidth - 0.05) / pageWidth, (space.y * 16 + texHeight - 0.05) / pageHeight};
+        ref->uv = {(space.x * 16) / pageWidth, (space.y * 16) / pageHeight,
+                   (space.x * 16 + texWidth) / pageWidth, (space.y * 16 + texHeight) / pageHeight};
 
         textures.insert({name, ref});
     }

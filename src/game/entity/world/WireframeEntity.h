@@ -12,9 +12,9 @@
 class WireframeEntity : public Entity {
 public:
     WireframeEntity() = default;
-    WireframeEntity(glm::vec3 posA, glm::vec3 posB, float width, glm::vec3 color = {0.25, 0.25, 0.25});
+    WireframeEntity(glm::vec3 posA, glm::vec3 posB, float width, glm::vec3 color);
 
-    void updateMesh(glm::vec3 posA, glm::vec3 posB, float width, glm::vec3 color = {0.25, 0.25, 0.25});
+    void updateMesh(glm::vec3 posA, glm::vec3 posB, float width);
 private:
     std::vector<Vertex> vertices {};
     std::vector<unsigned int> indices {};

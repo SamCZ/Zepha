@@ -10,8 +10,9 @@
 #include "window/Window.h"
 #include "Camera.h"
 #include "Texture.h"
-#include "WorldUniforms.h"
 #include "GuiUniforms.h"
+#include "WorldLightingUniforms.h"
+#include "WorldGeometryUniforms.h"
 #include <ext.hpp>
 
 class Renderer {
@@ -19,7 +20,7 @@ public:
     Renderer();
     Renderer(GLint winWidth, GLint winHeight);
 
-    void createWorldShader();
+    void createWorldShaders();
     void createGUIShader();
 
     void update();
@@ -42,20 +43,22 @@ private:
     void renderQuad();
 
     unsigned int quadVAO = 0, quadVBO;
+    float renderScale = 2.f;
 
     Window window;
     Camera camera;
 
-    unsigned int gBuffer;
-    unsigned int gPosition, gNormal, gColorSpec, rboDepth;
+    unsigned int gBuffer, gPosition, gNormal, gColorSpec, rboDepth;
 
-//    glm::vec4 clearColor {0.0f, 0.0f, 0.0f, 1.0f};
+    unsigned int sBuffer, sDepthMap;
+
     glm::vec4 clearColor {0.58f, 0.76f, 0.94f, 1.0f};
     Texture* activeTexture;
 
     Shader worldGeometryShader;
     Shader worldLightingShader;
-    WorldUniforms wu;
+    WorldGeometryUniforms wgu;
+    WorldLightingUniforms wlu;
 
     Shader guiShader;
     GuiUniforms gu;

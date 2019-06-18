@@ -30,7 +30,7 @@ BlockChunk::BlockChunk(std::vector<int> blocks, glm::vec3 pos) :
         }
     }
 
-    renderedEmpty = true;
+    renderedEmpty = empty;
 }
 
 int BlockChunk::getBlock(const glm::vec3& pos) const {

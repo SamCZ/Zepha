@@ -14,11 +14,10 @@ WireframeEntity::WireframeEntity(glm::vec3 posA, glm::vec3 posB, float width, gl
     buildMesh();
 }
 
-void WireframeEntity::updateMesh(glm::vec3 posA, glm::vec3 posB, float width, glm::vec3 color) {
+void WireframeEntity::updateMesh(glm::vec3 posA, glm::vec3 posB, float width) {
     this->a = posA;
     this->b = posB - posA;
     this->width = width;
-    this->color = color;
 
     buildMesh();
 }
@@ -28,7 +27,7 @@ void WireframeEntity::buildMesh() {
     indOffset = 0;
 
     vertices.clear();
-    vertices.clear();
+    indices.clear();
 
     createBox(0,   0, 0,   0, b.y, 0);
     createBox(b.x, 0, 0,   0, b.y, 0);
@@ -54,18 +53,18 @@ void WireframeEntity::createBox(float x, float y, float z, float xSize, float yS
     float hw = (width/2.0f);
     float w = width;
     auto  c = color;
-    float al = 1;
+    glm::vec3 norm = {0, 1, 0};
 
     std::vector<Vertex> myVerts {
-    /*0*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z            }, 0, {c, al}, {}},
-    /*1*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z            }, 0, {c, al}, {}},
-    /*2*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z + zSize + w}, 0, {c, al}, {}},
-    /*3*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z + zSize + w}, 0, {c, al}, {}},
+    /*0*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z            }, 0, {c, 1}, norm},
+    /*1*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z            }, 0, {c, 1}, norm},
+    /*2*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z + zSize + w}, 0, {c, 1}, norm},
+    /*3*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z + zSize + w}, 0, {c, 1}, norm},
 
-    /*4*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z            }, 0, {c, al}, {}},
-    /*5*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z            }, 0, {c, al}, {}},
-    /*6*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, 0, {c, al}, {}},
-    /*7*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, 0, {c, al}, {}},
+    /*4*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z            }, 0, {c, 1}, norm},
+    /*5*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z            }, 0, {c, 1}, norm},
+    /*6*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, 0, {c, 1}, norm},
+    /*7*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, 0, {c, 1}, norm},
     };
 
     std::vector<unsigned int> myInds {

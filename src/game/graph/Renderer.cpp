@@ -16,7 +16,7 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
     auto winSize = window.getSize();
     camera.create(winSize.x, winSize.y, glm::vec3(0, 1, 0));
 
-    createWorldShader();
+    createWorldShaders();
     createGUIShader();
 
     glEnable(GL_CULL_FACE);
@@ -24,17 +24,16 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void Renderer::createWorldShader() {
+void Renderer::createWorldShaders() {
+    //Initialize Geometry Shader for Deferred Rendering
+
     worldGeometryShader = Shader();
     worldGeometryShader.createFromFile("../res/shader/geometryVertex.vs", "../res/shader/geometryFragment.fs");
 
-    worldLightingShader = Shader();
-    worldLightingShader.createFromFile("../res/shader/lightingVertex.vs", "../res/shader/lightingFragment.fs");
-
-    wu.matrix = camera.getProjectionMatrix();
-    wu.proj   = worldGeometryShader.getUniform("projection");
-    wu.model  = worldGeometryShader.getUniform("model");
-    wu.view   = worldGeometryShader.getUniform("view");
+    wgu.matrix = camera.getProjectionMatrix();
+    wgu.proj   = worldGeometryShader.getUniform("projection");
+    wgu.model  = worldGeometryShader.getUniform("model");
+    wgu.view   = worldGeometryShader.getUniform("view");
 
     worldGeometryShader.use();
 
@@ -43,25 +42,27 @@ void Renderer::createWorldShader() {
 
     auto winSize = window.getSize();
 
+    winSize *= renderScale;
+
     glGenTextures(1, &gPosition);
     glBindTexture(GL_TEXTURE_2D, gPosition);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, static_cast<int>(winSize.x), static_cast<int>(winSize.y), 0, GL_RGB, GL_FLOAT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
 
     glGenTextures(1, &gNormal);
     glBindTexture(GL_TEXTURE_2D, gNormal);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, static_cast<int>(winSize.x), static_cast<int>(winSize.y), 0, GL_RGB, GL_FLOAT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
 
     glGenTextures(1, &gColorSpec);
     glBindTexture(GL_TEXTURE_2D, gColorSpec);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<int>(winSize.x), static_cast<int>(winSize.y), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
 
     unsigned int attachments[3] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
@@ -77,19 +78,43 @@ void Renderer::createWorldShader() {
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    wu.gPosition  = worldLightingShader.getUniform("gPosition");
-    wu.gNormal    = worldLightingShader.getUniform("gNormal");
-    wu.gColorSpec = worldLightingShader.getUniform("gColorSpec");
+    //Initialize Lighting Shader for Deferred Rendering
+
+    worldLightingShader = Shader();
+    worldLightingShader.createFromFile("../res/shader/lightingVertex.vs", "../res/shader/lightingFragment.fs");
+
+    wlu.gPosition  = worldLightingShader.getUniform("gPosition");
+    wlu.gNormal    = worldLightingShader.getUniform("gNormal");
+    wlu.gColorSpec = worldLightingShader.getUniform("gColorSpec");
+
+    wlu.camPosition = worldLightingShader.getUniform("camPosition");
 
     worldLightingShader.use();
-    glUniform1i(wu.gPosition, 0);
-    glUniform1i(wu.gNormal, 1);
-    glUniform1i(wu.gColorSpec, 2);
+    glUniform1i(wlu.gPosition, 0);
+    glUniform1i(wlu.gNormal, 1);
+    glUniform1i(wlu.gColorSpec, 2);
+
+    //Initialize Shading Shader for Shadowmapping
+
+    const unsigned int SHADOW_SCALE = 2048;
+    glGenFramebuffers(1, &sBuffer);
+    glGenTextures(1, &sDepthMap);
+    glBindTexture(GL_TEXTURE_2D, sDepthMap);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_SCALE, SHADOW_SCALE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glBindFramebuffer(GL_FRAMEBUFFER, sBuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, sDepthMap, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glBindBuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Renderer::createGUIShader() {
     guiShader = Shader();
-    guiShader.createFromFile("../res/shader/gui.vs", "../res/shader/gui.fs");
+    guiShader.createFromFile("../res/shader/guiVertex.vs", "../res/shader/guiFragment.fs");
 
     gu.matrix = camera.getOrthographicMatrix();
     gu.ortho  = guiShader.getUniform("ortho");
@@ -105,6 +130,8 @@ void Renderer::update() {
 
         auto winSize = window.getSize();
         camera.changeWindowDimensions(winSize.x, winSize.y);
+
+        winSize *= renderScale;
 
         glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 
@@ -131,8 +158,8 @@ void Renderer::update() {
             std::cout << "Framebuffer not complete!" << std::endl;
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        
-        wu.matrix = camera.getProjectionMatrix();
+
+        wgu.matrix = camera.getProjectionMatrix();
         gu.matrix = camera.getOrthographicMatrix();
     }
 }
@@ -140,24 +167,34 @@ void Renderer::update() {
 void Renderer::beginWorldDrawCalls() {
     activeTexture = nullptr;
 
-    glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+    auto winSize = window.getSize();
+    winSize *= renderScale;
+
+    glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
+    glViewport(0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y));
 
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     worldGeometryShader.use();
-    glUniformMatrix4fv(wu.proj, 1, GL_FALSE, glm::value_ptr(wu.matrix));
-    glUniformMatrix4fv(wu.view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
+    glUniformMatrix4fv(wgu.proj, 1, GL_FALSE, glm::value_ptr(wgu.matrix));
+    glUniformMatrix4fv(wgu.view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
 }
 
 void Renderer::endWorldDrawCalls() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    auto winSize = window.getSize();
+    glViewport(0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y));
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 
     worldLightingShader.use();
+
+    glUniform3f(wlu.camPosition, camera.getPos().x, camera.getPos().y, camera.getPos().z);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gPosition);
@@ -168,14 +205,17 @@ void Renderer::endWorldDrawCalls() {
 
     renderQuad();
 
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    //Used to push the depth map to the default framebuffer
+    //Enable when creating forward rendering stage
 
-    auto winSize = window.getSize();
-    glBlitFramebuffer(0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y),
-                      0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y),
-                      GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//    glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
+//    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+//
+//    auto winSize = window.getSize();
+//    glBlitFramebuffer(0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y),
+//                      0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y),
+//                      GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Renderer::beginGUIDrawCalls() {
@@ -214,7 +254,7 @@ void Renderer::renderQuad() {
         glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) nullptr);
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *) (3 * sizeof(float)));
     }
@@ -225,7 +265,7 @@ void Renderer::renderQuad() {
 }
 
 void Renderer::setModelMatrix(glm::mat4& modelMatrix) {
-    glUniformMatrix4fv((mode) ? gu.model : wu.model, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+    glUniformMatrix4fv((mode) ? gu.model : wgu.model, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 }
 
 void Renderer::enableTexture(Texture *texture) {

@@ -9,16 +9,12 @@
 #include <GL/gl.h>
 #include <mat4x4.hpp>
 
-struct WorldUniforms {
+struct WorldGeometryUniforms {
     glm::mat4 matrix;
 
     GLint proj;
     GLint model;
     GLint view;
-
-    GLint gPosition;
-    GLint gNormal;
-    GLint gColorSpec;
 };
 
 

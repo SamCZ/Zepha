@@ -9,7 +9,7 @@ Player::Player(LocalWorld& world, LocalDefs& defs, Camera& camera) :
     world(world),
     camera(camera),
     defs(defs),
-    wireframe(WireframeEntity({0, 0, 0}, {1, 1, 1}, 0.01)) {}
+    wireframe(WireframeEntity({0, 0, 0}, {1, 1, 1}, 0.01, {1, 1, 1})) {}
 
 void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
     posUpdate(input, delta);
@@ -115,7 +115,7 @@ void Player::pointerUpdate(InputManager &input, double delta) {
                 pointedThing.pos = pointedPos;
                 pointedThing.face = intersects;
 
-                wireframe.updateMesh(sBox.a, sBox.b, 0.0020f + ray.getLength() * 0.0020f, glm::vec3(0.0));
+                wireframe.updateMesh(sBox.a, sBox.b, 0.000005f + ray.getLength() * 0.0015f);
                 wireframe.setPos(pointedPos);
                 if (!wireframe.isVisible()) wireframe.setVisible(true);
 
@@ -142,7 +142,7 @@ void Player::pointerUpdate(InputManager &input, double delta) {
         }
         if (input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
             world.localSetBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face),
-                    defs.blocks().fromIdentifier("default:sandstone").getIndex());
+                    defs.blocks().fromIdentifier("default:shaft_0").getIndex());
         }
     }
     else {

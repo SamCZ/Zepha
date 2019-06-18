@@ -6,3 +6,4 @@ dofile(path .. "models/cross.lua");
 dofile(path .. "models/leaflike.lua");
 dofile(path .. "models/halfslab.lua");
 dofile(path .. "models/halfslab_foliage.lua");
+dofile(path .. "models/shaft.lua");
