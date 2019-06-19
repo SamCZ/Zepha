@@ -1,6 +1,6 @@
 zeus.register_blockmodel("default:shaft", {
     {
-        face = "left",
+        face = "left", -- Small part 1
         tex = 3,
         points = {
             0, 7/16, 7/16, 0, 2/10,
@@ -9,13 +9,13 @@ zeus.register_blockmodel("default:shaft", {
             0, 9/16, 7/16, 0, 0
         }
     }, {
-        face = "right",
+        face = "right", -- Small part 2
         tex = 4,
         points = {
-            1, 9/16, 9/16, 0, 2/10,
-            1, 7/16, 9/16, 2/16, 2/10,
-            1, 7/16, 7/16, 2/16, 0,
-            1, 9/16, 7/16, 0, 0
+            1, 9/16, 9/16, 2/16, 2/10,
+            1, 7/16, 9/16, 4/16, 2/10,
+            1, 7/16, 7/16, 4/16, 0,
+            1, 9/16, 7/16, 2/16, 0
         }
     }, {
         face = "nocull", -- Top
