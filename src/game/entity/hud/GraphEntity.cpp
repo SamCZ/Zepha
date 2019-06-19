@@ -15,7 +15,7 @@ GraphEntity::GraphEntity(Texture *texture, int length, float maxVal, bool editIn
     this->insertionPoint = 0;
 
     setTexture(texture);
-    setMesh(new Mesh());
+    setMesh(new EntityMesh());
 }
 
 void GraphEntity::push_back(float value) {
@@ -40,12 +40,12 @@ void GraphEntity::push_back(float value) {
         }
     }
 
-    Mesh* mesh = buildHistogramMesh();
+    EntityMesh* mesh = buildHistogramMesh();
     setMesh(mesh);
 }
 
-Mesh* GraphEntity::buildHistogramMesh() {
-    std::vector<Vertex> vertices;
+EntityMesh* GraphEntity::buildHistogramMesh() {
+    std::vector<EntityVertex> vertices;
     std::vector<unsigned int> indices;
 
     unsigned int indOffset = 0;
@@ -58,11 +58,11 @@ Mesh* GraphEntity::buildHistogramMesh() {
         float h = num / maxVal;
         float sec = (float)std::round(9 - fmin(h, 1)*9) * 0.1f;
 
-        auto columnVerts = std::vector<Vertex> {
-            {{xOffset,    -h, 0}, 1, {age,       sec,       0, 0}, {0, 0, 0}},
-            {{xOffset + 1,-h, 0}, 1, {age+0.01f, sec,       0, 0}, {0, 0, 0}},
-            {{xOffset + 1, 0, 0}, 1, {age+0.01f, sec+0.10f, 0, 0}, {0, 0, 0}},
-            {{xOffset,     0, 0}, 1, {age,       sec+0.10f, 0, 0}, {0, 0, 0}},
+        auto columnVerts = std::vector<EntityVertex> {
+            {{xOffset,    -h, 0}, {age,       sec,       0, 0}, true, {}},
+            {{xOffset + 1,-h, 0}, {age+0.01f, sec,       0, 0}, true, {}},
+            {{xOffset + 1, 0, 0}, {age+0.01f, sec+0.10f, 0, 0}, true, {}},
+            {{xOffset,     0, 0}, {age,       sec+0.10f, 0, 0}, true, {}},
         };
 
         vertices.insert(vertices.end(), columnVerts.begin(), columnVerts.end());
@@ -78,7 +78,7 @@ Mesh* GraphEntity::buildHistogramMesh() {
         indOffset += 4;
     }
 
-    auto m = new Mesh();
+    auto m = new EntityMesh();
     m->create(vertices, indices);
 
     return m;

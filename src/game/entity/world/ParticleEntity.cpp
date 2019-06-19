@@ -30,11 +30,11 @@ ParticleEntity::ParticleEntity(glm::vec3 pos, LocalBlockDef &block) {
     uv -= glm::vec4(0, 0, spanX * 0.75, spanY * 0.75);
     uv += glm::vec4(offX, offY, offX, offY);
 
-    std::vector<Vertex> vertices {
-        {{-0.05, -0.05, 0}, 1, {uv.x, uv.w, 0, 0}, {0, 0, 1}},
-        {{-0.05,  0.05, 0}, 1, {uv.x, uv.y, 0, 0}, {0, 0, 1}},
-        {{ 0.05,  0.05, 0}, 1, {uv.z, uv.y, 0, 0}, {0, 0, 1}},
-        {{ 0.05, -0.05, 0}, 1, {uv.z, uv.w, 0, 0}, {0, 0, 1}},
+    std::vector<EntityVertex> vertices {
+        {{-0.05, -0.05, 0}, {uv.x, uv.w, 0, 0}, true, {0, 0, 1}},
+        {{-0.05,  0.05, 0}, {uv.x, uv.y, 0, 0}, true, {0, 0, 1}},
+        {{ 0.05,  0.05, 0}, {uv.z, uv.y, 0, 0}, true, {0, 0, 1}},
+        {{ 0.05, -0.05, 0}, {uv.z, uv.w, 0, 0}, true, {0, 0, 1}},
     };
     std::vector<unsigned int> indices {
         0, 1, 2, 2, 3, 0,
@@ -53,7 +53,7 @@ ParticleEntity::ParticleEntity(glm::vec3 pos, LocalBlockDef &block) {
 
     pos += glm::vec3(xDir, 0, zDir);
 
-    auto m = new Mesh();
+    auto m = new EntityMesh();
     m->create(vertices, indices);
     this->setMesh(m);
     this->setScale(0.75f + (rand() % 10 / 20.f));

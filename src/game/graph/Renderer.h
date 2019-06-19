@@ -5,14 +5,15 @@
 #ifndef SRC_RENDERER_H
 #define SRC_RENDERER_H
 
-#include "Mesh.h"
+#include "ChunkMesh.h"
 #include "Shader.h"
 #include "window/Window.h"
 #include "Camera.h"
 #include "Texture.h"
 #include "GuiUniforms.h"
-#include "WorldLightingUniforms.h"
-#include "WorldGeometryUniforms.h"
+#include "uniform/WorldLightingUniforms.h"
+#include "uniform/WorldGeometryUniforms.h"
+#include "uniform/EntityGeometryUniforms.h"
 #include <ext.hpp>
 
 class Renderer {
@@ -25,12 +26,13 @@ public:
 
     void update();
 
-    void beginWorldDrawCalls();
-    void endWorldDrawCalls();
+    void beginChunkDeferredCalls();
+    void beginEntityDeferredCalls();
+    void endDeferredCalls();
     void beginGUIDrawCalls();
     void swapBuffers();
 
-    void setModelMatrix(glm::mat4& modelMatrix);
+    void setModelMatrix(const glm::mat4& modelMatrix);
     void enableTexture(Texture* texture);
 
     Window* getWindow();
@@ -56,14 +58,15 @@ private:
     Texture* activeTexture;
 
     Shader worldGeometryShader;
-    Shader worldLightingShader;
     WorldGeometryUniforms wgu;
+    Shader entityGeometryShader;
+    EntityGeometryUniforms egu;
+    Shader worldLightingShader;
     WorldLightingUniforms wlu;
-
     Shader guiShader;
     GuiUniforms gu;
 
-    bool mode; //false = world, true = gui
+    GLint currentModelUniform;
 };
 
 

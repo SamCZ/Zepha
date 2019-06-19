@@ -52,7 +52,8 @@ public:
     void attemptMeshChunk(glm::vec3 pos);
     bool getAdjacentExists(glm::vec3 pos, glm::vec3 myPos);
 
-    int render(Renderer& render);
+    int renderChunks(Renderer &render);
+    void renderEntities(Renderer &renderer);
     int getMeshChunkCount();
 
     int getBlock(glm::vec3 pos);

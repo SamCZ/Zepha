@@ -44,7 +44,7 @@ void WireframeEntity::buildMesh() {
     createBox(b.x, b.y, 0, 0, 0, b.z);
     createBox(b.x, 0,   0, 0, 0, b.z);
 
-    auto m = new Mesh();
+    auto m = new EntityMesh();
     m->create(vertices, indices);
     setMesh(m);
 }
@@ -53,18 +53,17 @@ void WireframeEntity::createBox(float x, float y, float z, float xSize, float yS
     float hw = (width/2.0f);
     float w = width;
     auto  c = color;
-    glm::vec3 norm = {0, 1, 0};
 
-    std::vector<Vertex> myVerts {
-    /*0*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z            }, 0, {c, 1}, norm},
-    /*1*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z            }, 0, {c, 1}, norm},
-    /*2*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z + zSize + w}, 0, {c, 1}, norm},
-    /*3*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z + zSize + w}, 0, {c, 1}, norm},
+    std::vector<EntityVertex> myVerts {
+    /*0*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z            }, {c, 1}, false, {0, 1, 0}},
+    /*1*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z            }, {c, 1}, false, {0, 1, 0}},
+    /*2*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z + zSize + w}, {c, 1}, false, {0, 1, 0}},
+    /*3*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z + zSize + w}, {c, 1}, false, {0, 1, 0}},
 
-    /*4*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z            }, 0, {c, 1}, norm},
-    /*5*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z            }, 0, {c, 1}, norm},
-    /*6*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, 0, {c, 1}, norm},
-    /*7*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, 0, {c, 1}, norm},
+    /*4*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z            }, {c, 1}, false, {0, 1, 0}},
+    /*5*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z            }, {c, 1}, false, {0, 1, 0}},
+    /*6*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, {c, 1}, false, {0, 1, 0}},
+    /*7*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, {c, 1}, false, {0, 1, 0}},
     };
 
     std::vector<unsigned int> myInds {

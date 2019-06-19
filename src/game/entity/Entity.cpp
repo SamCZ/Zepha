@@ -6,20 +6,20 @@
 
 Entity::Entity() = default;
 
-Entity::Entity(Mesh* mesh) {
+Entity::Entity(EntityMesh* mesh) {
     setMesh(mesh);
 }
 
-Entity::Entity(Mesh* mesh, Texture* texture) {
+Entity::Entity(EntityMesh* mesh, Texture* texture) {
     setMesh(mesh, texture);
 }
 
-void Entity::setMesh(Mesh* myMesh) {
+void Entity::setMesh(EntityMesh* myMesh) {
     cleanup();
     this->mesh = myMesh;
 }
 
-void Entity::setMesh(Mesh* myMesh, Texture* texture) {
+void Entity::setMesh(EntityMesh* myMesh, Texture* texture) {
     cleanup();
     this->mesh = myMesh;
     this->texture = texture;

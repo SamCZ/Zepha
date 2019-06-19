@@ -32,11 +32,11 @@ public:
     bool tryToQueue(glm::vec3 pos);
 
     struct MeshDetails {
-        std::vector<Vertex>* vertices;
+        std::vector<ChunkVertex>* vertices;
         std::vector<unsigned int>* indices;
         glm::vec3 pos {0, 0, 0};
 
-        MeshDetails(std::vector<Vertex>* verts, std::vector<unsigned int>* inds, glm::vec3 p) {
+        MeshDetails(std::vector<ChunkVertex>* verts, std::vector<unsigned int>* inds, glm::vec3 p) {
             this->vertices = verts;
             this->indices = inds;
             this->pos = p;
@@ -51,7 +51,7 @@ public:
         std::shared_ptr<BlockChunk> chunk = nullptr;
         std::vector<bool>* adjacent = nullptr;
 
-        std::vector<Vertex>* vertices = nullptr;
+        std::vector<ChunkVertex>* vertices = nullptr;
         std::vector<unsigned int>* indices = nullptr;
 
         bool unlocked = true;

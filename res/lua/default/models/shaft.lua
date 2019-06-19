@@ -18,7 +18,7 @@ zeus.register_blockmodel("default:shaft", {
             1, 9/16, 7/16, 0, 0
         }
     }, {
-        face = "top",
+        face = "nocull", -- Top
         tex = 1,
         points = {
             0, 9/16, 7/16, 0, 2/10,
@@ -27,7 +27,7 @@ zeus.register_blockmodel("default:shaft", {
             1, 9/16, 7/16, 1, 2/10
         }
     }, {
-        face = "bottom",
+        face = "nocull", -- Bottom
         tex = 2,
         points = {
             0, 7/16, 7/16, 0, 6/10,
@@ -36,7 +36,7 @@ zeus.register_blockmodel("default:shaft", {
             0, 7/16, 9/16, 0, 8/10
         }
     }, {
-        face = "front",
+        face = "nocull", -- Front
         tex = 5,
         points = {
             0, 7/16, 9/16, 0, 8/10,
@@ -45,7 +45,7 @@ zeus.register_blockmodel("default:shaft", {
             0, 9/16, 9/16, 0, 1
         }
     }, {
-        face = "back",
+        face = "nocull", -- Back
         tex = 6,
         points = {
             0, 7/16, 7/16, 0, 4/10,

@@ -65,13 +65,17 @@ void GameScene::draw() {
     auto &renderer = *state->renderer;
     auto &camera = *renderer.getCamera();
 
-    renderer.beginWorldDrawCalls();
+    renderer.beginChunkDeferredCalls();
 
     renderer.enableTexture(&defs.textures().getAtlasTexture());
-    drawCalls = world.render(renderer);
-    for (auto entity : entities) entity->draw(renderer);
+    drawCalls = world.renderChunks(renderer);
 
-    renderer.endWorldDrawCalls();
+    renderer.beginEntityDeferredCalls();
+
+    for (auto entity : entities) entity->draw(renderer);
+    world.renderEntities(renderer);
+
+    renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
 
     for (auto entity : gui) entity->draw(renderer);

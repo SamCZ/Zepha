@@ -23,9 +23,9 @@ void BlockCrackEntity::update() {
         this->crackLevel = crackLevel;
 
         auto model = defs.blocks().fromIndex(blockID).getModel();
-        auto m = new Mesh();
+        auto m = new EntityMesh();
 
-        std::vector<Vertex> vertices;
+        std::vector<EntityVertex> vertices;
         std::vector<unsigned int> indices;
 
         unsigned int indOffset = 0;
@@ -45,10 +45,10 @@ void BlockCrackEntity::setNewDamage(float damage) {
     this->targetDamage = damage;
 }
 
-void BlockCrackEntity::addFaces(unsigned int &indOffset, std::vector<Vertex> &vertices, std::vector<unsigned int> &indices, std::vector<LocalMeshPart> &meshParts) {
+void BlockCrackEntity::addFaces(unsigned int &indOffset, std::vector<EntityVertex> &vertices, std::vector<unsigned int> &indices, std::vector<LocalMeshPart> &meshParts) {
     for (const LocalMeshPart& mp : meshParts) {
         glm::vec4 uv;
-        auto ref = defs.textures().generateCrackImage(mp.texture->name, crackLevel);
+        auto ref = defs.textures().generateCrackImage(mp.texture->name, static_cast<unsigned short>(crackLevel));
         if (ref == nullptr) {
             std::string missing("_missing");
             uv = defs.textures().getTextureRef(missing)->uv;
@@ -60,10 +60,9 @@ void BlockCrackEntity::addFaces(unsigned int &indOffset, std::vector<Vertex> &ve
         for (const MeshVertex &vertex : mp.vertices) {
             glm::vec3 pushed_pos = vertex.pos;
             pushed_pos += glm::normalize(vertex.nml) * 0.003f;
+            glm::vec4 tex = {uv.x + (uv.z - uv.x) * vertex.texUVs.x, uv.y + ((uv.w - uv.y) * vertex.texUVs.y), 0, 0};
 
-            vertices.push_back({{pushed_pos}, 1,
-                    {uv.x + (uv.z - uv.x) * vertex.texUVs.x, uv.y + ((uv.w - uv.y) * vertex.texUVs.y), 0, 0},
-                    vertex.nml});
+            vertices.push_back({pushed_pos, tex, 1, vertex.nml});
         }
 
         for (unsigned int index : mp.indices) {

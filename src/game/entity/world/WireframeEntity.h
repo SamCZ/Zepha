@@ -6,7 +6,7 @@
 #define ZEUS_WIREFRAMEGENERATOR_H
 
 #include <vec3.hpp>
-#include "../../graph/Mesh.h"
+#include "../../graph/ChunkMesh.h"
 #include "../Entity.h"
 
 class WireframeEntity : public Entity {
@@ -16,7 +16,7 @@ public:
 
     void updateMesh(glm::vec3 posA, glm::vec3 posB, float width);
 private:
-    std::vector<Vertex> vertices {};
+    std::vector<EntityVertex> vertices {};
     std::vector<unsigned int> indices {};
 
     void buildMesh();

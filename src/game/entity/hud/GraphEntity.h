@@ -16,7 +16,7 @@ public:
     void push_back(float value);
     void setMax(float max);
 private:
-    Mesh* buildHistogramMesh();
+    EntityMesh* buildHistogramMesh();
 
     bool dynamicMax = true;
 

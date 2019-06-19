@@ -187,13 +187,13 @@ bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
     return false;
 }
 
-int LocalWorld::render(Renderer &renderer) {
-    auto count = dimension.render(renderer);
+int LocalWorld::renderChunks(Renderer &renderer) {
+    return dimension.render(renderer);
+}
 
+void LocalWorld::renderEntities(Renderer &renderer) {
     for (auto block : crackedBlocks) block->draw(renderer);
     for (auto &p : particles) p->draw(renderer);
-
-    return count;
 }
 
 int LocalWorld::getMeshChunkCount() {

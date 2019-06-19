@@ -25,7 +25,7 @@ public:
 private:
     short crackLevel = -1;
 
-    void addFaces(unsigned int &indOffset, std::vector<Vertex> &vertices, std::vector<unsigned int> &indices, std::vector<LocalMeshPart> &meshParts);
+    void addFaces(unsigned int &indOffset, std::vector<EntityVertex> &vertices, std::vector<unsigned int> &indices, std::vector<LocalMeshPart> &meshParts);
 
     std::vector<std::shared_ptr<AtlasRef>> crackedFaces;
     LocalDefs& defs;

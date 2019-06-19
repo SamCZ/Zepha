@@ -7,7 +7,6 @@
 Renderer::Renderer() : Renderer(1366, 768) {};
 
 Renderer::Renderer(GLint winWidth, GLint winHeight) :
-    mode(false),
     activeTexture(nullptr),
 
     window(winWidth, winHeight) {
@@ -25,10 +24,10 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
 }
 
 void Renderer::createWorldShaders() {
-    //Initialize Geometry Shader for Deferred Rendering
+    //Initialize World Geometry Shader
 
     worldGeometryShader = Shader();
-    worldGeometryShader.createFromFile("../res/shader/geometryVertex.vs", "../res/shader/geometryFragment.fs");
+    worldGeometryShader.createFromFile("../res/shader/world/deferredGeometryWorld.vs", "../res/shader/world/deferredGeometryWorld.fs");
 
     wgu.matrix = camera.getProjectionMatrix();
     wgu.proj   = worldGeometryShader.getUniform("projection");
@@ -78,10 +77,20 @@ void Renderer::createWorldShaders() {
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    //Initialize Entity Geometry Shader
+
+    entityGeometryShader = Shader();
+    entityGeometryShader.createFromFile("../res/shader/world/deferredGeometryEntity.vs", "../res/shader/world/deferredGeometryEntity.fs");
+
+    egu.matrix = camera.getProjectionMatrix();
+    egu.proj   = worldGeometryShader.getUniform("projection");
+    egu.model  = worldGeometryShader.getUniform("model");
+    egu.view   = worldGeometryShader.getUniform("view");
+
     //Initialize Lighting Shader for Deferred Rendering
 
     worldLightingShader = Shader();
-    worldLightingShader.createFromFile("../res/shader/lightingVertex.vs", "../res/shader/lightingFragment.fs");
+    worldLightingShader.createFromFile("../res/shader/world/deferredLighting.vs", "../res/shader/world/deferredLighting.fs");
 
     wlu.gPosition  = worldLightingShader.getUniform("gPosition");
     wlu.gNormal    = worldLightingShader.getUniform("gNormal");
@@ -114,7 +123,7 @@ void Renderer::createWorldShaders() {
 
 void Renderer::createGUIShader() {
     guiShader = Shader();
-    guiShader.createFromFile("../res/shader/guiVertex.vs", "../res/shader/guiFragment.fs");
+    guiShader.createFromFile("../res/shader/ortho/hud.vs", "../res/shader/ortho/hud.fs");
 
     gu.matrix = camera.getOrthographicMatrix();
     gu.ortho  = guiShader.getUniform("ortho");
@@ -160,12 +169,14 @@ void Renderer::update() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         wgu.matrix = camera.getProjectionMatrix();
+        egu.matrix = camera.getProjectionMatrix();
         gu.matrix = camera.getOrthographicMatrix();
     }
 }
 
-void Renderer::beginWorldDrawCalls() {
+void Renderer::beginChunkDeferredCalls() {
     activeTexture = nullptr;
+    currentModelUniform = wgu.model;
 
     auto winSize = window.getSize();
     winSize *= renderScale;
@@ -183,7 +194,15 @@ void Renderer::beginWorldDrawCalls() {
     glUniformMatrix4fv(wgu.view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
 }
 
-void Renderer::endWorldDrawCalls() {
+void Renderer::beginEntityDeferredCalls() {
+    currentModelUniform = egu.model;
+
+    entityGeometryShader.use();
+    glUniformMatrix4fv(egu.proj, 1, GL_FALSE, glm::value_ptr(egu.matrix));
+    glUniformMatrix4fv(egu.view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
+}
+
+void Renderer::endDeferredCalls() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     auto winSize = window.getSize();
@@ -219,6 +238,8 @@ void Renderer::endWorldDrawCalls() {
 }
 
 void Renderer::beginGUIDrawCalls() {
+    currentModelUniform = gu.model;
+
     glClear(GL_DEPTH_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
 
@@ -261,11 +282,10 @@ void Renderer::renderQuad() {
 
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glBindVertexArray(0);
 }
 
-void Renderer::setModelMatrix(glm::mat4& modelMatrix) {
-    glUniformMatrix4fv((mode) ? gu.model : wgu.model, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+void Renderer::setModelMatrix(const glm::mat4& modelMatrix) {
+    glUniformMatrix4fv(currentModelUniform, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 }
 
 void Renderer::enableTexture(Texture *texture) {

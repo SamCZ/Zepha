@@ -1,6 +1,6 @@
 set(ZEUS_SRC_FILES
-    game/graph/Mesh.cpp
-    game/graph/Mesh.h
+        game/graph/ChunkMesh.cpp
+        game/graph/ChunkMesh.h
     game/entity/Entity.cpp
     game/entity/Entity.h
     game/graph/Shader.cpp
@@ -124,6 +124,6 @@ set(ZEUS_SRC_FILES
     game/entity/hud/StatGraph.cpp
     game/entity/hud/StatGraph.h
     util/Util.h
-        world/block/PointedThing.h game/entity/world/ParticleEntity.cpp game/entity/world/ParticleEntity.h def/ServerDefs.cpp def/ServerDefs.h def/block/server/ServerBlockAtlas.cpp def/block/server/ServerBlockAtlas.h def/block/server/ServerBlockDef.cpp def/block/server/ServerBlockDef.h def/block/server/ServerBlockModel.cpp def/block/server/ServerBlockModel.h util/Dir.h def/block/server/ServerMeshPart.cpp def/block/server/ServerMeshPart.h def/block/BlockAtlas.h def/block/BlockDef.h api/LuaParser.cpp api/LuaParser.h api/server/ServerLuaParser.cpp api/server/ServerLuaParser.h api/server/ModuleServerUtils.h api/server/ModuleServerRegisterBlock.h util/Path.cpp util/Path.h util/Log.h api/Callback.h api/server/ModuleServerRegisterBlockModel.h api/client/ModuleClientRegisterBlockModel.h api/server/ModuleServerGetSetBlock.h api/client/ModuleClientGetSetBlock.h api/server/ModuleServerDelay.h api/client/ModuleClientDelay.h game/graph/WorldGeometryUniforms.h game/graph/GuiUniforms.h game/graph/WorldLightingUniforms.h)
+        world/block/PointedThing.h game/entity/world/ParticleEntity.cpp game/entity/world/ParticleEntity.h def/ServerDefs.cpp def/ServerDefs.h def/block/server/ServerBlockAtlas.cpp def/block/server/ServerBlockAtlas.h def/block/server/ServerBlockDef.cpp def/block/server/ServerBlockDef.h def/block/server/ServerBlockModel.cpp def/block/server/ServerBlockModel.h util/Dir.h def/block/server/ServerMeshPart.cpp def/block/server/ServerMeshPart.h def/block/BlockAtlas.h def/block/BlockDef.h api/LuaParser.cpp api/LuaParser.h api/server/ServerLuaParser.cpp api/server/ServerLuaParser.h api/server/ModuleServerUtils.h api/server/ModuleServerRegisterBlock.h util/Path.cpp util/Path.h util/Log.h api/Callback.h api/server/ModuleServerRegisterBlockModel.h api/client/ModuleClientRegisterBlockModel.h api/server/ModuleServerGetSetBlock.h api/client/ModuleClientGetSetBlock.h api/server/ModuleServerDelay.h api/client/ModuleClientDelay.h game/graph/uniform/WorldGeometryUniforms.h game/graph/GuiUniforms.h game/graph/uniform/WorldLightingUniforms.h game/graph/EntityMesh.cpp game/graph/EntityMesh.h game/graph/uniform/EntityGeometryUniforms.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

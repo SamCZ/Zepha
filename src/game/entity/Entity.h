@@ -9,18 +9,18 @@
 #include <iostream>
 #include <gtc/matrix_transform.hpp>
 
-#include "../graph/Mesh.h"
+#include "../graph/EntityMesh.h"
 #include "../graph/Texture.h"
 #include "../graph/drawable/Drawable.h"
 
 class Entity : public Drawable {
 public:
     Entity();
-    explicit Entity(Mesh* mesh);
-    Entity(Mesh* mesh, Texture* texture);
+    explicit Entity(EntityMesh* mesh);
+    Entity(EntityMesh* mesh, Texture* texture);
 
-    void setMesh(Mesh* mesh);
-    void setMesh(Mesh* mesh, Texture* texture);
+    void setMesh(EntityMesh* mesh);
+    void setMesh(EntityMesh* mesh, Texture* texture);
 
     void draw(Renderer& renderer) override;
 
@@ -48,7 +48,7 @@ protected:
     GLfloat angle = 0;
 
 private:
-    Mesh* mesh = nullptr;
+    EntityMesh* mesh = nullptr;
     Texture* texture = nullptr;
 };
 

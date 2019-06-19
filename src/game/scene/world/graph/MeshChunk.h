@@ -11,17 +11,23 @@
 #include "../../../entity/Entity.h"
 #include "../../../../util/TransPos.h"
 
-class MeshChunk : Entity {
+class MeshChunk : Drawable {
 public:
     MeshChunk() = default;
-    void build(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
+    void build(std::vector<ChunkVertex>& vertices, std::vector<unsigned int>& indices);
+
+    void draw(Renderer& renderer) override;
+
     void setPos(glm::vec3 pos);
     glm::vec3 getPos();
-public:
-    using Entity::setMesh;
-    using Entity::draw;
 
-    using Entity::getModelMatrix;
+    ~MeshChunk();
+private:
+    void cleanup();
+    glm::mat4 getModelMatrix();
+
+    ChunkMesh* mesh = nullptr;
+    glm::vec3 pos;
 };
 
 

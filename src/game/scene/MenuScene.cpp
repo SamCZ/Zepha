@@ -31,8 +31,8 @@ void MenuScene::update() {
 }
 
 void MenuScene::draw() {
-    state->renderer->beginWorldDrawCalls();
-    state->renderer->endWorldDrawCalls();
+    state->renderer->beginChunkDeferredCalls();
+    state->renderer->endDeferredCalls();
     state->renderer->beginGUIDrawCalls();
 
     for (auto &element : entities) {

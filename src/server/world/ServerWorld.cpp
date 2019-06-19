@@ -143,22 +143,15 @@ void ServerWorld::update() {
 }
 
 void ServerWorld::sendChunk(glm::vec3 pos, ServerPeer &peer) {
-    //TODO: Remove null check once bug is fixed
     auto chunk = dimension.getChunk(pos);
-    if (chunk != nullptr) {
-        auto serialized = chunk->serialize();
+    auto serialized = chunk->serialize();
 
-        Packet r(Packet::CHUNK_INFO);
+    Packet r(Packet::CHUNK_INFO);
 
-        Serializer::encodeIntVec3(r.data, pos);
-        Serializer::encodeString(r.data, serialized);
+    Serializer::encodeIntVec3(r.data, pos);
+    Serializer::encodeString(r.data, serialized);
 
-        r.sendTo(peer.peer, PacketChannel::CHUNKS);
-    }
-    else {
-        //BUG: If the null chunks are on the client, The Null chunks have to happen there, cause the chunks are serialized before sending.
-        std::cout << Log::err << "Tried to send null chunk at " << pos.x << ", " << pos.y << ", " << pos.z << Log::endl;
-    }
+    r.sendTo(peer.peer, PacketChannel::CHUNKS);
 }
 
 void ServerWorld::setBlock(glm::vec3 pos, int block) {

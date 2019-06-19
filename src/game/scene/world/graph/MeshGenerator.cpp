@@ -5,7 +5,7 @@
 #include <thread>
 #include "MeshGenerator.h"
 
-MeshGenerator::MeshGenerator(std::vector<Vertex> &vertices, std::vector<unsigned int> &indices,
+MeshGenerator::MeshGenerator(std::vector<ChunkVertex> &vertices, std::vector<unsigned int> &indices,
                              LocalBlockAtlas& atlas, const BlockChunk& chunk, const std::vector<bool>& adj) :
     vertices(vertices),
     indices(indices),
@@ -15,7 +15,7 @@ MeshGenerator::MeshGenerator(std::vector<Vertex> &vertices, std::vector<unsigned
     vertices.reserve(10000);
     indices.reserve(10000);
 
-    Timer t("Mesh Generation");
+    Timer t("ChunkMesh Generation");
 
     glm::vec3 off;
     glm::vec3 vis;
@@ -92,8 +92,8 @@ bool MeshGenerator::faceOcculudedAt(const glm::vec3 &pos, const std::vector<bool
 void MeshGenerator::addFaces(const glm::vec3 &positon, const vector<LocalMeshPart> &meshParts) {
     for (const LocalMeshPart& mp : meshParts) {
 
-        for (const MeshVertex &vertex : mp.vertices) {
-            vertices.push_back({{vertex.pos + positon}, 1, {vertex.tex.x, vertex.tex.y, 0, 0}, vertex.nml});
+        for (const MeshVertex &vertex : mp.vertices) {                       //Meshmod / Meshdata
+            vertices.push_back({{vertex.pos + positon}, vertex.tex, vertex.nml, 0, {}});
         }
 
         for (unsigned int index : mp.indices) {

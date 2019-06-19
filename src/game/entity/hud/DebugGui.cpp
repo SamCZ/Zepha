@@ -16,7 +16,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize, Texture* tex) :
     dataText(&fontTexture, true),
 
     chunkUpdatesGraph("Interp",     120, 64, &monochromeGraphTexture, &fontTexture),
-    meshUpdatesGraph ("Mesh",       120, 64, &monochromeGraphTexture, &fontTexture),
+    meshUpdatesGraph ("ChunkMesh",       120, 64, &monochromeGraphTexture, &fontTexture),
     serverGenGraph   ("Gen",        120, 64, &monochromeGraphTexture, &fontTexture),
     serverPacketGraph("Packets",    120, 64, &monochromeGraphTexture, &fontTexture),
 

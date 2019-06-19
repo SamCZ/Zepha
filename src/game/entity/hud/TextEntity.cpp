@@ -18,7 +18,7 @@ TextEntity::TextEntity(Texture *texture, bool background, int scale) :
 void TextEntity::set(std::string text) {
     this->text = std::move(text);
 
-    std::vector<Vertex> textVertices;
+    std::vector<EntityVertex> textVertices;
     std::vector<unsigned int> textIndices;
 
     float texPosWidth  = 1/128.0f * (float)w;
@@ -40,11 +40,11 @@ void TextEntity::set(std::string text) {
                 }
 
                 if (width > 1) {
-                    std::vector<Vertex> vertices {
-                        {{-1,    -1 + up,     0}, 0, {0.1, 0.1, 0.1, 0.3}, {0, 0, 0}},
-                        {{-1,     h + 1 + up, 0}, 0, {0.1, 0.1, 0.1, 0.3}, {0, 0, 0}},
-                        {{width,  h + 1 + up, 0}, 0, {0.1, 0.1, 0.1, 0.3}, {0, 0, 0}},
-                        {{width, -1 + up,     0}, 0, {0.1, 0.1, 0.1, 0.3}, {0, 0, 0}},
+                    std::vector<EntityVertex> vertices {
+                        {{-1,    -1 + up,     0}, {0.1, 0.1, 0.1, 0.3}, false},
+                        {{-1,     h + 1 + up, 0}, {0.1, 0.1, 0.1, 0.3}, false},
+                        {{width,  h + 1 + up, 0}, {0.1, 0.1, 0.1, 0.3}, false},
+                        {{width, -1 + up,     0}, {0.1, 0.1, 0.1, 0.3}, false},
                     };
                     std::vector<unsigned int> indices {
                         0 + indOffset,
@@ -94,11 +94,11 @@ void TextEntity::set(std::string text) {
         float texPosL = texPosX + (p / 128.0f);
         float texPosR = texPosX + texPosWidth - ((p / 128.0f));
 
-        auto letterVerts = std::vector<Vertex> {
-             {{left,             top,     0}, 1, {texPosL, texPosY,                 0, 0}, {0, 0, 0}},
-             {{left + w - p * 2, top,     0}, 1, {texPosR, texPosY,                 0, 0}, {0, 0, 0}},
-             {{left + w - p * 2, top + h, 0}, 1, {texPosR, texPosY + texPosHeight,  0, 0}, {0, 0, 0}},
-             {{left,             top + h, 0}, 1, {texPosL, texPosY + texPosHeight,  0, 0}, {0, 0, 0}},
+        auto letterVerts = std::vector<EntityVertex> {
+             {{left,             top,     0}, {texPosL, texPosY,                 0, 0}, true, {}},
+             {{left + w - p * 2, top,     0}, {texPosR, texPosY,                 0, 0}, true, {}},
+             {{left + w - p * 2, top + h, 0}, {texPosR, texPosY + texPosHeight,  0, 0}, true, {}},
+             {{left,             top + h, 0}, {texPosL, texPosY + texPosHeight,  0, 0}, true, {}},
         };
 
         textVertices.insert(textVertices.end(), letterVerts.begin(), letterVerts.end());
@@ -115,7 +115,7 @@ void TextEntity::set(std::string text) {
         left += w - p * 2;
     }
 
-    Mesh* m = new Mesh();
+    auto m = new EntityMesh();
     m->create(textVertices, textIndices);
     setMesh(m);
 }

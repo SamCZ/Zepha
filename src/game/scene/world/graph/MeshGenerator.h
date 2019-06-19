@@ -24,7 +24,7 @@
 
 class MeshGenerator {
 public:
-    MeshGenerator(std::vector<Vertex> &vertices, std::vector<unsigned int> &indices,
+    MeshGenerator(std::vector<ChunkVertex> &vertices, std::vector<unsigned int> &indices,
                   LocalBlockAtlas& atlas, const BlockChunk& chunk, const std::vector<bool>& adj);
 private:
     bool faceOcculudedAt(const glm::vec3 &pos, const std::vector<bool> &adj);
@@ -35,7 +35,7 @@ private:
     unsigned int indOffset = 0;
     const BlockChunk& chunk;
     LocalBlockAtlas& atlas;
-    std::vector<Vertex>& vertices;
+    std::vector<ChunkVertex>& vertices;
     std::vector<unsigned int>& indices;
 
 };
