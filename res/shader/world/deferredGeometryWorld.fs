@@ -9,13 +9,13 @@ in vec3  fragPos;
 in vec3  normal;
 
 uniform sampler2D tex;
+uniform float time;
 
 void main() {
-
     vec4 spec = texture(tex, texCoords);
     if (spec.a < 0.1) discard;
     gSpecular = spec;
 
     gPosition = vec4(fragPos, 1);
-    gNormal = vec4(normalize(normal), 1);
+    gNormal = vec4(normal, 1);
 }

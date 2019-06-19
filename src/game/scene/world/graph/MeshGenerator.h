@@ -28,7 +28,7 @@ public:
                   LocalBlockAtlas& atlas, const BlockChunk& chunk, const std::vector<bool>& adj);
 private:
     bool faceOcculudedAt(const glm::vec3 &pos, const std::vector<bool> &adj);
-    void addFaces(const glm::vec3 &positon, const vector<LocalMeshPart> &meshParts);
+    void addFaces(const glm::vec3 &offset, const vector<LocalMeshPart> &meshParts, int meshMod);
     LocalBlockDef& getDef(int ind);
     LocalBlockDef& getDef(const glm::vec3 &pos);
 

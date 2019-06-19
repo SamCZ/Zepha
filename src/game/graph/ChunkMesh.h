@@ -14,10 +14,9 @@
 struct ChunkVertex {
     glm::vec3 position;
     glm::vec2 texCoords;
-    glm::vec3 normal;
-
+    float     normal;
     float     shaderMod;
-    glm::vec3 modValue;
+    glm::vec3 modValues;
 };
 
 #define STRIDE_OFFSET_CHUNK(m) sizeof(struct ChunkVertex), (void *)offsetof(struct ChunkVertex, m)

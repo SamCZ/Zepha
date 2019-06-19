@@ -66,7 +66,7 @@ void Game::loop() {
     glfwPollEvents();
 
     sceneManager.update();
-    state->renderer->update();
+    state->renderer->update(state->deltaTime);
 
     state->fps = 1000 / (t.elapsedNs() / 1000000.0);
 }

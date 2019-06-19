@@ -34,6 +34,15 @@ namespace Util {
         out << std::fixed << vec.x << ", " << std::fixed << vec.y << ", " << std::fixed << vec.z;
         return out.str();
     }
+
+    inline static float packFloat(const glm::vec3& vec) {
+        auto charX = static_cast<unsigned char>((vec.x + 1.0f) * 0.5f * 255.f);
+        auto charY = static_cast<unsigned char>((vec.y + 1.0f) * 0.5f * 255.f);
+        auto charZ = static_cast<unsigned char>((vec.z + 1.0f) * 0.5f * 255.f);
+
+        unsigned int packedInt = (charX << 16) | (charY << 8) | charZ;
+        return static_cast<float>(static_cast<double>(packedInt) / static_cast<double>(1 << 24));
+    }
 };
 
 

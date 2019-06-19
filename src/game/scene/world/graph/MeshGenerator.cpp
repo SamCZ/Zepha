@@ -35,26 +35,27 @@ MeshGenerator::MeshGenerator(std::vector<ChunkVertex> &vertices, std::vector<uns
 
             LocalBlockModel& model = getDef(i).getModel();
             if (model.visible) {
+                int m = (getDef(i).getIndex() > 10);
 
                 check = off; check.x -= 1;
-                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[XNEG]);
+                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[XNEG], m);
 
                 check = off; check.x += 1;
-                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[XPOS]);
+                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[XPOS], m);
 
                 check = off; check.y -= 1;
-                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[YNEG]);
+                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[YNEG], m);
 
                 check = off; check.y += 1;
-                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[YPOS]);
+                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[YPOS], m);
 
                 check = off; check.z -= 1;
-                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[ZNEG]);
+                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[ZNEG], m);
 
                 check = off; check.z += 1;
-                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[ZPOS]);
+                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[ZPOS], m);
 
-                addFaces(vis, model.parts[NO_CULL]);
+                addFaces(vis, model.parts[NO_CULL], m);
             }
         }
     }
@@ -89,11 +90,17 @@ bool MeshGenerator::faceOcculudedAt(const glm::vec3 &pos, const std::vector<bool
     return getDef(pos).isCulling();
 }
 
-void MeshGenerator::addFaces(const glm::vec3 &positon, const vector<LocalMeshPart> &meshParts) {
+void MeshGenerator::addFaces(const glm::vec3 &offset, const vector<LocalMeshPart> &meshParts, int meshMod) {
     for (const LocalMeshPart& mp : meshParts) {
 
-        for (const MeshVertex &vertex : mp.vertices) {                       //Meshmod / Meshdata
-            vertices.push_back({{vertex.pos + positon}, vertex.tex, vertex.nml, 0, {}});
+        for (const MeshVertex &vertex : mp.vertices) {
+            vertices.push_back({
+                   vertex.pos + offset,
+                   vertex.tex,
+                   Util::packFloat(vertex.nml),
+                   static_cast<float>(meshMod),
+                   offset
+            });
         }
 
         for (unsigned int index : mp.indices) {

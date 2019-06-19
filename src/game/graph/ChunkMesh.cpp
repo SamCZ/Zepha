@@ -33,9 +33,9 @@ void ChunkMesh::create(const std::vector<ChunkVertex>& vertices, const std::vect
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_CHUNK(position));
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_CHUNK(texCoords));
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_CHUNK(normal));
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_CHUNK(normal));
     glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_CHUNK(shaderMod));
-    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_CHUNK(modValue));
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_CHUNK(modValues));
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);

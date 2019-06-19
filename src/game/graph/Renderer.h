@@ -24,7 +24,7 @@ public:
     void createWorldShaders();
     void createGUIShader();
 
-    void update();
+    void update(double delta);
 
     void beginChunkDeferredCalls();
     void beginEntityDeferredCalls();
@@ -67,6 +67,7 @@ private:
     GuiUniforms gu;
 
     GLint currentModelUniform;
+    double elapsedTime;
 };
 
 

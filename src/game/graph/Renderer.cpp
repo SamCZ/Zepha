@@ -34,6 +34,8 @@ void Renderer::createWorldShaders() {
     wgu.model  = worldGeometryShader.getUniform("model");
     wgu.view   = worldGeometryShader.getUniform("view");
 
+    wgu.time   = worldGeometryShader.getUniform("time");
+
     worldGeometryShader.use();
 
     glGenFramebuffers(1, &gBuffer);
@@ -83,9 +85,9 @@ void Renderer::createWorldShaders() {
     entityGeometryShader.createFromFile("../res/shader/world/deferredGeometryEntity.vs", "../res/shader/world/deferredGeometryEntity.fs");
 
     egu.matrix = camera.getProjectionMatrix();
-    egu.proj   = worldGeometryShader.getUniform("projection");
-    egu.model  = worldGeometryShader.getUniform("model");
-    egu.view   = worldGeometryShader.getUniform("view");
+    egu.proj   = entityGeometryShader.getUniform("projection");
+    egu.model  = entityGeometryShader.getUniform("model");
+    egu.view   = entityGeometryShader.getUniform("view");
 
     //Initialize Lighting Shader for Deferred Rendering
 
@@ -130,8 +132,9 @@ void Renderer::createGUIShader() {
     gu.model  = guiShader.getUniform("model");
 }
 
-void Renderer::update() {
+void Renderer::update(double delta) {
     window.update();
+    elapsedTime += delta;
 
     if (window.resized) {
         resized = true;
@@ -192,6 +195,8 @@ void Renderer::beginChunkDeferredCalls() {
     worldGeometryShader.use();
     glUniformMatrix4fv(wgu.proj, 1, GL_FALSE, glm::value_ptr(wgu.matrix));
     glUniformMatrix4fv(wgu.view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
+
+    glUniform1f(wgu.time, static_cast<float>(elapsedTime));
 }
 
 void Renderer::beginEntityDeferredCalls() {

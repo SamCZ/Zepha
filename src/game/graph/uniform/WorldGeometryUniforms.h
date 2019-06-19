@@ -15,6 +15,8 @@ struct WorldGeometryUniforms {
     GLint proj;
     GLint model;
     GLint view;
+
+    GLint time;
 };
 
 
