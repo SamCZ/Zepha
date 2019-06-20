@@ -6,6 +6,12 @@ zeus.register_block('kinetic:axle_0', {
     selection_box = {
         {0, 6/16, 6/16, 1, 10/16, 10/16}
     },
+    on_place = function(pos)
+        for i = 0, 9 do
+            pos.x = pos.x + 1
+            zeus.set_block(pos, "kinetic:axle_0")
+        end
+    end,
     on_construct = function(pos)
         zeus.delay(function()
             zeus.set_block(pos, "kinetic:axle_1")
