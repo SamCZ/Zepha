@@ -36,8 +36,3 @@ dofile(path .. "blocks.lua");
 --         0, 1, 0, 0, 0
 --     }
 -- }
-
--- # Register Block
--- `zeus.register_block(string identifier, table definition)`
---
---

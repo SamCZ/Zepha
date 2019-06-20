@@ -1,5 +1,7 @@
 #version 330 core
 
+#define TWO_PI 6.28318530718f
+
 layout (location = 0) in vec3  aPos;
 layout (location = 1) in vec2  aTexCoords;
 layout (location = 2) in float aNormal;
@@ -20,6 +22,12 @@ vec3 unpackFloat(float src) {
     return vec3(fract(src) * 2.0f - 1.0f, fract(src * 256f) * 2.0f - 1.0f, fract(src * 65536f) * 2.0f - 1.0f);
 }
 
+vec4 rotateX(vec4 vertex, vec4 offset, float radians) {
+    vertex -= offset;
+    mat2 m = mat2(cos(radians), -sin(radians), sin(radians), cos(radians));
+    return vec4(m * vertex.zy, vertex.xw).zyxw + offset;
+}
+
 vec4 rotateY(vec4 vertex, vec4 offset, float radians) {
     vertex -= offset;
     mat2 m = mat2(cos(radians), -sin(radians), sin(radians), cos(radians));
@@ -32,12 +40,6 @@ vec4 rotateZ(vec4 vertex, vec4 offset, float radians) {
     return vec4(m * vertex.xy, vertex.zw).xyzw + offset;
 }
 
-vec4 rotateX(vec4 vertex, vec4 offset, float radians) {
-    vertex -= offset;
-    mat2 m = mat2(cos(radians), -sin(radians), sin(radians), cos(radians));
-    return vec4(m * vertex.zy, vertex.xw).zyxw + offset;
-}
-
 void main() {
     vec4 pos = vec4(aPos, 1);
     vec4 nml = vec4(unpackFloat(aNormal), 1);
@@ -45,8 +47,22 @@ void main() {
     switch (int(aShaderMod)) {
         default: break;
         case 1: { // Rotate X
-            pos = rotateX(pos, vec4(aModValues + vec3(0.5), 0), time);
-            nml = rotateX(nml, vec4(0), time);
+            vec4 origin = vec4(round(unpackFloat(aModValues.x) * 8 + 8) + 0.5, 1);
+            pos = rotateX(pos, origin, time * TWO_PI * aModValues.y);
+            nml = rotateX(nml, vec4(0), time * TWO_PI * aModValues.y);
+            break;
+        }
+        case 2: { // Rotate Y
+            vec4 origin = vec4(round(unpackFloat(aModValues.x) * 8 + 8) + 0.5, 1);
+            pos = rotateY(pos, origin, time * TWO_PI * aModValues.y);
+            nml = rotateY(nml, vec4(0), time * TWO_PI * aModValues.y);
+            break;
+        }
+        case 3: { // Rotate Z
+            vec4 origin = vec4(round(unpackFloat(aModValues.x) * 8 + 8) + 0.5, 1);
+            pos = rotateZ(pos, origin, time * TWO_PI * aModValues.y);
+            nml = rotateZ(nml, vec4(0), time * TWO_PI * aModValues.y);
+            break;
         }
     }
 

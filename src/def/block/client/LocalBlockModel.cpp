@@ -61,6 +61,29 @@ LocalBlockModel LocalBlockModel::create(sol::table model, std::vector<std::strin
             //Create a LocalMeshPart object
             LocalMeshPart meshPart(std::move(vertices), std::move(indices), textureRef);
 
+            //Add ShaderMod
+            sol::optional<sol::table> shaderModTable = meshPartTable.get<sol::optional<sol::table>>("shader_mod");
+            if (shaderModTable) {
+                std::string shaderMod = (*shaderModTable).get_or<std::string>("type", "none");
+
+                if (shaderMod == "none") {
+                    meshPart.shaderMod = NONE;
+                }
+                else if (shaderMod == "rotate_x") {
+                    meshPart.shaderMod = ROTATE_X;
+                    meshPart.modValue = (*shaderModTable).get_or<float>("speed", 1);
+                }
+                else if (shaderMod == "rotate_y") {
+                    meshPart.shaderMod = ROTATE_Y;
+                    meshPart.modValue = (*shaderModTable).get_or<float>("speed", 1);
+                }
+                else if (shaderMod == "rotate_z") {
+                    meshPart.shaderMod = ROTATE_Z;
+                    meshPart.modValue = (*shaderModTable).get_or<float>("speed", 1);
+                }
+            }
+
+
             //Add the meshpart to the proper face vector
             std::string face = meshPartTable.get_or<std::string>("face", "nocull");
 

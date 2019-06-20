@@ -39,6 +39,13 @@ public:
             zeus.dump = dump
         )");
 
+        //Printe function
+        lua.script(R"(
+            function printe(str)
+                print("\27[31m[!] " .. str .. "\27[0m")
+            end
+        )");
+
         //Get Path for mod
         zeus.set_function("get_path", [&](std::string modname) {
             try {

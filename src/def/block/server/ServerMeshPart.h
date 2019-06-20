@@ -14,7 +14,7 @@
 #include <vec4.hpp>
 #include <gtx/normal.hpp>
 
-#include "../MeshMod.h"
+#include "../ShaderMod.h"
 #include "../../../game/scene/world/graph/MeshVertex.h"
 #include "../../texture/TextureAtlas.h"
 
@@ -26,7 +26,7 @@ struct ServerMeshPart {
 
     std::string texture;
 
-    MeshMod meshMod;
+    ShaderMod meshMod;
     float modValue;
 };
 

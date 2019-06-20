@@ -21,7 +21,7 @@ set(ZEUS_SRC_FILES
         def/block/client/LocalBlockDef.h
         def/block/client/LocalMeshPart.cpp
         def/block/client/LocalMeshPart.h
-        def/block/MeshMod.h
+        def/block/ShaderMod.h
     game/scene/world/graph/MeshVertex.h
         def/block/client/LocalBlockModel.cpp
         def/block/client/LocalBlockModel.h

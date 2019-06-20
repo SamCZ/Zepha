@@ -5,9 +5,11 @@
 #ifndef GLPROJECT_MESHMOD_H
 #define GLPROJECT_MESHMOD_H
 
-enum MeshMod {
-    NONE,
-    SHIFT,
+enum ShaderMod {
+    NONE = 0,
+    ROTATE_X,
+    ROTATE_Y,
+    ROTATE_Z,
 };
 
 #endif //GLPROJECT_MESHMOD_H

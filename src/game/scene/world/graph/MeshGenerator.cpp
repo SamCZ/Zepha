@@ -34,28 +34,27 @@ MeshGenerator::MeshGenerator(std::vector<ChunkVertex> &vertices, std::vector<uns
 //            }
 
             LocalBlockModel& model = getDef(i).getModel();
-            if (model.visible) {
-                int m = (getDef(i).getIndex() > 10);
+                if (model.visible) {
 
                 check = off; check.x -= 1;
-                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[XNEG], m);
+                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[XNEG]);
 
                 check = off; check.x += 1;
-                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[XPOS], m);
+                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[XPOS]);
 
                 check = off; check.y -= 1;
-                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[YNEG], m);
+                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[YNEG]);
 
                 check = off; check.y += 1;
-                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[YPOS], m);
+                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[YPOS]);
 
                 check = off; check.z -= 1;
-                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[ZNEG], m);
+                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[ZNEG]);
 
                 check = off; check.z += 1;
-                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[ZPOS], m);
+                if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[ZPOS]);
 
-                addFaces(vis, model.parts[NO_CULL], m);
+                addFaces(vis, model.parts[NO_CULL]);
             }
         }
     }
@@ -90,16 +89,25 @@ bool MeshGenerator::faceOcculudedAt(const glm::vec3 &pos, const std::vector<bool
     return getDef(pos).isCulling();
 }
 
-void MeshGenerator::addFaces(const glm::vec3 &offset, const vector<LocalMeshPart> &meshParts, int meshMod) {
+void MeshGenerator::addFaces(const glm::vec3 &offset, const vector<LocalMeshPart> &meshParts) {
     for (const LocalMeshPart& mp : meshParts) {
+
+        glm::vec3 modData = {};
+
+        switch (mp.shaderMod) {
+            default: break;
+            case ROTATE_X: case ROTATE_Y: case ROTATE_Z: {
+                modData = {Util::packFloat((offset - 8.f) / 8), mp.modValue, 0};
+            }
+        }
 
         for (const MeshVertex &vertex : mp.vertices) {
             vertices.push_back({
                    vertex.pos + offset,
                    vertex.tex,
                    Util::packFloat(vertex.nml),
-                   static_cast<float>(meshMod),
-                   offset
+                   static_cast<float>(mp.shaderMod),
+                   modData
             });
         }
 

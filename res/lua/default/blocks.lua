@@ -4,4 +4,3 @@ dofile(path .. "blocks/ground.lua");
 dofile(path .. "blocks/tree.lua");
 dofile(path .. "blocks/foliage.lua");
 dofile(path .. "blocks/desert.lua");
-dofile(path .. "blocks/shaft.lua");
