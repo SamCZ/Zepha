@@ -17,7 +17,7 @@ zeus.register_blockmodel("default:plantlike", {
             0.1, 0.9, 0.1, 0, 0
         },
         shader_mod = {
-            type = "sway_grounded",
+            type = "sway_attached",
             amplitude = amp
         }
     }, {
@@ -30,7 +30,7 @@ zeus.register_blockmodel("default:plantlike", {
             0.1, 0.9, 0.1, 0, 0
         },
         shader_mod = {
-            type = "sway_grounded",
+            type = "sway_attached",
             amplitude = amp
         }
     }, {
@@ -43,7 +43,7 @@ zeus.register_blockmodel("default:plantlike", {
             0.1, 0.9, 0.9, 0, 0
         },
         shader_mod = {
-            type = "sway_grounded",
+            type = "sway_attached",
             amplitude = amp
         }
     }, {
@@ -56,7 +56,7 @@ zeus.register_blockmodel("default:plantlike", {
             0.1, 0.9, 0.9, 0, 0
         },
         shader_mod = {
-            type = "sway_grounded",
+            type = "sway_attached",
             amplitude = amp
         }
     }

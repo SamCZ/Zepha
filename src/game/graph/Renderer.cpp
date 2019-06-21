@@ -21,10 +21,10 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
         swayData[i*4+3] = 255;
     }
 
-    swayNoise.SetOctaveCount(1);
+    swayNoise.SetOctaveCount(2);
 
     swayMap = new Texture();
-    swayMap->loadFromBytes(swayData, 16, 16, GL_LINEAR);
+    swayMap->loadFromBytes(swayData, 16, 16, GL_LINEAR, GL_MIRRORED_REPEAT);
 
     createWorldShaders();
     createGUIShader();

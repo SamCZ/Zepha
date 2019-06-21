@@ -4,6 +4,8 @@
 -- Texture order is: top, bottom, left, right, front, back, raised.
 --
 
+local amp = 0.1
+
 zeus.register_blockmodel("default:block_foliage", {
     {
         face = "left",
@@ -65,36 +67,52 @@ zeus.register_blockmodel("default:block_foliage", {
         tex = 7,
         points = {
             0, 1, 1, 0, 0,
-            0, 0.2, 1.2, 0, 1,
-            1, 0.2, 1.2, 1, 1,
+            0.005, 0.2, 1.2, 0, 1,
+            1.005, 0.2, 1.2, 1, 1,
             1, 1, 1, 1, 0
+        },
+        shader_mod = {
+            type = "sway_attached",
+            amplitude = amp
         }
     }, {
         face = "back",
         tex = 7,
         points = {
-            1, 0.2, -0.2, 1, 1,
-            0, 0.2, -0.2, 0, 1,
+            1.005, 0.2, -0.2, 1, 1,
+            0.005, 0.2, -0.2, 0, 1,
             0, 1, 0, 0, 0,
             1, 1, 0, 1, 0
+        },
+        shader_mod = {
+            type = "sway_attached",
+            amplitude = amp
         }
     }, {
         face = "right",
         tex = 7,
         points = {
-            1.2, 0.2, 1, 1, 1,
-            1.2, 0.2, 0, 0, 1,
+            1.2, 0.2, 1.005, 1, 1,
+            1.2, 0.2, 0.005, 0, 1,
             1, 1, 0, 0, 0,
             1, 1, 1, 1, 0
+        },
+        shader_mod = {
+            type = "sway_attached",
+            amplitude = amp
         }
     }, {
         face = "left",
         tex = 7,
         points = {
             0, 1, 0, 0, 0,
-            -0.2, 0.2, 0, 0, 1,
-            -0.2, 0.2, 1, 1, 1,
+            -0.2, 0.2, 0.005, 0, 1,
+            -0.2, 0.2, 1.005, 1, 1,
             0, 1, 1, 1, 0
+        },
+        shader_mod = {
+            type = "sway_attached",
+            amplitude = amp
         }
     }
 })

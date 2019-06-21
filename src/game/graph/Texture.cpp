@@ -22,7 +22,7 @@ void Texture::loadFromFile(std::string file) {
     stbi_image_free(texData);
 }
 
-void Texture::loadFromBytes(unsigned char* bytes, int width, int height, GLint interpolation) {
+void Texture::loadFromBytes(unsigned char* bytes, int width, int height, GLint interpolation, GLint repeatMode) {
     if (textureID != 0) clear();
 
     this->width = width;
@@ -31,8 +31,8 @@ void Texture::loadFromBytes(unsigned char* bytes, int width, int height, GLint i
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeatMode);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeatMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, interpolation);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, interpolation);
 

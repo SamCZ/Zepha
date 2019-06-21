@@ -68,15 +68,17 @@ void main() {
         }
         case 4: { //Sway Grounded
             vec4 origin = vec4(round(unpackFloat(aModValues.x) * 8 + 8), 1);
-            if ((pos - origin).y != 0) {
-                vec3 sway = (texture(swayTex, pos.xz * (pos.y / 16.f) / 16.f).xyz - .5f) * vec3(aModValues.y, aModValues.y / 2, aModValues.y);
+            vec3 bsp = vec3(pos - origin);
+            vec3 worldPos = (model * pos).xyz;
+            if (bsp.x*bsp.y*bsp.z != 0 && bsp.x*bsp.y*bsp.z != 1) {
+                vec3 sway = (texture(swayTex, worldPos.xz * (worldPos.y / 16.f) / 16.f).xyz - .5f) * vec3(aModValues.y, aModValues.y / 2, aModValues.y);
                 pos += vec4(sway, 0);
             }
             break;
         }
         case 5: { //Sway Full Block
-            vec4 origin = vec4(round(unpackFloat(aModValues.x) * 8 + 8), 1);
-            vec3 sway = (texture(swayTex, pos.xz * (pos.y / 16.f)  / 16.f).xyz - .5f) * vec3(aModValues.y, aModValues.y / 2, aModValues.y);
+            vec3 worldPos = (model * pos).xyz;
+            vec3 sway = (texture(swayTex, worldPos.xz * (worldPos.y / 16.f)  / 16.f).xyz - .5f) * vec3(aModValues.y, aModValues.y / 2, aModValues.y);
             pos += vec4(sway, 0);
             break;
         }

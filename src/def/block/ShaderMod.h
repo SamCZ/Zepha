@@ -10,7 +10,7 @@ enum ShaderMod {
     ROTATE_X,
     ROTATE_Y,
     ROTATE_Z,
-    SWAY_GROUNDED,
+    SWAY_ATTACHED,
     SWAY_FULL_BLOCK
 };
 

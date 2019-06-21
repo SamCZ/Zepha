@@ -15,7 +15,7 @@ public:
     explicit Texture(std::string file);
 
     void loadFromFile(std::string file);
-    void loadFromBytes(unsigned char* bytes, int width, int height, GLint interpolation = GL_NEAREST);
+    void loadFromBytes(unsigned char* bytes, int width, int height, GLint interpolation = GL_NEAREST, GLint repeatMode = GL_CLAMP_TO_EDGE);
     void updateTexture(int x, int y, int width, int height, unsigned char* bytes);
 
     void enable(GLuint position = 0);
