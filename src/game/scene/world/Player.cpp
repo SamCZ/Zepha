@@ -107,9 +107,9 @@ void Player::pointerUpdate(InputManager &input, double delta) {
         auto blockID = world.getBlock(rayEnd);
         if (blockID > 0) {
             auto sBox = defs.blocks().fromIndex(blockID).getSelectionBox();
-            SelectionBox::Face intersects = sBox.intersects(*ray.getEnd(), pointedPos);
+            auto intersects = sBox.intersects(*ray.getEnd(), pointedPos);
 
-            if (intersects != SelectionBox::NONE) {
+            if (intersects != NONE) {
                 pointedThing.blockID = static_cast<unsigned int>(blockID);
                 pointedThing.blockDef = &defs.blocks().fromIndex(blockID);
                 pointedThing.pos = pointedPos;

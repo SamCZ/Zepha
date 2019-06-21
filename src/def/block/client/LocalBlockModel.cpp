@@ -67,26 +67,26 @@ LocalBlockModel LocalBlockModel::create(sol::table model, std::vector<std::strin
                 std::string shaderMod = (*shaderModTable).get_or<std::string>("type", "none");
 
                 if (shaderMod == "none") {
-                    meshPart.shaderMod = NONE;
+                    meshPart.shaderMod = MOD_NONE;
                 }
                 else if (shaderMod == "rotate_x") {
-                    meshPart.shaderMod = ROTATE_X;
+                    meshPart.shaderMod = MOD_ROTATE_X;
                     meshPart.modValue = (*shaderModTable).get_or<float>("speed", 1);
                 }
                 else if (shaderMod == "rotate_y") {
-                    meshPart.shaderMod = ROTATE_Y;
+                    meshPart.shaderMod = MOD_ROTATE_Y;
                     meshPart.modValue = (*shaderModTable).get_or<float>("speed", 1);
                 }
                 else if (shaderMod == "rotate_z") {
-                    meshPart.shaderMod = ROTATE_Z;
+                    meshPart.shaderMod = MOD_ROTATE_Z;
                     meshPart.modValue = (*shaderModTable).get_or<float>("speed", 1);
                 }
                 else if (shaderMod == "sway_attached") {
-                    meshPart.shaderMod = SWAY_ATTACHED;
+                    meshPart.shaderMod = MOD_SWAY_ATTACHED;
                     meshPart.modValue = (*shaderModTable).get_or<float>("amplitude", 1);
                 }
                 else if (shaderMod == "sway_full_block") {
-                    meshPart.shaderMod = SWAY_FULL_BLOCK;
+                    meshPart.shaderMod = MOD_SWAY_FULL_BLOCK;
                     meshPart.modValue = (*shaderModTable).get_or<float>("amplitude", 1);
                 }
             }

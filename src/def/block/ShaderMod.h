@@ -6,12 +6,12 @@
 #define GLPROJECT_MESHMOD_H
 
 enum ShaderMod {
-    NONE = 0,
-    ROTATE_X,
-    ROTATE_Y,
-    ROTATE_Z,
-    SWAY_ATTACHED,
-    SWAY_FULL_BLOCK
+    MOD_NONE = 0,
+    MOD_ROTATE_X,
+    MOD_ROTATE_Y,
+    MOD_ROTATE_Z,
+    MOD_SWAY_ATTACHED,
+    MOD_SWAY_FULL_BLOCK
 };
 
 #endif //GLPROJECT_MESHMOD_H

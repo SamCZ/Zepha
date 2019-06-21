@@ -110,12 +110,12 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         glm::vec3 regionCoordinate = TransPos::Dimension::regionFromVec(chunkPos);
 
         auto thing = player.getPointedThing();
-        std::string face = (thing.face == SelectionBox::TOP)    ? "TOP" :
-                           (thing.face == SelectionBox::BOTTOM) ? "BOTTOM" :
-                           (thing.face == SelectionBox::LEFT)   ? "LEFT" :
-                           (thing.face == SelectionBox::RIGHT)  ? "RIGHT" :
-                           (thing.face == SelectionBox::FRONT)  ? "FRONT" :
-                           (thing.face == SelectionBox::BACK)   ? "BACK" :
+        std::string face = (thing.face == TOP)    ? "TOP" :
+                           (thing.face == BOTTOM) ? "BOTTOM" :
+                           (thing.face == LEFT)   ? "LEFT" :
+                           (thing.face == RIGHT)  ? "RIGHT" :
+                           (thing.face == FRONT)  ? "FRONT" :
+                           (thing.face == BACK)   ? "BACK" :
                            "NONE";
 
         std::ostringstream str;

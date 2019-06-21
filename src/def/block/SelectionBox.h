@@ -11,14 +11,10 @@
 #include <vec3.hpp>
 #include <glm.hpp>
 #include "../../util/Util.h"
+#include "../../util/Dir.h"
 
 class SelectionBox {
 public:
-    enum Face {
-        NONE,
-        TOP, BOTTOM, FRONT, BACK, LEFT, RIGHT
-    };
-
     SelectionBox() {
         set({0, 0, 0}, {1, 1, 1});
     }
@@ -45,7 +41,7 @@ public:
         this->b = b;
     }
 
-    Face intersects(glm::vec3 vec, glm::vec3 blockOffset) {
+    Dir intersects(glm::vec3 vec, glm::vec3 blockOffset) {
         const float THRESH = 0.02f;
 
         vec -= blockOffset; //Normalize Vector Position
@@ -60,7 +56,7 @@ public:
         return NONE;
     }
 
-    static glm::vec3 faceToOffset(SelectionBox::Face f) {
+    static glm::vec3 faceToOffset(Dir f) {
         static const glm::vec3 positionOffsets[6] {
             {0, 1, 0},
             {0, -1, 0},
@@ -70,7 +66,7 @@ public:
             {-1, 0, 0}
         };
 
-        return positionOffsets[f - 1];
+        return positionOffsets[f];
     }
 
     glm::vec3 a {}, b {};

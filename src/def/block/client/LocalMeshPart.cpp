@@ -9,7 +9,7 @@ LocalMeshPart::LocalMeshPart(std::vector<MeshVertex> vertices, std::vector<unsig
     this->vertices = std::move(vertices);
     this->indices = std::move(indices);
 
-    this->shaderMod = NONE;
+    this->shaderMod = MOD_NONE;
     this->modValue = 0;
 
     //These vertex structs do (should) not have normals, so we will generate them here from the triangle information

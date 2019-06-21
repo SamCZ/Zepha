@@ -32,7 +32,7 @@ public:
     LocalBlockDef* blockDef = nullptr;
 
     glm::vec3 pos {};
-    SelectionBox::Face face = SelectionBox::NONE;
+    Dir face = NONE;
 };
 
 #endif //ZEUS_POSBLOCK_H
