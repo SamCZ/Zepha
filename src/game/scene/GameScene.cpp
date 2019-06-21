@@ -12,7 +12,9 @@ GameScene::GameScene(ClientState* state) : Scene(state),
     player(world, defs, *state->renderer->getCamera()),
 
     gameGui(state->renderer->getCamera()->getBufferDimensions()),
-    debugGui(state->renderer->getCamera()->getBufferDimensions(),  &defs.textures().getAtlasTexture()) {
+    debugGui(state->renderer->getCamera()->getBufferDimensions(), &defs.textures().getAtlasTexture()) {
+
+    debugGui.changeImage(state->renderer->swayMap);
 
     defs.init(world);
     world.init();
@@ -84,5 +86,6 @@ void GameScene::draw() {
 }
 
 void GameScene::cleanup() {
-    //No pointers to clean up at this point
+//    for (auto entity : entities) delete entity;
+//    for (auto guiItem : gui) delete guiItem;
 }

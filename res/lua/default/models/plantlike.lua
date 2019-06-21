@@ -4,7 +4,9 @@
 -- Only takes one texture, which is displayed on all faces.
 --
 
-zeus.register_blockmodel("default:cross", {
+local amp = 0.6
+
+zeus.register_blockmodel("default:plantlike", {
     {
         face = "nocull",
         tex = 1,
@@ -13,6 +15,10 @@ zeus.register_blockmodel("default:cross", {
             0.9, 0, 0.9, 1, 1,
             0.9, 0.9, 0.9, 1, 0,
             0.1, 0.9, 0.1, 0, 0
+        },
+        shader_mod = {
+            type = "sway_grounded",
+            amplitude = amp
         }
     }, {
         face = "nocull",
@@ -22,6 +28,10 @@ zeus.register_blockmodel("default:cross", {
             0.9, 0, 0.9, 1, 1,
             0.1, 0, 0.1, 0, 1,
             0.1, 0.9, 0.1, 0, 0
+        },
+        shader_mod = {
+            type = "sway_grounded",
+            amplitude = amp
         }
     }, {
         face = "nocull",
@@ -31,6 +41,10 @@ zeus.register_blockmodel("default:cross", {
             0.9, 0, 0.1, 1, 1,
             0.1, 0, 0.9, 0, 1,
             0.1, 0.9, 0.9, 0, 0
+        },
+        shader_mod = {
+            type = "sway_grounded",
+            amplitude = amp
         }
     }, {
         face = "nocull",
@@ -40,6 +54,10 @@ zeus.register_blockmodel("default:cross", {
             0.9, 0, 0.1, 1, 1,
             0.9, 0.9, 0.1, 1, 0,
             0.1, 0.9, 0.9, 0, 0
+        },
+        shader_mod = {
+            type = "sway_grounded",
+            amplitude = amp
         }
     }
 })

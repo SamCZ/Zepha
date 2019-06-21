@@ -1,4 +1,4 @@
-#version 330 core
+#version 420 core
 
 layout (location = 0) out vec4 gPosition;
 layout (location = 1) out vec4 gNormal;
@@ -8,8 +8,9 @@ in vec2  texCoords;
 in vec3  fragPos;
 in vec3  normal;
 
-uniform sampler2D tex;
 uniform float time;
+
+layout (binding = 0) uniform sampler2D tex;
 
 void main() {
     vec4 spec = texture(tex, texCoords);

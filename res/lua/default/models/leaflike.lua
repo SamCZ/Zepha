@@ -4,6 +4,8 @@
 -- Texture order is: cube textures, pop textures.
 --
 
+local amp = 0.2
+
 zeus.register_blockmodel("default:leaflike", {
     {
         face = "left",
@@ -13,6 +15,10 @@ zeus.register_blockmodel("default:leaflike", {
             0, 0, 1, 1, 1,
             0, 1, 1, 1, 0,
             0, 1, 0, 0, 0
+        },
+        shader_mod = {
+            type = "sway_full_block",
+            amplitude = amp
         }
     }, {
         face = "right",
@@ -22,6 +28,10 @@ zeus.register_blockmodel("default:leaflike", {
             1, 0, 1, 1, 1,
             1, 0, 0, 0, 1,
             1, 1, 0, 0, 0
+        },
+        shader_mod = {
+            type = "sway_full_block",
+            amplitude = amp
         }
     }, {
         face = "top",
@@ -31,6 +41,10 @@ zeus.register_blockmodel("default:leaflike", {
             0, 1, 1, 0, 1,
             1, 1, 1, 1, 1,
             1, 1, 0, 1, 0
+        },
+        shader_mod = {
+            type = "sway_full_block",
+            amplitude = amp
         }
     }, {
         face = "bottom",
@@ -40,6 +54,10 @@ zeus.register_blockmodel("default:leaflike", {
             1, 0, 0, 1, 0,
             1, 0, 1, 1, 1,
             0, 0, 1, 0, 1
+        },
+        shader_mod = {
+            type = "sway_full_block",
+            amplitude = amp
         }
     }, {
         face = "front",
@@ -49,6 +67,10 @@ zeus.register_blockmodel("default:leaflike", {
             1, 0, 1, 1, 1,
             1, 1, 1, 1, 0,
             0, 1, 1, 0, 0
+        },
+        shader_mod = {
+            type = "sway_full_block",
+            amplitude = amp
         }
     }, {
         face = "back",
@@ -58,6 +80,10 @@ zeus.register_blockmodel("default:leaflike", {
             0, 1, 0, 0, 0,
             1, 1, 0, 1, 0,
             1, 0, 0, 1, 1
+        },
+        shader_mod = {
+            type = "sway_full_block",
+            amplitude = amp
         }
     }, {
         face = "nocull",
@@ -82,6 +108,10 @@ zeus.register_blockmodel("default:leaflike", {
             -0.31, -0.30, 1.3, 0, 1,
             -0.31, 1.30, 1.29, 0, 0,
             1.3, 1.30, -0.3, 1, 0
+        },
+        shader_mod = {
+            type = "sway_full_block",
+            amplitude = amp
         }
     }
 })

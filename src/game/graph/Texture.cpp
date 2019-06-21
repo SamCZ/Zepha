@@ -22,7 +22,7 @@ void Texture::loadFromFile(std::string file) {
     stbi_image_free(texData);
 }
 
-void Texture::loadFromBytes(unsigned char* bytes, int width, int height) {
+void Texture::loadFromBytes(unsigned char* bytes, int width, int height, GLint interpolation) {
     if (textureID != 0) clear();
 
     this->width = width;
@@ -33,8 +33,8 @@ void Texture::loadFromBytes(unsigned char* bytes, int width, int height) {
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, interpolation);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, interpolation);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -49,13 +49,8 @@ void Texture::updateTexture(int x, int y, int width, int height, unsigned char *
 }
 
 
-void Texture::enable() {
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-}
-
-void Texture::enable(unsigned int texSlot) {
-    glActiveTexture(GL_TEXTURE0 + texSlot);
+void Texture::enable(GLuint position) {
+    glActiveTexture(GL_TEXTURE0 + position);
     glBindTexture(GL_TEXTURE_2D, textureID);
 }
 

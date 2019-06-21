@@ -28,15 +28,20 @@ void Server::update() {
     while (handler.update(&event) && loop.elapsedNs() < 15L*1000000L) {
         switch (event.type) {
             case ENET_EVENT_TYPE_NONE:
-            default: {
-                break;
-            }
+            default: break;
+
             case ENET_EVENT_TYPE_CONNECT: {
                 auto peer = connections.addPeer(event.peer);
                 //TODO: Get an actual username / uuid
                 connections.createPlayer(peer, "1234567890", "Aurailus");
                 break;
             }
+
+            case ENET_EVENT_TYPE_DISCONNECT: {
+                connections.removePeer(event.peer);
+                break;
+            }
+
             case ENET_EVENT_TYPE_RECEIVE: {
                 Packet p(event.packet);
 
@@ -45,9 +50,8 @@ void Server::update() {
 
                 if (player != nullptr) {
                     switch (p.type) {
-                        default: {
-                            break;
-                        }
+                        default: break;
+
                         case Packet::PLAYER_INFO: {
                             //Update Player Object
                             auto newPos = Serializer::decodeFloatVec3(&p.data[0]);
@@ -70,6 +74,7 @@ void Server::update() {
 
                             break;
                         }
+
                         case Packet::BLOCK_SET: {
                             auto pos = Serializer::decodeIntVec3(&p.data[0]);
                             auto block = Serializer::decodeInt(&p.data[12]);
@@ -95,10 +100,6 @@ void Server::update() {
                 }
 
                 enet_packet_destroy(event.packet);
-                break;
-            }
-            case ENET_EVENT_TYPE_DISCONNECT: {
-                connections.removePeer(event.peer);
                 break;
             }
         }

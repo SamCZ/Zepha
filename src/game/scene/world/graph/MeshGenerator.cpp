@@ -96,8 +96,14 @@ void MeshGenerator::addFaces(const glm::vec3 &offset, const vector<LocalMeshPart
 
         switch (mp.shaderMod) {
             default: break;
-            case ROTATE_X: case ROTATE_Y: case ROTATE_Z: {
+
+            case ROTATE_X:
+            case ROTATE_Y:
+            case ROTATE_Z:
+            case SWAY_GROUNDED:
+            case SWAY_FULL_BLOCK: {
                 modData = {Util::packFloat((offset - 8.f) / 8), mp.modValue, 0};
+                break;
             }
         }
 

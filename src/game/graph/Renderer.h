@@ -15,6 +15,7 @@
 #include "uniform/WorldGeometryUniforms.h"
 #include "uniform/EntityGeometryUniforms.h"
 #include <ext.hpp>
+#include <noise/noise.h>
 
 class Renderer {
 public:
@@ -41,6 +42,7 @@ public:
     ~Renderer();
 
     bool resized;
+    Texture* swayMap;
 private:
     void renderQuad();
 
@@ -51,8 +53,11 @@ private:
     Camera camera;
 
     unsigned int gBuffer, gPosition, gNormal, gColorSpec, rboDepth;
-
     unsigned int sBuffer, sDepthMap;
+
+    double swayOffset = 0;
+    noise::module::Perlin swayNoise;
+    unsigned char* swayData = nullptr;
 
     glm::vec4 clearColor {0.58f, 0.76f, 0.94f, 1.0f};
     Texture* activeTexture;

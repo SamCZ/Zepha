@@ -122,6 +122,7 @@ void ServerConnection::update(Player &player) {
 }
 
 void ServerConnection::cleanup() {
+    handler.disconnect();
     connected = false;
 }
 

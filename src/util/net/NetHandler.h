@@ -18,6 +18,8 @@ public:
     NetHandler(std::string host_address, unsigned short host_port);
     NetHandler(std::string host_address, unsigned short host_port, int connection_attempts, int connection_timeout);
 
+    void disconnect();
+
     int getState();
     ENetPeer* getPeer();
     bool update(ENetEvent* event);
@@ -36,12 +38,15 @@ private:
     ENetAddress address;
 
 public:
-    /*Definitions*/
-    const static int UNINITIALIZED  = 0;
-    const static int FAILED_CONNECT = 1;
-    const static int ERROR          = 2;
-    const static int CLIENT         = 3;
-    const static int HOST           = 4;
+    // States
+    enum {
+        UNINITIALIZED,
+        FAILED_CONNECT,
+        ERROR,
+        CLIENT,
+        HOST,
+        CLOSED
+    };
 };
 
 #endif //ZEUS_NETHANDLER_H

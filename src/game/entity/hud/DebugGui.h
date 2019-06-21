@@ -22,6 +22,7 @@ public:
 
     void bufferResized(glm::vec2 bufferSize);
 
+    void changeImage(Texture* tex);
     void update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
     void draw(Renderer &renderer) override;
 
@@ -36,7 +37,7 @@ private:
     Texture coloredGraphTexture;
     Texture monochromeGraphTexture;
 
-//    TextureRect atlasTex;
+    TextureRect atlasTex;
 
     TextEntity crosshairText;
     TextEntity dataText;

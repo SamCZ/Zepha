@@ -9,11 +9,22 @@ Renderer::Renderer() : Renderer(1366, 768) {};
 Renderer::Renderer(GLint winWidth, GLint winHeight) :
     activeTexture(nullptr),
 
-    window(winWidth, winHeight) {
+    window(winWidth, winHeight),
+    swayData(new unsigned char[16 * 4 * 16]) {
 
     window.initialize();
     auto winSize = window.getSize();
     camera.create(winSize.x, winSize.y, glm::vec3(0, 1, 0));
+
+    for (int i = 0; i < 16 * 16; i++) {
+        swayData[i*4+1] = 127;
+        swayData[i*4+3] = 255;
+    }
+
+    swayNoise.SetOctaveCount(1);
+
+    swayMap = new Texture();
+    swayMap->loadFromBytes(swayData, 16, 16, GL_LINEAR);
 
     createWorldShaders();
     createGUIShader();
@@ -136,6 +147,14 @@ void Renderer::update(double delta) {
     window.update();
     elapsedTime += delta;
 
+    swayOffset += delta * 0.9;
+    for (int i = 0; i < 16 * 16; i++) {
+        swayData[i*4]   = static_cast<unsigned char>((fmax(-1, fmin(1, swayNoise.GetValue((i / 16) / 3.f, (i % 16) / 3.f, swayOffset)))       + 1) / 2.f * 255.f);
+        swayData[i*4+1] = static_cast<unsigned char>((fmax(-1, fmin(1, swayNoise.GetValue((i / 16) / 3.f, (i % 16) / 3.f, swayOffset + 50)))  + 1) / 2.f * 255.f);
+        swayData[i*4+2] = static_cast<unsigned char>((fmax(-1, fmin(1, swayNoise.GetValue((i / 16) / 3.f, (i % 16) / 3.f, swayOffset + 100))) + 1) / 2.f * 255.f);
+    }
+    swayMap->updateTexture(0, 0, 16, 16, swayData);
+
     if (window.resized) {
         resized = true;
         window.resized = false;
@@ -191,6 +210,8 @@ void Renderer::beginChunkDeferredCalls() {
 
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    swayMap->enable(1);
 
     worldGeometryShader.use();
     glUniformMatrix4fv(wgu.proj, 1, GL_FALSE, glm::value_ptr(wgu.matrix));

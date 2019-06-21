@@ -3,7 +3,7 @@ for i=1,5,1 do
         culls = false,
         solid = false,
         name = "Tall Grass",
-        model = "default:cross",
+        model = "default:plantlike",
         textures = {
             "default_tallgrass_" .. i,
         },
@@ -40,7 +40,7 @@ for _,flower in ipairs(flowers) do
         culls = false,
         solid = false,
         name = name,
-        model = "default:cross",
+        model = "default:plantlike",
         textures = {
             "flowers_" .. flower
         },

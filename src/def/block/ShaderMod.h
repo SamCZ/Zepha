@@ -10,6 +10,8 @@ enum ShaderMod {
     ROTATE_X,
     ROTATE_Y,
     ROTATE_Z,
+    SWAY_GROUNDED,
+    SWAY_FULL_BLOCK
 };
 
 #endif //GLPROJECT_MESHMOD_H

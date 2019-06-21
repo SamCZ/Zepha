@@ -111,10 +111,22 @@ ENetPeer* NetHandler::getPeer() {
     return peer;
 }
 
+void NetHandler::disconnect() {
+    if (state == CLIENT) {
+        std::cout << Log::info << "Disconnecting from host." << Log::endl;
+        enet_peer_disconnect(peer, 0);
+        enet_host_flush(host);
+    }
+    if (state != HOST) {
+        enet_host_destroy(host);
+        state = CLOSED;
+    }
+}
+
 NetHandler::~NetHandler() {
     if (initialized) {
         if (host != nullptr) {
-            enet_host_destroy(host);
+            disconnect();
         }
         if (getState() != UNINITIALIZED) {
             enet_deinitialize();

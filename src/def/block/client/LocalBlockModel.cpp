@@ -81,6 +81,14 @@ LocalBlockModel LocalBlockModel::create(sol::table model, std::vector<std::strin
                     meshPart.shaderMod = ROTATE_Z;
                     meshPart.modValue = (*shaderModTable).get_or<float>("speed", 1);
                 }
+                else if (shaderMod == "sway_grounded") {
+                    meshPart.shaderMod = SWAY_GROUNDED;
+                    meshPart.modValue = (*shaderModTable).get_or<float>("amplitude", 1);
+                }
+                else if (shaderMod == "sway_full_block") {
+                    meshPart.shaderMod = SWAY_FULL_BLOCK;
+                    meshPart.modValue = (*shaderModTable).get_or<float>("amplitude", 1);
+                }
             }
 
 

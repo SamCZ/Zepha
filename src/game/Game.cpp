@@ -38,7 +38,7 @@ Game::Game(int width, int height, char* path) :
     };
 
     //Start the Main Menu
-    Scene* m = new MenuScene(state);
+    Scene* m = new GameScene(state);
     sceneManager.setScene(m);
 
     while (!renderer->getWindow()->getShouldClose()) loop();
@@ -54,15 +54,6 @@ void Game::loop() {
     state->deltaTime = now - timeElapsed;
     timeElapsed = now;
 
-    if (count == 5) {
-        Scene* g = new GameScene(state);
-        sceneManager.setScene(g); //Main Menu Scene here eventually
-        count = 8;
-    }
-    else {
-        count++;
-    }
-
     glfwPollEvents();
 
     sceneManager.update();
@@ -75,6 +66,7 @@ void Game::cleanup() {
     if (local_server_pid != 0) {
         kill(local_server_pid, SIGKILL);
     }
+
     sceneManager.cleanupScene();
     delete state;
     delete renderer;
