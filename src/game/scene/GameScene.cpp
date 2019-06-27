@@ -47,6 +47,7 @@ void GameScene::update() {
     server.chunkPackets.clear();
 
     debugGui.update(player, world, defs, state->fps, world.getMeshChunkCount(), drawCalls, server.serverSideChunkGens, server.recvPackets);
+    server.recvPackets = 0;
     world.update(state->deltaTime);
 
     if (window->input.isKeyPressed(GLFW_KEY_F1)) {

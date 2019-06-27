@@ -6,13 +6,30 @@
 
 MeshGenStream::MeshGenStream(LocalDefs &defs, Dimension &dimension) :
     defs(defs),
-    dimension(dimension) {
+    dimension(dimension),
+    noiseSampler({NoiseSample(1, 1), NoiseSample(1, 1), NoiseSample(1, 1)}) {
 
     queuedTasks.reserve((unsigned long) TOTAL_QUEUE_SIZE);
 
+    noise::module::Perlin offsetBaseNoise;
+    offsetBaseNoise.SetFrequency(8);
+    offsetBaseNoise.SetOctaveCount(3);
+
+    noise::module::Turbulence offsetTurbulence;
+    offsetTurbulence.SetSourceModule(0, offsetBaseNoise);
+    offsetTurbulence.SetFrequency(4.0);
+    offsetTurbulence.SetPower(0.125);
+
+    //8 is just a random value to offset results
+    noiseSampler = {
+            NoiseSample::getSample(&offsetTurbulence, {0, 0, 8}, 16, 16),
+            NoiseSample::getSample(&offsetTurbulence, {0, 8, 0}, 16, 16),
+            NoiseSample::getSample(&offsetTurbulence, {8, 0, 0}, 16, 16)
+    };
+
     threads.reserve(THREADS);
     for (int i = 0; i < THREADS; i++) {
-        threads.emplace_back(defs.blocks());
+        threads.emplace_back(defs.blocks(), noiseSampler);
     }
 }
 
@@ -73,7 +90,8 @@ std::vector<MeshGenStream::MeshDetails> MeshGenStream::update() {
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-MeshGenStream::Thread::Thread(LocalBlockAtlas &atlas) : atlas(atlas) {
+MeshGenStream::Thread::Thread(LocalBlockAtlas &atlas, std::array<NoiseSample, 3>& offsetSamplers) :
+    atlas(atlas), offsetSamplers(offsetSamplers) {
     thread = new std::thread(MeshGenStream::threadFunction, this);
 }
 #pragma clang diagnostic pop
@@ -90,7 +108,7 @@ void MeshGenStream::threadFunction(MeshGenStream::Thread *thread) {
                 u.vertices = new std::vector<ChunkVertex>();
                 u.indices = new std::vector<unsigned int>();
 
-                MeshGenerator(*u.vertices, *u.indices, thread->atlas, *u.chunk, *u.adjacent);
+                MeshGenerator(*u.vertices, *u.indices, thread->atlas, *u.chunk, *u.adjacent, thread->offsetSamplers);
 
                 delete u.adjacent;
 

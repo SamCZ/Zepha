@@ -5,7 +5,7 @@
 #include "ServerDefs.h"
 
 ServerDefs::ServerDefs() :
-    luaApi("/home/aurailus/C++/GlProject/res/lua/") {
+    luaApi("/home/aurailus/CLion/Zeus/res/lua/") {
 }
 
 void ServerDefs::init(ServerWorld &world) {
@@ -20,7 +20,7 @@ ServerLuaParser &ServerDefs::lua() {
     return luaApi;
 }
 
-void ServerDefs::update(float delta) {
+void ServerDefs::update(double delta) {
     this->delta += delta;
     while (this->delta > 48) {
         luaApi.update();

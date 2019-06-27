@@ -4,60 +4,89 @@
 -- Only takes one texture, which is displayed on all faces.
 --
 
-local amp = 0.6
+local wave_amplitude = 0.6
+local offset_amplitude = 0.4
 
 zeus.register_blockmodel("default:plantlike", {
-    {
-        face = "nocull",
-        tex = 1,
-        points = {
-            0.1, 0, 0.1, 0, 1,
-            0.9, 0, 0.9, 1, 1,
-            0.9, 0.9, 0.9, 1, 0,
-            0.1, 0.9, 0.1, 0, 0
+    mesh_mods = {
+        {
+            type = "offset_x",
+            amplitude = offset_amplitude,
         },
-        shader_mod = {
-            type = "sway_attached",
-            amplitude = amp
+        {
+            type = "offset_z",
+            amplitude = offset_amplitude,
         }
-    }, {
-        face = "nocull",
-        tex = 1,
-        points = {
-            0.9, 0.9, 0.9, 1, 0,
-            0.9, 0, 0.9, 1, 1,
-            0.1, 0, 0.1, 0, 1,
-            0.1, 0.9, 0.1, 0, 0
-        },
-        shader_mod = {
-            type = "sway_attached",
-            amplitude = amp
-        }
-    }, {
-        face = "nocull",
-        tex = 1,
-        points = {
-            0.9, 0.9, 0.1, 1, 0,
-            0.9, 0, 0.1, 1, 1,
-            0.1, 0, 0.9, 0, 1,
-            0.1, 0.9, 0.9, 0, 0
-        },
-        shader_mod = {
-            type = "sway_attached",
-            amplitude = amp
-        }
-    }, {
-        face = "nocull",
-        tex = 1,
-        points = {
-            0.1, 0, 0.9, 0, 1,
-            0.9, 0, 0.1, 1, 1,
-            0.9, 0.9, 0.1, 1, 0,
-            0.1, 0.9, 0.9, 0, 0
-        },
-        shader_mod = {
-            type = "sway_attached",
-            amplitude = amp
+    },
+    parts = {
+        {
+            face = "nocull",
+            tex = 1,
+            points = {
+                0.1, 0, 0.1, 0, 1,
+                0.9, 0, 0.9, 1, 1,
+                0.9, 0.9, 0.9, 1, 0,
+                0.1, 0.9, 0.1, 0, 0
+            },
+            shader_mod = {
+                type = "sway_attached",
+                amplitude = wave_amplitude
+            },
+            mesh_mod = {
+                type = "offset",
+                scale = 0.2
+            }
+        }, {
+            face = "nocull",
+            tex = 1,
+            points = {
+                0.9, 0.9, 0.9, 1, 0,
+                0.9, 0, 0.9, 1, 1,
+                0.1, 0, 0.1, 0, 1,
+                0.1, 0.9, 0.1, 0, 0
+            },
+            shader_mod = {
+                type = "sway_attached",
+                amplitude = wave_amplitude
+            },
+            mesh_mod = {
+                type = "offset",
+                scale = 0.2
+            }
+        }, {
+            face = "nocull",
+            tex = 1,
+            points = {
+                0.9, 0.9, 0.1, 1, 0,
+                0.9, 0, 0.1, 1, 1,
+                0.1, 0, 0.9, 0, 1,
+                0.1, 0.9, 0.9, 0, 0
+            },
+            shader_mod = {
+                type = "sway_attached",
+                amplitude = wave_amplitude
+            },
+            mesh_mod = {
+                type = "offset",
+                scale = 0.2
+            }
+        }, {
+            face = "nocull",
+            tex = 1,
+            points = {
+                0.1, 0, 0.9, 0, 1,
+                0.9, 0, 0.1, 1, 1,
+                0.9, 0.9, 0.1, 1, 0,
+                0.1, 0.9, 0.9, 0, 0
+            },
+            shader_mod = {
+                type = "sway_attached",
+                amplitude = wave_amplitude
+            },
+            mesh_mod = {
+                type = "offset",
+                scale = 0.2
+            }
         }
     }
 })

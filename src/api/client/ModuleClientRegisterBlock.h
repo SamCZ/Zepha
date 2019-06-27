@@ -14,19 +14,6 @@
 class ModuleClientRegisterBlock {
 public:
     ModuleClientRegisterBlock(sol::state& lua, sol::table& zeus, LocalDefs& defs) {
-        //Define registered_blockmodels table
-        zeus["registered_blockmodels"] = lua.create_table();
-
-        zeus.set_function("register_blockmodel", [&](std::string identifier, sol::table data) {
-            try {
-                if (identifier.length() == 0) throw "No Identifier";
-                zeus["registered_blockmodels"][identifier] = data;
-            }
-            catch (const std::string& e) {
-                std::cout << Log::err << "Exception on register_blockmodel: " << e << Log::endl;
-            }
-        });
-
         zeus.set_function("register_block", [&](std::string identifier, sol::table data) {
             try {
                 if (identifier.length() == 0) throw "No Identifier";
@@ -57,7 +44,7 @@ public:
                 sol::table models = zeus["registered_blockmodels"];
                 auto model = models.get<sol::optional<sol::table>>(modelStr);
 
-                if (!model) throw "Undefined model";
+                if (!model) throw "Undefined model (Client)";
 
                 //TODO: Validate and allow multiple selection boxes
                 SelectionBox sbox = {{0, 0, 0}, {1, 1, 1}};

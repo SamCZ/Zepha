@@ -9,7 +9,7 @@ ServerMeshPart::ServerMeshPart(std::vector<MeshVertex> vertices, std::vector<uns
     this->vertices = std::move(vertices);
     this->indices = std::move(indices);
 
-    this->meshMod = MOD_NONE;
+    this->meshMod = ShaderMod::NONE;
     this->modValue = 0;
 
     //These vertex structs do (should) not have normals, so we will generate them here from the triangle information

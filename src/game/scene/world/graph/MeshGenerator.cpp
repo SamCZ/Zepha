@@ -6,7 +6,8 @@
 #include "MeshGenerator.h"
 
 MeshGenerator::MeshGenerator(std::vector<ChunkVertex> &vertices, std::vector<unsigned int> &indices,
-                             LocalBlockAtlas& atlas, const BlockChunk& chunk, const std::vector<bool>& adj) :
+                             LocalBlockAtlas& atlas, const BlockChunk& chunk, const std::vector<bool>& adj,
+                             std::array<NoiseSample, 3>& blockOffsets) :
     vertices(vertices),
     indices(indices),
     atlas(atlas),
@@ -26,31 +27,41 @@ MeshGenerator::MeshGenerator(std::vector<ChunkVertex> &vertices, std::vector<uns
         if (getDef(i).getModel().visible) {
             VecUtils::indAssignVec(i, off);
 
-            // Add TallGrass offsets
-            // TODO: Make this acknowlege MeshMods & Be based on position instead of pure random
-            vis = off;
-//            if (chunk.getBlock(i) >= 6 && chunk.getBlock(i) <= 10) {
-//                vis += glm::vec3((((double)rand() / RAND_MAX) - 0.5f) / 3.f, 0, (((double)rand() / RAND_MAX) - 0.5f) / 3.f);
-//            }
-
             LocalBlockModel& model = getDef(i).getModel();
-                if (model.visible) {
+
+            vis = off;
+
+            for (auto& mod : model.meshMods) {
+                switch (mod.first) {
+                    default: break;
+
+                    case MeshMod::OFFSET_X: {
+                        vis.x += blockOffsets[0].get(off) * mod.second;
+                        break;
+                    }
+                    case MeshMod::OFFSET_Y: {
+                        vis.y += blockOffsets[1].get(off) * mod.second;
+                        break;
+                    }
+                    case MeshMod::OFFSET_Z: {
+                        vis.z += blockOffsets[2].get(off) * mod.second;
+                        break;
+                    }
+                }
+            }
+
+            if (model.visible) {
 
                 check = off; check.x -= 1;
                 if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[XNEG]);
-
                 check = off; check.x += 1;
                 if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[XPOS]);
-
                 check = off; check.y -= 1;
                 if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[YNEG]);
-
                 check = off; check.y += 1;
                 if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[YPOS]);
-
                 check = off; check.z -= 1;
                 if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[ZNEG]);
-
                 check = off; check.z += 1;
                 if (!faceOcculudedAt(check, adj)) addFaces(vis, model.parts[ZPOS]);
 
@@ -97,11 +108,11 @@ void MeshGenerator::addFaces(const glm::vec3 &offset, const vector<LocalMeshPart
         switch (mp.shaderMod) {
             default: break;
 
-            case MOD_ROTATE_X:
-            case MOD_ROTATE_Y:
-            case MOD_ROTATE_Z:
-            case MOD_SWAY_ATTACHED:
-            case MOD_SWAY_FULL_BLOCK: {
+            case ShaderMod::ROTATE_X:
+            case ShaderMod::ROTATE_Y:
+            case ShaderMod::ROTATE_Z:
+            case ShaderMod::SWAY_ATTACHED:
+            case ShaderMod::SWAY_FULL_BLOCK: {
                 modData = {Util::packFloat((offset - 8.f) / 8), mp.modValue, 0};
                 break;
             }

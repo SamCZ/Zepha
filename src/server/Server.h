@@ -32,6 +32,9 @@ private:
     NetHandler handler;
     ConnectionList connections;
 
+    double elapsedSeconds;
+    double deltaTime;
+
     unsigned short port;
 };
 

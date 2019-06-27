@@ -5,7 +5,7 @@
 #include "LocalDefs.h"
 
 LocalDefs::LocalDefs(std::string tex_path) :
-    luaApi("/home/aurailus/C++/GlProject/res/lua/") {
+    luaApi("/home/aurailus/CLion/Zeus/res/lua/") {
 
     textureAtlas = TextureAtlas(1024);
     textureAtlas.loadDirectory(tex_path + "/game");

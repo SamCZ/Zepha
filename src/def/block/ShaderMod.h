@@ -5,13 +5,20 @@
 #ifndef GLPROJECT_MESHMOD_H
 #define GLPROJECT_MESHMOD_H
 
-enum ShaderMod {
-    MOD_NONE = 0,
-    MOD_ROTATE_X,
-    MOD_ROTATE_Y,
-    MOD_ROTATE_Z,
-    MOD_SWAY_ATTACHED,
-    MOD_SWAY_FULL_BLOCK
+enum class ShaderMod {
+    NONE = 0,
+    ROTATE_X,
+    ROTATE_Y,
+    ROTATE_Z,
+    SWAY_ATTACHED,
+    SWAY_FULL_BLOCK
+};
+
+enum class MeshMod {
+    NONE = 0,
+    OFFSET_X,
+    OFFSET_Y,
+    OFFSET_Z
 };
 
 #endif //GLPROJECT_MESHMOD_H

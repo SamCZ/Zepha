@@ -42,7 +42,7 @@ public:
                 sol::table models = zeus["registered_blockmodels"];
                 auto model = models.get<sol::optional<sol::table>>(modelStr);
 
-                if (!model) throw "Undefined model";
+                if (!model) throw "Undefined model (Server)";
 
                 //TODO: Validate and allow multiple selection boxes
                 SelectionBox sbox = {{0, 0, 0}, {1, 1, 1}};
@@ -51,7 +51,7 @@ public:
                     sbox = {{def[1], def[2], def[3]}, {def[4], def[5], def[6]}};
                 }
 
-                ServerBlockModel blockModel = ServerBlockModel::create(*model, texturesVector, visible, culls);
+                ServerBlockModel blockModel = ServerBlockModel::create((*model).get<sol::table>("parts"), texturesVector, visible, culls);
                 ServerBlockDef def(identifier, defs.blocks().definitionsSize(), std::move(blockModel), solid, sbox);
 
                 //Add Callbacks to the block definition

@@ -15,16 +15,16 @@ DebugGui::DebugGui(glm::vec2 bufferSize, Texture* tex) :
     crosshairText(&fontTexture, true),
     dataText(&fontTexture, true),
 
-    chunkUpdatesGraph("Interp",     120, 64, &monochromeGraphTexture, &fontTexture),
-    meshUpdatesGraph ("ChunkMesh",  120, 64, &monochromeGraphTexture, &fontTexture),
-    serverGenGraph   ("Gen",        120, 64, &monochromeGraphTexture, &fontTexture),
-    serverPacketGraph("Packets",    120, 64, &monochromeGraphTexture, &fontTexture),
+    chunkUpdatesGraph("Interp",     120, 128, &monochromeGraphTexture, &fontTexture),
+    meshUpdatesGraph ("ChunkMesh",  120, 128, &monochromeGraphTexture, &fontTexture),
+    serverGenGraph   ("Gen",        120, 512, &monochromeGraphTexture, &fontTexture),
+    serverPacketGraph("Packets",    120, 512, &monochromeGraphTexture, &fontTexture),
 
     fpsGraph         ("FPS",        244, 64, 120, 60, &coloredGraphTexture   , &fontTexture),
     drawCallsGraph   ("Draw Calls", 244, 64, 120, 0,  &monochromeGraphTexture, &fontTexture),
     vRamGraph        ("VRam",       244, 64, 120, 1,  &monochromeGraphTexture, &fontTexture) {
 
-    atlasTex.setScale({256, 256, 1});
+    atlasTex.setScale({1024, 1024, 1});
 
     positionElements(bufferSize);
 

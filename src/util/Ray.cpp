@@ -43,4 +43,3 @@ glm::vec3* Ray::getEnd() {
 float Ray::getLength() {
     return glm::distance(start, pos);
 }
-

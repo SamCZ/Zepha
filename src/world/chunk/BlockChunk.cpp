@@ -10,23 +10,18 @@
 #include <gzip/utils.hpp>
 
 BlockChunk::BlockChunk() :
-    blocks(static_cast<unsigned long>(pow(TransPos::CHUNK_SIZE, 3))),
-    empty(true),
-    renderedEmpty(true),
-    fullBlocks(0) {}
+    blocks(static_cast<unsigned long>(pow(TransPos::CHUNK_SIZE, 3))) {}
 
 BlockChunk::BlockChunk(std::vector<int> blocks) : BlockChunk(std::move(blocks), {0, 0, 0}) {}
 
 BlockChunk::BlockChunk(std::vector<int> blocks, glm::vec3 pos) :
-    empty(true),
-    renderedEmpty(true),
     blocks(std::move(blocks)),
     pos(pos) {
 
     for (int i : this->blocks) {
         if (i != 0) {
             empty = false;
-            fullBlocks ++;
+            fullBlocks++;
         }
     }
 
@@ -52,6 +47,7 @@ bool BlockChunk::setBlock(const glm::vec3& pos, int block) {
         if (block == 0) {
             this->fullBlocks--;
             if (this->fullBlocks == 0) {
+                std::cout << "Empty" << std::endl;
                 this->empty = true;
                 this->renderedEmpty = false;
             }

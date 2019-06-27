@@ -46,7 +46,7 @@ private:
     void renderQuad();
 
     unsigned int quadVAO = 0, quadVBO;
-    float renderScale = 2.f;
+    float renderScale = 2.0f;
 
     Window window;
     Camera camera;

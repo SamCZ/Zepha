@@ -19,11 +19,11 @@ public:
     ServerLuaParser& lua();
 
     void init(ServerWorld& world);
-    void update(float delta);
+    void update(double delta);
 
     ~ServerDefs() = default;
 private:
-    float delta = 0;
+    double delta = 0;
 
     ServerBlockAtlas blockAtlas;
     ServerLuaParser luaApi;

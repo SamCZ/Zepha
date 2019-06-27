@@ -11,8 +11,31 @@ LocalBlockModel LocalBlockModel::create(sol::table model, std::vector<std::strin
         blockModel.culls = culls;
         blockModel.visible = visible;
 
+        //Add Mesh Mods
+        sol::optional<sol::table> meshModTable = model.get<sol::optional<sol::table>>("mesh_mods");
+        if (meshModTable) {
+            for (auto modEntry : (*meshModTable)) {
+                auto modTable = modEntry.second.as<sol::table>();
+                std::string meshMod = modTable.get_or<std::string>("type", "none");
+
+                if (meshMod == "none") { continue; }
+                else if (meshMod == "offset_x") {
+                    blockModel.meshMods.emplace_back(
+                            MeshMod::OFFSET_X, modTable.get_or<float>("amplitude", 1));
+                }
+                else if (meshMod == "offset_y") {
+                    blockModel.meshMods.emplace_back(
+                            MeshMod::OFFSET_Y, modTable.get_or<float>("amplitude", 1));
+                }
+                else if (meshMod == "offset_z") {
+                    blockModel.meshMods.emplace_back(
+                            MeshMod::OFFSET_Z, modTable.get_or<float>("amplitude", 1));
+                }
+            }
+        }
+
         //Convert all of the mesh parts to C++ Objects and add them to blockModel
-        model.for_each([&](sol::object key, sol::object value) {
+        model.get<sol::table>("parts").for_each([&](sol::object key, sol::object value) {
 
             //Make sure LocalMeshPart is in fact a table
             if (!value.is<sol::table>()) throw "Meshpart is not a table";
@@ -20,7 +43,7 @@ LocalBlockModel LocalBlockModel::create(sol::table model, std::vector<std::strin
 
             //Get The points table, and make sure it's valid
             auto points_optional = meshPartTable.get<sol::optional<sol::table>>("points");
-            if (!points_optional) throw "Meshpart is missing a points table";
+            if (!points_optional) throw "Meshpart is missing a points table (Local)";
 
             sol::table points = *points_optional;
 
@@ -67,26 +90,26 @@ LocalBlockModel LocalBlockModel::create(sol::table model, std::vector<std::strin
                 std::string shaderMod = (*shaderModTable).get_or<std::string>("type", "none");
 
                 if (shaderMod == "none") {
-                    meshPart.shaderMod = MOD_NONE;
+                    meshPart.shaderMod = ShaderMod::NONE;
                 }
                 else if (shaderMod == "rotate_x") {
-                    meshPart.shaderMod = MOD_ROTATE_X;
+                    meshPart.shaderMod = ShaderMod::ROTATE_X;
                     meshPart.modValue = (*shaderModTable).get_or<float>("speed", 1);
                 }
                 else if (shaderMod == "rotate_y") {
-                    meshPart.shaderMod = MOD_ROTATE_Y;
+                    meshPart.shaderMod = ShaderMod::ROTATE_Y;
                     meshPart.modValue = (*shaderModTable).get_or<float>("speed", 1);
                 }
                 else if (shaderMod == "rotate_z") {
-                    meshPart.shaderMod = MOD_ROTATE_Z;
+                    meshPart.shaderMod = ShaderMod::ROTATE_Z;
                     meshPart.modValue = (*shaderModTable).get_or<float>("speed", 1);
                 }
                 else if (shaderMod == "sway_attached") {
-                    meshPart.shaderMod = MOD_SWAY_ATTACHED;
+                    meshPart.shaderMod = ShaderMod::SWAY_ATTACHED;
                     meshPart.modValue = (*shaderModTable).get_or<float>("amplitude", 1);
                 }
                 else if (shaderMod == "sway_full_block") {
-                    meshPart.shaderMod = MOD_SWAY_FULL_BLOCK;
+                    meshPart.shaderMod = ShaderMod::SWAY_FULL_BLOCK;
                     meshPart.modValue = (*shaderModTable).get_or<float>("amplitude", 1);
                 }
             }

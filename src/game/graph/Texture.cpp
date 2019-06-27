@@ -49,7 +49,7 @@ void Texture::updateTexture(int x, int y, int width, int height, unsigned char *
 }
 
 
-void Texture::enable(GLuint position) {
+void Texture::use(GLuint position) {
     glActiveTexture(GL_TEXTURE0 + position);
     glBindTexture(GL_TEXTURE_2D, textureID);
 }

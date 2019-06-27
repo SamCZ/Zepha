@@ -58,9 +58,10 @@ public:
     };
 
     struct Thread {
-        explicit Thread(LocalBlockAtlas &atlas);
+        explicit Thread(LocalBlockAtlas &atlas, std::array<NoiseSample, 3>& offsetSampler);
 
         LocalBlockAtlas &atlas;
+        std::array<NoiseSample, 3>& offsetSamplers;
 
         std::thread* thread;
         bool keepAlive = true;
@@ -76,6 +77,7 @@ private:
     Dimension& dimension;
     LocalDefs& defs;
 
+    std::array<NoiseSample, 3> noiseSampler;
     std::vector<glm::vec3> queuedTasks;
     std::unordered_set<glm::vec3, VecUtils::compareFunc> queuedMap;
 };

@@ -18,7 +18,7 @@ MapGen::MapGen(unsigned int seed, BlockAtlas& atlas) {
     DIRT_BLOCK  = atlas.fromIdentifier("default:dirt").getIndex();
     STONE_BLOCK = atlas.fromIdentifier("default:stone").getIndex();
 
-    PLANT_STEM_BLOCK = atlas.fromIdentifier("default:wood").getIndex();
+    PLANT_STEM_BLOCK = atlas.fromIdentifier("default:bush_stem").getIndex();
     LEAVES_BLOCK     = atlas.fromIdentifier("default:leaves").getIndex();
 
     for (int i = 1; i <= 5; i++) {

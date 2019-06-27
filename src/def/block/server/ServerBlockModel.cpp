@@ -19,7 +19,7 @@ ServerBlockModel ServerBlockModel::create(sol::table model, std::vector<std::str
 
             //Get The points table, and make sure it's valid
             auto points_optional = meshPartTable.get<sol::optional<sol::table>>("points");
-            if (!points_optional) throw "Meshpart is missing a points table";
+            if (!points_optional) throw "Meshpart is missing a points table (Server)";
 
             sol::table points = *points_optional;
 

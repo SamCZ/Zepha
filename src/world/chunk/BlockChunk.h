@@ -43,11 +43,11 @@ public:
     MeshChunk* meshChunk = nullptr;
     std::list<MeshChunk*>::iterator meshChunkIter;
 
-    bool renderedEmpty;
+    bool renderedEmpty = true;
 private:
     std::vector<int> blocks;
-    unsigned short fullBlocks;
-    bool empty;
+    unsigned short fullBlocks = 0;
+    bool empty = true;
 };
 
 #endif //GLPROJECT_BLOCKCHUNK_H

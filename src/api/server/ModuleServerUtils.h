@@ -51,7 +51,7 @@ public:
         zeus.set_function("get_path", [&](std::string modname) {
             try {
                 if (modname.length() == 0) throw "No mod name specified!";
-                return "/home/aurailus/C++/GlProject/res/lua/" + modname + "/";
+                return "/home/aurailus/CLion/Zeus/res/lua/" + modname + "/";
             }
             catch (const std::string& e) {
                 std::cout << Log::err << "Exception on get_path: " << e << Log::endl;

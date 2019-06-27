@@ -22,10 +22,10 @@ void Server::update() {
     Timer loop("");
 
     world.update();
-    defs.update(16); //TODO: Calculate the real delta.
+    defs.update(deltaTime);
 
     ENetEvent event;
-    while (handler.update(&event) && loop.elapsedNs() < 15L*1000000L) {
+    while (handler.update(&event) && loop.elapsedNs() < 30L*1000000L) {
         switch (event.type) {
             case ENET_EVENT_TYPE_NONE:
             default: break;
@@ -105,8 +105,14 @@ void Server::update() {
         }
     }
 
-    long sleep_for = 16L*1000000L - loop.elapsedNs();
-    std::this_thread::sleep_for(std::chrono::nanoseconds(sleep_for));
+    const static long interval_ns = (long)((1000 / 20.f) * 1000000L);
+    long sleep_for = interval_ns - loop.elapsedNs();
+    if (sleep_for > 0) {
+        std::this_thread::sleep_for(std::chrono::nanoseconds(sleep_for));
+    }
+
+    deltaTime = loop.elapsedNs() / 1000000.0;
+    elapsedSeconds += deltaTime;
 }
 
 void Server::cleanup() {

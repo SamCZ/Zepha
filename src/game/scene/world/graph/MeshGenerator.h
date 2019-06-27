@@ -14,18 +14,20 @@
 #include <vector>
 #include <cstdio>
 
+#include "MeshVertex.h"
 #include "../../../../util/Timer.h"
 #include "../../../../def/block/client/LocalBlockDef.h"
 #include "../../../../world/chunk/BlockChunk.h"
 #include "../../../../def/block/client/LocalBlockAtlas.h"
 #include "../../../../def/block/client/LocalBlockModel.h"
 #include "../../../../util/Vec.h"
-#include "MeshVertex.h"
+#include "../../../../def/gen/NoiseSample.h"
 
 class MeshGenerator {
 public:
     MeshGenerator(std::vector<ChunkVertex> &vertices, std::vector<unsigned int> &indices,
-                  LocalBlockAtlas& atlas, const BlockChunk& chunk, const std::vector<bool>& adj);
+                  LocalBlockAtlas& atlas, const BlockChunk& chunk, const std::vector<bool>& adj,
+                  std::array<NoiseSample, 3>& blockOffsets);
 private:
     bool faceOcculudedAt(const glm::vec3 &pos, const std::vector<bool> &adj);
     void addFaces(const glm::vec3 &offset, const vector<LocalMeshPart> &meshParts);

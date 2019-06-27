@@ -58,12 +58,12 @@ public:
 
     static glm::vec3 faceToOffset(Dir f) {
         static const glm::vec3 positionOffsets[6] {
-            {0, 1, 0},
-            {0, -1, 0},
-            {0, 0, -1},
-            {0, 0, 1},
-            {1, 0, 0},
-            {-1, 0, 0}
+            { 1, 0, 0},
+            {-1, 0, 0},
+            { 0, 1, 0},
+            { 0,-1, 0},
+            { 0, 0,-1},
+            { 0, 0, 1},
         };
 
         return positionOffsets[f];

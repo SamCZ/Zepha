@@ -1,6 +1,6 @@
 set(ZEUS_SRC_FILES
-        game/graph/ChunkMesh.cpp
-        game/graph/ChunkMesh.h
+    game/graph/ChunkMesh.cpp
+    game/graph/ChunkMesh.h
     game/entity/Entity.cpp
     game/entity/Entity.h
     game/graph/Shader.cpp
@@ -15,16 +15,16 @@ set(ZEUS_SRC_FILES
     game/scene/world/graph/MeshGenerator.h
     util/Timer.cpp
     util/Timer.h
-        def/block/client/LocalBlockAtlas.cpp
-        def/block/client/LocalBlockAtlas.h
-        def/block/client/LocalBlockDef.cpp
-        def/block/client/LocalBlockDef.h
-        def/block/client/LocalMeshPart.cpp
-        def/block/client/LocalMeshPart.h
-        def/block/ShaderMod.h
+    def/block/client/LocalBlockAtlas.cpp
+    def/block/client/LocalBlockAtlas.h
+    def/block/client/LocalBlockDef.cpp
+    def/block/client/LocalBlockDef.h
+    def/block/client/LocalMeshPart.cpp
+    def/block/client/LocalMeshPart.h
+    def/block/ShaderMod.h
     game/scene/world/graph/MeshVertex.h
-        def/block/client/LocalBlockModel.cpp
-        def/block/client/LocalBlockModel.h
+    def/block/client/LocalBlockModel.cpp
+    def/block/client/LocalBlockModel.h
     game/scene/world/LocalWorld.cpp
     game/scene/world/LocalWorld.h
     world/chunk/BlockChunk.cpp
@@ -35,9 +35,9 @@ set(ZEUS_SRC_FILES
     game/scene/GameScene.h
     game/graph/Renderer.cpp
     game/graph/Renderer.h
-        api/client/LocalLuaParser.cpp
-        api/client/LocalLuaParser.h
-        api/client/ModuleClientRegisterBlock.h
+    api/client/LocalLuaParser.cpp
+    api/client/LocalLuaParser.h
+    api/client/ModuleClientRegisterBlock.h
     game/entity/hud/TextEntity.cpp
     game/entity/hud/TextEntity.h
     game/entity/hud/DebugGui.cpp
@@ -105,25 +105,63 @@ set(ZEUS_SRC_FILES
     world/region/Region.h
     game/entity/world/WireframeEntity.cpp
     game/entity/world/WireframeEntity.h
-        def/block/SelectionBox.h
+    def/block/SelectionBox.h
     game/graph/drawable/Drawable.h
     game/graph/drawable/DrawableGroup.cpp
     game/graph/drawable/DrawableGroup.h
     game/graph/window/InputManager.cpp
     game/graph/window/InputManager.h
-        game/entity/world/BlockCrackEntity.cpp
-        game/entity/world/BlockCrackEntity.h
+    game/entity/world/BlockCrackEntity.cpp
+    game/entity/world/BlockCrackEntity.h
     def/texture/TextureAtlas.cpp
     def/texture/TextureAtlas.h
     def/texture/AtlasRef.h
-    world/region/MapBlock.h def/LocalDefs.cpp
-        def/LocalDefs.h
-        api/client/ModuleClientUtils.h
+    world/region/MapBlock.h 
+    def/LocalDefs.cpp
+    def/LocalDefs.h
+    api/client/ModuleClientUtils.h
     world/region/Region.cpp
     world/region/MapBlock.cpp
     game/entity/hud/StatGraph.cpp
     game/entity/hud/StatGraph.h
-    util/Util.h
-        world/block/PointedThing.h game/entity/world/ParticleEntity.cpp game/entity/world/ParticleEntity.h def/ServerDefs.cpp def/ServerDefs.h def/block/server/ServerBlockAtlas.cpp def/block/server/ServerBlockAtlas.h def/block/server/ServerBlockDef.cpp def/block/server/ServerBlockDef.h def/block/server/ServerBlockModel.cpp def/block/server/ServerBlockModel.h util/Dir.h def/block/server/ServerMeshPart.cpp def/block/server/ServerMeshPart.h def/block/BlockAtlas.h def/block/BlockDef.h api/LuaParser.cpp api/LuaParser.h api/server/ServerLuaParser.cpp api/server/ServerLuaParser.h api/server/ModuleServerUtils.h api/server/ModuleServerRegisterBlock.h util/Path.cpp util/Path.h util/Log.h api/Callback.h api/server/ModuleServerRegisterBlockModel.h api/client/ModuleClientRegisterBlockModel.h api/server/ModuleServerGetSetBlock.h api/client/ModuleClientGetSetBlock.h api/server/ModuleServerDelay.h api/client/ModuleClientDelay.h game/graph/uniform/WorldGeometryUniforms.h game/graph/GuiUniforms.h game/graph/uniform/WorldLightingUniforms.h game/graph/EntityMesh.cpp game/graph/EntityMesh.h game/graph/uniform/EntityGeometryUniforms.h)
+    util/Util.h 
+    world/block/PointedThing.h 
+    game/entity/world/ParticleEntity.cpp
+    game/entity/world/ParticleEntity.h
+    def/ServerDefs.cpp def/ServerDefs.h
+    def/block/server/ServerBlockAtlas.cpp
+    def/block/server/ServerBlockAtlas.h
+    def/block/server/ServerBlockDef.cpp
+    def/block/server/ServerBlockDef.h
+    def/block/server/ServerBlockModel.cpp
+    def/block/server/ServerBlockModel.h
+    util/Dir.h
+    def/block/server/ServerMeshPart.cpp
+    def/block/server/ServerMeshPart.h
+    def/block/BlockAtlas.h
+    def/block/BlockDef.h
+    api/LuaParser.cpp
+    api/LuaParser.h
+    api/server/ServerLuaParser.cpp
+    api/server/ServerLuaParser.h
+    api/server/ModuleServerUtils.h
+    api/server/ModuleServerRegisterBlock.h
+    util/Path.cpp
+    util/Path.h
+    util/Log.h
+    api/Callback.h
+    api/server/ModuleServerRegisterBlockModel.h
+    api/client/ModuleClientRegisterBlockModel.h
+    api/server/ModuleServerGetSetBlock.h
+    api/client/ModuleClientGetSetBlock.h
+    api/server/ModuleServerDelay.h
+    api/client/ModuleClientDelay.h
+    game/graph/uniform/WorldGeometryUniforms.h
+    game/graph/GuiUniforms.h
+    game/graph/uniform/WorldLightingUniforms.h
+    game/graph/EntityMesh.cpp
+    game/graph/EntityMesh.h
+    game/graph/uniform/EntityGeometryUniforms.h
+)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

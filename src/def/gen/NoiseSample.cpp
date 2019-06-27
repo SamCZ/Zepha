@@ -7,9 +7,9 @@
 #include "../../util/Interp.h"
 #include "../../util/TransPos.h"
 
-NoiseSample::NoiseSample(int hPrecision, int vPrecision) {
-    this->hPrecision = hPrecision;
-    this->vPrecision = vPrecision;
+NoiseSample::NoiseSample(int hPrecision, int vPrecision) :
+    hPrecision(hPrecision),
+    vPrecision(vPrecision) {
 
     data = std::vector<std::vector<std::vector<float>>>();
     data.reserve((unsigned int)hPrecision + 1);

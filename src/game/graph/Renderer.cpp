@@ -203,7 +203,7 @@ void Renderer::beginChunkDeferredCalls() {
     auto winSize = window.getSize();
     winSize *= renderScale;
 
-    glClearColor(0, 0, 0, 1);
+    glClearColor(clearColor.x, clearColor.y, clearColor.z, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y));
@@ -211,7 +211,7 @@ void Renderer::beginChunkDeferredCalls() {
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    swayMap->enable(1);
+    swayMap->use(1);
 
     worldGeometryShader.use();
     glUniformMatrix4fv(wgu.proj, 1, GL_FALSE, glm::value_ptr(wgu.matrix));
@@ -234,8 +234,8 @@ void Renderer::endDeferredCalls() {
     auto winSize = window.getSize();
     glViewport(0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y));
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     worldLightingShader.use();
 
@@ -317,7 +317,7 @@ void Renderer::setModelMatrix(const glm::mat4& modelMatrix) {
 void Renderer::enableTexture(Texture *texture) {
     if (texture != activeTexture) {
         activeTexture = texture;
-        texture->enable();
+        texture->use();
     }
 }
 
