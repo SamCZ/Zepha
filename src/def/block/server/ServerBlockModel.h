@@ -19,7 +19,7 @@ struct ServerBlockModel {
     bool culls;
     bool visible;
 
-    static ServerBlockModel create(sol::table model, std::vector<std::string> textures, bool visible, bool culls);
+    static ServerBlockModel create(sol::table model, sol::table texturesTbl, bool visible, bool culls);
 };
 
 #endif //ZEUS_SERVERBLOCKMODEL_H

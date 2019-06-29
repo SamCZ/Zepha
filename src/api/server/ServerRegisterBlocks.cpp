@@ -1,10 +1,10 @@
 //
-// Created by aurailus on 28/06/19.
+// Created by aurailus on 29/06/19.
 //
 
-#include "LocalRegisterBlocks.h"
+#include "ServerRegisterBlocks.h"
 
-LocalRegisterBlocks::LocalRegisterBlocks(sol::table& zeus, LocalDefs &defs) {
+ServerRegisterBlocks::ServerRegisterBlocks(sol::table& zeus, ServerDefs &defs) {
     for (auto blockRef : zeus.get<sol::table>("registered_blocks")) {
         std::string identifier = blockRef.first.as<std::string>();
 
@@ -39,16 +39,28 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& zeus, LocalDefs &defs) {
             }
         } else sBoxes.push_back({{0, 0, 0}, {1, 1, 1}});
 
-        //TODO: Make LocalBlockDef take multiple selectionboxes
-        LocalBlockModel model = LocalBlockModel::create(*modelOpt, *texturesOpt, defs.textures(), visible, culls);
-        LocalBlockDef blockDef(identifier, defs.blocks().definitionsSize(), std::move(model), solid, sBoxes[0]);
+        //TODO: Make ServerBlockDef take multiple selectionboxes
+        ServerBlockModel model = ServerBlockModel::create(*modelOpt, *texturesOpt, visible, culls);
+        ServerBlockDef blockDef(identifier, defs.blocks().definitionsSize(), std::move(model), solid, sBoxes[0]);
 
         //Bind Callbacks
-        auto on_place_client = blockTable.get<sol::optional<sol::function>>("on_place_client");
-        if (on_place_client) blockDef.callbacks.insert({Callback::PLACE_CLIENT, *on_place_client});
+        auto on_place = blockTable.get<sol::optional<sol::function>>("on_place");
+        if (on_place) blockDef.callbacks.insert({Callback::PLACE, *on_place});
 
-        auto on_break_client = blockTable.get<sol::optional<sol::function>>("on_break_client");
-        if (on_break_client) blockDef.callbacks.insert({Callback::BREAK_CLIENT, *on_break_client});
+        auto on_break = blockTable.get<sol::optional<sol::function>>("on_break");
+        if (on_break) blockDef.callbacks.insert({Callback::BREAK, *on_break});
+
+        auto on_construct = blockTable.get<sol::optional<sol::function>>("on_construct");
+        if (on_construct) blockDef.callbacks.insert({Callback::CONSTRUCT, *on_construct});
+
+        auto after_construct = blockTable.get<sol::optional<sol::function>>("after_construct");
+        if (after_construct) blockDef.callbacks.insert({Callback::AFTER_CONSTRUCT, *after_construct});
+
+        auto on_destruct = blockTable.get<sol::optional<sol::function>>("on_destruct");
+        if (on_destruct) blockDef.callbacks.insert({Callback::DESTRUCT, *on_destruct});
+
+        auto after_destruct = blockTable.get<sol::optional<sol::function>>("after_destruct");
+        if (after_destruct) blockDef.callbacks.insert({Callback::AFTER_DESTRUCT, *after_destruct});
 
         //Add Block Definition to the Atlas
         defs.blocks().registerBlock(std::move(blockDef));

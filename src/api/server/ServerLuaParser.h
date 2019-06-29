@@ -7,25 +7,19 @@
 
 #include "../LuaParser.h"
 #include <cute_files.h>
-#include <list>
 
 class ServerDefs;
 class ServerWorld;
 
 class ServerLuaParser : public LuaParser {
 public:
-    explicit ServerLuaParser(std::string mod_root);
+    explicit ServerLuaParser(std::string mod_root) : LuaParser(std::move(mod_root)) {};
 
     void init(ServerDefs& defs, ServerWorld& world);
-    void update();
 
-    struct DelayedFunction {
-        sol::function function;
-        std::vector<sol::object> args;
-        float timeout;
-        float initial_timeout;
-    };
-    std::list<DelayedFunction> delayed_functions;
+    void loadModules(ServerDefs& defs, ServerWorld& world);
+    void loadMods();
+    void registerBlocks(ServerDefs& defs);
 
     ~ServerLuaParser() = default;
 };

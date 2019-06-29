@@ -44,7 +44,7 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world) {
 
     //Load Modules
     ClientApi::dump(lua);
-    ClientApi::print_e(lua);
+    ClientApi::printe(lua);
 
     ClientApi::get_path(zeus, root);
     ClientApi::is_server(zeus);

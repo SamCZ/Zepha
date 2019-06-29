@@ -3,31 +3,64 @@
 //
 
 #include "ServerLuaParser.h"
+#include "ServerRegisterBlocks.h"
 #include "../../def/ServerDefs.h"
 
-#include "ModuleServerRegisterBlock.h"
-#include "ModuleServerUtils.h"
-#include "ModuleServerRegisterFunctions.h"
-#include "ModuleServerGetSetBlock.h"
-#include "ModuleServerDelay.h"
+#include "modules/sDump.h"
+#include "modules/sPrintE.h"
 
-ServerLuaParser::ServerLuaParser(std::string mod_root) : LuaParser(std::move(mod_root)) {}
+#include "modules/sGetPath.h"
+#include "modules/sIsServer.h"
+#include "modules/sDelay.h"
+
+#include "modules/sRegisterBlock.h"
+#include "modules/sRegisterBlockmodel.h"
+
+#include "modules/sSetBlock.h"
+#include "modules/sGetBlock.h"
+#include "modules/sRemoveBlock.h"
 
 void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world) {
+    //Load Base Libraries
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math);
 
+    //Define Panic Callback
+    lua_atpanic(lua, sol::c_call<decltype(&LuaParser::override_panic), &LuaParser::override_panic>);
+
+    //Load Modules
+    loadModules(defs, world);
+
+    //Load Mods
+    loadMods();
+
+    //Register Blocks
+    registerBlocks(defs);
+}
+
+void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
+    //Create Zeus Table
     zeus = lua.create_table();
     lua["zeus"] = zeus;
 
+    //Load Modules
+    ServerApi::dump(lua);
+    ServerApi::printe(lua);
+
+    ServerApi::get_path(zeus, root);
+    ServerApi::is_server(zeus);
+    ServerApi::delay(zeus, delayed_functions);
+
+    ServerApi::register_block(lua, zeus);
+    ServerApi::register_blockmodel(lua, zeus);
+
+    ServerApi::get_block(zeus, defs, world);
+    ServerApi::set_block(zeus, defs, world);
+    ServerApi::remove_block(zeus, defs, world);
+}
+
+void ServerLuaParser::loadMods() {
+    //Sandbox the dofile function
     lua.set_function("dofile", &ServerLuaParser::DoFileSandboxed, this);
-
-    ModuleServerUtils(lua, zeus, defs);
-    ModuleServerRegisterFunctions(lua, zeus, defs);
-    ModuleServerRegisterBlock(lua, zeus, defs);
-    ModuleServerGetSetBlock(lua, zeus, defs, world);
-    ModuleServerDelay(lua, zeus, defs, delayed_functions);
-
-    //LOAD MODS
 
     cf_dir_t mods_dir;
     cf_dir_open(&mods_dir, root.c_str());
@@ -55,25 +88,11 @@ void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world) {
                 cf_dir_next(&mod_dir);
             }
         }
-
         cf_dir_next(&mods_dir);
     }
     cf_dir_close(&mods_dir);
 }
 
-void ServerLuaParser::update() {
-    auto it = delayed_functions.begin();
-    while (it != delayed_functions.end()) {
-        DelayedFunction& f = *it;
-        f.timeout -= 0.048f;
-        if (f.timeout <= 0) {
-            if (f.function(sol::as_args(f.args))) {
-                f.timeout = f.initial_timeout;
-            } else {
-                it = delayed_functions.erase(it);
-                continue;
-            }
-        }
-        it++;
-    }
+void ServerLuaParser::registerBlocks(ServerDefs& defs) {
+    ServerRegisterBlocks(zeus, defs);
 }
