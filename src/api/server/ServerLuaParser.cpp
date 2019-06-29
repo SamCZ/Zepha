@@ -7,7 +7,7 @@
 
 #include "ModuleServerRegisterBlock.h"
 #include "ModuleServerUtils.h"
-#include "ModuleServerRegisterBlockModel.h"
+#include "ModuleServerRegisterFunctions.h"
 #include "ModuleServerGetSetBlock.h"
 #include "ModuleServerDelay.h"
 
@@ -22,7 +22,7 @@ void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world) {
     lua.set_function("dofile", &ServerLuaParser::DoFileSandboxed, this);
 
     ModuleServerUtils(lua, zeus, defs);
-    ModuleServerRegisterBlockModel(lua, zeus, defs);
+    ModuleServerRegisterFunctions(lua, zeus, defs);
     ModuleServerRegisterBlock(lua, zeus, defs);
     ModuleServerGetSetBlock(lua, zeus, defs, world);
     ModuleServerDelay(lua, zeus, defs, delayed_functions);

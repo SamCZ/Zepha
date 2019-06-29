@@ -20,7 +20,7 @@ struct LocalBlockModel {
     bool culls;
     bool visible;
 
-    static LocalBlockModel create(sol::table model, std::vector<std::string> textures, TextureAtlas& atlas, bool visible, bool culls);
+    static LocalBlockModel create(sol::table model, sol::table texturesTbl, TextureAtlas& atlas, bool visible, bool culls);
 };
 
 

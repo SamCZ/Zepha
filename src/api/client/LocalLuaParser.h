@@ -7,25 +7,19 @@
 
 #include "../LuaParser.h"
 #include <cute_files.h>
-#include <list>
 
 class LocalDefs;
 class LocalWorld;
 
 class LocalLuaParser : public LuaParser {
 public:
-    explicit LocalLuaParser(std::string mod_root);
+    explicit LocalLuaParser(std::string mod_root) : LuaParser(std::move(mod_root)) {};
 
     void init(LocalDefs& defs, LocalWorld& world);
-    void update();
 
-    struct DelayedFunction {
-        sol::function function;
-        std::vector<sol::object> args;
-        float timeout;
-        float initial_timeout;
-    };
-    std::list<DelayedFunction> delayed_functions;
+    void loadModules(LocalDefs& defs, LocalWorld& world);
+    void loadMods();
+    void registerBlocks(LocalDefs& defs);
 
     ~LocalLuaParser() = default;
 };

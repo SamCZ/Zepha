@@ -119,8 +119,7 @@ set(ZEUS_SRC_FILES
     world/region/MapBlock.h 
     def/LocalDefs.cpp
     def/LocalDefs.h
-    api/client/ModuleClientUtils.h
-    world/region/Region.cpp
+        world/region/Region.cpp
     world/region/MapBlock.cpp
     game/entity/hud/StatGraph.cpp
     game/entity/hud/StatGraph.h
@@ -150,18 +149,17 @@ set(ZEUS_SRC_FILES
     util/Path.h
     util/Log.h
     api/Callback.h
-    api/server/ModuleServerRegisterBlockModel.h
-    api/client/ModuleClientRegisterBlockModel.h
+        api/server/ModuleServerRegisterFunctions.h
+        api/client/modules/cRegisterBlock.h
     api/server/ModuleServerGetSetBlock.h
-    api/client/ModuleClientGetSetBlock.h
-    api/server/ModuleServerDelay.h
-    api/client/ModuleClientDelay.h
+        api/server/ModuleServerDelay.h
+        api/client/modules/cDelay.h
     game/graph/uniform/WorldGeometryUniforms.h
     game/graph/GuiUniforms.h
     game/graph/uniform/WorldLightingUniforms.h
     game/graph/EntityMesh.cpp
     game/graph/EntityMesh.h
     game/graph/uniform/EntityGeometryUniforms.h
-)
+        api/client/modules/cRegisterBlockmodel.h api/client/modules/cSetBlock.h api/client/modules/cGetBlock.h api/client/modules/cRemoveBlock.h api/client/modules/cDump.h api/client/modules/cIsServer.h api/client/modules/cGetPath.h api/client/modules/cPrintE.h api/client/LocalRegisterBlocks.cpp api/client/LocalRegisterBlocks.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})
