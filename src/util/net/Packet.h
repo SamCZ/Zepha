@@ -32,6 +32,7 @@ struct Packet {
 
     ENetPacket* toENetPacket();
     void sendTo(ENetPeer* peer, int channel);
+    void sendTo(const ENetPeer &peer, int channel);
 
     int type = UNDEFINED;
     std::string data;

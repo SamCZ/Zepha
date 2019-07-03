@@ -8,32 +8,32 @@
 
 #include <unordered_map>
 #include <unordered_set>
-#include "../../world/chunk/BlockChunk.h"
-#include "../player/ServerPlayer.h"
 #include "WorldGenStream.h"
+#include "../conn/ServerClient.h"
+#include "../conn/ServerPlayer.h"
+#include "../../world/chunk/BlockChunk.h"
 #include "../../util/Vec.h"
 #include "../../world/Dimension.h"
 #include "../../def/ServerDefs.h"
+#include "../conn/ServerClients.h"
 
 class ServerWorld {
 public:
-    explicit ServerWorld(unsigned int seed, ServerDefs& defs);
+    explicit ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& clients);
 
     void init();
     void update();
-
-    void addPlayer(ServerPlayer* player);
 
     void setBlock(glm::vec3 pos, int block);
     int getBlock(glm::vec3 pos);
 
     ~ServerWorld();
 private:
-    void playerChangedChunks(ServerPlayer* player);
+    void changedChunks(ServerClient& client);
     void generate(glm::vec3 pos);
-    void sendChunk(glm::vec3 pos, ServerPeer& peer);
+    void sendChunk(glm::vec3 pos, ServerClient& client);
 
-    std::vector<ServerPlayer*> players;
+    bool isInBounds(glm::vec3 pos, std::pair<glm::vec3, glm::vec3>& bounds);
 
     WorldGenStream* genStream;
     Dimension dimension;
@@ -41,9 +41,11 @@ private:
     std::unordered_set<glm::vec3, VecUtils::compareFunc> generateQueueMap;
     std::vector<glm::vec3> generateQueueList;
 
-    int generatedChunks = 0;
     unsigned int seed;
     ServerDefs& defs;
+    ServerClients& clientList;
+
+    int generatedChunks = 0;
 
     //Static vector of chunks to place around players
     std::vector<glm::vec3> generateOrder;

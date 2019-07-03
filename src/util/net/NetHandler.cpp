@@ -45,7 +45,7 @@ void NetHandler::initServer(unsigned short port, short max_clients) {
         return;
     }
 
-    std::cout << Log::info << "Server Started. Listening for clients." << Log::endl;
+    std::cout << Log::info << "Server Started. Listening for clientList." << Log::endl;
 }
 
 void NetHandler::initClient(std::string host_address, unsigned short host_port, int attempts, int timeout) {

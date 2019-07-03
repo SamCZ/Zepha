@@ -40,8 +40,8 @@ int BlockChunk::getBlock(int ind) const {
 }
 
 bool BlockChunk::setBlock(const glm::vec3& pos, int block) {
-    auto ind = VecUtils::vecToInd(pos);
-    if (ind < 0 || ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return false;
+    unsigned int ind = VecUtils::vecToInd(pos);
+    if (ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return false;
 
     if (blocks[ind] != block) {
         if (block == 0) {

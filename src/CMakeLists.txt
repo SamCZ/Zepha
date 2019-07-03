@@ -57,8 +57,8 @@ set(ZEUS_SRC_FILES
         server/Server.h
         util/net/Packet.cpp
         util/net/Packet.h
-        server/player/ServerPlayer.cpp
-        server/player/ServerPlayer.h
+        server/conn/ServerPlayer.cpp
+        server/conn/ServerPlayer.h
         game/scene/net/ServerConnection.cpp
         game/scene/net/ServerConnection.h
         def/gen/MapGen.cpp
@@ -69,9 +69,9 @@ set(ZEUS_SRC_FILES
         game/entity/hud/GameGui.h
         util/net/Serializer.cpp
         util/net/Serializer.h
-        server/conn/ConnectionList.cpp
-        server/conn/ConnectionList.h
-        server/conn/ServerPeer.h
+        server/conn/ServerClients.cpp
+        server/conn/ServerClients.h
+        server/conn/ServerClient.h
         util/net/PacketChannel.h
         game/entity/world/PlayerEntity.cpp
         game/entity/world/PlayerEntity.h
@@ -166,6 +166,6 @@ set(ZEUS_SRC_FILES
         api/client/LocalRegisterBlocks.h
         api/server/ServerRegisterBlocks.cpp
         api/server/ServerRegisterBlocks.h
-)
+        server/conn/ServerClient.cpp)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

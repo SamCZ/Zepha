@@ -9,18 +9,22 @@
 #include <vector>
 #include <iostream>
 
-#include "player/ServerPlayer.h"
+#include "conn/ServerPlayer.h"
+#include "conn/ServerClient.h"
+#include "conn/ServerClients.h"
+#include "world/ServerWorld.h"
 #include "../util/net/Packet.h"
 #include "../util/Timer.h"
 #include "../util/net/NetHandler.h"
-#include "conn/ConnectionList.h"
-#include "conn/ServerPeer.h"
+#include "../def/ServerDefs.h"
 
 class Server {
 public:
     explicit Server(unsigned short port);
 
     void update();
+    void handlePlayerPacket(ServerClient& client, Packet& p);
+
     void cleanup();
 
     ~Server();
@@ -30,7 +34,7 @@ private:
     ServerDefs defs;
     ServerWorld world;
     NetHandler handler;
-    ConnectionList connections;
+    ServerClients clientList;
 
     double elapsedSeconds;
     double deltaTime;

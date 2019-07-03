@@ -28,3 +28,8 @@ void Packet::sendTo(ENetPeer *peer, int channel) {
     ENetPacket* enet = toENetPacket();
     enet_peer_send(peer, (enet_uint8)channel, enet);
 }
+
+void Packet::sendTo(const ENetPeer &peer, int channel) {
+    ENetPacket* enet = toENetPacket();
+    enet_peer_send(const_cast<ENetPeer*>(&peer), (enet_uint8)channel, enet);
+}

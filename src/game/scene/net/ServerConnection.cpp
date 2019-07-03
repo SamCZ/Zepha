@@ -61,6 +61,8 @@ void ServerConnection::update(Player &player) {
                         auto playerPos = Serializer::decodeFloatVec3(&p.data[4]);
                         auto playerAngle = Serializer::decodeFloat(&p.data[16]);
 
+                        std::cout << peer_id << std::endl;
+
                         bool found = false;
                         for (auto ent : entities->getChildren()) {
                             auto playerEntity = (PlayerEntity*)ent;
