@@ -9,12 +9,9 @@ ServerConnection::ServerConnection(std::string address, unsigned short port, Tex
     port(port),
     address(std::move(address)) {
 
-    std::string front("player_front");
-    std::string back("player_back");
-    std::string shadow("player_shadow");
-    playerFrontTex = atlas.getTextureRef(front);
-    playerBackTex = atlas.getTextureRef(back);
-    shadowTex = atlas.getTextureRef(shadow);
+    playerFrontTex = atlas.getTextureRef("player_front");
+    playerBackTex = atlas.getTextureRef("player_back");
+    shadowTex = atlas.getTextureRef("player_shadow");
 
     entities = new DrawableGroup();
 }
@@ -48,20 +45,18 @@ void ServerConnection::update(Player &player) {
                 Packet p(event.packet);
 
                 switch (p.type) {
-                    case Packet::PLAYER_INFO: {
+                    case PacketType::PLAYER_INFO: {
                         this->id = Serializer::decodeInt(&p.data[0]);
                         auto playerPos = Serializer::decodeFloatVec3(&p.data[4]);
                         player.setPos(playerPos);
                         break;
                     }
-                    case Packet::ENTITY_INFO: {
+                    case PacketType::ENTITY_INFO: {
                         int peer_id = Serializer::decodeInt(&p.data[0]);
                         if (peer_id == id) break;
 
                         auto playerPos = Serializer::decodeFloatVec3(&p.data[4]);
                         auto playerAngle = Serializer::decodeFloat(&p.data[16]);
-
-                        std::cout << peer_id << std::endl;
 
                         bool found = false;
                         for (auto ent : entities->getChildren()) {
@@ -82,17 +77,17 @@ void ServerConnection::update(Player &player) {
                         }
                         break;
                     }
-                    case Packet::BLOCK_SET: {
+                    case PacketType::BLOCK_SET: {
                         auto pos = Serializer::decodeIntVec3(&p.data[0]);
                         auto block = Serializer::decodeInt(&p.data[12]);
                         world->setBlock(pos, block);
                         break;
                     }
-                    case Packet::CHUNK_INFO: {
+                    case PacketType::CHUNK_INFO: {
                         chunkPackets.push_back(std::move(p));
                         break;
                     }
-                    case Packet::SERVER_INFO: {
+                    case PacketType::SERVER_INFO: {
                         serverSideChunkGens = Serializer::decodeInt(&p.data[0]);
                         break;
                     }
@@ -115,7 +110,7 @@ void ServerConnection::update(Player &player) {
     }
 
     //Send Player Position
-    Packet p(Packet::PLAYER_INFO);
+    Packet p(PacketType::PLAYER_INFO);
     Serializer::encodeFloat(p.data, player.getPos().x);
     Serializer::encodeFloat(p.data, player.getPos().y - Player::EYE_HEIGHT);
     Serializer::encodeFloat(p.data, player.getPos().z);
@@ -133,7 +128,7 @@ ServerConnection::~ServerConnection() {
 }
 
 void ServerConnection::setBlock(glm::vec3 pos, int block) {
-    Packet p(Packet::BLOCK_SET);
+    Packet p(PacketType::BLOCK_SET);
     Serializer::encodeIntVec3(p.data, pos);
     Serializer::encodeInt(p.data, block);
     p.sendTo(handler.getPeer(), PacketChannel::BLOCK_UPDATES);

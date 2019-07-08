@@ -166,6 +166,6 @@ set(ZEUS_SRC_FILES
         api/client/LocalRegisterBlocks.h
         api/server/ServerRegisterBlocks.cpp
         api/server/ServerRegisterBlocks.h
-        server/conn/ServerClient.cpp)
+        server/conn/ServerClient.cpp server/config/ServerConfig.cpp server/config/ServerConfig.h util/net/PacketType.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

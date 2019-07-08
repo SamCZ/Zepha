@@ -13,10 +13,11 @@
 #include "conn/ServerClient.h"
 #include "conn/ServerClients.h"
 #include "world/ServerWorld.h"
+#include "config/ServerConfig.h"
+#include "../def/ServerDefs.h"
 #include "../util/net/Packet.h"
 #include "../util/Timer.h"
 #include "../util/net/NetHandler.h"
-#include "../def/ServerDefs.h"
 
 class Server {
 public:
@@ -35,6 +36,7 @@ private:
     ServerWorld world;
     NetHandler handler;
     ServerClients clientList;
+    ServerConfig config;
 
     double elapsedSeconds;
     double deltaTime;

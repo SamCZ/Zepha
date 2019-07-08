@@ -29,7 +29,7 @@ public:
     std::shared_ptr<AtlasRef> addImage(unsigned char *data, std::string name, bool base, int texWidth, int texHeight);
     std::shared_ptr<AtlasRef> generateCrackImage(std::string &name, unsigned short crackLevel);
 
-    std::shared_ptr<AtlasRef> getTextureRef(std::string &name);
+    std::shared_ptr<AtlasRef> getTextureRef(const std::string &name);
 
     ~TextureAtlas();
 private:

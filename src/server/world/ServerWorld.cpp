@@ -96,7 +96,7 @@ void ServerWorld::update() {
         }
     }
 
-    Packet r(Packet::SERVER_INFO);
+    Packet r(PacketType::SERVER_INFO);
     Serializer::encodeInt(r.data, generatedChunks);
 
     for (auto& client : clientList.clients) {
@@ -112,7 +112,7 @@ void ServerWorld::sendChunk(glm::vec3 pos, ServerClient &peer) {
     auto chunk = dimension.getChunk(pos);
     auto serialized = chunk->serialize();
 
-    Packet r(Packet::CHUNK_INFO);
+    Packet r(PacketType::CHUNK_INFO);
 
     Serializer::encodeIntVec3(r.data, pos);
     Serializer::encodeString(r.data, serialized);
@@ -138,7 +138,7 @@ void ServerWorld::setBlock(glm::vec3 pos, int block) {
 
     dimension.setBlock(pos, block);
 
-    Packet b(Packet::BLOCK_SET);
+    Packet b(PacketType::BLOCK_SET);
     Serializer::encodeIntVec3(b.data, pos);
     Serializer::encodeInt(b.data, block);
 

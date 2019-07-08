@@ -16,7 +16,7 @@ void ServerClients::handleConnect(ENetEvent e) {
     client.initPlayer();
     peer->data = &client;
 
-    Packet p(Packet::PLAYER_INFO);
+    Packet p(PacketType::PLAYER_INFO);
     Serializer::encodeInt(p.data, client.getConnectID());
     Serializer::encodeFloatVec3(p.data, client.getPlayer().getPos());
     p.sendTo(peer, PacketChannel::PLAYER_INFO);
@@ -36,7 +36,6 @@ void ServerClients::handleDisconnect(ENetEvent e) {
     while (it != clients.end()) {
         if ((*it).getConnectID() == connectID) {
             found = true;
-            std::cout << Log::info << "Disconnected a Client." << Log::endl;
             clients.erase(it);
             break;
         }

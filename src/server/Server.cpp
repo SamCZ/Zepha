@@ -9,7 +9,8 @@ Server::Server(unsigned short port) :
     clientList(),
     world(55, defs, clientList),
     port(port),
-    handler(port, 32) {
+    handler(port, 32),
+    config(defs) {
 
     defs.init(world);
     world.init();
@@ -48,7 +49,7 @@ void Server::update() {
                     handlePlayerPacket(*client, p);
                 }
                 else {
-//                    handleConnectPacket(*client, p);
+                    config.handlePacket(*client, p);
                 }
 
                 break;
@@ -66,22 +67,21 @@ void Server::update() {
 }
 
 void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
-    //Client *does* have a getPlayer, this is ensured in update().
+    //Client *does* have a player, this is ensured in update().
     ServerPlayer& player = client.getPlayer();
 
     switch (p.type) {
         default: {
-            std::cout << Log::err << "Invalid packet type (" << p.type << ") recieved." << Log::endl;
+            std::cout << Log::err << "Invalid packet type (" << static_cast<int>(p.type) << ") recieved." << Log::endl;
             break;
         }
 
-        case Packet::PLAYER_INFO: {
-
+        case PacketType::PLAYER_INFO: {
             player.setPos(Serializer::decodeFloatVec3(&p.data[0]));
             player.setAngle(Serializer::decodeFloat(&p.data[12]));
 
             //Send All ServerClients the new positon
-            Packet r(Packet::ENTITY_INFO);
+            Packet r(PacketType::ENTITY_INFO);
 
             Serializer::encodeInt(r.data, client.getConnectID());
             Serializer::encodeFloatVec3(r.data, player.getPos());
@@ -96,7 +96,7 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
             break;
         }
 
-        case Packet::BLOCK_SET: {
+        case PacketType::BLOCK_SET: {
             auto pos = Serializer::decodeIntVec3(&p.data[0]);
             auto block = Serializer::decodeInt(&p.data[12]);
 
