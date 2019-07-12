@@ -82,7 +82,7 @@ int Dimension::render(Renderer &renderer) {
     for (auto &chunk : meshChunks) {
         FrustumAABB bbox(chunk->getPos() * glm::vec3(TransPos::CHUNK_SIZE), glm::vec3(TransPos::CHUNK_SIZE));
 
-        if (renderer.getCamera()->inFrustum(bbox) != Frustum::OUTSIDE) {
+        if (renderer.getCamera().inFrustum(bbox) != Frustum::OUTSIDE) {
             chunk->draw(renderer);
             count++;
         }

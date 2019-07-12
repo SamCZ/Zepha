@@ -36,8 +36,8 @@ public:
     void setModelMatrix(const glm::mat4& modelMatrix);
     void enableTexture(Texture* texture);
 
-    Window* getWindow();
-    Camera* getCamera();
+    Window& getWindow();
+    Camera& getCamera();
 
     ~Renderer();
 

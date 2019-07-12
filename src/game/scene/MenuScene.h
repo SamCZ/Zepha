@@ -5,17 +5,15 @@
 #ifndef ZEUS_MENUSCENE_H
 #define ZEUS_MENUSCENE_H
 
-
 #include "../../game/ClientState.h"
 #include "../../game/graph/scene/Scene.h"
 #include "../entity/hud/TextEntity.h"
 
 class MenuScene : public Scene {
 public:
-    explicit MenuScene(ClientState* state);
+    explicit MenuScene(ClientState& state);
 
     void update() override;
-
     void draw() override;
 
     void cleanup() override;
@@ -23,7 +21,6 @@ public:
 private:
     Texture* fontTexture;
     std::vector<Entity*> entities;
-//    DebugGui gui;
 };
 
 

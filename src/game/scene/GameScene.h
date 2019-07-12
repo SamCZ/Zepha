@@ -19,14 +19,14 @@
 
 class GameScene : public Scene {
 public:
-    explicit GameScene(ClientState* state);
+    explicit GameScene(ClientState& state);
 
     void update() override;
     void draw() override;
 
     void cleanup() override;
 public:
-    LocalDefs defs;
+    LocalDefs& defs;
 
     glm::vec3 playerPos;
 

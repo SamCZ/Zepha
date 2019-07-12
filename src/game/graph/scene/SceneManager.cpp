@@ -4,28 +4,23 @@
 
 #include "SceneManager.h"
 
-SceneManager::SceneManager() {
-    scene = nullptr;
-};
-
 void SceneManager::update() {
     scene->update();
     scene->draw();
 }
 
-void SceneManager::setScene(Scene* scene) {
+void SceneManager::setScene(std::unique_ptr<Scene> scene) {
     if (this->scene != nullptr) cleanupScene();
-    this->scene = scene;
+    this->scene = std::move(scene);
 }
 
-Scene* SceneManager::getScene() {
-    return scene;
+Scene& SceneManager::getScene() {
+    return *scene;
 }
 
 void SceneManager::cleanupScene() {
     if (scene != nullptr) {
         scene->cleanup();
-        delete scene;
         scene = nullptr;
     }
 }

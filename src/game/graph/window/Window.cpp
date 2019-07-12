@@ -20,7 +20,7 @@ Window::Window(GLint windowWidth, GLint windowHeight) {
 int Window::initialize() {
     //Initialize GLFW
     if (!glfwInit()) {
-        printf("GLFW init failed");
+        printf("GLFW init failed\n");
         glfwTerminate();
         return 1;
     }
@@ -33,15 +33,11 @@ int Window::initialize() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    //MSAA
-//    glfwWindowHint(GLFW_SAMPLES, 4);
-//    glEnable(GL_MULTISAMPLE);
-
     //Create the window
     mainWindow = glfwCreateWindow(width, height, "Zeus", nullptr, nullptr);
 
     if (!mainWindow) {
-        printf("GLFW window failed");
+        printf("GLFW window failed\n");
         glfwTerminate();
         return 1;
     }
@@ -148,8 +144,8 @@ glm::vec2 Window::getSize() {
     return {bufferWidth, bufferHeight};
 }
 
-bool Window::getShouldClose() {
-    return (bool)glfwWindowShouldClose(mainWindow);
+bool Window::shouldClose() {
+    return static_cast<bool>(glfwWindowShouldClose(mainWindow));
 }
 
 void Window::swapBuffers() {

@@ -144,6 +144,9 @@ void Renderer::createGUIShader() {
 }
 
 void Renderer::update(double delta) {
+    //VSync 1 = On, 0 = Off
+    glfwSwapInterval(1);
+
     window.update();
     elapsedTime += delta;
 
@@ -278,12 +281,12 @@ void Renderer::swapBuffers() {
     window.swapBuffers();
 }
 
-Window *Renderer::getWindow() {
-    return &window;
+Window& Renderer::getWindow() {
+    return window;
 }
 
-Camera *Renderer::getCamera() {
-    return &camera;
+Camera& Renderer::getCamera() {
+    return camera;
 }
 
 void Renderer::renderQuad() {

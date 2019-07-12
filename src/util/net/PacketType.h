@@ -10,7 +10,7 @@ enum class PacketType {
     UNDEFINED = 0,
     HANDSHAKE,
     AUTHENTICATE,
-    MOD_DATA,
+    IDENTIFIER_LIST,
     PLAYER_INFO,
     ENTITY_INFO,
     CHUNK_INFO,

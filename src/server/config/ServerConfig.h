@@ -13,9 +13,12 @@ class ServerConfig {
 public:
     explicit ServerConfig(ServerDefs& defs);
 
+    void init();
+
     void handlePacket(ServerClient &client, Packet& p);
 private:
     ServerDefs& defs;
+    std::vector<std::string> identifierList {};
 };
 
 #endif //ZEUS_SERVERCONFIG_H

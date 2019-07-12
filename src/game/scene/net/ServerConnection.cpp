@@ -5,13 +5,13 @@
 #include "ServerConnection.h"
 
 
-ServerConnection::ServerConnection(std::string address, unsigned short port, TextureAtlas &atlas) :
+ServerConnection::ServerConnection(std::string address, unsigned short port, LocalDefs& defs) :
     port(port),
     address(std::move(address)) {
 
-    playerFrontTex = atlas.getTextureRef("player_front");
-    playerBackTex = atlas.getTextureRef("player_back");
-    shadowTex = atlas.getTextureRef("player_shadow");
+    playerFrontTex = defs.textures().getTextureRef("player_front");
+    playerBackTex = defs.textures().getTextureRef("player_back");
+    shadowTex = defs.textures().getTextureRef("player_shadow");
 
     entities = new DrawableGroup();
 }
@@ -23,7 +23,7 @@ void ServerConnection::init(std::vector<Drawable *> &entities, LocalWorld *world
 
     handler = NetHandler(address, port, 3, 3000);
 
-    if (handler.getState() != NetHandler::CLIENT) {
+    if (handler.getState() != NetState::CLIENT) {
         exit(EXIT_FAILURE);
     }
 }

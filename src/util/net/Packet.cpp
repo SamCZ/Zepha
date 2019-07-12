@@ -4,9 +4,7 @@
 
 #include "Packet.h"
 
-Packet::Packet(PacketType p) {
-    this->type = p;
-}
+Packet::Packet(PacketType type) : type(type) {}
 
 Packet::Packet(ENetPacket *packet) {
     std::string packetData(packet->data, packet->data + packet->dataLength);
@@ -24,12 +22,12 @@ ENetPacket* Packet::toENetPacket() {
     return enet;
 }
 
-void Packet::sendTo(ENetPeer *peer, int channel) {
+void Packet::sendTo(ENetPeer *peer, PacketChannel channel) {
     ENetPacket* enet = toENetPacket();
-    enet_peer_send(peer, (enet_uint8)channel, enet);
+    enet_peer_send(peer, static_cast<enet_uint8>(channel), enet);
 }
 
-void Packet::sendTo(const ENetPeer &peer, int channel) {
+void Packet::sendTo(const ENetPeer &peer, PacketChannel channel) {
     ENetPacket* enet = toENetPacket();
-    enet_peer_send(const_cast<ENetPeer*>(&peer), (enet_uint8)channel, enet);
+    enet_peer_send(const_cast<ENetPeer*>(&peer), static_cast<enet_uint8>(channel), enet);
 }

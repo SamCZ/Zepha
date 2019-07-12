@@ -4,15 +4,15 @@
 
 #include "GameScene.h"
 
-GameScene::GameScene(ClientState* state) : Scene(state),
-    defs("../res/tex"),
-    server("127.0.0.1", 12345, defs.textures()),
+GameScene::GameScene(ClientState& state) : Scene(state),
+    defs(state.defs),
+    server("127.0.0.1", 12345, defs),
     world(defs, &playerPos, &server),
 
-    player(world, defs, *state->renderer->getCamera()),
+    player(world, defs, state.renderer.getCamera()),
 
-    gameGui(state->renderer->getCamera()->getBufferDimensions()),
-    debugGui(state->renderer->getCamera()->getBufferDimensions(), &defs.textures().getAtlasTexture()) {
+    gameGui (state.renderer.getCamera().getBufferDimensions()),
+    debugGui(state.renderer.getCamera().getBufferDimensions(), &defs.textures().getAtlasTexture()) {
 
     defs.init(world);
     world.init();
@@ -27,44 +27,44 @@ GameScene::GameScene(ClientState* state) : Scene(state),
 
 
 void GameScene::update() {
-    defs.update(static_cast<float>(state->deltaTime) * 1000);
+    defs.update(static_cast<float>(state.deltaTime) * 1000);
     defs.textures().update();
     server.update(player);
 
-    auto window = state->renderer->getWindow();
+    Window& window = state.renderer.getWindow();
 
     playerPos = player.getPos();
-    player.update(window->input, state->deltaTime, window->getDeltaX(), window->getDeltaY());
+    player.update(window.input, state.deltaTime, window.getDeltaX(), window.getDeltaY());
 
-    if (state->renderer->resized) {
-        debugGui.bufferResized(state->renderer->getCamera()->getBufferDimensions());
-        gameGui.bufferResized(state->renderer->getCamera()->getBufferDimensions());
+    if (state.renderer.resized) {
+        debugGui.bufferResized(state.renderer.getCamera().getBufferDimensions());
+        gameGui.bufferResized(state.renderer.getCamera().getBufferDimensions());
 
-        state->renderer->resized = false;
+        state.renderer.resized = false;
     }
 
     for (auto &chunkPacket : server.chunkPackets) world.loadChunkPacket(chunkPacket);
     server.chunkPackets.clear();
 
-    debugGui.update(player, world, defs, state->fps, world.getMeshChunkCount(), drawCalls, server.serverSideChunkGens, server.recvPackets);
+    debugGui.update(player, world, defs, state.fps, world.getMeshChunkCount(), drawCalls, server.serverSideChunkGens, server.recvPackets);
     server.recvPackets = 0;
-    world.update(state->deltaTime);
+    world.update(state.deltaTime);
 
-    if (window->input.isKeyPressed(GLFW_KEY_F1)) {
+    if (window.input.isKeyPressed(GLFW_KEY_F1)) {
         hudVisible = !hudVisible;
         debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
         gameGui.setVisible(hudVisible);
     }
 
-    if (window->input.isKeyPressed(GLFW_KEY_F3)) {
+    if (window.input.isKeyPressed(GLFW_KEY_F3)) {
         debugVisible = !debugVisible;
         debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
     }
 }
 
 void GameScene::draw() {
-    auto &renderer = *state->renderer;
-    auto &camera = *renderer.getCamera();
+    Renderer& renderer = state.renderer;
+    Camera& camera = renderer.getCamera();
 
     renderer.beginChunkDeferredCalls();
 

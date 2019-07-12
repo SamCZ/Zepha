@@ -12,6 +12,7 @@
 class LocalDefs {
 public:
     explicit LocalDefs(std::string tex_path);
+    LocalDefs(const LocalDefs& copy);
 
     LocalBlockAtlas& blocks();
     TextureAtlas& textures();
@@ -23,6 +24,8 @@ public:
     ~LocalDefs() = default;
 private:
     float delta = 0;
+
+    std::string tex_path;
 
     TextureAtlas textureAtlas;
     LocalBlockAtlas blockAtlas;

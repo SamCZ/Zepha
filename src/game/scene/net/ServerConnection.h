@@ -19,7 +19,7 @@
 
 class ServerConnection {
 public:
-    ServerConnection(std::string address, unsigned short port, TextureAtlas& atlas);
+    ServerConnection(std::string address, unsigned short port, LocalDefs& defs);
 
     void init(std::vector<Drawable*> &entities, LocalWorld* world);
     void update(Player &player);

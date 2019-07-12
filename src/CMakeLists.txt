@@ -45,8 +45,8 @@ set(ZEUS_SRC_FILES
         game/scene/world/Player.h
         util/Ray.cpp
         util/Ray.h
-        game/Game.cpp
-        game/Game.h
+        game/Client.cpp
+        game/Client.h
         game/graph/scene/SceneManager.cpp
         game/graph/scene/SceneManager.h
         game/graph/scene/Scene.h
@@ -166,6 +166,6 @@ set(ZEUS_SRC_FILES
         api/client/LocalRegisterBlocks.h
         api/server/ServerRegisterBlocks.cpp
         api/server/ServerRegisterBlocks.h
-        server/conn/ServerClient.cpp server/config/ServerConfig.cpp server/config/ServerConfig.h util/net/PacketType.h)
+        server/conn/ServerClient.cpp server/config/ServerConfig.cpp server/config/ServerConfig.h util/net/PacketType.h util/net/NetState.h game/scene/ConnectScene.cpp game/scene/ConnectScene.h util/net/Address.cpp util/net/Address.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

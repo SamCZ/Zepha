@@ -6,21 +6,21 @@
 #define ZEUS_SCENEMANAGER_H
 
 #include "Scene.h"
+#include <memory>
 
 class SceneManager {
 public:
-    SceneManager();
+    SceneManager() = default;
 
-    void setScene(Scene* scene);
-    Scene* getScene();
+    void setScene(std::unique_ptr<Scene> scene);
+    Scene& getScene();
 
     void update();
-
     void cleanupScene();
 
     ~SceneManager();
 private:
-    Scene* scene;
+    std::unique_ptr<Scene> scene = nullptr;
 };
 
 

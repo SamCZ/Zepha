@@ -14,6 +14,7 @@ Server::Server(unsigned short port) :
 
     defs.init(world);
     world.init();
+    config.init();
 
     while (alive) update();
 }

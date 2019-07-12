@@ -1,4 +1,4 @@
-# Zeus Voxel Game
+# Zeus Voxel Client
 
 (c) 2018-2019 Benjamin Collings, All Rights Reserved.
 

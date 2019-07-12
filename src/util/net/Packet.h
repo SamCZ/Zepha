@@ -14,20 +14,22 @@
 
 #include "Serializer.h"
 #include "PacketType.h"
+#include "PacketChannel.h"
 
-struct Packet {
+class Packet {
+public:
     Packet() = default;
-    explicit Packet(PacketType p);
+    explicit Packet(PacketType type);
     explicit Packet(ENetPacket* packet);
 
     ENetPacket* toENetPacket();
-    void sendTo(ENetPeer* peer, int channel);
-    void sendTo(const ENetPeer &peer, int channel);
+    void sendTo(ENetPeer* peer, PacketChannel channel);
+    void sendTo(const ENetPeer &peer, PacketChannel channel);
+
+    ~Packet() = default;
 
     PacketType type = PacketType::UNDEFINED;
     std::string data;
-
-    ~Packet() = default;
 };
 
 

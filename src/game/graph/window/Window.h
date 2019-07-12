@@ -23,7 +23,7 @@ public:
     glm::vec2 getSize();
     bool resized;
 
-    bool getShouldClose();
+    bool shouldClose();
 
     double getDeltaX();
     double getDeltaY();

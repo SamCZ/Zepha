@@ -6,12 +6,16 @@
 #define ZEUS_CLIENTSTATE_H
 
 #include "graph/Renderer.h"
+#include "scene/net/ServerConnection.h"
+#include "../def/LocalDefs.h"
 
 struct ClientState {
-    Renderer* renderer;
+    Renderer& renderer;
+    LocalDefs defs;
+//    ServerConnection connection;
 
     double fps = 0;
-    double deltaTime;
+    double deltaTime = 0;
 };
 
 #endif //ZEUS_CLIENTSTATE_H

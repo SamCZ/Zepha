@@ -10,6 +10,7 @@
 #include <enet/enet.h>
 #include "PacketChannel.h"
 #include "../Log.h"
+#include "NetState.h"
 
 class NetHandler {
 public:
@@ -20,7 +21,7 @@ public:
 
     void disconnect();
 
-    int getState();
+    NetState getState();
     ENetPeer* getPeer();
     bool update(ENetEvent* event);
 
@@ -30,23 +31,14 @@ private:
     void initClient(std::string host_address, unsigned short host_port, int connection_attempts, int connection_timeout);
 
     bool initialized = false; //Not default constructed.
-    int state = UNINITIALIZED;
+    NetState state = NetState::UNINITIALIZED;
 
     ENetPeer* peer;
     ENetHost* host;
 
     ENetAddress address;
 
-public:
-    // States
-    enum {
-        UNINITIALIZED,
-        FAILED_CONNECT,
-        ERROR,
-        CLIENT,
-        HOST,
-        CLOSED
-    };
+    const static int PACKET_CHANNELS = 12;
 };
 
 #endif //ZEUS_NETHANDLER_H

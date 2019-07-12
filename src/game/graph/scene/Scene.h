@@ -10,19 +10,15 @@
 
 class Scene {
 public:
-    explicit Scene(ClientState* state) {
-        this->state = state;
-    };
+    explicit Scene(ClientState& state) : state(state) {}
 
-    virtual void update() {};
-
-    virtual void draw() {};
-
-    virtual void cleanup() {};
+    virtual void update() = 0;
+    virtual void draw() = 0;
+    virtual void cleanup() = 0;
 
     virtual ~Scene() = default;
 
-    ClientState* state;
+    ClientState& state;
 };
 
 

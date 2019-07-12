@@ -4,7 +4,7 @@
 
 #include "MenuScene.h"
 
-MenuScene::MenuScene(ClientState *state) : Scene(state) {
+MenuScene::MenuScene(ClientState& state) : Scene(state) {
     fontTexture = new Texture((char*)"../res/tex/gui/font.png");
 
     auto alphaText = new TextEntity(fontTexture);
@@ -31,15 +31,15 @@ void MenuScene::update() {
 }
 
 void MenuScene::draw() {
-    state->renderer->beginChunkDeferredCalls();
-    state->renderer->endDeferredCalls();
-    state->renderer->beginGUIDrawCalls();
+    state.renderer.beginChunkDeferredCalls();
+    state.renderer.endDeferredCalls();
+    state.renderer.beginGUIDrawCalls();
 
     for (auto &element : entities) {
-        element->draw(*state->renderer);
+        element->draw(state.renderer);
     }
 
-    state->renderer->swapBuffers();
+    state.renderer.swapBuffers();
 }
 
 void MenuScene::cleanup() {

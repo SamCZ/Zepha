@@ -5,35 +5,32 @@
 #ifndef ZEUS_CLIENT_H
 #define ZEUS_CLIENT_H
 
+#include <zconf.h>
+#include <signal.h>
 #include "ClientState.h"
 #include "graph/Renderer.h"
 #include "graph/scene/SceneManager.h"
-
+#include "../util/Timer.h"
 #include "scene/GameScene.h"
 #include "scene/MenuScene.h"
 
-#include "../util/Timer.h"
-
-class Game {
+class Client {
 public:
-    Game();
-    Game(int width, int height, char* path);
-    ~Game();
+    Client(char* path, int width, int height);
+    ~Client();
 
 private:
     void loop();
 
-    void cleanup();
+    Renderer renderer;
+    ClientState state;
 
-    Renderer* renderer;
-
-    ClientState* state;
     SceneManager sceneManager;
 
-    int local_server_pid = 0;
-    int count = 0;
-
     double timeElapsed = 0.0f;
+    bool startedGame = false;
+
+    int serverPID = 0;
 };
 
 

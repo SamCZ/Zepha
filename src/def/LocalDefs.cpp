@@ -5,6 +5,7 @@
 #include "LocalDefs.h"
 
 LocalDefs::LocalDefs(std::string tex_path) :
+    tex_path(tex_path),
     luaApi("/home/aurailus/CLion/Zeus/res/lua/") {
 
     textureAtlas = TextureAtlas(1024);
@@ -13,6 +14,10 @@ LocalDefs::LocalDefs(std::string tex_path) :
     textureAtlas.loadDirectory(tex_path + "/ent");
 
     blockAtlas = LocalBlockAtlas();
+}
+
+LocalDefs::LocalDefs(const LocalDefs &copy) : LocalDefs(copy.tex_path) {
+    //Note: This constructor is only for *uninitialized* LocalDef objects!
 }
 
 void LocalDefs::init(LocalWorld &world) {

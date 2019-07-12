@@ -25,43 +25,43 @@ NetHandler::NetHandler(unsigned short port, short max_clients) {
 }
 
 void NetHandler::initServer(unsigned short port, short max_clients) {
-    state = HOST;
+    state = NetState::HOST;
 
     if (enet_initialize() != 0) {
         fprintf(stderr, "[FATAL] Failed to Initialize ENet.\n");
-        state = ERROR;
+        state = NetState::ERROR;
         return;
     }
 
     address.host = ENET_HOST_ANY;
     address.port = port;
 
-    host = enet_host_create(&address, (size_t)max_clients, PacketChannel::CHANNELS, 0, 0);
+    host = enet_host_create(&address, (size_t)max_clients, PACKET_CHANNELS, 0, 0);
     peer = nullptr;
 
     if (host == nullptr) {
         fprintf(stderr, "[FATAL] Failed to create ENet host.\n");
-        state = ERROR;
+        state = NetState::ERROR;
         return;
     }
 
-    std::cout << Log::info << "Server Started. Listening for clientList." << Log::endl;
+    std::cout << Log::info << "Server Started. Listening for clients." << Log::endl;
 }
 
 void NetHandler::initClient(std::string host_address, unsigned short host_port, int attempts, int timeout) {
-    state = FAILED_CONNECT;
+    state = NetState::FAILED_CONNECT;
 
     if (enet_initialize() != 0) {
         fprintf(stderr, "[FATAL] Failed to Initialize ENet.\n");
-        state = ERROR;
+        state = NetState::ERROR;
         return;
     }
 
-    host = enet_host_create(nullptr, 1, PacketChannel::CHANNELS, 0, 0);
+    host = enet_host_create(nullptr, 1, PACKET_CHANNELS, 0, 0);
 
     if (host == nullptr) {
         fprintf(stderr, "[FATAL] Failed to create ENet client.\n");
-        state = ERROR;
+        state = NetState::ERROR;
         return;
     }
 
@@ -71,11 +71,11 @@ void NetHandler::initClient(std::string host_address, unsigned short host_port, 
     int attempt = 0;
     while (attempt++ < attempts) {
 
-        peer = enet_host_connect(host, &address, PacketChannel::CHANNELS, 0);
+        peer = enet_host_connect(host, &address, PACKET_CHANNELS, 0);
 
         if (peer == nullptr) {
             fprintf(stderr, "[FATAL] Failed to find ENet peer.\n");
-            state = ERROR;
+            state = NetState::ERROR;
             return;
         }
 
@@ -83,7 +83,7 @@ void NetHandler::initClient(std::string host_address, unsigned short host_port, 
         if (enet_host_service(host, &event, (enet_uint32)timeout) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
             std::cout << Log::info << "Connected to "
                       << event.peer->address.host << ":" << event.peer->address.port << "." << Log::endl;
-            state = CLIENT;
+            state = NetState::CLIENT;
             break;
         } else {
             enet_peer_reset(peer);
@@ -93,7 +93,7 @@ void NetHandler::initClient(std::string host_address, unsigned short host_port, 
         }
     }
 
-    if (state == FAILED_CONNECT) {
+    if (state == NetState::FAILED_CONNECT) {
         std::cout << Log::err << "Failed to connect to peer." << Log::endl;
         return;
     }
@@ -103,7 +103,7 @@ bool NetHandler::update(ENetEvent *event) {
     return enet_host_service(host, event, 0) > 0;
 }
 
-int NetHandler::getState() {
+NetState NetHandler::getState() {
     return state;
 }
 
@@ -112,14 +112,14 @@ ENetPeer* NetHandler::getPeer() {
 }
 
 void NetHandler::disconnect() {
-    if (state == CLIENT) {
+    if (state == NetState::CLIENT) {
         std::cout << Log::info << "Disconnecting from host." << Log::endl;
         enet_peer_disconnect(peer, 0);
         enet_host_flush(host);
     }
-    if (state != HOST) {
+    if (state != NetState::HOST) {
         enet_host_destroy(host);
-        state = CLOSED;
+        state = NetState::CLOSED;
     }
 }
 
@@ -128,7 +128,7 @@ NetHandler::~NetHandler() {
         if (host != nullptr) {
             disconnect();
         }
-        if (getState() != UNINITIALIZED) {
+        if (getState() != NetState::UNINITIALIZED) {
             enet_deinitialize();
         }
     }

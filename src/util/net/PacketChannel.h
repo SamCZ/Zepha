@@ -5,20 +5,16 @@
 #ifndef ZEUS_PACKETCHANNEL_H
 #define ZEUS_PACKETCHANNEL_H
 
-
-struct PacketChannel {
-    const static int CHANNELS = 12;
-
-    enum {
-        UNDEFINED = -1,
-        KEEP_ALIVE,
-        AUTHENTICATE,
-        PLAYER_INFO,
-        ENTITY_INFO,
-        CHUNKS,
-        SERVER_INFO,
-        BLOCK_UPDATES
-    };
+enum class PacketChannel {
+    UNDEFINED = -1,
+    KEEP_ALIVE,
+    AUTHENTICATE,
+    CONNECT_DATA,
+    PLAYER_INFO,
+    ENTITY_INFO,
+    CHUNKS,
+    SERVER_INFO,
+    BLOCK_UPDATES,
 };
 
 
