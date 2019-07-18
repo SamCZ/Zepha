@@ -8,8 +8,8 @@
 #define ZEUS_SELECTIONBOX_H
 
 #include <iostream>
-#include <vec3.hpp>
-#include <glm.hpp>
+#include <glm/vec3.hpp>
+#include <glm/glm.hpp>
 #include "../../util/Util.h"
 #include "../../util/Dir.h"
 

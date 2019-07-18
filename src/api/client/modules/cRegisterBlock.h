@@ -5,7 +5,7 @@
 #ifndef ZEUS_MODULECLIENTREGISTERBLOCKMODEL_H
 #define ZEUS_MODULECLIENTREGISTERBLOCKMODEL_H
 
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 
 namespace ClientApi {
     void register_block(sol::state& lua, sol::table& zeus) {

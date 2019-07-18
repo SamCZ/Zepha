@@ -5,9 +5,9 @@
 #ifndef GLPROJECT_TEXTURE_H
 #define GLPROJECT_TEXTURE_H
 
-#include <glew.h>
+#include <glew/glew.h>
 #include <iostream>
-#include <stb_image.h>
+#include <stb_image/stb_image.h>
 
 class Texture {
 public:

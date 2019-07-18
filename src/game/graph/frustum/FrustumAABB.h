@@ -6,7 +6,7 @@
 #define ZEUS_FRUSTUMAABB_H
 
 
-#include <vec3.hpp>
+#include <glm/vec3.hpp>
 
 class FrustumAABB {
 public:

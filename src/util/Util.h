@@ -8,7 +8,7 @@
 
 #include <string>
 #include <sstream>
-#include <vec3.hpp>
+#include <glm/vec3.hpp>
 
 namespace Util {
     static std::string floatToString(float val) {

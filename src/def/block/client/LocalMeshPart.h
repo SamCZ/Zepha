@@ -11,8 +11,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include <vector>
-#include <vec4.hpp>
-#include <gtx/normal.hpp>
+#include <glm/vec4.hpp>
+#include <glm/gtx/normal.hpp>
 
 #include "../ShaderMod.h"
 #include "../../../game/scene/world/graph/MeshVertex.h"

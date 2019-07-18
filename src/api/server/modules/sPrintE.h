@@ -5,7 +5,7 @@
 #ifndef ZEUS_SPRINTE_H
 #define ZEUS_SPRINTE_H
 
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 
 namespace ServerApi {
     void printe(sol::state& lua) {

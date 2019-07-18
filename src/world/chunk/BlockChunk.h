@@ -5,7 +5,7 @@
 #ifndef GLPROJECT_BLOCKCHUNK_H
 #define GLPROJECT_BLOCKCHUNK_H
 
-#include <vec3.hpp>
+#include <glm/vec3.hpp>
 #include <vector>
 #include <iostream>
 #include <list>

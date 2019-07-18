@@ -5,7 +5,7 @@
 #ifndef ZEUS_SGETPATH_H
 #define ZEUS_SGETPATH_H
 
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 #include "../../../util/Log.h"
 
 namespace ServerApi {

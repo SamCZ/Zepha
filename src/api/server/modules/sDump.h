@@ -5,7 +5,7 @@
 #ifndef ZEUS_SDUMP_H
 #define ZEUS_SDUMP_H
 
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 
 namespace ServerApi {
     void dump(sol::state& lua) {

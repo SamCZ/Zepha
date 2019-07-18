@@ -5,9 +5,9 @@
 #ifndef ZEUS_RAY_H
 #define ZEUS_RAY_H
 
-#include <vec3.hpp>
 #include <cmath>
-#include <glm.hpp>
+#include <glm/glm.hpp>
+#include <glm/vec3.hpp>
 #include "../game/scene/world/Player.h"
 
 class Ray {

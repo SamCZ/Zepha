@@ -6,7 +6,7 @@
 #define ZEUS_SERVERREGISTERBLOCKS_H
 
 
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 #include "../../def/ServerDefs.h"
 
 class ServerRegisterBlocks {

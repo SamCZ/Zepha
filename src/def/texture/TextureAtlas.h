@@ -5,13 +5,13 @@
 #ifndef ZEUS_DYNAMICATLAS_H
 #define ZEUS_DYNAMICATLAS_H
 
-#include <vector>
-#include <vec2.hpp>
-#include <glew.h>
-#include <tgmath.h>
 #include <map>
 #include <memory>
-#include <cute_files.h>
+#include <vector>
+#include <tgmath.h>
+#include <glm/vec2.hpp>
+#include <glew/glew.h>
+#include <cute_files/cute_files.h>
 #include "../../util/Log.h"
 #include "../../game/graph/Texture.h"
 #include "AtlasRef.h"

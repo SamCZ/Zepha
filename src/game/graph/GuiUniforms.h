@@ -7,7 +7,7 @@
 
 
 #include <GL/gl.h>
-#include <mat4x4.hpp>
+#include <glm/mat4x4.hpp>
 
 struct GuiUniforms {
     glm::mat4 matrix;

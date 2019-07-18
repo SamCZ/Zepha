@@ -6,7 +6,7 @@
 #define ZEUS_LOCALREGISTERBLOCKS_H
 
 
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 #include "../../def/LocalDefs.h"
 
 class LocalRegisterBlocks {

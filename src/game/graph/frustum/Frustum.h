@@ -6,7 +6,7 @@
 #define ZEUS_FRUSTUM_H
 
 
-#include <vec3.hpp>
+#include <glm/vec3.hpp>
 #include "FrustumPlane.h"
 #include "FrustumAABB.h"
 

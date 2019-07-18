@@ -6,8 +6,8 @@
 #define GLPROJECT_BLOCKMODEL_H
 
 #include <vector>
-#include <sol.hpp>
 #include <set>
+#include <sol2/sol.hpp>
 #include "LocalMeshPart.h"
 #include "../../../game/scene/world/graph/MeshVertex.h"
 #include "../../../util/Dir.h"

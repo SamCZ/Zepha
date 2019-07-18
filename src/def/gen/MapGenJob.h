@@ -5,8 +5,8 @@
 #ifndef ZEUS_MAPGENJOB_H
 #define ZEUS_MAPGENJOB_H
 
-#include <vec3.hpp>
 #include <vector>
+#include <glm/vec3.hpp>
 #include "../../util/TransPos.h"
 
 struct MapGenJob {

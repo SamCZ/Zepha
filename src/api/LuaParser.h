@@ -10,8 +10,8 @@
 
 #include <list>
 #include <iostream>
-#include <vec3.hpp>
-#include <sol.hpp>
+#include <glm/vec3.hpp>
+#include <sol2/sol.hpp>
 
 #include "../util/Path.h"
 #include "../util/Log.h"

@@ -11,13 +11,14 @@
 #include "PacketChannel.h"
 #include "../Log.h"
 #include "NetState.h"
+#include "Address.h"
 
 class NetHandler {
 public:
-    NetHandler();
+    NetHandler() = default;
     NetHandler(unsigned short port, short max_clients);
-    NetHandler(std::string host_address, unsigned short host_port);
-    NetHandler(std::string host_address, unsigned short host_port, int connection_attempts, int connection_timeout);
+    NetHandler(Address hostAddress);
+    NetHandler(Address hostAddress, int connection_attempts, int connection_timeout);
 
     void disconnect();
 
@@ -28,15 +29,15 @@ public:
     ~NetHandler();
 private:
     void initServer(unsigned short port, short max_clients);
-    void initClient(std::string host_address, unsigned short host_port, int connection_attempts, int connection_timeout);
+    void initClient(Address hostAddress, int connection_attempts, int connection_timeout);
 
     bool initialized = false; //Not default constructed.
     NetState state = NetState::UNINITIALIZED;
 
-    ENetPeer* peer;
-    ENetHost* host;
+    ENetPeer* peer = nullptr;
+    ENetHost* host = nullptr;
 
-    ENetAddress address;
+    ENetAddress address {};
 
     const static int PACKET_CHANNELS = 12;
 };

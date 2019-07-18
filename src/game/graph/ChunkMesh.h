@@ -5,11 +5,11 @@
 #ifndef GLPROJECT_MESH_H
 #define GLPROJECT_MESH_H
 
-#include <GL/glew.h>
-#include <vec3.hpp>
-#include <vec4.hpp>
+#include <glew/glew.h>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 #include <vector>
-#include <vec2.hpp>
 
 struct ChunkVertex {
     glm::vec3 position;

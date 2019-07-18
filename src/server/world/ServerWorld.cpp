@@ -3,7 +3,7 @@
 //
 
 #include <algorithm>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include "ServerWorld.h"
 #include "../../util/net/PacketChannel.h"
 #include "../../util/Timer.h"

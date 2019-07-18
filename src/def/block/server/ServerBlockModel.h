@@ -6,7 +6,7 @@
 #define ZEUS_SERVERBLOCKMODEL_H
 
 #include <vector>
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 #include <set>
 #include "ServerMeshPart.h"
 #include "../../../game/scene/world/graph/MeshVertex.h"

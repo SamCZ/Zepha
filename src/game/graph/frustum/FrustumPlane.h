@@ -6,8 +6,8 @@
 #define ZEUS_FRUSTUMPLANE_H
 
 
-#include <vec3.hpp>
-#include <glm.hpp>
+#include <glm/vec3.hpp>
+#include <glm/glm.hpp>
 
 class FrustumPlane {
 public:

@@ -7,7 +7,7 @@
 
 #include <string>
 #include <iostream>
-#include <vec3.hpp>
+#include <glm/vec3.hpp>
 
 #include "../../../util/Timer.h"
 #include "../../../util/net/Packet.h"
@@ -16,10 +16,11 @@
 #include "../../graph/drawable/DrawableGroup.h"
 #include "../world/Player.h"
 #include "../world/LocalWorld.h"
+#include "../../../util/net/Address.h"
 
 class ServerConnection {
 public:
-    ServerConnection(std::string address, unsigned short port, LocalDefs& defs);
+    ServerConnection(Address address, LocalDefs& defs);
 
     void init(std::vector<Drawable*> &entities, LocalWorld* world);
     void update(Player &player);
@@ -42,8 +43,7 @@ private:
 
     NetHandler handler;
 
-    std::string address;
-    unsigned short port;
+    Address address;
 };
 
 

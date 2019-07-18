@@ -5,9 +5,9 @@
 #ifndef GLPROJECT_ENTITY_H
 #define GLPROJECT_ENTITY_H
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <iostream>
-#include <gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "../graph/EntityMesh.h"
 #include "../graph/Texture.h"

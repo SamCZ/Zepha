@@ -8,7 +8,7 @@
 
 #include <string>
 #include <unordered_map>
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 #include "SelectionBox.h"
 #include "../../api/Callback.h"
 

@@ -6,7 +6,7 @@
 #define ZEUS_MESHGENSTREAM_H
 
 
-#include <vec3.hpp>
+#include <glm/vec3.hpp>
 #include <thread>
 #include <unordered_set>
 #include "../../../world/chunk/BlockChunk.h"

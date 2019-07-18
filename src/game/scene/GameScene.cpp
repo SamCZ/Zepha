@@ -6,7 +6,7 @@
 
 GameScene::GameScene(ClientState& state) : Scene(state),
     defs(state.defs),
-    server("127.0.0.1", 12345, defs),
+    server({"127.0.0.1", 12345}, defs),
     world(defs, &playerPos, &server),
 
     player(world, defs, state.renderer.getCamera()),

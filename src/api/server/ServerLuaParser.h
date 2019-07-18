@@ -6,7 +6,7 @@
 #define ZEUS_SERVERLUAPARSER_H
 
 #include "../LuaParser.h"
-#include <cute_files.h>
+#include <cute_files/cute_files.h>
 
 class ServerDefs;
 class ServerWorld;

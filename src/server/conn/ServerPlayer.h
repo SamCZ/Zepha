@@ -5,7 +5,7 @@
 #ifndef ZEUS_SERVERPLAYER_H
 #define ZEUS_SERVERPLAYER_H
 
-#include <vec3.hpp>
+#include <glm/vec3.hpp>
 #include "../../util/TransPos.h"
 
 class ServerPlayer {

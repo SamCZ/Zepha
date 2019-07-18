@@ -5,23 +5,19 @@
 #include "ServerConnection.h"
 
 
-ServerConnection::ServerConnection(std::string address, unsigned short port, LocalDefs& defs) :
-    port(port),
-    address(std::move(address)) {
+ServerConnection::ServerConnection(Address address, LocalDefs& defs) :
+    address(std::move(address)),
+    entities(new DrawableGroup()),
 
-    playerFrontTex = defs.textures().getTextureRef("player_front");
-    playerBackTex = defs.textures().getTextureRef("player_back");
-    shadowTex = defs.textures().getTextureRef("player_shadow");
-
-    entities = new DrawableGroup();
-}
-
+    playerFrontTex(defs.textures().getTextureRef("player_front")),
+    playerBackTex(defs.textures().getTextureRef("player_back")),
+    shadowTex(defs.textures().getTextureRef("player_shadow")) {}
 
 void ServerConnection::init(std::vector<Drawable *> &entities, LocalWorld *world) {
     entities.push_back(this->entities);
     this->world = world;
 
-    handler = NetHandler(address, port, 3, 3000);
+    handler = NetHandler(address, 3, 3000);
 
     if (handler.getState() != NetState::CLIENT) {
         exit(EXIT_FAILURE);
@@ -46,7 +42,7 @@ void ServerConnection::update(Player &player) {
 
                 switch (p.type) {
                     case PacketType::PLAYER_INFO: {
-                        this->id = Serializer::decodeInt(&p.data[0]);
+                        id = Serializer::decodeInt(&p.data[0]);
                         auto playerPos = Serializer::decodeFloatVec3(&p.data[4]);
                         player.setPos(playerPos);
                         break;

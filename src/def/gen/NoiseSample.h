@@ -6,8 +6,8 @@
 #define ZEUS_NOISESAMPLE_H
 
 #include <vector>
-#include <vec3.hpp>
 #include <iostream>
+#include <glm/vec3.hpp>
 #include <noise/noise.h>
 
 class NoiseSample {

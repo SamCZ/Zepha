@@ -7,7 +7,7 @@
 
 #include "../../../def/ServerDefs.h"
 #include "../../../server/world/ServerWorld.h"
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 
 namespace ServerApi {
     void set_block(sol::table &zeus, ServerDefs& defs, ServerWorld& world) {

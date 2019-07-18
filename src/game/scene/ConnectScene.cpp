@@ -3,3 +3,8 @@
 //
 
 #include "ConnectScene.h"
+
+ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state) {
+    ServerConnection connection(std::move(addr), state.defs);
+//    connection.
+}

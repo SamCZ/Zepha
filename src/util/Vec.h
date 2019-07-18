@@ -6,7 +6,7 @@
 #define ZEUS_VECUTILS_H
 
 #include <array>
-#include <vec3.hpp>
+#include <glm/vec3.hpp>
 #include <cstddef>
 #include <functional>
 #include "TransPos.h"

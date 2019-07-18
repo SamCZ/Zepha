@@ -5,7 +5,7 @@
 #ifndef ZEUS_SREGISTERBLOCKMODEL_H
 #define ZEUS_SREGISTERBLOCKMODEL_H
 
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 
 namespace ServerApi {
     void register_blockmodel(sol::state& lua, sol::table& zeus) {

@@ -6,7 +6,7 @@
 #define ZEUS_MODULESERVERDELAY_H
 
 #include "../../../def/ServerDefs.h"
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 
 namespace ServerApi {
     void delay(sol::table &zeus, std::list<ServerLuaParser::DelayedFunction> &funcs) {

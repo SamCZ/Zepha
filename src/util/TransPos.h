@@ -7,7 +7,7 @@
 
 
 #include <tgmath.h>
-#include <vec3.hpp>
+#include <glm/vec3.hpp>
 
 namespace TransPos {
     const static int CHUNK_SIZE = 16; //Must be a multiple of 16

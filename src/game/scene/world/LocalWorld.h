@@ -10,8 +10,8 @@
 #include <bits/unordered_map.h>
 #include <thread>
 #include <mutex>
-#include <vec3.hpp>
-#include <gtc/type_ptr.hpp>
+#include <glm/vec3.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "../../../def/block/client/LocalBlockAtlas.h"
 #include "../../../world/chunk/BlockChunk.h"

@@ -6,7 +6,7 @@
 #define ZEUS_LOCALLUAPARSER_H
 
 #include "../LuaParser.h"
-#include <cute_files.h>
+#include <cute_files/cute_files.h>
 
 class LocalDefs;
 class LocalWorld;

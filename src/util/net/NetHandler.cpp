@@ -4,20 +4,11 @@
 
 #include "NetHandler.h"
 
-NetHandler::NetHandler() {
-    address = ENetAddress();
-    host = nullptr;
-    peer = nullptr;
-}
+NetHandler::NetHandler(Address hostAddress) : NetHandler(std::move(hostAddress), 3, 3) {}
 
-
-NetHandler::NetHandler(std::string host_address, unsigned short host_port) {
-    initClient(std::move(host_address), host_port, 3, 3);
+NetHandler::NetHandler(Address hostAddress, int attempts, int timeout) {
+    initClient(std::move(hostAddress), attempts, timeout);
     bool initialized = true;
-}
-
-NetHandler::NetHandler(std::string host_address, unsigned short host_port, int attempts, int timeout) {
-    initClient(std::move(host_address), host_port, attempts, timeout);
 }
 
 NetHandler::NetHandler(unsigned short port, short max_clients) {
@@ -48,7 +39,7 @@ void NetHandler::initServer(unsigned short port, short max_clients) {
     std::cout << Log::info << "Server Started. Listening for clients." << Log::endl;
 }
 
-void NetHandler::initClient(std::string host_address, unsigned short host_port, int attempts, int timeout) {
+void NetHandler::initClient(Address hostAddress, int attempts, int timeout) {
     state = NetState::FAILED_CONNECT;
 
     if (enet_initialize() != 0) {
@@ -65,8 +56,8 @@ void NetHandler::initClient(std::string host_address, unsigned short host_port, 
         return;
     }
 
-    enet_address_set_host(&address, host_address.c_str());
-    address.port = host_port;
+    enet_address_set_host(&address, hostAddress.host.c_str());
+    address.port = hostAddress.port;
 
     int attempt = 0;
     while (attempt++ < attempts) {

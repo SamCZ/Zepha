@@ -5,7 +5,7 @@
 #ifndef ZEUS_CPRINTE_H
 #define ZEUS_CPRINTE_H
 
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 
 namespace ClientApi {
     void printe(sol::state &lua) {

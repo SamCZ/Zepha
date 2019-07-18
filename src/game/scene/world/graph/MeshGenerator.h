@@ -10,7 +10,7 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include <gtx/normal.hpp>
+#include <glm/gtx/normal.hpp>
 #include <vector>
 #include <cstdio>
 

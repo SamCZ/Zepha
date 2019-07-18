@@ -6,7 +6,7 @@
 #define ZEUS_REGION_H
 
 
-#include <vec3.hpp>
+#include <glm/vec3.hpp>
 #include <array>
 #include "MapBlock.h"
 #include "../../util/TransPos.h"

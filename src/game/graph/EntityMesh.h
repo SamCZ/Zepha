@@ -5,9 +5,9 @@
 #ifndef ZEUS_ENTITYMESH_H
 #define ZEUS_ENTITYMESH_H
 
-#include <GL/glew.h>
-#include <vec3.hpp>
-#include <vec4.hpp>
+#include <glew/glew.h>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 #include <vector>
 
 struct EntityVertex {

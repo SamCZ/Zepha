@@ -6,8 +6,8 @@
 #define ZEUS_DIMENSION_H
 
 
-#include <vec3.hpp>
 #include <unordered_map>
+#include <glm/vec3.hpp>
 #include "region/Region.h"
 #include "../util/Vec.h"
 #include "../game/scene/world/graph/MeshChunk.h"

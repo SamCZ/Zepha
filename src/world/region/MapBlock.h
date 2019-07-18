@@ -5,7 +5,7 @@
 #ifndef ZEUS_MAPBLOCK_H
 #define ZEUS_MAPBLOCK_H
 
-#include <vec3.hpp>
+#include <glm/vec3.hpp>
 #include <array>
 #include <memory>
 #include "../../util/TransPos.h"

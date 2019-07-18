@@ -5,7 +5,7 @@
 #ifndef GLPROJECT_SHADER_H
 #define GLPROJECT_SHADER_H
 
-#include <GL/glew.h>
+#include <glew/glew.h>
 
 #include <string>
 #include <cstring>

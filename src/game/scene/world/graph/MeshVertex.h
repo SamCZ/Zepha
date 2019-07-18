@@ -5,8 +5,8 @@
 #ifndef GLPROJECT_VERTEX_H
 #define GLPROJECT_VERTEX_H
 
-#include <vec3.hpp>
-#include <vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 
 struct MeshVertex {
     glm::vec3 pos;

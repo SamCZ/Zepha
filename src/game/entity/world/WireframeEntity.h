@@ -5,7 +5,7 @@
 #ifndef ZEUS_WIREFRAMEGENERATOR_H
 #define ZEUS_WIREFRAMEGENERATOR_H
 
-#include <vec3.hpp>
+#include <glm/vec3.hpp>
 #include "../../graph/ChunkMesh.h"
 #include "../Entity.h"
 

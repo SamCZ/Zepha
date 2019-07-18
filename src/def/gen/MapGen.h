@@ -6,7 +6,7 @@
 #define ZEUS_MAPGEN_H
 
 
-#include <vec3.hpp>
+#include <glm/vec3.hpp>
 #include <vector>
 
 #include "MapGenJob.h"

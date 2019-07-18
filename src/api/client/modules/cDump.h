@@ -5,7 +5,7 @@
 #ifndef ZEUS_CDUMP_H
 #define ZEUS_CDUMP_H
 
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 
 namespace ClientApi {
     void dump(sol::state& lua) {

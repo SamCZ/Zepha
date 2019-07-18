@@ -5,9 +5,9 @@
 #ifndef GLPROJECT_CAMERA_H
 #define GLPROJECT_CAMERA_H
 
-#include <GL/glew.h>
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
+#include <glew/glew.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <GLFW/glfw3.h>
 #include "frustum/Frustum.h"
 

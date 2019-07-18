@@ -5,7 +5,7 @@
 #ifndef ZEUS_CISSERVER_H
 #define ZEUS_CISSERVER_H
 
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 
 namespace ClientApi {
     void is_server(sol::table& zeus) {

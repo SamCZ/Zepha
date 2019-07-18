@@ -14,7 +14,7 @@
 #include "uniform/WorldLightingUniforms.h"
 #include "uniform/WorldGeometryUniforms.h"
 #include "uniform/EntityGeometryUniforms.h"
-#include <ext.hpp>
+#include <glm/ext.hpp>
 #include <noise/noise.h>
 
 class Renderer {

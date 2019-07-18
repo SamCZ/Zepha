@@ -6,7 +6,7 @@
 #define ZEUS_MODULECLIENTDELAY_H
 
 #include "../../../def/LocalDefs.h"
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 
 namespace ClientApi {
     void delay(sol::table &zeus, std::list<LocalLuaParser::DelayedFunction> &funcs) {

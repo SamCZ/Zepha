@@ -5,10 +5,10 @@
 #ifndef GLPROJECT_WINDOW_H
 #define GLPROJECT_WINDOW_H
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <vec2.hpp>
 #include <cstdio>
+#include <glew/glew.h>
+#include <GLFW/glfw3.h>
+#include <glm/vec2.hpp>
 #include "InputManager.h"
 
 class Window {

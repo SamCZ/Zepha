@@ -5,10 +5,11 @@
 #ifndef ZEUS_ADDRESS_H
 #define ZEUS_ADDRESS_H
 
+#include <string>
 
-class Address {
-
+struct Address {
+    std::string host;
+    unsigned short port;
 };
-
 
 #endif //ZEUS_ADDRESS_H

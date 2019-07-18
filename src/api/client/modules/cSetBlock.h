@@ -7,7 +7,7 @@
 
 #include "../../../def/LocalDefs.h"
 #include "../../../game/scene/world/LocalWorld.h"
-#include <sol.hpp>
+#include <sol2/sol.hpp>
 
 namespace ClientApi {
     void set_block(sol::table &zeus, LocalDefs& defs, LocalWorld& world) {

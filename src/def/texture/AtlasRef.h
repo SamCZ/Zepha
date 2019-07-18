@@ -6,7 +6,7 @@
 #define ZEUS_ATLASREF_H
 
 
-#include <vec4.hpp>
+#include <glm/vec4.hpp>
 #include <string>
 
 struct AtlasRef {
