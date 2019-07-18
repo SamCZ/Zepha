@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 set (CMAKE_CXX_STANDARD 14)
 set (PROJECT_NAME "Zeus")
 
-#set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,undefined")
-
 project (${PROJECT_NAME})
 
 #Include all of the library headers
