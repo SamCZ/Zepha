@@ -38,10 +38,10 @@ private:
     ServerClients clientList;
     ServerConfig config;
 
-    double elapsedSeconds;
-    double deltaTime;
+    double elapsedSeconds = 0;
+    double deltaTime = 0;
 
-    unsigned short port;
+    unsigned short port = 0;
 };
 
 

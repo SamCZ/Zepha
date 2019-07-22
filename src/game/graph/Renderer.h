@@ -74,7 +74,7 @@ private:
     GuiUniforms gu;
 
     GLint currentModelUniform;
-    double elapsedTime;
+    double elapsedTime = 0;
 };
 
 

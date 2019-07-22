@@ -17,10 +17,11 @@
 #include "../world/Player.h"
 #include "../world/LocalWorld.h"
 #include "../../../util/net/Address.h"
+#include "ServerConnection.h"
 
 class ClientNetworkInterpreter {
 public:
-    ClientNetworkInterpreter(Address address, LocalDefs& defs);
+    ClientNetworkInterpreter(ServerConnection& connection, LocalDefs& defs);
 
     void init(std::vector<Drawable*> &entities, LocalWorld* world);
     void update(Player &player);
@@ -35,15 +36,11 @@ public:
     int recvPackets = 0;
 private:
     std::shared_ptr<AtlasRef> playerFrontTex, playerBackTex, shadowTex;
-    bool connected = false;
     int id = 0;
 
     DrawableGroup* entities;
     LocalWorld* world;
-
-    NetHandler handler;
-
-    Address address;
+    ServerConnection& connection;
 };
 
 

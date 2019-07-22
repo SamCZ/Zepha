@@ -30,7 +30,7 @@ void ConnectScene::update() {
 
         case State::IDENTIFIER_LIST: {
             ENetEvent e;
-            if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
+            while (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
 
                 statusText.set(statusText.get() + "Recieved block index-identifier table.\n");
@@ -43,15 +43,13 @@ void ConnectScene::update() {
                     auto len = Serializer::decodeInt(&p.data[ind]);
                     indexIdentifierTable.emplace_back(&p.data[ind + 4], &p.data[ind + 4 + len]);
                     ind += 4 + len;
-                    if (ind >= p.data.length()) break;
+                    if (ind >= p.data.length() - 4) break;
                 }
 
+                statusText.set(statusText.get() + "Joining World...");
                 state.defs.blocks().setIdentifiers(indexIdentifierTable);
-
-                Packet r(PacketType::CONNECT_DATA_RECVD);
-                r.sendTo(connection.getPeer(), PacketChannel::CONNECT);
-
                 state.desiredState = "game";
+                return;
             }
         }
     }

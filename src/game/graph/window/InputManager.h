@@ -22,9 +22,9 @@ public:
     bool isMousePressed(int button);
     bool isMouseReleased(int button);
 private:
-    bool keysDown[1024];
-    bool keysPressed[1024];
-    bool keysReleased[1024];
+    bool keysDown[1024] {false};
+    bool keysPressed[1024] {false};
+    bool keysReleased[1024] {false};
 
     bool leftPressed, leftDown, leftReleased;
     bool rightReleased, rightDown, rightPressed;

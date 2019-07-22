@@ -6,8 +6,7 @@
 
 GameScene::GameScene(ClientState& state) : Scene(state),
     defs(state.defs),
-    //TODO: Give `server` `state.connection` instead of a NetHandler.
-    server({"127.0.0.1", 12345}, defs),
+    server(state.connection, defs),
     world(defs, &playerPos, &server),
 
     player(world, defs, state.renderer.getCamera()),
@@ -26,6 +25,9 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     entities.push_back(&player);
 
     server.init(entities, &world);
+
+    Packet r(PacketType::CONNECT_DATA_RECVD);
+    r.sendTo(state.connection.getPeer(), PacketChannel::CONNECT);
 }
 
 

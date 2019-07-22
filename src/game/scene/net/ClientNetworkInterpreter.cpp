@@ -4,9 +4,8 @@
 
 #include "ClientNetworkInterpreter.h"
 
-
-ClientNetworkInterpreter::ClientNetworkInterpreter(Address address, LocalDefs& defs) :
-    address(std::move(address)),
+ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, LocalDefs &defs) :
+    connection(connection),
     entities(new DrawableGroup()),
 
     playerFrontTex(defs.textures().getTextureRef("player_front")),
@@ -16,19 +15,13 @@ ClientNetworkInterpreter::ClientNetworkInterpreter(Address address, LocalDefs& d
 void ClientNetworkInterpreter::init(std::vector<Drawable *> &entities, LocalWorld *world) {
     entities.push_back(this->entities);
     this->world = world;
-
-    handler = NetHandler(address, 3, 3000);
-
-    if (handler.getState() != NetState::CLIENT) {
-        exit(EXIT_FAILURE);
-    }
 }
 
 void ClientNetworkInterpreter::update(Player &player) {
     recvPackets = 0;
 
     ENetEvent event;
-    while (handler.update(&event)) {
+    while (connection.pollEvents(&event)) {
         recvPackets++;
 
         switch (event.type) {
@@ -111,12 +104,11 @@ void ClientNetworkInterpreter::update(Player &player) {
     Serializer::encodeFloat(p.data, player.getPos().y - Player::EYE_HEIGHT);
     Serializer::encodeFloat(p.data, player.getPos().z);
     Serializer::encodeFloat(p.data, player.getYaw());
-    p.sendTo(handler.getPeer(), PacketChannel::PLAYER);
+    p.sendTo(connection.getPeer(), PacketChannel::PLAYER);
 }
 
 void ClientNetworkInterpreter::cleanup() {
-    handler.disconnect();
-    connected = false;
+    connection.disconnect();
 }
 
 ClientNetworkInterpreter::~ClientNetworkInterpreter() {
@@ -127,5 +119,5 @@ void ClientNetworkInterpreter::setBlock(glm::vec3 pos, int block) {
     Packet p(PacketType::BLOCK_SET);
     Serializer::encodeIntVec3(p.data, pos);
     Serializer::encodeInt(p.data, block);
-    p.sendTo(handler.getPeer(), PacketChannel::BLOCK);
+    p.sendTo(connection.getPeer(), PacketChannel::BLOCK);
 }

@@ -6,9 +6,9 @@
 #include "InputManager.h"
 
 InputManager::InputManager() {
-    for (bool &key : keysDown) key = false;
-    for (bool &key : keysPressed) key = false;
-    for (bool &key : keysReleased) key = false;
+    for (bool& key : keysDown) key = false;
+    for (bool& key : keysPressed) key = false;
+    for (bool& key : keysReleased) key = false;
 
     leftDown = false;
     rightDown = false;
