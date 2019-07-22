@@ -1,49 +1,49 @@
 //
-// Created by aurailus on 11/01/19.
+// Created by aurailus on 21/07/19.
 //
 
 #ifndef ZEUS_SERVERCONNECTION_H
 #define ZEUS_SERVERCONNECTION_H
 
-#include <string>
-#include <iostream>
-#include <glm/vec3.hpp>
 
-#include "../../../util/Timer.h"
-#include "../../../util/net/Packet.h"
-#include "../../../util/net/NetHandler.h"
-#include "../../entity/world/PlayerEntity.h"
-#include "../../graph/drawable/DrawableGroup.h"
-#include "../world/Player.h"
-#include "../world/LocalWorld.h"
+#include <enet/enet.h>
+#include <chrono>
 #include "../../../util/net/Address.h"
 
 class ServerConnection {
 public:
-    ServerConnection(Address address, LocalDefs& defs);
+    enum class State {
+        UNCONNECTED,
+        ATTEMPTING_CONNECT,
+        CONNECTED,
+        FAILED_CONNECT,
+        DISCONNECTED,
+        ENET_ERROR
+    };
 
-    void init(std::vector<Drawable*> &entities, LocalWorld* world);
-    void update(Player &player);
-    void cleanup();
+    ServerConnection() = default;
 
-    void setBlock(glm::vec3 pos, int block);
+    void attemptConnect(Address addr);
+    State getConnectionStatus();
+    void disconnect();
+
+    void processConnecting();
+    bool pollEvents(ENetEvent* event);
+
+    ENetPeer* getPeer();
 
     ~ServerConnection();
 
-    std::vector<Packet> chunkPackets;
-    int serverSideChunkGens = 0;
-    int recvPackets = 0;
 private:
-    std::shared_ptr<AtlasRef> playerFrontTex, playerBackTex, shadowTex;
-    bool connected = false;
-    int id = 0;
+    unsigned long timeout = 1000;
+    unsigned int attempts = 3;
 
-    DrawableGroup* entities;
-    LocalWorld* world;
+    ENetHost* host = nullptr;
+    ENetPeer* peer = nullptr;
 
-    NetHandler handler;
-
-    Address address;
+    State state = State::UNCONNECTED;
+    unsigned int attempt = 0;
+    std::chrono::time_point<std::chrono::high_resolution_clock> connectionTime;
 };
 
 

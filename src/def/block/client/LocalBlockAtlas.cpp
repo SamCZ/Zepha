@@ -8,16 +8,28 @@ LocalBlockAtlas::LocalBlockAtlas() {
     //Register Air Node
     LocalBlockModel nullModel; nullModel.visible = false, nullModel.culls = false;
     LocalBlockDef air("builtin:air", static_cast<int>(definitions.size()), nullModel, false, {{0, 0, 0}, {1, 1, 1}});
-    registerBlock(std::move(air));
+    definitions.push_back(air);
+    identifierIndexTable["builtin:air"] = AIR;
 }
 
 int LocalBlockAtlas::definitionsSize() {
     return static_cast<int>(definitions.size());
 }
 
+void LocalBlockAtlas::setIdentifiers(std::vector<std::string> &identifiers) {
+    for (int i = 0; i < identifiers.size(); i++) {
+        identifierIndexTable.insert({identifiers[i], -1});
+    }
+}
+
 void LocalBlockAtlas::registerBlock(LocalBlockDef def) {
     definitions.push_back(def);
-    identifierIndexTable.insert({def.getIdentifier(), def.getIndex()});
+
+    if (!identifierIndexTable.count(def.getIdentifier())) {
+        std::cout << Log::err << "Client/Server block identifier desync: " + def.getIdentifier() + "!" << Log::endl;
+        return;
+    }
+    identifierIndexTable[def.getIdentifier()] = def.getIndex();
 }
 
 LocalBlockDef& LocalBlockAtlas::fromIndex(int id) {

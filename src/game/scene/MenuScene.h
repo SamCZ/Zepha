@@ -16,11 +16,14 @@ public:
     void update() override;
     void draw() override;
 
-    void cleanup() override;
+    void cleanup() override {};
 
 private:
-    Texture* fontTexture;
-    std::vector<Entity*> entities;
+    Texture fontTexture;
+
+    TextEntity alphaText;
+    TextEntity titleText;
+    TextEntity mainMenuText;
 };
 
 

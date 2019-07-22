@@ -28,11 +28,11 @@
 #include "WorldInterpolationStream.h"
 #include "MeshGenStream.h"
 
-class ServerConnection;
+class ClientNetworkInterpreter;
 
 class LocalWorld {
 public:
-    LocalWorld(LocalDefs& defs, glm::vec3* playerPos, ServerConnection* server);
+    LocalWorld(LocalDefs& defs, glm::vec3* playerPos, ClientNetworkInterpreter* server);
 
     void init();
     void update(double delta);
@@ -60,7 +60,7 @@ public:
 
     //Called by the Client
     void localSetBlock(glm::vec3 pos, int block);
-    //Called form ServerConnection
+    //Called form ClientNetworkInterpreter
     void setBlock(glm::vec3 pos, int block);
 
     bool solidAt(glm::vec3 pos);
@@ -71,7 +71,7 @@ private:
     glm::vec3* playerPos;
     glm::vec3 playerChunkPos {};
 
-    ServerConnection* server;
+    ClientNetworkInterpreter* server;
 
     WorldInterpolationStream* worldGenStream;
     Dimension dimension;

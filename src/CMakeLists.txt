@@ -59,8 +59,8 @@ set(ZEUS_SRC_FILES
         util/net/Packet.h
         server/conn/ServerPlayer.cpp
         server/conn/ServerPlayer.h
-        game/scene/net/ServerConnection.cpp
-        game/scene/net/ServerConnection.h
+        game/scene/net/ClientNetworkInterpreter.cpp
+        game/scene/net/ClientNetworkInterpreter.h
         def/gen/MapGen.cpp
         def/gen/MapGen.h
         util/net/NetHandler.cpp
@@ -173,6 +173,6 @@ set(ZEUS_SRC_FILES
         util/net/NetState.h
         game/scene/ConnectScene.cpp
         game/scene/ConnectScene.h
-        util/net/Address.h)
+        util/net/Address.h game/scene/net/ServerConnection.cpp game/scene/net/ServerConnection.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

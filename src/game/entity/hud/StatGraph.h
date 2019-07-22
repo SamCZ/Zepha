@@ -16,21 +16,19 @@ public:
     StatGraph(std::string title, int xSize, int ySize, int graphLength, int graphScale, Texture* graphTex, Texture* textTex);
     StatGraph(std::string title, int graphLength, int graphScale, Texture* graphTex, Texture* textTex);
 
-    void setPosition(glm::vec2 pos);
+    void setPos(glm::vec2 pos);
     void update(float value);
 
     void draw(Renderer& renderer) override;
 private:
-    void construct(std::string title, int xSize, int ySize, int graphLength, int graphScale, Texture* graphTex, Texture* textTex);
-
     const static int GRAPH_PAD_X = 2, GRAPH_PAD_Y = 62, TEXT_PAD_X = 4, TEXT_PAD_Y = 8;
 
     int ind = 0;
-    float history[10];
+    float history[5];
 
-    TextureRect* background;
-    GraphEntity* graph;
-    TextEntity* text;
+    TextureRect background;
+    GraphEntity graph;
+    TextEntity  text;
 
     std::string title;
 };

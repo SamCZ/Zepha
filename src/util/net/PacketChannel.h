@@ -7,14 +7,13 @@
 
 enum class PacketChannel {
     UNDEFINED = -1,
-    KEEP_ALIVE,
-    AUTHENTICATE,
-    CONNECT_DATA,
-    PLAYER_INFO,
-    ENTITY_INFO,
-    CHUNKS,
-    SERVER_INFO,
-    BLOCK_UPDATES,
+    AUTH,
+    CONNECT,
+    SERVER,
+    PLAYER,
+    ENTITY,
+    CHUNK,
+    BLOCK,
 };
 
 

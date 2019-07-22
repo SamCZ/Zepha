@@ -14,6 +14,7 @@ public:
     explicit TextEntity(Texture* texture, bool background = false, int scale = 2);
 
     void set(std::string text);
+    std::string get();
 private:
     int getWidthSubtract(int c);
 

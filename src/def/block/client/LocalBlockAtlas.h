@@ -15,6 +15,7 @@ class LocalBlockAtlas : public BlockAtlas {
 public:
     LocalBlockAtlas();
 
+    void setIdentifiers(std::vector<std::string>& identifiers);
     void registerBlock(LocalBlockDef def);
 
     int definitionsSize() override;
@@ -22,6 +23,7 @@ public:
     LocalBlockDef& fromIndex(int id) override;
     LocalBlockDef& fromIdentifier(std::string identifier) override;
 private:
+    const static int UNDEFINED = -1;
     const static int AIR = 0;
 
     std::vector<LocalBlockDef> definitions;

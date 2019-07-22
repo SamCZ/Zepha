@@ -6,6 +6,7 @@
 
 GameScene::GameScene(ClientState& state) : Scene(state),
     defs(state.defs),
+    //TODO: Give `server` `state.connection` instead of a NetHandler.
     server({"127.0.0.1", 12345}, defs),
     world(defs, &playerPos, &server),
 
@@ -13,6 +14,8 @@ GameScene::GameScene(ClientState& state) : Scene(state),
 
     gameGui (state.renderer.getCamera().getBufferDimensions()),
     debugGui(state.renderer.getCamera().getBufferDimensions(), &defs.textures().getAtlasTexture()) {
+
+    state.renderer.setClearColor(148, 194, 240);
 
     defs.init(world);
     world.init();

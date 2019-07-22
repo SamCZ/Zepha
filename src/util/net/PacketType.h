@@ -5,15 +5,19 @@
 #ifndef ZEUS_PACKETTYPE_H
 #define ZEUS_PACKETTYPE_H
 
-
 enum class PacketType {
     UNDEFINED = 0,
-    HANDSHAKE,
-    AUTHENTICATE,
+    CONNECT,
+    AUTH,
+
+    //Information Request Types
     IDENTIFIER_LIST,
-    PLAYER_INFO,
+    CONNECT_DATA_RECVD,
+
+    //Ingame Data Types
+    PLAYER,
+    CHUNK,
     ENTITY_INFO,
-    CHUNK_INFO,
     SERVER_INFO,
     BLOCK_SET,
 };

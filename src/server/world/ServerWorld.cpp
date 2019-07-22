@@ -101,7 +101,7 @@ void ServerWorld::update() {
 
     for (auto& client : clientList.clients) {
         if (client.hasPlayer()) {
-            r.sendTo(client.getPeer(), PacketChannel::SERVER_INFO);
+            r.sendTo(client.getPeer(), PacketChannel::SERVER);
 
             if (client.getPlayer().changedChunks) changedChunks(client);
         }
@@ -112,12 +112,12 @@ void ServerWorld::sendChunk(glm::vec3 pos, ServerClient &peer) {
     auto chunk = dimension.getChunk(pos);
     auto serialized = chunk->serialize();
 
-    Packet r(PacketType::CHUNK_INFO);
+    Packet r(PacketType::CHUNK);
 
     Serializer::encodeIntVec3(r.data, pos);
     Serializer::encodeString(r.data, serialized);
 
-    r.sendTo(peer.getPeer(), PacketChannel::CHUNKS);
+    r.sendTo(peer.getPeer(), PacketChannel::CHUNK);
 }
 
 void ServerWorld::setBlock(glm::vec3 pos, int block) {
@@ -149,7 +149,7 @@ void ServerWorld::setBlock(glm::vec3 pos, int block) {
             auto bounds = client.getPlayer().getChunkBounds();
 
             if (isInBounds(chunkPos, bounds)) {
-                b.sendTo(client.getPeer(), PacketChannel::BLOCK_UPDATES);
+                b.sendTo(client.getPeer(), PacketChannel::BLOCK);
             }
         }
     }

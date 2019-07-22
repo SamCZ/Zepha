@@ -49,7 +49,7 @@ Dimension::~Dimension() {
 }
 
 void Dimension::update() {
-    //TODO: Figure out why there are NULL CHUNKS in the map
+    //TODO: Figure out why there are NULL CHUNK in the map
     for (auto it = blockChunks.begin(); it != blockChunks.end();) {
         auto chunk = it->second;
         auto pos = it->first;

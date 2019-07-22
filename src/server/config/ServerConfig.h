@@ -15,7 +15,8 @@ public:
 
     void init();
 
-    void handlePacket(ServerClient &client, Packet& p);
+    //Bool: Create player
+    bool handlePacket(ServerClient &client, Packet& p);
 private:
     ServerDefs& defs;
     std::vector<std::string> identifierList {};

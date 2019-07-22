@@ -55,13 +55,13 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
 
     dataText.setPos(glm::vec3(10, 10, 0));
 
-    serverGenGraph   .setPosition({bufferWidth - 254, bufferHeight - 70 - 160});
-    serverPacketGraph.setPosition({bufferWidth - 254, bufferHeight - 70 - 240});
-    meshUpdatesGraph .setPosition({bufferWidth - 254, bufferHeight - 70 - 80 });
-    chunkUpdatesGraph.setPosition({bufferWidth - 254, bufferHeight - 70      });
-    fpsGraph         .setPosition({10,                bufferHeight - 70      });
-    drawCallsGraph   .setPosition({10,                bufferHeight - 70 - 80 });
-    vRamGraph        .setPosition({bufferWidth - 254, 10                     });
+    serverGenGraph.setPos({bufferWidth - 254, bufferHeight - 70 - 160});
+    serverPacketGraph.setPos({bufferWidth - 254, bufferHeight - 70 - 240});
+    meshUpdatesGraph.setPos({bufferWidth - 254, bufferHeight - 70 - 80});
+    chunkUpdatesGraph.setPos({bufferWidth - 254, bufferHeight - 70});
+    fpsGraph.setPos({10, bufferHeight - 70});
+    drawCallsGraph.setPos({10, bufferHeight - 70 - 80});
+    vRamGraph.setPos({bufferWidth - 254, 10});
 }
 
 void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack) {

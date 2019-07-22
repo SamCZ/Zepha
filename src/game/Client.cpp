@@ -6,7 +6,7 @@
 
 Client::Client(char* path, int width, int height) :
     renderer(width, height),
-    state {renderer, LocalDefs("../res/tex"), 0, 0} {
+    state {renderer, {}, LocalDefs("../res/tex"), "this", 0, 0} {
 
 //    Start Local Server
 //    if (path != nullptr) {
@@ -30,11 +30,16 @@ Client::Client(char* path, int width, int height) :
 void Client::loop() {
     Timer t("Client Loop");
 
-    if (!startedGame && timeElapsed > 1) {
-//        std::unique_ptr<Scene> scene = std::make_unique<ConnectScene>(state);
-        std::unique_ptr<Scene> scene = std::make_unique<GameScene>(state);
+    if (!startedGame && timeElapsed > 1.5) {
+        std::unique_ptr<Scene> scene = std::make_unique<ConnectScene>(state, Address{"127.0.0.1", 12345});
         sceneManager.setScene(std::move(scene));
         startedGame = true;
+    }
+
+    if (state.desiredState == "game") {
+        state.desiredState = "this";
+        std::unique_ptr<Scene> scene = std::make_unique<GameScene>(state);
+        sceneManager.setScene(std::move(scene));
     }
 
     double now = glfwGetTime();

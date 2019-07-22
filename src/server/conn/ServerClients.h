@@ -17,6 +17,8 @@ public:
     void handleConnect(ENetEvent e);
     void handleDisconnect(ENetEvent e);
 
+    void createPlayer(ServerClient& c);
+
     std::vector<ServerClient> clients;
 };
 

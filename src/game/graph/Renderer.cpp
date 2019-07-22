@@ -328,3 +328,7 @@ Renderer::~Renderer() {
     worldGeometryShader.cleanup();
     guiShader.cleanup();
 }
+
+void Renderer::setClearColor(unsigned char r, unsigned char g, unsigned char b) {
+    clearColor = {static_cast<float>(r)/255.f, static_cast<float>(g)/255.f, static_cast<float>(b)/255.f, 1};
+}

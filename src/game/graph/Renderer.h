@@ -33,6 +33,8 @@ public:
     void beginGUIDrawCalls();
     void swapBuffers();
 
+    void setClearColor(unsigned char r, unsigned char g, unsigned char b);
+
     void setModelMatrix(const glm::mat4& modelMatrix);
     void enableTexture(Texture* texture);
 
@@ -59,7 +61,7 @@ private:
     noise::module::Perlin swayNoise;
     unsigned char* swayData = nullptr;
 
-    glm::vec4 clearColor {0.58f, 0.76f, 0.94f, 1.0f};
+    glm::vec4 clearColor {0, 0, 0, 1};
     Texture* activeTexture;
 
     Shader worldGeometryShader;

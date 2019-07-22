@@ -13,14 +13,8 @@ void ServerClients::handleConnect(ENetEvent e) {
     clients.emplace_back(peer, addr);
     ServerClient& client = clients.back();
 
-    client.initPlayer();
+    //TODO: Create this later
     peer->data = &client;
-
-    Packet p(PacketType::PLAYER_INFO);
-    Serializer::encodeInt(p.data, client.getConnectID());
-    Serializer::encodeFloatVec3(p.data, client.getPlayer().getPos());
-    p.sendTo(peer, PacketChannel::PLAYER_INFO);
-
 }
 
 void ServerClients::handleDisconnect(ENetEvent e) {
@@ -43,4 +37,13 @@ void ServerClients::handleDisconnect(ENetEvent e) {
     }
 
     if (!found) std::cout << Log::err << "Tried to disconnect nonexistent client!" << Log::endl;
+}
+
+void ServerClients::createPlayer(ServerClient &c) {
+    c.initPlayer();
+
+    Packet p(PacketType::PLAYER);
+    Serializer::encodeInt(p.data, c.getConnectID());
+    Serializer::encodeFloatVec3(p.data, c.getPlayer().getPos());
+    p.sendTo(c.getPeer(), PacketChannel::PLAYER);
 }

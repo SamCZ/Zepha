@@ -156,3 +156,7 @@ int TextEntity::getWidthSubtract(int c) {
     }
     return 0;
 }
+
+std::string TextEntity::get() {
+    return text;
+}

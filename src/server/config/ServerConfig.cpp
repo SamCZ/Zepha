@@ -16,8 +16,11 @@ void ServerConfig::init() {
     }
 }
 
-void ServerConfig::handlePacket(ServerClient &client, Packet &r) {
-    if (r.type == PacketType::IDENTIFIER_LIST) {
+bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
+    if (r.type == PacketType::CONNECT_DATA_RECVD) {
+        return true;
+    }
+    else if (r.type == PacketType::IDENTIFIER_LIST) {
 
         Packet p(PacketType::IDENTIFIER_LIST);
 
@@ -27,6 +30,7 @@ void ServerConfig::handlePacket(ServerClient &client, Packet &r) {
             Serializer::encodeString(p.data, str);
         }
 
-        p.sendTo(client.getPeer(), PacketChannel::CONNECT_DATA);
+        p.sendTo(client.getPeer(), PacketChannel::CONNECT);
     }
+    return false;
 }

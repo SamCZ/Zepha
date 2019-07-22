@@ -4,45 +4,48 @@
 
 #include "MenuScene.h"
 
-MenuScene::MenuScene(ClientState& state) : Scene(state) {
-    fontTexture = new Texture((char*)"../res/tex/gui/font.png");
+MenuScene::MenuScene(ClientState& state) : Scene(state),
+    fontTexture((char*)"../res/tex/gui/font.png"),
+    alphaText(&fontTexture),
+    titleText(&fontTexture),
+    mainMenuText(&fontTexture) {
 
-    auto alphaText = new TextEntity(fontTexture);
-    alphaText->set("Zeus Alpha 0.01");
-    alphaText->setScale(3);
-    alphaText->setPos(glm::vec3(8, 4, 0));
-    entities.push_back(alphaText);
+    state.renderer.setClearColor(22, 22, 22);
 
-    auto titleText = new TextEntity(fontTexture);
-    titleText->set("Zeus");
-    titleText->setScale(12);
-    titleText->setPos(glm::vec3(490, 120, 0));
-    entities.push_back(titleText);
+    alphaText.set("Alpha Software - Do Not Redistribute!\nCreated by Nicole Collings");
+    alphaText.setScale(2);
+    alphaText.setPos(glm::vec3(8, 4, 0));
 
-    auto mainMenuText = new TextEntity(fontTexture);
-    mainMenuText->set("MAIN MENU");
-    mainMenuText->setScale(4);
-    mainMenuText->setPos(glm::vec3(530, 230, 0));
-    entities.push_back(mainMenuText);
+    titleText.set("Zeus");
+    titleText.setScale(12);
+    titleText.setPos(glm::vec3(490, 120, 0));
+
+    mainMenuText.set("MAIN MENU");
+    mainMenuText.setScale(4);
+    mainMenuText.setPos(glm::vec3(530, 230, 0));
 }
 
 void MenuScene::update() {
-    //Nothing
+    if (state.renderer.resized) {
+        auto size = state.renderer.getWindow().getSize();
+
+        titleText.setPos({size.x / 2 - 180, size.y / 2 - 120, 0});
+        mainMenuText.setPos({size.x / 2 - 130, size.y / 2, 0});
+
+        state.renderer.resized = false;
+    }
 }
 
 void MenuScene::draw() {
-    state.renderer.beginChunkDeferredCalls();
-    state.renderer.endDeferredCalls();
-    state.renderer.beginGUIDrawCalls();
+    Renderer& renderer = state.renderer;
 
-    for (auto &element : entities) {
-        element->draw(state.renderer);
-    }
+    renderer.beginChunkDeferredCalls();
+    renderer.endDeferredCalls();
+    renderer.beginGUIDrawCalls();
 
-    state.renderer.swapBuffers();
-}
+    alphaText.draw(renderer);
+    titleText.draw(renderer);
+    mainMenuText.draw(renderer);
 
-void MenuScene::cleanup() {
-    fontTexture->clear();
-    delete fontTexture;
+    renderer.swapBuffers();
 }

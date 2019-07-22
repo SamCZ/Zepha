@@ -6,9 +6,9 @@
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 
 #include "LocalWorld.h"
-#include "../net/ServerConnection.h"
+#include "../net/ClientNetworkInterpreter.h"
 
-LocalWorld::LocalWorld(LocalDefs& defs, glm::vec3* playerPos, ServerConnection* server) :
+LocalWorld::LocalWorld(LocalDefs& defs, glm::vec3* playerPos, ClientNetworkInterpreter* server) :
     playerPos(playerPos),
     dimension(&playerChunkPos),
     meshGenStream(defs, dimension),

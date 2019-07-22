@@ -44,13 +44,15 @@ void Server::update() {
 
             case ENET_EVENT_TYPE_RECEIVE: {
                 Packet p(event.packet);
-                ServerClient *client = (ServerClient *) event.peer->data;
+                ServerClient* client = static_cast<ServerClient*>(event.peer->data);
 
-                if (client->hasPlayer()) {
+                if (client->hasPlayer())
                     handlePlayerPacket(*client, p);
-                }
                 else {
-                    config.handlePacket(*client, p);
+                    bool done = config.handlePacket(*client, p);
+                    if (done) {
+                        clientList.createPlayer(*client);
+                    }
                 }
 
                 break;
@@ -68,7 +70,7 @@ void Server::update() {
 }
 
 void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
-    //Client *does* have a player, this is ensured in update().
+    //Client *does* have a player, this is ensured in processConnecting().
     ServerPlayer& player = client.getPlayer();
 
     switch (p.type) {
@@ -77,7 +79,7 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
             break;
         }
 
-        case PacketType::PLAYER_INFO: {
+        case PacketType::PLAYER: {
             player.setPos(Serializer::decodeFloatVec3(&p.data[0]));
             player.setAngle(Serializer::decodeFloat(&p.data[12]));
 
@@ -90,7 +92,7 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
 
             for (auto& iter : clientList.clients) {
                 if (iter.getConnectID() != client.getConnectID()) {
-                    r.sendTo(iter.getPeer(), PacketChannel::ENTITY_INFO);
+                    r.sendTo(iter.getPeer(), PacketChannel::ENTITY);
                 }
             }
 

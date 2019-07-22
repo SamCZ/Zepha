@@ -13,6 +13,7 @@
 #include "../util/Timer.h"
 #include "scene/GameScene.h"
 #include "scene/MenuScene.h"
+#include "scene/ConnectScene.h"
 
 class Client {
 public:

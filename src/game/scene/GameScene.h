@@ -11,7 +11,7 @@
 #include "../entity/hud/GameGui.h"
 #include "world/LocalWorld.h"
 #include "world/Player.h"
-#include "net/ServerConnection.h"
+#include "net/ClientNetworkInterpreter.h"
 #include "../entity/world/PlayerEntity.h"
 #include "../entity/world/WireframeEntity.h"
 #include "../entity/world/BlockCrackEntity.h"
@@ -30,7 +30,7 @@ public:
 
     glm::vec3 playerPos;
 
-    ServerConnection server;
+    ClientNetworkInterpreter server;
     Player player;
     LocalWorld world;
 

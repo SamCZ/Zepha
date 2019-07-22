@@ -16,9 +16,10 @@
 class NetHandler {
 public:
     NetHandler() = default;
-    NetHandler(unsigned short port, short max_clients);
-    NetHandler(Address hostAddress);
+    explicit NetHandler(Address hostAddress);
     NetHandler(Address hostAddress, int connection_attempts, int connection_timeout);
+
+    NetHandler(unsigned short port, short max_clients);
 
     void disconnect();
 
@@ -27,6 +28,8 @@ public:
     bool update(ENetEvent* event);
 
     ~NetHandler();
+
+    const static int PACKET_CHANNELS = 12;
 private:
     void initServer(unsigned short port, short max_clients);
     void initClient(Address hostAddress, int connection_attempts, int connection_timeout);
@@ -38,8 +41,6 @@ private:
     ENetHost* host = nullptr;
 
     ENetAddress address {};
-
-    const static int PACKET_CHANNELS = 12;
 };
 
 #endif //ZEUS_NETHANDLER_H

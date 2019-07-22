@@ -12,8 +12,6 @@ LocalDefs::LocalDefs(std::string tex_path) :
     textureAtlas.loadDirectory(tex_path + "/game");
     textureAtlas.loadDirectory(tex_path + "/gui");
     textureAtlas.loadDirectory(tex_path + "/ent");
-
-    blockAtlas = LocalBlockAtlas();
 }
 
 LocalDefs::LocalDefs(const LocalDefs &copy) : LocalDefs(copy.tex_path) {
