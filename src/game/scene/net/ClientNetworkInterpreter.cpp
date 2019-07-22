@@ -120,4 +120,5 @@ void ClientNetworkInterpreter::setBlock(glm::vec3 pos, int block) {
     Serializer::encodeIntVec3(p.data, pos);
     Serializer::encodeInt(p.data, block);
     p.sendTo(connection.getPeer(), PacketChannel::BLOCK);
+
 }
