@@ -4,11 +4,11 @@
 
 #include "StatGraph.h"
 
-StatGraph::StatGraph(std::string title, int graphLength, int graphScale, Texture *graphTex, Texture *textTex) :
-    StatGraph(std::move(title), 244, 64, graphLength, graphScale, graphTex, textTex) {}
+StatGraph::StatGraph(const std::string& title, int graphLength, int graphScale, Texture *graphTex, Texture *textTex) :
+    StatGraph(title, 244, 64, graphLength, graphScale, graphTex, textTex) {}
 
-StatGraph::StatGraph(std::string title, int xSize, int ySize, int graphLength, int graphScale, Texture* graphTex, Texture* textTex) :
-    title(std::move(title)),
+StatGraph::StatGraph(const std::string& title, int xSize, int ySize, int graphLength, int graphScale, Texture* graphTex, Texture* textTex) :
+    title(title),
     background({0.1, 0.1, 0.1, 0.2}, {0.1, 0.1, 0.1, 0.2}, {0.1, 0.1, 0.1, 0.7}, {0.1, 0.1, 0.1, 0.7}),
     graph(graphTex, graphLength, graphScale, true),
     text(textTex) {

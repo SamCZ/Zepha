@@ -38,8 +38,8 @@ private:
     std::shared_ptr<AtlasRef> playerFrontTex, playerBackTex, shadowTex;
     int id = 0;
 
-    DrawableGroup* entities;
-    LocalWorld* world;
+    DrawableGroup* entities = nullptr;
+    LocalWorld* world = nullptr;
     ServerConnection& connection;
 };
 

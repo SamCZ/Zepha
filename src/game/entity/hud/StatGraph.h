@@ -13,8 +13,8 @@
 
 class StatGraph : public Drawable {
 public:
-    StatGraph(std::string title, int xSize, int ySize, int graphLength, int graphScale, Texture* graphTex, Texture* textTex);
-    StatGraph(std::string title, int graphLength, int graphScale, Texture* graphTex, Texture* textTex);
+    StatGraph(const std::string& title, int xSize, int ySize, int graphLength, int graphScale, Texture* graphTex, Texture* textTex);
+    StatGraph(const std::string& title, int graphLength, int graphScale, Texture* graphTex, Texture* textTex);
 
     void setPos(glm::vec2 pos);
     void update(float value);
