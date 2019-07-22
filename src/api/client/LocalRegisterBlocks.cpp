@@ -41,7 +41,7 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& zeus, LocalDefs &defs) {
 
         //TODO: Make LocalBlockDef take multiple selectionboxes
         LocalBlockModel model = LocalBlockModel::create(*modelOpt, *texturesOpt, defs.textures(), visible, culls);
-        LocalBlockDef blockDef(identifier, defs.blocks().definitionsSize(), std::move(model), solid, sBoxes[0]);
+        LocalBlockDef blockDef(identifier, std::move(model), solid, sBoxes[0]);
 
         //Bind Callbacks
         auto on_place_client = blockTable.get<sol::optional<sol::function>>("on_place_client");

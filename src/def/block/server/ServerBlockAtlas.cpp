@@ -17,7 +17,7 @@ int ServerBlockAtlas::definitionsSize() {
 
 void ServerBlockAtlas::registerBlock(ServerBlockDef def) {
     definitions.push_back(def);
-    identifierIndexTable.insert({def.getIdentifier(), def.getIndex()});
+    identifierIndexTable.insert({def.identifier, def.index});
 }
 
 ServerBlockDef& ServerBlockAtlas::fromIndex(int id) {

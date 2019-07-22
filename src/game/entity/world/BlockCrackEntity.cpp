@@ -22,7 +22,7 @@ void BlockCrackEntity::update() {
     if (crackLevel != this->crackLevel) {
         this->crackLevel = crackLevel;
 
-        auto model = defs.blocks().fromIndex(blockID).getModel();
+        auto model = defs.blocks().fromIndex(blockID).model;
         auto m = new EntityMesh();
 
         std::vector<EntityVertex> vertices;

@@ -24,10 +24,10 @@ MeshGenerator::MeshGenerator(std::vector<ChunkVertex> &vertices, std::vector<uns
 
     auto end = (int)pow(TransPos::CHUNK_SIZE, 3);
     for (int i = 0; i < end; i++) {
-        if (getDef(i).getModel().visible) {
+        if (getDef(i).model.visible) {
             VecUtils::indAssignVec(i, off);
 
-            LocalBlockModel& model = getDef(i).getModel();
+            LocalBlockModel& model = getDef(i).model;
 
             vis = off;
 
@@ -97,7 +97,7 @@ bool MeshGenerator::faceOcculudedAt(const glm::vec3 &pos, const std::vector<bool
 
         return false;
     }
-    return getDef(pos).isCulling();
+    return getDef(pos).culls;
 }
 
 void MeshGenerator::addFaces(const glm::vec3 &offset, const vector<LocalMeshPart> &meshParts) {

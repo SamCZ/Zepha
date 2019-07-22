@@ -14,31 +14,15 @@
 
 class BlockDef {
 public:
-    BlockDef() = default;
-    BlockDef(std::string identifier, int index, bool culls, bool solid, SelectionBox selectionBox) :
-        identifier(std::move(identifier)),
-        index(index),
-        culls(culls),
-        solid(solid),
-        selectionBox(selectionBox) {}
-
-    std::string getIdentifier() { return identifier; };
-    int getIndex() { return index; }
-
-    bool isCulling() { return culls; };
-    bool isSolid() { return solid; };
-
-    SelectionBox getSelectionBox() { return selectionBox; };
-
-    std::unordered_map<int /*Callback*/, sol::function> callbacks;
-protected:
-    std::string identifier;
     int index;
+    std::string identifier;
 
     bool culls = false;
     bool solid = false;
 
     SelectionBox selectionBox;
+
+    std::unordered_map<Callback, sol::function, Util::EnumClassHash> callbacks {};
 };
 
 

@@ -106,7 +106,7 @@ void Player::pointerUpdate(InputManager &input, double delta) {
 
         auto blockID = world.getBlock(rayEnd);
         if (blockID > 0) {
-            auto sBox = defs.blocks().fromIndex(blockID).getSelectionBox();
+            SelectionBox& sBox = defs.blocks().fromIndex(blockID).selectionBox;
             auto intersects = sBox.intersects(*ray.getEnd(), pointedPos);
 
             if (intersects != NONE) {
@@ -142,7 +142,7 @@ void Player::pointerUpdate(InputManager &input, double delta) {
         }
         if (input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
             world.localSetBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face),
-                    defs.blocks().fromIdentifier("kinetic:axle_0").getIndex());
+                    defs.blocks().fromIdentifier("kinetic:axle_0").index);
         }
     }
     else {

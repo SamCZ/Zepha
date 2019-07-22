@@ -14,6 +14,7 @@ class ConnectScene : public Scene {
 public:
     enum class State {
         CONNECTING,
+        FAILED_CONNECT,
         IDENTIFIER_LIST,
     };
 

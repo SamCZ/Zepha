@@ -14,25 +14,25 @@ MapGen::MapGen(unsigned int seed, BlockAtlas& atlas) {
 
     //Get Block Indexes
 
-    GRASS_BLOCK = atlas.fromIdentifier("default:grass").getIndex();
-    DIRT_BLOCK  = atlas.fromIdentifier("default:dirt").getIndex();
-    STONE_BLOCK = atlas.fromIdentifier("default:stone").getIndex();
+    GRASS_BLOCK = atlas.fromIdentifier("default:grass").index;
+    DIRT_BLOCK  = atlas.fromIdentifier("default:dirt").index;
+    STONE_BLOCK = atlas.fromIdentifier("default:stone").index;
 
-    PLANT_STEM_BLOCK = atlas.fromIdentifier("default:bush_stem").getIndex();
-    LEAVES_BLOCK     = atlas.fromIdentifier("default:leaves").getIndex();
+    PLANT_STEM_BLOCK = atlas.fromIdentifier("default:bush_stem").index;
+    LEAVES_BLOCK     = atlas.fromIdentifier("default:leaves").index;
 
     for (int i = 1; i <= 5; i++) {
-        TALLGRASSES[i] = atlas.fromIdentifier("default:tallgrass_" + to_string(i)).getIndex();
+        TALLGRASSES[i] = atlas.fromIdentifier("default:tallgrass_" + to_string(i)).index;
     }
 
-    FLOWERS[0] = atlas.fromIdentifier("default:flower_dandelion_yellow").getIndex();
-    FLOWERS[1] = atlas.fromIdentifier("default:flower_viola").getIndex();
-    FLOWERS[2] = atlas.fromIdentifier("default:flower_geranium").getIndex();
-    FLOWERS[3] = atlas.fromIdentifier("default:flower_tulip").getIndex();
-    FLOWERS[4] = atlas.fromIdentifier("default:flower_dandelion_white").getIndex();
-    FLOWERS[5] = atlas.fromIdentifier("default:flower_rose").getIndex();
-    FLOWERS[6] = atlas.fromIdentifier("default:flower_mushroom_red").getIndex();
-    FLOWERS[7] = atlas.fromIdentifier("default:flower_mushroom_brown").getIndex();
+    FLOWERS[0] = atlas.fromIdentifier("default:flower_dandelion_yellow").index;
+    FLOWERS[1] = atlas.fromIdentifier("default:flower_viola").index;
+    FLOWERS[2] = atlas.fromIdentifier("default:flower_geranium").index;
+    FLOWERS[3] = atlas.fromIdentifier("default:flower_tulip").index;
+    FLOWERS[4] = atlas.fromIdentifier("default:flower_dandelion_white").index;
+    FLOWERS[5] = atlas.fromIdentifier("default:flower_rose").index;
+    FLOWERS[6] = atlas.fromIdentifier("default:flower_mushroom_red").index;
+    FLOWERS[7] = atlas.fromIdentifier("default:flower_mushroom_brown").index;
 
     //Set up Noise Parameters
 

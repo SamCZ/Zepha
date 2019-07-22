@@ -12,7 +12,7 @@ ServerConfig::ServerConfig(ServerDefs &defs) :
 void ServerConfig::init() {
     identifierList.reserve(static_cast<unsigned long>(defs.blocks().definitionsSize()));
     for (int i = 0; i < defs.blocks().definitionsSize(); i++) {
-        identifierList.push_back(defs.blocks().fromIndex(i).getIdentifier());
+        identifierList.push_back(defs.blocks().fromIndex(i).identifier);
     }
 }
 

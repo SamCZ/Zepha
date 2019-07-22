@@ -5,7 +5,7 @@
 #ifndef ZEUS_CALLBACK_H
 #define ZEUS_CALLBACK_H
 
-enum Callback {
+enum class Callback {
     CONSTRUCT,
     DESTRUCT,
     AFTER_CONSTRUCT,

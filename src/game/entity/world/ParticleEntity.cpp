@@ -15,7 +15,7 @@ ParticleEntity::ParticleEntity(glm::vec3 pos, LocalBlockDef &block) {
             (static_cast<float>(rand()) / static_cast<float>(RAND_MAX / 2) - 1) / 3.f
     );
 
-    auto& textureRefs = block.getModel().textureRefs;
+    std::set<std::shared_ptr<AtlasRef>>& textureRefs = block.model.textureRefs;
     auto it = textureRefs.cbegin();
     advance(it, rand() % textureRefs.size());
 

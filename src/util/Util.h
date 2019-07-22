@@ -11,6 +11,14 @@
 #include <glm/vec3.hpp>
 
 namespace Util {
+    struct EnumClassHash {
+        template <typename T>
+        std::size_t operator()(T t) const
+        {
+            return static_cast<std::size_t>(t);
+        }
+    };
+
     static std::string floatToString(float val) {
         std::ostringstream out;
         out.precision(2);

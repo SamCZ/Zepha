@@ -24,7 +24,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize, Texture* tex) :
     drawCallsGraph   ("Draw Calls", 244, 64, 120, 0,  &monochromeGraphTexture, &fontTexture),
     vRamGraph        ("VRam",       244, 64, 120, 1,  &monochromeGraphTexture, &fontTexture) {
 
-    atlasTex.setScale({1024, 1024, 1});
+    atlasTex.setScale({0, 0, 1});
 
     positionElements(bufferSize);
 
@@ -94,7 +94,7 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         glm::vec3 footPos = TransPos::roundPos(player.getPos()) + glm::vec3(0, -2, 0);
 
         int blockID = world.getBlock(footPos);
-        std::string on = (blockID > 0) ? defs.blocks().fromIndex(blockID).getIdentifier() : "invalid";
+        std::string on = (blockID > 0) ? defs.blocks().fromIndex(blockID).identifier : "invalid";
 
         glm::vec3 playerPos = TransPos::roundPos(player.getPos());
 
@@ -139,7 +139,7 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
 
         str << "Standing On: " << on << std::endl << std::endl;
 
-        if (thing.blockDef != nullptr) str << "Pointing At: " << thing.blockDef->getIdentifier() << ", " << std::endl;
+        if (thing.blockDef != nullptr) str << "Pointing At: " << thing.blockDef->identifier << ", " << std::endl;
         str << "Pointed Position: " << vecToString(thing.pos) << std::endl;
         str << "Pointed Face: " << face << std::endl;
 
@@ -150,7 +150,7 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         auto thing = player.getPointedThing();
 
         std::ostringstream crossText;
-        if (thing.blockDef != nullptr) crossText << thing.blockDef->getIdentifier() << std::endl;
+        if (thing.blockDef != nullptr) crossText << thing.blockDef->identifier << std::endl;
         crosshairText.set(crossText.str());
     }
 }

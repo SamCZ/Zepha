@@ -18,15 +18,12 @@ public:
     void setIdentifiers(std::vector<std::string>& identifiers);
     void registerBlock(LocalBlockDef def);
 
-    int definitionsSize() override;
+    int definitionsSize() override {return 0;};
 
     LocalBlockDef& fromIndex(int id) override;
     LocalBlockDef& fromIdentifier(std::string identifier) override;
 private:
-    const static int UNDEFINED = -1;
-    const static int AIR = 0;
-
-    std::vector<LocalBlockDef> definitions;
+    std::vector<LocalBlockDef> definitions {1};
     std::unordered_map<std::string, int> identifierIndexTable;
 };
 

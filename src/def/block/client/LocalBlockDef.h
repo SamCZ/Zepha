@@ -13,10 +13,8 @@
 class LocalBlockDef : public BlockDef {
 public:
     LocalBlockDef() = default;
-    LocalBlockDef(std::string identifier, int index, LocalBlockModel model, bool solid, SelectionBox selectionBox);
+    LocalBlockDef(std::string identifier, LocalBlockModel model, bool solid, SelectionBox selectionBox);
 
-    LocalBlockModel&  getModel();
-private:
     LocalBlockModel model;
 };
 

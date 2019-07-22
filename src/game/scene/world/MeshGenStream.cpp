@@ -153,7 +153,7 @@ std::vector<bool>* MeshGenStream::getAdjacentsCull(glm::vec3 pos) {
                 };
 
                 auto block = chunk->getBlock(checkPos);
-                culls->push_back(defs.blocks().fromIndex(block).isCulling());
+                culls->push_back(defs.blocks().fromIndex(block).culls);
             }
         }
     }

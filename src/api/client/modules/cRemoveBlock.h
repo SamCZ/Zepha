@@ -11,7 +11,7 @@
 
 namespace ClientApi {
     void remove_block(sol::table &zeus, LocalDefs& defs, LocalWorld& world) {
-        int air = defs.blocks().fromIdentifier("builtin:air").getIndex();
+        int air = defs.blocks().fromIdentifier("builtin:air").index;
 
         zeus.set_function("remove_block", [&](sol::table pos) {
             if (!pos["x"] || !pos["y"] || !pos["z"]) {

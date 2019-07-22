@@ -15,8 +15,6 @@ public:
     ServerBlockDef() = default;
     ServerBlockDef(std::string identifier, int index, ServerBlockModel model, bool solid, SelectionBox selectionBox);
 
-    ServerBlockModel& getModel();
-private:
     ServerBlockModel model;
 };
 

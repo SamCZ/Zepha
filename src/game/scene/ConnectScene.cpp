@@ -24,6 +24,9 @@ void ConnectScene::update() {
             std::cout << Log::err << "Invalid connectState" << Log::endl;
             exit(1);
 
+        case State::FAILED_CONNECT:
+            break;
+
         case State::CONNECTING:
             handleConnecting();
             break;
@@ -62,10 +65,13 @@ void ConnectScene::handleConnecting() {
         default:
             std::cout << Log::err << "Undefined connection error. Exiting." << Log::endl;
 
-        case ServerConnection::State::FAILED_CONNECT:
-
         case ServerConnection::State::ENET_ERROR:
             exit(1);
+            break;
+
+        case ServerConnection::State::FAILED_CONNECT:
+            connectState = State::FAILED_CONNECT;
+            statusText.set(statusText.get() + "\nFailed to connect :(\n");
             break;
 
         case ServerConnection::State::ATTEMPTING_CONNECT:

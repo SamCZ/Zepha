@@ -7,29 +7,26 @@
 LocalBlockAtlas::LocalBlockAtlas() {
     //Register Air Node
     LocalBlockModel nullModel; nullModel.visible = false, nullModel.culls = false;
-    LocalBlockDef air("builtin:air", static_cast<int>(definitions.size()), nullModel, false, {{0, 0, 0}, {1, 1, 1}});
-    definitions.push_back(air);
-    identifierIndexTable["builtin:air"] = AIR;
-}
-
-int LocalBlockAtlas::definitionsSize() {
-    return static_cast<int>(definitions.size());
+    LocalBlockDef air("builtin:air", nullModel, false, {{0, 0, 0}, {1, 1, 1}});
+    air.index = 0;
+    definitions[0] = air;
 }
 
 void LocalBlockAtlas::setIdentifiers(std::vector<std::string> &identifiers) {
     for (int i = 0; i < identifiers.size(); i++) {
-        identifierIndexTable.insert({identifiers[i], -1});
+        definitions.emplace_back();
+        identifierIndexTable.insert({identifiers[i], i});
     }
 }
 
 void LocalBlockAtlas::registerBlock(LocalBlockDef def) {
-    definitions.push_back(def);
-
-    if (!identifierIndexTable.count(def.getIdentifier())) {
-        std::cout << Log::err << "Client/Server block identifier desync: " + def.getIdentifier() + "!" << Log::endl;
+    if (!identifierIndexTable.count(def.identifier)) {
+        std::cout << Log::err << "Client/Server block identifier desync: " + def.identifier + "!" << Log::endl;
         return;
     }
-    identifierIndexTable[def.getIdentifier()] = def.getIndex();
+
+    def.index = identifierIndexTable[def.identifier];
+    definitions[def.index] = def;
 }
 
 LocalBlockDef& LocalBlockAtlas::fromIndex(int id) {
