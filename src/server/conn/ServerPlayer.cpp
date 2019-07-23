@@ -4,10 +4,10 @@
 
 #include "ServerPlayer.h"
 
-ServerPlayer::ServerPlayer(glm::vec3 pos, unsigned int connectID, std::string username) :
+ServerPlayer::ServerPlayer(glm::vec3 pos, unsigned int connectID, const std::string& username) :
     pos(pos),
     connectID(connectID),
-    username(std::move(username)) {
+    username(username) {
 
     chunkPos = TransPos::chunkFromVec(pos);
     lastChunkPos = chunkPos - glm::vec3(200); //Force resending of all chunks around getPlayer.

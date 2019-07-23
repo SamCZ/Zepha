@@ -19,15 +19,15 @@
 #include "../../texture/TextureAtlas.h"
 
 struct ServerMeshPart {
-    ServerMeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, std::string texture);
+    ServerMeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, const std::string& texture);
 
     std::vector<MeshVertex> vertices;
     std::vector<unsigned int> indices;
 
     std::string texture;
 
-    ShaderMod meshMod;
-    float modValue;
+    ShaderMod meshMod = ShaderMod::NONE;
+    float modValue = 0;
 };
 
 

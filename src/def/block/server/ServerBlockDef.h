@@ -13,7 +13,7 @@
 class ServerBlockDef : public BlockDef {
 public:
     ServerBlockDef() = default;
-    ServerBlockDef(std::string identifier, int index, ServerBlockModel model, bool solid, SelectionBox selectionBox);
+    ServerBlockDef(std::string identifier, int index, const ServerBlockModel& model, bool solid, SelectionBox selectionBox);
 
     ServerBlockModel model;
 };

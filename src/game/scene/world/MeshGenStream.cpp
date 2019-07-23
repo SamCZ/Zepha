@@ -91,9 +91,8 @@ std::vector<MeshGenStream::MeshDetails> MeshGenStream::update() {
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 MeshGenStream::Thread::Thread(LocalBlockAtlas &atlas, std::array<NoiseSample, 3>& offsetSamplers) :
-    atlas(atlas), offsetSamplers(offsetSamplers) {
-    thread = new std::thread(MeshGenStream::threadFunction, this);
-}
+    atlas(atlas), offsetSamplers(offsetSamplers),
+    thread(MeshGenStream::threadFunction, this) {}
 #pragma clang diagnostic pop
 
 void MeshGenStream::threadFunction(MeshGenStream::Thread *thread) {
@@ -127,7 +126,7 @@ void MeshGenStream::threadFunction(MeshGenStream::Thread *thread) {
 MeshGenStream::~MeshGenStream() {
     for (auto& t : threads) {
         t.keepAlive = false;
-        t.thread->join();
+        t.thread.join();
     }
 }
 

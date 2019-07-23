@@ -13,7 +13,7 @@ public:
     const static int ACTIVE_RANGE_H = 24;
     const static int ACTIVE_RANGE_V = 12;
 
-    explicit ServerPlayer(glm::vec3 pos, unsigned int connectID, std::string username);
+    explicit ServerPlayer(glm::vec3 pos, unsigned int connectID, const std::string& username);
 
     void setPos(glm::vec3 pos);
     void setAngle(float angle);
@@ -37,7 +37,7 @@ private:
     glm::vec3 lastChunkPos {};
     glm::vec3 pos {};
 
-    float angle;
+    float angle = 0;
 };
 
 

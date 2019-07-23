@@ -63,7 +63,7 @@ public:
         LocalBlockAtlas &atlas;
         std::array<NoiseSample, 3>& offsetSamplers;
 
-        std::thread* thread;
+        std::thread thread;
         bool keepAlive = true;
 
         std::vector<Unit> tasks = std::vector<Unit>(THREAD_QUEUE_SIZE);

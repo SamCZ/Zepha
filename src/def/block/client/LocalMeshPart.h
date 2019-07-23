@@ -26,8 +26,8 @@ struct LocalMeshPart {
 
     std::shared_ptr<AtlasRef> texture;
 
-    ShaderMod shaderMod;
-    float modValue;
+    ShaderMod shaderMod = ShaderMod::NONE;
+    float modValue = 0;
 };
 
 

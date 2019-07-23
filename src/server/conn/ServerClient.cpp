@@ -17,6 +17,7 @@ unsigned int ServerClient::getConnectID() {
 
 void ServerClient::initPlayer() {
     //TODO: IMPLEMENT USERNAME
+    delete player;
     player = new ServerPlayer({0, 16, 0}, connectID, "TEMPORARY");
 }
 

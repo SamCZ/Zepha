@@ -4,11 +4,11 @@
 
 #include "LocalDefs.h"
 
-LocalDefs::LocalDefs(std::string tex_path) :
+LocalDefs::LocalDefs(const std::string& tex_path) :
     tex_path(tex_path),
-    luaApi("/home/aurailus/CLion/Zeus/res/lua/") {
+    luaApi("/home/aurailus/CLion/Zeus/res/lua/"),
+    textureAtlas(1024) {
 
-    textureAtlas = TextureAtlas(1024);
     textureAtlas.loadDirectory(tex_path + "/game");
     textureAtlas.loadDirectory(tex_path + "/gui");
     textureAtlas.loadDirectory(tex_path + "/ent");

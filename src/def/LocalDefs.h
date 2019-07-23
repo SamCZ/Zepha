@@ -11,7 +11,7 @@
 
 class LocalDefs {
 public:
-    explicit LocalDefs(std::string tex_path);
+    explicit LocalDefs(const std::string& tex_path);
     LocalDefs(const LocalDefs& copy);
 
     LocalBlockAtlas& blocks();

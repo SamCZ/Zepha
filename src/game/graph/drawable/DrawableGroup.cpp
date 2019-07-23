@@ -17,8 +17,8 @@ void DrawableGroup::addDrawable(Drawable *drawable) {
 void DrawableGroup::removeDrawable(Drawable *drawable) {
     for (auto it = children.begin(); it < children.end(); ++it) {
         if (*it == drawable) {
-            children.erase(it);
             delete *it;
+            children.erase(it);
         }
     }
 }
