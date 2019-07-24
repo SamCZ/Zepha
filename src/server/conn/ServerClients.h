@@ -11,6 +11,7 @@
 #include "../../util/net/Packet.h"
 #include "../../util/net/PacketChannel.h"
 #include "../../util/Log.h"
+#include "../../util/net/NetHandler.h"
 
 class ServerClients {
 public:

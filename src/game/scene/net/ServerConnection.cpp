@@ -52,7 +52,8 @@ void ServerConnection::processConnecting() {
         if (elapsedMs < timeout) {
             if (enet_host_service(host, &event, 0) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
                 std::cout << Log::info << "Connected to "
-                          << event.peer->address.host << ":" << event.peer->address.port << "." << Log::endl;
+                          << NetHandler::intToIPString(event.peer->address.host)
+                          << ":" << event.peer->address.port << "." << Log::endl;
 
                 state = State::CONNECTED;
             }
@@ -77,11 +78,13 @@ ServerConnection::State ServerConnection::getConnectionStatus() {
 }
 
 void ServerConnection::disconnect() {
-    std::cout << Log::info << "Disconnecting from server." << Log::endl;
-    enet_peer_disconnect(peer, 0);
-    enet_host_flush(host);
-    //TODO: Make sure the client is *actually* disconnected.. get clarification from the docs
-    state = State::DISCONNECTED;
+    if (state == State::CONNECTED) {
+        std::cout << Log::info << "Disconnecting from server." << Log::endl;
+        enet_peer_disconnect(peer, 0);
+        enet_host_flush(host);
+        //TODO: Make sure the client is *actually* disconnected.. get clarification from the docs
+        state = State::DISCONNECTED;
+    }
 }
 
 bool ServerConnection::pollEvents(ENetEvent *event) {

@@ -8,7 +8,7 @@ void ServerClients::handleConnect(ENetEvent e) {
     ENetPeer* peer = e.peer;
     ENetAddress& addr = peer->address;
 
-    std::cout << Log::info << addr.host << ":" << addr.port << " connected." << Log::endl;
+    std::cout << Log::info << NetHandler::intToIPString(addr.host) << ":" << addr.port << " connected." << Log::endl;
 
     clients.emplace_back(peer, addr);
     ServerClient& client = clients.back();
@@ -23,7 +23,7 @@ void ServerClients::handleDisconnect(ENetEvent e) {
 
     unsigned int connectID = static_cast<ServerClient*>(peer->data)->getConnectID();
 
-    std::cout << Log::info << addr.host << ":" << addr.port << " disconnected." << Log::endl;
+    std::cout << Log::info << NetHandler::intToIPString(addr.host) << ":" << addr.port << " disconnected." << Log::endl;
 
     bool found = false;
     auto it = clients.begin();

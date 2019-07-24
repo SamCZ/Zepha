@@ -2,6 +2,7 @@
 // Created by aurailus on 03/02/19.
 //
 
+#include <sstream>
 #include "NetHandler.h"
 
 NetHandler::NetHandler(const Address& hostAddress) : NetHandler(std::move(hostAddress), 3, 3) {}
@@ -73,7 +74,8 @@ void NetHandler::initClient(Address hostAddress, int attempts, int timeout) {
         ENetEvent event;
         if (enet_host_service(host, &event, (enet_uint32)timeout) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
             std::cout << Log::info << "Connected to "
-                      << event.peer->address.host << ":" << event.peer->address.port << "." << Log::endl;
+                      << NetHandler::intToIPString(event.peer->address.host)
+                      << ":" << event.peer->address.port << "." << Log::endl;
             state = NetState::CLIENT;
             break;
         }
@@ -124,4 +126,13 @@ NetHandler::~NetHandler() {
             enet_deinitialize();
         }
     }
+}
+
+std::string NetHandler::intToIPString(unsigned int ip) {
+    std::ostringstream s;
+    s << ((ip      ) & 0xFF) << ".";
+    s << ((ip >> 8 ) & 0xFF) << ".";
+    s << ((ip >> 16) & 0xFF) << ".";
+    s << ((ip >> 24) & 0xFF);
+    return s.str();
 }

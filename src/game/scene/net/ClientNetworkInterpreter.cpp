@@ -28,7 +28,8 @@ void ClientNetworkInterpreter::update(Player &player) {
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT: {
                 std::cout << Log::info << "Connected to server "
-                          << event.peer->address.host << ":" << event.peer->address.port << "." << Log::endl;
+                          << NetHandler::intToIPString(event.peer->address.host)
+                          << ":" << event.peer->address.port << "." << Log::endl;
                 break;
             }
             case ENET_EVENT_TYPE_RECEIVE: {

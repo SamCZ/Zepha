@@ -27,6 +27,8 @@ public:
     ENetPeer* getPeer();
     bool update(ENetEvent* event);
 
+    static std::string intToIPString(unsigned int ip);
+
     ~NetHandler();
 
     const static int PACKET_CHANNELS = 12;
