@@ -1,6 +1,6 @@
 # Zeus Voxel Engine
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c68cee789d164977861c62bb42464e8e)](https://app.codacy.com/app/Aurailus/Zeus_cpp?utm_source=github.com&utm_medium=referral&utm_content=Aurailus/Zeus_cpp&utm_campaign=Badge_Grade_Settings)
+[![Codacy Badge](https://img.shields.io/codacy/grade/fb6fa8dbb8254a91a2f4c06fae5f1347.svg?logo=codacy)](https://app.codacy.com/app/Aurailus/Zeus_cpp?utm_source=github.com&utm_medium=referral&utm_content=Aurailus/Zeus_cpp&utm_campaign=Badge_Grade_Settings)
 [![Discord Badge](https://img.shields.io/discord/416379773976051712.svg?color=7289DA&label=discord&logo=discord&logoColor=white)](https://discord.gg/HFTCQ7a)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/aurailus/zeus_cpp.svg?logo=github&label=commit%20activity)](https://github.com/Aurailus/Zeus_cpp/commits/master)
 
