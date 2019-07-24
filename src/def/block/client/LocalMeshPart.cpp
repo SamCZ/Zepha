@@ -4,10 +4,9 @@
 
 #include "LocalMeshPart.h"
 
-LocalMeshPart::LocalMeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, std::shared_ptr<AtlasRef> texture) :
-
-    vertices(std::move(vertices)),
-    indices(std::move(indices)),
+LocalMeshPart::LocalMeshPart(const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<AtlasRef> texture) :
+    vertices(vertices),
+    indices(indices),
     texture(texture) {
 
     //These vertex structs do (should) not have normals, so we will generate them here from the triangle information

@@ -4,9 +4,10 @@
 
 #include "ServerMeshPart.h"
 
-ServerMeshPart::ServerMeshPart(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, const std::string& texture) :
-    vertices(std::move(vertices)),
-    indices(std::move(indices)) {
+ServerMeshPart::ServerMeshPart(const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices, const std::string& texture) :
+    vertices(vertices),
+    indices(indices),
+    texture(texture) {
 
     //These vertex structs do (should) not have normals, so we will generate them here from the triangle information
     //To do this, we have to assume that each group of 3 indices is a triangle (which it would be hard for it to not be)

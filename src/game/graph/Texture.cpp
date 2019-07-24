@@ -4,8 +4,8 @@
 
 #include "Texture.h"
 
-Texture::Texture(std::string file) {
-    fileLocation = std::move(file);
+Texture::Texture(const std::string& file) :
+    fileLocation(file) {
     loadFromFile(this->fileLocation);
 }
 

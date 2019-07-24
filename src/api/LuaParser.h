@@ -30,7 +30,7 @@ public:
         float initial_timeout;
     };
 
-    explicit LuaParser(std::string root);
+    explicit LuaParser(const std::string& root);
 
     virtual void update();
 

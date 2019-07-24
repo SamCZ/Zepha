@@ -4,9 +4,8 @@
 
 #include "LuaParser.h"
 
-LuaParser::LuaParser(std::string root) :
-        root(std::move(root)),
-        root_path(this->root) {}
+LuaParser::LuaParser(const std::string& root) :
+        root(root), root_path(root) {}
 
 void LuaParser::update() {
     //Loop through and call delayed functions
