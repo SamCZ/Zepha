@@ -2,7 +2,7 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c68cee789d164977861c62bb42464e8e)](https://app.codacy.com/app/Aurailus/Zeus_cpp?utm_source=github.com&utm_medium=referral&utm_content=Aurailus/Zeus_cpp&utm_campaign=Badge_Grade_Settings)
 ![Discord Badge](https://img.shields.io/discord/416379773976051712.svg?color=7289DA&label=discord&logo=discord&logoColor=white)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/aurailus/zeus_cpp.svg?logo=github)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/aurailus/zeus_cpp.svg?logo=github&label=commit%20activity)
 
 A highly moddable, fast, extensible C++ Voxel Game. Sounds like all the other ones right? Well - This one's better.
 This project is very early in development, and is not in a usable form right now without extensive configuration (undocumented at this point in time).
