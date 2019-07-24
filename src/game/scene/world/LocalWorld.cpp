@@ -68,18 +68,20 @@ void LocalWorld::finishMeshes() {
     lastMeshUpdates = 0;
     auto finishedMeshes = meshGenStream.update();
 
-    for (auto mesh : finishedMeshes) {
-        if (!mesh.vertices->empty()) {
+    for (MeshDetails* meshDetails : finishedMeshes) {
+
+        if (!meshDetails->vertices.empty()) {
             auto meshChunk = new MeshChunk();
-            meshChunk->build(*mesh.vertices, *mesh.indices);
-            meshChunk->setPos(mesh.pos);
+            meshChunk->build(meshDetails->vertices, meshDetails->indices);
+            meshChunk->setPos(meshDetails->pos);
 
             dimension.addMeshChunk(meshChunk);
             lastMeshUpdates++;
+        } else {
+            dimension.removeMeshChunk(meshDetails->pos);
         }
-        else {
-            dimension.removeMeshChunk(mesh.pos);
-        }
+
+        delete meshDetails;
     }
 }
 

@@ -30,7 +30,7 @@ public:
     bool tryToQueue(glm::vec3 pos);
 
     //Will return a vector of BlockChunk pointers containing finished chunks.
-    //Frees up the threads and starts new tasks.
+    //Frees up the threads and starts new units.
     std::vector<std::shared_ptr<BlockChunk>> update();
 
     struct Unit {

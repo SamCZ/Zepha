@@ -173,6 +173,6 @@ set(ZEUS_SRC_FILES
         util/net/NetState.h
         game/scene/ConnectScene.cpp
         game/scene/ConnectScene.h
-        util/net/Address.h game/scene/net/ServerConnection.cpp game/scene/net/ServerConnection.h)
+        util/net/Address.h game/scene/net/ServerConnection.cpp game/scene/net/ServerConnection.h game/scene/world/MeshDetails.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

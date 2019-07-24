@@ -113,9 +113,9 @@ int Dimension::getBlock(glm::vec3 pos) {
 }
 
 void Dimension::removeMeshChunk(const glm::vec3& pos) {
-    auto blockChunk = blockChunks[pos];
+    std::shared_ptr<BlockChunk> blockChunk = blockChunks[pos];
 
-    if (blockChunk->meshChunk != nullptr) {
+    if (blockChunk != nullptr && blockChunk->meshChunk != nullptr) {
         meshChunks.erase(blockChunk->meshChunkIter);
         delete blockChunk->meshChunk;
         blockChunk->meshChunk = nullptr;

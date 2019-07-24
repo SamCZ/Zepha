@@ -22,23 +22,24 @@
 #include "../../../../def/block/client/LocalBlockModel.h"
 #include "../../../../util/Vec.h"
 #include "../../../../def/gen/NoiseSample.h"
+#include "../MeshDetails.h"
 
 class MeshGenerator {
 public:
-    MeshGenerator(std::vector<ChunkVertex> &vertices, std::vector<unsigned int> &indices,
-                  LocalBlockAtlas& atlas, const BlockChunk& chunk, const std::vector<bool>& adj,
+    MeshGenerator(MeshDetails* meshDetails, LocalBlockAtlas& atlas,
+                  std::shared_ptr<BlockChunk> chunk, std::array<std::shared_ptr<BlockChunk>, 6> adjacent,
                   std::array<NoiseSample, 3>& blockOffsets);
 private:
-    bool faceOcculudedAt(const glm::vec3 &pos, const std::vector<bool> &adj);
+    LocalBlockDef& getBlockAt(const glm::vec3 &pos);
     void addFaces(const glm::vec3 &offset, const vector<LocalMeshPart> &meshParts);
-    LocalBlockDef& getDef(int ind);
-    LocalBlockDef& getDef(const glm::vec3 &pos);
 
     unsigned int indOffset = 0;
-    const BlockChunk& chunk;
+
     LocalBlockAtlas& atlas;
-    std::vector<ChunkVertex>& vertices;
-    std::vector<unsigned int>& indices;
+    MeshDetails* meshDetails;
+
+    std::shared_ptr<BlockChunk> chunk;
+    std::array<std::shared_ptr<BlockChunk>, 6> adjacent;
 
 };
 

@@ -15,6 +15,7 @@
 #include "../../../util/Vec.h"
 #include "../../../world/Dimension.h"
 #include "../../../def/LocalDefs.h"
+#include "MeshDetails.h"
 
 class MeshGenStream {
 public:
@@ -31,30 +32,17 @@ public:
     //Will return a boolean stating if there is more space left in the queue.
     bool tryToQueue(glm::vec3 pos);
 
-    struct MeshDetails {
-        std::vector<ChunkVertex>* vertices;
-        std::vector<unsigned int>* indices;
-        glm::vec3 pos {0, 0, 0};
-
-        MeshDetails(std::vector<ChunkVertex>* verts, std::vector<unsigned int>* inds, glm::vec3 p) {
-            this->vertices = verts;
-            this->indices = inds;
-            this->pos = p;
-        }
-    };
-
     //Will return a vector of MeshDetails pointers containing finished meshes.
     //Frees up the threads and starts new tasks.
-    std::vector<MeshDetails> update();
+    std::vector<MeshDetails*> update();
 
     struct Unit {
-        std::shared_ptr<BlockChunk> chunk = nullptr;
-        std::vector<bool>* adjacent = nullptr;
+        std::shared_ptr<BlockChunk> thisChunk = nullptr;
+        std::array<std::shared_ptr<BlockChunk>, 6> adjacentChunks {};
 
-        std::vector<ChunkVertex>* vertices = nullptr;
-        std::vector<unsigned int>* indices = nullptr;
+        MeshDetails* meshDetails = new MeshDetails();
 
-        bool unlocked = true;
+        bool busy = false;
     };
 
     struct Thread {
@@ -63,7 +51,7 @@ public:
         LocalBlockAtlas &atlas;
         std::array<NoiseSample, 3>& offsetSamplers;
 
-        std::thread thread;
+        std::thread thread {};
         bool keepAlive = true;
 
         std::vector<Unit> tasks = std::vector<Unit>(THREAD_QUEUE_SIZE);
@@ -71,7 +59,6 @@ public:
 
     std::vector<Thread> threads;
 private:
-    std::vector<bool>* getAdjacentsCull(glm::vec3 pos);
     static void threadFunction(Thread* thread);
 
     Dimension& dimension;
