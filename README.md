@@ -7,6 +7,8 @@
 A highly moddable, fast, extensible C++ Voxel Game. Sounds like all the other ones right? Well - This one's better.
 This project is very early in development, and is not in a usable form right now without extensive configuration (undocumented at this point in time).
 
+[Join our discord server!](https://discord.gg/HFTCQ7a)
+
 (c) 2018-2019 Nicole Collings, All Rights Reserved.
 
 You do not have permission to redistribute, copy, or share this work without my explicit written permission. 
