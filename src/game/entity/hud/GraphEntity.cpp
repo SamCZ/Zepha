@@ -4,15 +4,12 @@
 
 #include "GraphEntity.h"
 
-GraphEntity::GraphEntity(Texture *texture, int length, float maxVal, bool editInPlace) {
-    this->length = length;
-    this->maxVal = maxVal;
-    this->dynamicMax = (maxVal <= 0);
-
-    this->editInPlace = editInPlace;
-
-    this->history = std::vector<float>((unsigned long)length);
-    this->insertionPoint = 0;
+GraphEntity::GraphEntity(Texture *texture, int length, float maxVal, bool editInPlace) :
+    length(length),
+    maxVal(maxVal),
+    dynamicMax(maxVal <= 0),
+    editInPlace(editInPlace),
+    history(std::vector<float>(static_cast<unsigned long>(length))) {
 
     setTexture(texture);
     setMesh(new EntityMesh());

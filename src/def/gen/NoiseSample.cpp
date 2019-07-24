@@ -9,9 +9,9 @@
 
 NoiseSample::NoiseSample(int hPrecision, int vPrecision) :
     hPrecision(hPrecision),
-    vPrecision(vPrecision) {
+    vPrecision(vPrecision),
+    data(std::vector<std::vector<std::vector<float>>> {}) {
 
-    data = std::vector<std::vector<std::vector<float>>>();
     data.reserve((unsigned int)hPrecision + 1);
 
     for (int i = 0; i <= hPrecision; i++) {

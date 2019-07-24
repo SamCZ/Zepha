@@ -16,8 +16,8 @@
 class NetHandler {
 public:
     NetHandler() = default;
-    explicit NetHandler(Address hostAddress);
-    NetHandler(Address hostAddress, int connection_attempts, int connection_timeout);
+    explicit NetHandler(const Address& hostAddress);
+    NetHandler(const Address& hostAddress, int connection_attempts, int connection_timeout);
 
     NetHandler(unsigned short port, short max_clients);
 

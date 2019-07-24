@@ -18,8 +18,8 @@
 class BlockChunk {
 public:
     BlockChunk();
-    explicit BlockChunk(std::vector<int> blocks);
-    BlockChunk(std::vector<int> blocks, glm::vec3 pos);
+    explicit BlockChunk(const std::vector<int>& blocks);
+    BlockChunk(const std::vector<int>& blocks, glm::vec3 pos);
 
     bool shouldRender();
     bool allAdjacentsExist();

@@ -12,10 +12,10 @@
 BlockChunk::BlockChunk() :
     blocks(static_cast<unsigned long>(pow(TransPos::CHUNK_SIZE, 3))) {}
 
-BlockChunk::BlockChunk(std::vector<int> blocks) : BlockChunk(std::move(blocks), {0, 0, 0}) {}
+BlockChunk::BlockChunk(const std::vector<int>& blocks) : BlockChunk(blocks, {0, 0, 0}) {}
 
-BlockChunk::BlockChunk(std::vector<int> blocks, glm::vec3 pos) :
-    blocks(std::move(blocks)),
+BlockChunk::BlockChunk(const std::vector<int>& blocks, glm::vec3 pos) :
+    blocks(blocks),
     pos(pos) {
 
     for (int i : this->blocks) {

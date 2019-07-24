@@ -4,9 +4,9 @@
 
 #include "NetHandler.h"
 
-NetHandler::NetHandler(Address hostAddress) : NetHandler(std::move(hostAddress), 3, 3) {}
+NetHandler::NetHandler(const Address& hostAddress) : NetHandler(std::move(hostAddress), 3, 3) {}
 
-NetHandler::NetHandler(Address hostAddress, int attempts, int timeout) {
+NetHandler::NetHandler(const Address& hostAddress, int attempts, int timeout) {
     initClient(std::move(hostAddress), attempts, timeout);
     bool initialized = true;
 }
