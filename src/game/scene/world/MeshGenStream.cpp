@@ -58,26 +58,21 @@ std::vector<MeshDetails*> MeshGenStream::update() {
 
                 u.meshDetails->pos = pos;
                 std::shared_ptr<BlockChunk> chunk = dimension.getChunk(pos);
+                if (chunk == nullptr) goto breakAddTask;
+
                 u.thisChunk = shared_ptr<BlockChunk>(chunk);
 
-                if (u.thisChunk != nullptr) {
-
-                    int ind = 0;
-                    for (glm::vec3 dir : VecUtils::getCardinalVectors()) {
-                        std::shared_ptr<BlockChunk> adjacent = dimension.getChunk(pos + dir);
-                        u.adjacentChunks[ind] = shared_ptr<BlockChunk>(adjacent);
-                        ind++;
-                        if (adjacent == nullptr) {
-                            u.thisChunk = nullptr;
-                            break;
-                        }
-                    }
-
-                    if (u.thisChunk != nullptr) {
-                        u.busy = true;
-                    }
+                int ind = 0;
+                for (glm::vec3 dir : VecUtils::getCardinalVectors()) {
+                    std::shared_ptr<BlockChunk> adjacent = dimension.getChunk(pos + dir);
+                    u.adjacentChunks[ind++] = shared_ptr<BlockChunk>(adjacent);
+                    if (adjacent == nullptr) goto breakAddTask;
                 }
+
+                u.busy = true;
             }
+
+            breakAddTask:;
         }
     }
 
@@ -87,17 +82,16 @@ std::vector<MeshDetails*> MeshGenStream::update() {
 void MeshGenStream::threadFunction(MeshGenStream::Thread *thread) {
     while (thread->keepAlive) {
         bool hasNoTasks = true;
-        for (Unit& u : thread->tasks) {
-            if (u.busy) {
-                MeshGenerator m(u.meshDetails, thread->atlas, u.thisChunk, u.adjacentChunks, thread->offsetSamplers);
-                hasNoTasks = false;
-                u.busy = false;
-                break;
 
-            }
+        for (Unit& u : thread->tasks) {
+            if (!u.busy) continue;
+
+            MeshGenerator m(u.meshDetails, thread->atlas, u.thisChunk, u.adjacentChunks, thread->offsetSamplers);
+            hasNoTasks = false;
+            u.busy = false;
         }
 
-        if (hasNoTasks) std::this_thread::sleep_for(1ms);
+         if (hasNoTasks) std::this_thread::sleep_for(1ms);
     }
 }
 
