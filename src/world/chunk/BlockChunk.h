@@ -24,7 +24,7 @@ public:
     bool shouldRender();
     bool allAdjacentsExist();
 
-    int getBlock(int ind) const;
+    int getBlock(unsigned int ind) const;
     int getBlock(const glm::vec3& pos) const;
 
     bool setBlock(const glm::vec3& pos, int ind);

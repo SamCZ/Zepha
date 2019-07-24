@@ -16,15 +16,13 @@ public:
 
     void bufferResized(glm::vec2 bufferSize);
 
-    ~GameGui() override;
-
-    void setVisible(bool visible);
-    bool isVisible();
+    void setVisible(bool visible) override;
 private:
-    Texture* crosshairTexture, *viginetteTexture;
-    Entity* crosshair, *viginette;
+    Texture crosshairTexture;
+    Texture viginetteTexture;
 
-    bool visible;
+    TextureRect* crosshair;
+    TextureRect* viginette;
 };
 
 

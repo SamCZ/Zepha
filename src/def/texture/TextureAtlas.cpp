@@ -25,8 +25,7 @@ TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) :
     empty = std::vector<bool>(pageTileWidth * pageTileHeight, true);
     for (int i = 0; i < pageWidth * 4 * pageHeight; i++) atlasData[i] = 0;
 
-    t = new Texture();
-    t->loadFromBytes(atlasData, pageWidth, pageHeight);
+    t.loadFromBytes(atlasData, pageWidth, pageHeight);
 
     createMissingImage();
 }
@@ -174,7 +173,7 @@ void TextureAtlas::updateAtlas(int tileX, int tileY, int texWidth, int texHeight
     int baseX = tileX * 16;
     int baseY = tileY * 16;
 
-    t->updateTexture(baseX, baseY, texWidth, texHeight, data);
+    t.updateTexture(baseX, baseY, texWidth, texHeight, data);
 
     for (int i = 0; i < texWidth * texHeight * 4; i++) {
         int xx = (i / 4) % texWidth;
@@ -241,7 +240,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::generateCrackImage(std::string &name, un
 }
 
 Texture &TextureAtlas::getAtlasTexture() {
-    return *t;
+    return t;
 }
 
 std::shared_ptr<AtlasRef> TextureAtlas::getTextureRef(const std::string &name) {

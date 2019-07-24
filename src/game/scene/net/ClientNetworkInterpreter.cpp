@@ -50,7 +50,7 @@ void ClientNetworkInterpreter::update(Player &player) {
 
                         bool found = false;
                         for (auto ent : entities->getChildren()) {
-                            auto playerEntity = (PlayerEntity*)ent;
+                            auto playerEntity = static_cast<PlayerEntity*>(ent);
 
                             if (playerEntity->peer_id == peer_id) {
 

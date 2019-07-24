@@ -8,7 +8,7 @@ NetHandler::NetHandler(const Address& hostAddress) : NetHandler(std::move(hostAd
 
 NetHandler::NetHandler(const Address& hostAddress, int attempts, int timeout) {
     initClient(std::move(hostAddress), attempts, timeout);
-    bool initialized = true;
+    initialized = true;
 }
 
 NetHandler::NetHandler(unsigned short port, short max_clients) {

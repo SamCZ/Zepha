@@ -22,9 +22,7 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
     }
 
     swayNoise.SetOctaveCount(2);
-
-    swayMap = new Texture();
-    swayMap->loadFromBytes(swayData, 16, 16, GL_LINEAR, GL_MIRRORED_REPEAT);
+    swayMap.loadFromBytes(swayData, 16, 16, GL_LINEAR, GL_MIRRORED_REPEAT);
 
     createWorldShaders();
     createGUIShader();
@@ -156,7 +154,7 @@ void Renderer::update(double delta) {
         swayData[i*4+1] = static_cast<unsigned char>((fmax(-1, fmin(1, swayNoise.GetValue((i / 16) / 3.f, (i % 16) / 3.f, swayOffset + 50)))  + 1) / 2.f * 255.f);
         swayData[i*4+2] = static_cast<unsigned char>((fmax(-1, fmin(1, swayNoise.GetValue((i / 16) / 3.f, (i % 16) / 3.f, swayOffset + 100))) + 1) / 2.f * 255.f);
     }
-    swayMap->updateTexture(0, 0, 16, 16, swayData);
+    swayMap.updateTexture(0, 0, 16, 16, swayData);
 
     if (window.resized) {
         resized = true;
@@ -214,7 +212,7 @@ void Renderer::beginChunkDeferredCalls() {
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    swayMap->use(1);
+    swayMap.use(1);
 
     worldGeometryShader.use();
     glUniformMatrix4fv(wgu.proj, 1, GL_FALSE, glm::value_ptr(wgu.matrix));
@@ -327,6 +325,7 @@ void Renderer::enableTexture(Texture *texture) {
 Renderer::~Renderer() {
     worldGeometryShader.cleanup();
     guiShader.cleanup();
+    delete[] swayData;
 }
 
 void Renderer::setClearColor(unsigned char r, unsigned char g, unsigned char b) {

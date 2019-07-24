@@ -14,11 +14,11 @@ public:
 
     virtual ~Drawable() = default;
 
-    bool isVisible() {
+    virtual bool isVisible() {
         return visible;
     }
 
-    void setVisible(bool visible) {
+    virtual void setVisible(bool visible) {
         this->visible = visible;
     }
 protected:

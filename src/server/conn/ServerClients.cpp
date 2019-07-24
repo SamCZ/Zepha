@@ -21,7 +21,7 @@ void ServerClients::handleDisconnect(ENetEvent e) {
     ENetPeer* peer = e.peer;
     ENetAddress& addr = peer->address;
 
-    unsigned int connectID = ((ServerClient*) peer->data)->getConnectID();
+    unsigned int connectID = static_cast<ServerClient*>(peer->data)->getConnectID();
 
     std::cout << Log::info << addr.host << ":" << addr.port << " disconnected." << Log::endl;
 

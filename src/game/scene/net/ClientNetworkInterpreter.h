@@ -22,6 +22,7 @@
 class ClientNetworkInterpreter {
 public:
     ClientNetworkInterpreter(ServerConnection& connection, LocalDefs& defs);
+    ClientNetworkInterpreter(const ClientNetworkInterpreter& other) = default;
 
     void init(std::vector<Drawable*> &entities, LocalWorld* world);
     void update(Player &player);

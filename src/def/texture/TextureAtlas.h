@@ -53,7 +53,7 @@ private:
     unsigned int pageTileWidth = 0;
     unsigned int pageTileHeight = 0;
 
-    Texture* t = nullptr;
+    Texture t;
     unsigned char* atlasData = nullptr;
 
     std::vector<bool> empty;

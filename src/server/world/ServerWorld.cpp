@@ -43,18 +43,11 @@ void ServerWorld::changedChunks(ServerClient& client) {
     auto bounds = client.getPlayer().getChunkBounds();
     auto oldBounds = client.getPlayer().getLastChunkBounds();
 
-    int generated = 0;
-
     for (const auto &c : generateOrder) {
         glm::vec3 chunkPos = {c.x + pos.x, c.y + pos.y, c.z + pos.z};
         if (!isInBounds(chunkPos, oldBounds)) {
-            if (dimension.getChunk(chunkPos) != nullptr) {
-                sendChunk(chunkPos, client);
-            }
-            else {
-                generate(chunkPos);
-                generated++;
-            }
+            if (dimension.getChunk(chunkPos) != nullptr) sendChunk(chunkPos, client);
+            else generate(chunkPos);
         }
     }
 

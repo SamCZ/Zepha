@@ -56,7 +56,7 @@ private:
     unsigned int gBuffer, gPosition, gNormal, gColorSpec, rboDepth;
     unsigned int sBuffer, sDepthMap;
 
-    Texture* swayMap;
+    Texture swayMap;
     double swayOffset = 0;
     noise::module::Perlin swayNoise;
     unsigned char* swayData = nullptr;

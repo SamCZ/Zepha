@@ -29,13 +29,13 @@ BlockChunk::BlockChunk(const std::vector<int>& blocks, glm::vec3 pos) :
 }
 
 int BlockChunk::getBlock(const glm::vec3& pos) const {
-    auto ind = VecUtils::vecToInd(pos);
-    if (ind < 0 || ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return -1;
+    unsigned int ind = VecUtils::vecToInd(pos);
+    if (ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return -1;
     return blocks[ind];
 }
 
-int BlockChunk::getBlock(int ind) const {
-    if (ind < 0 || ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return -1;
+int BlockChunk::getBlock(unsigned int ind) const {
+    if (ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return -1;
     return blocks[ind];
 }
 

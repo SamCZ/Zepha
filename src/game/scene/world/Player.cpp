@@ -19,8 +19,9 @@ void Player::update(InputManager &input, double delta, double mouseX, double mou
 }
 
 void Player::posUpdate(InputManager &input, double delta) {
-    float moveSpeed = 7.5f;
-    float jumpVel = 0.14f;
+    const static float moveSpeed = 7.5f;
+    const static float jumpVel = 0.14f;
+
     float friction = 0.3f;
 
     double moveMult = moveSpeed * delta;
