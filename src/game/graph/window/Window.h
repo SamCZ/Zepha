@@ -48,8 +48,8 @@ private:
     static void handleKeys(GLFWwindow* glfwWindow, int key, int code, int action, int mode);
     static void handleResize(GLFWwindow* glfwWindow, int width, int height);
 
-    double deltaX;
-    double deltaY;
+    double deltaX = 0;
+    double deltaY = 0;
 };
 
 

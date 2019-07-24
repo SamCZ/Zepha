@@ -7,6 +7,7 @@
 ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, LocalDefs &defs) :
     connection(connection),
     entities(new DrawableGroup()),
+    world(nullptr),
 
     playerFrontTex(defs.textures().getTextureRef("player_front")),
     playerBackTex(defs.textures().getTextureRef("player_back")),

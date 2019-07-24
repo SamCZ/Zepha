@@ -19,6 +19,7 @@ void DrawableGroup::removeDrawable(Drawable *drawable) {
         if (*it == drawable) {
             children.erase(it);
             delete *it;
+            return;
         }
     }
 }

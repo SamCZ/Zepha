@@ -35,7 +35,7 @@ private:
 
     bool isInBounds(glm::vec3 pos, std::pair<glm::vec3, glm::vec3>& bounds);
 
-    WorldGenStream* genStream;
+    WorldGenStream* genStream = nullptr;
     Dimension dimension;
 
     std::unordered_set<glm::vec3, VecUtils::compareFunc> generateQueueMap;

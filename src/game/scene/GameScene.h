@@ -40,7 +40,7 @@ public:
     DebugGui debugGui;
     GameGui gameGui;
 
-    int drawCalls;
+    int drawCalls = 0;
 
     bool debugVisible = true;
     bool hudVisible = true;

@@ -71,9 +71,9 @@ private:
     glm::vec3* playerPos;
     glm::vec3 playerChunkPos {};
 
-    ClientNetworkInterpreter* server;
+    ClientNetworkInterpreter* server = nullptr;
 
-    WorldInterpolationStream* worldGenStream;
+    WorldInterpolationStream* worldGenStream = nullptr;
     Dimension dimension;
 
     std::vector<BlockCrackEntity*> crackedBlocks;
