@@ -11,15 +11,16 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include "../../util/Log.h"
 
 class Shader {
 public:
     Shader();
 
-    void createFromString(const char* vertexSource, const char* fragmentSource);
-    void createFromFile(const char* vertexFile, const char* fragmentFile);
+    void createFromString(std::string vertexSource, std::string fragmentSource);
+    void createFromFile(const std::string& vertexFile, const std::string& fragmentFile);
 
-    std::string readFile(const char* fileLocation);
+    std::string readFile(const std::string& fileLocation);
 
     GLint getUniform(const char *name);
 
@@ -36,8 +37,8 @@ public:
 private:
     GLuint shaderID;
 
-    void compileShader(const char* vertexSource, const char* fragmentSource);
-    void addShader(GLuint program, const char* shaderCode, GLenum shaderType);
+    void compileShader(const std::string& vertexSource, const std::string& fragmentSource);
+    void addShader(GLuint program, const std::string& shaderCode, GLenum shaderType);
 };
 
 

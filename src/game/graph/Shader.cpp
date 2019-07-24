@@ -8,23 +8,23 @@ Shader::Shader() {
     shaderID = 0;
 }
 
-void Shader::createFromString(const char *vertexSource, const char *fragmentSource) {
+void Shader::createFromString(std::string vertexSource, std::string fragmentSource) {
     compileShader(vertexSource, fragmentSource);
 }
 
-void Shader::createFromFile(const char *vertexFile, const char *fragmentFile) {
+void Shader::createFromFile(const std::string& vertexFile, const std::string& fragmentFile) {
     std::string vertexSource = readFile(vertexFile);
     std::string fragmentSource = readFile(fragmentFile);
 
-    compileShader(vertexSource.c_str(), fragmentSource.c_str());
+    compileShader(vertexSource, fragmentSource);
 }
 
-std::string Shader::readFile(const char* fileLocation) {
+std::string Shader::readFile(const std::string& fileLocation) {
     std::string contents;
     std::ifstream fileStream(fileLocation, std::ios::in);
 
     if (!fileStream.is_open()) {
-        printf("Failed to open shader file! %s", fileLocation);
+        std::cout << Log::err << "Failed to open shader file '" << fileLocation << "'!" << Log::endl;
         return "";
     }
 
@@ -39,11 +39,11 @@ std::string Shader::readFile(const char* fileLocation) {
     return contents;
 }
 
-void Shader::compileShader(const char *vertexSource, const char *fragmentSource) {
+void Shader::compileShader(const std::string& vertexSource, const std::string& fragmentSource) {
     shaderID = glCreateProgram();
 
     if (!shaderID) {
-        printf("Error creating the shader program.");
+        std::cout << Log::err << "Error creating the shader program." << Log::endl;
         return;
     }
 
@@ -58,7 +58,7 @@ void Shader::compileShader(const char *vertexSource, const char *fragmentSource)
 
     if (!result) {
         glGetProgramInfoLog(shaderID, sizeof(eLog), nullptr, eLog);
-        printf("Error linking program: '%s'\n", eLog);
+        std::cout << Log::err << "Error linking program: '" << eLog << "'." << Log::endl;
         return;
     }
 
@@ -67,7 +67,7 @@ void Shader::compileShader(const char *vertexSource, const char *fragmentSource)
 
     if (!result) {
         glGetProgramInfoLog(shaderID, sizeof(eLog), nullptr, eLog);
-        printf("Error validating program: '%s'\n", eLog);
+        std::cout << Log::err << "Error validating program: '" << eLog << "'." << Log::endl;
         return;
     }
 }
@@ -86,15 +86,13 @@ void Shader::cleanup() {
     }
 }
 
-void Shader::addShader(GLuint program, const char *shaderCode, GLenum shaderType) {
+void Shader::addShader(GLuint program, const std::string& shaderCode, GLenum shaderType) {
     GLuint shader = glCreateShader(shaderType);
-    const GLchar* code;
-    code = shaderCode;
 
-    GLint codeLength;
-    codeLength = static_cast<GLint>(strlen(shaderCode));
+    const GLchar* shaderCodeCStr = shaderCode.data();
+    int shaderLength = static_cast<int>(shaderCode.length());
 
-    glShaderSource(shader, 1, &code, &codeLength);
+    glShaderSource(shader, 1, &shaderCodeCStr, &shaderLength);
     glCompileShader(shader);
 
     GLint result = 0;
@@ -106,7 +104,7 @@ void Shader::addShader(GLuint program, const char *shaderCode, GLenum shaderType
         const char* shaderTypeString = (shaderType == GL_VERTEX_SHADER) ? "vertex" : "fragment";
 
         glGetShaderInfoLog(shader, sizeof(eLog), nullptr, eLog);
-        printf("Error compiling the %s shader:\n'%s'\n", shaderTypeString, eLog);
+        std::cout << Log::err << "Error compiling the " << shaderTypeString << " shader: '" << eLog << "'";
         return;
     }
 
