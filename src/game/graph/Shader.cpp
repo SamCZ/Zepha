@@ -8,7 +8,7 @@ Shader::Shader() {
     shaderID = 0;
 }
 
-void Shader::createFromString(std::string vertexSource, std::string fragmentSource) {
+void Shader::createFromString(std::string& vertexSource, std::string& fragmentSource) {
     compileShader(vertexSource, fragmentSource);
 }
 

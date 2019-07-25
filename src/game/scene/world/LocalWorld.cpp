@@ -16,6 +16,7 @@ LocalWorld::LocalWorld(LocalDefs& defs, glm::vec3* playerPos, ClientNetworkInter
     defs(defs) {}
 
 void LocalWorld::init() {
+    delete worldGenStream;
     worldGenStream = new WorldInterpolationStream(55, defs);
 }
 

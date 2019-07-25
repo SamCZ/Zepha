@@ -17,7 +17,7 @@ class Shader {
 public:
     Shader();
 
-    void createFromString(std::string vertexSource, std::string fragmentSource);
+    void createFromString(std::string& vertexSource, std::string& fragmentSource);
     void createFromFile(const std::string& vertexFile, const std::string& fragmentFile);
 
     std::string readFile(const std::string& fileLocation);
