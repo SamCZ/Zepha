@@ -9,11 +9,10 @@ StatGraph::StatGraph(const std::string& title, int graphLength, int graphScale, 
 
 StatGraph::StatGraph(const std::string& title, int xSize, int ySize, int graphLength, int graphScale, Texture* graphTex, Texture* textTex) :
     title(title),
-    background({0.1, 0.1, 0.1, 0.2}, {0.1, 0.1, 0.1, 0.2}, {0.1, 0.1, 0.1, 0.7}, {0.1, 0.1, 0.1, 0.7}),
     graph(graphTex, graphLength, graphScale, true),
     text(textTex) {
 
-    background.setScale({xSize, ySize, 1});
+    background.create({xSize, ySize}, {}, {0.1, 0.1, 0.1, 0.2}, {0.1, 0.1, 0.1, 0.2}, {0.1, 0.1, 0.1, 0.7}, {0.1, 0.1, 0.1, 0.7});
     graph.setScale({(xSize - GRAPH_PAD_X * 2) / graphLength, 28, 1});
     text.setScale(2);
 
@@ -26,7 +25,7 @@ StatGraph::StatGraph(const std::string& title, int xSize, int ySize, int graphLe
 void StatGraph::setPos(glm::vec2 pos) {
     text.setPos({pos.x + TEXT_PAD_X, pos.y + TEXT_PAD_Y, 0});
     graph.setPos({pos.x + GRAPH_PAD_X, pos.y + GRAPH_PAD_Y, 0});
-    background.setPos({pos.x, pos.y, 0});
+    background.setPos({pos.x, pos.y});
 }
 
 void StatGraph::update(float value) {

@@ -143,7 +143,7 @@ void Player::pointerUpdate(InputManager &input, double delta) {
         }
         if (input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
             world.localSetBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face),
-                    defs.blocks().fromIdentifier("kinetic:axle_0").index);
+                    defs.blocks().fromIdentifier("default:open_formspec").index);
         }
     }
     else {

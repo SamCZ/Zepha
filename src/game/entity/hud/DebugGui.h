@@ -12,9 +12,9 @@
 #include "../../../util/Util.h"
 #include "../../../util/Ray.h"
 #include "StatGraph.h"
-#include "TextureRect.h"
-#include "GraphEntity.h"
-#include "TextEntity.h"
+#include "components/basic/GUIRect.h"
+#include "components/GraphEntity.h"
+#include "components/TextEntity.h"
 
 class DebugGui : public Drawable {
 public:
@@ -37,7 +37,7 @@ private:
     Texture coloredGraphTexture;
     Texture monochromeGraphTexture;
 
-    TextureRect atlasTex;
+//    GUIRect atlasTex;
 
     TextEntity crosshairText;
     TextEntity dataText;

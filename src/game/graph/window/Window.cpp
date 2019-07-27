@@ -13,7 +13,8 @@ Window::Window(GLint windowWidth, GLint windowHeight) {
     centerX = width / 2;
     centerY = height / 2;
 
-    mouseLocked = true;
+    forceMouseUnlocked = false;
+    mouseIsLocked = false;
     resized = false;
 }
 
@@ -68,7 +69,7 @@ int Window::initialize() {
     glfwSetWindowUserPointer(mainWindow, this);
     glfwSetKeyCallback(mainWindow, handleKeys);
     glfwSetWindowSizeCallback(mainWindow, handleResize);
-    glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     glfwMaximizeWindow(mainWindow);
 
@@ -78,16 +79,19 @@ int Window::initialize() {
 void Window::update() {
     double mouseX, mouseY;
     if (glfwGetWindowAttrib(mainWindow, GLFW_FOCUSED) == GL_FALSE) {
-        mouseLocked = false;
+        mouseIsLocked = false;
         deltaX = 0;
         deltaY = 0;
     }
     else {
         glfwGetCursorPos(mainWindow, &mouseX, &mouseY);
 
-        if (!mouseLocked) {
-            //Allow user to grab window edges without locking the mouse
-            if (mouseX > 128 && mouseY > 128 && mouseX < bufferWidth - 128 && mouseY < bufferHeight - 128) mouseLocked = true;
+        if (!mouseIsLocked) {
+            if (!forceMouseUnlocked && input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
+                glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+                glfwSetCursorPos(mainWindow, centerX, centerY);
+                mouseIsLocked = true;
+            }
         }
         else {
             deltaX = mouseX - centerX;
@@ -132,6 +136,9 @@ void Window::handleResize(GLFWwindow *glfwWindow, int, int) {
     glfwGetFramebufferSize(glfwWindow, &window->bufferWidth, &window->bufferHeight);
     glViewport(0, 0, window->bufferWidth, window->bufferHeight);
     window->resized = true;
+
+    window->centerX = window->bufferWidth / 2;
+    window->centerY = window->bufferHeight / 2;
 }
 
 Window::~Window() {
@@ -150,4 +157,10 @@ bool Window::shouldClose() {
 
 void Window::swapBuffers() {
     glfwSwapBuffers(mainWindow);
+}
+
+void Window::lockMouse(bool lock) {
+    forceMouseUnlocked = !lock;
+    if (lock) mouseIsLocked = true;
+    glfwSetInputMode(mainWindow, GLFW_CURSOR, (mouseIsLocked ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL));
 }

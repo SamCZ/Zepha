@@ -6,7 +6,7 @@
 #define ZEUS_TEXTENTITY_H
 
 
-#include "../Entity.h"
+#include "../../Entity.h"
 
 class TextEntity : public Entity {
 public:

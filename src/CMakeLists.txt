@@ -37,8 +37,8 @@ set(ZEUS_SRC_FILES
         game/graph/Renderer.h
         api/client/LocalLuaParser.cpp
         api/client/LocalLuaParser.h
-        game/entity/hud/TextEntity.cpp
-        game/entity/hud/TextEntity.h
+        game/entity/hud/components/TextEntity.cpp
+        game/entity/hud/components/TextEntity.h
         game/entity/hud/DebugGui.cpp
         game/entity/hud/DebugGui.h
         game/scene/world/Player.cpp
@@ -75,10 +75,10 @@ set(ZEUS_SRC_FILES
         util/net/PacketChannel.h
         game/entity/world/PlayerEntity.cpp
         game/entity/world/PlayerEntity.h
-        game/entity/hud/GraphEntity.cpp
-        game/entity/hud/GraphEntity.h
-        game/entity/hud/TextureRect.cpp
-        game/entity/hud/TextureRect.h
+        game/entity/hud/components/GraphEntity.cpp
+        game/entity/hud/components/GraphEntity.h
+        game/entity/hud/components/basic/GUIRect.cpp
+        game/entity/hud/components/basic/GUIRect.h
         def/gen/MapGenJob.h
         util/Interp.h
         def/gen/NoiseSample.cpp
@@ -121,7 +121,7 @@ set(ZEUS_SRC_FILES
         world/region/Region.cpp
         world/region/MapBlock.cpp
         game/entity/hud/StatGraph.cpp
-        game/entity/hud/StatGraph.h
+        game/entity/hud/StatGraph.cpp
         util/Util.h
         world/block/PointedThing.h
         game/entity/world/ParticleEntity.cpp
@@ -173,6 +173,9 @@ set(ZEUS_SRC_FILES
         util/net/NetState.h
         game/scene/ConnectScene.cpp
         game/scene/ConnectScene.h
-        util/net/Address.h game/scene/net/ServerConnection.cpp game/scene/net/ServerConnection.h game/scene/world/MeshDetails.h)
+        util/net/Address.h
+        game/scene/net/ServerConnection.cpp
+        game/scene/net/ServerConnection.h
+        game/scene/world/MeshDetails.h game/entity/hud/components/GUIComponent.cpp game/entity/hud/components/GUIComponent.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

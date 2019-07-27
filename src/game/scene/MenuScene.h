@@ -7,7 +7,7 @@
 
 #include "../../game/ClientState.h"
 #include "../../game/graph/scene/Scene.h"
-#include "../entity/hud/TextEntity.h"
+#include "../entity/hud/components/TextEntity.h"
 
 class MenuScene : public Scene {
 public:

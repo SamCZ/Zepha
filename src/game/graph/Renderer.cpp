@@ -230,6 +230,7 @@ void Renderer::beginEntityDeferredCalls() {
 }
 
 void Renderer::endDeferredCalls() {
+    activeTexture = nullptr;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     auto winSize = window.getSize();
@@ -265,6 +266,7 @@ void Renderer::endDeferredCalls() {
 }
 
 void Renderer::beginGUIDrawCalls() {
+    activeTexture = nullptr;
     currentModelUniform = gu.model;
 
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -318,7 +320,7 @@ void Renderer::setModelMatrix(const glm::mat4& modelMatrix) {
 void Renderer::enableTexture(Texture *texture) {
     if (texture != activeTexture) {
         activeTexture = texture;
-        texture->use();
+        texture->use(0);
     }
 }
 

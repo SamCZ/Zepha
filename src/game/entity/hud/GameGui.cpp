@@ -4,31 +4,28 @@
 
 #include "GameGui.h"
 
-GameGui::GameGui(glm::vec2 bufferSize) :
-    crosshairTexture(const_cast<char*>("../res/tex/gui/crosshair.png")),
-    viginetteTexture(const_cast<char*>("../res/tex/gui/viginette.png")),
-    crosshair(new TextureRect(&crosshairTexture)),
-    viginette(new TextureRect(&viginetteTexture)) {
+GameGui::GameGui(glm::vec2 bufferSize, TextureAtlas& atlas) :
+    crosshairRef(atlas.getTextureRef("crosshair")),
+    viginetteRef(atlas.getTextureRef("viginette")) {
 
-    crosshair->setPos(glm::vec3(bufferSize.x / 2 - 11, bufferSize.y / 2 - 9, 0));
-    crosshair->setScale(22);
+    crosshair.create({22, 22}, {}, crosshairRef);
+    crosshair.setPos({bufferSize.x / 2 - 11, bufferSize.y / 2 - 9});
+    viginette.create(bufferSize, {}, viginetteRef);
+}
 
-    addDrawable(crosshair);
-
-    viginette->setScale(glm::vec3(bufferSize.x, bufferSize.y, 1));
-    viginette->setPos(glm::vec3(0, 0, -5));
-
-    addDrawable(viginette);
+void GameGui::draw(Renderer &renderer) {
+    viginette.draw(renderer);
+    crosshair.draw(renderer);
 }
 
 void GameGui::bufferResized(glm::vec2 bufferSize) {
-    crosshair->setPos(glm::vec3(bufferSize.x / 2 - 11, bufferSize.y / 2 - 9, 0));
-    viginette->setScale(glm::vec3(bufferSize.x, bufferSize.y, 1));
+    crosshair.setPos({bufferSize.x / 2 - 11, bufferSize.y / 2 - 9});
+    viginette.setScale({bufferSize.x, bufferSize.y});
 }
 
 void GameGui::setVisible(bool visible) {
     this->visible = visible;
 
-    crosshair->setVisible(visible);
-    viginette->setVisible(visible);
+    crosshair.setVisible(visible);
+    viginette.setVisible(visible);
 }

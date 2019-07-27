@@ -10,7 +10,7 @@
 namespace ServerApi {
     void dump(sol::state& lua) {
         lua.script(R"(
-            local function dump(tbl, indent)
+            function dump(tbl, indent)
                 if not indent then indent = 0 end
                 for k, v in pairs(tbl) do
                     if type(k) == "number" then
@@ -29,8 +29,6 @@ namespace ServerApi {
                     end
                 end
             end
-
-            zeus.dump = dump
         )");
     }
 }

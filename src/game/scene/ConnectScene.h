@@ -7,7 +7,7 @@
 
 #include <utility>
 #include "../graph/scene/Scene.h"
-#include "../entity/hud/TextEntity.h"
+#include "../entity/hud/components/TextEntity.h"
 #include "net/ServerConnection.h"
 
 class ConnectScene : public Scene {

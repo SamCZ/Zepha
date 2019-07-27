@@ -6,7 +6,7 @@
 #define ZEUS_HISTOGRAM_H
 
 
-#include "../Entity.h"
+#include "../../Entity.h"
 
 class GraphEntity : public Entity {
 public:

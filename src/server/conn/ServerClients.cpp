@@ -11,10 +11,7 @@ void ServerClients::handleConnect(ENetEvent e) {
     std::cout << Log::info << NetHandler::intToIPString(addr.host) << ":" << addr.port << " connected." << Log::endl;
 
     clients.emplace_back(peer, addr);
-    ServerClient& client = clients.back();
-
-    //TODO: Create this later
-    peer->data = &client;
+    peer->data = &clients.back();
 }
 
 void ServerClients::handleDisconnect(ENetEvent e) {

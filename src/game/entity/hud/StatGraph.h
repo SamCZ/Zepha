@@ -6,9 +6,9 @@
 #define ZEUS_STATGRAPH_H
 
 #include "../Entity.h"
-#include "TextureRect.h"
-#include "GraphEntity.h"
-#include "TextEntity.h"
+#include "components/basic/GUIRect.h"
+#include "components/GraphEntity.h"
+#include "components/TextEntity.h"
 #include "../../../util/Util.h"
 
 class StatGraph : public Drawable {
@@ -26,7 +26,7 @@ private:
     int ind = 0;
     float history[5];
 
-    TextureRect background;
+    GUIRect background;
     GraphEntity graph;
     TextEntity  text;
 

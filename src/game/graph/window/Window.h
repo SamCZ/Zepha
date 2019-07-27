@@ -23,6 +23,7 @@ public:
     glm::vec2 getSize();
     bool resized;
 
+    void lockMouse(bool lock);
     bool shouldClose();
 
     double getDeltaX();
@@ -38,9 +39,9 @@ private:
 
     GLint width, height;
     GLint centerX, centerY;
-    bool mouseLocked;
+    bool mouseIsLocked, forceMouseUnlocked;
 
-    bool keys[1024];
+    bool keys[1024] {};
 
     GLint bufferWidth, bufferHeight;
 
