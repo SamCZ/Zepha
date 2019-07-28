@@ -8,7 +8,7 @@
 #include "../Entity.h"
 #include "components/basic/GUIRect.h"
 #include "components/GraphEntity.h"
-#include "components/TextEntity.h"
+#include "components/basic/GUIText.h"
 #include "../../../util/Util.h"
 
 class StatGraph : public Drawable {
@@ -28,7 +28,7 @@ private:
 
     GUIRect background;
     GraphEntity graph;
-    TextEntity  text;
+    GUIText  text;
 
     std::string title;
 };

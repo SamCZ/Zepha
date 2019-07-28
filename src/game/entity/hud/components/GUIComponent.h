@@ -13,7 +13,7 @@
 class GUIComponent : Drawable {
 public:
     GUIComponent() = default;
-    GUIComponent(const std::string& key, GUIComponent* parent);
+    explicit GUIComponent(const std::string& key);
 
     virtual void setScale(glm::vec2 scale);
     virtual glm::vec2 getScale();
@@ -24,9 +24,11 @@ public:
     virtual void setPos(glm::vec2 pos);
     virtual glm::vec2 getPos();
 
-    void set(std::string key, std::shared_ptr<GUIComponent> component);
+    void add(std::shared_ptr<GUIComponent> component);
+    template<class T> std::shared_ptr<T> get(const std::string &key) { return std::static_pointer_cast<T>(children[key]); };
     void remove(std::string key);
-    std::shared_ptr<GUIComponent> operator[](std::string);
+
+//    std::shared_ptr<GUIComponent> operator[](std::string);
 
     void setVisible(bool visible) override;
 
@@ -42,6 +44,8 @@ protected:
     bool visible = true;
 
     Entity entity;
+private:
+    void updatePos();
 };
 
 

@@ -4,7 +4,7 @@
 
 #include "GUIRect.h"
 
-GUIRect::GUIRect(const std::string &key, GUIComponent *parent) : GUIComponent(key, parent) {}
+GUIRect::GUIRect(const std::string &key) : GUIComponent(key) {}
 
 void GUIRect::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 color) {
     // Single Color Constructor

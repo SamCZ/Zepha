@@ -12,12 +12,12 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     player(world, defs, state.renderer.getCamera()),
 
     gameGui (state.renderer.getCamera().getBufferDimensions(), defs.textures()),
-    debugGui(state.renderer.getCamera().getBufferDimensions(), nullptr) {
+    debugGui(state.renderer.getCamera().getBufferDimensions(), defs.textures()) {
 
     state.renderer.setClearColor(148, 194, 240);
     state.renderer.getWindow().lockMouse(true);
 
-    defs.init(world);
+    defs.initLuaApi(world);
     world.init();
 
     gui.push_back(&gameGui);
@@ -73,8 +73,8 @@ void GameScene::draw() {
     Camera& camera = renderer.getCamera();
 
     renderer.beginChunkDeferredCalls();
-
     renderer.enableTexture(&defs.textures().getAtlasTexture());
+
     drawCalls = world.renderChunks(renderer);
 
     renderer.beginEntityDeferredCalls();
@@ -84,9 +84,8 @@ void GameScene::draw() {
 
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
-
     renderer.enableTexture(&defs.textures().getAtlasTexture());
-    defs.textures().getAtlasTexture().use(0);
+
     for (auto entity : gui) entity->draw(renderer);
 
     renderer.swapBuffers();

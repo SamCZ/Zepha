@@ -4,33 +4,34 @@
 
 #include "MenuScene.h"
 
-MenuScene::MenuScene(ClientState& state) : Scene(state),
-    fontTexture((char*)"../res/tex/gui/font.png"),
-    alphaText(&fontTexture),
-    titleText(&fontTexture),
-    mainMenuText(&fontTexture) {
-
+MenuScene::MenuScene(ClientState& state) : Scene(state) {
     state.renderer.setClearColor(22, 22, 22);
 
-    alphaText.set("Alpha Software - Do Not Redistribute!\nCreated by Nicole Collings");
-    alphaText.setScale(2);
-    alphaText.setPos(glm::vec3(8, 4, 0));
+    auto alphaText = std::make_shared<GUIText>("alphaText");
+    alphaText->create({2, 2}, {}, {1, 0, 0, 0}, {}, state.defs.textures().getTextureRef("font"));
+    alphaText->setText("Alpha Software - Do Not Redistribute!\nCreated by Nicole Collings");
+    alphaText->setPos({8, 4});
+    components.add(alphaText);
 
-    titleText.set("Zeus");
-    titleText.setScale(12);
-    titleText.setPos(glm::vec3(490, 120, 0));
+    auto titleText = std::make_shared<GUIText>("titleText");
+    titleText->create({12, 12}, {}, {1, 0, 0, 1}, {}, state.defs.textures().getTextureRef("font"));
+    titleText->setText("Zeus");
+    titleText->setPos({490, 120});
+    components.add(titleText);
 
-    mainMenuText.set("MAIN MENU");
-    mainMenuText.setScale(4);
-    mainMenuText.setPos(glm::vec3(530, 230, 0));
+    auto mainMenuText = std::make_shared<GUIText>("mainMenuText");
+    mainMenuText->create({4, 4}, {}, {1, 0, 0, 1}, {}, state.defs.textures().getTextureRef("font"));
+    mainMenuText->setText("MAIN MENU");
+    mainMenuText->setPos({530, 230});
+    components.add(mainMenuText);
 }
 
 void MenuScene::update() {
     if (state.renderer.resized) {
         auto size = state.renderer.getWindow().getSize();
 
-        titleText.setPos({size.x / 2 - 180, size.y / 2 - 120, 0});
-        mainMenuText.setPos({size.x / 2 - 130, size.y / 2, 0});
+        components.get<GUIText>("titleText")->setPos({size.x / 2 - 180, size.y / 2 - 120});
+        components.get<GUIText>("mainMenuText")->setPos({size.x / 2 - 130, size.y / 2});
 
         state.renderer.resized = false;
     }
@@ -42,10 +43,9 @@ void MenuScene::draw() {
     renderer.beginChunkDeferredCalls();
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
+    renderer.enableTexture(&state.defs.textures().getAtlasTexture());
 
-    alphaText.draw(renderer);
-    titleText.draw(renderer);
-    mainMenuText.draw(renderer);
+    components.draw(renderer);
 
     renderer.swapBuffers();
 }

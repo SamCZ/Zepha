@@ -7,7 +7,8 @@
 
 #include "../../game/ClientState.h"
 #include "../../game/graph/scene/Scene.h"
-#include "../entity/hud/components/TextEntity.h"
+#include "../entity/hud/components/basic/GUIText.h"
+#include "../entity/hud/components/basic/GUIContainer.h"
 
 class MenuScene : public Scene {
 public:
@@ -19,11 +20,7 @@ public:
     void cleanup() override {};
 
 private:
-    Texture fontTexture;
-
-    TextEntity alphaText;
-    TextEntity titleText;
-    TextEntity mainMenuText;
+    GUIContainer components;
 };
 
 

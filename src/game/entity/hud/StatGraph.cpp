@@ -42,7 +42,7 @@ void StatGraph::update(float value) {
                                 ? std::to_string(static_cast<int>(value))
                                 : Util::floatToString(value);
 
-        text.set(title + ": " + stringVal);
+        text.setText(title + ": " + stringVal);
     }
 }
 

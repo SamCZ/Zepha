@@ -6,9 +6,10 @@
 #define ZEUS_CONNECTSCENE_H
 
 #include <utility>
-#include "../graph/scene/Scene.h"
-#include "../entity/hud/components/TextEntity.h"
 #include "net/ServerConnection.h"
+#include "../graph/scene/Scene.h"
+#include "../entity/hud/components/basic/GUIText.h"
+#include "../entity/hud/components/basic/GUIContainer.h"
 
 class ConnectScene : public Scene {
 public:
@@ -31,8 +32,7 @@ private:
     State connectState = State::CONNECTING;
     ServerConnection& connection;
 
-    Texture fontTexture;
-    TextEntity statusText;
+    GUIContainer components;
 
     double dotsTime = 0;
 };

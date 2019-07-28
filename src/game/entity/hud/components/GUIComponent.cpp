@@ -6,9 +6,8 @@
 
 #include "GUIComponent.h"
 
-GUIComponent::GUIComponent(const std::string& key, GUIComponent *parent) :
-    key(key),
-    parent(parent) {}
+GUIComponent::GUIComponent(const std::string& key) :
+    key(key) {}
 
 void GUIComponent::setScale(glm::vec2 scale) {
     this->scale = scale;
@@ -29,20 +28,28 @@ glm::vec4 GUIComponent::getPadding() {
 
 void GUIComponent::setPos(glm::vec2 pos) {
     this->pos = pos;
+    if (parent != nullptr) {
+        glm::vec3 parentPos = parent->entity.getPos();
+        pos += glm::vec2{parentPos.x, parentPos.y};
+    }
     entity.setPos({pos.x, pos.y, 0});
+    for (const auto& child : children) {
+        child.second->updatePos();
+    }
 }
 
 glm::vec2 GUIComponent::getPos() {
     return pos;
 }
 
-void GUIComponent::set(std::string key, std::shared_ptr<GUIComponent> component) {
-    children[key] = std::move(component);
+void GUIComponent::add(std::shared_ptr<GUIComponent> component) {
+    component->parent = this;
+    children[component->key] = std::move(component);
 }
 
-std::shared_ptr<GUIComponent> GUIComponent::operator[](std::string) {
-    return children[key];
-}
+//std::shared_ptr<GUIComponent> GUIComponent::operator[](std::string) {
+//    return children[key];
+//}
 
 void GUIComponent::remove(std::string key) {
     children.erase(key);
@@ -58,4 +65,19 @@ void GUIComponent::draw(Renderer& renderer) {
 void GUIComponent::setVisible(bool visible) {
     Drawable::setVisible(visible);
     entity.setVisible(visible);
+    for (const auto& child : children) {
+        child.second->setVisible(visible);
+    }
+}
+
+void GUIComponent::updatePos() {
+    glm::vec2 realPos(pos);
+    if (parent != nullptr) {
+        glm::vec3 parentPos = parent->entity.getPos();
+        pos += glm::vec2{parentPos.x, parentPos.y};
+    }
+    entity.setPos({realPos.x, realPos.y, 0});
+    for (const auto& child : children) {
+        child.second->updatePos();
+    }
 }

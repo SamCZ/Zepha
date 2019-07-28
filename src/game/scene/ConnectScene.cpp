@@ -5,15 +5,15 @@
 #include "ConnectScene.h"
 
 ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
-    connection(state.connection),
-    fontTexture(const_cast<char*>("../res/tex/gui/font.png")),
-    statusText(&fontTexture) {
+    connection(state.connection) {
 
     state.renderer.setClearColor(10, 10, 10);
 
-    statusText.set("Connecting...");
-    statusText.setScale(2);
-    statusText.setPos(glm::vec3(32, 24, 0));
+    auto statusText = std::make_shared<GUIText>("statusText");
+    statusText->create({2, 2}, {}, {}, {}, state.defs.textures().getTextureRef("font"));
+    statusText->setText("Connecting...");
+    statusText->setPos({32, 24});
+    components.add(statusText);
 
     connection.attemptConnect(std::move(addr));
 }
@@ -36,7 +36,8 @@ void ConnectScene::update() {
             while (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
 
-                statusText.set(statusText.get() + "Recieved block index-identifier table.\n");
+                auto statusText = components.get<GUIText>("statusText");
+                statusText->setText(statusText->getText() + "Recieved block index-identifier table.\n");
 
                 std::vector<std::string> indexIdentifierTable {};
                 indexIdentifierTable.reserve(static_cast<unsigned long>(Serializer::decodeInt(&p.data[0])));
@@ -49,7 +50,7 @@ void ConnectScene::update() {
                     if (ind >= p.data.length() - 4) break;
                 }
 
-                statusText.set(statusText.get() + "Joining World...");
+                statusText->setText(statusText->getText() + "Joining World...");
                 state.defs.blocks().setIdentifiers(indexIdentifierTable);
                 state.desiredState = "game";
                 return;
@@ -60,6 +61,7 @@ void ConnectScene::update() {
 
 void ConnectScene::handleConnecting() {
     Packet resp(PacketType::IDENTIFIER_LIST);
+    auto statusText = components.get<GUIText>("statusText");
 
     switch (connection.getConnectionStatus()) {
         default:
@@ -71,7 +73,7 @@ void ConnectScene::handleConnecting() {
 
         case ServerConnection::State::FAILED_CONNECT:
             connectState = State::FAILED_CONNECT;
-            statusText.set(statusText.get() + "\nFailed to connect :(\n");
+            statusText->setText(statusText->getText() + "\nFailed to connect :(\n");
             break;
 
         case ServerConnection::State::ATTEMPTING_CONNECT:
@@ -80,14 +82,14 @@ void ConnectScene::handleConnecting() {
             dotsTime += state.deltaTime;
             if (dotsTime > 1) {
                 dotsTime -= 1;
-                statusText.set(statusText.get() + ".");
+                statusText->setText(statusText->getText() + ".");
             }
 
             break;
 
         case ServerConnection::State::CONNECTED:
             connectState = State::IDENTIFIER_LIST;
-            statusText.set(statusText.get() + " Connected!~\n");
+            statusText->setText(statusText->getText() + " Connected!~\n");
 
             resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
 
@@ -101,8 +103,9 @@ void ConnectScene::draw() {
     renderer.beginChunkDeferredCalls();
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
+    renderer.enableTexture(&state.defs.textures().getAtlasTexture());
 
-    statusText.draw(renderer);
+    components.draw(renderer);
 
     renderer.swapBuffers();
 }

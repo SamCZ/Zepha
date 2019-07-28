@@ -37,8 +37,8 @@ set(ZEUS_SRC_FILES
         game/graph/Renderer.h
         api/client/LocalLuaParser.cpp
         api/client/LocalLuaParser.h
-        game/entity/hud/components/TextEntity.cpp
-        game/entity/hud/components/TextEntity.h
+        game/entity/hud/components/basic/GUIText.cpp
+        game/entity/hud/components/basic/GUIText.h
         game/entity/hud/DebugGui.cpp
         game/entity/hud/DebugGui.h
         game/scene/world/Player.cpp
@@ -120,8 +120,8 @@ set(ZEUS_SRC_FILES
         def/LocalDefs.h
         world/region/Region.cpp
         world/region/MapBlock.cpp
-        game/entity/hud/StatGraph.cpp
-        game/entity/hud/StatGraph.cpp
+#        game/entity/hud/StatGraph.cpp
+#        game/entity/hud/StatGraph.cpp
         util/Util.h
         world/block/PointedThing.h
         game/entity/world/ParticleEntity.cpp
@@ -176,6 +176,6 @@ set(ZEUS_SRC_FILES
         util/net/Address.h
         game/scene/net/ServerConnection.cpp
         game/scene/net/ServerConnection.h
-        game/scene/world/MeshDetails.h game/entity/hud/components/GUIComponent.cpp game/entity/hud/components/GUIComponent.h)
+        game/scene/world/MeshDetails.h game/entity/hud/components/GUIComponent.cpp game/entity/hud/components/GUIComponent.h game/entity/hud/components/basic/GUIContainer.cpp game/entity/hud/components/basic/GUIContainer.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

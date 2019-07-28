@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
     //Start the game
     switch (mode) {
         default: {
-            std::cout << Log::err << "Mode not set." << Log::endl;
+            std::cout << Log::err << "Mode not setText." << Log::endl;
             return -1;
         }
         case Mode::CLIENT: {

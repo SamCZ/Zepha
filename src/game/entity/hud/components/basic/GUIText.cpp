@@ -1,21 +1,33 @@
 #include <utility>
 
+
 //
 // Created by aurailus on 25/12/18.
 //
 
-#include "TextEntity.h"
+#include "GUIText.h"
 
+GUIText::GUIText(const std::string &key) : GUIComponent(key) {}
 
-TextEntity::TextEntity(Texture *texture, bool background, int scale) :
-    background(background) {
+void GUIText::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 bgcolor, glm::vec4 color, std::shared_ptr<AtlasRef> fontRef) {
+    // Text Constructor
+    // Creates a GUIText object.
 
-    setTexture(texture);
-    set("");
-    setScale({2, 2, 1});
+    this->scale = scale;
+    this->padding = padding;
+    this->fontRef = std::move(fontRef);
+
+    this->bgcolor = bgcolor;
+    //TODO: Text Color
+
+    entity.setScale({scale.x, scale.y, 1});
+    setText("");
 }
 
-void TextEntity::set(std::string text) {
+void GUIText::setText(std::string text) {
+    const static int w = 7;
+    const static int h = 9;
+
     this->text = std::move(text);
 
     std::vector<EntityVertex> textVertices;
@@ -27,7 +39,7 @@ void TextEntity::set(std::string text) {
     float left = 0, top = 0;
     unsigned int indOffset = 0;
 
-    if (background) {
+    if (bgcolor.w != 0) {
         float width = 1;
         float up = 0;
 
@@ -41,10 +53,10 @@ void TextEntity::set(std::string text) {
 
                 if (width > 1) {
                     std::vector<EntityVertex> vertices {
-                        {{-1,    -1 + up,     0}, {0.1, 0.1, 0.1, 0.3}, false},
-                        {{-1,     h + 1 + up, 0}, {0.1, 0.1, 0.1, 0.3}, false},
-                        {{width,  h + 1 + up, 0}, {0.1, 0.1, 0.1, 0.3}, false},
-                        {{width, -1 + up,     0}, {0.1, 0.1, 0.1, 0.3}, false},
+                        {{-1,    -1 + up,     0}, bgcolor, false},
+                        {{-1,     h + 1 + up, 0}, bgcolor, false},
+                        {{width,  h + 1 + up, 0}, bgcolor, false},
+                        {{width, -1 + up,     0}, bgcolor, false},
                     };
                     std::vector<unsigned int> indices {
                         0 + indOffset,
@@ -94,11 +106,15 @@ void TextEntity::set(std::string text) {
         float texPosL = texPosX + (p / 128.0f);
         float texPosR = texPosX + texPosWidth - ((p / 128.0f));
 
+        auto uv = fontRef->uv;
+        uv.z -= uv.x;
+        uv.w -= uv.y;
+
         auto letterVerts = std::vector<EntityVertex> {
-             {{left,             top,     0}, {texPosL, texPosY,                 0, 0}, true, {}},
-             {{left + w - p * 2, top,     0}, {texPosR, texPosY,                 0, 0}, true, {}},
-             {{left + w - p * 2, top + h, 0}, {texPosR, texPosY + texPosHeight,  0, 0}, true, {}},
-             {{left,             top + h, 0}, {texPosL, texPosY + texPosHeight,  0, 0}, true, {}},
+             {{left,             top,     0}, {uv.x + texPosL * uv.z, uv.y + texPosY * uv.w,                 0, 0}, true, {}},
+             {{left + w - p * 2, top,     0}, {uv.x + texPosR * uv.z, uv.y + texPosY * uv.w,                 0, 0}, true, {}},
+             {{left + w - p * 2, top + h, 0}, {uv.x + texPosR * uv.z, uv.y + (texPosY+texPosHeight) * uv.w,  0, 0}, true, {}},
+             {{left,             top + h, 0}, {uv.x + texPosL * uv.z, uv.y + (texPosY+texPosHeight) * uv.w,  0, 0}, true, {}},
         };
 
         textVertices.insert(textVertices.end(), letterVerts.begin(), letterVerts.end());
@@ -117,10 +133,10 @@ void TextEntity::set(std::string text) {
 
     auto m = new EntityMesh();
     m->create(textVertices, textIndices);
-    setMesh(m);
+    entity.setMesh(m);
 }
 
-int TextEntity::getWidthSubtract(int c) {
+int GUIText::getWidthSubtract(int c) {
     switch (c) {
         case 1:
         case 7:
@@ -157,6 +173,6 @@ int TextEntity::getWidthSubtract(int c) {
     return 0;
 }
 
-std::string TextEntity::get() {
+std::string GUIText::getText() {
     return text;
 }

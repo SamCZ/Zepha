@@ -4,63 +4,60 @@
 
 #include "DebugGui.h"
 
-DebugGui::DebugGui(glm::vec2 bufferSize, Texture* tex) :
-    displayMode(0),
+DebugGui::DebugGui(glm::vec2 bufferSize, TextureAtlas& atlas) :
+    displayMode(0)
 
-    fontTexture("../res/tex/gui/font.png"),
-    coloredGraphTexture("../res/tex/gui/histogram.png"),
-    monochromeGraphTexture("../res/tex/gui/histogram_white.png"),
+//    coloredGraphTexture("../res/tex/gui/histogram.png"),
+//    monochromeGraphTexture("../res/tex/gui/histogram_white.png")
 
-    crosshairText(&fontTexture, true),
-    dataText(&fontTexture, true),
+//    chunkUpdatesGraph("Interp",     120, 128, &monochromeGraphTexture, &fontTexture),
+//    meshUpdatesGraph ("ChunkMesh",  120, 128, &monochromeGraphTexture, &fontTexture),
+//    serverGenGraph   ("Gen",        120, 512, &monochromeGraphTexture, &fontTexture),
+//    serverPacketGraph("Packets",    120, 512, &monochromeGraphTexture, &fontTexture),
+//
+//    fpsGraph         ("FPS",        244, 64, 120, 60, &coloredGraphTexture   , &fontTexture),
+//    drawCallsGraph   ("Draw Calls", 244, 64, 120, 0,  &monochromeGraphTexture, &fontTexture),
+//    vRamGraph        ("VRam",       244, 64, 120, 1,  &monochromeGraphTexture, &fontTexture)
+    {
 
-    chunkUpdatesGraph("Interp",     120, 128, &monochromeGraphTexture, &fontTexture),
-    meshUpdatesGraph ("ChunkMesh",  120, 128, &monochromeGraphTexture, &fontTexture),
-    serverGenGraph   ("Gen",        120, 512, &monochromeGraphTexture, &fontTexture),
-    serverPacketGraph("Packets",    120, 512, &monochromeGraphTexture, &fontTexture),
+    auto crosshairText = std::make_shared<GUIText>("crosshairText");
+    crosshairText->create({2, 2}, {}, {0.1, 0.1, 0.1, 0.2}, {}, atlas.getTextureRef("font"));
+    components.add(crosshairText);
 
-    fpsGraph         ("FPS",        244, 64, 120, 60, &coloredGraphTexture   , &fontTexture),
-    drawCallsGraph   ("Draw Calls", 244, 64, 120, 0,  &monochromeGraphTexture, &fontTexture),
-    vRamGraph        ("VRam",       244, 64, 120, 1,  &monochromeGraphTexture, &fontTexture) {
-
-//    atlasTex.setScale({0, 0});
+    auto dataText = std::make_shared<GUIText>("dataText");
+    dataText->create({2, 2}, {}, {0.1, 0.1, 0.1, 0.2}, {}, atlas.getTextureRef("font"));
+    components.add(dataText);
 
     positionElements(bufferSize);
 
-    children.push_back(&dataText);
-    children.push_back(&crosshairText);
-
-    children.push_back(&chunkUpdatesGraph);
-    children.push_back(&meshUpdatesGraph);
-    children.push_back(&serverGenGraph);
-    children.push_back(&serverPacketGraph);
-    children.push_back(&fpsGraph);
-    children.push_back(&drawCallsGraph);
-    children.push_back(&vRamGraph);
+//    children.push_back(&dataText);
+//    children.push_back(&crosshairText);
+//
+//    children.push_back(&chunkUpdatesGraph);
+//    children.push_back(&meshUpdatesGraph);
+//    children.push_back(&serverGenGraph);
+//    children.push_back(&serverPacketGraph);
+//    children.push_back(&fpsGraph);
+//    children.push_back(&drawCallsGraph);
+//    children.push_back(&vRamGraph);
 
 //    children.push_back(&atlasTex);
-}
-
-void DebugGui::changeImage(Texture *tex) {
-//    atlasTex.setTexture(tex);
 }
 
 void DebugGui::positionElements(glm::vec2 bufferSize) {
     auto bufferWidth  = (int)bufferSize.x;
     auto bufferHeight = (int)bufferSize.y;
 
-    crosshairText.setPos({bufferWidth / 2 + 22, bufferHeight / 2 - 7, 0});
-//    atlasTex.setPos({8, 350, 0});
+    components.get<GUIText>("crosshairText")->setPos({bufferWidth / 2 + 22, bufferHeight / 2 - 7});
+    components.get<GUIText>("dataText")->setPos(glm::vec3(10, 10, 0));
 
-    dataText.setPos(glm::vec3(10, 10, 0));
-
-    serverGenGraph.setPos({bufferWidth - 254, bufferHeight - 70 - 160});
-    serverPacketGraph.setPos({bufferWidth - 254, bufferHeight - 70 - 240});
-    meshUpdatesGraph.setPos({bufferWidth - 254, bufferHeight - 70 - 80});
-    chunkUpdatesGraph.setPos({bufferWidth - 254, bufferHeight - 70});
-    fpsGraph.setPos({10, bufferHeight - 70});
-    drawCallsGraph.setPos({10, bufferHeight - 70 - 80});
-    vRamGraph.setPos({bufferWidth - 254, 10});
+//    serverGenGraph.setPos({bufferWidth - 254, bufferHeight - 70 - 160});
+//    serverPacketGraph.setPos({bufferWidth - 254, bufferHeight - 70 - 240});
+//    meshUpdatesGraph.setPos({bufferWidth - 254, bufferHeight - 70 - 80});
+//    chunkUpdatesGraph.setPos({bufferWidth - 254, bufferHeight - 70});
+//    fpsGraph.setPos({10, bufferHeight - 70});
+//    drawCallsGraph.setPos({10, bufferHeight - 70 - 80});
+//    vRamGraph.setPos({bufferWidth - 254, 10});
 }
 
 void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack) {
@@ -71,22 +68,22 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         glGetIntegerv(0x9048, &videoMemTotal);
         glGetIntegerv(0x9049, &videoMemAvail);
 
-        vRamGraph.update(static_cast<int>(std::round(
-                (videoMemTotal - videoMemAvail) / static_cast<float>(videoMemTotal) * 100.0))
-                / 100.0f);
+//        vRamGraph.update(static_cast<int>(std::round(
+//                (videoMemTotal - videoMemAvail) / static_cast<float>(videoMemTotal) * 100.0))
+//                / 100.0f);
     }
 
     { //Bottom Left Graphs
-        fpsGraph.update(static_cast<float>(fps));
-        drawCallsGraph.update(drawCalls);
+//        fpsGraph.update(static_cast<float>(fps));
+//        drawCallsGraph.update(drawCalls);
     }
 
     { //Bottom Right Graphs
-        meshUpdatesGraph.update(world.lastMeshUpdates);
-        chunkUpdatesGraph.update(world.lastGenUpdates);
-
-        serverGenGraph.update(static_cast<float>(ssGen));
-        serverPacketGraph.update(static_cast<float>(ssPack));
+//        meshUpdatesGraph.update(world.lastMeshUpdates);
+//        chunkUpdatesGraph.update(world.lastGenUpdates);
+//
+//        serverGenGraph.update(static_cast<float>(ssGen));
+//        serverPacketGraph.update(static_cast<float>(ssPack));
     }
 
     { //Top-left Data
@@ -109,13 +106,14 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         glm::vec3 regionCoordinate = TransPos::Dimension::regionFromVec(chunkPos);
 
         auto thing = player.getPointedThing();
-        std::string face = (thing.face == TOP)    ? "TOP" :
-                           (thing.face == BOTTOM) ? "BOTTOM" :
-                           (thing.face == LEFT)   ? "LEFT" :
-                           (thing.face == RIGHT)  ? "RIGHT" :
-                           (thing.face == FRONT)  ? "FRONT" :
-                           (thing.face == BACK)   ? "BACK" :
-                           "NONE";
+        std::string face =
+            (thing.face == TOP)    ? "TOP" :
+            (thing.face == BOTTOM) ? "BOTTOM" :
+            (thing.face == LEFT)   ? "LEFT" :
+            (thing.face == RIGHT)  ? "RIGHT" :
+            (thing.face == FRONT)  ? "FRONT" :
+            (thing.face == BACK)   ? "BACK" :
+            "NONE";
 
         std::ostringstream str;
 
@@ -142,7 +140,7 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         str << "Pointed Position: " << vecToString(thing.pos) << std::endl;
         str << "Pointed Face: " << face << std::endl;
 
-        dataText.set(str.str());
+        components.get<GUIText>("dataText")->setText(str.str());
     }
 
     { //Crosshair Text
@@ -150,14 +148,12 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
 
         std::ostringstream crossText;
         if (thing.blockDef != nullptr) crossText << thing.blockDef->identifier << std::endl;
-        crosshairText.set(crossText.str());
+        components.get<GUIText>("crosshairText")->setText(crossText.str());
     }
 }
 
 void DebugGui::draw(Renderer &renderer) {
-    for (auto elem : children) {
-        elem->draw(renderer);
-    }
+    components.draw(renderer);
 }
 
 void DebugGui::bufferResized(glm::vec2 bufferSize) {
@@ -168,9 +164,6 @@ void DebugGui::bufferResized(glm::vec2 bufferSize) {
 void DebugGui::changeVisibilityState(int state) {
     displayMode = state;
 
-    for (auto elem : children) {
-        elem->setVisible(displayMode == 0);
-    }
-
-    fpsGraph.setVisible(displayMode != 1);
+    components.setVisible(displayMode == 0);
+//    components.get<GUILabelledGraph>("fpsGraph").setVisible(displayMode != 1);
 }

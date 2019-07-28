@@ -14,41 +14,33 @@
 #include "StatGraph.h"
 #include "components/basic/GUIRect.h"
 #include "components/GraphEntity.h"
-#include "components/TextEntity.h"
+#include "components/basic/GUIText.h"
+#include "components/basic/GUIContainer.h"
 
 class DebugGui : public Drawable {
 public:
-    explicit DebugGui(glm::vec2 bufferSize, Texture* tex);
+    DebugGui(glm::vec2 bufferSize, TextureAtlas& atlas);
 
     void bufferResized(glm::vec2 bufferSize);
 
-    void changeImage(Texture* tex);
     void update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
     void draw(Renderer &renderer) override;
 
     void changeVisibilityState(int state);
 private:
     void positionElements(glm::vec2 bufferSize);
-    std::vector<Drawable*> children;
+
+    GUIContainer components;
 
     int displayMode;
 
-    Texture fontTexture;
-    Texture coloredGraphTexture;
-    Texture monochromeGraphTexture;
-
-//    GUIRect atlasTex;
-
-    TextEntity crosshairText;
-    TextEntity dataText;
-    
-    StatGraph chunkUpdatesGraph;
-    StatGraph meshUpdatesGraph;
-    StatGraph fpsGraph;
-    StatGraph drawCallsGraph;
-    StatGraph vRamGraph;
-    StatGraph serverGenGraph;
-    StatGraph serverPacketGraph;
+//    StatGraph chunkUpdatesGraph;
+//    StatGraph meshUpdatesGraph;
+//    StatGraph fpsGraph;
+//    StatGraph drawCallsGraph;
+//    StatGraph vRamGraph;
+//    StatGraph serverGenGraph;
+//    StatGraph serverPacketGraph;
 };
 
 #endif //ZEUS_DEBUGGUI_H
