@@ -75,10 +75,10 @@ set(ZEUS_SRC_FILES
         util/net/PacketChannel.h
         game/entity/world/PlayerEntity.cpp
         game/entity/world/PlayerEntity.h
-        game/entity/hud/components/GraphEntity.cpp
-        game/entity/hud/components/GraphEntity.h
         game/entity/hud/components/basic/GUIRect.cpp
         game/entity/hud/components/basic/GUIRect.h
+        game/entity/hud/components/basic/GUIGraph.cpp
+        game/entity/hud/components/basic/GUIGraph.h
         def/gen/MapGenJob.h
         util/Interp.h
         def/gen/NoiseSample.cpp
@@ -120,10 +120,10 @@ set(ZEUS_SRC_FILES
         def/LocalDefs.h
         world/region/Region.cpp
         world/region/MapBlock.cpp
-#        game/entity/hud/StatGraph.cpp
-#        game/entity/hud/StatGraph.cpp
         util/Util.h
         world/block/PointedThing.h
+        game/entity/hud/components/compound/GUILabelledGraph.cpp
+        game/entity/hud/components/compound/GUILabelledGraph.cpp
         game/entity/world/ParticleEntity.cpp
         game/entity/world/ParticleEntity.h
         def/ServerDefs.cpp def/ServerDefs.h
@@ -176,6 +176,10 @@ set(ZEUS_SRC_FILES
         util/net/Address.h
         game/scene/net/ServerConnection.cpp
         game/scene/net/ServerConnection.h
-        game/scene/world/MeshDetails.h game/entity/hud/components/GUIComponent.cpp game/entity/hud/components/GUIComponent.h game/entity/hud/components/basic/GUIContainer.cpp game/entity/hud/components/basic/GUIContainer.h)
+        game/scene/world/MeshDetails.h
+        game/entity/hud/components/GUIComponent.cpp
+        game/entity/hud/components/GUIComponent.h
+        game/entity/hud/components/basic/GUIContainer.cpp
+        game/entity/hud/components/basic/GUIContainer.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

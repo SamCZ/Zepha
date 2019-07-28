@@ -47,10 +47,6 @@ void GUIComponent::add(std::shared_ptr<GUIComponent> component) {
     children[component->key] = std::move(component);
 }
 
-//std::shared_ptr<GUIComponent> GUIComponent::operator[](std::string) {
-//    return children[key];
-//}
-
 void GUIComponent::remove(std::string key) {
     children.erase(key);
 }
@@ -74,7 +70,7 @@ void GUIComponent::updatePos() {
     glm::vec2 realPos(pos);
     if (parent != nullptr) {
         glm::vec3 parentPos = parent->entity.getPos();
-        pos += glm::vec2{parentPos.x, parentPos.y};
+        realPos += glm::vec2{parentPos.x, parentPos.y};
     }
     entity.setPos({realPos.x, realPos.y, 0});
     for (const auto& child : children) {

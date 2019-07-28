@@ -5,43 +5,51 @@
 #include "DebugGui.h"
 
 DebugGui::DebugGui(glm::vec2 bufferSize, TextureAtlas& atlas) :
-    displayMode(0)
+    displayMode(0) {
 
-//    coloredGraphTexture("../res/tex/gui/histogram.png"),
-//    monochromeGraphTexture("../res/tex/gui/histogram_white.png")
-
-//    chunkUpdatesGraph("Interp",     120, 128, &monochromeGraphTexture, &fontTexture),
-//    meshUpdatesGraph ("ChunkMesh",  120, 128, &monochromeGraphTexture, &fontTexture),
-//    serverGenGraph   ("Gen",        120, 512, &monochromeGraphTexture, &fontTexture),
-//    serverPacketGraph("Packets",    120, 512, &monochromeGraphTexture, &fontTexture),
-//
-//    fpsGraph         ("FPS",        244, 64, 120, 60, &coloredGraphTexture   , &fontTexture),
-//    drawCallsGraph   ("Draw Calls", 244, 64, 120, 0,  &monochromeGraphTexture, &fontTexture),
-//    vRamGraph        ("VRam",       244, 64, 120, 1,  &monochromeGraphTexture, &fontTexture)
-    {
+    auto fpsHistogramRef = atlas.getTextureRef("histogram");
+    auto genericHistogramRef = atlas.getTextureRef("histogram_white");
+    auto fontRef = atlas.getTextureRef("font");
 
     auto crosshairText = std::make_shared<GUIText>("crosshairText");
-    crosshairText->create({2, 2}, {}, {0.1, 0.1, 0.1, 0.2}, {}, atlas.getTextureRef("font"));
+    crosshairText->create({2, 2}, {}, {0.1, 0.1, 0.1, 0.3}, {}, fontRef);
     components.add(crosshairText);
 
     auto dataText = std::make_shared<GUIText>("dataText");
-    dataText->create({2, 2}, {}, {0.1, 0.1, 0.1, 0.2}, {}, atlas.getTextureRef("font"));
+    dataText->create({2, 2}, {}, {0.1, 0.1, 0.1, 0.3}, {}, fontRef);
     components.add(dataText);
 
+
+    auto interpGraph = std::make_shared<GUILabelledGraph>("interpGraph");
+    interpGraph->create({244, 64}, {}, "Interp", 120, 128, genericHistogramRef, fontRef);
+    components.add(interpGraph);
+
+    auto meshGraph = std::make_shared<GUILabelledGraph>("meshGraph");
+    meshGraph->create({244, 64}, {}, "Mesh", 120, 128, genericHistogramRef, fontRef);
+    components.add(meshGraph);
+
+    auto genGraph = std::make_shared<GUILabelledGraph>("genGraph");
+    genGraph->create({244, 64}, {}, "Gen", 120, 512, genericHistogramRef, fontRef);
+    components.add(genGraph);
+
+    auto packetGraph = std::make_shared<GUILabelledGraph>("packetGraph");
+    packetGraph->create({244, 64}, {}, "Packets", 120, 512, genericHistogramRef, fontRef);
+    components.add(packetGraph);
+
+
+    auto fpsGraph = std::make_shared<GUILabelledGraph>("fpsGraph");
+    fpsGraph->create({244, 64}, {}, "FPS", 120, 60, fpsHistogramRef, fontRef);
+    components.add(fpsGraph);
+
+    auto drawsGraph = std::make_shared<GUILabelledGraph>("drawsGraph");
+    drawsGraph->create({244, 64}, {}, "Draw Calls", 120, 0, genericHistogramRef, fontRef);
+    components.add(drawsGraph);
+
+    auto gpuGraph = std::make_shared<GUILabelledGraph>("gpuGraph");
+    gpuGraph->create({244, 64}, {}, "GPU", 120, 1, genericHistogramRef, fontRef);
+    components.add(gpuGraph);
+
     positionElements(bufferSize);
-
-//    children.push_back(&dataText);
-//    children.push_back(&crosshairText);
-//
-//    children.push_back(&chunkUpdatesGraph);
-//    children.push_back(&meshUpdatesGraph);
-//    children.push_back(&serverGenGraph);
-//    children.push_back(&serverPacketGraph);
-//    children.push_back(&fpsGraph);
-//    children.push_back(&drawCallsGraph);
-//    children.push_back(&vRamGraph);
-
-//    children.push_back(&atlasTex);
 }
 
 void DebugGui::positionElements(glm::vec2 bufferSize) {
@@ -51,13 +59,14 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
     components.get<GUIText>("crosshairText")->setPos({bufferWidth / 2 + 22, bufferHeight / 2 - 7});
     components.get<GUIText>("dataText")->setPos(glm::vec3(10, 10, 0));
 
-//    serverGenGraph.setPos({bufferWidth - 254, bufferHeight - 70 - 160});
-//    serverPacketGraph.setPos({bufferWidth - 254, bufferHeight - 70 - 240});
-//    meshUpdatesGraph.setPos({bufferWidth - 254, bufferHeight - 70 - 80});
-//    chunkUpdatesGraph.setPos({bufferWidth - 254, bufferHeight - 70});
-//    fpsGraph.setPos({10, bufferHeight - 70});
-//    drawCallsGraph.setPos({10, bufferHeight - 70 - 80});
-//    vRamGraph.setPos({bufferWidth - 254, 10});
+    components.get<GUILabelledGraph>("genGraph")->setPos({bufferWidth - 254, bufferHeight - 70 - 160});
+    components.get<GUILabelledGraph>("packetGraph")->setPos({bufferWidth - 254, bufferHeight - 70 - 240});
+    components.get<GUILabelledGraph>("meshGraph")->setPos({bufferWidth - 254, bufferHeight - 70 - 80});
+    components.get<GUILabelledGraph>("interpGraph")->setPos({bufferWidth - 254, bufferHeight - 70});
+
+    components.get<GUILabelledGraph>("fpsGraph")->setPos({10, bufferHeight - 70});
+    components.get<GUILabelledGraph>("drawsGraph")->setPos({10, bufferHeight - 70 - 80});
+    components.get<GUILabelledGraph>("gpuGraph")->setPos({bufferWidth - 254, 10});
 }
 
 void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack) {
@@ -68,22 +77,21 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         glGetIntegerv(0x9048, &videoMemTotal);
         glGetIntegerv(0x9049, &videoMemAvail);
 
-//        vRamGraph.update(static_cast<int>(std::round(
-//                (videoMemTotal - videoMemAvail) / static_cast<float>(videoMemTotal) * 100.0))
-//                / 100.0f);
+        components.get<GUILabelledGraph>("gpuGraph")->pushValue(static_cast<int>(std::round(
+                (videoMemTotal - videoMemAvail) / static_cast<float>(videoMemTotal) * 100.0))
+                / 100.0f);
     }
 
     { //Bottom Left Graphs
-//        fpsGraph.update(static_cast<float>(fps));
-//        drawCallsGraph.update(drawCalls);
+        components.get<GUILabelledGraph>("fpsGraph")->pushValue(static_cast<float>(fps));
+        components.get<GUILabelledGraph>("drawsGraph")->pushValue(drawCalls);
     }
 
     { //Bottom Right Graphs
-//        meshUpdatesGraph.update(world.lastMeshUpdates);
-//        chunkUpdatesGraph.update(world.lastGenUpdates);
-//
-//        serverGenGraph.update(static_cast<float>(ssGen));
-//        serverPacketGraph.update(static_cast<float>(ssPack));
+        components.get<GUILabelledGraph>("meshGraph")->pushValue(world.lastMeshUpdates);
+        components.get<GUILabelledGraph>("interpGraph")->pushValue(world.lastGenUpdates);
+        components.get<GUILabelledGraph>("genGraph")->pushValue(static_cast<float>(ssGen));
+        components.get<GUILabelledGraph>("packetGraph")->pushValue(static_cast<float>(ssPack));
     }
 
     { //Top-left Data
@@ -165,5 +173,5 @@ void DebugGui::changeVisibilityState(int state) {
     displayMode = state;
 
     components.setVisible(displayMode == 0);
-//    components.get<GUILabelledGraph>("fpsGraph").setVisible(displayMode != 1);
+    components.get<GUILabelledGraph>("fpsGraph")->setVisible(displayMode != 1);
 }

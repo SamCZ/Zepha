@@ -11,9 +11,9 @@
 #include "../../../util/TransPos.h"
 #include "../../../util/Util.h"
 #include "../../../util/Ray.h"
-#include "StatGraph.h"
+#include "components/compound/GUILabelledGraph.h"
 #include "components/basic/GUIRect.h"
-#include "components/GraphEntity.h"
+#include "components/basic/GUIGraph.h"
 #include "components/basic/GUIText.h"
 #include "components/basic/GUIContainer.h"
 
@@ -33,14 +33,6 @@ private:
     GUIContainer components;
 
     int displayMode;
-
-//    StatGraph chunkUpdatesGraph;
-//    StatGraph meshUpdatesGraph;
-//    StatGraph fpsGraph;
-//    StatGraph drawCallsGraph;
-//    StatGraph vRamGraph;
-//    StatGraph serverGenGraph;
-//    StatGraph serverPacketGraph;
 };
 
 #endif //ZEUS_DEBUGGUI_H
