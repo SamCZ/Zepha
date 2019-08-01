@@ -15,6 +15,9 @@ class GameGui : public GUIContainer {
 public:
     explicit GameGui(glm::vec2 bufferSize, TextureAtlas& atlas);
     void bufferResized(glm::vec2 bufferSize);
+
+    void setInventoryVisible(bool visible);
+    bool isInventoryVisible();
 };
 
 

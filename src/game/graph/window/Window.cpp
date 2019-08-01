@@ -161,6 +161,9 @@ void Window::swapBuffers() {
 
 void Window::lockMouse(bool lock) {
     forceMouseUnlocked = !lock;
-    if (lock) mouseIsLocked = true;
+    mouseIsLocked = lock;
+    glfwSetCursorPos(mainWindow, centerX, centerY);
     glfwSetInputMode(mainWindow, GLFW_CURSOR, (mouseIsLocked ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL));
+    deltaX = 0;
+    deltaY = 0;
 }

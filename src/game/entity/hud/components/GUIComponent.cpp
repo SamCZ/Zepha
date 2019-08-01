@@ -35,7 +35,7 @@ void GUIComponent::setPos(glm::vec2 pos) {
     }
     entity.setPos({pos.x, pos.y, 0});
     for (const auto& child : children) {
-        child.second->updatePos();
+        child->updatePos();
     }
 }
 
@@ -46,17 +46,22 @@ glm::vec2 GUIComponent::getPos() {
 void GUIComponent::add(std::shared_ptr<GUIComponent> component) {
     component->parent = this;
     component->updatePos();
-    children[component->key] = std::move(component);
+    children.push_back(std::move(component));
 }
 
 void GUIComponent::remove(std::string key) {
-    children.erase(key);
+    for (auto it = children.cbegin(); it != children.cend(); it++) {
+        if (it->get()->key == key) {
+            children.erase(it);
+            return;
+        }
+    }
 }
 
 void GUIComponent::draw(Renderer& renderer) {
     entity.draw(renderer);
     for (const auto& child : children) {
-        child.second->draw(renderer);
+        child->draw(renderer);
     }
 }
 
@@ -64,7 +69,7 @@ void GUIComponent::setVisible(bool visible) {
     Drawable::setVisible(visible);
     entity.setVisible(visible);
     for (const auto& child : children) {
-        child.second->setVisible(visible);
+        child->setVisible(visible);
     }
 }
 
@@ -77,6 +82,6 @@ void GUIComponent::updatePos() {
     }
     entity.setPos({realPos.x, realPos.y, 0});
     for (const auto& child : children) {
-        child.second->updatePos();
+        child->updatePos();
     }
 }

@@ -8,6 +8,6 @@ GUIContainer::GUIContainer(const std::string &key) : GUIComponent(key) {}
 
 void GUIContainer::draw(Renderer &renderer) {
     for (const auto& child : children) {
-        child.second->draw(renderer);
+        child->draw(renderer);
     }
 }

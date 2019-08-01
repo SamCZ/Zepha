@@ -66,6 +66,12 @@ void GameScene::update() {
         debugVisible = !debugVisible;
         debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
     }
+
+    if (window.input.isKeyPressed(GLFW_KEY_E)) {
+        bool open = !gameGui.isInventoryVisible();
+        gameGui.setInventoryVisible(open);
+        window.lockMouse(!open);
+    }
 }
 
 void GameScene::draw() {
