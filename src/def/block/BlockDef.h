@@ -5,7 +5,6 @@
 #ifndef ZEUS_BLOCKDEF_H
 #define ZEUS_BLOCKDEF_H
 
-
 #include <string>
 #include <unordered_map>
 #include <sol2/sol.hpp>
@@ -14,7 +13,7 @@
 
 class BlockDef {
 public:
-    int index;
+    unsigned int index;
     std::string identifier;
 
     bool culls = false;

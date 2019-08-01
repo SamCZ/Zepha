@@ -13,6 +13,7 @@ MapGen::MapGen(unsigned int seed, BlockAtlas& atlas) {
     this->seed = seed;
 
     //Get Block Indexes
+    AIR = atlas.fromIdentifier("air").index;
 
     GRASS_BLOCK = atlas.fromIdentifier("default:grass").index;
     DIRT_BLOCK  = atlas.fromIdentifier("default:dirt").index;

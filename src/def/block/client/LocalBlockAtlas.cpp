@@ -5,11 +5,21 @@
 #include "LocalBlockAtlas.h"
 
 LocalBlockAtlas::LocalBlockAtlas() {
-    //Register Air Node
-    LocalBlockModel nullModel; nullModel.visible = false, nullModel.culls = false;
-    LocalBlockDef air("builtin:air", nullModel, false, {{0, 0, 0}, {1, 1, 1}});
-    air.index = 0;
-    definitions[0] = air;
+    LocalBlockModel nullModel;
+    nullModel.visible = false,
+    nullModel.culls = false;
+
+    //Invalid Node
+    LocalBlockDef invalid("invalid", nullModel, false, {{0, 0, 0}, {1, 1, 1}});
+    invalid.index = 0;
+    definitions[0] = invalid;
+    identifierIndexTable.insert({"invalid", 0});
+
+    //Air Node
+    LocalBlockDef air("air", nullModel, false, {{0, 0, 0}, {1, 1, 1}});
+    air.index = 1;
+    definitions[1] = air;
+    identifierIndexTable.insert({"air", 1});
 }
 
 void LocalBlockAtlas::setIdentifiers(std::vector<std::string> &identifiers) {
@@ -29,7 +39,7 @@ void LocalBlockAtlas::registerBlock(LocalBlockDef def) {
     definitions[def.index] = def;
 }
 
-LocalBlockDef& LocalBlockAtlas::fromIndex(int id) {
+LocalBlockDef& LocalBlockAtlas::fromIndex(unsigned int id) {
     if (id >= 0 && id < definitions.size()) {
         return definitions.at(static_cast<unsigned long>(id));
     }
@@ -43,6 +53,6 @@ LocalBlockDef &LocalBlockAtlas::fromIdentifier(std::string identifier) {
         return definitions.at(static_cast<unsigned long>(identifierIndexTable.at(identifier)));
     }
 
-    std::cout << Log::err << "Block Identifier \"" << identifier << "\" (undefined) requested! Returning air." << Log::endl;
+    std::cout << Log::err << "Block Identifier \"" << identifier << "\" (undefined) requested! Returning invalid." << Log::endl;
     return definitions.at(0);
 }

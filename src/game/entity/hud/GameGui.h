@@ -6,24 +6,15 @@
 #define ZEUS_GAMEGUI_H
 
 #include "components/basic/GUIRect.h"
+#include "components/basic/GUIContainer.h"
 #include "../Entity.h"
-#include "../../ClientState.h"
 #include "../../graph/drawable/DrawableGroup.h"
+#include "../../ClientState.h"
 
-class GameGui : public Drawable {
+class GameGui : public GUIContainer {
 public:
     explicit GameGui(glm::vec2 bufferSize, TextureAtlas& atlas);
-
-    void draw(Renderer& renderer) override;
-
     void bufferResized(glm::vec2 bufferSize);
-    void setVisible(bool visible) override;
-private:
-    std::shared_ptr<AtlasRef> crosshairRef;
-    std::shared_ptr<AtlasRef> viginetteRef;
-
-    GUIRect crosshair;
-    GUIRect viginette;
 };
 
 

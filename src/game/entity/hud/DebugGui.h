@@ -17,21 +17,16 @@
 #include "components/basic/GUIText.h"
 #include "components/basic/GUIContainer.h"
 
-class DebugGui : public Drawable {
+class DebugGui : public GUIContainer {
 public:
     DebugGui(glm::vec2 bufferSize, TextureAtlas& atlas);
 
     void bufferResized(glm::vec2 bufferSize);
-
-    void update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
-    void draw(Renderer &renderer) override;
-
     void changeVisibilityState(int state);
-private:
     void positionElements(glm::vec2 bufferSize);
 
-    GUIContainer components;
-
+    void update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
+private:
     int displayMode;
 };
 

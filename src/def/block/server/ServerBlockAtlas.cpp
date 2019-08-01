@@ -5,9 +5,16 @@
 #include "ServerBlockAtlas.h"
 
 ServerBlockAtlas::ServerBlockAtlas() {
-    //Register Air Node
-    ServerBlockModel nullModel; nullModel.visible = false, nullModel.culls = false;
-    ServerBlockDef air("builtin:air", static_cast<int>(definitions.size()), nullModel, false, {{0, 0, 0}, {1, 1, 1}});
+    ServerBlockModel nullModel;
+    nullModel.visible = false,
+    nullModel.culls = false;
+
+    //Invalid Node
+    ServerBlockDef invalid("invalid", static_cast<int>(definitions.size()), nullModel, false, {{0, 0, 0}, {1, 1, 1}});
+    registerBlock(std::move(invalid));
+
+    //Air Node
+    ServerBlockDef air("air", static_cast<int>(definitions.size()), nullModel, false, {{0, 0, 0}, {1, 1, 1}});
     registerBlock(std::move(air));
 }
 
@@ -20,7 +27,7 @@ void ServerBlockAtlas::registerBlock(ServerBlockDef def) {
     identifierIndexTable.insert({def.identifier, def.index});
 }
 
-ServerBlockDef& ServerBlockAtlas::fromIndex(int id) {
+ServerBlockDef& ServerBlockAtlas::fromIndex(unsigned int id) {
     if (id >= 0 && id < definitions.size()) {
         return definitions.at((unsigned long)id);
     }
@@ -34,6 +41,6 @@ ServerBlockDef &ServerBlockAtlas::fromIdentifier(std::string identifier) {
         return definitions.at(static_cast<unsigned long>(identifierIndexTable.at(identifier)));
     }
 
-    std::cout << Log::err << "Block Identifier \"" << identifier << "\" (undefined) requested! Returning air." << Log::endl;
-    return definitions.at(0);
+    std::cout << Log::err << "Block Identifier \"" << identifier << "\" (undefined) requested! Returning invalid." << Log::endl;
+    return definitions.at(INVALID);
 }

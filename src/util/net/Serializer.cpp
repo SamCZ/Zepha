@@ -45,6 +45,12 @@ void Serializer::encodeIntVec(string &target, vector<int> &vec) {
     target += string(reinterpret_cast<const char*>(&vec[0]), vec.size()*4);
 }
 
+void Serializer::encodeUIntVec(string &target, vector<unsigned int> &vec) {
+    //Used a reinterpret cast to speed things up
+    target.reserve(target.length() + vec.size() * 4);
+    target += string(reinterpret_cast<const char*>(&vec[0]), vec.size()*4);
+}
+
 void Serializer::encodeFloatVec(string &target, vector<float> &vec){
     //Used a reinterpret cast to speed things up
     target.reserve(target.length() + vec.size() * 4);
@@ -80,10 +86,17 @@ string Serializer::decodeString(char *stringStart) {
 }
 
 vector<int> Serializer::decodeIntVec(string &string) {
-    //Reverse dthe conversion done to vectors in the encode*Vec classes using reinterpret_cast.
+    //Reverse the conversion done to vectors in the encode*Vec classes using reinterpret_cast.
     return std::vector<int>(reinterpret_cast<const int*>(&string[0]),
                             reinterpret_cast<const int*>(&string[string.size()]));
 }
+
+vector<unsigned int> Serializer::decodeUIntVec(string &string) {
+    //Reverse the conversion done to vectors in the encode*Vec classes using reinterpret_cast.
+    return std::vector<unsigned int>(reinterpret_cast<const int*>(&string[0]),
+                            reinterpret_cast<const int*>(&string[string.size()]));
+}
+
 
 vector<float> Serializer::decodeFloatVec(string &string) {
     //Reversed the conversion done to vectors in the encode*Vec classes using reinterpret_cast.

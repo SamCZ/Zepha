@@ -31,6 +31,7 @@ void GUIComponent::setPos(glm::vec2 pos) {
     if (parent != nullptr) {
         glm::vec3 parentPos = parent->entity.getPos();
         pos += glm::vec2{parentPos.x, parentPos.y};
+        pos += glm::vec2{parent->getPadding().w, parent->getPadding().x};
     }
     entity.setPos({pos.x, pos.y, 0});
     for (const auto& child : children) {
@@ -44,6 +45,7 @@ glm::vec2 GUIComponent::getPos() {
 
 void GUIComponent::add(std::shared_ptr<GUIComponent> component) {
     component->parent = this;
+    component->updatePos();
     children[component->key] = std::move(component);
 }
 
@@ -71,6 +73,7 @@ void GUIComponent::updatePos() {
     if (parent != nullptr) {
         glm::vec3 parentPos = parent->entity.getPos();
         realPos += glm::vec2{parentPos.x, parentPos.y};
+        realPos += glm::vec2{parent->getPadding().w, parent->getPadding().x};
     }
     entity.setPos({realPos.x, realPos.y, 0});
     for (const auto& child : children) {

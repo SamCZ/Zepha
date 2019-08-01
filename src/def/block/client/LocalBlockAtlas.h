@@ -20,10 +20,10 @@ public:
 
     int definitionsSize() override {return 0;};
 
-    LocalBlockDef& fromIndex(int id) override;
+    LocalBlockDef& fromIndex(unsigned int id) override;
     LocalBlockDef& fromIdentifier(std::string identifier) override;
 private:
-    std::vector<LocalBlockDef> definitions {1};
+    std::vector<LocalBlockDef> definitions {2};
     std::unordered_map<std::string, int> identifierIndexTable;
 };
 

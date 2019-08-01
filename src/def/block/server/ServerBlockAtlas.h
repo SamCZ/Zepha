@@ -20,11 +20,9 @@ public:
 
     int definitionsSize() override;
 
-    ServerBlockDef& fromIndex(int id) override;
+    ServerBlockDef& fromIndex(unsigned int id) override;
     ServerBlockDef& fromIdentifier(std::string identifier) override;
 private:
-    const static int AIR = 0;
-
     std::vector<ServerBlockDef> definitions;
     std::unordered_map<std::string, int> identifierIndexTable;
 };

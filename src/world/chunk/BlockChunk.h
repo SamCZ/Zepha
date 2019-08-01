@@ -18,24 +18,22 @@
 class BlockChunk {
 public:
     BlockChunk();
-    explicit BlockChunk(const std::vector<int>& blocks);
-    BlockChunk(const std::vector<int>& blocks, glm::vec3 pos);
+    explicit BlockChunk(const std::vector<unsigned int>& blocks);
+    BlockChunk(const std::vector<unsigned int>& blocks, glm::vec3 pos);
 
     bool shouldRender();
     bool allAdjacentsExist();
 
-    int getBlock(unsigned int ind) const;
-    int getBlock(const glm::vec3& pos) const;
+    unsigned int getBlock(unsigned int ind) const;
+    unsigned int getBlock(const glm::vec3& pos) const;
 
-    bool setBlock(const glm::vec3& pos, int ind);
+    bool setBlock(const glm::vec3& pos, unsigned int ind);
 
-    std::vector<int> rleEncode();
-    void rleDecode(std::vector<int>& blocksRle, std::vector<int>& buffer);
+    std::vector<unsigned int> rleEncode();
+    void rleDecode(std::vector<unsigned int>& blocksRle, std::vector<unsigned int>& buffer);
 
     std::string serialize();
     bool deserialize(std::string gzip);
-
-    static std::vector<int> deserializeToVec(std::string gzip);
 
     glm::vec3 pos;
     bool adjacent[6] = {false, false, false, false, false, false};
@@ -45,7 +43,7 @@ public:
 
     bool renderedEmpty = true;
 private:
-    std::vector<int> blocks;
+    std::vector<unsigned int> blocks;
     unsigned short fullBlocks = 0;
     bool empty = true;
 };

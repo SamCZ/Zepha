@@ -209,7 +209,7 @@ int LocalWorld::getBlock(glm::vec3 pos) {
 
     auto chunk = getChunk(chunkPos);
     if (chunk != nullptr) return chunk->getBlock(local);
-    return -1;
+    return BlockAtlas::INVALID;
 }
 
 void LocalWorld::localSetBlock(glm::vec3 pos, int block) {

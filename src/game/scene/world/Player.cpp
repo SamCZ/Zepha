@@ -106,7 +106,8 @@ void Player::pointerUpdate(InputManager &input, double delta) {
         auto pointedPos = TransPos::roundPos(rayEnd);
 
         auto blockID = world.getBlock(rayEnd);
-        if (blockID > 0) {
+        //TODO: Make some property on the node defining if it can be selected
+        if (blockID > 1) {
             SelectionBox& sBox = defs.blocks().fromIndex(blockID).selectionBox;
             auto intersects = sBox.intersects(*ray.getEnd(), pointedPos);
 

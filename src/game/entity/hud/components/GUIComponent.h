@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include "../../Entity.h"
 
-class GUIComponent : Drawable {
+class GUIComponent : public Drawable {
 public:
     GUIComponent() = default;
     explicit GUIComponent(const std::string& key);
@@ -27,8 +27,6 @@ public:
     void add(std::shared_ptr<GUIComponent> component);
     template<class T> std::shared_ptr<T> get(const std::string &key) { return std::static_pointer_cast<T>(children[key]); };
     void remove(std::string key);
-
-//    std::shared_ptr<GUIComponent> operator[](std::string);
 
     void setVisible(bool visible) override;
 
