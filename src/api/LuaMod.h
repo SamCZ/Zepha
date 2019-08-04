@@ -13,6 +13,7 @@ class LuaMod {
 public:
     std::vector<LuaModFile> files {};
     LuaModConfig config {};
+    std::string serialized;
 };
 
 #endif //ZEUS_LUAMOD_H

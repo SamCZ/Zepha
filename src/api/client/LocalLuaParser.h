@@ -5,8 +5,9 @@
 #ifndef ZEUS_LOCALLUAPARSER_H
 #define ZEUS_LOCALLUAPARSER_H
 
-#include "../LuaParser.h"
 #include <cute_files/cute_files.h>
+#include "../LuaParser.h"
+#include "../LuaMod.h"
 
 class LocalDefs;
 class LocalWorld;
@@ -23,6 +24,9 @@ public:
     void registerBlocks(LocalDefs& defs);
 
     ~LocalLuaParser() = default;
+
+    std::vector<LuaMod> mods;
+    std::vector<std::string> modsOrder;
 private:
     int DoFileSandboxed(std::string file);
 };

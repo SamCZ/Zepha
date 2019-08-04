@@ -12,6 +12,8 @@ enum class PacketType {
 
     //Information Request Types
     IDENTIFIER_LIST,
+    MODS,
+    MOD_ORDER,
     CONNECT_DATA_RECVD,
 
     //Ingame Data Types

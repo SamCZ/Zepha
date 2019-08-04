@@ -61,41 +61,15 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, GameGui& gu
     ClientApi::remove_block(zeus, defs, world);
 
     ClientApi::show_menu(zeus, defs, gui);
+
+    //Sandbox the dofile function
+    lua.set_function("dofile", &LocalLuaParser::DoFileSandboxed, this);
 }
 
 void LocalLuaParser::loadMods() {
-    //Sandbox the dofile function
-    lua.set_function("dofile", &LocalLuaParser::DoFileSandboxed, this);
-
-    cf_dir_t mods_dir;
-    cf_dir_open(&mods_dir, root.c_str());
-
-    //Iterate through all mod folders
-    while (mods_dir.has_next) {
-        cf_file_t mod_folder_file;
-        cf_read_file(&mods_dir, &mod_folder_file);
-
-        if (mod_folder_file.is_dir && strncmp(mod_folder_file.name, ".", 2) != 0 && strncmp(mod_folder_file.name, "..", 3) != 0) {
-            cf_dir_t mod_dir;
-            cf_dir_open(&mod_dir, mod_folder_file.path);
-
-            //Find main.lua
-            while (mod_dir.has_next) {
-                cf_file_t mod_file;
-                cf_read_file(&mod_dir, &mod_file);
-
-                if (strncmp(mod_file.name, "main.lua", 9) == 0) {
-                    //Run main.lua
-                    DoFileSandboxed(mod_file.path);
-                    break;
-                }
-
-                cf_dir_next(&mod_dir);
-            }
-        }
-        cf_dir_next(&mods_dir);
+    for (const std::string& modName : modsOrder) {
+        DoFileSandboxed(modName + "/main");
     }
-    cf_dir_close(&mods_dir);
 }
 
 void LocalLuaParser::registerBlocks(LocalDefs& defs) {
@@ -103,10 +77,20 @@ void LocalLuaParser::registerBlocks(LocalDefs& defs) {
 }
 
 int LocalLuaParser::DoFileSandboxed(std::string file) {
-    if (root_path.contains(Path(file))) {
-        lua.script_file(file);
+    size_t modname_length = file.find('/');
+    std::string modname = file.substr(0, modname_length);
+
+    for (LuaMod& mod : mods) {
+        if (strncmp(mod.config.name.c_str(), modname.c_str(), modname_length) == 0) {
+            for (LuaModFile& f : mod.files) {
+                if (f.path == file) {
+                    lua.script(f.file);
+                    return 0;
+                }
+            }
+            break;
+        }
     }
-    else {
-        std::cout << Log::err << "Error opening \"" + file + "\", access denied." << Log::endl;
-    }
+
+    std::cout << Log::err << "Error opening \"" + file + "\", not found." << Log::endl;
 }

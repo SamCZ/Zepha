@@ -7,6 +7,7 @@
 
 #include "../LuaMod.h"
 #include "../LuaParser.h"
+#include "../../util/Timer.h"
 #include <cute_files/cute_files.h>
 #include <json/json.hpp>
 
@@ -26,14 +27,15 @@ public:
     void registerBlocks(ServerDefs& defs);
 
     ~ServerLuaParser() = default;
+
+    std::vector<LuaMod> mods;
 private:
     std::list<std::string> findModDirs();
     std::vector<LuaMod> createLuaMods(std::list<std::string> modDirs);
     void handleDependencies();
+    void serializeMods();
 
     int DoFileSandboxed(std::string file);
-
-    std::vector<LuaMod> mods;
 };
 
 

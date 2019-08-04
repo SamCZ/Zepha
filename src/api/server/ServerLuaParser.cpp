@@ -3,6 +3,7 @@
 //
 
 #include <iomanip>
+#include <gzip/compress.hpp>
 #include "ServerLuaParser.h"
 #include "ServerRegisterBlocks.h"
 #include "../../def/ServerDefs.h"
@@ -70,11 +71,10 @@ void ServerLuaParser::loadMods() {
     auto modDirs = findModDirs();
     mods = createLuaMods(modDirs);
     handleDependencies();
+    serializeMods();
 
-    for (LuaMod& mod : mods) {
+    for (LuaMod& mod : mods)
         DoFileSandboxed(mod.config.name + "/main");
-    }
-
 }
 
 std::list<std::string> ServerLuaParser::findModDirs() {
@@ -199,29 +199,6 @@ std::vector<LuaMod> ServerLuaParser::createLuaMods(std::list<std::string> modDir
 }
 
 void ServerLuaParser::handleDependencies() {
-    // TODO: Detect and crash on cyclic dependencies
-    // Ruben's Pseudocode
-    //
-    //    def resolve(package):
-    //        for dep in package.dependencies:
-    //            if pending[dep]:
-    //                throw "dependency cycle"
-    //            elsif not loaded[dep]:
-    //                pending[dep] = True
-    //                resolve(dep, loaded, order, pending)
-    //                loaded[dep] = True
-    //                order.append(dep)
-    //                del pending[dep]
-    //
-    //
-    //    order = []
-    //    pending = {}
-    //    loading = {}
-    //
-    //    for package in list:
-    //        if not loaded[package]:
-    //            resolve(package, loaded, order, pending)
-
     for (int i = 0; i < mods.size(); i++) {
         LuaMod& mod = mods[i];
         auto& deps = mod.config.depends;
@@ -247,6 +224,35 @@ void ServerLuaParser::handleDependencies() {
         if (modifiedList) i = -1;
     }
 }
+
+void ServerLuaParser::serializeMods() {
+    for (LuaMod& mod : mods) {
+        std::string s;
+
+        Serializer::encodeString(s, mod.config.name);
+        Serializer::encodeString(s, mod.config.description);
+        Serializer::encodeString(s, mod.config.version);
+
+        std::string depends;
+        bool delimiter = false;
+        for (const std::string& dep : mod.config.depends) {
+            if (delimiter) depends.append(",");
+            else delimiter = true;
+            depends.append(dep);
+        }
+
+        Serializer::encodeString(s, depends);
+
+        for (LuaModFile& file : mod.files) {
+            Serializer::encodeString(s, file.path);
+            Serializer::encodeString(s, file.file);
+        }
+
+        std::string comp = gzip::compress(s.data(), s.length());
+        mod.serialized = comp;
+    }
+}
+
 
 int ServerLuaParser::DoFileSandboxed(std::string file) {
     size_t modname_length = file.find('/');

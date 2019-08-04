@@ -10,6 +10,8 @@
 #include "../graph/scene/Scene.h"
 #include "../entity/hud/components/basic/GUIText.h"
 #include "../entity/hud/components/basic/GUIContainer.h"
+#include "../../api/LuaModFile.h"
+#include "../../api/LuaMod.h"
 
 class ConnectScene : public Scene {
 public:
@@ -17,6 +19,8 @@ public:
         CONNECTING,
         FAILED_CONNECT,
         IDENTIFIER_LIST,
+        MODS,
+        DONE
     };
 
     ConnectScene(ClientState& state, Address addr);

@@ -2,6 +2,7 @@
 // Created by aurailus on 11/07/19.
 //
 
+#include <gzip/decompress.hpp>
 #include "ConnectScene.h"
 
 ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
@@ -24,6 +25,7 @@ void ConnectScene::update() {
             std::cout << Log::err << "Invalid connectState" << Log::endl;
             exit(1);
 
+        case State::DONE:
         case State::FAILED_CONNECT:
             break;
 
@@ -37,7 +39,7 @@ void ConnectScene::update() {
                 Packet p(e.packet);
 
                 auto statusText = components.get<GUIText>("statusText");
-                statusText->setText(statusText->getText() + "Recieved block index-identifier table.\n");
+                statusText->setText(statusText->getText() + "Received block index-identifier table.\n");
 
                 std::vector<std::string> indexIdentifierTable {};
                 indexIdentifierTable.reserve(static_cast<unsigned long>(Serializer::decodeInt(&p.data[0])));
@@ -50,11 +52,87 @@ void ConnectScene::update() {
                     if (ind >= p.data.length() - 4) break;
                 }
 
-                statusText->setText(statusText->getText() + "Joining World...");
                 state.defs.blocks().setIdentifiers(indexIdentifierTable);
-                state.desiredState = "game";
-                return;
+
+                connectState = State::MODS;
+                Packet resp(PacketType::MODS);
+                resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
             }
+            break;
+        }
+
+        case State::MODS: {
+            ENetEvent e;
+            while (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
+                Packet p(e.packet);
+                auto statusText = components.get<GUIText>("statusText");
+
+                if (p.type == PacketType::MODS) {
+                    std::string mod = gzip::decompress(&p.data[4], p.data.size());
+
+                    LuaMod luaMod {};
+                    luaMod.serialized = &p.data[4];
+
+                    unsigned int offset = 0;
+
+                    std::string name = Serializer::decodeString(&mod[0]);
+                    offset += 4 + name.length();
+
+                    std::string description = Serializer::decodeString(&mod[offset]);
+                    offset += 4 + description.length();
+
+                    std::string version = Serializer::decodeString(&mod[offset]);
+                    offset += 4 + version.length();
+
+                    std::string dependsStr = Serializer::decodeString(&mod[offset]);
+                    offset += 4 + dependsStr.length();
+
+                    std::vector<std::string> depends;
+                    size_t pos = 0;
+                    std::string token;
+                    while ((pos = dependsStr.find(',')) != std::string::npos) {
+                        token = dependsStr.substr(0, pos);
+                        depends.push_back(token);
+                        dependsStr.erase(0, pos + 1);
+                    }
+                    depends.push_back(dependsStr);
+
+                    luaMod.config = {name, description, version, depends};
+
+                    while (offset < mod.length()) {
+                        std::string path = Serializer::decodeString(&mod[offset]);
+                        offset += 4 + path.length();
+                        std::string file = Serializer::decodeString(&mod[offset]);
+                        offset += 4 + file.length();
+
+                        LuaModFile modFile {path, file};
+                        luaMod.files.push_back(modFile);
+                    }
+
+                    state.defs.lua().mods.push_back(std::move(luaMod));
+                    statusText->setText(statusText->getText() + "Received " + name + ".\n");
+                }
+                else if (p.type == PacketType::MOD_ORDER) {
+                    std::string order = Serializer::decodeString(&p.data[0]);
+
+                    size_t pos = 0;
+                    std::string token;
+                    while ((pos = order.find(',')) != std::string::npos) {
+                        token = order.substr(0, pos);
+                        state.defs.lua().modsOrder.push_back(token);
+                        order.erase(0, pos + 1);
+                    }
+                    state.defs.lua().modsOrder.push_back(order);
+
+
+                    statusText->setText(statusText->getText() + "Received the mod order.\n");
+                    statusText->setText(statusText->getText() + "Joining World...\n");
+
+                    connectState = State::DONE;
+                    state.desiredState = "game";
+                }
+            }
+            break;
         }
     }
 }
