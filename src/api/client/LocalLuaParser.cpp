@@ -5,6 +5,7 @@
 #include "LocalLuaParser.h"
 #include "LocalRegisterBlocks.h"
 #include "../../def/LocalDefs.h"
+#include "../../game/entity/hud/GameGui.h"
 
 #include "modules/cDump.h"
 #include "modules/cPrintE.h"
@@ -20,7 +21,9 @@
 #include "modules/cGetBlock.h"
 #include "modules/cRemoveBlock.h"
 
-void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world) {
+#include "modules/cShowMenu.h"
+
+void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world, GameGui& gui) {
     //Load Base Libraries
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math);
 
@@ -28,7 +31,7 @@ void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world) {
     lua_atpanic(lua, sol::c_call<decltype(&LuaParser::override_panic), &LuaParser::override_panic>);
 
     //Load Modules
-    loadModules(defs, world);
+    loadModules(defs, world, gui);
 
     //Load Mods
     loadMods();
@@ -37,7 +40,7 @@ void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world) {
     registerBlocks(defs);
 }
 
-void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world) {
+void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, GameGui& gui) {
     //Create Zeus Table
     zeus = lua.create_table();
     lua["zeus"] = zeus;
@@ -56,6 +59,8 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world) {
     ClientApi::get_block(zeus, defs, world);
     ClientApi::set_block(zeus, defs, world);
     ClientApi::remove_block(zeus, defs, world);
+
+    ClientApi::show_menu(zeus, defs, gui);
 }
 
 void LocalLuaParser::loadMods() {
@@ -95,4 +100,13 @@ void LocalLuaParser::loadMods() {
 
 void LocalLuaParser::registerBlocks(LocalDefs& defs) {
     LocalRegisterBlocks(zeus, defs);
+}
+
+int LocalLuaParser::DoFileSandboxed(std::string file) {
+    if (root_path.contains(Path(file))) {
+        lua.script_file(file);
+    }
+    else {
+        std::cout << Log::err << "Error opening \"" + file + "\", access denied." << Log::endl;
+    }
 }

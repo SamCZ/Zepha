@@ -17,8 +17,8 @@ LocalDefs::LocalDefs(const std::string& tex_path) :
     textureAtlas.loadDirectory(tex_path + "/ent");
 }
 
-void LocalDefs::initLuaApi(LocalWorld &world) {
-    luaApi.init(*this, world);
+void LocalDefs::initLuaApi(LocalWorld &world, GameGui& gui) {
+    luaApi.init(*this, world, gui);
 }
 
 LocalBlockAtlas &LocalDefs::blocks() {

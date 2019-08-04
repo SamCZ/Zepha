@@ -114,10 +114,10 @@ void ServerWorld::sendChunk(glm::vec3 pos, ServerClient &peer) {
     r.sendTo(peer.getPeer(), PacketChannel::CHUNK);
 }
 
-void ServerWorld::setBlock(glm::vec3 pos, int block) {
+void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {
     auto oldBlock = getBlock(pos);
 
-    if (block == 0) {
+    if (block == 1) { //TODO: Get air's data value
         auto def = defs.blocks().fromIndex(oldBlock);
         if (def.callbacks.count(Callback::DESTRUCT)) {
             def.callbacks[Callback::DESTRUCT](defs.lua().vecToTable(pos));
@@ -168,7 +168,7 @@ bool ServerWorld::isInBounds(glm::vec3 cPos, std::pair<glm::vec3, glm::vec3> &bo
          && cPos.z >= bounds.first.z && cPos.z <= bounds.second.z);
 }
 
-int ServerWorld::getBlock(glm::vec3 pos) {
+unsigned int ServerWorld::getBlock(glm::vec3 pos) {
     return dimension.getBlock(pos);
 }
 

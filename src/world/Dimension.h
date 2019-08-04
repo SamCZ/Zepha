@@ -24,8 +24,8 @@ public:
     void removeMeshChunk(const glm::vec3& pos);
 
     void update();
-    void setBlock(glm::vec3 pos, int block);
-    int getBlock(glm::vec3 pos);
+    void setBlock(glm::vec3 pos, unsigned int block);
+    unsigned int getBlock(glm::vec3 pos);
 
     int render(Renderer &renderer);
     int getMeshChunkCount();

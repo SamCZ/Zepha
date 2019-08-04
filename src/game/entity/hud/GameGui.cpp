@@ -72,10 +72,16 @@ void GameGui::bufferResized(glm::vec2 bufferSize) {
     get<GUIRect>("viginette")->setScale({bufferSize.x, bufferSize.y});
 }
 
-void GameGui::setInventoryVisible(bool visible) {
-    get<GUIRect>("root")->setVisible(visible);
+void GameGui::setVisible(bool visible) {
+    GUIComponent::setVisible(visible);
+    get<GUIRect>("root")->setVisible(invOpen);
 }
 
-bool GameGui::isInventoryVisible() {
-    return get<GUIRect>("root")->isVisible();
+void GameGui::setInvOpen(bool open) {
+    get<GUIRect>("root")->setVisible(open);
+    invOpen = open;
+}
+
+bool GameGui::isInvOpen() {
+    return invOpen;
 }

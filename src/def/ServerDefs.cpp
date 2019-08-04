@@ -5,8 +5,7 @@
 #include "ServerDefs.h"
 
 ServerDefs::ServerDefs() :
-    luaApi("/home/aurailus/CLion/Zeus/res/lua/") {
-}
+    luaApi("/home/aurailus/CLion/Zeus/res/lua") {}
 
 void ServerDefs::init(ServerWorld &world) {
     luaApi.init(*this, world);

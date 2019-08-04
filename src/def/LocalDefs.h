@@ -18,7 +18,7 @@ public:
     TextureAtlas& textures();
     LocalLuaParser& lua();
 
-    void initLuaApi(LocalWorld &world);
+    void initLuaApi(LocalWorld &world, GameGui& gui);
     void update(float delta);
 
     ~LocalDefs() = default;

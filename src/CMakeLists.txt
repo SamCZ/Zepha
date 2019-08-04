@@ -180,6 +180,7 @@ set(ZEUS_SRC_FILES
         game/entity/hud/components/GUIComponent.cpp
         game/entity/hud/components/GUIComponent.h
         game/entity/hud/components/basic/GUIContainer.cpp
-        game/entity/hud/components/basic/GUIContainer.h)
+        game/entity/hud/components/basic/GUIContainer.h
+        api/client/modules/cShowMenu.h api/LuaModFile.h api/LuaMod.h api/LuaModConfig.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

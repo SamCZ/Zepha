@@ -11,11 +11,12 @@ project (${PROJECT_NAME})
 # Include Header only Libraries
 set (HEADER_LIBRARIES
         lib/header/catch2/include      # Catch2 unit testing library.
-        lib/header/gzip/include        # GZip Compression header library
+        lib/header/gzip/include        # GZip Compression header library.
         lib/header/glm/include         # OpenGL Mathematics Library.
-        lib/header/sol2/include        # Sol2 Lua Parser library
+        lib/header/sol2/include        # Sol2 Lua Parser library.
         lib/header/cute_files/include  # Cute file traversal header library.
         lib/header/stb_image/include   # STB Image processor header library.
+        lib/header/json/include        # JSON header library.
 )
 
 include_directories (${HEADER_LIBRARIES})

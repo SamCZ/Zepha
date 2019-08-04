@@ -7,17 +7,20 @@
 
 #include "components/basic/GUIRect.h"
 #include "components/basic/GUIContainer.h"
-#include "../Entity.h"
 #include "../../graph/drawable/DrawableGroup.h"
 #include "../../ClientState.h"
+#include "../Entity.h"
 
 class GameGui : public GUIContainer {
 public:
     explicit GameGui(glm::vec2 bufferSize, TextureAtlas& atlas);
     void bufferResized(glm::vec2 bufferSize);
 
-    void setInventoryVisible(bool visible);
-    bool isInventoryVisible();
+    void setVisible(bool visible) override;
+    void setInvOpen(bool open);
+    bool isInvOpen();
+
+    bool invOpen;
 };
 
 

@@ -5,7 +5,6 @@
 #ifndef ZEUS_WORLD_H
 #define ZEUS_WORLD_H
 
-
 #include <unordered_map>
 #include <unordered_set>
 #include "WorldGenStream.h"
@@ -24,8 +23,8 @@ public:
     void init();
     void update();
 
-    void setBlock(glm::vec3 pos, int block);
-    int getBlock(glm::vec3 pos);
+    void setBlock(glm::vec3 pos, unsigned int block);
+    unsigned int getBlock(glm::vec3 pos);
 
     ~ServerWorld();
 private:

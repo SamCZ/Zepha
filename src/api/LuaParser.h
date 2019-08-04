@@ -43,8 +43,6 @@ public:
     sol::table zeus;
 
     std::list<DelayedFunction> delayed_functions;
-protected:
-    int DoFileSandboxed(std::string file);
 };
 
 

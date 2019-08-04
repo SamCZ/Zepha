@@ -17,7 +17,7 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     state.renderer.setClearColor(148, 194, 240);
     state.renderer.getWindow().lockMouse(true);
 
-    defs.initLuaApi(world);
+    defs.initLuaApi(world, gameGui);
     world.init();
 
     gui.push_back(&gameGui);
@@ -30,7 +30,6 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     Packet r(PacketType::CONNECT_DATA_RECVD);
     r.sendTo(state.connection.getPeer(), PacketChannel::CONNECT);
 }
-
 
 void GameScene::update() {
     defs.update(static_cast<float>(state.deltaTime) * 1000);
@@ -68,8 +67,8 @@ void GameScene::update() {
     }
 
     if (window.input.isKeyPressed(GLFW_KEY_E)) {
-        bool open = !gameGui.isInventoryVisible();
-        gameGui.setInventoryVisible(open);
+        bool open = !gameGui.isInvOpen();
+        gameGui.setInvOpen(open);
         window.lockMouse(!open);
     }
 }
