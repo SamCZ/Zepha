@@ -26,14 +26,14 @@ MapGen::MapGen(unsigned int seed, BlockAtlas& atlas) {
         TALLGRASSES[i] = atlas.fromIdentifier("default:tallgrass_" + to_string(i)).index;
     }
 
-    FLOWERS[0] = atlas.fromIdentifier("default:flower_dandelion_yellow").index;
+    FLOWERS[0] = atlas.fromIdentifier("default:flower_yellow_dandelion").index;
     FLOWERS[1] = atlas.fromIdentifier("default:flower_viola").index;
     FLOWERS[2] = atlas.fromIdentifier("default:flower_geranium").index;
     FLOWERS[3] = atlas.fromIdentifier("default:flower_tulip").index;
-    FLOWERS[4] = atlas.fromIdentifier("default:flower_dandelion_white").index;
+    FLOWERS[4] = atlas.fromIdentifier("default:flower_white_dandelion").index;
     FLOWERS[5] = atlas.fromIdentifier("default:flower_rose").index;
-    FLOWERS[6] = atlas.fromIdentifier("default:flower_mushroom_red").index;
-    FLOWERS[7] = atlas.fromIdentifier("default:flower_mushroom_brown").index;
+    FLOWERS[6] = atlas.fromIdentifier("default:flower_red_mushroom").index;
+    FLOWERS[7] = atlas.fromIdentifier("default:flower_brown_mushroom").index;
 
     //Set up Noise Parameters
 

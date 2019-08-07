@@ -160,7 +160,6 @@ set(ZEUS_SRC_FILES
         api/client/modules/cRemoveBlock.h
         api/client/modules/cDump.h
         api/client/modules/cIsServer.h
-        api/client/modules/cGetPath.h
         api/client/modules/cPrintE.h
         api/client/LocalRegisterBlocks.cpp
         api/client/LocalRegisterBlocks.h
@@ -181,6 +180,6 @@ set(ZEUS_SRC_FILES
         game/entity/hud/components/GUIComponent.h
         game/entity/hud/components/basic/GUIContainer.cpp
         game/entity/hud/components/basic/GUIContainer.h
-        api/client/modules/cShowMenu.h api/LuaModFile.h api/LuaMod.h api/LuaModConfig.h)
+        api/client/modules/cShowMenu.h api/LuaModFile.h api/LuaMod.h api/LuaModConfig.h def/texture/ServerTexture.h def/texture/ServerTextureStorage.h api/LuaMod.cpp)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

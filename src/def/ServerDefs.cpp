@@ -4,11 +4,10 @@
 
 #include "ServerDefs.h"
 
-ServerDefs::ServerDefs() :
-    luaApi("/home/aurailus/CLion/Zeus/res/lua") {}
-
-void ServerDefs::init(ServerWorld &world) {
-    luaApi.init(*this, world);
+void ServerDefs::init(ServerWorld &world, const std::string& path) {
+    size_t exec = path.find_last_of('/');
+    std::string folderPath = path.substr(0, exec + 1);
+    luaApi.init(*this, world, folderPath);
 }
 
 ServerBlockAtlas &ServerDefs::blocks() {
@@ -17,6 +16,10 @@ ServerBlockAtlas &ServerDefs::blocks() {
 
 ServerLuaParser &ServerDefs::lua() {
     return luaApi;
+}
+
+ServerTextureStorage &ServerDefs::textures() {
+    return textureStorage;
 }
 
 void ServerDefs::update(double delta) {

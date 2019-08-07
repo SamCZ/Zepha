@@ -15,8 +15,6 @@ class GameGui;
 
 class LocalLuaParser : public LuaParser {
 public:
-    explicit LocalLuaParser(std::string mod_root) : LuaParser(std::move(mod_root)) {};
-
     void init(LocalDefs& defs, LocalWorld& world, GameGui& gui);
 
     void loadModules(LocalDefs& defs, LocalWorld& world, GameGui& gui);

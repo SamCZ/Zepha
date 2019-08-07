@@ -10,7 +10,6 @@
 #include "modules/cDump.h"
 #include "modules/cPrintE.h"
 
-#include "modules/cGetPath.h"
 #include "modules/cIsServer.h"
 #include "modules/cDelay.h"
 
@@ -49,7 +48,6 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, GameGui& gu
     ClientApi::dump(lua);
     ClientApi::printe(lua);
 
-    ClientApi::get_path(zeus, root);
     ClientApi::is_server(zeus);
     ClientApi::delay(zeus, delayed_functions);
 

@@ -1,0 +1,6 @@
+{
+	"name": "zeus:flowers",
+	"description": "Flowers and vegitation for the Zeus subgame.",
+	"version": "0.0.1",
+	"depends": ["zeus:default"]
+}

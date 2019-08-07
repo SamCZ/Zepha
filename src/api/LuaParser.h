@@ -19,7 +19,7 @@
 class LuaParser {
 public:
     static inline void override_panic(sol::optional<std::string> message) {
-        std::cout << Log::err << "Zeus has panicked! Error:" << Log::endl;
+        std::cout << Log::err << "Zepha has panicked! Error:" << Log::endl;
         if (message) std::cout << Log::err << message.value() << Log::endl;
     }
 
@@ -30,14 +30,9 @@ public:
         float initial_timeout;
     };
 
-    explicit LuaParser(const std::string& root);
-
     virtual void update();
 
     sol::table vecToTable(glm::vec3 vec);
-
-    std::string root;
-    Path root_path;
 
     sol::state lua;
     sol::table zeus;

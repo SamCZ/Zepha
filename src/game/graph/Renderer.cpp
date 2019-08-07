@@ -36,7 +36,7 @@ void Renderer::createWorldShaders() {
     //Initialize World Geometry Shader
 
     worldGeometryShader = Shader();
-    worldGeometryShader.createFromFile("../res/shader/world/deferredGeometryWorld.vs", "../res/shader/world/deferredGeometryWorld.fs");
+    worldGeometryShader.createFromFile("./assets/shader/world/deferredGeometryWorld.vs", "./assets/shader/world/deferredGeometryWorld.fs");
 
     wgu.matrix = camera.getProjectionMatrix();
     wgu.proj   = worldGeometryShader.getUniform("projection");
@@ -91,7 +91,7 @@ void Renderer::createWorldShaders() {
     //Initialize Entity Geometry Shader
 
     entityGeometryShader = Shader();
-    entityGeometryShader.createFromFile("../res/shader/world/deferredGeometryEntity.vs", "../res/shader/world/deferredGeometryEntity.fs");
+    entityGeometryShader.createFromFile("./assets/shader/world/deferredGeometryEntity.vs", "./assets/shader/world/deferredGeometryEntity.fs");
 
     egu.matrix = camera.getProjectionMatrix();
     egu.proj   = entityGeometryShader.getUniform("projection");
@@ -101,7 +101,7 @@ void Renderer::createWorldShaders() {
     //Initialize Lighting Shader for Deferred Rendering
 
     worldLightingShader = Shader();
-    worldLightingShader.createFromFile("../res/shader/world/deferredLighting.vs", "../res/shader/world/deferredLighting.fs");
+    worldLightingShader.createFromFile("./assets/shader/world/deferredLighting.vs", "./assets/shader/world/deferredLighting.fs");
 
     wlu.gPosition  = worldLightingShader.getUniform("gPosition");
     wlu.gNormal    = worldLightingShader.getUniform("gNormal");
@@ -134,7 +134,7 @@ void Renderer::createWorldShaders() {
 
 void Renderer::createGUIShader() {
     guiShader = Shader();
-    guiShader.createFromFile("../res/shader/ortho/hud.vs", "../res/shader/ortho/hud.fs");
+    guiShader.createFromFile("./assets/shader/ortho/hud.vs", "./assets/shader/ortho/hud.fs");
 
     gu.matrix = camera.getOrthographicMatrix();
     gu.ortho  = guiShader.getUniform("ortho");
@@ -327,6 +327,7 @@ void Renderer::enableTexture(Texture *texture) {
 Renderer::~Renderer() {
     worldGeometryShader.cleanup();
     guiShader.cleanup();
+    swayMap.clear();
     delete[] swayData;
 }
 

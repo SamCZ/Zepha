@@ -8,23 +8,25 @@
 
 #include "block/server/ServerBlockAtlas.h"
 #include "../api/server/ServerLuaParser.h"
+#include "texture/ServerTextureStorage.h"
 
 class ServerWorld;
 
 class ServerDefs {
 public:
-    ServerDefs();
+    void init(ServerWorld& world, const std::string& path);
 
     ServerBlockAtlas& blocks();
     ServerLuaParser& lua();
+    ServerTextureStorage& textures();
 
-    void init(ServerWorld& world);
     void update(double delta);
 
     ~ServerDefs() = default;
 private:
     double delta = 0;
 
+    ServerTextureStorage textureStorage;
     ServerBlockAtlas blockAtlas;
     ServerLuaParser luaApi;
 };

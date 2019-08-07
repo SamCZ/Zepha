@@ -11,7 +11,6 @@
 #include "modules/sDump.h"
 #include "modules/sPrintE.h"
 
-#include "modules/sGetPath.h"
 #include "modules/sIsServer.h"
 #include "modules/sDelay.h"
 
@@ -22,7 +21,7 @@
 #include "modules/sGetBlock.h"
 #include "modules/sRemoveBlock.h"
 
-void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world) {
+void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world, std::string path) {
     //Load Base Libraries
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math);
 
@@ -33,7 +32,7 @@ void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world) {
     loadModules(defs, world);
 
     //Load Mods
-    loadMods();
+    loadMods(defs, path + "mods");
 
     //Register Blocks
     registerBlocks(defs);
@@ -48,7 +47,6 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
     ServerApi::dump(lua);
     ServerApi::printe(lua);
 
-    ServerApi::get_path(zeus, root);
     ServerApi::is_server(zeus);
     ServerApi::delay(zeus, delayed_functions);
 
@@ -67,9 +65,10 @@ void ServerLuaParser::registerBlocks(ServerDefs& defs) {
     ServerRegisterBlocks(zeus, defs);
 }
 
-void ServerLuaParser::loadMods() {
-    auto modDirs = findModDirs();
+void ServerLuaParser::loadMods(ServerDefs& defs, const std::string& rootPath) {
+    auto modDirs = findModDirs(rootPath);
     mods = createLuaMods(modDirs);
+    createTextures(defs);
     handleDependencies();
     serializeMods();
 
@@ -77,10 +76,10 @@ void ServerLuaParser::loadMods() {
         DoFileSandboxed(mod.config.name + "/main");
 }
 
-std::list<std::string> ServerLuaParser::findModDirs() {
+std::list<std::string> ServerLuaParser::findModDirs(const std::string& rootPath) {
     //Find Mod Directories
     std::list<std::string> modDirs {};
-    std::list<std::string> dirsToScan {root};
+    std::list<std::string> dirsToScan {rootPath};
 
     cf_dir_t dir;
 
@@ -157,6 +156,7 @@ std::vector<LuaMod> ServerLuaParser::createLuaMods(std::list<std::string> modDir
         }
 
         LuaMod mod {};
+        mod.modPath = modDir;
         auto& conf = mod.config;
 
         std::ifstream i(modDir + "/conf.json");
@@ -196,6 +196,58 @@ std::vector<LuaMod> ServerLuaParser::createLuaMods(std::list<std::string> modDir
     }
 
     return mods;
+}
+
+void ServerLuaParser::createTextures(ServerDefs &defs) {
+    std::vector<std::string> seekDirs;
+    std::vector<std::string> texturePaths;
+
+    cf_dir_t dir;
+
+    for (const LuaMod& mod : mods) {
+        std::string root = mod.modPath + "/textures";
+
+        std::list<std::string> dirsToScan {root};
+
+        while (!dirsToScan.empty()) {
+            std::string dirStr = *dirsToScan.begin();
+            dirsToScan.erase(dirsToScan.begin());
+
+            cf_dir_open(&dir, dirStr.c_str());
+
+            while (dir.has_next) {
+                // Read through files in the directory
+                cf_file_t scannedFile;
+                cf_read_file(&dir, &scannedFile);
+
+                if (strncmp(scannedFile.name, ".", 1) != 0) {
+                    if (scannedFile.is_dir) dirsToScan.emplace_back(scannedFile.path);
+                    else {
+                        char *dot = strrchr(scannedFile.path, '.');
+                        if (dot && strncmp(dot, ".png", 4) == 0) {
+
+                            std::string name = std::string(scannedFile.name).substr(0, std::string(scannedFile.name).size() - 4);
+                            name.insert(0, mod.config.name + ":");
+
+                            int width, height;
+                            unsigned char* data = stbi_load(scannedFile.path, &width, &height, nullptr, 4);
+                            std::string str(reinterpret_cast<char*>(data), static_cast<unsigned long>(width * height * 4));
+                            std::string comp = gzip::compress(str.data(), str.length());
+                            free(data);
+
+                            defs.textures().textures.push_back({std::move(name), comp, width, height});
+                        }
+                    }
+                }
+
+                cf_dir_next(&dir);
+            }
+
+            cf_dir_close(&dir);
+        }
+    }
+
+
 }
 
 void ServerLuaParser::handleDependencies() {

@@ -35,7 +35,7 @@ int Window::initialize() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     //Create the window
-    mainWindow = glfwCreateWindow(width, height, "Zeus", nullptr, nullptr);
+    mainWindow = glfwCreateWindow(width, height, "Zepha", nullptr, nullptr);
 
     if (!mainWindow) {
         printf("GLFW window failed\n");

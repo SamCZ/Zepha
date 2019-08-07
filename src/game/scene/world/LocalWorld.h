@@ -56,7 +56,7 @@ public:
     void renderEntities(Renderer &renderer);
     int getMeshChunkCount();
 
-    int getBlock(glm::vec3 pos);
+    unsigned int getBlock(glm::vec3 pos);
 
     //Called by the Client
     void localSetBlock(glm::vec3 pos, int block);

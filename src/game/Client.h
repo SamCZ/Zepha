@@ -17,11 +17,13 @@
 
 class Client {
 public:
-    Client(char* path, int width, int height);
+    Client(char* path, const Address& addr, int width, int height);
     ~Client();
 
 private:
     void loop();
+
+    Address addr;
 
     Renderer renderer;
     ClientState state;

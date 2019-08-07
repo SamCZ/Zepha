@@ -20,6 +20,7 @@ public:
         FAILED_CONNECT,
         IDENTIFIER_LIST,
         MODS,
+        MEDIA,
         DONE
     };
 

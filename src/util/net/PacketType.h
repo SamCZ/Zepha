@@ -14,6 +14,8 @@ enum class PacketType {
     IDENTIFIER_LIST,
     MODS,
     MOD_ORDER,
+    MEDIA,
+    MEDIA_DONE,
     CONNECT_DATA_RECVD,
 
     //Ingame Data Types

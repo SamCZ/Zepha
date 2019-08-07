@@ -17,6 +17,8 @@ uint64_t constexpr hashStr(const char * m) {
 }
 
 int main(int argc, char* argv[]) {
+    Address addr {"127.0.0.1", 32000};
+
     enum class Mode {
         NONE, CLIENT, SERVER, LOCAL_SERVER
     };
@@ -43,7 +45,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    Mode mode = Mode::NONE;
+    Mode mode = Mode::CLIENT;
 
     //Parse the arguments map
     for (auto arg : args) {
@@ -59,6 +61,12 @@ int main(int argc, char* argv[]) {
                 else std::cout << Log::err << "Invalid mode argument." << Log::endl;
                 break;
             }
+            case hashStr("--port"): {
+                addr.port = stoi(arg.second);
+            }
+            case hashStr("--address"): {
+                addr.host = arg.second;
+            }
         }
     }
 
@@ -69,15 +77,15 @@ int main(int argc, char* argv[]) {
             return -1;
         }
         case Mode::CLIENT: {
-            Client c(argv[0], 1366, 768);
+            Client c(argv[0], addr, 1366, 768);
             break;
         }
         case Mode::LOCAL_SERVER: {
-            Client c(argv[0], 1366, 768);
+            Client c(argv[0], addr, 1366, 768);
             break;
         }
         case Mode::SERVER: {
-            Server s(12345);
+            Server s(argv[0], addr.port);
             break;
         }
     }

@@ -1,0 +1,6 @@
+{
+	"name": "aurailus:basictools",
+	"description": "Basic tools for Zepha.",
+	"version": "0.0.1",
+	"depends": "zeus:materials"
+}

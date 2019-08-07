@@ -35,11 +35,11 @@ void ConnectScene::update() {
 
         case State::IDENTIFIER_LIST: {
             ENetEvent e;
-            while (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
+            if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
 
                 auto statusText = components.get<GUIText>("statusText");
-                statusText->setText(statusText->getText() + "Received block index-identifier table.\n");
+                statusText->setText(statusText->getText() + "Received block index-identifier table.\nDownloading mods...\n");
 
                 std::vector<std::string> indexIdentifierTable {};
                 indexIdentifierTable.reserve(static_cast<unsigned long>(Serializer::decodeInt(&p.data[0])));
@@ -63,54 +63,14 @@ void ConnectScene::update() {
 
         case State::MODS: {
             ENetEvent e;
-            while (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
+            if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
                 auto statusText = components.get<GUIText>("statusText");
 
                 if (p.type == PacketType::MODS) {
-                    std::string mod = gzip::decompress(&p.data[4], p.data.size());
-
-                    LuaMod luaMod {};
-                    luaMod.serialized = &p.data[4];
-
-                    unsigned int offset = 0;
-
-                    std::string name = Serializer::decodeString(&mod[0]);
-                    offset += 4 + name.length();
-
-                    std::string description = Serializer::decodeString(&mod[offset]);
-                    offset += 4 + description.length();
-
-                    std::string version = Serializer::decodeString(&mod[offset]);
-                    offset += 4 + version.length();
-
-                    std::string dependsStr = Serializer::decodeString(&mod[offset]);
-                    offset += 4 + dependsStr.length();
-
-                    std::vector<std::string> depends;
-                    size_t pos = 0;
-                    std::string token;
-                    while ((pos = dependsStr.find(',')) != std::string::npos) {
-                        token = dependsStr.substr(0, pos);
-                        depends.push_back(token);
-                        dependsStr.erase(0, pos + 1);
-                    }
-                    depends.push_back(dependsStr);
-
-                    luaMod.config = {name, description, version, depends};
-
-                    while (offset < mod.length()) {
-                        std::string path = Serializer::decodeString(&mod[offset]);
-                        offset += 4 + path.length();
-                        std::string file = Serializer::decodeString(&mod[offset]);
-                        offset += 4 + file.length();
-
-                        LuaModFile modFile {path, file};
-                        luaMod.files.push_back(modFile);
-                    }
-
+                    auto luaMod = LuaMod::fromPacket(p);
+                    statusText->setText(statusText->getText() + "Received mod " + luaMod.config.name + ".\n");
                     state.defs.lua().mods.push_back(std::move(luaMod));
-                    statusText->setText(statusText->getText() + "Received " + name + ".\n");
                 }
                 else if (p.type == PacketType::MOD_ORDER) {
                     std::string order = Serializer::decodeString(&p.data[0]);
@@ -124,9 +84,63 @@ void ConnectScene::update() {
                     }
                     state.defs.lua().modsOrder.push_back(order);
 
+                    statusText->setText(statusText->getText() + "Done downloading mods.\nReceived the mods order.\nDownloading media...\n");
 
-                    statusText->setText(statusText->getText() + "Received the mod order.\n");
-                    statusText->setText(statusText->getText() + "Joining World...\n");
+                    connectState = State::MEDIA;
+                    Packet resp(PacketType::MEDIA);
+                    resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
+                }
+            }
+            break;
+        }
+
+        case State::MEDIA: {
+            ENetEvent e;
+            if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
+                Packet p(e.packet);
+                auto statusText = components.get<GUIText>("statusText");
+
+                if (p.type == PacketType::MEDIA) {
+                    std::string texName = Serializer::decodeString(&p.data[0]);
+                    size_t offset = texName.length() + 4;
+                    unsigned int count = 0;
+
+                    while (texName != "end") {
+                        int width = Serializer::decodeInt(&p.data[offset]);
+                        offset += 4;
+                        int height = Serializer::decodeInt(&p.data[offset]);
+                        offset += 4;
+
+                        std::string data = Serializer::decodeString(&p.data[offset]);
+                        std::string uncompressed = gzip::decompress(data.data(), data.length());
+
+                        state.defs.textures().addImage(reinterpret_cast<unsigned char*>(const_cast<char*>(uncompressed.data())), texName, true, width, height);
+
+                        offset += data.length() + 4;
+                        count++;
+
+                        texName = Serializer::decodeString(&p.data[offset]);
+                        offset += texName.length() + 4;
+                    }
+
+                    statusText->setText(statusText->getText() + "Received " + to_string(count) + "x media files.\n");
+
+//                    state.defs.lua().mods.push_back(std::move(luaMod));'
+                }
+                else if (p.type == PacketType::MEDIA_DONE) {
+//                    std::string order = Serializer::decodeString(&p.data[0]);
+//
+//                    size_t pos = 0;
+//                    std::string token;
+//                    while ((pos = order.find(',')) != std::string::npos) {
+//                        token = order.substr(0, pos);
+//                        state.defs.lua().modsOrder.push_back(token);
+//                        order.erase(0, pos + 1);
+//                    }
+//                    state.defs.lua().modsOrder.push_back(order);
+
+
+                    statusText->setText(statusText->getText() + "Done downloading media.\nJoining world...\n");
 
                     connectState = State::DONE;
                     state.desiredState = "game";

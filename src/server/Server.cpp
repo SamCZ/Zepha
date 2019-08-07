@@ -4,7 +4,7 @@
 
 #include "Server.h"
 
-Server::Server(unsigned short port) :
+Server::Server(const std::string& path, unsigned short port) :
     defs(),
     clientList(),
     world(55, defs, clientList),
@@ -12,7 +12,7 @@ Server::Server(unsigned short port) :
     handler(port, 32),
     config(defs) {
 
-    defs.init(world);
+    defs.init(world, path);
     world.init();
     config.init();
 

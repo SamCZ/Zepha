@@ -4,9 +4,10 @@
 
 #include "Client.h"
 
-Client::Client(char* path, int width, int height) :
+Client::Client(char* path, const Address& addr, int width, int height) :
+    addr(addr),
     renderer(width, height),
-    state {renderer, {}, LocalDefs("../res/tex"), "this", 0, 0} {
+    state {renderer, {}, LocalDefs("./assets/textures"), "this", 0, 0} {
 
 //    Start Local Server
 //    if (path != nullptr) {
@@ -30,8 +31,8 @@ Client::Client(char* path, int width, int height) :
 void Client::loop() {
     Timer t("Client Loop");
 
-    if (!startedGame && timeElapsed > 1.5) {
-        std::unique_ptr<Scene> scene = std::make_unique<ConnectScene>(state, Address{"127.0.0.1", 12345});
+    if (!startedGame && timeElapsed > 2.5) {
+        std::unique_ptr<Scene> scene = std::make_unique<ConnectScene>(state, addr);
         sceneManager.setScene(std::move(scene));
         startedGame = true;
     }

@@ -50,7 +50,7 @@ void LocalWorld::damageBlock(glm::vec3 pos, float amount) {
         }
     }
     if (block == nullptr) {
-        auto blockID = static_cast<unsigned int>(getBlock(pos));
+        auto blockID = getBlock(pos);
         block = new BlockCrackEntity(defs, pos, blockID);
         crackedBlocks.push_back(block);
     }
@@ -122,7 +122,7 @@ void LocalWorld::updateBlockDamages(double delta) {
         block->time += delta;
 
         if (block->damage >= 1) {
-            localSetBlock(block->blockPos, 0);
+            localSetBlock(block->blockPos, BlockAtlas::AIR);
             deleteMe = true;
         }
 
@@ -203,7 +203,7 @@ int LocalWorld::getMeshChunkCount() {
     return dimension.getMeshChunkCount();
 }
 
-int LocalWorld::getBlock(glm::vec3 pos) {
+unsigned int LocalWorld::getBlock(glm::vec3 pos) {
     auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
     auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
 
@@ -237,7 +237,5 @@ void LocalWorld::setBlock(glm::vec3 pos, int block) {
 }
 
 bool LocalWorld::solidAt(glm::vec3 pos) {
-    int blockId = getBlock(pos);
-    if (blockId == -1) return true;
-    return defs.blocks().fromIndex(blockId).solid;
+    return defs.blocks().fromIndex(getBlock(pos)).solid;
 }

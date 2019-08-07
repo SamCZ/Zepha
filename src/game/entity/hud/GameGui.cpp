@@ -24,12 +24,12 @@ GameGui::GameGui(glm::vec2 bufferSize, TextureAtlas& atlas) {
     root->add(inv_root);
 
     std::array<std::string, 6> mats = {
-        "materials_stick",
-        "materials_rock",
-        "materials_flint",
-        "basictools_flint_pickaxe",
-        "basictools_flint_hatchet",
-        "basictools_flint_shovel"
+        "zeus:materials:stick",
+        "zeus:materials:rock",
+        "zeus:materials:flint",
+        "aurailus:basictools:flint_pickaxe",
+        "aurailus:basictools:flint_hatchet",
+        "aurailus:basictools:flint_shovel"
     };
 
     for (int i = 0; i < 5; i++) {

@@ -11,14 +11,12 @@
 
 namespace ServerApi {
     void remove_block(sol::table &zeus, ServerDefs& defs, ServerWorld& world) {
-        int air = defs.blocks().fromIdentifier("air").index;
-
         zeus.set_function("remove_block", [&](sol::table pos) {
             if (!pos["x"] || !pos["y"] || !pos["z"]) {
                 std::cout << Log::err << "remove_block vector is ill formed." << Log::endl;
                 return;
             }
-            world.setBlock({pos["x"], pos["y"], pos["z"]}, air);
+            world.setBlock({pos["x"], pos["y"], pos["z"]}, LocalBlockAtlas::AIR);
         });
     }
 }

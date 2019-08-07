@@ -10,7 +10,7 @@ LocalBlockAtlas::LocalBlockAtlas() {
     nullModel.culls = false;
 
     //Invalid Node
-    LocalBlockDef invalid("invalid", nullModel, false, {{0, 0, 0}, {1, 1, 1}});
+    LocalBlockDef invalid("invalid", nullModel, true, {{0, 0, 0}, {1, 1, 1}});
     invalid.index = 0;
     definitions[0] = invalid;
     identifierIndexTable.insert({"invalid", 0});

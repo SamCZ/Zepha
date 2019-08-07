@@ -48,6 +48,31 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
             p.sendTo(client.getPeer(), PacketChannel::CONNECT);
             break;
         }
+        case PacketType::MEDIA: {
+            const unsigned int MAX_PACKET_SIZE = 8192;
+            unsigned int packetSize = 0;
+
+            Packet p(PacketType::MEDIA);
+            for (ServerTexture& texture : defs.textures().textures) {
+                if (packetSize + 12 + texture.data.length() > MAX_PACKET_SIZE && packetSize != 0) {
+                    Serializer::encodeString(p.data, "end");
+                    p.sendTo(client.getPeer(), PacketChannel::CONNECT);
+                    p = Packet(PacketType::MEDIA);
+                    packetSize = 0;
+                }
+
+                Serializer::encodeString(p.data, texture.name);
+                Serializer::encodeInt(p.data, texture.width);
+                Serializer::encodeInt(p.data, texture.height);
+                Serializer::encodeString(p.data, texture.data);
+                packetSize += texture.data.length() + 12;
+            }
+            Serializer::encodeString(p.data, "end");
+            p.sendTo(client.getPeer(), PacketChannel::CONNECT);
+
+            Packet d(PacketType::MEDIA_DONE);
+            d.sendTo(client.getPeer(), PacketChannel::CONNECT);
+        }
     }
     return false;
 }

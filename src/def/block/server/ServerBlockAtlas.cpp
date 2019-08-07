@@ -10,11 +10,11 @@ ServerBlockAtlas::ServerBlockAtlas() {
     nullModel.culls = false;
 
     //Invalid Node
-    ServerBlockDef invalid("invalid", static_cast<int>(definitions.size()), nullModel, false, {{0, 0, 0}, {1, 1, 1}});
+    ServerBlockDef invalid("invalid", 0, nullModel, true, {{0, 0, 0}, {1, 1, 1}});
     registerBlock(std::move(invalid));
 
     //Air Node
-    ServerBlockDef air("air", static_cast<int>(definitions.size()), nullModel, false, {{0, 0, 0}, {1, 1, 1}});
+    ServerBlockDef air("air", 1, nullModel, false, {{0, 0, 0}, {1, 1, 1}});
     registerBlock(std::move(air));
 }
 

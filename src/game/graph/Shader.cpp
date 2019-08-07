@@ -104,7 +104,8 @@ void Shader::addShader(GLuint program, const std::string& shaderCode, GLenum sha
         const char* shaderTypeString = (shaderType == GL_VERTEX_SHADER) ? "vertex" : "fragment";
 
         glGetShaderInfoLog(shader, sizeof(eLog), nullptr, eLog);
-        std::cout << Log::err << "Error compiling the " << shaderTypeString << " shader: '" << eLog << "'";
+        std::cout << Log::err << "Error compiling the " << shaderTypeString << " shader: '" << eLog << "'" << Log::endl;
+        std::cout << Log::err << shaderCode << std::endl;
         return;
     }
 
