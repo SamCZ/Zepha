@@ -35,36 +35,76 @@ MapGen::MapGen(unsigned int seed, BlockAtlas& atlas) {
     FLOWERS[6] = atlas.fromIdentifier("default:flower_red_mushroom").index;
     FLOWERS[7] = atlas.fromIdentifier("default:flower_brown_mushroom").index;
 
-    //Set up Noise Parameters
+    //First stage smooth elevation
+    worldElevationBase.SetSeed(seed);
+    worldElevationBase.SetFrequency(0.002);
+    worldElevationBase.SetOctaveCount(8);
 
-    terrainGeneralElevation.SetFrequency(0.05);
-    terrainGeneralElevation.SetPersistence(0.4);
-    terrainGeneralElevation.SetOctaveCount(6);
+    worldElevationScaled.SetSourceModule(0, worldElevationBase);
+    worldElevationScaled.SetScale(500);
 
-    terrainFlatBase.SetFrequency(0.15);
-    terrainFlatBase.SetPersistence(0.4);
-    terrainFlatBase.SetOctaveCount(4);
+    //Smooth elevation features
+    worldFeatureBase.SetSeed(seed);
+    worldFeatureBase.SetFrequency(0.2);
+    worldFeatureBase.SetOctaveCount(3);
+    worldFeatureScaled.SetSourceModule(0, worldFeatureBase);
+    worldFeatureScaled.SetScale(6);
+    worldFeatureScaled.SetBias(6);
 
-    terrainFlat.SetSourceModule(0, terrainFlatBase);
-    terrainFlat.SetScale(0.125);
-    terrainFlat.SetBias(-0.75);
+    //Smooth elevation combined
+    worldSmoothElevation.SetSourceModule(0, worldElevationScaled);
+    worldSmoothElevation.SetSourceModule(1, worldFeatureScaled);
 
-    terrainType.SetFrequency(0.05);
-    terrainType.SetPersistence(0.25);
-    terrainType.SetOctaveCount(4);
+    //Smooth mountain terrain
+    mountainSmoothBase.SetSeed(seed);
+    mountainSmoothBase.SetFrequency(0.05);
+    mountainSmoothScaled.SetSourceModule(0, mountainSmoothBase);
+    mountainSmoothScaled.SetScale(300);
+    mountainSmoothScaled.SetBias(400);
 
-    terrainMountains.SetFrequency(0.1);
-    terrainMountains.SetOctaveCount(4);
+    //Craggy mountains hold
+    mountainRoughHoldBase.SetSeed(seed);
+    mountainRoughHoldBase.SetFrequency(0.05);
+    mountainRoughHoldScaled.SetSourceModule(0, mountainRoughHoldBase);
+    mountainRoughHoldScaled.SetScale(0.5);
+    mountainRoughHoldScaled.SetBias(0.5);
 
-    terrainPreElevation.SetSourceModule(0, terrainFlat);
-    terrainPreElevation.SetSourceModule(1, terrainMountains);
+    //Craggy mountains
+    mountainRoughBase.SetSeed(seed);
+    mountainRoughBase.SetFrequency(0.75);
+    mountainRoughBase.SetLacunarity(1.5);
+    mountainRoughBase.SetOctaveCount(8);
+    mountainRoughScaled.SetSourceModule(0, mountainRoughBase);
+    mountainRoughScaled.SetScale(20);
+    mountainRoughScaled.SetBias(20);
 
-    terrainPreElevation.SetControlModule(terrainType);
-    terrainPreElevation.SetBounds(0.0, 1000.0);
-    terrainPreElevation.SetEdgeFalloff(0.1);
+    mountainRoughMultiplied.SetSourceModule(0, mountainRoughHoldScaled);
+    mountainRoughMultiplied.SetSourceModule(1, mountainRoughScaled);
 
-    terrainFinal.SetSourceModule(0, terrainPreElevation);
-    terrainFinal.SetSourceModule(1, terrainGeneralElevation);
+    mountainNoise.SetSourceModule(0, mountainSmoothScaled);
+    mountainNoise.SetSourceModule(1, mountainRoughMultiplied);
+
+    //Noise for the strength "multiplier" for mountains
+    mountainMultiplierBase.SetSeed(seed);
+    mountainMultiplierBase.SetFrequency(0.02);
+    mountainMultiplierBase.SetPersistence(0.25f);
+    mountainMultiplierScaled.SetSourceModule(0, mountainMultiplierBase);
+//    mountainMultiplierScaled.SetScale(2);
+//    mountainMultiplierScaled.SetBias(-1);
+    mountainMultiplierClamped.SetSourceModule(0, mountainMultiplierScaled);
+    mountainMultiplierClamped.SetBounds(0, 1);
+
+    //Multiply mountain terrain by the multiplier
+    mountainMultiplied.SetSourceModule(0, mountainMultiplierClamped);
+    mountainMultiplied.SetSourceModule(1, mountainNoise);
+
+    //Add both the general elevation and the mountain terrain
+    terrainFinal.SetSourceModule(0, worldSmoothElevation);
+    terrainFinal.SetSourceModule(1, mountainMultiplied);
+
+
+
+
 
     grassNoise.SetFrequency(2);
     grassNoise.SetOctaveCount(3);
@@ -157,7 +197,7 @@ void MapGen::getDensityMap(MapGenJob &job) {
 
     for (int m = 0; m < (int)pow(TransPos::CHUNK_SIZE, 3); m++) {
         VecUtils::indAssignVec(m, lp);
-        job.density[m] = terrain_2d_sample.get(lp) * 24.0f - (lp.y + job.pos.y * TransPos::CHUNK_SIZE);
+        job.density[m] = terrain_2d_sample.get(lp) - (lp.y + job.pos.y * TransPos::CHUNK_SIZE);
     }
 }
 
@@ -214,7 +254,7 @@ void MapGen::addTrees(MapGenJob &job) {
     }
 }
 
-void MapGen::addBlock(glm::vec3 lp, int block, MapGenJob &j) {
+void MapGen::addBlock(glm::vec3 lp, unsigned int block, MapGenJob &j) {
     if (lp.x >= 0 && lp.x < TransPos::CHUNK_SIZE && lp.y >= 0 && lp.y < TransPos::CHUNK_SIZE && lp.z >= 0 && lp.z < TransPos::CHUNK_SIZE) {
         j.blocks[VecUtils::vecToInd(lp)] = block;
     }

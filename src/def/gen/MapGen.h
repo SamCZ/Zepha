@@ -20,7 +20,6 @@ using namespace noise;
 class MapGen {
 public:
     MapGen() = default;
-    MapGen(const MapGen& mapGen);
     MapGen(unsigned int seed, BlockAtlas& atlas);
     BlockChunk* generate(glm::vec3 pos);
 private:
@@ -29,22 +28,57 @@ private:
     void fillChunk(MapGenJob &j);
     void addTrees(MapGenJob &j);
 
-    void addBlock(glm::vec3 lp, int block, MapGenJob &j);
+    void addBlock(glm::vec3 lp, unsigned int block, MapGenJob &j);
 
     unsigned int seed = 0;
 
-    int AIR = 0;
-    int GRASS_BLOCK = 0, DIRT_BLOCK = 0, STONE_BLOCK = 0;
-    int PLANT_STEM_BLOCK = 0, LEAVES_BLOCK = 0;
-    int TALLGRASSES[6] = {0, 0, 0, 0, 0, 0};
-    int FLOWERS[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    unsigned int AIR = 0;
+    unsigned int GRASS_BLOCK = 0, DIRT_BLOCK = 0, STONE_BLOCK = 0;
+    unsigned int PLANT_STEM_BLOCK = 0, LEAVES_BLOCK = 0;
+    unsigned int TALLGRASSES[6] = {0, 0, 0, 0, 0, 0};
+    unsigned int FLOWERS[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
-    module::Perlin terrainGeneralElevation;
-    module::RidgedMulti terrainMountains;
-    module::Billow terrainFlatBase;
-    module::ScaleBias terrainFlat;
-    module::Perlin terrainType;
-    module::Select terrainPreElevation;
+    //Smooth world noise factors
+    module::Perlin worldElevationBase;
+    module::ScaleBias worldElevationScaled;
+
+    module::Perlin worldFeatureBase;
+    module::ScaleBias worldFeatureScaled;
+
+    module::Add worldSmoothElevation;
+
+    //Mountain hold
+    module::Perlin mountainMultiplierBase;
+    module::ScaleBias mountainMultiplierScaled;
+    module::Clamp mountainMultiplierClamped;
+
+    //Mountain noise types
+    module::Perlin mountainSmoothBase;
+    module::ScaleBias mountainSmoothScaled;
+
+    module::RidgedMulti mountainRoughBase;
+    module::ScaleBias mountainRoughScaled;
+    module::Perlin mountainRoughHoldBase;
+    module::ScaleBias mountainRoughHoldScaled;
+
+    module::Multiply mountainRoughMultiplied;
+
+    module::Add mountainNoise;
+
+//    module::Perlin mountainRoughnessMultiplierBase;
+//    module::ScaleBias mountainRoughnessMultiplierScaled;
+//
+//    module::RidgedMulti terrainMountainElevation;
+//    module::ScaleBias terrainMountainElevationScaled;
+//
+//    module::Perlin terrainMountainHold;
+//    module::ScaleBias terrainMountainHoldScaled;
+//    module::Multiply terrainMountainMultiplied;
+//
+//    module::Add terrainElevation;
+
+    module::Multiply mountainMultiplied;
+
     module::Add terrainFinal;
 
     module::Perlin grassNoise;

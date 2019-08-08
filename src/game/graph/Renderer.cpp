@@ -7,10 +7,10 @@
 Renderer::Renderer() : Renderer(1366, 768) {};
 
 Renderer::Renderer(GLint winWidth, GLint winHeight) :
-    activeTexture(nullptr),
+        activeTexture(nullptr),
 
-    window(winWidth, winHeight),
-    swayData(new unsigned char[16 * 4 * 16]) {
+        window(winWidth, winHeight),
+        swayData(new unsigned char[16 * 4 * 16]) {
 
     window.initialize();
     auto winSize = window.getSize();
@@ -27,9 +27,8 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
     createWorldShaders();
     createGUIShader();
 
-    glEnable(GL_BLEND);
-    glEnable(GL_CULL_FACE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_CULL_FACE);
 }
 
 void Renderer::createWorldShaders() {
@@ -207,6 +206,7 @@ void Renderer::beginChunkDeferredCalls() {
     glClearColor(clearColor.x, clearColor.y, clearColor.z, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
     glViewport(0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y));
 
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
@@ -250,6 +250,7 @@ void Renderer::endDeferredCalls() {
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, gColorSpec);
 
+    glEnable(GL_BLEND);
     renderQuad();
 
     //Used to push the depth map to the default framebuffer

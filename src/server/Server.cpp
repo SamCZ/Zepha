@@ -7,7 +7,7 @@
 Server::Server(const std::string& path, unsigned short port) :
     defs(),
     clientList(),
-    world(55, defs, clientList),
+    world(10, defs, clientList),
     port(port),
     handler(port, 32),
     config(defs) {
