@@ -10,7 +10,7 @@
 
 class ServerPlayer {
 public:
-    const static int ACTIVE_RANGE_H = 20;
+    const static int ACTIVE_RANGE_H = 8;
     const static int ACTIVE_RANGE_V = 8;
 
     explicit ServerPlayer(glm::vec3 pos, unsigned int connectID, const std::string& username);

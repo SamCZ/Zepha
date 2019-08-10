@@ -1,11 +1,3 @@
-zeus.register_block("default:water", {
-    name = "Water",
-    model = "default:block",
-    textures = {
-        "zeus:default:water"
-    }
-})
-
 zeus.register_block("default:grass", {
     name = "Grass",
     model = "default:block_foliage",
@@ -27,26 +19,5 @@ zeus.register_block("default:grass", {
         hand = 3,
         shovel = 1,
         pick = 2
-    }
-})
-
-zeus.register_block('default:dirt', {
-    name = "Dirt",
-    model = "default:block",
-    textures = {"zeus:default:dirt"},
-    toughness = {
-        hand = 3,
-        shovel = 1,
-        pick = 2
-    }
-})
-
-zeus.register_block('default:stone', {
-    name = "Stone",
-    model = "default:block",
-    textures = {"zeus:default:stone"},
-    toughness = {
-        hand = 14,
-        pick = 3
     }
 })

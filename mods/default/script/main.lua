@@ -1,4 +1,4 @@
-print("Hello from default, Zeus " .. (zeus.is_server() and "Server" or "Client") .. "!")
+print("Hello from default")
 
 dofile("zeus:default/models")
 dofile("zeus:default/blocks")

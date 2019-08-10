@@ -187,6 +187,7 @@ std::vector<LuaMod> ServerLuaParser::createLuaMods(std::list<std::string> modDir
 
             std::ifstream t(file);
             std::string fileStr((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+            fileStr.insert(0, "local PATH = \"" + modPath + "/\"; ");
 
             LuaModFile f {modPath, fileStr};
             mod.files.push_back(f);
