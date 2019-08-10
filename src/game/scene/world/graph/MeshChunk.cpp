@@ -27,7 +27,7 @@ glm::vec3 MeshChunk::getPos() {
 
 glm::mat4 MeshChunk::getModelMatrix() {
     glm::mat4 model = glm::mat4(1.0);
-    model = glm::translate(model, pos * 16.f);
+    model = glm::translate(model, pos * static_cast<float>(TransPos::CHUNK_SIZE));
     return model;
 }
 

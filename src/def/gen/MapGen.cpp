@@ -18,6 +18,7 @@ MapGen::MapGen(unsigned int seed, BlockAtlas& atlas) {
     GRASS_BLOCK = atlas.fromIdentifier("default:grass").index;
     DIRT_BLOCK  = atlas.fromIdentifier("default:dirt").index;
     STONE_BLOCK = atlas.fromIdentifier("default:stone").index;
+    WATER = atlas.fromIdentifier("default:water").index;
 
     PLANT_STEM_BLOCK = atlas.fromIdentifier("default:bush_stem").index;
     LEAVES_BLOCK     = atlas.fromIdentifier("default:leaves").index;
@@ -41,7 +42,8 @@ MapGen::MapGen(unsigned int seed, BlockAtlas& atlas) {
     worldElevationBase.SetOctaveCount(8);
 
     worldElevationScaled.SetSourceModule(0, worldElevationBase);
-    worldElevationScaled.SetScale(500);
+    worldElevationScaled.SetScale(250);
+    worldElevationScaled.SetBias(32);
 
     //Smooth elevation features
     worldFeatureBase.SetSeed(seed);
@@ -202,6 +204,7 @@ void MapGen::getDensityMap(MapGenJob &job) {
 }
 
 void MapGen::fillChunk(MapGenJob &job) {
+    auto terrain_2d_sample = NoiseSample::getSample(&terrainFinal, job.pos, 4, 1, true);
     auto grass_sample = NoiseSample::getSample(&grassFinal, job.pos, 8, 0, true);
     auto flora_type_sample = NoiseSample::getSample(&floraFinal, job.pos, 2, 0, true);
     auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 8, 0, true);
@@ -212,6 +215,11 @@ void MapGen::fillChunk(MapGenJob &job) {
 
     for (int m = 0; m < (int)pow(TransPos::CHUNK_SIZE, 3); m++) {
         VecUtils::indAssignVec(m, lp);
+
+        if (job.pos.y == 0 && lp.y == 0) {
+            job.blocks[m] = WATER;
+            continue;
+        }
 
         int d = job.depth[m];
         int flora = AIR;
@@ -245,11 +253,11 @@ void MapGen::addTrees(MapGenJob &job) {
             glm::vec3 p = lp;
 
             addBlock(p, PLANT_STEM_BLOCK, job);
-            addBlock(p + glm::vec3( 1,  0,  0), LEAVES_BLOCK, job);
-            addBlock(p + glm::vec3(-1,  0,  0), LEAVES_BLOCK, job);
-            addBlock(p + glm::vec3( 0,  0,  1), LEAVES_BLOCK, job);
-            addBlock(p + glm::vec3( 0,  0, -1), LEAVES_BLOCK, job);
-            addBlock(p + glm::vec3( 0,  1,  0), LEAVES_BLOCK, job);
+            addBlock(p + glm::vec3{ 1, 0, 0}, LEAVES_BLOCK, job);
+            addBlock(p + glm::vec3{-1, 0, 0}, LEAVES_BLOCK, job);
+            addBlock(p + glm::vec3{ 0, 0, 1}, LEAVES_BLOCK, job);
+            addBlock(p + glm::vec3{ 0, 0,-1}, LEAVES_BLOCK, job);
+            addBlock(p + glm::vec3{ 0, 1, 0}, LEAVES_BLOCK, job);
         }
     }
 }

@@ -1,3 +1,11 @@
+zeus.register_block("default:water", {
+    name = "Water",
+    model = "default:block",
+    textures = {
+        "zeus:default:water"
+    }
+})
+
 zeus.register_block("default:grass", {
     name = "Grass",
     model = "default:block_foliage",

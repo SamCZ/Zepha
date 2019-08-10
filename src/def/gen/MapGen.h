@@ -33,6 +33,7 @@ private:
     unsigned int seed = 0;
 
     unsigned int AIR = 0;
+    unsigned int WATER = 0;
     unsigned int GRASS_BLOCK = 0, DIRT_BLOCK = 0, STONE_BLOCK = 0;
     unsigned int PLANT_STEM_BLOCK = 0, LEAVES_BLOCK = 0;
     unsigned int TALLGRASSES[6] = {0, 0, 0, 0, 0, 0};
@@ -64,19 +65,6 @@ private:
     module::Multiply mountainRoughMultiplied;
 
     module::Add mountainNoise;
-
-//    module::Perlin mountainRoughnessMultiplierBase;
-//    module::ScaleBias mountainRoughnessMultiplierScaled;
-//
-//    module::RidgedMulti terrainMountainElevation;
-//    module::ScaleBias terrainMountainElevationScaled;
-//
-//    module::Perlin terrainMountainHold;
-//    module::ScaleBias terrainMountainHoldScaled;
-//    module::Multiply terrainMountainMultiplied;
-//
-//    module::Add terrainElevation;
-
     module::Multiply mountainMultiplied;
 
     module::Add terrainFinal;
