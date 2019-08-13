@@ -29,7 +29,7 @@ MeshGenStream::MeshGenStream(LocalDefs &defs, Dimension &dimension) :
 
     threads.reserve(THREADS);
     for (int i = 0; i < THREADS; i++) {
-        threads.emplace_back(defs.blocks(), noiseSampler);
+        threads.emplace_back(defs.defs(), noiseSampler);
     }
 }
 

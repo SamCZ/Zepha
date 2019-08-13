@@ -130,7 +130,7 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& zeus, LocalDefs &defs) {
             blockModel.textureRefs.insert(textureRef);
 
             //Create a LocalMeshPart object
-            LocalMeshPart meshPart(std::move(vertices), std::move(indices), textureRef);
+            MeshPart meshPart(std::move(vertices), std::move(indices), textureRef);
 
             //Add ShaderMod
             sol::optional<sol::table> shaderModTable = meshPartTable.get<sol::optional<sol::table>>("shader_mod");
@@ -181,7 +181,7 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& zeus, LocalDefs &defs) {
         });
 
         //TODO: Update the selection boxes thingy
-        BlockDef* blockDef = new BlockDef(identifier, defs.blocks().size(), blockModel, solid, sBoxes[0]);
+        BlockDef* blockDef = new BlockDef(identifier, defs.defs().size(), blockModel, solid, sBoxes[0]);
 
         //Bind Callbacks
         auto on_place_client = blockTable.get<sol::optional<sol::function>>("on_place_client");
@@ -191,6 +191,6 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& zeus, LocalDefs &defs) {
         if (on_break_client) blockDef->callbacks.insert({Callback::BREAK_CLIENT, *on_break_client});
 
         //Add Block Definition to the Atlas
-        defs.blocks().registerDef(blockDef);
+        defs.defs().registerDef(blockDef);
     }
 }

@@ -108,12 +108,12 @@ void Player::pointerUpdate(InputManager &input, double delta) {
         auto blockID = world.getBlock(rayEnd);
         //TODO: Make some property on the node defining if it can be selected
         if (blockID > 1) {
-            SelectionBox& sBox = defs.blocks().blockFromId(blockID).selectionBox;
+            SelectionBox& sBox = defs.defs().blockFromId(blockID).selectionBox;
             auto intersects = sBox.intersects(*ray.getEnd(), pointedPos);
 
             if (intersects != NONE) {
                 pointedThing.blockID = blockID;
-                pointedThing.blockDef = &defs.blocks().blockFromId(blockID);
+                pointedThing.blockDef = &defs.defs().blockFromId(blockID);
                 pointedThing.pos = pointedPos;
                 pointedThing.face = intersects;
 
@@ -144,7 +144,7 @@ void Player::pointerUpdate(InputManager &input, double delta) {
         }
         if (input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
             world.localSetBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face),
-                    defs.blocks().blockFromStr("default:stone").index);
+                                defs.defs().blockFromStr("default:stone").index);
         }
     }
     else {

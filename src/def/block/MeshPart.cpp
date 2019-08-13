@@ -2,9 +2,9 @@
 // Created by aurailus on 02/12/18.
 //
 
-#include "LocalMeshPart.h"
+#include "MeshPart.h"
 
-LocalMeshPart::LocalMeshPart(const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<AtlasRef> texture) :
+MeshPart::MeshPart(const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<AtlasRef> texture) :
     vertices(vertices),
     indices(indices),
     texture(texture) {
@@ -30,7 +30,7 @@ LocalMeshPart::LocalMeshPart(const std::vector<MeshVertex>& vertices, const std:
     }
 
     //If the MeshPart is being initialized on the client with an AtlasRef to base it's values off of,
-    //it will set the UVs to be relative to the texture atlas.
+    //it will set the UVs to the coordinates of the texture relative to the TextureAtlas.
     if (texture) {
         auto uv = texture->uv;
 
@@ -42,15 +42,6 @@ LocalMeshPart::LocalMeshPart(const std::vector<MeshVertex>& vertices, const std:
             //Generate solid coordinates for the atlas positions
             vertex.tex.x = uv.x + ((uv.z - uv.x) * vertex.tex.x);
             vertex.tex.y = uv.y + ((uv.w - uv.y) * vertex.tex.y);
-        }
-    }
-    //Otherwise, we will just copy the UVs as-is, since we do not have the TextureAtlas to adjust them for.
-    else {
-        //Iterate over the vertices and copy the texture coordinates into them.
-        //TODO: Find out if this is necessary, because it's sort of redundant
-        for (MeshVertex &vertex : this->vertices) {
-            vertex.texUVs.x = vertex.tex.x;
-            vertex.texUVs.y = vertex.tex.y;
         }
     }
 }

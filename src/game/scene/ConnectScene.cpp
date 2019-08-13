@@ -52,7 +52,7 @@ void ConnectScene::update() {
                     if (ind >= p.data.length() - 4) break;
                 }
 
-                state.defs.blocks().setIdentifiers(indexIdentifierTable);
+                state.defs.defs().setIdentifiers(indexIdentifierTable);
 
                 connectState = State::MODS;
                 Packet resp(PacketType::MODS);

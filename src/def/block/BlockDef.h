@@ -6,10 +6,10 @@
 #define ZEUS_SERVERBLOCKDEF_H
 
 #include <string>
-#include "server/ServerBlockModel.h"
+#include <sol2/sol.hpp>
 #include "SelectionBox.h"
 #include "BlockModel.h"
-#include "../item/ItemDef.h"
+#include "../ItemDef.h"
 #include "../../api/Callback.h"
 
 class BlockDef : public ItemDef {

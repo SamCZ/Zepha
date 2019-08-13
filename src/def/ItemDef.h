@@ -5,7 +5,7 @@
 #ifndef ZEUS_ITEMDEF_H
 #define ZEUS_ITEMDEF_H
 
-#include <string>
+#include <c++/5/string>
 
 class ItemDef {
 public:

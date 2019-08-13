@@ -122,7 +122,7 @@ ServerRegisterBlocks::ServerRegisterBlocks(sol::table& zeus, ServerDefs &defs) {
             }
 
             //Create a LocalMeshPart object
-            LocalMeshPart meshPart(std::move(vertices), std::move(indices), nullptr);
+            MeshPart meshPart(std::move(vertices), std::move(indices), nullptr);
 
             //Add ShaderMod
             sol::optional<sol::table> shaderModTable = meshPartTable.get<sol::optional<sol::table>>("shader_mod");

@@ -22,7 +22,7 @@ void BlockCrackEntity::update() {
     if (crackLevel != this->crackLevel) {
         this->crackLevel = crackLevel;
 
-        auto model = defs.blocks().blockFromId(blockID).model;
+        auto model = defs.defs().blockFromId(blockID).model;
         auto m = new EntityMesh();
 
         std::vector<EntityVertex> vertices;
@@ -45,8 +45,8 @@ void BlockCrackEntity::setNewDamage(float damage) {
     this->targetDamage = damage;
 }
 
-void BlockCrackEntity::addFaces(unsigned int &indOffset, std::vector<EntityVertex> &vertices, std::vector<unsigned int> &indices, std::vector<LocalMeshPart> &meshParts) {
-    for (const LocalMeshPart& mp : meshParts) {
+void BlockCrackEntity::addFaces(unsigned int &indOffset, std::vector<EntityVertex> &vertices, std::vector<unsigned int> &indices, std::vector<MeshPart> &meshParts) {
+    for (const MeshPart& mp : meshParts) {
         glm::vec4 uv;
         auto ref = defs.textures().generateCrackImage(mp.texture->name, static_cast<unsigned short>(crackLevel));
         if (ref == nullptr) {

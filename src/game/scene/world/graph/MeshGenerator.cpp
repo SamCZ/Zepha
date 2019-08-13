@@ -89,8 +89,8 @@ BlockDef& MeshGenerator::getBlockAt(const glm::vec3 &pos) {
     return atlas.blockFromId(chunk->getBlock(pos));
 }
 
-void MeshGenerator::addFaces(const glm::vec3 &offset, const vector<LocalMeshPart> &meshParts) {
-    for (const LocalMeshPart& mp : meshParts) {
+void MeshGenerator::addFaces(const glm::vec3 &offset, const vector<MeshPart> &meshParts) {
+    for (const MeshPart& mp : meshParts) {
 
         glm::vec3 modData = {};
 

@@ -19,7 +19,6 @@
 #include "../../../../world/chunk/BlockChunk.h"
 #include "../../../../def/LocalDefinitionAtlas.h"
 #include "../../../../def/block/BlockDef.h"
-#include "../../../../def/block/client/LocalBlockModel.h"
 #include "../../../../def/gen/NoiseSample.h"
 #include "../../../../util/Vec.h"
 #include "../../../../util/Timer.h"
@@ -31,7 +30,7 @@ public:
                   std::array<NoiseSample, 3>& blockOffsets);
 private:
     BlockDef& getBlockAt(const glm::vec3 &pos);
-    void addFaces(const glm::vec3 &offset, const vector<LocalMeshPart> &meshParts);
+    void addFaces(const glm::vec3 &offset, const vector<MeshPart> &meshParts);
 
     unsigned int indOffset = 0;
 

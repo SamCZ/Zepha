@@ -7,7 +7,7 @@
 
 #include <string>
 #include "block/BlockDef.h"
-#include "item/ItemDef.h"
+#include "ItemDef.h"
 
 class DefinitionAtlas {
 public:

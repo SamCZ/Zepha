@@ -14,7 +14,7 @@ public:
     explicit LocalDefs(const std::string& tex_path);
     LocalDefs(const LocalDefs& copy);
 
-    LocalDefinitionAtlas& blocks();
+    LocalDefinitionAtlas& defs();
     TextureAtlas& textures();
     LocalLuaParser& lua();
 

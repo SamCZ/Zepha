@@ -7,7 +7,6 @@
 
 
 #include "../../../game/entity/Entity.h"
-#include "../../../def/block/client/LocalBlockModel.h"
 #include "../../../def/LocalDefs.h"
 
 class BlockCrackEntity : public Entity {
@@ -25,7 +24,7 @@ public:
 private:
     short crackLevel = -1;
 
-    void addFaces(unsigned int &indOffset, std::vector<EntityVertex> &vertices, std::vector<unsigned int> &indices, std::vector<LocalMeshPart> &meshParts);
+    void addFaces(unsigned int &indOffset, std::vector<EntityVertex> &vertices, std::vector<unsigned int> &indices, std::vector<MeshPart> &meshParts);
 
     std::vector<std::shared_ptr<AtlasRef>> crackedFaces;
     LocalDefs& defs;

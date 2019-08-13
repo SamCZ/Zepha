@@ -7,10 +7,10 @@
 
 #include <set>
 #include <vector>
-#include "LocalMeshPart.h"
+#include "MeshPart.h"
 
 struct BlockModel {
-    std::array<std::vector<LocalMeshPart>, 7> parts;
+    std::array<std::vector<MeshPart>, 7> parts;
     std::vector<std::pair<MeshMod, float>> meshMods;
     std::set<std::shared_ptr<AtlasRef>> textureRefs;
 

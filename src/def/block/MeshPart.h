@@ -18,8 +18,8 @@
 #include "../texture/TextureAtlas.h"
 #include "../../game/scene/world/graph/MeshVertex.h"
 
-struct LocalMeshPart {
-    LocalMeshPart(const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<AtlasRef> texture);
+struct MeshPart {
+    MeshPart(const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<AtlasRef> texture);
 
     std::vector<MeshVertex> vertices;
     std::vector<unsigned int> indices;

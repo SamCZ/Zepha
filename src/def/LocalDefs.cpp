@@ -19,7 +19,7 @@ void LocalDefs::initLuaApi(LocalWorld &world, GameGui& gui) {
     luaApi.init(*this, world, gui);
 }
 
-LocalDefinitionAtlas &LocalDefs::blocks() {
+LocalDefinitionAtlas &LocalDefs::defs() {
     return blockAtlas;
 }
 

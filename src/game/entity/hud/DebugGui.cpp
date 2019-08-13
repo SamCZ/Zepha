@@ -98,7 +98,7 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         glm::vec3 footPos = TransPos::roundPos(player.getPos()) + glm::vec3(0, -2, 0);
 
         int blockID = world.getBlock(footPos);
-        std::string on = defs.blocks().fromId(blockID).identifier;
+        std::string on = defs.defs().fromId(blockID).identifier;
 
         glm::vec3 playerPos = TransPos::roundPos(player.getPos());
         glm::vec3 chunkPos = TransPos::chunkFromVec(playerPos);

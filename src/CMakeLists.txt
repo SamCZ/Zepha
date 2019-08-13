@@ -17,12 +17,10 @@ set(ZEUS_SRC_FILES
         util/Timer.h
         def/LocalDefinitionAtlas.cpp
         def/LocalDefinitionAtlas.h
-        def/block/LocalMeshPart.cpp
-        def/block/LocalMeshPart.h
+        def/block/MeshPart.cpp
+        def/block/MeshPart.h
         def/block/ShaderMod.h
         game/scene/world/graph/MeshVertex.h
-        def/block/client/LocalBlockModel.cpp
-        def/block/client/LocalBlockModel.h
         game/scene/world/LocalWorld.cpp
         game/scene/world/LocalWorld.h
         world/chunk/BlockChunk.cpp
@@ -124,16 +122,13 @@ set(ZEUS_SRC_FILES
         game/entity/hud/components/compound/GUILabelledGraph.cpp
         game/entity/world/ParticleEntity.cpp
         game/entity/world/ParticleEntity.h
-        def/ServerDefs.cpp def/ServerDefs.h
+        def/ServerDefs.cpp
+        def/ServerDefs.h
         def/ServerDefinitionAtlas.cpp
         def/ServerDefinitionAtlas.h
         def/block/BlockDef.cpp
         def/block/BlockDef.h
-        def/block/server/ServerBlockModel.cpp
-        def/block/server/ServerBlockModel.h
         util/Dir.h
-        def/block/server/ServerMeshPart.cpp
-        def/block/server/ServerMeshPart.h
         def/DefinitionAtlas.h
         api/LuaParser.cpp
         api/LuaParser.h
@@ -177,6 +172,15 @@ set(ZEUS_SRC_FILES
         game/entity/hud/components/GUIComponent.h
         game/entity/hud/components/basic/GUIContainer.cpp
         game/entity/hud/components/basic/GUIContainer.h
-        api/client/modules/cShowMenu.h api/LuaModFile.h api/LuaMod.h api/LuaModConfig.h def/texture/ServerTexture.h def/texture/ServerTextureStorage.h api/LuaMod.cpp def/item/ItemDef.h def/DefinitionAtlas.cpp def/block/BlockModel.cpp def/block/BlockModel.h)
+        api/client/modules/cShowMenu.h
+        api/LuaModFile.h
+        api/LuaMod.h
+        api/LuaModConfig.h
+        def/texture/ServerTexture.h
+        def/texture/ServerTextureStorage.h
+        api/LuaMod.cpp
+        def/ItemDef.h
+        def/DefinitionAtlas.cpp
+        def/block/BlockModel.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})
