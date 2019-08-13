@@ -100,18 +100,18 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
         }
 
         case PacketType::BLOCK_SET: {
-            auto pos = Serializer::decodeIntVec3(&p.data[0]);
-            auto block = Serializer::decodeInt(&p.data[12]);
+            glm::vec3 pos = Serializer::decodeIntVec3(&p.data[0]);
+            unsigned int block = static_cast<unsigned int>(Serializer::decodeInt(&p.data[12]));
 
             world.setBlock(pos, block);
 
             if (block == 0) {
-                auto def = defs.blocks().fromIndex(world.getBlock(pos));
+                auto def = defs.blocks().blockFromId(world.getBlock(pos));
                 if (def.callbacks.count(Callback::BREAK)) {
                     def.callbacks[Callback::BREAK](defs.lua().vecToTable(pos));
                 }
             } else {
-                auto def = defs.blocks().fromIndex(block);
+                auto def = defs.blocks().blockFromId(block);
                 if (def.callbacks.count(Callback::PLACE)) {
                     def.callbacks[Callback::PLACE](defs.lua().vecToTable(pos));
                 }

@@ -10,7 +10,7 @@
 #include <thread>
 #include <unordered_set>
 #include "../../../world/chunk/BlockChunk.h"
-#include "../../../def/block/client/LocalBlockAtlas.h"
+#include "../../../def/LocalDefinitionAtlas.h"
 #include "graph/MeshGenerator.h"
 #include "../../../util/Vec.h"
 #include "../../../world/Dimension.h"
@@ -46,9 +46,9 @@ public:
     };
 
     struct Thread {
-        explicit Thread(LocalBlockAtlas &atlas, std::array<NoiseSample, 3>& offsetSampler);
+        explicit Thread(LocalDefinitionAtlas &atlas, std::array<NoiseSample, 3>& offsetSampler);
 
-        LocalBlockAtlas &atlas;
+        LocalDefinitionAtlas &atlas;
         std::array<NoiseSample, 3>& offsetSamplers;
 
         std::thread thread {};

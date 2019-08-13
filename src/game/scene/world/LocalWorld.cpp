@@ -58,7 +58,7 @@ void LocalWorld::damageBlock(glm::vec3 pos, float amount) {
     block->setNewDamage(block->targetDamage + amount);
     block->time = 0;
 
-    auto def = defs.blocks().fromIndex(getBlock(pos));
+    auto def = defs.blocks().blockFromId(getBlock(pos));
     for (int i = 0; i < 40 * amount; i++) {
         auto p = new ParticleEntity(pos, def);
         particles.push_back(p);
@@ -122,7 +122,7 @@ void LocalWorld::updateBlockDamages(double delta) {
         block->time += delta;
 
         if (block->damage >= 1) {
-            localSetBlock(block->blockPos, BlockAtlas::AIR);
+            localSetBlock(block->blockPos, DefinitionAtlas::AIR);
             deleteMe = true;
         }
 
@@ -209,18 +209,18 @@ unsigned int LocalWorld::getBlock(glm::vec3 pos) {
 
     auto chunk = getChunk(chunkPos);
     if (chunk != nullptr) return chunk->getBlock(local);
-    return BlockAtlas::INVALID;
+    return DefinitionAtlas::INVALID;
 }
 
 void LocalWorld::localSetBlock(glm::vec3 pos, int block) {
     if (block == 0) {
-        auto def = defs.blocks().fromIndex(getBlock(pos));
+        auto def = defs.blocks().blockFromId(getBlock(pos));
         if (def.callbacks.count(Callback::BREAK_CLIENT)) {
             def.callbacks[Callback::BREAK_CLIENT](defs.lua().vecToTable(pos));
         }
     }
     else {
-        auto def = defs.blocks().fromIndex(block);
+        auto def = defs.blocks().blockFromId(block);
         if (def.callbacks.count(Callback::PLACE_CLIENT)) {
             def.callbacks[Callback::PLACE_CLIENT](defs.lua().vecToTable(pos));
         }
@@ -237,5 +237,5 @@ void LocalWorld::setBlock(glm::vec3 pos, int block) {
 }
 
 bool LocalWorld::solidAt(glm::vec3 pos) {
-    return defs.blocks().fromIndex(getBlock(pos)).solid;
+    return defs.blocks().blockFromId(getBlock(pos)).solid;
 }

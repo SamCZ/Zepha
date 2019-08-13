@@ -7,7 +7,7 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-WorldGenStream::WorldGenStream(unsigned int seed, ServerBlockAtlas& atlas) : gen(seed, atlas) {
+WorldGenStream::WorldGenStream(unsigned int seed, ServerDefinitionAtlas& atlas) : gen(seed, atlas) {
     queuedTasks.reserve((unsigned long) TOTAL_QUEUE_SIZE);
 
     threads.reserve(THREADS);

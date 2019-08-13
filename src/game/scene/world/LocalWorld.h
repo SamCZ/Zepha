@@ -13,7 +13,7 @@
 #include <glm/vec3.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "../../../def/block/client/LocalBlockAtlas.h"
+#include "../../../def/LocalDefinitionAtlas.h"
 #include "../../../world/chunk/BlockChunk.h"
 #include "../../../def/gen/MapGen.h"
 #include "../../../util/TransPos.h"

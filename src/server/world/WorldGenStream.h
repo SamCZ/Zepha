@@ -14,7 +14,7 @@
 #include "../../util/Vec.h"
 #include "../../def/gen/MapGen.h"
 #include "../../world/chunk/BlockChunk.h"
-#include "../../def/block/server/ServerBlockAtlas.h"
+#include "../../def/ServerDefinitionAtlas.h"
 
 class WorldGenStream {
 public:
@@ -22,7 +22,7 @@ public:
     static const int THREADS = 4;
     static const int TOTAL_QUEUE_SIZE = THREADS * THREAD_QUEUE_SIZE;
 
-    explicit WorldGenStream(unsigned int seed, ServerBlockAtlas& atlas);
+    explicit WorldGenStream(unsigned int seed, ServerDefinitionAtlas& atlas);
     ~WorldGenStream();
 
     //Attempt to add `pos` to the pre-thread queue.

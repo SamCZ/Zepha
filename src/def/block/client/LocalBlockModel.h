@@ -8,7 +8,7 @@
 #include <vector>
 #include <set>
 #include <sol2/sol.hpp>
-#include "LocalMeshPart.h"
+#include "../LocalMeshPart.h"
 #include "../../../game/scene/world/graph/MeshVertex.h"
 #include "../../../util/Dir.h"
 
@@ -22,6 +22,5 @@ struct LocalBlockModel {
 
     static LocalBlockModel create(sol::table model, sol::table texturesTbl, TextureAtlas& atlas, bool visible, bool culls);
 };
-
 
 #endif //GLPROJECT_BLOCKMODEL_H

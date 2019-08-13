@@ -9,32 +9,32 @@
 #include "NoiseSample.h"
 #include "../../util/Vec.h"
 
-MapGen::MapGen(unsigned int seed, BlockAtlas& atlas) {
+MapGen::MapGen(unsigned int seed, DefinitionAtlas& atlas) {
     this->seed = seed;
 
     //Get Block Indexes
-    AIR = atlas.fromIdentifier("air").index;
+    AIR = atlas.fromStr("air").index;
 
-    GRASS_BLOCK = atlas.fromIdentifier("default:grass").index;
-    DIRT_BLOCK  = atlas.fromIdentifier("default:dirt").index;
-    STONE_BLOCK = atlas.fromIdentifier("default:stone").index;
-    WATER = atlas.fromIdentifier("default:water").index;
+    GRASS_BLOCK = atlas.fromStr("default:grass").index;
+    DIRT_BLOCK  = atlas.fromStr("default:dirt").index;
+    STONE_BLOCK = atlas.fromStr("default:stone").index;
+    WATER = atlas.fromStr("default:water").index;
 
-    PLANT_STEM_BLOCK = atlas.fromIdentifier("default:bush_stem").index;
-    LEAVES_BLOCK     = atlas.fromIdentifier("default:leaves").index;
+    PLANT_STEM_BLOCK = atlas.fromStr("default:bush_stem").index;
+    LEAVES_BLOCK     = atlas.fromStr("default:leaves").index;
 
     for (int i = 1; i <= 5; i++) {
-        TALLGRASSES[i] = atlas.fromIdentifier("default:tallgrass_" + to_string(i)).index;
+        TALLGRASSES[i] = atlas.fromStr("default:tallgrass_" + to_string(i)).index;
     }
 
-    FLOWERS[0] = atlas.fromIdentifier("flowers:flower_yellow_dandelion").index;
-    FLOWERS[1] = atlas.fromIdentifier("flowers:flower_viola").index;
-    FLOWERS[2] = atlas.fromIdentifier("flowers:flower_geranium").index;
-    FLOWERS[3] = atlas.fromIdentifier("flowers:flower_tulip").index;
-    FLOWERS[4] = atlas.fromIdentifier("flowers:flower_white_dandelion").index;
-    FLOWERS[5] = atlas.fromIdentifier("flowers:flower_rose").index;
-    FLOWERS[6] = atlas.fromIdentifier("flowers:flower_red_mushroom").index;
-    FLOWERS[7] = atlas.fromIdentifier("flowers:flower_brown_mushroom").index;
+    FLOWERS[0] = atlas.fromStr("flowers:flower_yellow_dandelion").index;
+    FLOWERS[1] = atlas.fromStr("flowers:flower_viola").index;
+    FLOWERS[2] = atlas.fromStr("flowers:flower_geranium").index;
+    FLOWERS[3] = atlas.fromStr("flowers:flower_tulip").index;
+    FLOWERS[4] = atlas.fromStr("flowers:flower_white_dandelion").index;
+    FLOWERS[5] = atlas.fromStr("flowers:flower_rose").index;
+    FLOWERS[6] = atlas.fromStr("flowers:flower_red_mushroom").index;
+    FLOWERS[7] = atlas.fromStr("flowers:flower_brown_mushroom").index;
 
     //First stage smooth elevation
     worldElevationBase.SetSeed(seed);

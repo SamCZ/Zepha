@@ -6,7 +6,7 @@
 
 #include "ParticleEntity.h"
 
-ParticleEntity::ParticleEntity(glm::vec3 pos, LocalBlockDef &block) {
+ParticleEntity::ParticleEntity(glm::vec3 pos, BlockDef &block) {
     this->position = pos + glm::vec3(.5,.3,.5);
 
     this->position += glm::vec3(

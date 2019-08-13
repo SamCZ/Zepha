@@ -16,7 +16,7 @@ namespace ClientApi {
                 std::cout << Log::err << "remove_block vector is ill formed." << Log::endl;
                 return;
             }
-            world.setBlock({pos["x"], pos["y"], pos["z"]}, LocalBlockAtlas::AIR);
+            world.setBlock({pos["x"], pos["y"], pos["z"]}, LocalDefinitionAtlas::AIR);
         });
     }
 }

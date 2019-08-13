@@ -15,27 +15,27 @@
 #include <cstdio>
 
 #include "MeshVertex.h"
-#include "../../../../util/Timer.h"
-#include "../../../../def/block/client/LocalBlockDef.h"
-#include "../../../../world/chunk/BlockChunk.h"
-#include "../../../../def/block/client/LocalBlockAtlas.h"
-#include "../../../../def/block/client/LocalBlockModel.h"
-#include "../../../../util/Vec.h"
-#include "../../../../def/gen/NoiseSample.h"
 #include "../MeshDetails.h"
+#include "../../../../world/chunk/BlockChunk.h"
+#include "../../../../def/LocalDefinitionAtlas.h"
+#include "../../../../def/block/BlockDef.h"
+#include "../../../../def/block/client/LocalBlockModel.h"
+#include "../../../../def/gen/NoiseSample.h"
+#include "../../../../util/Vec.h"
+#include "../../../../util/Timer.h"
 
 class MeshGenerator {
 public:
-    MeshGenerator(MeshDetails* meshDetails, LocalBlockAtlas& atlas,
+    MeshGenerator(MeshDetails* meshDetails, LocalDefinitionAtlas& atlas,
                   std::shared_ptr<BlockChunk> chunk, std::array<std::shared_ptr<BlockChunk>, 6> adjacent,
                   std::array<NoiseSample, 3>& blockOffsets);
 private:
-    LocalBlockDef& getBlockAt(const glm::vec3 &pos);
+    BlockDef& getBlockAt(const glm::vec3 &pos);
     void addFaces(const glm::vec3 &offset, const vector<LocalMeshPart> &meshParts);
 
     unsigned int indOffset = 0;
 
-    LocalBlockAtlas& atlas;
+    LocalDefinitionAtlas& atlas;
     MeshDetails* meshDetails;
 
     std::shared_ptr<BlockChunk> chunk;

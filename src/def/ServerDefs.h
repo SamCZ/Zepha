@@ -6,7 +6,7 @@
 #define ZEUS_SERVERDEFS_H
 
 
-#include "block/server/ServerBlockAtlas.h"
+#include "ServerDefinitionAtlas.h"
 #include "../api/server/ServerLuaParser.h"
 #include "texture/ServerTextureStorage.h"
 
@@ -16,7 +16,7 @@ class ServerDefs {
 public:
     void init(ServerWorld& world, const std::string& path);
 
-    ServerBlockAtlas& blocks();
+    ServerDefinitionAtlas& blocks();
     ServerLuaParser& lua();
     ServerTextureStorage& textures();
 
@@ -27,7 +27,7 @@ private:
     double delta = 0;
 
     ServerTextureStorage textureStorage;
-    ServerBlockAtlas blockAtlas;
+    ServerDefinitionAtlas blockAtlas;
     ServerLuaParser luaApi;
 };
 

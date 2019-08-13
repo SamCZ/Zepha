@@ -117,14 +117,14 @@ void ServerWorld::sendChunk(glm::vec3 pos, ServerClient &peer) {
 void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {
     auto oldBlock = getBlock(pos);
 
-    if (block == 1) { //TODO: Get air's data value
-        auto def = defs.blocks().fromIndex(oldBlock);
+    if (block == DefinitionAtlas::AIR) {
+        auto def = defs.blocks().blockFromId(oldBlock);
         if (def.callbacks.count(Callback::DESTRUCT)) {
             def.callbacks[Callback::DESTRUCT](defs.lua().vecToTable(pos));
         }
     }
     else {
-        auto def = defs.blocks().fromIndex(block);
+        auto def = defs.blocks().blockFromId(block);
         if (def.callbacks.count(Callback::CONSTRUCT)) {
             def.callbacks[Callback::CONSTRUCT](defs.lua().vecToTable(pos));
         }
@@ -148,14 +148,14 @@ void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {
         }
     }
 
-    if (block == 0) {
-        auto def = defs.blocks().fromIndex(oldBlock);
+    if (block == DefinitionAtlas::AIR) {
+        auto def = defs.blocks().blockFromId(oldBlock);
         if (def.callbacks.count(Callback::AFTER_DESTRUCT)) {
             def.callbacks[Callback::AFTER_DESTRUCT](defs.lua().vecToTable(pos));
         }
     }
     else {
-        auto def = defs.blocks().fromIndex(block);
+        auto def = defs.blocks().blockFromId(block);
         if (def.callbacks.count(Callback::AFTER_CONSTRUCT)) {
             def.callbacks[Callback::AFTER_CONSTRUCT](defs.lua().vecToTable(pos));
         }

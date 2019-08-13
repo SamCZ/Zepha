@@ -16,7 +16,7 @@ namespace ServerApi {
                 std::cout << Log::err << "set_block vector is ill formed." << Log::endl;
                 return;
             }
-            world.setBlock({pos["x"], pos["y"], pos["z"]}, defs.blocks().fromIdentifier(identifier).index);
+            world.setBlock({pos["x"], pos["y"], pos["z"]}, defs.blocks().fromStr(identifier).index);
         });
     }
 }

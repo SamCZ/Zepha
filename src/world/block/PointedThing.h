@@ -5,7 +5,7 @@
 #ifndef ZEUS_POSBLOCK_H
 #define ZEUS_POSBLOCK_H
 
-#include "../../def/block/client/LocalBlockDef.h"
+#include "../../def/block/BlockDef.h"
 #include "../../def/LocalDefs.h"
 
 struct PointedThing {
@@ -29,7 +29,7 @@ struct PointedThing {
 public:
     //Properties
     unsigned int blockID = 0;
-    LocalBlockDef* blockDef = nullptr;
+    BlockDef* blockDef = nullptr;
 
     glm::vec3 pos {};
     Dir face = NONE;

@@ -2,20 +2,23 @@
 // Created by aurailus on 10/06/19.
 //
 
-#ifndef ZEUS_BLOCKDEF_H
-#define ZEUS_BLOCKDEF_H
+#ifndef ZEUS_SERVERBLOCKDEF_H
+#define ZEUS_SERVERBLOCKDEF_H
 
 #include <string>
-#include <unordered_map>
-#include <sol2/sol.hpp>
+#include "server/ServerBlockModel.h"
 #include "SelectionBox.h"
+#include "BlockModel.h"
+#include "../item/ItemDef.h"
 #include "../../api/Callback.h"
 
-class BlockDef {
+class BlockDef : public ItemDef {
 public:
-    unsigned int index;
-    std::string identifier;
+    BlockDef() = default;
+    BlockDef(const std::string& identifier, const BlockModel& model, bool solid, SelectionBox selectionBox);
+    BlockDef(const std::string& identifier, unsigned int index, const BlockModel& model, bool solid, SelectionBox selectionBox);
 
+    BlockModel model;
     bool culls = false;
     bool solid = false;
 
@@ -24,5 +27,4 @@ public:
     std::unordered_map<Callback, sol::function, Util::EnumClassHash> callbacks {};
 };
 
-
-#endif //ZEUS_BLOCKDEF_H
+#endif //ZEUS_SERVERBLOCKDEF_H

@@ -20,7 +20,7 @@ using namespace noise;
 class MapGen {
 public:
     MapGen() = default;
-    MapGen(unsigned int seed, BlockAtlas& atlas);
+    MapGen(unsigned int seed, DefinitionAtlas& atlas);
     BlockChunk* generate(glm::vec3 pos);
 private:
     void getDensityMap(MapGenJob &job);

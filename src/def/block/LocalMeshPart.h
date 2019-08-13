@@ -14,9 +14,9 @@
 #include <glm/vec4.hpp>
 #include <glm/gtx/normal.hpp>
 
-#include "../ShaderMod.h"
-#include "../../../game/scene/world/graph/MeshVertex.h"
-#include "../../texture/TextureAtlas.h"
+#include "ShaderMod.h"
+#include "../texture/TextureAtlas.h"
+#include "../../game/scene/world/graph/MeshVertex.h"
 
 struct LocalMeshPart {
     LocalMeshPart(const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<AtlasRef> texture);

@@ -6,7 +6,7 @@
 #define ZEUS_GAMEDEFS_H
 
 #include "texture/TextureAtlas.h"
-#include "block/client/LocalBlockAtlas.h"
+#include "LocalDefinitionAtlas.h"
 #include "../api/client/LocalLuaParser.h"
 
 class LocalDefs {
@@ -14,7 +14,7 @@ public:
     explicit LocalDefs(const std::string& tex_path);
     LocalDefs(const LocalDefs& copy);
 
-    LocalBlockAtlas& blocks();
+    LocalDefinitionAtlas& blocks();
     TextureAtlas& textures();
     LocalLuaParser& lua();
 
@@ -28,7 +28,7 @@ private:
     std::string tex_path;
 
     TextureAtlas textureAtlas;
-    LocalBlockAtlas blockAtlas;
+    LocalDefinitionAtlas blockAtlas;
     LocalLuaParser luaApi;
 };
 

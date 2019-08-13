@@ -10,7 +10,7 @@ void ServerDefs::init(ServerWorld &world, const std::string& path) {
     luaApi.init(*this, world, folderPath);
 }
 
-ServerBlockAtlas &ServerDefs::blocks() {
+ServerDefinitionAtlas &ServerDefs::blocks() {
     return blockAtlas;
 }
 

@@ -121,7 +121,6 @@ LocalBlockModel LocalBlockModel::create(sol::table model, sol::table texturesTbl
             }
         }
 
-
         //Add the meshpart to the proper face vector
         std::string face = meshPartTable.get_or<std::string>("face", "nocull");
 

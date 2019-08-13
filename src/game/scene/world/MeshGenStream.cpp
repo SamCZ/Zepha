@@ -33,7 +33,7 @@ MeshGenStream::MeshGenStream(LocalDefs &defs, Dimension &dimension) :
     }
 }
 
-MeshGenStream::Thread::Thread(LocalBlockAtlas &atlas, std::array<NoiseSample, 3>& offsetSamplers) :
+MeshGenStream::Thread::Thread(LocalDefinitionAtlas &atlas, std::array<NoiseSample, 3>& offsetSamplers) :
     atlas(atlas), offsetSamplers(offsetSamplers) {
     thread = std::thread(MeshGenStream::threadFunction, this);
 }

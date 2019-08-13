@@ -4,7 +4,7 @@
 
 #include "BlockChunk.h"
 #include "../../util/Util.h"
-#include "../../def/block/BlockAtlas.h"
+#include "../../def/DefinitionAtlas.h"
 
 #include <gzip/compress.hpp>
 #include <gzip/decompress.hpp>
@@ -31,12 +31,12 @@ BlockChunk::BlockChunk(const std::vector<unsigned int>& blocks, glm::vec3 pos) :
 
 unsigned int BlockChunk::getBlock(const glm::vec3& pos) const {
     unsigned int ind = VecUtils::vecToInd(pos);
-    if (ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return BlockAtlas::INVALID;
+    if (ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return DefinitionAtlas::INVALID;
     return blocks[ind];
 }
 
 unsigned int BlockChunk::getBlock(unsigned int ind) const {
-    if (ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return BlockAtlas::INVALID;
+    if (ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return DefinitionAtlas::INVALID;
     return blocks[ind];
 }
 
