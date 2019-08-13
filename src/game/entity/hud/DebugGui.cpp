@@ -154,7 +154,9 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         auto thing = player.getPointedThing();
 
         std::ostringstream crossText;
-        if (thing.blockDef != nullptr) crossText << thing.blockDef->identifier << std::endl;
+        if (thing.blockDef != nullptr) {
+            crossText << thing.blockDef->name << " (" << thing.blockDef->identifier << ")" << std::endl;
+        }
         get<GUIText>("crosshairText")->setText(crossText.str());
     }
 }

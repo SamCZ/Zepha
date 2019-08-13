@@ -181,7 +181,7 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& zeus, LocalDefs &defs) {
         });
 
         //TODO: Update the selection boxes thingy
-        BlockDef* blockDef = new BlockDef(identifier, defs.defs().size(), blockModel, solid, sBoxes[0]);
+        BlockDef* blockDef = new BlockDef(identifier, defs.defs().size(), *nameOpt, blockModel, solid, sBoxes[0]);
 
         //Bind Callbacks
         auto on_place_client = blockTable.get<sol::optional<sol::function>>("on_place_client");

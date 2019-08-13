@@ -17,6 +17,7 @@ public:
     };
 
     std::string identifier = "";
+    std::string name = "";
     unsigned int index = 0;
 
     Type type = Type::INVALID;
