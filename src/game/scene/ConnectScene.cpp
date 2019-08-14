@@ -18,10 +18,19 @@ ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
     statusText->setPos({32, 24});
     components.add(statusText);
 
+    auto loadBar = std::make_shared<GUIRect>("loadBar");
+    loadBar->create({1, 32}, {}, {0.17, 0.75, 0.93, 1});
+    loadBar->setPos({0, state.renderer.getWindow().getSize().y - 32});
+    components.add(loadBar);
+
     connection.attemptConnect(std::move(addr));
 }
 
 void ConnectScene::update() {
+    if (state.renderer.getWindow().resized) {
+        components.get<GUIRect>("loadBar")->setPos({0, state.renderer.getWindow().getSize().y - 32});
+        state.renderer.getWindow().resized = false;
+    }
     switch (connectState) {
         default:
             std::cout << Log::err << "Invalid connectState" << Log::endl;
@@ -36,34 +45,39 @@ void ConnectScene::update() {
             break;
 
         case State::IDENTIFIER_LIST: {
+            components.get<GUIRect>("loadBar")->setScale({state.renderer.getWindow().getSize().x * 0.2, 32});
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
 
-                auto statusText = components.get<GUIText>("statusText");
-                statusText->setText(statusText->getText() + "Received block index-identifier table.\nDownloading mods...\n");
+                if (p.type == PacketType::IDENTIFIER_LIST) {
+                    auto statusText = components.get<GUIText>("statusText");
+                    statusText->setText(
+                            statusText->getText() + "Received block index-identifier table.\nDownloading mods...\n");
 
-                std::vector<std::string> indexIdentifierTable {};
-                indexIdentifierTable.reserve(static_cast<unsigned long>(Serializer::decodeInt(&p.data[0])));
+                    std::vector<std::string> indexIdentifierTable{};
+                    indexIdentifierTable.reserve(static_cast<unsigned long>(Serializer::decodeInt(&p.data[0])));
 
-                unsigned int ind = 4;
-                while (true) {
-                    auto len = Serializer::decodeInt(&p.data[ind]);
-                    indexIdentifierTable.emplace_back(&p.data[ind + 4], &p.data[ind + 4 + len]);
-                    ind += 4 + len;
-                    if (ind >= p.data.length() - 4) break;
+                    unsigned int ind = 4;
+                    while (true) {
+                        auto len = Serializer::decodeInt(&p.data[ind]);
+                        indexIdentifierTable.emplace_back(&p.data[ind + 4], &p.data[ind + 4 + len]);
+                        ind += 4 + len;
+                        if (ind >= p.data.length() - 4) break;
+                    }
+
+                    state.defs.defs().setIdentifiers(indexIdentifierTable);
+
+                    connectState = State::MODS;
+                    Packet resp(PacketType::MODS);
+                    resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
                 }
-
-                state.defs.defs().setIdentifiers(indexIdentifierTable);
-
-                connectState = State::MODS;
-                Packet resp(PacketType::MODS);
-                resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
             }
             break;
         }
 
         case State::MODS: {
+            components.get<GUIRect>("loadBar")->setScale({state.renderer.getWindow().getSize().x * 0.4, 32});
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
@@ -97,6 +111,7 @@ void ConnectScene::update() {
         }
 
         case State::MEDIA: {
+            components.get<GUIRect>("loadBar")->setScale({state.renderer.getWindow().getSize().x * 0.6, 32});
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
@@ -130,6 +145,7 @@ void ConnectScene::update() {
 //                    state.defs.lua().mods.push_back(std::move(luaMod));'
                 }
                 else if (p.type == PacketType::MEDIA_DONE) {
+                    components.get<GUIRect>("loadBar")->setScale({state.renderer.getWindow().getSize().x, 32});
 //                    std::string order = Serializer::decodeString(&p.data[0]);
 //
 //                    size_t pos = 0;

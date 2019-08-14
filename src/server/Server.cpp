@@ -34,6 +34,7 @@ void Server::update() {
 
             case ENET_EVENT_TYPE_CONNECT: {
                 clientList.handleConnect(event);
+                std::cout << "connect" << std::endl;
                 break;
             }
 
@@ -46,8 +47,10 @@ void Server::update() {
                 Packet p(event.packet);
                 ServerClient* client = static_cast<ServerClient*>(event.peer->data);
 
-                if (client->hasPlayer())
+                std::cout << "Recieve from " << client << std::endl;
+                if (client->hasPlayer()) {
                     handlePlayerPacket(*client, p);
+                }
                 else {
                     bool done = config.handlePacket(*client, p);
                     if (done) {
@@ -91,8 +94,8 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
             Serializer::encodeFloat(r.data, player.getAngle());
 
             for (auto& iter : clientList.clients) {
-                if (iter.getConnectID() != client.getConnectID()) {
-                    r.sendTo(iter.getPeer(), PacketChannel::ENTITY);
+                if (iter->getConnectID() != client.getConnectID()) {
+                    r.sendTo(iter->getPeer(), PacketChannel::ENTITY);
                 }
             }
 

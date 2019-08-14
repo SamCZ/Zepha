@@ -71,7 +71,7 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
     get<GUILabelledGraph>("gpuGraph")->setPos({bufferWidth - 254, 10});
 }
 
-void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack) {
+void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int /*chunks*/, int drawCalls, int ssGen, int ssPack) {
 
     { //VRam Usage Graph (Top Right)
         int videoMemAvail, videoMemTotal;

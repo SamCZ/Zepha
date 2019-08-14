@@ -10,8 +10,9 @@ void ServerClients::handleConnect(ENetEvent e) {
 
     std::cout << Log::info << NetHandler::intToIPString(addr.host) << ":" << addr.port << " connected." << Log::endl;
 
-    clients.emplace_back(peer, addr);
-    peer->data = &clients.back();
+    auto client = new ServerClient(peer, addr);
+    clients.push_back(client);
+    peer->data = client;
 }
 
 void ServerClients::handleDisconnect(ENetEvent e) {
@@ -25,7 +26,7 @@ void ServerClients::handleDisconnect(ENetEvent e) {
     bool found = false;
     auto it = clients.begin();
     while (it != clients.end()) {
-        if ((*it).getConnectID() == connectID) {
+        if ((*it)->getConnectID() == connectID) {
             found = true;
             clients.erase(it);
             break;

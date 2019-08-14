@@ -10,6 +10,7 @@
 #include "../graph/scene/Scene.h"
 #include "../entity/hud/components/basic/GUIText.h"
 #include "../entity/hud/components/basic/GUIContainer.h"
+#include "../entity/hud/components/basic/GUIRect.h"
 #include "../../api/LuaModFile.h"
 #include "../../api/LuaMod.h"
 

@@ -15,8 +15,8 @@
 class BlockDef : public ItemDef {
 public:
     BlockDef() = default;
-    BlockDef(const std::string& identifier, const std::string& name, const BlockModel& model, bool solid, std::vector<SelectionBox> sBoxes);
-    BlockDef(const std::string& identifier, unsigned int index, const std::string& name, const BlockModel& model, bool solid, std::vector<SelectionBox> sBoxes);
+    BlockDef(const std::string& identifier, const std::string& name, const BlockModel& model, bool solid, const std::vector<SelectionBox>& sBoxes);
+    BlockDef(const std::string& identifier, unsigned int index, const std::string& name, const BlockModel& model, bool solid, const std::vector<SelectionBox>& sBoxes);
 
     BlockModel model;
     bool culls = false;

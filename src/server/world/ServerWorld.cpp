@@ -80,11 +80,11 @@ void ServerWorld::update() {
         dimension.addBlockChunk(chunk);
 
         for (auto& client : clientList.clients) {
-            if (client.hasPlayer()) {
-                auto bounds = client.getPlayer().getChunkBounds();
+            if (client->hasPlayer()) {
+                auto bounds = client->getPlayer().getChunkBounds();
 
                 if (isInBounds(chunk->pos, bounds)) {
-                    sendChunk(chunk->pos, client);
+                    sendChunk(chunk->pos, *client);
                 }
             }
         }
@@ -94,10 +94,10 @@ void ServerWorld::update() {
     Serializer::encodeInt(r.data, generatedChunks);
 
     for (auto& client : clientList.clients) {
-        if (client.hasPlayer()) {
-            r.sendTo(client.getPeer(), PacketChannel::SERVER);
+        if (client->hasPlayer()) {
+            r.sendTo(client->getPeer(), PacketChannel::SERVER);
 
-            if (client.getPlayer().changedChunks) changedChunks(client);
+            if (client->getPlayer().changedChunks) changedChunks(*client);
         }
     }
 }
@@ -139,11 +139,11 @@ void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {
     auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
 
     for (auto &client : clientList.clients) {
-        if (client.hasPlayer()) {
-            auto bounds = client.getPlayer().getChunkBounds();
+        if (client->hasPlayer()) {
+            auto bounds = client->getPlayer().getChunkBounds();
 
             if (isInBounds(chunkPos, bounds)) {
-                b.sendTo(client.getPeer(), PacketChannel::BLOCK);
+                b.sendTo(client->getPeer(), PacketChannel::BLOCK);
             }
         }
     }

@@ -13,7 +13,7 @@ Font::Font(TextureAtlas& atlas, std::shared_ptr<AtlasRef> tex) :
 
 uint Font::getCharWidth(char c) {
     uint index = static_cast<uint>(c) - 32;
-    if (index > AMOUNT_CHARS) {
+    if (index >= AMOUNT_CHARS) {
         std::cout << Log::err << "Invalid char index!" << std::endl;
         return 0;
     }
@@ -23,7 +23,7 @@ uint Font::getCharWidth(char c) {
 void Font::getCharWidths(TextureAtlas &atlas) {
     const unsigned char* data = atlas.getAtlasData();
 
-    charWidths[0] = 3;
+    charWidths[0] = 2;
 
     for (unsigned int i = 1; i < AMOUNT_CHARS; i++) {
         glm::vec2 charPos = {i % 18 * CHAR_WIDTH, std::floor(i / 18) * CHAR_HEIGHT};

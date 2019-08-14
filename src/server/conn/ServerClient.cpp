@@ -8,16 +8,15 @@
 ServerClient::ServerClient(ENetPeer *peer, ENetAddress address) :
     peer(peer),
     address(address),
-    connectID(peer->connectID) {
-}
+    connectID(peer->connectID) {}
 
 unsigned int ServerClient::getConnectID() {
     return connectID;
 }
 
 void ServerClient::initPlayer() {
-    //TODO: IMPLEMENT USERNAME
     delete player;
+    //TODO: IMPLEMENT USERNAME
     player = new ServerPlayer({0, 64, 0}, connectID, "TEMPORARY");
 }
 

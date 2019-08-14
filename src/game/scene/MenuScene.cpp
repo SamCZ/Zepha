@@ -38,8 +38,8 @@ void MenuScene::update() {
     if (state.renderer.resized) {
         auto size = state.renderer.getWindow().getSize();
 
-        components.get<GUIText>("titleText")->setPos({size.x / 2 - 190, size.y / 2 - 120});
-        components.get<GUIText>("mainMenuText")->setPos({size.x / 2 - 130, size.y / 2 + 20});
+        components.get<GUIText>("titleText")->setPos({size.x / 2 - 160, size.y / 2 - 120});
+        components.get<GUIText>("mainMenuText")->setPos({size.x / 2 - 100, size.y / 2 + 20});
 
         state.renderer.resized = false;
     }

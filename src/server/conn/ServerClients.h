@@ -20,7 +20,7 @@ public:
 
     void createPlayer(ServerClient& c);
 
-    std::vector<ServerClient> clients;
+    std::vector<ServerClient*> clients;
 };
 
 #endif //ZEUS_SERVERPLAYERLIST_H
