@@ -5,12 +5,12 @@
 #include "BlockDef.h"
 
 
-BlockDef::BlockDef(const std::string &identifier, const std::string& name, const BlockModel &model, bool solid, SelectionBox selectionBox) :
-    BlockDef(identifier, 0, name, model, solid, selectionBox) {}
+BlockDef::BlockDef(const std::string &identifier, const std::string& name, const BlockModel &model, bool solid, std::vector<SelectionBox> sBoxes) :
+    BlockDef(identifier, 0, name, model, solid, std::move(sBoxes)) {}
 
-BlockDef::BlockDef(const std::string& identifier, unsigned int index, const std::string& name, const BlockModel& model, bool solid, SelectionBox selectionBox) :
+BlockDef::BlockDef(const std::string& identifier, unsigned int index, const std::string& name, const BlockModel& model, bool solid, std::vector<SelectionBox> sBoxes) :
     ItemDef {identifier, name, index, ItemDef::Type::BLOCK},
     model(model),
     culls(model.culls),
     solid(solid),
-    selectionBox(selectionBox) {}
+    sBoxes(sBoxes) {}

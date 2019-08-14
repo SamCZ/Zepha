@@ -5,65 +5,66 @@
 #include "WireframeEntity.h"
 
 
-WireframeEntity::WireframeEntity(glm::vec3 posA, glm::vec3 posB, float width, glm::vec3 color) {
-    this->a = posA;
-    this->b = posB - posA;
+WireframeEntity::WireframeEntity(const std::vector<SelectionBox>& boxes, float width, glm::vec3 color) {
     this->width = width;
     this->color = color;
 
-    buildMesh();
+    buildMesh(boxes);
 }
 
-void WireframeEntity::updateMesh(glm::vec3 posA, glm::vec3 posB, float width) {
-    this->a = posA;
-    this->b = posB - posA;
+void WireframeEntity::updateMesh(const std::vector<SelectionBox>& boxes, float width) {
     this->width = width;
 
-    buildMesh();
+    buildMesh(boxes);
 }
 
 
-void WireframeEntity::buildMesh() {
+void WireframeEntity::buildMesh(const std::vector<SelectionBox>& boxes) {
     indOffset = 0;
 
     vertices.clear();
     indices.clear();
 
-    createBox(0,   0, 0,   0, b.y, 0);
-    createBox(b.x, 0, 0,   0, b.y, 0);
-    createBox(b.x, 0, b.z, 0, b.y, 0);
-    createBox(0,   0, b.z, 0, b.y, 0);
+    for (auto& box : boxes) {
+        glm::vec3 a = box.a;
+        glm::vec3 b = box.b - box.a;
 
-    createBox(0, 0,   0,   b.x, 0, 0);
-    createBox(0, b.y, 0,   b.x, 0, 0);
-    createBox(0, b.y, b.z, b.x, 0, 0);
-    createBox(0, 0,   b.z, b.x, 0, 0);
+        createBox(a, b, 0,   0, 0,   0, b.y, 0);
+        createBox(a, b, b.x, 0, 0,   0, b.y, 0);
+        createBox(a, b, b.x, 0, b.z, 0, b.y, 0);
+        createBox(a, b, 0,   0, b.z, 0, b.y, 0);
 
-    createBox(0,   0,   0, 0, 0, b.z);
-    createBox(0,   b.y, 0, 0, 0, b.z);
-    createBox(b.x, b.y, 0, 0, 0, b.z);
-    createBox(b.x, 0,   0, 0, 0, b.z);
+        createBox(a, b, 0, 0,   0,   b.x, 0, 0);
+        createBox(a, b, 0, b.y, 0,   b.x, 0, 0);
+        createBox(a, b, 0, b.y, b.z, b.x, 0, 0);
+        createBox(a, b, 0, 0,   b.z, b.x, 0, 0);
+
+        createBox(a, b, 0,   0,   0, 0, 0, b.z);
+        createBox(a, b, 0,   b.y, 0, 0, 0, b.z);
+        createBox(a, b, b.x, b.y, 0, 0, 0, b.z);
+        createBox(a, b, b.x, 0,   0, 0, 0, b.z);
+    }
 
     auto m = new EntityMesh();
     m->create(vertices, indices);
     setMesh(m);
 }
 
-void WireframeEntity::createBox(float x, float y, float z, float xSize, float ySize, float zSize) {
+void WireframeEntity::createBox(glm::vec3 a, glm::vec3 b, float x, float y, float z, float xSize, float ySize, float zSize) {
     float hw = (width/2.0f);
     float w = width;
     auto  c = color;
 
     std::vector<EntityVertex> myVerts {
-    /*0*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z            }, {c, 1}, false, {0, 1, 0}},
-    /*1*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z            }, {c, 1}, false, {0, 1, 0}},
-    /*2*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z + zSize + w}, {c, 1}, false, {0, 1, 0}},
-    /*3*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z + zSize + w}, {c, 1}, false, {0, 1, 0}},
+    /*0*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z            }, {c, 1}, {1, 1, 1}, false, {0, 1, 0}},
+    /*1*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z            }, {c, 1}, {1, 1, 1}, false, {0, 1, 0}},
+    /*2*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z + zSize + w}, {c, 1}, {1, 1, 1}, false, {0, 1, 0}},
+    /*3*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z + zSize + w}, {c, 1}, {1, 1, 1}, false, {0, 1, 0}},
 
-    /*4*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z            }, {c, 1}, false, {0, 1, 0}},
-    /*5*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z            }, {c, 1}, false, {0, 1, 0}},
-    /*6*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, {c, 1}, false, {0, 1, 0}},
-    /*7*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, {c, 1}, false, {0, 1, 0}},
+    /*4*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z            }, {c, 1}, {1, 1, 1}, false, {0, 1, 0}},
+    /*5*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z            }, {c, 1}, {1, 1, 1}, false, {0, 1, 0}},
+    /*6*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, {c, 1}, {1, 1, 1}, false, {0, 1, 0}},
+    /*7*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, {c, 1}, {1, 1, 1}, false, {0, 1, 0}},
     };
 
     std::vector<unsigned int> myInds {

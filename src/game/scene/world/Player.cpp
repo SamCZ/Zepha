@@ -9,7 +9,7 @@ Player::Player(LocalWorld& world, LocalDefs& defs, Camera& camera) :
     world(world),
     camera(camera),
     defs(defs),
-    wireframe(WireframeEntity({0, 0, 0}, {1, 1, 1}, 0.01, {1, 1, 1})) {}
+    wireframe(WireframeEntity({}, 0.01, {1, 1, 1})) {}
 
 void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
     posUpdate(input, delta);
@@ -106,9 +106,9 @@ void Player::pointerUpdate(InputManager &input, double delta) {
         auto pointedPos = TransPos::roundPos(rayEnd);
 
         auto blockID = world.getBlock(rayEnd);
-        //TODO: Make some property on the node defining if it can be selected
-        if (blockID > 1) {
-            SelectionBox& sBox = defs.defs().blockFromId(blockID).selectionBox;
+        auto& sBoxes = defs.defs().blockFromId(blockID).sBoxes;
+
+        for (auto& sBox : sBoxes) {
             auto intersects = sBox.intersects(*ray.getEnd(), pointedPos);
 
             if (intersects != NONE) {
@@ -117,15 +117,16 @@ void Player::pointerUpdate(InputManager &input, double delta) {
                 pointedThing.pos = pointedPos;
                 pointedThing.face = intersects;
 
-                wireframe.updateMesh(sBox.a, sBox.b, 0.000005f + ray.getLength() * 0.0015f);
+                wireframe.updateMesh(sBoxes, 0.000005f + ray.getLength() * 0.0015f);
                 wireframe.setPos(pointedPos);
                 if (!wireframe.isVisible()) wireframe.setVisible(true);
 
                 found = true;
-                break;
+                goto stop;
             }
         }
     }
+    stop:
 
     if (found) {
         const static float DAMAGE = 0.25f;

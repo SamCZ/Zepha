@@ -6,25 +6,23 @@
 #define ZEUS_WIREFRAMEGENERATOR_H
 
 #include <glm/vec3.hpp>
-#include "../../graph/ChunkMesh.h"
 #include "../Entity.h"
+#include "../../../def/block/SelectionBox.h"
 
 class WireframeEntity : public Entity {
 public:
     WireframeEntity() = default;
-    WireframeEntity(glm::vec3 posA, glm::vec3 posB, float width, glm::vec3 color);
+    WireframeEntity(const std::vector<SelectionBox>& boxes, float width, glm::vec3 color);
 
-    void updateMesh(glm::vec3 posA, glm::vec3 posB, float width);
+    void updateMesh(const std::vector<SelectionBox>& boxes, float width);
 private:
     std::vector<EntityVertex> vertices {};
     std::vector<unsigned int> indices {};
 
-    void buildMesh();
-    void createBox(float x, float y, float z, float xSize, float ySize, float zSize);
+    void buildMesh(const std::vector<SelectionBox>& boxes);
+    void createBox(glm::vec3 a, glm::vec3 b, float x, float y, float z, float xSize, float ySize, float zSize);
 
     glm::vec3 color {};
-    glm::vec3 a     {};
-    glm::vec3 b     {};
 
     float width = 0.5;
     int indOffset = 0;

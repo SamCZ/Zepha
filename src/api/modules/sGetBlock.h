@@ -5,8 +5,8 @@
 #ifndef ZEUS_SGETBLOCK_H
 #define ZEUS_SGETBLOCK_H
 
-#include "../../../def/ServerDefs.h"
-#include "../../../server/world/ServerWorld.h"
+#include "../../def/ServerDefs.h"
+#include "../../server/world/ServerWorld.h"
 #include <sol2/sol.hpp>
 
 namespace ServerApi {

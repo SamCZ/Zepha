@@ -13,6 +13,7 @@
 struct EntityVertex {
     glm::vec3 position;
     glm::vec4 colorData;
+    glm::vec3 colorBlend;
     float useTex;
     glm::vec3 normal;
 };

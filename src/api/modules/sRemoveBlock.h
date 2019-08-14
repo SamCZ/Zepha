@@ -5,8 +5,8 @@
 #ifndef ZEUS_SREMOVEBLOCK_H
 #define ZEUS_SREMOVEBLOCK_H
 
-#include "../../../def/ServerDefs.h"
-#include "../../../server/world/ServerWorld.h"
+#include "../../def/ServerDefs.h"
+#include "../../server/world/ServerWorld.h"
 #include <sol2/sol.hpp>
 
 namespace ServerApi {

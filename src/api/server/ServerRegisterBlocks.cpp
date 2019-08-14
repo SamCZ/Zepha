@@ -173,7 +173,7 @@ ServerRegisterBlocks::ServerRegisterBlocks(sol::table& zeus, ServerDefs &defs) {
         });
 
         //TODO: Update the selection boxes thingy
-        BlockDef* blockDef = new BlockDef(identifier, defs.blocks().size(), *nameOpt, blockModel, solid, sBoxes[0]);
+        BlockDef* blockDef = new BlockDef(identifier, defs.blocks().size(), *nameOpt, blockModel, solid, std::move(sBoxes));
 
         //Bind Callbacks
         auto on_place = blockTable.get<sol::optional<sol::function>>("on_place");

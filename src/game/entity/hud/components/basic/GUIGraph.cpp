@@ -73,10 +73,10 @@ void GUIGraph::buildHistogramMesh() {
         float sec = (float)std::round(9 - fmin(h, 1)*9) * 0.1f;
 
         auto columnVerts = std::vector<EntityVertex> {
-            {{xOffset,    -h, 0}, {uv.x + age * uv.z,         uv.y + sec * uv.w,         0, 0}, true, {}},
-            {{xOffset + 1,-h, 0}, {uv.x + (age+0.01f) * uv.z, uv.y + sec * uv.w,         0, 0}, true, {}},
-            {{xOffset + 1, 0, 0}, {uv.x + (age+0.01f) * uv.z, uv.y + (sec+0.10f) * uv.w, 0, 0}, true, {}},
-            {{xOffset,     0, 0}, {uv.x + age * uv.z,         uv.y + (sec+0.10f) * uv.w, 0, 0}, true, {}},
+            {{xOffset,    -h, 0}, {uv.x + age * uv.z,         uv.y + sec * uv.w,         0, 0}, {1, 1, 1}, true, {}},
+            {{xOffset + 1,-h, 0}, {uv.x + (age+0.01f) * uv.z, uv.y + sec * uv.w,         0, 0}, {1, 1, 1}, true, {}},
+            {{xOffset + 1, 0, 0}, {uv.x + (age+0.01f) * uv.z, uv.y + (sec+0.10f) * uv.w, 0, 0}, {1, 1, 1}, true, {}},
+            {{xOffset,     0, 0}, {uv.x + age * uv.z,         uv.y + (sec+0.10f) * uv.w, 0, 0}, {1, 1, 1}, true, {}},
         };
 
         vertices.insert(vertices.end(), columnVerts.begin(), columnVerts.end());

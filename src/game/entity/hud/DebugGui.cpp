@@ -3,6 +3,7 @@
 //
 
 #include "DebugGui.h"
+#include "../../../def/texture/Font.h"
 
 DebugGui::DebugGui(glm::vec2 bufferSize, TextureAtlas& atlas) :
     displayMode(0) {
@@ -11,42 +12,43 @@ DebugGui::DebugGui(glm::vec2 bufferSize, TextureAtlas& atlas) :
     auto genericHistogramRef = atlas.getTextureRef("histogram_white");
     auto fontRef = atlas.getTextureRef("font");
 
+    Font f(atlas, fontRef);
+
     auto crosshairText = std::make_shared<GUIText>("crosshairText");
-    crosshairText->create({2, 2}, {}, {0.1, 0.1, 0.1, 0.3}, {}, fontRef);
+    crosshairText->create({2, 2}, {}, {0.2, 0.2, 0.2, 0.5}, {1, 1, 1, 1}, f);
     add(crosshairText);
 
     auto dataText = std::make_shared<GUIText>("dataText");
-    dataText->create({2, 2}, {}, {0.1, 0.1, 0.1, 0.3}, {}, fontRef);
+    dataText->create({2, 2}, {}, {0.2, 0.2, 0.2, 0.5}, {1, 1, 1, 1}, f);
     add(dataText);
 
-
     auto interpGraph = std::make_shared<GUILabelledGraph>("interpGraph");
-    interpGraph->create({244, 64}, {}, "Interp", 120, 128, genericHistogramRef, fontRef);
+    interpGraph->create({244, 64}, {}, "Interp", 120, 128, genericHistogramRef, f);
     add(interpGraph);
 
     auto meshGraph = std::make_shared<GUILabelledGraph>("meshGraph");
-    meshGraph->create({244, 64}, {}, "Mesh", 120, 128, genericHistogramRef, fontRef);
+    meshGraph->create({244, 64}, {}, "Mesh", 120, 128, genericHistogramRef, f);
     add(meshGraph);
 
     auto genGraph = std::make_shared<GUILabelledGraph>("genGraph");
-    genGraph->create({244, 64}, {}, "Gen", 120, 512, genericHistogramRef, fontRef);
+    genGraph->create({244, 64}, {}, "Gen", 120, 512, genericHistogramRef, f);
     add(genGraph);
 
     auto packetGraph = std::make_shared<GUILabelledGraph>("packetGraph");
-    packetGraph->create({244, 64}, {}, "Packets", 120, 512, genericHistogramRef, fontRef);
+    packetGraph->create({244, 64}, {}, "Packets", 120, 512, genericHistogramRef, f);
     add(packetGraph);
 
 
     auto fpsGraph = std::make_shared<GUILabelledGraph>("fpsGraph");
-    fpsGraph->create({244, 64}, {}, "FPS", 120, 60, fpsHistogramRef, fontRef);
+    fpsGraph->create({244, 64}, {}, "FPS", 120, 60, fpsHistogramRef, f);
     add(fpsGraph);
 
     auto drawsGraph = std::make_shared<GUILabelledGraph>("drawsGraph");
-    drawsGraph->create({244, 64}, {}, "Draw Calls", 120, 0, genericHistogramRef, fontRef);
+    drawsGraph->create({244, 64}, {}, "Draw Calls", 120, 0, genericHistogramRef, f);
     add(drawsGraph);
 
     auto gpuGraph = std::make_shared<GUILabelledGraph>("gpuGraph");
-    gpuGraph->create({244, 64}, {}, "GPU", 120, 1, genericHistogramRef, fontRef);
+    gpuGraph->create({244, 64}, {}, "GPU", 120, 1, genericHistogramRef, f);
     add(gpuGraph);
 
     positionElements(bufferSize);
@@ -97,7 +99,7 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
     { //Top-left Data
         glm::vec3 footPos = TransPos::roundPos(player.getPos()) + glm::vec3(0, -2, 0);
 
-        int blockID = world.getBlock(footPos);
+        unsigned int blockID = world.getBlock(footPos);
         std::string on = defs.defs().fromId(blockID).identifier;
 
         glm::vec3 playerPos = TransPos::roundPos(player.getPos());
@@ -114,12 +116,12 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
 
         auto thing = player.getPointedThing();
         std::string face =
-            (thing.face == TOP)    ? "TOP" :
+            (thing.face == TOP)    ? "TOP"    :
             (thing.face == BOTTOM) ? "BOTTOM" :
-            (thing.face == LEFT)   ? "LEFT" :
-            (thing.face == RIGHT)  ? "RIGHT" :
-            (thing.face == FRONT)  ? "FRONT" :
-            (thing.face == BACK)   ? "BACK" :
+            (thing.face == LEFT)   ? "LEFT"   :
+            (thing.face == RIGHT)  ? "RIGHT"  :
+            (thing.face == FRONT)  ? "FRONT"  :
+            (thing.face == BACK)   ? "BACK"   :
             "NONE";
 
         std::ostringstream str;
@@ -143,7 +145,7 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
 
         str << "Standing On: " << on << std::endl << std::endl;
 
-        if (thing.blockDef != nullptr) str << "Pointing At: " << thing.blockDef->identifier << ", " << std::endl;
+        if (thing.blockDef != nullptr) str << "Pointing At: " << thing.blockDef->identifier << std::endl;
         str << "Pointed Position: " << vecToString(thing.pos) << std::endl;
         str << "Pointed Face: " << face << std::endl;
 

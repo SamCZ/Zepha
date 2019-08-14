@@ -223,7 +223,6 @@ std::shared_ptr<AtlasRef> TextureAtlas::generateCrackImage(std::string &name, un
     RawTexData crack = getSubImageBytes(crackStr);
 
     for (int i = 0; i < base.width * base.height; i++) {
-//        float alpha = crack.data[i * 4 + 3] / 255.f * (crackLevel / 16.f + 0.5f);
         float alpha = crack.data[i * 4 + 3] / 255.f;
         
         base.data[i * 4 + 0] = static_cast<unsigned char>(base.data[i * 4 + 0] * (1 - alpha) + crack.data[i * 4 + 0] * alpha);
@@ -241,6 +240,14 @@ std::shared_ptr<AtlasRef> TextureAtlas::generateCrackImage(std::string &name, un
 
 Texture &TextureAtlas::getAtlasTexture() {
     return t;
+}
+
+const unsigned char *TextureAtlas::getAtlasData() {
+    return atlasData;
+}
+
+glm::vec2 TextureAtlas::getAtlasSize() {
+    return {pageWidth, pageHeight};
 }
 
 std::shared_ptr<AtlasRef> TextureAtlas::getTextureRef(const std::string &name) {

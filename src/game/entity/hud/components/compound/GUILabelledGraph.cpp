@@ -8,14 +8,13 @@ GUILabelledGraph::GUILabelledGraph(const std::string &key) : GUIContainer(key) {
 
 void GUILabelledGraph::create(glm::vec2 scale, glm::vec4 padding, const std::string &title,
     unsigned int graphLength, unsigned int graphScale,
-    std::shared_ptr <AtlasRef> graphTextureRef, std::shared_ptr <AtlasRef> fontTextureRef) {
+    std::shared_ptr <AtlasRef> graphTextureRef, Font font) {
 
     this->scale = scale;
     this->padding = padding;
     this->title = title;
-
+    this->font = std::move(font);
     this->graphTextureRef = std::move(graphTextureRef);
-    this->fontTextureRef = std::move(fontTextureRef);
 
     auto background = std::make_shared<GUIRect>("background");
     background->create(scale, {}, {0.1, 0.1, 0.1, 0.2}, {0.1, 0.1, 0.1, 0.2}, {0.1, 0.1, 0.1, 0.7}, {0.1, 0.1, 0.1, 0.7});
@@ -28,7 +27,7 @@ void GUILabelledGraph::create(glm::vec2 scale, glm::vec4 padding, const std::str
     graph->setPos({GRAPH_PAD_X, GRAPH_PAD_Y});
 
     auto label = std::make_shared<GUIText>("label");
-    label->create({2, 2}, {}, {}, {}, this->fontTextureRef);
+    label->create({2, 2}, {}, {}, {1, 1, 1, 1}, this->font);
     add(label);
     label->setPos({TEXT_PAD_X, TEXT_PAD_Y});
 

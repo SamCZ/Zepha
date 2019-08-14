@@ -1,7 +1,7 @@
 zeus.register_block("default:bush_stem", {
     visible = true,
     culls = false,
-    name = "Stem",
+    name = "Bush Stem",
     model = "default:crosslarge",
     textures = {
         "zeus:default:bush_stem"

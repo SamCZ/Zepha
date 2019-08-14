@@ -62,7 +62,7 @@ void BlockCrackEntity::addFaces(unsigned int &indOffset, std::vector<EntityVerte
             pushed_pos += glm::normalize(vertex.nml) * 0.003f;
             glm::vec4 tex = {uv.x + (uv.z - uv.x) * vertex.texUVs.x, uv.y + ((uv.w - uv.y) * vertex.texUVs.y), 0, 0};
 
-            vertices.push_back({pushed_pos, tex, 1, vertex.nml});
+            vertices.push_back({pushed_pos, tex, {1, 1, 1}, true, vertex.nml});
         }
 
         for (unsigned int index : mp.indices) {

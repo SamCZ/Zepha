@@ -25,6 +25,8 @@ public:
     void update();
 
     Texture& getAtlasTexture();
+    const unsigned char* getAtlasData();
+    glm::vec2 getAtlasSize();
 
     std::shared_ptr<AtlasRef> addImage(unsigned char *data, std::string name, bool base, int texWidth, int texHeight);
     std::shared_ptr<AtlasRef> generateCrackImage(std::string &name, unsigned short crackLevel);

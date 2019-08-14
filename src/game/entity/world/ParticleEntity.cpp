@@ -31,10 +31,10 @@ ParticleEntity::ParticleEntity(glm::vec3 pos, BlockDef &block) {
     uv += glm::vec4(offX, offY, offX, offY);
 
     std::vector<EntityVertex> vertices {
-        {{-0.05, -0.05, 0}, {uv.x, uv.w, 0, 0}, true, {0, 0, 1}},
-        {{-0.05,  0.05, 0}, {uv.x, uv.y, 0, 0}, true, {0, 0, 1}},
-        {{ 0.05,  0.05, 0}, {uv.z, uv.y, 0, 0}, true, {0, 0, 1}},
-        {{ 0.05, -0.05, 0}, {uv.z, uv.w, 0, 0}, true, {0, 0, 1}},
+        {{-0.05, -0.05, 0}, {uv.x, uv.w, 0, 0}, {1, 1, 1}, true, {0, 0, 1}},
+        {{-0.05,  0.05, 0}, {uv.x, uv.y, 0, 0}, {1, 1, 1}, true, {0, 0, 1}},
+        {{ 0.05,  0.05, 0}, {uv.z, uv.y, 0, 0}, {1, 1, 1}, true, {0, 0, 1}},
+        {{ 0.05, -0.05, 0}, {uv.z, uv.w, 0, 0}, {1, 1, 1}, true, {0, 0, 1}},
     };
     std::vector<unsigned int> indices {
         0, 1, 2, 2, 3, 0,

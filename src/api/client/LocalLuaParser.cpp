@@ -7,20 +7,20 @@
 #include "../../def/LocalDefs.h"
 #include "../../game/entity/hud/GameGui.h"
 
-#include "modules/cDump.h"
-#include "modules/cPrintE.h"
+#include "../modules/cDump.h"
+#include "../modules/cPrintE.h"
 
-#include "modules/cIsServer.h"
-#include "modules/cDelay.h"
+#include "../modules/cIsServer.h"
+#include "../modules/cDelay.h"
 
-#include "modules/cRegisterBlock.h"
-#include "modules/cRegisterBlockmodel.h"
+#include "../modules/cRegisterBlock.h"
+#include "../modules/cRegisterBlockmodel.h"
 
-#include "modules/cSetBlock.h"
-#include "modules/cGetBlock.h"
-#include "modules/cRemoveBlock.h"
+#include "../modules/cSetBlock.h"
+#include "../modules/cGetBlock.h"
+#include "../modules/cRemoveBlock.h"
 
-#include "modules/cShowMenu.h"
+#include "../modules/cShowMenu.h"
 
 void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world, GameGui& gui) {
     //Load Base Libraries

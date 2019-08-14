@@ -29,11 +29,13 @@ void EntityMesh::create(const std::vector<EntityVertex>& vertices, const std::ve
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
+    glEnableVertexAttribArray(4);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_ENTITY(position));
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_ENTITY(colorData));
-    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_ENTITY(useTex));
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_ENTITY(normal));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_ENTITY(colorBlend));
+    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_ENTITY(useTex));
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_ENTITY(normal));
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);

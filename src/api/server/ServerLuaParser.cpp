@@ -8,18 +8,18 @@
 #include "ServerRegisterBlocks.h"
 #include "../../def/ServerDefs.h"
 
-#include "modules/sDump.h"
-#include "modules/sPrintE.h"
+#include "../modules/sDump.h"
+#include "../modules/sPrintE.h"
 
-#include "modules/sIsServer.h"
-#include "modules/sDelay.h"
+#include "../modules/sIsServer.h"
+#include "../modules/sDelay.h"
 
-#include "modules/sRegisterBlock.h"
-#include "modules/sRegisterBlockmodel.h"
+#include "../modules/sRegisterBlock.h"
+#include "../modules/sRegisterBlockmodel.h"
 
-#include "modules/sSetBlock.h"
-#include "modules/sGetBlock.h"
-#include "modules/sRemoveBlock.h"
+#include "../modules/sSetBlock.h"
+#include "../modules/sGetBlock.h"
+#include "../modules/sRemoveBlock.h"
 
 void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world, std::string path) {
     //Load Base Libraries

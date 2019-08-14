@@ -10,8 +10,10 @@ ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
 
     state.renderer.setClearColor(10, 10, 10);
 
+    Font f(state.defs.textures(), state.defs.textures().getTextureRef("font"));
+
     auto statusText = std::make_shared<GUIText>("statusText");
-    statusText->create({2, 2}, {}, {}, {}, state.defs.textures().getTextureRef("font"));
+    statusText->create({2, 2}, {}, {}, {1, 1, 1, 1}, f);
     statusText->setText("Connecting...");
     statusText->setPos({32, 24});
     components.add(statusText);

@@ -10,11 +10,11 @@ ServerDefinitionAtlas::ServerDefinitionAtlas() {
     nullModel.culls = false;
 
     //Invalid Node
-    BlockDef* invalid = new BlockDef("invalid", INVALID, "Invalid (you broke the game)", nullModel, true, {{0, 0, 0}, {1, 1, 1}});
+    BlockDef* invalid = new BlockDef("invalid", INVALID, "Invalid (you broke the game!)", nullModel, true, {});
     registerDef(invalid);
 
     //Air Node
-    BlockDef* air = new BlockDef("air", AIR, "Air", nullModel, false, {{0, 0, 0}, {1, 1, 1}});
+    BlockDef* air = new BlockDef("air", AIR, "Air", nullModel, false, {});
     registerDef(air);
 }
 

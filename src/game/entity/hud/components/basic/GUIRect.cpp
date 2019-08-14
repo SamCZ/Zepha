@@ -15,8 +15,8 @@ void GUIRect::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 color) {
     this->padding = padding;
 
     std::vector<EntityVertex> vertices {
-            {{0, 0, 0}, {color}, false, {}}, {{0, 1, 0}, {color}, false, {}},
-            {{1, 1, 0}, {color}, false, {}}, {{1, 0, 0}, {color}, false, {}}
+            {{0, 0, 0}, {color}, {1, 1, 1}, false, {}}, {{0, 1, 0}, {color}, {1, 1, 1}, false, {}},
+            {{1, 1, 0}, {color}, {1, 1, 1}, false, {}}, {{1, 0, 0}, {color}, {1, 1, 1}, false, {}}
     };
     std::vector<unsigned int> indices {0, 1, 2, 2, 3, 0};
 
@@ -35,8 +35,8 @@ void GUIRect::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 tl, glm::vec4
     this->padding = padding;
 
     std::vector<EntityVertex> vertices {
-            {{0, 0, 0}, tl, false, {}}, {{0, 1, 0}, bl, false, {}},
-            {{1, 1, 0}, br, false, {}}, {{1, 0, 0}, tr, false, {}}
+            {{0, 0, 0}, tl, {1, 1, 1}, false, {}}, {{0, 1, 0}, bl, {1, 1, 1}, false, {}},
+            {{1, 1, 0}, br, {1, 1, 1}, false, {}}, {{1, 0, 0}, tr, {1, 1, 1}, false, {}}
     };
     std::vector<unsigned int> indices {0, 1, 2, 2, 3, 0};
 
@@ -56,10 +56,10 @@ void GUIRect::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<AtlasRe
     this->texture = std::move(texture);
 
     std::vector<EntityVertex> vertices {
-            {{0, 0, 0}, {this->texture->uv.x, this->texture->uv.y, 0, 0}, true, {}},
-            {{0, 1, 0}, {this->texture->uv.x, this->texture->uv.w, 0, 0}, true, {}},
-            {{1, 1, 0}, {this->texture->uv.z, this->texture->uv.w, 0, 0}, true, {}},
-            {{1, 0, 0}, {this->texture->uv.z, this->texture->uv.y, 0, 0}, true, {}}
+            {{0, 0, 0}, {this->texture->uv.x, this->texture->uv.y, 0, 0}, {1, 1, 1}, true, {}},
+            {{0, 1, 0}, {this->texture->uv.x, this->texture->uv.w, 0, 0}, {1, 1, 1}, true, {}},
+            {{1, 1, 0}, {this->texture->uv.z, this->texture->uv.w, 0, 0}, {1, 1, 1}, true, {}},
+            {{1, 0, 0}, {this->texture->uv.z, this->texture->uv.y, 0, 0}, {1, 1, 1}, true, {}}
     };
     std::vector<unsigned int> indices {0, 1, 2, 2, 3, 0};
 

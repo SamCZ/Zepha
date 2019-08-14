@@ -5,13 +5,13 @@
 #ifndef ZEUS_CSHOWMENU_H
 #define ZEUS_CSHOWMENU_H
 
-#include "../../../def/LocalDefs.h"
-#include "../../../game/scene/world/LocalWorld.h"
-#include "../../../game/entity/hud/GameGui.h"
-#include "../../../game/entity/hud/components/GUIComponent.h"
-#include "../../../game/entity/hud/components/basic/GUIContainer.h"
-#include "../../../game/entity/hud/components/basic/GUIText.h"
-#include "../../../game/entity/hud/components/basic/GUIRect.h"
+#include "../../def/LocalDefs.h"
+#include "../../game/scene/world/LocalWorld.h"
+#include "../../game/entity/hud/GameGui.h"
+#include "../../game/entity/hud/components/GUIComponent.h"
+#include "../../game/entity/hud/components/basic/GUIContainer.h"
+#include "../../game/entity/hud/components/basic/GUIText.h"
+#include "../../game/entity/hud/components/basic/GUIRect.h"
 #include <sol2/sol.hpp>
 
 const static float scale_modifier = 3;
@@ -119,7 +119,7 @@ void processElement(LocalDefs& defs, sol::table& element, std::shared_ptr<GUICom
         std::string contents = element.get<std::string>("contents");
 
         std::shared_ptr<GUIText> text = std::make_shared<GUIText>(key);
-        text->create(scale, padding, bgcolor, color, defs.textures().getTextureRef("font"));
+        text->create(scale, padding, bgcolor, color, {defs.textures(), defs.textures().getTextureRef("font")});
         text->setText(contents);
         component = text;
         text->setPos(pos);

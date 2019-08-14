@@ -10,12 +10,12 @@ LocalDefinitionAtlas::LocalDefinitionAtlas() {
     nullModel.culls = false;
 
     //Invalid Node
-    BlockDef* invalid = new BlockDef("invalid", 0, "Invalid (you broke the game)", nullModel, true, {{0, 0, 0}, {1, 1, 1}});
+    BlockDef* invalid = new BlockDef("invalid", 0, "Invalid (you broke the game!)", nullModel, true, {});
     defs.push_back(invalid);
     defTable.insert({"invalid", 0});
 
     //Air Node
-    BlockDef* air = new BlockDef("air", 0, "Air", nullModel, false, {{0, 0, 0}, {1, 1, 1}});
+    BlockDef* air = new BlockDef("air", 0, "Air", nullModel, false, {});
     defs.push_back(air);
     defTable.insert({"air", 1});
 }

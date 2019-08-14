@@ -5,8 +5,8 @@
 #ifndef ZEUS_CREMOVEBLOCK_H
 #define ZEUS_CREMOVEBLOCK_H
 
-#include "../../../def/LocalDefs.h"
-#include "../../../game/scene/world/LocalWorld.h"
+#include "../../def/LocalDefs.h"
+#include "../../game/scene/world/LocalWorld.h"
 #include <sol2/sol.hpp>
 
 namespace ClientApi {

@@ -138,21 +138,21 @@ set(ZEUS_SRC_FILES
         util/Path.h
         util/Log.h
         api/Callback.h
-        api/client/modules/cRegisterBlock.h
-        api/client/modules/cDelay.h
+        api/modules/cRegisterBlock.h
+        api/modules/cDelay.h
         game/graph/uniform/WorldGeometryUniforms.h
         game/graph/GuiUniforms.h
         game/graph/uniform/WorldLightingUniforms.h
         game/graph/EntityMesh.cpp
         game/graph/EntityMesh.h
         game/graph/uniform/EntityGeometryUniforms.h
-        api/client/modules/cRegisterBlockmodel.h
-        api/client/modules/cSetBlock.h
-        api/client/modules/cGetBlock.h
-        api/client/modules/cRemoveBlock.h
-        api/client/modules/cDump.h
-        api/client/modules/cIsServer.h
-        api/client/modules/cPrintE.h
+        api/modules/cRegisterBlockmodel.h
+        api/modules/cSetBlock.h
+        api/modules/cGetBlock.h
+        api/modules/cRemoveBlock.h
+        api/modules/cDump.h
+        api/modules/cIsServer.h
+        api/modules/cPrintE.h
         api/client/LocalRegisterBlocks.cpp
         api/client/LocalRegisterBlocks.h
         api/server/ServerRegisterBlocks.cpp
@@ -172,7 +172,7 @@ set(ZEUS_SRC_FILES
         game/entity/hud/components/GUIComponent.h
         game/entity/hud/components/basic/GUIContainer.cpp
         game/entity/hud/components/basic/GUIContainer.h
-        api/client/modules/cShowMenu.h
+        api/modules/cShowMenu.h
         api/LuaModFile.h
         api/LuaMod.h
         api/LuaModConfig.h
@@ -181,6 +181,6 @@ set(ZEUS_SRC_FILES
         api/LuaMod.cpp
         def/ItemDef.h
         def/DefinitionAtlas.cpp
-        def/block/BlockModel.h)
+        def/block/BlockModel.h api/modules/sRegisterItem.h def/texture/Font.cpp def/texture/Font.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

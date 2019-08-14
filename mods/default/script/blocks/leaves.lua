@@ -1,7 +1,7 @@
-zeus.register_block('default:leaves', {
+zeus.register_block("default:leaves", {
     visible = true,
     culls = false,
-    name = "Log",
+    name = "Leaves",
     model = "default:leaflike",
     textures = {
         "zeus:default:leaves",

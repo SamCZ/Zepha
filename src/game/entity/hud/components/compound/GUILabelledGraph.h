@@ -19,7 +19,7 @@ public:
 
     void create(glm::vec2 scale, glm::vec4 padding, const std::string& title,
                 unsigned int graphLength, unsigned int graphScale,
-                std::shared_ptr<AtlasRef> graphTextureRef, std::shared_ptr<AtlasRef> fontTextureRef);
+                std::shared_ptr<AtlasRef> graphTextureRef, Font font);
 
     void pushValue(float value);
 private:
@@ -28,7 +28,7 @@ private:
     std::string title;
 
     std::shared_ptr<AtlasRef> graphTextureRef;
-    std::shared_ptr<AtlasRef> fontTextureRef;
+    Font font;
 
     int ind = 0;
     float history[5] {};
