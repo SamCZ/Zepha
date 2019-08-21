@@ -1,7 +1,7 @@
 # Zeus Voxel Engine
 
 [![Codacy Rating](https://img.shields.io/codacy/grade/fb6fa8dbb8254a91a2f4c06fae5f1347.svg?logo=codacy)](https://app.codacy.com/app/Aurailus/Zeus_cpp?utm_source=github.com&utm_medium=referral&utm_content=Aurailus/Zeus_cpp&utm_campaign=Badge_Grade_Settings)
-[![Discord Badge](https://img.shields.io/discord/416379773976051712.svg?color=7289DA&label=discord&logo=discord&logoColor=white)](https://discord.gg/HFTCQ7a)
+[![Discord Badge](https://img.shields.io/discord/416379773976051712.svg?color=7289DA&label=discord&logo=discord&logoColor=white)](https://discord.gg/sT7APUG)
 [![GitHub Commit](https://img.shields.io/github/commit-activity/m/aurailus/zeus_cpp.svg?logo=github&label=commit%20activity)](https://github.com/Aurailus/Zeus_cpp/commits/master)
 
 A highly moddable, fast, extensible C++ Voxel Game. Sounds like all the other ones right? Well - This one's better.
