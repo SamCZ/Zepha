@@ -1,9 +1,8 @@
-#include <utility>
-
 //
 // Created by aurailus on 27/07/19.
 //
 
+#include <utility>
 #include "GUIComponent.h"
 
 GUIComponent::GUIComponent(const std::string& key) :
@@ -11,7 +10,7 @@ GUIComponent::GUIComponent(const std::string& key) :
 
 void GUIComponent::setScale(glm::vec2 scale) {
     this->scale = scale;
-    entity.setScale({scale.x, scale.y, 1});
+    entity.setScale(scale);
 }
 
 glm::vec2 GUIComponent::getScale() {
@@ -29,11 +28,11 @@ glm::vec4 GUIComponent::getPadding() {
 void GUIComponent::setPos(glm::vec2 pos) {
     this->pos = pos;
     if (parent != nullptr) {
-        glm::vec3 parentPos = parent->entity.getPos();
-        pos += glm::vec2{parentPos.x, parentPos.y};
-        pos += glm::vec2{parent->getPadding().w, parent->getPadding().x};
+        glm::vec2 parentPos = parent->entity.getPos();
+        pos += glm::vec2 {parentPos.x, parentPos.y};
+        pos += glm::vec2 {parent->getPadding().w, parent->getPadding().x};
     }
-    entity.setPos({pos.x, pos.y, 0});
+    entity.setPos(pos);
     for (const auto& child : children) {
         child->updatePos();
     }
@@ -76,11 +75,11 @@ void GUIComponent::setVisible(bool visible) {
 void GUIComponent::updatePos() {
     glm::vec2 realPos(pos);
     if (parent != nullptr) {
-        glm::vec3 parentPos = parent->entity.getPos();
-        realPos += glm::vec2{parentPos.x, parentPos.y};
-        realPos += glm::vec2{parent->getPadding().w, parent->getPadding().x};
+        glm::vec2 parentPos = parent->entity.getPos();
+        realPos += glm::vec2 {parentPos.x, parentPos.y};
+        realPos += glm::vec2 {parent->getPadding().w, parent->getPadding().x};
     }
-    entity.setPos({realPos.x, realPos.y, 0});
+    entity.setPos(realPos);
     for (const auto& child : children) {
         child->updatePos();
     }

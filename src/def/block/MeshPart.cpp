@@ -4,7 +4,7 @@
 
 #include "MeshPart.h"
 
-MeshPart::MeshPart(const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<AtlasRef> texture) :
+MeshPart::MeshPart(const std::vector<BlockModelVertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<AtlasRef> texture) :
     vertices(vertices),
     indices(indices),
     texture(texture) {
@@ -16,9 +16,9 @@ MeshPart::MeshPart(const std::vector<MeshVertex>& vertices, const std::vector<un
     //Iterate through the indices to find all used vertices to add normals and adjust texture coordinates.
     for (int i = 0; i < this->indices.size()/3; i++) {
         //Get the three vertices
-        MeshVertex& p1 = this->vertices[this->indices[i*3]];
-        MeshVertex& p2 = this->vertices[this->indices[i*3 + 1]];
-        MeshVertex& p3 = this->vertices[this->indices[i*3 + 2]];
+        BlockModelVertex& p1 = this->vertices[this->indices[i*3]];
+        BlockModelVertex& p2 = this->vertices[this->indices[i*3 + 1]];
+        BlockModelVertex& p3 = this->vertices[this->indices[i*3 + 2]];
 
         //Get the normal of the formed triangle
         glm::vec3 normal = glm::triangleNormal(p1.pos, p2.pos, p3.pos);
@@ -35,7 +35,7 @@ MeshPart::MeshPart(const std::vector<MeshVertex>& vertices, const std::vector<un
         auto uv = texture->uv;
 
         //Iterate through the vertices to adjust the texture coordinates to fit the textureAtlas.
-        for (MeshVertex &vertex : this->vertices) {
+        for (BlockModelVertex &vertex : this->vertices) {
             //Store the old positions in texUVs
             vertex.texUVs.x = vertex.tex.x;
             vertex.texUVs.y = vertex.tex.y;

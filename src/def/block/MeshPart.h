@@ -16,12 +16,12 @@
 
 #include "ShaderMod.h"
 #include "../texture/TextureAtlas.h"
-#include "../../game/scene/world/graph/MeshVertex.h"
+#include "../../game/scene/world/graph/BlockModelVertex.h"
 
 struct MeshPart {
-    MeshPart(const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<AtlasRef> texture);
+    MeshPart(const std::vector<BlockModelVertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<AtlasRef> texture);
 
-    std::vector<MeshVertex> vertices;
+    std::vector<BlockModelVertex> vertices;
     std::vector<unsigned int> indices;
 
     std::shared_ptr<AtlasRef> texture;

@@ -8,8 +8,7 @@
 
 #include <memory>
 #include <list>
-//#include <unordered_map>
-#include "../../Entity.h"
+#include "../GuiEntity.h"
 
 class GUIComponent : public Drawable {
 public:
@@ -36,20 +35,18 @@ public:
     void remove(std::string key);
 
     void setVisible(bool visible) override;
-
     void draw(Renderer& renderer) override;
 protected:
     std::string key = "";
     GUIComponent* parent = nullptr;
     std::list<std::shared_ptr<GUIComponent>> children;
-//    std::unordered_map<std::string, std::shared_ptr<GUIComponent>> children;
 
     glm::vec2 pos {};
     glm::vec2 scale {};
     glm::vec4 padding {};
     bool visible = true;
 
-    Entity entity;
+    GuiEntity entity;
 private:
     void updatePos();
 };

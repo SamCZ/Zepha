@@ -8,7 +8,7 @@
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 
-struct MeshVertex {
+struct BlockModelVertex {
     glm::vec3 pos;
     glm::vec3 nml;
     glm::vec2 tex;

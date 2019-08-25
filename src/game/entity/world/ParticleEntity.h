@@ -5,8 +5,7 @@
 #ifndef ZEUS_PARTICLEENTITY_H
 #define ZEUS_PARTICLEENTITY_H
 
-
-#include "../Entity.h"
+#include "Entity.h"
 #include "../../../def/block/BlockDef.h"
 
 class ParticleEntity : public Entity {

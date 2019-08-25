@@ -1,8 +1,8 @@
 set(ZEUS_SRC_FILES
         game/graph/ChunkMesh.cpp
         game/graph/ChunkMesh.h
-        game/entity/Entity.cpp
-        game/entity/Entity.h
+        game/entity/world/Entity.cpp
+        game/entity/world/Entity.h
         game/graph/Shader.cpp
         game/graph/Shader.h
         game/graph/window/Window.cpp
@@ -20,7 +20,7 @@ set(ZEUS_SRC_FILES
         def/block/MeshPart.cpp
         def/block/MeshPart.h
         def/block/ShaderMod.h
-        game/scene/world/graph/MeshVertex.h
+        game/scene/world/graph/BlockModelVertex.h
         game/scene/world/LocalWorld.cpp
         game/scene/world/LocalWorld.h
         world/chunk/BlockChunk.cpp
@@ -181,6 +181,20 @@ set(ZEUS_SRC_FILES
         api/LuaMod.cpp
         def/ItemDef.h
         def/DefinitionAtlas.cpp
-        def/block/BlockModel.h api/modules/sRegisterItem.h def/texture/Font.cpp def/texture/Font.h)
+        def/block/BlockModel.h
+        api/modules/sRegisterItem.h
+        def/texture/Font.cpp
+        def/texture/Font.h
+        def/entity/Model.cpp
+        def/entity/Model.h
+        game/graph/EntityVertex.h
+        game/graph/ChunkVertex.h
+        game/graph/Mesh.cpp
+        game/graph/Mesh.h
+        game/graph/GuiMesh.cpp
+        game/graph/GuiMesh.h
+        game/graph/GuiVertex.h
+        game/entity/hud/GuiEntity.cpp
+        game/entity/hud/GuiEntity.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

@@ -8,7 +8,7 @@
 #ifndef GLPROJECT_MESHCHUNK_H
 #define GLPROJECT_MESHCHUNK_H
 
-#include "../../../entity/Entity.h"
+#include "../../../entity/world/Entity.h"
 #include "../../../../util/TransPos.h"
 
 class MeshChunk : Drawable {

@@ -47,7 +47,6 @@ void Server::update() {
                 Packet p(event.packet);
                 ServerClient* client = static_cast<ServerClient*>(event.peer->data);
 
-                std::cout << "Recieve from " << client << std::endl;
                 if (client->hasPlayer()) {
                     handlePlayerPacket(*client, p);
                 }

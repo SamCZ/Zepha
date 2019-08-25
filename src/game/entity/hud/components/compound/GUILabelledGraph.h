@@ -5,7 +5,7 @@
 #ifndef ZEUS_STATGRAPH_H
 #define ZEUS_STATGRAPH_H
 
-#include "../../../Entity.h"
+#include "../../../world/Entity.h"
 #include "../../../../../util/Util.h"
 #include "../basic/GUIRect.h"
 #include "../basic/GUIGraph.h"

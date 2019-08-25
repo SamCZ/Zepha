@@ -57,7 +57,7 @@ void BlockCrackEntity::addFaces(unsigned int &indOffset, std::vector<EntityVerte
 
         crackedFaces.push_back(ref);
 
-        for (const MeshVertex &vertex : mp.vertices) {
+        for (const BlockModelVertex &vertex : mp.vertices) {
             glm::vec3 pushed_pos = vertex.pos;
             pushed_pos += glm::normalize(vertex.nml) * 0.003f;
             glm::vec4 tex = {uv.x + (uv.z - uv.x) * vertex.texUVs.x, uv.y + ((uv.w - uv.y) * vertex.texUVs.y), 0, 0};

@@ -28,13 +28,14 @@ set (DYNAMIC_LIBRARY_HEADERS
         lib/dynamic/enet/include       # ENet headers.
         lib/dynamic/noise/include      # Noise headers.
         lib/dynamic/lua5.3/include     # Lua headers.
+        lib/dynamic/assimp/include     # Assimp headers.
 )
 
 include_directories (${DYNAMIC_LIBRARY_HEADERS})
 
 # Add source files to the executable as a library
 add_subdirectory (src)
-add_executable (${MAIN_EXEC_NAME} src/Main.cpp)
+add_executable (${MAIN_EXEC_NAME} src/Main.cpp src/StartGame.h)
 target_link_libraries (${MAIN_EXEC_NAME} zeusCore)
 
 # Include OpenGL
@@ -42,7 +43,7 @@ find_package (OpenGL REQUIRED)
 target_link_libraries(${MAIN_EXEC_NAME} ${OPENGL_gl_LIBRARY})
 
 # Build and include GLFW
-find_package (glfw3 REQUIRED)
+#find_package (glfw3 REQUIRED)
 set (GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set (GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set (GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -55,7 +56,7 @@ find_package (GLEW REQUIRED)
 target_link_libraries (${MAIN_EXEC_NAME} ${GLEW_LIBRARIES})
 
 # Include the other dynamic libraries - End goal would be to build these at compile time
-set (ZEUS_LIBRARIES pthread lua5.3 z enet noise)
+set (ZEUS_LIBRARIES pthread lua5.3 z enet noise assimp)
 
 target_link_libraries (${MAIN_EXEC_NAME} ${ZEUS_LIBRARIES})
 

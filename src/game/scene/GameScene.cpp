@@ -3,6 +3,7 @@
 //
 
 #include "GameScene.h"
+#include "../../def/entity/Model.h"
 
 GameScene::GameScene(ClientState& state) : Scene(state),
     defs(state.defs),
@@ -24,6 +25,13 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     gui.push_back(&debugGui);
 
     entities.push_back(&player);
+
+    Model m;
+    m.create("/home/aurailus/Zepha/mods/default/models/player.b3d", defs.textures(), "zeus:default:player");
+    EntityMesh* mesh = new EntityMesh(m.meshes[0]);
+    Entity* e = new Entity(mesh);
+    e->setScale(1.f/16.f);
+    entities.push_back(e);
 
     server.init(entities, &world);
 

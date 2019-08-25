@@ -6,7 +6,7 @@
 #define ZEUS_WIREFRAMEGENERATOR_H
 
 #include <glm/vec3.hpp>
-#include "../Entity.h"
+#include "Entity.h"
 #include "../../../def/block/SelectionBox.h"
 
 class WireframeEntity : public Entity {

@@ -4,73 +4,35 @@
 
 #include "EntityMesh.h"
 
-EntityMesh::EntityMesh() {
-    VAO = 0;
-    VBO = 0;
-    IBO = 0;
-    indCount = 0;
+EntityMesh::EntityMesh(const EntityMesh &o) :
+    vertices(o.vertices),
+    indices(o.indices) {
+    this->indCount = o.indCount;
+    if (indCount > 0) initModel();
 }
 
 void EntityMesh::create(const std::vector<EntityVertex>& vertices, const std::vector<unsigned int>& indices) {
-    this->indCount = (int)indices.size();
+    indCount = static_cast<GLsizei>(indices.size());
+    this->vertices = vertices;
+    this->indices = indices;
 
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-    glGenBuffers(1, &IBO);
+    initModel();
+}
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indCount * sizeof(unsigned int), &indices.front(), GL_STATIC_DRAW);
+void EntityMesh::initModel() {
 
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(EntityVertex), &vertices.front(), GL_STATIC_DRAW);
+    genArrays(static_cast<unsigned int>(vertices.size() * sizeof(EntityMesh)),
+              static_cast<unsigned int>(indices.size() * sizeof(unsigned int)),
+              &vertices.front(), &indices.front());
 
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    glEnableVertexAttribArray(3);
-    glEnableVertexAttribArray(4);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_ENTITY(position));
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_ENTITY(colorData));
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_ENTITY(colorBlend));
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_ENTITY(useTex));
-    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, STRIDE_OFFSET_ENTITY(normal));
+    unsigned int idx = 0;
+    createVertexAttrib(idx++, 3, GL_FLOAT, STRIDE_OFFSET_ENTITY(position));
+    createVertexAttrib(idx++, 4, GL_FLOAT, STRIDE_OFFSET_ENTITY(colorData));
+    createVertexAttrib(idx++, 3, GL_FLOAT, STRIDE_OFFSET_ENTITY(colorBlend));
+    createVertexAttrib(idx++, 1, GL_FLOAT, STRIDE_OFFSET_ENTITY(useTex));
+    createVertexAttrib(idx  , 3, GL_FLOAT, STRIDE_OFFSET_ENTITY(normal));
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
-
-void EntityMesh::draw() {
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-
-    glDrawElements(GL_TRIANGLES, indCount, GL_UNSIGNED_INT, nullptr);
-
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-}
-
-void EntityMesh::cleanup() {
-    if (IBO != 0) {
-        glDeleteBuffers(1, &IBO);
-        IBO = 0;
-    }
-
-    if (VBO != 0) {
-        glDeleteBuffers(1, &VBO);
-        VBO = 0;
-    }
-
-    if (VAO != 0) {
-        glDeleteVertexArrays(1, &VAO);
-        VAO = 0;
-    }
-
-    indCount = 0;
-}
-
-EntityMesh::~EntityMesh() {
-    cleanup();
 }

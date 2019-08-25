@@ -10,36 +10,15 @@ Entity::Entity(EntityMesh* mesh) {
     setMesh(mesh);
 }
 
-Entity::Entity(EntityMesh* mesh, Texture* texture) {
-    setMesh(mesh, texture);
-}
-
 void Entity::setMesh(EntityMesh* myMesh) {
     cleanup();
     this->mesh = myMesh;
 }
 
-void Entity::setMesh(EntityMesh* myMesh, Texture* texture) {
-    cleanup();
-    this->mesh = myMesh;
-    this->texture = texture;
-}
-
-void Entity::setTexture(Texture* texture) {
-    this->texture = texture;
-};
-
-Texture* Entity::getTexture() {
-    return texture;
-}
-
 void Entity::draw(Renderer& renderer) {
     if (visible) {
         auto mm = getModelMatrix();
-
         renderer.setModelMatrix(mm);
-        if (texture != nullptr) renderer.enableTexture(texture);
-
         mesh->draw();
     }
 }

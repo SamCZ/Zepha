@@ -107,7 +107,7 @@ void MeshGenerator::addFaces(const glm::vec3 &offset, const vector<MeshPart> &me
             }
         }
 
-        for (const MeshVertex &vertex : mp.vertices) {
+        for (const BlockModelVertex &vertex : mp.vertices) {
             meshDetails->vertices.push_back({
                    vertex.pos + offset,
                    vertex.tex,

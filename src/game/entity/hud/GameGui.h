@@ -9,7 +9,7 @@
 #include "components/basic/GUIContainer.h"
 #include "../../graph/drawable/DrawableGroup.h"
 #include "../../ClientState.h"
-#include "../Entity.h"
+#include "../world/Entity.h"
 
 class GameGui : public GUIContainer {
 public:

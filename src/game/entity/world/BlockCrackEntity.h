@@ -5,8 +5,7 @@
 #ifndef ZEUS_BLOCKMODELENTITY_H
 #define ZEUS_BLOCKMODELENTITY_H
 
-
-#include "../../../game/entity/Entity.h"
+#include "Entity.h"
 #include "../../../def/LocalDefs.h"
 
 class BlockCrackEntity : public Entity {
@@ -29,6 +28,5 @@ private:
     std::vector<std::shared_ptr<AtlasRef>> crackedFaces;
     LocalDefs& defs;
 };
-
 
 #endif //ZEUS_BLOCKMODELENTITY_H

@@ -6,7 +6,7 @@
 #define ZEUS_PLAYERENTITY_H
 
 #include <memory>
-#include "../../../game/entity/Entity.h"
+#include "Entity.h"
 #include "../../../def/texture/AtlasRef.h"
 
 class PlayerEntity : public Entity {

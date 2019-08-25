@@ -9,23 +9,17 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "../graph/EntityMesh.h"
-#include "../graph/Texture.h"
-#include "../graph/drawable/Drawable.h"
+#include "../../graph/EntityMesh.h"
+#include "../../graph/drawable/Drawable.h"
 
 class Entity : public Drawable {
 public:
     Entity();
     explicit Entity(EntityMesh* mesh);
-    Entity(EntityMesh* mesh, Texture* texture);
 
     void setMesh(EntityMesh* mesh);
-    void setMesh(EntityMesh* mesh, Texture* texture);
 
     void draw(Renderer& renderer) override;
-
-    void setTexture(Texture* texture);
-    Texture* getTexture();
 
     void setPos(glm::vec3 position);
     glm::vec3 getPos();
@@ -49,7 +43,6 @@ protected:
 
 private:
     EntityMesh* mesh = nullptr;
-    Texture* texture = nullptr;
 };
 
 

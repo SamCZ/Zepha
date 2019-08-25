@@ -14,7 +14,7 @@
 #include <vector>
 #include <cstdio>
 
-#include "MeshVertex.h"
+#include "BlockModelVertex.h"
 #include "../MeshDetails.h"
 #include "../../../../world/chunk/BlockChunk.h"
 #include "../../../../def/LocalDefinitionAtlas.h"

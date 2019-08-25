@@ -98,7 +98,7 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& zeus, LocalDefs &defs) {
             if (points.size() % 20 != 0) throw "Points array is ill-formed. (Not a multiple of 20 values)";
 
             //Populate the Vertices and Indices vectors from the points table
-            std::vector<MeshVertex> vertices;
+            std::vector<BlockModelVertex> vertices;
             std::vector<unsigned int> indices;
 
             for (int i = 1; i <= points.size()/5; i++) {

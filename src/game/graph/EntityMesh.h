@@ -5,35 +5,21 @@
 #ifndef ZEUS_ENTITYMESH_H
 #define ZEUS_ENTITYMESH_H
 
-#include <glew/glew.h>
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
 #include <vector>
+#include "Mesh.h"
+#include "EntityVertex.h"
 
-struct EntityVertex {
-    glm::vec3 position;
-    glm::vec4 colorData;
-    glm::vec3 colorBlend;
-    float useTex;
-    glm::vec3 normal;
-};
-
-#define STRIDE_OFFSET_ENTITY(m) sizeof(struct EntityVertex), (void *)offsetof(struct EntityVertex, m)
-
-class EntityMesh {
+class EntityMesh : public Mesh {
 public:
-    EntityMesh();
-
+    EntityMesh() = default;
+    EntityMesh(const EntityMesh& o);
     void create(const std::vector<EntityVertex>& vertices, const std::vector<unsigned int>& indices);
-    void draw();
-    void cleanup();
-
-    ~EntityMesh();
-
+    ~EntityMesh() = default;
 private:
-    GLuint VAO, VBO, IBO;
-    GLsizei indCount;
-};
+    void initModel();
 
+    std::vector<EntityVertex> vertices {};
+    std::vector<unsigned int> indices {};
+};
 
 #endif //ZEUS_ENTITYMESH_H

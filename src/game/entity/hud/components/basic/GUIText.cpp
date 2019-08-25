@@ -18,7 +18,7 @@ void GUIText::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 bgcolor, glm:
     this->bgcolor = bgcolor;
     this->color = color;
 
-    entity.setScale({scale.x, scale.y, 1});
+    entity.setScale(scale);
 
     setText("");
 }
@@ -27,7 +27,7 @@ void GUIText::setText(std::string text) {
     this->text = std::move(text);
     uint indOffset = 0;
 
-    std::vector<EntityVertex> textVertices;
+    std::vector<GuiVertex> textVertices;
     std::vector<unsigned int> textIndices;
 
     //Create background rectangles
@@ -43,11 +43,11 @@ void GUIText::setText(std::string text) {
                 if (lineWidth > 0) {
                     lineWidth += 2;
 
-                    std::vector<EntityVertex> vertices {
-                        {{-1,            yOffset - 1,     0}, bgcolor, {1, 1, 1}, false, {}},
-                        {{-1,            yOffset + h + 1, 0}, bgcolor, {1, 1, 1}, false, {}},
-                        {{lineWidth + 1, yOffset + h + 1, 0}, bgcolor, {1, 1, 1}, false, {}},
-                        {{lineWidth + 1, yOffset - 1,     0}, bgcolor, {1, 1, 1}, false, {}},
+                    std::vector<GuiVertex> vertices {
+                        {{-1,            yOffset - 1    }, bgcolor, {1, 1, 1}, false},
+                        {{-1,            yOffset + h + 1}, bgcolor, {1, 1, 1}, false},
+                        {{lineWidth + 1, yOffset + h + 1}, bgcolor, {1, 1, 1}, false},
+                        {{lineWidth + 1, yOffset - 1    }, bgcolor, {1, 1, 1}, false},
                     };
                     std::vector<uint> indices {
                         indOffset,
@@ -112,11 +112,11 @@ void GUIText::setText(std::string text) {
                 yOffset -= 1;
             }
 
-            std::vector<EntityVertex> vertices{
-                    {{xOffset,             yOffset,     0}, {charUVs.x, charUVs.y, 0, 0}, color, true, {}},
-                    {{xOffset,             yOffset + h, 0}, {charUVs.x, charUVs.w, 0, 0}, color, true, {}},
-                    {{xOffset + charWidth, yOffset + h, 0}, {charUVs.z, charUVs.w, 0, 0}, color, true, {}},
-                    {{xOffset + charWidth, yOffset,     0}, {charUVs.z, charUVs.y, 0, 0}, color, true, {}},
+            std::vector<GuiVertex> vertices {
+                    {{xOffset,             yOffset    }, {charUVs.x, charUVs.y, 0, 0}, color, true},
+                    {{xOffset,             yOffset + h}, {charUVs.x, charUVs.w, 0, 0}, color, true},
+                    {{xOffset + charWidth, yOffset + h}, {charUVs.z, charUVs.w, 0, 0}, color, true},
+                    {{xOffset + charWidth, yOffset    }, {charUVs.z, charUVs.y, 0, 0}, color, true},
             };
             std::vector<uint> indices{
                     indOffset,
@@ -136,7 +136,7 @@ void GUIText::setText(std::string text) {
         xOffset += charWidth;
     }
 
-    auto m = new EntityMesh();
+    auto m = new GuiMesh();
     m->create(textVertices, textIndices);
     entity.setMesh(m);
 }
