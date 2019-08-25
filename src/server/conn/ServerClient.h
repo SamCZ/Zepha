@@ -2,8 +2,7 @@
 // Created by aurailus on 07/02/19.
 //
 
-#ifndef ZEUS_SERVERPEER_H
-#define ZEUS_SERVERPEER_H
+#pragma once
 
 #include <enet/enet.h>
 #include "ServerPlayer.h"
@@ -29,5 +28,3 @@ private:
 
     unsigned int connectID;
 };
-
-#endif //ZEUS_SERVERPEER_H

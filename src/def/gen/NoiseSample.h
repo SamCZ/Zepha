@@ -2,8 +2,7 @@
 // Created by aurailus on 15/02/19.
 //
 
-#ifndef ZEUS_NOISESAMPLE_H
-#define ZEUS_NOISESAMPLE_H
+#pragma once
 
 #include <vector>
 #include <iostream>
@@ -26,5 +25,3 @@ private:
     int vPrecision;
 };
 
-
-#endif //ZEUS_NOISESAMPLE_H

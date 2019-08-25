@@ -2,8 +2,7 @@
 // Created by aurailus on 18/04/19.
 //
 
-#ifndef ZEUS_MAPBLOCK_H
-#define ZEUS_MAPBLOCK_H
+#pragma once
 
 #include <glm/vec3.hpp>
 #include <array>
@@ -25,5 +24,3 @@ private:
     const static int arrayLength = TransPos::MAPBLOCK_SIZE * TransPos::MAPBLOCK_SIZE * TransPos::MAPBLOCK_SIZE;
     std::array<std::shared_ptr<BlockChunk>, arrayLength> blockChunks;
 };
-
-#endif //ZEUS_MAPBLOCK_H

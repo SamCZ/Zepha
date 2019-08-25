@@ -2,8 +2,7 @@
 // Created by aurailus on 08/04/19.
 //
 
-#ifndef ZEUS_WIREFRAMEGENERATOR_H
-#define ZEUS_WIREFRAMEGENERATOR_H
+#pragma once
 
 #include <glm/vec3.hpp>
 #include "Entity.h"
@@ -27,5 +26,3 @@ private:
     float width = 0.5;
     int indOffset = 0;
 };
-
-#endif //ZEUS_WIREFRAMEGENERATOR_H

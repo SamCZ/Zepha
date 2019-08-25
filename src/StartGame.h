@@ -2,8 +2,7 @@
 // Created by aurailus on 22/08/19.
 //
 
-#ifndef ZEUS_STARTGAME_H
-#define ZEUS_STARTGAME_H
+#pragma once
 
 #include "game/Client.h"
 #include "server/Server.h"
@@ -93,5 +92,3 @@ int StartGame(int argc, char* argv[]) {
     return 0;
 };
 
-
-#endif //ZEUS_STARTGAME_H

@@ -2,8 +2,7 @@
 // Created by aurailus on 13/02/19.
 //
 
-#ifndef ZEUS_MAPGENJOB_H
-#define ZEUS_MAPGENJOB_H
+#pragma once
 
 #include <vector>
 #include <glm/vec3.hpp>
@@ -28,5 +27,3 @@ struct MapGenJob {
         depthFloat = std::vector<float>((unsigned long)pow(TransPos::CHUNK_SIZE, 3));
     }
 };
-
-#endif //ZEUS_MAPGENJOB_H

@@ -2,8 +2,7 @@
 // Created by aurailus on 28/06/19.
 //
 
-#ifndef ZEUS_CGETBLOCK_H
-#define ZEUS_CGETBLOCK_H
+#pragma once
 
 #include "../../def/LocalDefs.h"
 #include "../../game/scene/world/LocalWorld.h"
@@ -20,5 +19,3 @@ namespace ClientApi {
         });
     }
 }
-
-#endif //ZEUS_CGETBLOCK_H

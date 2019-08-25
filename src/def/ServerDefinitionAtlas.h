@@ -2,8 +2,7 @@
 // Created by aurailus on 10/06/19.
 //
 
-#ifndef ZEUS_SERVERBLOCKATLAS_H
-#define ZEUS_SERVERBLOCKATLAS_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -17,5 +16,3 @@ public:
     ServerDefinitionAtlas();
     void registerDef(ItemDef* def) override;
 };
-
-#endif //ZEUS_SERVERBLOCKATLAS_H

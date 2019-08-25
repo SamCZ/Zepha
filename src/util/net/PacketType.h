@@ -2,8 +2,7 @@
 // Created by aurailus on 07/07/19.
 //
 
-#ifndef ZEUS_PACKETTYPE_H
-#define ZEUS_PACKETTYPE_H
+#pragma once
 
 enum class PacketType {
     UNDEFINED = 0,
@@ -26,5 +25,3 @@ enum class PacketType {
     BLOCK_SET,
 };
 
-
-#endif //ZEUS_PACKETTYPE_H

@@ -2,8 +2,7 @@
 // Created by aurailus on 08/02/19.
 //
 
-#ifndef ZEUS_PACKETCHANNEL_H
-#define ZEUS_PACKETCHANNEL_H
+#pragma once
 
 enum class PacketChannel {
     UNDEFINED = -1,
@@ -16,5 +15,3 @@ enum class PacketChannel {
     BLOCK,
 };
 
-
-#endif //ZEUS_PACKETCHANNEL_H

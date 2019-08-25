@@ -2,8 +2,7 @@
 // Created by aurailus on 12/06/19.
 //
 
-#ifndef ZEUS_CALLBACK_H
-#define ZEUS_CALLBACK_H
+#pragma once
 
 enum class Callback {
     CONSTRUCT,
@@ -19,5 +18,3 @@ enum class Callback {
     HIT,
     HIT_CLIENT
 };
-
-#endif //ZEUS_CALLBACK_H

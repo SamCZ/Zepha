@@ -2,8 +2,7 @@
 // Created by aurailus on 02/12/18.
 //
 
-#ifndef GLPROJECT_MESHMOD_H
-#define GLPROJECT_MESHMOD_H
+#pragma once
 
 enum class ShaderMod {
     NONE = 0,
@@ -20,5 +19,3 @@ enum class MeshMod {
     OFFSET_Y,
     OFFSET_Z
 };
-
-#endif //GLPROJECT_MESHMOD_H

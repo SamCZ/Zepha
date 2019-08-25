@@ -2,8 +2,7 @@
 // Created by aurailus on 11/06/19.
 //
 
-#ifndef ZEUS_PATH_H
-#define ZEUS_PATH_H
+#pragma once
 
 
 #include <string>
@@ -22,5 +21,3 @@ private:
     std::vector<std::string> tokens {};
 };
 
-
-#endif //ZEUS_PATH_H

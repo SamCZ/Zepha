@@ -2,8 +2,7 @@
 // Created by aurailus on 02/12/18.
 //
 
-#ifndef GLPROJECT_TIMER_H
-#define GLPROJECT_TIMER_H
+#pragma once
 
 #include <iostream>
 #include <chrono>
@@ -24,5 +23,3 @@ private:
     std::chrono::high_resolution_clock::time_point start;
 };
 
-
-#endif //GLPROJECT_TIMER_H

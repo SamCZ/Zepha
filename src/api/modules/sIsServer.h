@@ -2,8 +2,7 @@
 // Created by aurailus on 28/06/19.
 //
 
-#ifndef ZEUS_SISSERVER_H
-#define ZEUS_SISSERVER_H
+#pragma once
 
 #include <sol2/sol.hpp>
 
@@ -14,5 +13,3 @@ namespace ServerApi {
         });
     }
 }
-
-#endif //ZEUS_CISSERVER_H

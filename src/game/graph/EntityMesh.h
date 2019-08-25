@@ -2,8 +2,7 @@
 // Created by aurailus on 18/06/19.
 //
 
-#ifndef ZEUS_ENTITYMESH_H
-#define ZEUS_ENTITYMESH_H
+#pragma once
 
 #include <vector>
 #include "Mesh.h"
@@ -21,5 +20,3 @@ private:
     std::vector<EntityVertex> vertices {};
     std::vector<unsigned int> indices {};
 };
-
-#endif //ZEUS_ENTITYMESH_H

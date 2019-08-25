@@ -2,8 +2,7 @@
 // Created by aurailus on 18/04/19.
 //
 
-#ifndef ZEUS_GAMEDEFS_H
-#define ZEUS_GAMEDEFS_H
+#pragma once
 
 #include "texture/TextureAtlas.h"
 #include "LocalDefinitionAtlas.h"
@@ -32,5 +31,3 @@ private:
     LocalLuaParser luaApi;
 };
 
-
-#endif //ZEUS_GAMEDEFS_H

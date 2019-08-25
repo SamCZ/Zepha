@@ -2,8 +2,7 @@
 // Created by aurailus on 28/06/19.
 //
 
-#ifndef ZEUS_CPRINTE_H
-#define ZEUS_CPRINTE_H
+#pragma once
 
 #include <sol2/sol.hpp>
 
@@ -16,5 +15,3 @@ namespace ClientApi {
         )");
     }
 }
-
-#endif //ZEUS_CPRINTE_H

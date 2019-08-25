@@ -2,8 +2,7 @@
 // Created by aurailus on 06/01/19.
 //
 
-#ifndef ZEUS_CLIENTSTATE_H
-#define ZEUS_CLIENTSTATE_H
+#pragma once
 
 #include "graph/Renderer.h"
 #include "scene/net/ClientNetworkInterpreter.h"
@@ -21,5 +20,3 @@ struct ClientState {
     double fps = 0;
     double deltaTime = 0;
 };
-
-#endif //ZEUS_CLIENTSTATE_H

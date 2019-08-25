@@ -2,8 +2,7 @@
 // Created by aurailus on 10/02/19.
 //
 
-#ifndef ZEUS_RECTENTITY_H
-#define ZEUS_RECTENTITY_H
+#pragma once
 
 
 #include <memory>
@@ -22,5 +21,3 @@ private:
     std::shared_ptr<AtlasRef> texture = nullptr;
 };
 
-
-#endif //ZEUS_RECTENTITY_H

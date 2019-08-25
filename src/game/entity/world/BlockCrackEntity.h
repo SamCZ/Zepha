@@ -2,8 +2,7 @@
 // Created by aurailus on 14/04/19.
 //
 
-#ifndef ZEUS_BLOCKMODELENTITY_H
-#define ZEUS_BLOCKMODELENTITY_H
+#pragma once
 
 #include "Entity.h"
 #include "../../../def/LocalDefs.h"
@@ -28,5 +27,3 @@ private:
     std::vector<std::shared_ptr<AtlasRef>> crackedFaces;
     LocalDefs& defs;
 };
-
-#endif //ZEUS_BLOCKMODELENTITY_H

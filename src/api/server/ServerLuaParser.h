@@ -2,8 +2,7 @@
 // Created by aurailus on 11/06/19.
 //
 
-#ifndef ZEUS_SERVERLUAPARSER_H
-#define ZEUS_SERVERLUAPARSER_H
+#pragma once
 
 #include "../LuaMod.h"
 #include "../LuaParser.h"
@@ -38,5 +37,3 @@ private:
     int DoFileSandboxed(std::string file);
 };
 
-
-#endif //ZEUS_SERVERLUAPARSER_H

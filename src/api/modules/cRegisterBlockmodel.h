@@ -2,8 +2,7 @@
 // Created by aurailus on 28/06/19.
 //
 
-#ifndef ZEUS_CREGISTERBLOCKMODEL_H
-#define ZEUS_CREGISTERBLOCKMODEL_H
+#pragma once
 
 #include <sol2/sol.hpp>
 
@@ -17,5 +16,3 @@ namespace ClientApi {
         });
     }
 }
-
-#endif //ZEUS_CREGISTERBLOCKMODEL_H

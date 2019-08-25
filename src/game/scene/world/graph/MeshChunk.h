@@ -5,8 +5,7 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "HidingNonVirtualFunction"
 
-#ifndef GLPROJECT_MESHCHUNK_H
-#define GLPROJECT_MESHCHUNK_H
+#pragma once
 
 #include "../../../entity/world/Entity.h"
 #include "../../../../util/TransPos.h"
@@ -30,7 +29,5 @@ private:
     glm::vec3 pos;
 };
 
-
-#endif //GLPROJECT_MESHCHUNK_H
 
 #pragma clang diagnostic pop

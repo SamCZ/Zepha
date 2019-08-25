@@ -4,8 +4,7 @@
 // Created by aurailus on 10/01/19.
 //
 
-#ifndef ZEUS_PACKET_H
-#define ZEUS_PACKET_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -32,5 +31,3 @@ public:
     std::string data;
 };
 
-
-#endif //ZEUS_PACKET_H

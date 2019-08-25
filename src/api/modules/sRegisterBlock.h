@@ -2,8 +2,7 @@
 // Created by aurailus on 12/06/19.
 //
 
-#ifndef ZEUS_MODULESERVERREGISTERBLOCKMODEL_H
-#define ZEUS_MODULESERVERREGISTERBLOCKMODEL_H
+#pragma once
 
 #include <sol2/sol.hpp>
 
@@ -17,5 +16,3 @@ namespace ServerApi {
         });
     }
 }
-
-#endif //ZEUS_MODULECLIENTREGISTERBLOCKMODEL_H

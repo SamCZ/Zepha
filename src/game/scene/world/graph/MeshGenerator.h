@@ -5,8 +5,7 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
 
-#ifndef GLPROJECT_MESHGENERATOR_H
-#define GLPROJECT_MESHGENERATOR_H
+#pragma once
 
 #define GLM_ENABLE_EXPERIMENTAL
 
@@ -41,7 +40,5 @@ private:
     std::array<std::shared_ptr<BlockChunk>, 6> adjacent;
 
 };
-
-#endif //GLPROJECT_MESHGENERATOR_H
 
 #pragma clang diagnostic pop

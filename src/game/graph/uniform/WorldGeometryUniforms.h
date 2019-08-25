@@ -2,8 +2,7 @@
 // Created by aurailus on 16/06/19.
 //
 
-#ifndef ZEUS_WORLDUNIFORMS_H
-#define ZEUS_WORLDUNIFORMS_H
+#pragma once
 
 
 #include <GL/gl.h>
@@ -21,5 +20,3 @@ struct WorldGeometryUniforms {
     GLint time;
 };
 
-
-#endif //ZEUS_WORLDUNIFORMS_H

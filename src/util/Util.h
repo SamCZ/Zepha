@@ -2,8 +2,7 @@
 // Created by aurailus on 28/04/19.
 //
 
-#ifndef ZEUS_UTIL_H
-#define ZEUS_UTIL_H
+#pragma once
 
 
 #include <string>
@@ -102,5 +101,3 @@ namespace Util {
     }
 };
 
-
-#endif //ZEUS_UTIL_H

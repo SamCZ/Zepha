@@ -2,8 +2,7 @@
 // Created by aurailus on 27/11/18.
 //
 
-#ifndef GLPROJECT_CAMERA_H
-#define GLPROJECT_CAMERA_H
+#pragma once
 
 #include <glew/glew.h>
 #include <glm/glm.hpp>
@@ -70,5 +69,3 @@ private:
     void update();
 };
 
-
-#endif //GLPROJECT_CAMERA_H

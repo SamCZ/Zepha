@@ -2,8 +2,7 @@
 // Created by aurailus on 15/05/19.
 //
 
-#ifndef ZEUS_PARTICLEENTITY_H
-#define ZEUS_PARTICLEENTITY_H
+#pragma once
 
 #include "Entity.h"
 #include "../../../def/block/BlockDef.h"
@@ -20,5 +19,3 @@ private:
     glm::vec3 velocity {};
 };
 
-
-#endif //ZEUS_PARTICLEENTITY_H

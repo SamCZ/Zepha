@@ -2,8 +2,7 @@
 // Created by aurailus on 06/01/19.
 //
 
-#ifndef ZEUS_SCENE_H
-#define ZEUS_SCENE_H
+#pragma once
 
 #include "../../../game/ClientState.h"
 #include <iostream>
@@ -21,5 +20,3 @@ public:
     ClientState& state;
 };
 
-
-#endif //ZEUS_SCENE_H

@@ -2,8 +2,7 @@
 // Created by aurailus on 25/11/18.
 //
 
-#ifndef ZEUS_GUIENTITY_H
-#define ZEUS_GUIENTITY_H
+#pragma once
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -43,5 +42,3 @@ private:
     GuiMesh* mesh = nullptr;
 };
 
-
-#endif //ZEUS_GUIENTITY_H

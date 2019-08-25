@@ -2,8 +2,7 @@
 // Created by aurailus on 08/01/19.
 //
 
-#ifndef ZEUS_MENUSCENE_H
-#define ZEUS_MENUSCENE_H
+#pragma once
 
 #include "../../game/ClientState.h"
 #include "../../game/graph/scene/Scene.h"
@@ -23,5 +22,3 @@ private:
     GUIContainer components;
 };
 
-
-#endif //ZEUS_MENUSCENE_H

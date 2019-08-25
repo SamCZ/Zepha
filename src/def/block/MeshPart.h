@@ -5,8 +5,7 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
 
-#ifndef GLPROJECT_MESHPART_H
-#define GLPROJECT_MESHPART_H
+#pragma once
 
 #define GLM_ENABLE_EXPERIMENTAL
 
@@ -30,7 +29,5 @@ struct MeshPart {
     float modValue = 0;
 };
 
-
-#endif //GLPROJECT_MESHPART_H
 
 #pragma clang diagnostic pop

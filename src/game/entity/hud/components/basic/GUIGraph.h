@@ -2,8 +2,7 @@
 // Created by aurailus on 08/02/19.
 //
 
-#ifndef ZEUS_HISTOGRAM_H
-#define ZEUS_HISTOGRAM_H
+#pragma once
 
 
 #include "../GUIComponent.h"
@@ -33,5 +32,3 @@ private:
     std::vector<float> history;
 };
 
-
-#endif //ZEUS_HISTOGRAM_H

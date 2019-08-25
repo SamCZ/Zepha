@@ -2,8 +2,7 @@
 // Created by aurailus on 09/04/19.
 //
 
-#ifndef ZEUS_DRAWABLE_H
-#define ZEUS_DRAWABLE_H
+#pragma once
 
 
 #include "../Renderer.h"
@@ -25,5 +24,3 @@ protected:
     bool visible = true;
 };
 
-
-#endif //ZEUS_DRAWABLE_H

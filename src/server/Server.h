@@ -2,8 +2,7 @@
 // Created by aurailus on 09/01/19.
 //
 
-#ifndef ZEUS_SERVER_H
-#define ZEUS_SERVER_H
+#pragma once
 
 #include <thread>
 #include <vector>
@@ -44,5 +43,3 @@ private:
     unsigned short port = 0;
 };
 
-
-#endif //ZEUS_SERVER_H

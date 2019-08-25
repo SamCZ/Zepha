@@ -2,8 +2,7 @@
 // Created by aurailus on 11/07/19.
 //
 
-#ifndef ZEUS_CONNECTSCENE_H
-#define ZEUS_CONNECTSCENE_H
+#pragma once
 
 #include <utility>
 #include "net/ServerConnection.h"
@@ -42,5 +41,3 @@ private:
 
     double dotsTime = 0;
 };
-
-#endif //ZEUS_CONNECTSCENE_H

@@ -2,8 +2,7 @@
 // Created by aurailus on 09/04/19.
 //
 
-#ifndef ZEUS_INPUTMANAGER_H
-#define ZEUS_INPUTMANAGER_H
+#pragma once
 
 
 class InputManager {
@@ -30,5 +29,3 @@ private:
     bool rightReleased, rightDown, rightPressed;
 };
 
-
-#endif //ZEUS_INPUTMANAGER_H

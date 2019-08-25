@@ -2,8 +2,7 @@
 // Created by aurailus on 27/12/18.
 //
 
-#ifndef ZEUS_DEBUGGUI_H
-#define ZEUS_DEBUGGUI_H
+#pragma once
 
 #include <sstream>
 #include "../../graph/window/Window.h"
@@ -29,5 +28,3 @@ public:
 private:
     int displayMode;
 };
-
-#endif //ZEUS_DEBUGGUI_H

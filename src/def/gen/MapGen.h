@@ -2,8 +2,7 @@
 // Created by aurailus on 28/01/19.
 //
 
-#ifndef ZEUS_MAPGEN_H
-#define ZEUS_MAPGEN_H
+#pragma once
 
 
 #include <glm/vec3.hpp>
@@ -81,6 +80,3 @@ private:
 
     module::Perlin biomeTemp;
 };
-
-
-#endif //ZEUS_MAPGEN_H

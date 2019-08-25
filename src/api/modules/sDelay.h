@@ -2,8 +2,7 @@
 // Created by aurailus on 15/06/19.
 //
 
-#ifndef ZEUS_MODULESERVERDELAY_H
-#define ZEUS_MODULESERVERDELAY_H
+#pragma once
 
 #include "../../def/ServerDefs.h"
 #include <sol2/sol.hpp>
@@ -17,5 +16,3 @@ namespace ServerApi {
         });
     }
 }
-
-#endif //ZEUS_MODULESERVERDELAY_H

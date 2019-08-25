@@ -2,8 +2,7 @@
 // Created by aurailus on 24/08/19.
 //
 
-#ifndef ZEUS_GUIMESH_H
-#define ZEUS_GUIMESH_H
+#pragma once
 
 #include <vector>
 #include "Mesh.h"
@@ -16,5 +15,3 @@ public:
     void create(const std::vector<GuiVertex>& vertices, const std::vector<unsigned int>& indices);
     ~GuiMesh() = default;
 };
-
-#endif //ZEUS_GUIMESH_H

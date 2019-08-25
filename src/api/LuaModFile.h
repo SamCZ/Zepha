@@ -2,8 +2,7 @@
 // Created by aurailus on 03/08/19.
 //
 
-#ifndef ZEUS_LUAMODFILE_H
-#define ZEUS_LUAMODFILE_H
+#pragma once
 
 
 #include <string>
@@ -13,5 +12,3 @@ struct LuaModFile {
     std::string file;
 };
 
-
-#endif //ZEUS_LUAMODFILE_H

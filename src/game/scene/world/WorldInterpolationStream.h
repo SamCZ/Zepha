@@ -2,8 +2,7 @@
 // Created by aurailus on 16/03/19.
 //
 
-#ifndef ZEUS_WORLDINTERPOLATIONSTREAM_H
-#define ZEUS_WORLDINTERPOLATIONSTREAM_H
+#pragma once
 
 
 #include <glm/vec3.hpp>
@@ -53,5 +52,3 @@ private:
     std::vector<Packet> queuedTasks;
 };
 
-
-#endif //ZEUS_WORLDINTERPOLATIONSTREAM_H

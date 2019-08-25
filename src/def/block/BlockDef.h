@@ -2,8 +2,7 @@
 // Created by aurailus on 10/06/19.
 //
 
-#ifndef ZEUS_SERVERBLOCKDEF_H
-#define ZEUS_SERVERBLOCKDEF_H
+#pragma once
 
 #include <string>
 #include <sol2/sol.hpp>
@@ -26,5 +25,3 @@ public:
 
     std::unordered_map<Callback, sol::function, Util::EnumClassHash> callbacks {};
 };
-
-#endif //ZEUS_SERVERBLOCKDEF_H

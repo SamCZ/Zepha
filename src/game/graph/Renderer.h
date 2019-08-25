@@ -2,8 +2,7 @@
 // Created by aurailus on 17/12/18.
 //
 
-#ifndef SRC_RENDERER_H
-#define SRC_RENDERER_H
+#pragma once
 
 #include "ChunkMesh.h"
 #include "Shader.h"
@@ -77,5 +76,3 @@ private:
     double elapsedTime = 0;
 };
 
-
-#endif //SRC_RENDERER_H

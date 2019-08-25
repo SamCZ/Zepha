@@ -2,8 +2,7 @@
 // Created by aurailus on 10/06/19.
 //
 
-#ifndef ZEUS_SERVERDEFS_H
-#define ZEUS_SERVERDEFS_H
+#pragma once
 
 
 #include "ServerDefinitionAtlas.h"
@@ -31,5 +30,3 @@ private:
     ServerLuaParser luaApi;
 };
 
-
-#endif //ZEUS_SERVERDEFS_H

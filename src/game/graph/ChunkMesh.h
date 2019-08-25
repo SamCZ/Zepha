@@ -2,8 +2,7 @@
 // Created by aurailus on 25/11/18.
 //
 
-#ifndef GLPROJECT_MESH_H
-#define GLPROJECT_MESH_H
+#pragma once
 
 #include <vector>
 #include "Mesh.h"
@@ -16,5 +15,3 @@ public:
     void create(const std::vector<ChunkVertex>& vertices, const std::vector<unsigned int>& indices);
     ~ChunkMesh() = default;
 };
-
-#endif //GLPROJECT_MESH_H

@@ -2,8 +2,7 @@
 // Created by aurailus on 02/03/19.
 //
 
-#ifndef ZEUS_FRUSTUMPLANE_H
-#define ZEUS_FRUSTUMPLANE_H
+#pragma once
 
 
 #include <glm/vec3.hpp>
@@ -21,5 +20,3 @@ public:
     float distance(glm::vec3 &p);
 };
 
-
-#endif //ZEUS_FRUSTUMPLANE_H

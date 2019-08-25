@@ -2,8 +2,7 @@
 // Created by aurailus on 11/08/19.
 //
 
-#ifndef ZEUS_ITEMDEF_H
-#define ZEUS_ITEMDEF_H
+#pragma once
 
 #include <c++/5/string>
 
@@ -23,5 +22,3 @@ public:
     Type type = Type::INVALID;
 };
 
-
-#endif //ZEUS_ITEMDEF_H

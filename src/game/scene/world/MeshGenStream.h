@@ -2,8 +2,7 @@
 // Created by aurailus on 27/03/19.
 //
 
-#ifndef ZEUS_MESHGENSTREAM_H
-#define ZEUS_MESHGENSTREAM_H
+#pragma once
 
 
 #include <glm/vec3.hpp>
@@ -69,5 +68,3 @@ private:
     std::unordered_set<glm::vec3, VecUtils::compareFunc> queuedMap;
 };
 
-
-#endif //ZEUS_MESHGENSTREAM_H

@@ -2,8 +2,7 @@
 // Created by aurailus on 28/12/18.
 //
 
-#ifndef ZEUS_PLAYER_H
-#define ZEUS_PLAYER_H
+#pragma once
 
 
 #include <iostream>
@@ -61,5 +60,3 @@ private:
     double breakInterval = 0;
 };
 
-
-#endif //ZEUS_PLAYER_H

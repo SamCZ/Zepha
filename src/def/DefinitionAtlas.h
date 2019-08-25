@@ -2,8 +2,7 @@
 // Created by aurailus on 10/06/19.
 //
 
-#ifndef ZEUS_BLOCKATLAS_H
-#define ZEUS_BLOCKATLAS_H
+#pragma once
 
 #include <string>
 #include "block/BlockDef.h"
@@ -33,5 +32,3 @@ protected:
     std::vector<ItemDef*> defs;
     std::unordered_map<std::string, unsigned int> defTable;
 };
-
-#endif //ZEUS_BLOCKATLAS_H

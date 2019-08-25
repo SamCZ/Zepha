@@ -2,8 +2,7 @@
 // Created by aurailus on 17/06/19.
 //
 
-#ifndef ZEUS_WORLDLIGHTINGUNIFORMS_H
-#define ZEUS_WORLDLIGHTINGUNIFORMS_H
+#pragma once
 
 
 #include <GL/gl.h>
@@ -17,5 +16,3 @@ struct WorldLightingUniforms {
     GLint camPosition;
 };
 
-
-#endif //ZEUS_WORLDLIGHTINGUNIFORMS_H

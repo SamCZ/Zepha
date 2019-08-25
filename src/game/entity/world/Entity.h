@@ -2,8 +2,7 @@
 // Created by aurailus on 25/11/18.
 //
 
-#ifndef GLPROJECT_ENTITY_H
-#define GLPROJECT_ENTITY_H
+#pragma once
 
 #include <iostream>
 #include <glm/glm.hpp>
@@ -45,5 +44,3 @@ private:
     EntityMesh* mesh = nullptr;
 };
 
-
-#endif //GLPROJECT_ENTITY_H

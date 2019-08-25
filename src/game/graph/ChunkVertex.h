@@ -2,8 +2,7 @@
 // Created by aurailus on 24/08/19.
 //
 
-#ifndef ZEUS_CHUNKVERTEX_H
-#define ZEUS_CHUNKVERTEX_H
+#pragma once
 
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
@@ -17,5 +16,3 @@ struct ChunkVertex {
 };
 
 #define STRIDE_OFFSET_CHUNK(m) sizeof(struct ChunkVertex), (void *)offsetof(struct ChunkVertex, m)
-
-#endif //ZEUS_CHUNKVERTEX_H

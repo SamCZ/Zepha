@@ -2,8 +2,7 @@
 // Created by aurailus on 05/02/19.
 //
 
-#ifndef ZEUS_GAMEGUI_H
-#define ZEUS_GAMEGUI_H
+#pragma once
 
 #include "components/basic/GUIRect.h"
 #include "components/basic/GUIContainer.h"
@@ -23,5 +22,3 @@ public:
     bool invOpen;
 };
 
-
-#endif //ZEUS_GAMEGUI_H

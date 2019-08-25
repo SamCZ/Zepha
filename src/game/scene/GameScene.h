@@ -2,8 +2,7 @@
 // Created by aurailus on 17/12/18.
 //
 
-#ifndef SRC_GAMEWORLD_H
-#define SRC_GAMEWORLD_H
+#pragma once
 
 #include "net/ClientNetworkInterpreter.h"
 #include "world/LocalWorld.h"
@@ -46,5 +45,3 @@ public:
     bool hudVisible = true;
 };
 
-
-#endif //SRC_GAMEWORLD_H

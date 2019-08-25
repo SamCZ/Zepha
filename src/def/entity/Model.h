@@ -2,8 +2,7 @@
 // Created by aurailus on 22/08/19.
 //
 
-#ifndef ZEUS_MODEL_H
-#define ZEUS_MODEL_H
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -27,5 +26,3 @@ private:
     std::string tex = "";
 };
 
-
-#endif //ZEUS_MODEL_H

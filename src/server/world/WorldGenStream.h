@@ -5,8 +5,7 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#ifndef ZEUS_WORLDGENSTREAM_H
-#define ZEUS_WORLDGENSTREAM_H
+#pragma once
 
 #include <glm/vec3.hpp>
 #include <thread>
@@ -60,6 +59,4 @@ private:
     std::unordered_set<glm::vec3, VecUtils::compareFunc> queuedMap;
 };
 
-
-#endif //ZEUS_WORLDGENSTREAM_H
 #pragma clang diagnostic pop

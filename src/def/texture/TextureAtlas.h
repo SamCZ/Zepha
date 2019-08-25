@@ -2,8 +2,7 @@
 // Created by aurailus on 16/04/19.
 //
 
-#ifndef ZEUS_DYNAMICATLAS_H
-#define ZEUS_DYNAMICATLAS_H
+#pragma once
 
 #include <map>
 #include <memory>
@@ -62,5 +61,3 @@ private:
     std::map<std::string, std::shared_ptr<AtlasRef>> textures;
 };
 
-
-#endif //ZEUS_DYNAMICATLAS_H

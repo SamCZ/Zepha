@@ -2,8 +2,7 @@
 // Created by aurailus on 06/01/19.
 //
 
-#ifndef ZEUS_SCENEMANAGER_H
-#define ZEUS_SCENEMANAGER_H
+#pragma once
 
 #include "Scene.h"
 #include <memory>
@@ -23,5 +22,3 @@ private:
     std::unique_ptr<Scene> scene = nullptr;
 };
 
-
-#endif //ZEUS_SCENEMANAGER_H

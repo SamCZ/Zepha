@@ -2,8 +2,7 @@
 // Created by aurailus on 24/08/19.
 //
 
-#ifndef ZEUS_GUIVERTEX_H
-#define ZEUS_GUIVERTEX_H
+#pragma once
 
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
@@ -17,5 +16,3 @@ struct GuiVertex {
 };
 
 #define STRIDE_OFFSET_GUI(m) sizeof(struct GuiVertex), (void *)offsetof(struct GuiVertex, m)
-
-#endif //ZEUS_GUIVERTEX_H

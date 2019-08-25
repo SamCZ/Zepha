@@ -2,8 +2,7 @@
 // Created by aurailus on 02/03/19.
 //
 
-#ifndef ZEUS_FRUSTUM_H
-#define ZEUS_FRUSTUM_H
+#pragma once
 
 
 #include <glm/vec3.hpp>
@@ -45,5 +44,3 @@ public:
               ftl, ftr, fbl, fbr;
 };
 
-
-#endif //ZEUS_FRUSTUM_H

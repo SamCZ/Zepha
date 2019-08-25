@@ -2,8 +2,7 @@
 // Created by aurailus on 08/02/19.
 //
 
-#ifndef ZEUS_PLAYERENTITY_H
-#define ZEUS_PLAYERENTITY_H
+#pragma once
 
 #include <memory>
 #include "Entity.h"
@@ -17,5 +16,3 @@ public:
 private:
     std::shared_ptr<AtlasRef> playerFrontTex, playerBackTex, shadowTex;
 };
-
-#endif //ZEUS_PLAYERENTITY_H

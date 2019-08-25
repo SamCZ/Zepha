@@ -2,8 +2,7 @@
 // Created by aurailus on 23/07/19.
 //
 
-#ifndef ZEUS_MESHDETAILS_H
-#define ZEUS_MESHDETAILS_H
+#pragma once
 
 #include <vector>
 #include <glm/vec3.hpp>
@@ -15,5 +14,3 @@ struct MeshDetails {
 
     glm::vec3 pos {0, 0, 0};
 };
-
-#endif //ZEUS_MESHDETAILS_H

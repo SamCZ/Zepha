@@ -2,8 +2,7 @@
 // Created by aurailus on 28/06/19.
 //
 
-#ifndef ZEUS_SDUMP_H
-#define ZEUS_SDUMP_H
+#pragma once
 
 #include <sol2/sol.hpp>
 
@@ -32,5 +31,3 @@ namespace ServerApi {
         )");
     }
 }
-
-#endif //ZEUS_SDUMP_H

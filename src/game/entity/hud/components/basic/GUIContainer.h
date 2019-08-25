@@ -2,8 +2,7 @@
 // Created by aurailus on 27/07/19.
 //
 
-#ifndef ZEUS_GUICONTAINER_H
-#define ZEUS_GUICONTAINER_H
+#pragma once
 
 
 #include "../GUIComponent.h"
@@ -16,5 +15,3 @@ public:
     void draw(Renderer& renderer) override;
 };
 
-
-#endif //ZEUS_GUICONTAINER_H

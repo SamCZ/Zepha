@@ -2,8 +2,7 @@
 // Created by aurailus on 13/08/19.
 //
 
-#ifndef ZEUS_FONT_H
-#define ZEUS_FONT_H
+#pragma once
 
 #include <memory>
 #include "AtlasRef.h"
@@ -27,5 +26,3 @@ private:
     std::shared_ptr<AtlasRef> fontTex = nullptr;
     std::array<unsigned short, 95> charWidths {};
 };
-
-#endif //ZEUS_FONT_H

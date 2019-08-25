@@ -2,8 +2,7 @@
 // Created by aurailus on 28/06/19.
 //
 
-#ifndef ZEUS_SREMOVEBLOCK_H
-#define ZEUS_SREMOVEBLOCK_H
+#pragma once
 
 #include "../../def/ServerDefs.h"
 #include "../../server/world/ServerWorld.h"
@@ -20,5 +19,3 @@ namespace ServerApi {
         });
     }
 }
-
-#endif //ZEUS_CREMOVEBLOCK_H

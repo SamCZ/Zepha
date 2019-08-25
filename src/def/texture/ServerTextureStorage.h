@@ -2,8 +2,7 @@
 // Created by aurailus on 05/08/19.
 //
 
-#ifndef ZEUS_SERVERTEXTURESTORAGE_H
-#define ZEUS_SERVERTEXTURESTORAGE_H
+#pragma once
 
 
 #include <vector>
@@ -14,5 +13,3 @@ public:
     std::vector<ServerTexture> textures;
 };
 
-
-#endif //ZEUS_SERVERTEXTURESTORAGE_H

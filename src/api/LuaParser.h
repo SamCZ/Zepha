@@ -5,8 +5,7 @@
 //
 //
 
-#ifndef ZEUS_LUAPARSER_H
-#define ZEUS_LUAPARSER_H
+#pragma once
 
 #include <list>
 #include <iostream>
@@ -40,5 +39,3 @@ public:
     std::list<DelayedFunction> delayed_functions;
 };
 
-
-#endif //ZEUS_LUAPARSER_H

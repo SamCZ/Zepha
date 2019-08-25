@@ -2,8 +2,7 @@
 // Created by aurailus on 29/11/18.
 //
 
-#ifndef GLPROJECT_TEXTURE_H
-#define GLPROJECT_TEXTURE_H
+#pragma once
 
 #include <glew/glew.h>
 #include <iostream>
@@ -32,5 +31,3 @@ protected:
     std::string fileLocation;
 };
 
-
-#endif //GLPROJECT_TEXTURE_H

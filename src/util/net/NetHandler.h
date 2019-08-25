@@ -2,8 +2,7 @@
 // Created by aurailus on 03/02/19.
 //
 
-#ifndef ZEUS_NETHANDLER_H
-#define ZEUS_NETHANDLER_H
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -44,5 +43,3 @@ private:
 
     ENetAddress address {};
 };
-
-#endif //ZEUS_NETHANDLER_H

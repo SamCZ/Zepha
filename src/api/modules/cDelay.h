@@ -2,8 +2,7 @@
 // Created by aurailus on 15/06/19.
 //
 
-#ifndef ZEUS_MODULECLIENTDELAY_H
-#define ZEUS_MODULECLIENTDELAY_H
+#pragma once
 
 #include "../../def/LocalDefs.h"
 #include <sol2/sol.hpp>
@@ -17,5 +16,3 @@ namespace ClientApi {
         });
     }
 }
-
-#endif //ZEUS_MODULECLIENTDELAY_H

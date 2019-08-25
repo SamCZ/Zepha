@@ -2,8 +2,7 @@
 // Created by aurailus on 03/03/19.
 //
 
-#ifndef ZEUS_FRUSTUMAABB_H
-#define ZEUS_FRUSTUMAABB_H
+#pragma once
 
 
 #include <glm/vec3.hpp>
@@ -21,5 +20,3 @@ public:
     glm::vec3 getVertexN(glm::vec3 &normal);
 };
 
-
-#endif //ZEUS_FRUSTUMAABB_H

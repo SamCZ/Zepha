@@ -2,8 +2,7 @@
 // Created by aurailus on 06/02/19.
 //
 
-#ifndef ZEUS_SERIALIZER_H
-#define ZEUS_SERIALIZER_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -40,5 +39,3 @@ private:
     } convert_union;
 };
 
-
-#endif //ZEUS_SERIALIZER_H

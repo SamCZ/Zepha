@@ -2,8 +2,7 @@
 // Created by aurailus on 27/07/19.
 //
 
-#ifndef ZEUS_GUICOMPONENT_H
-#define ZEUS_GUICOMPONENT_H
+#pragma once
 
 
 #include <memory>
@@ -52,5 +51,3 @@ private:
 };
 
 
-
-#endif //ZEUS_GUICOMPONENT_H

@@ -2,8 +2,7 @@
 // Created by aurailus on 28/04/19.
 //
 
-#ifndef ZEUS_STATGRAPH_H
-#define ZEUS_STATGRAPH_H
+#pragma once
 
 #include "../../../world/Entity.h"
 #include "../../../../../util/Util.h"
@@ -34,5 +33,3 @@ private:
     float history[5] {};
 };
 
-
-#endif //ZEUS_STATGRAPH_H

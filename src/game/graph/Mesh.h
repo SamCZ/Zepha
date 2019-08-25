@@ -2,8 +2,7 @@
 // Created by aurailus on 24/08/19.
 //
 
-#ifndef ZEUS_MESH_H
-#define ZEUS_MESH_H
+#pragma once
 
 #include <glew/glew.h>
 
@@ -24,5 +23,3 @@ protected:
     GLuint IBO = 0;
     GLsizei indCount = 0;
 };
-
-#endif //ZEUS_MESH_H

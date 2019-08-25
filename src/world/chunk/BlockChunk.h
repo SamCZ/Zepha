@@ -2,8 +2,7 @@
 // Created by aurailus on 14/12/18.
 //
 
-#ifndef GLPROJECT_BLOCKCHUNK_H
-#define GLPROJECT_BLOCKCHUNK_H
+#pragma once
 
 #include <glm/vec3.hpp>
 #include <vector>
@@ -47,5 +46,3 @@ private:
     unsigned short fullBlocks = 0;
     bool empty = true;
 };
-
-#endif //GLPROJECT_BLOCKCHUNK_H

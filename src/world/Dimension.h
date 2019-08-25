@@ -2,8 +2,7 @@
 // Created by aurailus on 04/04/19.
 //
 
-#ifndef ZEUS_DIMENSION_H
-#define ZEUS_DIMENSION_H
+#pragma once
 
 
 #include <unordered_map>
@@ -39,5 +38,3 @@ private:
     chunk_map blockChunks;
 };
 
-
-#endif //ZEUS_DIMENSION_H

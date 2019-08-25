@@ -2,8 +2,7 @@
 // Created by aurailus on 28/06/19.
 //
 
-#ifndef ZEUS_SGETBLOCK_H
-#define ZEUS_SGETBLOCK_H
+#pragma once
 
 #include "../../def/ServerDefs.h"
 #include "../../server/world/ServerWorld.h"
@@ -20,5 +19,3 @@ namespace ServerApi {
         });
     }
 }
-
-#endif //ZEUS_CGETBLOCK_H

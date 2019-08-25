@@ -2,8 +2,7 @@
 // Created by aurailus on 13/05/19.
 //
 
-#ifndef ZEUS_POSBLOCK_H
-#define ZEUS_POSBLOCK_H
+#pragma once
 
 #include "../../def/block/BlockDef.h"
 #include "../../def/LocalDefs.h"
@@ -34,5 +33,3 @@ public:
     glm::vec3 pos {};
     Dir face = NONE;
 };
-
-#endif //ZEUS_POSBLOCK_H

@@ -2,8 +2,7 @@
 // Created by aurailus on 03/07/19.
 //
 
-#ifndef ZEUS_SERVERCONFIG_H
-#define ZEUS_SERVERCONFIG_H
+#pragma once
 
 #include "../conn/ServerClient.h"
 #include "../../def/ServerDefs.h"
@@ -21,5 +20,3 @@ private:
     ServerDefs& defs;
     std::vector<std::string> identifierList {};
 };
-
-#endif //ZEUS_SERVERCONFIG_H

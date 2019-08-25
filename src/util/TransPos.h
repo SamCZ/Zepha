@@ -2,8 +2,7 @@
 // Created by aurailus on 24/03/19.
 //
 
-#ifndef ZEUS_CHUNKVEC_H
-#define ZEUS_CHUNKVEC_H
+#pragma once
 
 
 #include <tgmath.h>
@@ -100,5 +99,3 @@ namespace TransPos {
     }
 };
 
-
-#endif //ZEUS_CHUNKVEC_H

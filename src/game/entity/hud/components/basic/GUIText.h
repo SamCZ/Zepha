@@ -2,8 +2,7 @@
 // Created by aurailus on 25/12/18.
 //
 
-#ifndef ZEUS_TEXTENTITY_H
-#define ZEUS_TEXTENTITY_H
+#pragma once
 
 
 #include "../GUIComponent.h"
@@ -27,5 +26,3 @@ private:
     std::string text;
 };
 
-
-#endif //ZEUS_TEXTENTITY_H

@@ -2,8 +2,7 @@
 // Created by aurailus on 16/06/19.
 //
 
-#ifndef ZEUS_GUIUNIFORMS_H
-#define ZEUS_GUIUNIFORMS_H
+#pragma once
 
 
 #include <GL/gl.h>
@@ -15,5 +14,3 @@ struct GuiUniforms {
     GLint ortho;
     GLint model;
 };
-
-#endif //ZEUS_GUIUNIFORMS_H

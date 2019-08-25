@@ -2,8 +2,7 @@
 // Created by aurailus on 18/06/19.
 //
 
-#ifndef ZEUS_ENTITYGEOMETRYUNIFORMS_H
-#define ZEUS_ENTITYGEOMETRYUNIFORMS_H
+#pragma once
 
 
 #include <GL/gl.h>
@@ -16,5 +15,3 @@ struct EntityGeometryUniforms {
     GLint model;
     GLint view;
 };
-
-#endif //ZEUS_ENTITYGEOMETRYUNIFORMS_H

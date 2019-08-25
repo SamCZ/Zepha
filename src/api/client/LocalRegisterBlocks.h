@@ -2,8 +2,7 @@
 // Created by aurailus on 28/06/19.
 //
 
-#ifndef ZEUS_LOCALREGISTERBLOCKS_H
-#define ZEUS_LOCALREGISTERBLOCKS_H
+#pragma once
 
 
 #include <sol2/sol.hpp>
@@ -14,5 +13,3 @@ public:
     LocalRegisterBlocks(sol::table& zeus, LocalDefs& defs);
 };
 
-
-#endif //ZEUS_LOCALREGISTERBLOCKS_H

@@ -2,8 +2,7 @@
 // Created by aurailus on 15/02/19.
 //
 
-#ifndef ZEUS_INTERPOLATION_H
-#define ZEUS_INTERPOLATION_H
+#pragma once
 
 
 class Interp {
@@ -34,5 +33,3 @@ public:
     }
 };
 
-
-#endif //ZEUS_INTERPOLATION_H

@@ -2,8 +2,7 @@
 // Created by aurailus on 30/12/18.
 //
 
-#ifndef ZEUS_RAY_H
-#define ZEUS_RAY_H
+#pragma once
 
 #include <cmath>
 #include <glm/glm.hpp>
@@ -26,5 +25,3 @@ private:
     glm::vec3 dir;
 };
 
-
-#endif //ZEUS_RAY_H

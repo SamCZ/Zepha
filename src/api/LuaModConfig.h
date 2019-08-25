@@ -2,8 +2,7 @@
 // Created by aurailus on 03/08/19.
 //
 
-#ifndef ZEUS_LUAMODCONFIG_H
-#define ZEUS_LUAMODCONFIG_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -14,5 +13,3 @@ struct LuaModConfig {
     std::string version;
     std::vector<std::string> depends;
 };
-
-#endif //ZEUS_LUAMODCONFIG_H

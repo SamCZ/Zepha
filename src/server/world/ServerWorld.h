@@ -2,8 +2,7 @@
 // Created by aurailus on 05/03/19.
 //
 
-#ifndef ZEUS_WORLD_H
-#define ZEUS_WORLD_H
+#pragma once
 
 #include <unordered_map>
 #include <unordered_set>
@@ -50,5 +49,3 @@ private:
     std::vector<glm::vec3> generateOrder;
 };
 
-
-#endif //ZEUS_WORLD_H

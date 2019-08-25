@@ -2,8 +2,7 @@
 // Created by aurailus on 11/01/19.
 //
 
-#ifndef ZEUS_CLIENTNETWORKINTERPRETER_H
-#define ZEUS_CLIENTNETWORKINTERPRETER_H
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -44,5 +43,3 @@ private:
     ServerConnection& connection;
 };
 
-
-#endif //ZEUS_CLIENTNETWORKINTERPRETER_H

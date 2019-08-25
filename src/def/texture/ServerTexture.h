@@ -2,8 +2,7 @@
 // Created by aurailus on 05/08/19.
 //
 
-#ifndef ZEUS_SERVERTEXTURE_H
-#define ZEUS_SERVERTEXTURE_H
+#pragma once
 
 #include <string>
 
@@ -14,5 +13,3 @@ struct ServerTexture {
     int height;
 };
 
-
-#endif //ZEUS_SERVERTEXTURE_H

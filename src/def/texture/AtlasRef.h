@@ -2,8 +2,7 @@
 // Created by aurailus on 17/04/19.
 //
 
-#ifndef ZEUS_ATLASREF_H
-#define ZEUS_ATLASREF_H
+#pragma once
 
 
 #include <glm/vec4.hpp>
@@ -25,5 +24,3 @@ struct AtlasRef {
     int height = 0;
 };
 
-
-#endif //ZEUS_ATLASREF_H

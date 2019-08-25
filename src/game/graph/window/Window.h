@@ -2,8 +2,7 @@
 // Created by aurailus on 26/11/18.
 //
 
-#ifndef GLPROJECT_WINDOW_H
-#define GLPROJECT_WINDOW_H
+#pragma once
 
 #include <cstdio>
 #include <glew/glew.h>
@@ -53,5 +52,3 @@ private:
     double deltaY = 0;
 };
 
-
-#endif //GLPROJECT_WINDOW_H

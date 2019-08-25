@@ -2,8 +2,7 @@
 // Created by aurailus on 06/01/19.
 //
 
-#ifndef ZEUS_CLIENT_H
-#define ZEUS_CLIENT_H
+#pragma once
 
 #include <zconf.h>
 #include <signal.h>
@@ -36,5 +35,3 @@ private:
     int serverPID = 0;
 };
 
-
-#endif //ZEUS_CLIENT_H

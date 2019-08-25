@@ -2,8 +2,7 @@
 // Created by aurailus on 07/02/19.
 //
 
-#ifndef ZEUS_SERVERPLAYERLIST_H
-#define ZEUS_SERVERPLAYERLIST_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -22,5 +21,3 @@ public:
 
     std::vector<ServerClient*> clients;
 };
-
-#endif //ZEUS_SERVERPLAYERLIST_H

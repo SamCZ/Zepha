@@ -2,8 +2,7 @@
 // Created by aurailus on 11/01/19.
 //
 
-#ifndef ZEUS_SERVERPLAYER_H
-#define ZEUS_SERVERPLAYER_H
+#pragma once
 
 #include <glm/vec3.hpp>
 #include "../../util/TransPos.h"
@@ -40,5 +39,3 @@ private:
     float angle = 0;
 };
 
-
-#endif //ZEUS_SERVERPLAYER_H

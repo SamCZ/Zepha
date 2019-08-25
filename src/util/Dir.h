@@ -2,8 +2,7 @@
 // Created by aurailus on 10/06/19.
 //
 
-#ifndef ZEUS_DIRS_H
-#define ZEUS_DIRS_H
+#pragma once
 
 enum Dir {
     LEFT = 0, RIGHT = 1, TOP = 2, BOTTOM = 3, FRONT = 4, BACK = 5,
@@ -12,5 +11,3 @@ enum Dir {
     INVALID = -1, NONE = -1,
     NO_CULL = 6,
 };
-
-#endif //ZEUS_DIRS_H

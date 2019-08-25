@@ -2,8 +2,7 @@
 // Created by aurailus on 14/12/18.
 //
 
-#ifndef GLPROJECT_WORLD_H
-#define GLPROJECT_WORLD_H
+#pragma once
 
 #include <iostream>
 #include <unordered_set>
@@ -82,5 +81,3 @@ private:
     MeshGenStream meshGenStream;
     std::vector<glm::vec3> pendingMesh;
 };
-
-#endif //GLPROJECT_WORLD_H

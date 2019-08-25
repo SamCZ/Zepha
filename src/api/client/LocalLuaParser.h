@@ -2,8 +2,7 @@
 // Created by aurailus on 17/12/18.
 //
 
-#ifndef ZEUS_LOCALLUAPARSER_H
-#define ZEUS_LOCALLUAPARSER_H
+#pragma once
 
 #include <cute_files/cute_files.h>
 #include "../LuaParser.h"
@@ -28,6 +27,3 @@ public:
 private:
     int DoFileSandboxed(std::string file);
 };
-
-
-#endif //ZEUS_LOCALLUAPARSER_H

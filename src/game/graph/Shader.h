@@ -2,8 +2,7 @@
 // Created by aurailus on 26/11/18.
 //
 
-#ifndef GLPROJECT_SHADER_H
-#define GLPROJECT_SHADER_H
+#pragma once
 
 #include <glew/glew.h>
 
@@ -41,5 +40,3 @@ private:
     void addShader(GLuint program, const std::string& shaderCode, GLenum shaderType);
 };
 
-
-#endif //GLPROJECT_SHADER_H

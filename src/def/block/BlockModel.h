@@ -2,8 +2,7 @@
 // Created by aurailus on 13/08/19.
 //
 
-#ifndef ZEUS_BLOCKMODEL_H
-#define ZEUS_BLOCKMODEL_H
+#pragma once
 
 #include <set>
 #include <vector>
@@ -17,5 +16,3 @@ struct BlockModel {
     bool culls;
     bool visible;
 };
-
-#endif //ZEUS_BLOCKMODEL_H

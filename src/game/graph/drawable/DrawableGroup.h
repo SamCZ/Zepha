@@ -2,8 +2,7 @@
 // Created by aurailus on 09/04/19.
 //
 
-#ifndef ZEUS_DRAWABLEGROUP_H
-#define ZEUS_DRAWABLEGROUP_H
+#pragma once
 
 
 #include "Drawable.h"
@@ -23,5 +22,3 @@ protected:
     std::vector<Drawable*> children {};
 };
 
-
-#endif //ZEUS_DRAWABLEGROUP_H

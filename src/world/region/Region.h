@@ -2,8 +2,7 @@
 // Created by aurailus on 04/04/19.
 //
 
-#ifndef ZEUS_REGION_H
-#define ZEUS_REGION_H
+#pragma once
 
 
 #include <glm/vec3.hpp>
@@ -27,5 +26,3 @@ private:
     const static int arrayLength = TransPos::REGION_SIZE * TransPos::REGION_SIZE * TransPos::REGION_SIZE;
     std::array<MapBlock*, arrayLength> mapBlocks {};
 };
-
-#endif //ZEUS_REGION_H

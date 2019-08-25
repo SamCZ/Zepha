@@ -2,8 +2,7 @@
 // Created by aurailus on 21/07/19.
 //
 
-#ifndef ZEUS_SERVERCONNECTION_H
-#define ZEUS_SERVERCONNECTION_H
+#pragma once
 
 
 #include <enet/enet.h>
@@ -46,5 +45,3 @@ private:
     std::chrono::time_point<std::chrono::high_resolution_clock> connectionTime;
 };
 
-
-#endif //ZEUS_SERVERCONNECTION_H

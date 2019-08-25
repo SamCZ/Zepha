@@ -2,8 +2,7 @@
 // Created by aurailus on 29/03/19.
 //
 
-#ifndef ZEUS_VECUTILS_H
-#define ZEUS_VECUTILS_H
+#pragma once
 
 #include <array>
 #include <glm/vec3.hpp>
@@ -50,5 +49,3 @@ namespace VecUtils {
     }
 };
 
-
-#endif //ZEUS_VECUTILS_H

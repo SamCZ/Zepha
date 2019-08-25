@@ -2,8 +2,7 @@
 // Created by aurailus on 02/12/18.
 //
 
-#ifndef GLPROJECT_BLOCKATLAS_H
-#define GLPROJECT_BLOCKATLAS_H
+#pragma once
 
 #include <vector>
 #include "block/BlockDef.h"
@@ -17,5 +16,3 @@ public:
 
     void setIdentifiers(std::vector<std::string>& identifiers);
 };
-
-#endif //GLPROJECT_BLOCKATLAS_H

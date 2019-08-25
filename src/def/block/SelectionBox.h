@@ -4,8 +4,7 @@
 // Created by aurailus on 08/04/19.
 //
 
-#ifndef ZEUS_SELECTIONBOX_H
-#define ZEUS_SELECTIONBOX_H
+#pragma once
 
 #include <iostream>
 #include <glm/vec3.hpp>
@@ -72,5 +71,3 @@ public:
     glm::vec3 a {}, b {};
 };
 
-
-#endif //ZEUS_SELECTIONBOX_H
