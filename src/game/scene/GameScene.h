@@ -15,6 +15,7 @@
 #include "../entity/world/WireframeEntity.h"
 #include "../entity/world/BlockCrackEntity.h"
 #include "../../def/LocalDefs.h"
+#include "../../def/entity/Model.h"
 
 class GameScene : public Scene {
 public:
@@ -38,6 +39,9 @@ public:
 
     DebugGui debugGui;
     GameGui gameGui;
+
+    Model rabbit;
+    double time = 1.f/60.f;
 
     int drawCalls = 0;
 

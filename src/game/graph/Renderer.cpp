@@ -96,6 +96,7 @@ void Renderer::createWorldShaders() {
     egu.proj   = entityGeometryShader.getUniform("projection");
     egu.model  = entityGeometryShader.getUniform("model");
     egu.view   = entityGeometryShader.getUniform("view");
+    egu.uBones = entityGeometryShader.getUniform("uBones");
 
     //Initialize Lighting Shader for Deferred Rendering
 
@@ -334,4 +335,8 @@ Renderer::~Renderer() {
 
 void Renderer::setClearColor(unsigned char r, unsigned char g, unsigned char b) {
     clearColor = {static_cast<float>(r)/255.f, static_cast<float>(g)/255.f, static_cast<float>(b)/255.f, 1};
+}
+
+void Renderer::setBones(std::vector<glm::mat4> &transforms) {
+    glUniformMatrix4fv(egu.uBones, static_cast<GLsizei>(transforms.size()), GL_FALSE, glm::value_ptr(transforms.at(0)));
 }

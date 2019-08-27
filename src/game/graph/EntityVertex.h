@@ -13,6 +13,8 @@ struct EntityVertex {
     glm::vec3 colorBlend;
     float useTex;
     glm::vec3 normal;
+    glm::ivec4 boneIDs;
+    glm::vec4 boneWeights;
 };
 
 #define STRIDE_OFFSET_ENTITY(m) sizeof(struct EntityVertex), (void *)offsetof(struct EntityVertex, m)

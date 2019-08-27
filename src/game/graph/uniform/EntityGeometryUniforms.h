@@ -14,4 +14,6 @@ struct EntityGeometryUniforms {
     GLint proj;
     GLint model;
     GLint view;
+
+    GLint uBones;
 };

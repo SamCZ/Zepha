@@ -21,7 +21,7 @@ void EntityMesh::create(const std::vector<EntityVertex>& vertices, const std::ve
 
 void EntityMesh::initModel() {
 
-    genArrays(static_cast<unsigned int>(vertices.size() * sizeof(EntityMesh)),
+    genArrays(static_cast<unsigned int>(vertices.size() * sizeof(EntityVertex)),
               static_cast<unsigned int>(indices.size() * sizeof(unsigned int)),
               &vertices.front(), &indices.front());
 
@@ -30,7 +30,9 @@ void EntityMesh::initModel() {
     createVertexAttrib(idx++, 4, GL_FLOAT, STRIDE_OFFSET_ENTITY(colorData));
     createVertexAttrib(idx++, 3, GL_FLOAT, STRIDE_OFFSET_ENTITY(colorBlend));
     createVertexAttrib(idx++, 1, GL_FLOAT, STRIDE_OFFSET_ENTITY(useTex));
-    createVertexAttrib(idx  , 3, GL_FLOAT, STRIDE_OFFSET_ENTITY(normal));
+    createVertexAttrib(idx++, 3, GL_FLOAT, STRIDE_OFFSET_ENTITY(normal));
+    createVertexAttrib(idx++, 4, GL_INT,   STRIDE_OFFSET_ENTITY(boneIDs));
+    createVertexAttrib(idx  , 4, GL_FLOAT, STRIDE_OFFSET_ENTITY(boneWeights));
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

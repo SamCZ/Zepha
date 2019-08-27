@@ -30,7 +30,10 @@ void Mesh::genArrays(GLuint vboLength, GLuint iboLength, const void *verticesPtr
 
 void Mesh::createVertexAttrib(GLuint offset, GLuint size, GLenum type, GLsizei stride, const void *pointer) {
     glEnableVertexAttribArray(offset);
-    glVertexAttribPointer(offset, size, type, GL_FALSE, stride, pointer);
+    if (type == GL_INT)
+        glVertexAttribIPointer(offset, size, type, stride, pointer);
+    else
+        glVertexAttribPointer(offset, size, type, GL_FALSE, stride, pointer);
 }
 
 void Mesh::draw() {

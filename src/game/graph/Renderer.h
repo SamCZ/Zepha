@@ -35,6 +35,7 @@ public:
     void setClearColor(unsigned char r, unsigned char g, unsigned char b);
 
     void setModelMatrix(const glm::mat4& modelMatrix);
+    void setBones(std::vector<glm::mat4>& transforms);
     void enableTexture(Texture* texture);
 
     Window& getWindow();

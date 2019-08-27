@@ -1,65 +1,87 @@
+#include <utility>
+#include <glm/ext.hpp>
+
 //
 // Created by aurailus on 22/08/19.
 //
 
 #include "Model.h"
 
-int Model::create(const std::string &path, TextureAtlas& atlas, const std::string& tex) {
-    this->atlas = &atlas;
-    this->tex = tex;
+int Model::create(const std::string &path, std::shared_ptr<AtlasRef> texture) {
+    this->texture = std::move(texture);
 
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
 
-    if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
         return 1;
     }
 
-    processNode(scene->mRootNode, scene);
+    loadModelMeshes(scene->mRootNode, scene);
+    loadAnimations(scene);
+
+    calcBoneHeirarchy(scene->mRootNode, scene, -1);
+
+    globalInverseTransform = glm::inverse(MatConv::AiToGLMMat4(scene->mRootNode->mTransformation));
+
     return 0;
 }
 
-void Model::processNode(aiNode* node, const aiScene* scene) {
-    std::cout << node->mName.data << std::endl;
-    for (uint i = 0; i < node->mNumMeshes; i++) {
-        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(mesh, scene));
-    }
+void Model::getTransforms(double time, std::vector<glm::mat4> &transforms) {
+    double tps = animations[0].ticksPerSecond;
+    double tickTime = fmod(time * tps, animations[0].duration);
 
-    for (uint i = 0; i < node->mNumChildren; i++) {
-        processNode(node->mChildren[i], scene);
+    transforms.resize(bones.size());
+
+    calcBoneTransformation(tickTime, *rootBone, glm::mat4(1.0f));
+    for (uint i = 0; i < bones.size(); i++) {
+        transforms[i] = bones[i].transformation;
     }
 }
 
-EntityMesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
-    EntityMesh m;
+void Model::loadModelMeshes(aiNode *node, const aiScene *scene) {
+    for (uint i = 0; i < node->mNumMeshes; i++) {
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+        meshes.emplace_back();
+        loadMeshAndBone(mesh, scene, meshes[i]);
+    }
 
+    for (uint i = 0; i < node->mNumChildren; i++) {
+        loadModelMeshes(node->mChildren[i], scene); //Recurse down
+    }
+}
+
+void Model::loadMeshAndBone(aiMesh *mesh, const aiScene *scene, EntityMesh& target) {
     std::vector<EntityVertex> vertices;
     std::vector<unsigned int> indices;
 
-    auto texRef = atlas->getTextureRef(tex);
-
+    //Process Vertices
     for (uint i = 0; i < mesh->mNumVertices; i++) {
         EntityVertex vertex {};
-        vertex.position.x = mesh->mVertices[i].x;
-        vertex.position.y = mesh->mVertices[i].y;
-        vertex.position.z = mesh->mVertices[i].z;
-        vertex.normal.x = mesh->mNormals[i].x;
-        vertex.normal.y = mesh->mNormals[i].y;
-        vertex.normal.z = mesh->mNormals[i].z;
+
+        vertex.position = {mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z};
+        vertex.normal = {mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z};
         vertex.colorBlend = {1, 1, 1};
+
+        //Process Materials TODO: Use materials to allow different texture specifications
+        //if (mesh->mMaterialIndex >= 0) {}
+
         if (mesh->mTextureCoords[0]) {
+            //Set texture coordinates
             vertex.useTex = true;
-            vertex.colorData.x = texRef->uv.x + mesh->mTextureCoords[0][i].x * (texRef->uv.z - texRef->uv.x);
-            vertex.colorData.y = texRef->uv.y + mesh->mTextureCoords[0][i].y * (texRef->uv.w - texRef->uv.y);
+            vertex.colorData = {
+                texture->uv.x + mesh->mTextureCoords[0][i].x * (texture->uv.z - texture->uv.x),
+                texture->uv.y + mesh->mTextureCoords[0][i].y * (texture->uv.w - texture->uv.y),
+                0, 0
+            };
         }
-        else {
-            vertex.colorData = {1, 0, 0, 1};
-        }
+        else vertex.colorData = {1, 1, 1, 1};
+
         vertices.push_back(vertex);
     }
 
+    //Process Indices
     for (uint i = 0; i < mesh->mNumFaces; i++) {
         aiFace face = mesh->mFaces[i];
         for (uint j = 0; j < face.mNumIndices; j++) {
@@ -67,10 +89,229 @@ EntityMesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
         }
     }
 
-    if (mesh->mMaterialIndex >= 0) {
-        //TODO: Require list of textures to use with the model, and use those in here to translate texCoords based on idx
+    //Process Mesh Bones and add to bone list
+    bones.resize(mesh->mNumBones);
+    for (uint i = 0; i < mesh->mNumBones; i++) {
+        aiBone* bone = mesh->mBones[i];
+
+        bones[i] = ModelBone(static_cast<uint>(i), -1, {bone->mName.data});
+        bones[i].offsetMatrix = glm::transpose(MatConv::AiToGLMMat4(bone->mOffsetMatrix));
+
+        for (uint j = 0; j < bone->mNumWeights; j++) {
+            aiVertexWeight* weight = &bone->mWeights[j];
+            if (weight->mVertexId >= vertices.size()) assert(0);
+
+            uint bid = 0;
+            while (vertices[weight->mVertexId].boneWeights[bid] != 0) {
+                bid++;
+                assert(bid < 4);
+            }
+
+            vertices[weight->mVertexId].boneIDs[bid] = i;
+            vertices[weight->mVertexId].boneWeights[bid] = weight->mWeight;
+        }
     }
 
-    m.create(vertices, indices);
-    return m;
+    //Create mesh
+    target.create(vertices, indices);
+}
+
+void Model::loadAnimations(const aiScene *scene) {
+    animations.resize(scene->mNumAnimations);
+
+    for (unsigned int i = 0; i < scene->mNumAnimations; i++) {
+        const aiAnimation* aiAnim = scene->mAnimations[i];
+
+        animations[i] = ModelAnimation(aiAnim->mName.data);
+        ModelAnimation& animation = animations[i];
+
+        animation.duration = aiAnim->mDuration;
+        animation.ticksPerSecond = aiAnim->mTicksPerSecond;
+
+        animation.channels.resize(bones.size());
+        assert(aiAnim->mNumChannels <= bones.size());
+
+        for (unsigned int j = 0; j < aiAnim->mNumChannels; j++) {
+            const aiNodeAnim* aiChannel = aiAnim->mChannels[j];
+
+            int index = -1;
+            for (unsigned int k = 0; k < bones.size(); k++) {
+                if (std::string(aiChannel->mNodeName.data) == bones[k].name) {
+                    index = k;
+                    continue;
+                }
+            }
+
+            assert(index != -1);
+
+            animation.channels[index] = AnimChannel(static_cast<unsigned int>(index), aiChannel->mNodeName.data);
+            AnimChannel& channel = animation.channels[index];
+
+            //Copy Rotation Keys
+            channel.rotationKeys.reserve(aiChannel->mNumRotationKeys);
+            for (unsigned int k = 0; k < aiChannel->mNumRotationKeys; k++) {
+                aiQuatKey* key = &aiChannel->mRotationKeys[k];
+                channel.rotationKeys.emplace_back(key->mTime, key->mValue);
+            }
+
+            //Copy Position Keys
+            channel.positionKeys.reserve(aiChannel->mNumPositionKeys);
+            for (unsigned int k = 0; k < aiChannel->mNumPositionKeys; k++) {
+                aiVectorKey* key = &aiChannel->mPositionKeys[k];
+                channel.positionKeys.emplace_back(key->mTime, glm::vec3 {key->mValue.x, key->mValue.y, key->mValue.z});
+            }
+
+            //Copy Scale Keys
+            channel.scaleKeys.reserve(aiChannel->mNumScalingKeys);
+            for (unsigned int k = 0; k < aiChannel->mNumScalingKeys; k++) {
+                aiVectorKey* key = &aiChannel->mScalingKeys[k];
+                channel.scaleKeys.emplace_back(key->mTime, glm::vec3 {key->mValue.x, key->mValue.y, key->mValue.z});
+            }
+        }
+    }
+}
+
+void Model::calcBoneHeirarchy(aiNode *node, const aiScene *scene, int parentBoneIndex) {
+    int index = -1;
+
+    for (auto &bone : bones) {
+        if (bone.name == std::string(node->mName.data)) {
+            bone.parent = parentBoneIndex;
+            index = bone.index;
+            if (parentBoneIndex == -1) rootBone = &bone;
+            else bones[bone.parent].children.push_back(&bone);
+            break;
+        }
+    }
+
+    for (uint i = 0; i < node->mNumChildren; i++) {
+        calcBoneHeirarchy(node->mChildren[i], scene, index);
+    }
+
+    assert(rootBone != nullptr);
+}
+
+void Model::calcBoneTransformation(double animTime, ModelBone& bone, glm::mat4 parentTransform) {
+    AnimChannel* channel = nullptr;
+    for (auto &i : animations[0].channels) {
+        if (i.index == bone.index) channel = &i;
+    }
+
+    glm::mat4 boneTransformation(1.0f);
+
+    if (channel) {
+        glm::vec3 scale;
+        calcInterpolatedScale(scale, animTime, bone, *channel);
+        glm::mat4 scaleMat = glm::scale(glm::mat4(1.0), scale);
+
+        aiQuaternion rotation;
+        calcInterpolatedRotation(rotation, animTime, bone, *channel);
+        glm::mat4 rotationMat = glm::transpose(MatConv::AiToGLMMat3(rotation.GetMatrix()));
+
+        glm::vec3 position;
+        calcInterpolatedPosition(position, animTime, bone, *channel);
+        glm::mat4 positionMat = glm::translate(glm::mat4(1.0), position);
+
+        boneTransformation = positionMat * rotationMat * scaleMat;
+    }
+
+    glm::mat4 globalTransformation = parentTransform * boneTransformation;
+    bone.transformation = globalInverseTransform * globalTransformation * bone.offsetMatrix;
+
+    for (auto& child : bone.children) {
+        calcBoneTransformation(animTime, *child, globalTransformation);
+    }
+}
+
+void Model::calcInterpolatedPosition(glm::vec3 &position, double animTime, ModelBone bone, AnimChannel& channel) {
+    if (channel.positionKeys.empty()) {
+        position = glm::vec3(0);
+        return;
+    }
+    if (channel.positionKeys.size() == 1) {
+        position = channel.positionKeys[0].second;
+        return;
+    }
+
+    uint index = findPositionIndex(animTime, channel);
+    uint nextIndex = index + 1;
+    assert(nextIndex < channel.positionKeys.size());
+
+    double delta = channel.positionKeys[nextIndex].first - channel.positionKeys[index].first;
+    double factor = (animTime - channel.positionKeys[index].first) / delta;
+    assert(factor >= 0 && factor <= 1);
+
+    glm::vec3 startPosition = channel.positionKeys[index].second;
+    glm::vec3 endPosition = channel.positionKeys[nextIndex].second;
+
+    position = glm::mix(startPosition, endPosition, factor);
+}
+
+void Model::calcInterpolatedRotation(aiQuaternion &rotation, double animTime, ModelBone bone, AnimChannel& channel) {
+    if (channel.rotationKeys.empty()) {
+        return;
+    }
+    if (channel.rotationKeys.size() == 1) {
+        rotation = channel.rotationKeys[0].second;
+        return;
+    }
+
+    uint index = findRotationIndex(animTime, channel);
+    uint nextIndex = index + 1;
+    assert(nextIndex < channel.rotationKeys.size());
+
+    double delta = channel.rotationKeys[nextIndex].first - channel.rotationKeys[index].first;
+    double factor = (animTime - channel.rotationKeys[index].first) / delta;
+    assert(factor >= 0 && factor <= 1);
+
+    const aiQuaternion& startRotation = channel.rotationKeys[index].second;
+    const aiQuaternion& endRotation = channel.rotationKeys[nextIndex].second;
+
+    aiQuaternion::Interpolate(rotation, startRotation, endRotation, static_cast<ai_real>(factor));
+    rotation = rotation.Normalize();
+}
+
+void Model::calcInterpolatedScale(glm::vec3 &scale, double animTime, ModelBone bone, AnimChannel& channel) {
+    if (channel.scaleKeys.empty()) {
+        scale = glm::vec3(0);
+        return;
+    }
+    if (channel.scaleKeys.size() == 1) {
+        scale = channel.scaleKeys[0].second;
+        return;
+    }
+
+    uint index = findScaleIndex(animTime, channel);
+    uint nextIndex = index + 1;
+    assert(nextIndex < channel.scaleKeys.size());
+
+    double delta = channel.scaleKeys[nextIndex].first - channel.scaleKeys[index].first;
+    double factor = (animTime - channel.scaleKeys[index].first) / delta;
+    assert(factor >= 0 && factor <= 1);
+
+    glm::vec3 startScale = channel.scaleKeys[index].second;
+    glm::vec3 endScale = channel.scaleKeys[nextIndex].second;
+
+    scale = glm::mix(startScale, endScale, factor);
+}
+
+uint Model::findPositionIndex(double animTime, AnimChannel &channel){
+    for (uint i = 1; i < channel.positionKeys.size(); i++) {
+        if (channel.positionKeys[i].first > animTime) return i - 1;
+    }
+    assert(false);
+}
+
+uint Model::findRotationIndex(double animTime, AnimChannel &channel) {
+    for (uint i = 1; i < channel.rotationKeys.size(); i++) {
+        if (channel.rotationKeys[i].first > animTime) return i - 1;
+    }
+    assert(false);
+}
+
+uint Model::findScaleIndex(double animTime, AnimChannel &channel){
+    for (uint i = 1; i < channel.scaleKeys.size(); i++) {
+        if (channel.scaleKeys[i].first > animTime) return i - 1;
+    }
+    assert(false);
 }

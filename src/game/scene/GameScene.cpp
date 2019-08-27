@@ -26,11 +26,11 @@ GameScene::GameScene(ClientState& state) : Scene(state),
 
     entities.push_back(&player);
 
-    Model m;
-    m.create("/home/aurailus/Zepha/mods/default/models/player.b3d", defs.textures(), "zeus:default:player");
-    EntityMesh* mesh = new EntityMesh(m.meshes[0]);
+    rabbit.create("/home/aurailus/Zepha/mods/default/models/rabbit.b3d", defs.textures().getTextureRef("zeus:default:rabbit"));
+    EntityMesh* mesh = new EntityMesh(rabbit.meshes[0]);
     Entity* e = new Entity(mesh);
     e->setScale(1.f/16.f);
+    e->setPos({0, 48, 0});
     entities.push_back(e);
 
     server.init(entities, &world);
@@ -43,6 +43,10 @@ void GameScene::update() {
     defs.update(static_cast<float>(state.deltaTime) * 1000);
     defs.textures().update();
     server.update(player);
+
+    time += state.deltaTime;
+    time = fmod(time, 6.6f);
+    if (time < 1/60.f) time = 1/60.f;
 
     Window& window = state.renderer.getWindow();
 
@@ -91,6 +95,11 @@ void GameScene::draw() {
     drawCalls = world.renderChunks(renderer);
 
     renderer.beginEntityDeferredCalls();
+
+    //TODO: CHANGE
+    std::vector<glm::mat4> transforms;
+    rabbit.getTransforms(time, transforms);
+    renderer.setBones(transforms);
 
     for (auto entity : entities) entity->draw(renderer);
     world.renderEntities(renderer);
