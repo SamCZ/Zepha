@@ -1,5 +1,3 @@
-#include <utility>
-#include <glm/ext.hpp>
 
 //
 // Created by aurailus on 22/08/19.
@@ -7,14 +5,19 @@
 
 #include "Model.h"
 
-int Model::create(const std::string &path, std::shared_ptr<AtlasRef> texture) {
-    this->texture = std::move(texture);
+void Model::fromMesh(uptr<EntityMesh> mesh) {
+    meshes.clear();
+    meshes.push_back(std::move(mesh));
+}
+
+int Model::import(const std::string &path, const std::vector<std::shared_ptr<AtlasRef>>& textures) {
+    this->textures = textures;
 
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-        std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
+        std::cout << Log::err << "ERROR::ASSIMP::" << importer.GetErrorString() << Log::endl;
         return 1;
     }
 
@@ -28,23 +31,27 @@ int Model::create(const std::string &path, std::shared_ptr<AtlasRef> texture) {
     return 0;
 }
 
-void Model::getTransforms(double time, std::vector<glm::mat4> &transforms) {
-    double tps = animations[0].ticksPerSecond;
-    double tickTime = fmod(time * tps, animations[0].duration);
-
+void Model::getTransformsByFrame(double frame, std::tuple<int, int> bounds, std::vector<glm::mat4>& transforms) {
     transforms.resize(bones.size());
+    if (rootBone) calcBoneTransformation(frame, *rootBone, glm::mat4(1.0f), bounds, transforms);
+}
 
-    calcBoneTransformation(tickTime, *rootBone, glm::mat4(1.0f));
-    for (uint i = 0; i < bones.size(); i++) {
-        transforms[i] = bones[i].transformation;
-    }
+//void Model::getTransformsByTime(double time, std::vector<glm::mat4>& transforms) {
+//    double tps = animation.ticksPerSecond;
+//    double frameTime = fmod(time * tps, animation.duration);
+//
+//    getTransformsByFrame(frameTime, transforms);
+//}
+
+const ModelAnimation &Model::getAnimation() {
+    return animation;
 }
 
 void Model::loadModelMeshes(aiNode *node, const aiScene *scene) {
     for (uint i = 0; i < node->mNumMeshes; i++) {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.emplace_back();
-        loadMeshAndBone(mesh, scene, meshes[i]);
+        meshes.emplace_back(std::make_unique<EntityMesh>());
+        loadMeshAndBone(mesh, meshes[i]);
     }
 
     for (uint i = 0; i < node->mNumChildren; i++) {
@@ -52,7 +59,7 @@ void Model::loadModelMeshes(aiNode *node, const aiScene *scene) {
     }
 }
 
-void Model::loadMeshAndBone(aiMesh *mesh, const aiScene *scene, EntityMesh& target) {
+void Model::loadMeshAndBone(aiMesh *mesh, uptr<EntityMesh>& target) {
     std::vector<EntityVertex> vertices;
     std::vector<unsigned int> indices;
 
@@ -64,16 +71,15 @@ void Model::loadMeshAndBone(aiMesh *mesh, const aiScene *scene, EntityMesh& targ
         vertex.normal = {mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z};
         vertex.colorBlend = {1, 1, 1};
 
-        //Process Materials TODO: Use materials to allow different texture specifications
-        //if (mesh->mMaterialIndex >= 0) {}
+        assert(mesh->mMaterialIndex >= 0 && mesh->mMaterialIndex < textures.size());
+        auto& texture = textures[mesh->mMaterialIndex];
 
         if (mesh->mTextureCoords[0]) {
             //Set texture coordinates
             vertex.useTex = true;
             vertex.colorData = {
                 texture->uv.x + mesh->mTextureCoords[0][i].x * (texture->uv.z - texture->uv.x),
-                texture->uv.y + mesh->mTextureCoords[0][i].y * (texture->uv.w - texture->uv.y),
-                0, 0
+                texture->uv.y + mesh->mTextureCoords[0][i].y * (texture->uv.w - texture->uv.y), 0, 0
             };
         }
         else vertex.colorData = {1, 1, 1, 1};
@@ -113,19 +119,18 @@ void Model::loadMeshAndBone(aiMesh *mesh, const aiScene *scene, EntityMesh& targ
     }
 
     //Create mesh
-    target.create(vertices, indices);
+    target->create(vertices, indices);
 }
 
 void Model::loadAnimations(const aiScene *scene) {
-    animations.resize(scene->mNumAnimations);
+    assert(scene->mNumAnimations <= 1);
 
-    for (unsigned int i = 0; i < scene->mNumAnimations; i++) {
-        const aiAnimation* aiAnim = scene->mAnimations[i];
+    if (scene->mNumAnimations == 1) {
+        const aiAnimation* aiAnim = scene->mAnimations[0];
 
-        animations[i] = ModelAnimation(aiAnim->mName.data);
-        ModelAnimation& animation = animations[i];
+        animation = ModelAnimation(aiAnim->mName.data);
 
-        animation.duration = aiAnim->mDuration;
+        animation.duration = static_cast<uint>(aiAnim->mDuration);
         animation.ticksPerSecond = aiAnim->mTicksPerSecond;
 
         animation.channels.resize(bones.size());
@@ -191,9 +196,10 @@ void Model::calcBoneHeirarchy(aiNode *node, const aiScene *scene, int parentBone
     assert(rootBone != nullptr);
 }
 
-void Model::calcBoneTransformation(double animTime, ModelBone& bone, glm::mat4 parentTransform) {
+void Model::calcBoneTransformation(double animTime, ModelBone& bone, glm::mat4 parentTransform, std::tuple<int, int> bounds, std::vector<glm::mat4>& transforms) {
     AnimChannel* channel = nullptr;
-    for (auto &i : animations[0].channels) {
+
+    for (auto &i : animation.channels) {
         if (i.index == bone.index) channel = &i;
     }
 
@@ -201,37 +207,31 @@ void Model::calcBoneTransformation(double animTime, ModelBone& bone, glm::mat4 p
 
     if (channel) {
         glm::vec3 scale;
-        calcInterpolatedScale(scale, animTime, bone, *channel);
+        calcInterpolatedScale(scale, animTime, bone, *channel, bounds);
         glm::mat4 scaleMat = glm::scale(glm::mat4(1.0), scale);
 
         aiQuaternion rotation;
-        calcInterpolatedRotation(rotation, animTime, bone, *channel);
+        calcInterpolatedRotation(rotation, animTime, bone, *channel, bounds);
         glm::mat4 rotationMat = glm::transpose(MatConv::AiToGLMMat3(rotation.GetMatrix()));
 
         glm::vec3 position;
-        calcInterpolatedPosition(position, animTime, bone, *channel);
+        calcInterpolatedPosition(position, animTime, bone, *channel, bounds);
         glm::mat4 positionMat = glm::translate(glm::mat4(1.0), position);
 
         boneTransformation = positionMat * rotationMat * scaleMat;
     }
 
     glm::mat4 globalTransformation = parentTransform * boneTransformation;
-    bone.transformation = globalInverseTransform * globalTransformation * bone.offsetMatrix;
+    transforms[bone.index] = globalInverseTransform * globalTransformation * bone.offsetMatrix;
 
     for (auto& child : bone.children) {
-        calcBoneTransformation(animTime, *child, globalTransformation);
+        calcBoneTransformation(animTime, *child, globalTransformation, bounds, transforms);
     }
 }
 
-void Model::calcInterpolatedPosition(glm::vec3 &position, double animTime, ModelBone bone, AnimChannel& channel) {
-    if (channel.positionKeys.empty()) {
-        position = glm::vec3(0);
-        return;
-    }
-    if (channel.positionKeys.size() == 1) {
-        position = channel.positionKeys[0].second;
-        return;
-    }
+void Model::calcInterpolatedPosition(glm::vec3 &position, double animTime, ModelBone& bone, AnimChannel& channel, std::tuple<int, int> bounds) {
+    if (channel.positionKeys.empty()) { position = glm::vec3(0); return; }
+    if (channel.positionKeys.size() == 1) { position = channel.positionKeys[0].second; return; }
 
     uint index = findPositionIndex(animTime, channel);
     uint nextIndex = index + 1;
@@ -239,6 +239,7 @@ void Model::calcInterpolatedPosition(glm::vec3 &position, double animTime, Model
 
     double delta = channel.positionKeys[nextIndex].first - channel.positionKeys[index].first;
     double factor = (animTime - channel.positionKeys[index].first) / delta;
+    if (nextIndex >= std::get<1>(bounds)) factor = 0;
     assert(factor >= 0 && factor <= 1);
 
     glm::vec3 startPosition = channel.positionKeys[index].second;
@@ -247,14 +248,9 @@ void Model::calcInterpolatedPosition(glm::vec3 &position, double animTime, Model
     position = glm::mix(startPosition, endPosition, factor);
 }
 
-void Model::calcInterpolatedRotation(aiQuaternion &rotation, double animTime, ModelBone bone, AnimChannel& channel) {
-    if (channel.rotationKeys.empty()) {
-        return;
-    }
-    if (channel.rotationKeys.size() == 1) {
-        rotation = channel.rotationKeys[0].second;
-        return;
-    }
+void Model::calcInterpolatedRotation(aiQuaternion &rotation, double animTime, ModelBone& bone, AnimChannel& channel, std::tuple<int, int> bounds) {
+    if (channel.rotationKeys.empty()) { return; }
+    if (channel.rotationKeys.size() == 1) { rotation = channel.rotationKeys[0].second; return; }
 
     uint index = findRotationIndex(animTime, channel);
     uint nextIndex = index + 1;
@@ -262,6 +258,7 @@ void Model::calcInterpolatedRotation(aiQuaternion &rotation, double animTime, Mo
 
     double delta = channel.rotationKeys[nextIndex].first - channel.rotationKeys[index].first;
     double factor = (animTime - channel.rotationKeys[index].first) / delta;
+    if (nextIndex >= std::get<1>(bounds)) factor = 0;
     assert(factor >= 0 && factor <= 1);
 
     const aiQuaternion& startRotation = channel.rotationKeys[index].second;
@@ -271,15 +268,9 @@ void Model::calcInterpolatedRotation(aiQuaternion &rotation, double animTime, Mo
     rotation = rotation.Normalize();
 }
 
-void Model::calcInterpolatedScale(glm::vec3 &scale, double animTime, ModelBone bone, AnimChannel& channel) {
-    if (channel.scaleKeys.empty()) {
-        scale = glm::vec3(0);
-        return;
-    }
-    if (channel.scaleKeys.size() == 1) {
-        scale = channel.scaleKeys[0].second;
-        return;
-    }
+void Model::calcInterpolatedScale(glm::vec3 &scale, double animTime, ModelBone& bone, AnimChannel& channel, std::tuple<int, int> bounds) {
+    if (channel.scaleKeys.empty()) { scale = glm::vec3(1); return; }
+    if (channel.scaleKeys.size() == 1) { scale = channel.scaleKeys[0].second; return; }
 
     uint index = findScaleIndex(animTime, channel);
     uint nextIndex = index + 1;
@@ -287,6 +278,7 @@ void Model::calcInterpolatedScale(glm::vec3 &scale, double animTime, ModelBone b
 
     double delta = channel.scaleKeys[nextIndex].first - channel.scaleKeys[index].first;
     double factor = (animTime - channel.scaleKeys[index].first) / delta;
+    if (nextIndex >= std::get<1>(bounds)) factor = 0;
     assert(factor >= 0 && factor <= 1);
 
     glm::vec3 startScale = channel.scaleKeys[index].second;
@@ -295,7 +287,7 @@ void Model::calcInterpolatedScale(glm::vec3 &scale, double animTime, ModelBone b
     scale = glm::mix(startScale, endScale, factor);
 }
 
-uint Model::findPositionIndex(double animTime, AnimChannel &channel){
+uint Model::findPositionIndex(double animTime, AnimChannel &channel) {
     for (uint i = 1; i < channel.positionKeys.size(); i++) {
         if (channel.positionKeys[i].first > animTime) return i - 1;
     }
@@ -309,7 +301,7 @@ uint Model::findRotationIndex(double animTime, AnimChannel &channel) {
     assert(false);
 }
 
-uint Model::findScaleIndex(double animTime, AnimChannel &channel){
+uint Model::findScaleIndex(double animTime, AnimChannel &channel) {
     for (uint i = 1; i < channel.scaleKeys.size(); i++) {
         if (channel.scaleKeys[i].first > animTime) return i - 1;
     }

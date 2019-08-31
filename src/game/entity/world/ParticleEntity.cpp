@@ -53,9 +53,9 @@ ParticleEntity::ParticleEntity(glm::vec3 pos, BlockDef &block) {
 
     pos += glm::vec3(xDir, 0, zDir);
 
-    auto m = new EntityMesh();
-    m->create(vertices, indices);
-    this->setMesh(m);
+    uptr<EntityMesh> mesh = std::make_unique<EntityMesh>();
+    mesh->create(vertices, indices);
+    this->model->fromMesh(std::move(mesh));
     this->setScale(0.75f + (rand() % 10 / 20.f));
 }
 

@@ -259,6 +259,10 @@ std::shared_ptr<AtlasRef> TextureAtlas::getTextureRef(const std::string &name) {
     return textures[name];
 }
 
+std::shared_ptr<AtlasRef> TextureAtlas::operator[](const std::string &name) {
+    return getTextureRef(name);
+}
+
 TextureAtlas::~TextureAtlas() = default;
 //    delete[] atlasData;
 //    delete t;

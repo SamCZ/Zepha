@@ -11,7 +11,7 @@ public:
     Mesh() = default;
 
     void cleanup();
-    virtual void draw();
+    virtual void draw() const;
 
     ~Mesh();
 protected:

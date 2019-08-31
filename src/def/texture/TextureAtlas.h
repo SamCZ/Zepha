@@ -31,6 +31,7 @@ public:
     std::shared_ptr<AtlasRef> generateCrackImage(std::string &name, unsigned short crackLevel);
 
     std::shared_ptr<AtlasRef> getTextureRef(const std::string &name);
+    std::shared_ptr<AtlasRef> operator[](const std::string& name);
 
     ~TextureAtlas();
 private:

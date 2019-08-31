@@ -15,6 +15,6 @@ public:
 
     std::string name = "";
     std::vector<AnimChannel> channels {};
-    double duration = 0;
+    uint duration = 0;
     double ticksPerSecond = 0;
 };

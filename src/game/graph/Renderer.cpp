@@ -338,5 +338,6 @@ void Renderer::setClearColor(unsigned char r, unsigned char g, unsigned char b) 
 }
 
 void Renderer::setBones(std::vector<glm::mat4> &transforms) {
+    if (transforms.empty()) return;
     glUniformMatrix4fv(egu.uBones, static_cast<GLsizei>(transforms.size()), GL_FALSE, glm::value_ptr(transforms.at(0)));
 }

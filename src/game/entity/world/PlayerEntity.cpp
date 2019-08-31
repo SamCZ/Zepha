@@ -10,6 +10,8 @@ PlayerEntity::PlayerEntity(glm::vec3 pos, int peer_id, std::shared_ptr<AtlasRef>
     playerBackTex(std::move(playerBackTex)),
     shadowTex(std::move(shadowTex)) {
 
+    this->model = std::make_shared<Model>();
+
     auto fUV = this->playerFrontTex->uv;
     auto bUV = this->playerBackTex->uv;
     auto sUV = this->shadowTex->uv;
@@ -42,8 +44,8 @@ PlayerEntity::PlayerEntity(glm::vec3 pos, int peer_id, std::shared_ptr<AtlasRef>
         8, 10, 9, 10, 8, 11,
     };
 
-    auto m = new EntityMesh();
-    m->create(vertices, indices);
-    this->setMesh(m);
+    uptr<EntityMesh> mesh = std::make_unique<EntityMesh>();
+    mesh->create(vertices, indices);
+    this->model->fromMesh(std::move(mesh));
     this->setPos(pos);
 }

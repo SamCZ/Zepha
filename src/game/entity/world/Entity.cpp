@@ -1,25 +1,35 @@
+#include <utility>
+
 //
 // Created by aurailus on 25/11/18.
 //
 
 #include "Entity.h"
 
-Entity::Entity() = default;
+Entity::Entity() {
+    model = std::make_unique<Model>();
+};
 
-Entity::Entity(EntityMesh* mesh) {
-    setMesh(mesh);
+Entity::Entity(std::shared_ptr<Model> model) : animState(*model), model(model) {}
+
+void Entity::setModel(std::shared_ptr<Model> model) {
+    animState = AnimationState(*model);
+    model = std::move(model);
 }
 
-void Entity::setMesh(EntityMesh* myMesh) {
-    cleanup();
-    this->mesh = myMesh;
+void Entity::update(double delta) {
+    animState.update(delta);
 }
 
 void Entity::draw(Renderer& renderer) {
     if (visible) {
         auto mm = getModelMatrix();
         renderer.setModelMatrix(mm);
-        mesh->draw();
+
+        model->getTransformsByFrame(animState.getFrame(), animState.getBounds(), transforms);
+        renderer.setBones(transforms);
+
+        for (const auto& mesh : model->meshes) mesh->draw();
     }
 }
 
@@ -55,15 +65,14 @@ glm::mat4 Entity::getModelMatrix() {
     glm::mat4 model = glm::mat4(1.0);
 
     model = glm::translate(model, position);
-    model = glm::rotate(model, angle * (GLfloat)(3.14159265 / 180), glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, angle * static_cast<float>(3.14159265 / 180), {0.0, 1.0, 0.0});
     model = glm::scale(model, scale);
 
     return model;
 }
 
 void Entity::cleanup() {
-    delete mesh;
-    mesh = nullptr;
+    model = nullptr;
 }
 
 Entity::~Entity() {

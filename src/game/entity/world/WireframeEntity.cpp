@@ -5,9 +5,10 @@
 #include "WireframeEntity.h"
 
 
-WireframeEntity::WireframeEntity(const std::vector<SelectionBox>& boxes, float width, glm::vec3 color) {
-    this->width = width;
-    this->color = color;
+WireframeEntity::WireframeEntity(const std::vector<SelectionBox>& boxes, float width, glm::vec3 color) :
+    width(width),
+    color(color) {
+    model = std::make_shared<Model>();
 
     buildMesh(boxes);
 }
@@ -45,9 +46,10 @@ void WireframeEntity::buildMesh(const std::vector<SelectionBox>& boxes) {
         createBox(a, b, b.x, 0,   0, 0, 0, b.z);
     }
 
-    auto m = new EntityMesh();
-    m->create(vertices, indices);
-    setMesh(m);
+
+    uptr<EntityMesh> mesh = std::make_unique<EntityMesh>();
+    mesh->create(vertices, indices);
+    this->model->fromMesh(std::move(mesh));
 }
 
 void WireframeEntity::createBox(glm::vec3 a, glm::vec3 b, float x, float y, float z, float xSize, float ySize, float zSize) {

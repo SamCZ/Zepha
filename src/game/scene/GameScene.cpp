@@ -26,12 +26,20 @@ GameScene::GameScene(ClientState& state) : Scene(state),
 
     entities.push_back(&player);
 
-    rabbit.create("/home/aurailus/Zepha/mods/default/models/rabbit.b3d", defs.textures().getTextureRef("zeus:default:rabbit"));
-    EntityMesh* mesh = new EntityMesh(rabbit.meshes[0]);
-    Entity* e = new Entity(mesh);
-    e->setScale(1.f/16.f);
-    e->setPos({0, 48, 0});
-    entities.push_back(e);
+    auto model = std::make_shared<Model>();
+    model->import("/home/aurailus/Zepha/mods/default/models/rabbit.b3d", {defs.textures()["zeus:default:rabbit"]});
+
+    rabbit = new Entity(model);
+    rabbit->animState.defineAnimation("idle_sit", 1, 181);
+    rabbit->animState.defineAnimation("hop", 182, 212);
+    rabbit->animState.defineAnimation("sit_up", 213, 241);
+    rabbit->animState.defineAnimation("idle_stand", 242, 401);
+    rabbit->animState.setAnimation("idle_sit", 0, true);
+    rabbit->animState.setPlaying(true);
+    rabbit->setScale(1.f/16.f);
+    rabbit->setPos({0, 40, 0});
+
+    entities.push_back(rabbit);
 
     server.init(entities, &world);
 
@@ -44,14 +52,13 @@ void GameScene::update() {
     defs.textures().update();
     server.update(player);
 
-    time += state.deltaTime;
-    time = fmod(time, 6.6f);
-    if (time < 1/60.f) time = 1/60.f;
-
     Window& window = state.renderer.getWindow();
 
     playerPos = player.getPos();
     player.update(window.input, state.deltaTime, window.getDeltaX(), window.getDeltaY());
+
+    for (auto entity : entities) entity->update(state.deltaTime);
+    rabbit->setAngle(rabbit->getAngle() + 1);
 
     if (state.renderer.resized) {
         debugGui.bufferResized(state.renderer.getCamera().getBufferDimensions());
@@ -95,11 +102,6 @@ void GameScene::draw() {
     drawCalls = world.renderChunks(renderer);
 
     renderer.beginEntityDeferredCalls();
-
-    //TODO: CHANGE
-    std::vector<glm::mat4> transforms;
-    rabbit.getTransforms(time, transforms);
-    renderer.setBones(transforms);
 
     for (auto entity : entities) entity->draw(renderer);
     world.renderEntities(renderer);

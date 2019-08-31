@@ -10,14 +10,16 @@
 
 #include "../../graph/EntityMesh.h"
 #include "../../graph/drawable/Drawable.h"
+#include "../../../def/entity/Model.h"
+#include "../../../def/entity/AnimationState.h"
 
 class Entity : public Drawable {
 public:
     Entity();
-    explicit Entity(EntityMesh* mesh);
+    explicit Entity(std::shared_ptr<Model> model);
+    void setModel(std::shared_ptr<Model> model);
 
-    void setMesh(EntityMesh* mesh);
-
+    void update(double delta) override;
     void draw(Renderer& renderer) override;
 
     void setPos(glm::vec3 position);
@@ -30,17 +32,18 @@ public:
     void setScale(glm::vec3 scale);
     glm::vec3 getScale();
 
-    glm::mat4 getModelMatrix();
-
     void cleanup();
     ~Entity() override;
 
+    AnimationState animState {};
 protected:
-    glm::vec3 position {0, 0, 0};
-    glm::vec3 scale {1, 1, 1};
-    GLfloat angle = 0;
+    glm::mat4 getModelMatrix();
 
-private:
-    EntityMesh* mesh = nullptr;
+    glm::vec3 position {};
+    glm::vec3 scale {1, 1, 1};
+    float angle = 0;
+
+    std::shared_ptr<Model> model = nullptr;
+    std::vector<glm::mat4> transforms {};
 };
 

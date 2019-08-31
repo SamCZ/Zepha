@@ -40,7 +40,7 @@ public:
     DebugGui debugGui;
     GameGui gameGui;
 
-    Model rabbit;
+    Entity* rabbit;
     double time = 1.f/60.f;
 
     int drawCalls = 0;

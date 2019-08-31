@@ -195,6 +195,6 @@ set(ZEUS_SRC_FILES
         game/graph/GuiMesh.h
         game/graph/GuiVertex.h
         game/entity/hud/GuiEntity.cpp
-        game/entity/hud/GuiEntity.h util/Mat4Conv.h def/entity/ModelBone.cpp def/entity/ModelBone.h def/entity/ModelAnimation.cpp def/entity/ModelAnimation.h def/entity/AnimChannel.cpp def/entity/AnimChannel.h)
+        game/entity/hud/GuiEntity.h util/Mat4Conv.h def/entity/ModelBone.cpp def/entity/ModelBone.h def/entity/ModelAnimation.cpp def/entity/ModelAnimation.h def/entity/AnimChannel.cpp def/entity/AnimChannel.h def/entity/AnimationState.cpp def/entity/AnimationState.h def/entity/AnimationSegment.h util/Pointer.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

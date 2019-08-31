@@ -8,7 +8,3 @@ ModelBone::ModelBone(unsigned int index, int parent, const std::string& name) :
     index(index),
     parent(parent),
     name(name) {}
-
-bool ModelBone::hasParent() {
-    return parent != -1;
-}

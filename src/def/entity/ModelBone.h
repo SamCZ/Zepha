@@ -13,14 +13,11 @@ public:
     ModelBone() = default;
     ModelBone(unsigned int index, int parent, const std::string& name);
 
-    bool hasParent();
-
     std::string name {};
     unsigned int index = 0;
     int parent = 0;
 
     glm::mat4 offsetMatrix {};
-    glm::mat4 transformation {};
 
     std::vector<ModelBone*> children;
 };

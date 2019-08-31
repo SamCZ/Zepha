@@ -36,7 +36,7 @@ void Mesh::createVertexAttrib(GLuint offset, GLuint size, GLenum type, GLsizei s
         glVertexAttribPointer(offset, size, type, GL_FALSE, stride, pointer);
 }
 
-void Mesh::draw() {
+void Mesh::draw() const {
     glBindVertexArray(VAO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 

@@ -27,6 +27,10 @@ void main() {
     boneTransform += uBones[aBoneIDs[2]] * aBoneWeights[2];
     boneTransform += uBones[aBoneIDs[3]] * aBoneWeights[3];
 
+    float totalWeight = aBoneWeights[0] + aBoneWeights[1] + aBoneWeights[2] + aBoneWeights[3];
+
+    boneTransform = (boneTransform * totalWeight) + (mat4(1.0) * (1 - totalWeight));
+
     vec4 worldPos = model * boneTransform * vec4(aPos, 1.0);
     normal = transpose(inverse(mat3(model))) * (boneTransform * vec4(normalize(aNormal), 0.0)).xyz;
 
