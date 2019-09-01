@@ -7,11 +7,11 @@
 #include <utility>
 #include "net/ServerConnection.h"
 #include "../graph/scene/Scene.h"
-#include "../entity/hud/components/basic/GUIText.h"
-#include "../entity/hud/components/basic/GUIContainer.h"
-#include "../entity/hud/components/basic/GUIRect.h"
-#include "../../api/LuaModFile.h"
-#include "../../api/LuaMod.h"
+#include "../hud/components/basic/GUIText.h"
+#include "../hud/components/basic/GUIContainer.h"
+#include "../hud/components/basic/GUIRect.h"
+#include "../../lua/LuaModFile.h"
+#include "../../lua/LuaMod.h"
 
 class ConnectScene : public Scene {
 public:

@@ -39,6 +39,18 @@ void LocalWorld::update(double delta) {
         }
     }
     if (end != particles.begin()) particles.erase(particles.begin(), end + 1);
+
+    for (auto it = luaEntities.begin(); it != luaEntities.end();) {
+        if (auto ptr = (*it).lock()) {
+            ptr->update(delta);
+            it++;
+        }
+        else it = luaEntities.erase(it);
+    }
+}
+
+void LocalWorld::addEntity(const wptr<Entity> &entity) {
+    luaEntities.push_back(entity);
 }
 
 void LocalWorld::damageBlock(glm::vec3 pos, float amount) {
@@ -102,6 +114,7 @@ void LocalWorld::queueMeshes() {
         }
     }
 }
+
 void LocalWorld::finishChunks() {
     auto finishedChunks = worldGenStream->update();
 
@@ -111,6 +124,7 @@ void LocalWorld::finishChunks() {
         lastGenUpdates++;
     }
 }
+
 void LocalWorld::updateBlockDamages(double delta) {
     auto it = crackedBlocks.cbegin();
     while (it != crackedBlocks.cend()) {
@@ -197,6 +211,14 @@ int LocalWorld::renderChunks(Renderer &renderer) {
 void LocalWorld::renderEntities(Renderer &renderer) {
     for (auto block : crackedBlocks) block->draw(renderer);
     for (auto &p : particles) p->draw(renderer);
+
+    for (auto it = luaEntities.begin(); it != luaEntities.end();) {
+        if (auto ptr = (*it).lock()) {
+            ptr->draw(renderer);
+            it++;
+        }
+        else it = luaEntities.erase(it);
+    }
 }
 
 int LocalWorld::getMeshChunkCount() {
@@ -212,8 +234,8 @@ unsigned int LocalWorld::getBlock(glm::vec3 pos) {
     return DefinitionAtlas::INVALID;
 }
 
-void LocalWorld::localSetBlock(glm::vec3 pos, int block) {
-    if (block == 0) {
+void LocalWorld::localSetBlock(glm::vec3 pos, unsigned int block) {
+    if (block == LocalDefinitionAtlas::AIR) {
         auto def = defs.defs().blockFromId(getBlock(pos));
         if (def.callbacks.count(Callback::BREAK_CLIENT)) {
             def.callbacks[Callback::BREAK_CLIENT](defs.lua().vecToTable(pos));
@@ -231,7 +253,7 @@ void LocalWorld::localSetBlock(glm::vec3 pos, int block) {
     remeshChunk(TransPos::chunkFromVec(TransPos::roundPos(pos)));
 }
 
-void LocalWorld::setBlock(glm::vec3 pos, int block) {
+void LocalWorld::setBlock(glm::vec3 pos, unsigned int block) {
     dimension.setBlock(pos, block);
     remeshChunk(TransPos::chunkFromVec(TransPos::roundPos(pos)));
 }

@@ -6,7 +6,7 @@
 
 #include "texture/TextureAtlas.h"
 #include "LocalDefinitionAtlas.h"
-#include "../api/client/LocalLuaParser.h"
+#include "../lua/client/LocalLuaParser.h"
 
 class LocalDefs {
 public:

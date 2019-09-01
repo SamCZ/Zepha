@@ -9,13 +9,13 @@
 #include "world/Player.h"
 #include "../graph/scene/Scene.h"
 #include "../graph/Renderer.h"
-#include "../entity/hud/DebugGui.h"
-#include "../entity/hud/GameGui.h"
+#include "../hud/DebugGui.h"
+#include "../hud/GameGui.h"
 #include "../entity/world/PlayerEntity.h"
 #include "../entity/world/WireframeEntity.h"
 #include "../entity/world/BlockCrackEntity.h"
+#include "../entity/Model.h"
 #include "../../def/LocalDefs.h"
-#include "../../def/entity/Model.h"
 
 class GameScene : public Scene {
 public:
@@ -39,9 +39,6 @@ public:
 
     DebugGui debugGui;
     GameGui gameGui;
-
-    Entity* rabbit;
-    double time = 1.f/60.f;
 
     int drawCalls = 0;
 

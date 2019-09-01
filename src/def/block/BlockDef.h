@@ -9,7 +9,7 @@
 #include "SelectionBox.h"
 #include "BlockModel.h"
 #include "../ItemDef.h"
-#include "../../api/Callback.h"
+#include "../../lua/Callback.h"
 
 class BlockDef : public ItemDef {
 public:

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../../../entity/world/Entity.h"
+#include "../../../entity/Entity.h"
 #include "../../../../util/TransPos.h"
 
 class MeshChunk : Drawable {

@@ -8,3 +8,4 @@
 
 #define sptr std::shared_ptr
 #define uptr std::unique_ptr
+#define wptr std::weak_ptr

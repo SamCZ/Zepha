@@ -6,7 +6,7 @@
 
 
 #include "ServerDefinitionAtlas.h"
-#include "../api/server/ServerLuaParser.h"
+#include "../lua/server/ServerLuaParser.h"
 #include "texture/ServerTextureStorage.h"
 
 class ServerWorld;

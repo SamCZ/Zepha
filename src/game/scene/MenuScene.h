@@ -6,8 +6,8 @@
 
 #include "../../game/ClientState.h"
 #include "../../game/graph/scene/Scene.h"
-#include "../entity/hud/components/basic/GUIText.h"
-#include "../entity/hud/components/basic/GUIContainer.h"
+#include "../hud/components/basic/GUIText.h"
+#include "../hud/components/basic/GUIContainer.h"
 
 class MenuScene : public Scene {
 public:

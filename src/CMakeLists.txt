@@ -1,8 +1,8 @@
 set(ZEUS_SRC_FILES
         game/graph/ChunkMesh.cpp
         game/graph/ChunkMesh.h
-        game/entity/world/Entity.cpp
-        game/entity/world/Entity.h
+        game/entity/Entity.cpp
+        game/entity/Entity.h
         game/graph/Shader.cpp
         game/graph/Shader.h
         game/graph/window/Window.cpp
@@ -31,12 +31,12 @@ set(ZEUS_SRC_FILES
         game/scene/GameScene.h
         game/graph/Renderer.cpp
         game/graph/Renderer.h
-        api/client/LocalLuaParser.cpp
-        api/client/LocalLuaParser.h
-        game/entity/hud/components/basic/GUIText.cpp
-        game/entity/hud/components/basic/GUIText.h
-        game/entity/hud/DebugGui.cpp
-        game/entity/hud/DebugGui.h
+        lua/client/LocalLuaParser.cpp
+        lua/client/LocalLuaParser.h
+        game/hud/components/basic/GUIText.cpp
+        game/hud/components/basic/GUIText.h
+        game/hud/DebugGui.cpp
+        game/hud/DebugGui.h
         game/scene/world/Player.cpp
         game/scene/world/Player.h
         util/Ray.cpp
@@ -61,8 +61,8 @@ set(ZEUS_SRC_FILES
         def/gen/MapGen.h
         util/net/NetHandler.cpp
         util/net/NetHandler.h
-        game/entity/hud/GameGui.cpp
-        game/entity/hud/GameGui.h
+        game/hud/GameGui.cpp
+        game/hud/GameGui.h
         util/net/Serializer.cpp
         util/net/Serializer.h
         server/conn/ServerClients.cpp
@@ -71,10 +71,10 @@ set(ZEUS_SRC_FILES
         util/net/PacketChannel.h
         game/entity/world/PlayerEntity.cpp
         game/entity/world/PlayerEntity.h
-        game/entity/hud/components/basic/GUIRect.cpp
-        game/entity/hud/components/basic/GUIRect.h
-        game/entity/hud/components/basic/GUIGraph.cpp
-        game/entity/hud/components/basic/GUIGraph.h
+        game/hud/components/basic/GUIRect.cpp
+        game/hud/components/basic/GUIRect.h
+        game/hud/components/basic/GUIGraph.cpp
+        game/hud/components/basic/GUIGraph.h
         def/gen/MapGenJob.h
         util/Interp.h
         def/gen/NoiseSample.cpp
@@ -118,8 +118,8 @@ set(ZEUS_SRC_FILES
         world/region/MapBlock.cpp
         util/Util.h
         world/block/PointedThing.h
-        game/entity/hud/components/compound/GUILabelledGraph.cpp
-        game/entity/hud/components/compound/GUILabelledGraph.cpp
+        game/hud/components/compound/GUILabelledGraph.cpp
+        game/hud/components/compound/GUILabelledGraph.cpp
         game/entity/world/ParticleEntity.cpp
         game/entity/world/ParticleEntity.h
         def/ServerDefs.cpp
@@ -130,33 +130,33 @@ set(ZEUS_SRC_FILES
         def/block/BlockDef.h
         util/Dir.h
         def/DefinitionAtlas.h
-        api/LuaParser.cpp
-        api/LuaParser.h
-        api/server/ServerLuaParser.cpp
-        api/server/ServerLuaParser.h
+        lua/LuaParser.cpp
+        lua/LuaParser.h
+        lua/server/ServerLuaParser.cpp
+        lua/server/ServerLuaParser.h
         util/Path.cpp
         util/Path.h
         util/Log.h
-        api/Callback.h
-        api/modules/cRegisterBlock.h
-        api/modules/cDelay.h
+        lua/Callback.h
+        lua/api/modules/cRegisterBlock.h
+        lua/api/modules/cDelay.h
         game/graph/uniform/WorldGeometryUniforms.h
         game/graph/GuiUniforms.h
         game/graph/uniform/WorldLightingUniforms.h
         game/graph/EntityMesh.cpp
         game/graph/EntityMesh.h
         game/graph/uniform/EntityGeometryUniforms.h
-        api/modules/cRegisterBlockmodel.h
-        api/modules/cSetBlock.h
-        api/modules/cGetBlock.h
-        api/modules/cRemoveBlock.h
-        api/modules/cDump.h
-        api/modules/cIsServer.h
-        api/modules/cPrintE.h
-        api/client/LocalRegisterBlocks.cpp
-        api/client/LocalRegisterBlocks.h
-        api/server/ServerRegisterBlocks.cpp
-        api/server/ServerRegisterBlocks.h
+        lua/api/modules/cRegisterBlockmodel.h
+        lua/api/modules/cSetBlock.h
+        lua/api/modules/cGetBlock.h
+        lua/api/modules/cRemoveBlock.h
+        lua/api/modules/cDump.h
+        lua/api/modules/cIsServer.h
+        lua/api/modules/cPrintE.h
+        lua/client/LocalRegisterBlocks.cpp
+        lua/client/LocalRegisterBlocks.h
+        lua/server/ServerRegisterBlocks.cpp
+        lua/server/ServerRegisterBlocks.h
         server/conn/ServerClient.cpp
         server/config/ServerConfig.cpp
         server/config/ServerConfig.h
@@ -168,25 +168,25 @@ set(ZEUS_SRC_FILES
         game/scene/net/ServerConnection.cpp
         game/scene/net/ServerConnection.h
         game/scene/world/MeshDetails.h
-        game/entity/hud/components/GUIComponent.cpp
-        game/entity/hud/components/GUIComponent.h
-        game/entity/hud/components/basic/GUIContainer.cpp
-        game/entity/hud/components/basic/GUIContainer.h
-        api/modules/cShowMenu.h
-        api/LuaModFile.h
-        api/LuaMod.h
-        api/LuaModConfig.h
+        game/hud/components/GUIComponent.cpp
+        game/hud/components/GUIComponent.h
+        game/hud/components/basic/GUIContainer.cpp
+        game/hud/components/basic/GUIContainer.h
+        lua/api/modules/cShowMenu.h
+        lua/LuaModFile.h
+        lua/LuaMod.h
+        lua/LuaModConfig.h
         def/texture/ServerTexture.h
         def/texture/ServerTextureStorage.h
-        api/LuaMod.cpp
+        lua/LuaMod.cpp
         def/ItemDef.h
         def/DefinitionAtlas.cpp
         def/block/BlockModel.h
-        api/modules/sRegisterItem.h
+        lua/api/modules/sRegisterItem.h
         def/texture/Font.cpp
         def/texture/Font.h
-        def/entity/Model.cpp
-        def/entity/Model.h
+        game/entity/Model.cpp
+        game/entity/Model.h
         game/graph/EntityVertex.h
         game/graph/ChunkVertex.h
         game/graph/Mesh.cpp
@@ -194,7 +194,7 @@ set(ZEUS_SRC_FILES
         game/graph/GuiMesh.cpp
         game/graph/GuiMesh.h
         game/graph/GuiVertex.h
-        game/entity/hud/GuiEntity.cpp
-        game/entity/hud/GuiEntity.h util/Mat4Conv.h def/entity/ModelBone.cpp def/entity/ModelBone.h def/entity/ModelAnimation.cpp def/entity/ModelAnimation.h def/entity/AnimChannel.cpp def/entity/AnimChannel.h def/entity/AnimationState.cpp def/entity/AnimationState.h def/entity/AnimationSegment.h util/Pointer.h)
+        game/hud/GuiEntity.cpp
+        game/hud/GuiEntity.h util/Mat4Conv.h game/entity/ModelBone.cpp game/entity/ModelBone.h game/entity/ModelAnimation.cpp game/entity/ModelAnimation.h game/entity/AnimChannel.cpp game/entity/AnimChannel.h game/entity/AnimationState.cpp game/entity/AnimationState.h game/entity/AnimationSegment.h util/Pointer.h lua/api/type/cEntity.h lua/api/customization/pVec3.cpp lua/api/customization/pVec3.h)
 
 add_library (zeusCore ${ZEUS_SRC_FILES})

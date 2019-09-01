@@ -36,10 +36,7 @@ public:
     void init();
     void update(double delta);
 
-    void finishMeshes();
-    void queueMeshes();
-    void finishChunks();
-    void updateBlockDamages(double delta);
+    void addEntity(const wptr<Entity> &entity);
 
     void loadChunkPacket(Packet p);
     std::shared_ptr<BlockChunk> getChunk(glm::vec3 chunkPos);
@@ -58,26 +55,31 @@ public:
     unsigned int getBlock(glm::vec3 pos);
 
     //Called by the Client
-    void localSetBlock(glm::vec3 pos, int block);
+    void localSetBlock(glm::vec3 pos, unsigned int block);
     //Called form ClientNetworkInterpreter
-    void setBlock(glm::vec3 pos, int block);
+    void setBlock(glm::vec3 pos, unsigned int block);
 
     bool solidAt(glm::vec3 pos);
 
     int lastGenUpdates = 0, lastMeshUpdates = 0;
 private:
+    void finishMeshes();
+    void queueMeshes();
+    void finishChunks();
+    void updateBlockDamages(double delta);
+
     LocalDefs& defs;
     glm::vec3* playerPos;
     glm::vec3 playerChunkPos {};
 
-    ClientNetworkInterpreter* server = nullptr;
-
-    WorldInterpolationStream* worldGenStream = nullptr;
-    Dimension dimension;
-
     std::vector<BlockCrackEntity*> crackedBlocks;
     std::vector<ParticleEntity*> particles;
 
+    std::list<wptr<Entity>> luaEntities;
+
+    ClientNetworkInterpreter* server = nullptr;
+    WorldInterpolationStream* worldGenStream = nullptr;
+    Dimension dimension;
     MeshGenStream meshGenStream;
     std::vector<glm::vec3> pendingMesh;
 };
