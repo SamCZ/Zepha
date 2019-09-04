@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <glew/glew.h>
+#include <GL/glew.h>
 
 class Mesh {
 public:

@@ -9,7 +9,7 @@
 #include <vector>
 #include <tgmath.h>
 #include <glm/vec2.hpp>
-#include <glew/glew.h>
+#include <GL/glew.h>
 #include <cute_files/cute_files.h>
 #include "../../util/Log.h"
 #include "../../game/graph/Texture.h"

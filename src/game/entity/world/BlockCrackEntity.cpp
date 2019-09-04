@@ -9,7 +9,7 @@ BlockCrackEntity::BlockCrackEntity(LocalDefs &defs, glm::vec3 blockPos, unsigned
     defs(defs),
     blockPos(blockPos),
     blockID(blockID) {
-    position = blockPos;
+    setPos(blockPos);
 
     update();
 }
@@ -24,7 +24,6 @@ void BlockCrackEntity::update() {
         this->crackLevel = crackLevel;
 
         auto model = defs.defs().blockFromId(blockID).model;
-        auto m = new EntityMesh();
 
         std::vector<EntityVertex> vertices;
         std::vector<unsigned int> indices;
@@ -55,7 +54,7 @@ void BlockCrackEntity::addFaces(unsigned int &indOffset, std::vector<EntityVerte
             std::string missing("_missing");
             uv = defs.textures().getTextureRef(missing)->uv;
         }
-        uv = ref->uv;
+        else uv = ref->uv;
 
         crackedFaces.push_back(ref);
 
@@ -64,7 +63,14 @@ void BlockCrackEntity::addFaces(unsigned int &indOffset, std::vector<EntityVerte
             pushed_pos += glm::normalize(vertex.nml) * 0.003f;
             glm::vec4 tex = {uv.x + (uv.z - uv.x) * vertex.texUVs.x, uv.y + ((uv.w - uv.y) * vertex.texUVs.y), 0, 0};
 
-            vertices.push_back({pushed_pos, tex, {1, 1, 1}, true, vertex.nml});
+            vertices.push_back({
+                pushed_pos,
+                tex,
+                {1, 1, 1},
+                true,
+                vertex.nml,
+                {}, {}
+            });
         }
 
         for (unsigned int index : mp.indices) {

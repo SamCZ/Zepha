@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <glew/glew.h>
+#include <GL/glew.h>
 #include <iostream>
 #include <stb_image/stb_image.h>
 

@@ -26,7 +26,7 @@
 
 void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world, GameGui& gui) {
     //Load Base Libraries
-    lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math);
+    lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
 
     //Define Panic Callback
 //    lua_atpanic(lua, sol::c_call<decltype(&LuaParser::override_panic), &LuaParser::override_panic>);

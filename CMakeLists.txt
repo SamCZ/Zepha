@@ -23,8 +23,9 @@ include_directories (${HEADER_LIBRARIES})
 
 # Include dynamic library headers
 set (DYNAMIC_LIBRARY_HEADERS
-        lib/dynamic/glfw/include       # GLFW headers.
-        lib/dynamic/glew/include       # GLEW headers.
+        lib/static/glew/include        # GLEW headers.
+        lib/static/glfw/include        # GLFW headers.
+
         lib/dynamic/enet/include       # ENet headers.
         lib/dynamic/noise/include      # Noise headers.
         lib/dynamic/lua5.3/include     # Lua headers.
@@ -42,18 +43,17 @@ target_link_libraries (${MAIN_EXEC_NAME} zeusCore)
 find_package (OpenGL REQUIRED)
 target_link_libraries(${MAIN_EXEC_NAME} ${OPENGL_gl_LIBRARY})
 
-# Build and include GLFW
-#find_package (glfw3 REQUIRED)
+# GLFW Static Library
 set (GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set (GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set (GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-add_subdirectory (lib/dynamic/glfw)
+add_subdirectory (lib/static/glfw)
 target_link_libraries (${MAIN_EXEC_NAME} glfw)
 
-# Include GLEW
-find_package (GLEW REQUIRED)
-target_link_libraries (${MAIN_EXEC_NAME} ${GLEW_LIBRARIES})
+# Glew Static Library
+add_subdirectory (lib/static/glew/build/cmake)
+target_link_libraries (${MAIN_EXEC_NAME} glew)
 
 # Include the other dynamic libraries - End goal would be to build these at compile time
 set (ZEUS_LIBRARIES pthread lua5.3 z enet noise assimp)

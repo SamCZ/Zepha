@@ -23,6 +23,7 @@ void Entity::update(double delta) {
     float factor = static_cast<float>(fmin(delta * 15, 1));
 
     visualPosition = visualPosition * (1 - factor) + position * factor;
+    visualVisualOffset = visualVisualOffset * (1 - factor) + visualOffset * factor;
     visualAngle = visualAngle * (1 - factor) + angle * factor;
     visualScale = visualScale * (1 - factor) + scale * factor;
 }
@@ -50,6 +51,19 @@ void Entity::interpPos(glm::vec3 position) {
 
 glm::vec3 Entity::getPos() {
     return position;
+}
+
+void Entity::setVisualOffset(glm::vec3 vs) {
+    this->visualVisualOffset = vs;
+    this->visualOffset = vs;
+}
+
+void Entity::interpVisualOffset(glm::vec3 vs){
+    this->visualOffset = vs;
+}
+
+glm::vec3 Entity::getVisualOffset(){
+    return visualOffset;
 }
 
 void Entity::setAngle(float angle) {
@@ -81,9 +95,9 @@ float Entity::getScale() {
 glm::mat4 Entity::getModelMatrix() {
     glm::mat4 model = glm::mat4(1.0);
 
-    model = glm::translate(model, visualPosition);
+    model = glm::translate(model, visualPosition + visualVisualOffset);
     model = glm::rotate(model, visualAngle * static_cast<float>(3.14159265 / 180), {0.0, 1.0, 0.0});
-    model = glm::scale(model, {visualScale, visualScale, visualScale});
+    model = glm::scale(model, glm::vec3(visualScale));
 
     return model;
 }

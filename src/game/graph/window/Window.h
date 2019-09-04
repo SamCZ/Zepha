@@ -5,7 +5,7 @@
 #pragma once
 
 #include <cstdio>
-#include <glew/glew.h>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
 #include "InputManager.h"

@@ -26,6 +26,10 @@ public:
     void setPos(glm::vec3 position);
     glm::vec3 getPos();
 
+    void interpVisualOffset(glm::vec3 vs);
+    void setVisualOffset(glm::vec3 vs);
+    glm::vec3 getVisualOffset();
+
     void interpAngle(float angle);
     void setAngle(float angle);
     float getAngle();
@@ -42,10 +46,12 @@ protected:
     glm::mat4 getModelMatrix();
 
     glm::vec3 position {};
+    glm::vec3 visualOffset {};
     float scale = 1;
     float angle = 0;
 
     glm::vec3 visualPosition {};
+    glm::vec3 visualVisualOffset {};
     float visualScale = 1;
     float visualAngle = 0;
 

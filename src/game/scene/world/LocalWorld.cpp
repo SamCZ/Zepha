@@ -216,8 +216,7 @@ void LocalWorld::renderEntities(Renderer &renderer) {
         if (auto ptr = (*it).lock()) {
             ptr->draw(renderer);
             it++;
-        }
-        else it = luaEntities.erase(it);
+        } else it = luaEntities.erase(it);
     }
 }
 

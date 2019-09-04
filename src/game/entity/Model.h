@@ -14,17 +14,19 @@
 #include <glm/ext.hpp>
 #include "ModelBone.h"
 #include "ModelAnimation.h"
+#include "../graph/EntityMesh.h"
 #include "../../def/texture/TextureAtlas.h"
 #include "../../util/Mat4Conv.h"
-#include "../graph/EntityMesh.h"
 #include "../../util/Pointer.h"
+#include "../../def/block/BlockDef.h"
 
 class Model {
 public:
     Model() = default;
 
     void fromMesh(uptr<EntityMesh> mesh);
-    int import(const std::string& path, const std::vector<std::shared_ptr<AtlasRef>>& texture);
+    void fromBlock(BlockDef& def);
+    int  import(const std::string& path, const std::vector<std::shared_ptr<AtlasRef>>& texture);
 
     void getTransformsByFrame(double frame, std::tuple<int, int> bounds, std::vector<glm::mat4>& transforms);
 //    void getTransformsByTime(double time, std::tuple<uint> bounds, std::vector<glm::mat4>& transforms);

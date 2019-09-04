@@ -10,6 +10,40 @@ void Model::fromMesh(uptr<EntityMesh> mesh) {
     meshes.push_back(std::move(mesh));
 }
 
+void Model::fromBlock(BlockDef& def) {
+    uptr<EntityMesh> mesh = std::make_unique<EntityMesh>();
+    uint indOffset = 0;
+
+    std::vector<EntityVertex> vertices;
+    std::vector<unsigned int> indices;
+
+    for (std::vector<MeshPart>& pArray : def.model.parts) {
+        for (MeshPart& p : pArray) {
+            for (const BlockModelVertex &vertex : p.vertices) {
+                vertices.push_back(EntityVertex {
+                    vertex.pos - glm::vec3(0.5),
+                    {vertex.tex.x, vertex.tex.y, 0, 0},
+                    {1, 1, 1},
+                    true,
+                    vertex.nml,
+                    {}, {}
+                });
+            }
+
+            for (unsigned int index : p.indices) {
+                indices.push_back(indOffset + index);
+            }
+
+            indOffset += p.vertices.size();
+        }
+    }
+
+    mesh->create(vertices, indices);
+
+    meshes.clear();
+    meshes.push_back(std::move(mesh));
+}
+
 int Model::import(const std::string &path, const std::vector<std::shared_ptr<AtlasRef>>& textures) {
     this->textures = textures;
 
