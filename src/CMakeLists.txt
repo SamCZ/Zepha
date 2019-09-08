@@ -1,4 +1,4 @@
-set(ZEUS_SRC_FILES
+set(ZEPHA_SRC
         game/graph/ChunkMesh.cpp
         game/graph/ChunkMesh.h
         game/entity/Entity.cpp
@@ -195,6 +195,22 @@ set(ZEUS_SRC_FILES
         game/graph/GuiMesh.h
         game/graph/GuiVertex.h
         game/hud/GuiEntity.cpp
-        game/hud/GuiEntity.h util/Mat4Conv.h game/entity/ModelBone.cpp game/entity/ModelBone.h game/entity/ModelAnimation.cpp game/entity/ModelAnimation.h game/entity/AnimChannel.cpp game/entity/AnimChannel.h game/entity/AnimationState.cpp game/entity/AnimationState.h game/entity/AnimationSegment.h util/Pointer.h lua/api/type/cEntity.h lua/api/customization/pVec3.cpp lua/api/customization/pVec3.h)
+        game/hud/GuiEntity.h 
+        util/Mat4Conv.h 
+        game/entity/ModelBone.cpp 
+        game/entity/ModelBone.h 
+        game/entity/ModelAnimation.cpp 
+        game/entity/ModelAnimation.h 
+        game/entity/AnimChannel.cpp
+        game/entity/AnimChannel.h
+        game/entity/AnimationState.cpp
+        game/entity/AnimationState.h
+        game/entity/AnimationSegment.h
+        util/Pointer.h
+        lua/api/type/cEntity.h
+        lua/api/customization/pVec3.cpp
+        lua/api/customization/pVec3.h
+        StartGame.h
+)
 
-add_library (zeusCore ${ZEUS_SRC_FILES})
+add_library (Zepha_Core ${ZEPHA_SRC})
