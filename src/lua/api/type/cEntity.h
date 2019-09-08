@@ -7,8 +7,6 @@
 #include "../../../def/LocalDefs.h"
 #include "../../../game/scene/world/LocalWorld.h"
 #include "../customization/pVec3.h"
-
-#define SOL_ALL_SAFETIES_ON = 1
 #include <sol2/sol.hpp>
 
 namespace ClientApi {

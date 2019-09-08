@@ -33,6 +33,9 @@ target_link_libraries (${MAIN_EXEC_NAME} Zepha_Core)
 # Load Libraries
 include(${CMAKE_CURRENT_SOURCE_DIR}/LoadLibs.cmake)
 
+# Enable Safeties
+target_compile_definitions(${MAIN_EXEC_NAME} PUBLIC SOL_ALL_SAFETIES_ON)
+
 # Test Build
 #add_subdirectory(test)
 #add_executable(${TEST_EXEC_NAME} test/Main.cpp)

@@ -10,7 +10,7 @@ LocalDefs::LocalDefs(const LocalDefs &copy) : LocalDefs(copy.tex_path) {}
 LocalDefs::LocalDefs(const std::string& path) :
     luaApi(),
     tex_path(path),
-    textureAtlas(8192) {
+    textureAtlas(2048) {
 
     textureAtlas.loadDirectory(tex_path);
 }

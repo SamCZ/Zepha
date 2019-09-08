@@ -12,9 +12,9 @@ uniform mat4 model;
 uniform mat4 projection;
 uniform mat4 view;
 
-uniform float time;
-
 uniform sampler2D swayTex;
+
+uniform float time;
 
 out vec2  texCoords;
 out vec3  fragPos;

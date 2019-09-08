@@ -15,7 +15,7 @@ struct WorldGeometryUniforms {
     GLint model;
     GLint view;
 
-
+    GLint swaySampler;
 
     GLint time;
 };

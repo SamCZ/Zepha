@@ -42,6 +42,8 @@ void Renderer::createWorldShaders() {
     wgu.model  = worldGeometryShader.getUniform("model");
     wgu.view   = worldGeometryShader.getUniform("view");
 
+    wgu.swaySampler = worldGeometryShader.getUniform("swayTex");
+
     wgu.time   = worldGeometryShader.getUniform("time");
 
     worldGeometryShader.use();
@@ -213,13 +215,15 @@ void Renderer::beginChunkDeferredCalls() {
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    swayMap.use(1);
-
     worldGeometryShader.use();
+
     glUniformMatrix4fv(wgu.proj, 1, GL_FALSE, glm::value_ptr(wgu.matrix));
     glUniformMatrix4fv(wgu.view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
 
     glUniform1f(wgu.time, static_cast<float>(elapsedTime));
+
+    swayMap.use(1);
+    glUniform1i(wgu.swaySampler, 1);
 }
 
 void Renderer::beginEntityDeferredCalls() {
