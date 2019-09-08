@@ -1,6 +1,6 @@
-#version 420 core
+#version 330 core
 
-#define TWO_PI 6.28318530718f
+#define TAU 6.28318530718f
 
 layout (location = 0) in vec3  aPos;
 layout (location = 1) in vec2  aTexCoords;
@@ -14,7 +14,7 @@ uniform mat4 view;
 
 uniform float time;
 
-layout (binding = 1) uniform sampler2D swayTex;
+uniform sampler2D swayTex;
 
 out vec2  texCoords;
 out vec3  fragPos;
@@ -50,20 +50,20 @@ void main() {
         default: break;
         case 1: { // Rotate X
             vec4 origin = vec4(round(unpackFloat(aModValues.x) * 8 + 8) + 0.5, 1);
-            pos = rotateX(pos, origin, time * TWO_PI * aModValues.y);
-            nml = rotateX(nml, vec4(0), time * TWO_PI * aModValues.y);
+            pos = rotateX(pos, origin, time * TAU * aModValues.y);
+            nml = rotateX(nml, vec4(0), time * TAU * aModValues.y);
             break;
         }
         case 2: { // Rotate Y
             vec4 origin = vec4(round(unpackFloat(aModValues.x) * 8 + 8) + 0.5, 1);
-            pos = rotateY(pos, origin, time * TWO_PI * aModValues.y);
-            nml = rotateY(nml, vec4(0), time * TWO_PI * aModValues.y);
+            pos = rotateY(pos, origin, time * TAU * aModValues.y);
+            nml = rotateY(nml, vec4(0), time * TAU * aModValues.y);
             break;
         }
         case 3: { // Rotate Z
             vec4 origin = vec4(round(unpackFloat(aModValues.x) * 8 + 8) + 0.5, 1);
-            pos = rotateZ(pos, origin, time * TWO_PI * aModValues.y);
-            nml = rotateZ(nml, vec4(0), time * TWO_PI * aModValues.y);
+            pos = rotateZ(pos, origin, time * TAU * aModValues.y);
+            nml = rotateZ(nml, vec4(0), time * TAU * aModValues.y);
             break;
         }
         case 4: { //Sway Grounded

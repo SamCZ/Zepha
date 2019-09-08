@@ -1,4 +1,4 @@
-#version 420 core
+#version 330 core
 
 in vec4  colorData;
 in vec3  colorBlend;
@@ -6,7 +6,7 @@ in float useTex;
 
 out vec4 fragColor;
 
-layout (binding = 0) uniform sampler2D tex;
+uniform sampler2D tex;
 
 void main() {
     if (useTex > 0.5)
