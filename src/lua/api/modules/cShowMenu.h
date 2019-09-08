@@ -136,9 +136,9 @@ void processElement(LocalDefs& defs, sol::table& element, std::shared_ptr<GUICom
 }
 
 namespace ClientApi {
-    void show_menu(sol::table &zeus, LocalDefs& defs, GameGui& gui) {
+    void show_menu(sol::table &core, LocalDefs& defs, GameGui& gui) {
 
-        zeus.set_function("show_menu", [&](sol::table gui_root) {
+        core.set_function("show_menu", [&](sol::table gui_root) {
             auto root = std::make_shared<GUIContainer>("root");
             gui.add(root);
 

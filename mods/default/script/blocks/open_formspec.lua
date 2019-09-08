@@ -1,9 +1,9 @@
-zeus.register_block("default:open_formspec", {
+zepha.register_block("default:open_formspec", {
     name = "Open Formspec Block",
     model = "default:block",
     textures = {"zeus:default:brick"},
     on_place_client = function()
-        zeus.show_menu({
+        zepha.show_menu({
             key = "form_root",
             type = "rect",
 

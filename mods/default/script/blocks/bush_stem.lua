@@ -1,4 +1,4 @@
-zeus.register_block("default:bush_stem", {
+zepha.register_block("default:bush_stem", {
     visible = true,
     culls = false,
     name = "Bush Stem",

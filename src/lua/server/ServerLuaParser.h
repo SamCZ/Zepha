@@ -34,6 +34,6 @@ private:
     void handleDependencies();
     void serializeMods();
 
-    int DoFileSandboxed(std::string file);
+    sol::protected_function_result DoFileSandboxed(std::string file);
 };
 

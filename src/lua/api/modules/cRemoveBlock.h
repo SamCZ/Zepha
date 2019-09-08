@@ -9,8 +9,8 @@
 #include <sol2/sol.hpp>
 
 namespace ClientApi {
-    void remove_block(sol::table &zeus, LocalDefs& defs, LocalWorld& world) {
-        zeus.set_function("remove_block", [&](sol::table pos) {
+    void remove_block(sol::table &core, LocalDefs& defs, LocalWorld& world) {
+        core.set_function("remove_block", [&](sol::table pos) {
             if (!pos["x"] || !pos["y"] || !pos["z"]) {
                 std::cout << Log::err << "remove_block vector is ill formed." << Log::endl;
                 return;

@@ -4,7 +4,7 @@
 -- Only takes one texture, which is displayed on all faces.
 --
 
-zeus.register_blockmodel("default:crosslarge", {
+zepha.register_blockmodel("default:crosslarge", {
     parts = {
         {
             face = "nocull",

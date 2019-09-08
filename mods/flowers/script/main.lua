@@ -1,3 +1,3 @@
 print("Hello from flowers")
 
-dofile("zeus:flowers/flowers")
+runfile("zeus:flowers/flowers")

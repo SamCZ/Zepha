@@ -1,3 +1,3 @@
 print("Hello from materials")
 
-dofile("zeus:materials/items/stick")
+runfile("zeus:materials/items/stick")

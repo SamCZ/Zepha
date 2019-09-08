@@ -1,4 +1,4 @@
---zeus.register_item("materials:stick", {
+--zepha.register_item("materials:stick", {
 --    name = "Stick",
 --    groups = {
 --        stick = 1,

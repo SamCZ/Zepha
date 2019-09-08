@@ -219,7 +219,7 @@ TextureAtlas::RawTexData TextureAtlas::getSubImageBytes(std::string &name) {
 std::shared_ptr<AtlasRef> TextureAtlas::generateCrackImage(std::string &name, unsigned short crackLevel) {
     RawTexData base = getSubImageBytes(name);
 
-    std::string crackStr("zeus:default:crack_" + std::to_string(crackLevel));
+    std::string crackStr("zepha:default:crack_" + std::to_string(crackLevel));
     RawTexData crack = getSubImageBytes(crackStr);
 
     for (int i = 0; i < base.width * base.height; i++) {

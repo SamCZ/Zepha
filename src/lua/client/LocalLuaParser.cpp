@@ -42,31 +42,32 @@ void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world, GameGui& gui) {
 }
 
 void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, GameGui& gui) {
-    //Create Zeus Table
-    zeus = lua.create_table();
-    lua["zeus"] = zeus;
+    //Create Zepha Table
+    core = lua.create_table();
+    lua["zepha"] = core;
 
     //Load Types
-    ClientApi::entity(lua, zeus, defs, world);
+    ClientApi::entity(lua, core, defs, world);
 
     //Load Modules
     ClientApi::dump(lua);
     ClientApi::printe(lua);
 
-    ClientApi::is_server(zeus);
-    ClientApi::delay(zeus, delayed_functions);
+    ClientApi::is_server(core);
+    ClientApi::delay(core, delayed_functions);
 
-    ClientApi::register_block(lua, zeus);
-    ClientApi::register_blockmodel(lua, zeus);
+    ClientApi::register_block(lua, core);
+    ClientApi::register_blockmodel(lua, core);
 
-    ClientApi::get_block(zeus, defs, world);
-    ClientApi::set_block(zeus, defs, world);
-    ClientApi::remove_block(zeus, defs, world);
+    ClientApi::get_block(core, defs, world);
+    ClientApi::set_block(core, defs, world);
+    ClientApi::remove_block(core, defs, world);
 
-    ClientApi::show_menu(zeus, defs, gui);
+    ClientApi::show_menu(core, defs, gui);
 
     //Sandbox the dofile function
-    lua.set_function("dofile", &LocalLuaParser::DoFileSandboxed, this);
+    lua["dofile"] = sol::nil;
+    lua.set_function("runfile", &LocalLuaParser::DoFileSandboxed, this);
 }
 
 void LocalLuaParser::loadMods() {
@@ -76,10 +77,10 @@ void LocalLuaParser::loadMods() {
 }
 
 void LocalLuaParser::registerBlocks(LocalDefs& defs) {
-    LocalRegisterBlocks(zeus, defs);
+    LocalRegisterBlocks(core, defs);
 }
 
-int LocalLuaParser::DoFileSandboxed(std::string file) {
+sol::protected_function_result LocalLuaParser::DoFileSandboxed(std::string file) {
     size_t modname_length = file.find('/');
     std::string modname = file.substr(0, modname_length);
 
@@ -87,13 +88,17 @@ int LocalLuaParser::DoFileSandboxed(std::string file) {
         if (strncmp(mod.config.name.c_str(), modname.c_str(), modname_length) == 0) {
             for (LuaModFile& f : mod.files) {
                 if (f.path == file) {
-                    lua.safe_script(f.file);
-                    return 0;
+                    auto pfr = lua.safe_script(f.file, [](lua_State*, sol::protected_function_result errPfr) {
+                        sol::error err = errPfr;
+                        std::cout << Log::err << "DoFileSandboxed returned an error: " << err.what() << Log::endl;
+                        return errPfr;
+                    });
+                    return pfr;
                 }
             }
+            // TODO: No file found by that name - throw error?
+            std::cout << Log::err << "Error opening \"" + file + "\", not found." << Log::endl;
             break;
         }
     }
-
-    std::cout << Log::err << "Error opening \"" + file + "\", not found." << Log::endl;
 }

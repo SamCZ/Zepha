@@ -9,8 +9,8 @@
 #include <sol2/sol.hpp>
 
 namespace ClientApi {
-    void get_block(sol::table &zeus, LocalDefs& defs, LocalWorld& world) {
-        zeus.set_function("get_block", [&](sol::table pos) -> std::string {
+    void get_block(sol::table &core, LocalDefs& defs, LocalWorld& world) {
+        core.set_function("get_block", [&](sol::table pos) -> std::string {
             if (!pos["x"] || !pos["y"] || !pos["z"]) {
                 std::cout << Log::err << "get_block vector is ill formed." << Log::endl;
                 return "";

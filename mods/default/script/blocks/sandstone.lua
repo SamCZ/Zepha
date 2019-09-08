@@ -1,13 +1,13 @@
 local entities = {}
 
 local function collides(entity)
-    return zeus.get_block({
+    return zepha.get_block({
         x = math.floor(entity.pos.x),
         y = math.floor(entity.pos.y - 0.5),
         z = math.floor(entity.pos.z)}) ~= "air"
 end
 
-zeus.register_block("default:sandstone", {
+zepha.register_block("default:sandstone", {
     name = "Sandstone",
     model = "default:block",
     textures = {"zeus:default:sandstone"},
@@ -23,7 +23,7 @@ zeus.register_block("default:sandstone", {
         local velocityY = -3
         local time = 0
 
-        zeus.delay(function()
+        zepha.delay(function()
             entity.yaw = entity.yaw + speed
             if speed > 10 then speed = speed * 0.8 end
 
@@ -38,9 +38,12 @@ zeus.register_block("default:sandstone", {
                 entity.pos = {x = entity.pos.x, y = entity.pos.y + interval, z = entity.pos.z}
                 v = v + 0.25
             end
+            if collides(entity) then
+                velocityY = 0
+                time = time + 1/20
+            end
 
             entity.visual_offset = {x = 0, y = math.sin(time * 4) / 8, z = 0}
-            time = time + 1/20
 
             return true
         end, 1/20)

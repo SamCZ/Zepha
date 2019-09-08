@@ -11,6 +11,6 @@
 
 class ServerRegisterBlocks {
 public:
-    ServerRegisterBlocks(sol::table& zeus, ServerDefs& defs);
+    ServerRegisterBlocks(sol::table& core, ServerDefs& defs);
 };
 

@@ -3,7 +3,7 @@
 -- Texture order is: top, bottom, left, right, front, back.
 --
 
-zeus.register_blockmodel("default:block", {
+zepha.register_blockmodel("default:block", {
     parts = {
         {
             face = "left",

@@ -10,6 +10,6 @@
 
 class LocalRegisterBlocks {
 public:
-    LocalRegisterBlocks(sol::table& zeus, LocalDefs& defs);
+    LocalRegisterBlocks(sol::table& core, LocalDefs& defs);
 };
 

@@ -25,5 +25,5 @@ public:
     std::vector<LuaMod> mods;
     std::vector<std::string> modsOrder;
 private:
-    int DoFileSandboxed(std::string file);
+    sol::protected_function_result DoFileSandboxed(std::string file);
 };

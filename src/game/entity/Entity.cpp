@@ -20,7 +20,7 @@ void Entity::setModel(std::shared_ptr<Model> model) {
 void Entity::update(double delta) {
     animState.update(delta);
 
-    float factor = static_cast<float>(fmin(delta * 15, 1));
+    float factor = static_cast<float>(fmin(delta * 10, 1));
 
     visualPosition = visualPosition * (1 - factor) + position * factor;
     visualVisualOffset = visualVisualOffset * (1 - factor) + visualOffset * factor;

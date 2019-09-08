@@ -1,1 +1,1 @@
---dofile("zeus:default/items/stick")
+--runfile("zeus:default/items/stick")

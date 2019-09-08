@@ -50,7 +50,7 @@ namespace ClientApi {
         }
     };
 
-    void entity(sol::state& lua, sol::table &zeus, LocalDefs& defs, LocalWorld& world) {
+    void entity(sol::state& lua, sol::table &core, LocalDefs& defs, LocalWorld& world) {
         lua.new_usertype<LuaEntity>(
                 "LuaEntity",
                 "new", sol::factories([&world, &defs, &lua](sol::table pos){

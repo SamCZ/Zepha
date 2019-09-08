@@ -16,7 +16,7 @@ end
 for _,flower in ipairs(flowers) do
     local name = flower:gsub("_", " "):gsub("(%a)([%w_']*)", tchelper)
 
-    zeus.register_block("flowers:flower_" .. flower, {
+    zepha.register_block("flowers:flower_" .. flower, {
         culls = false,
         solid = false,
         name = name,

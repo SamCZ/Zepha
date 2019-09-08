@@ -6,7 +6,7 @@
 
 local amp = 0.1
 
-zeus.register_blockmodel("default:block_foliage", {
+zepha.register_blockmodel("default:block_foliage", {
     parts = {
         {
             face = "left",

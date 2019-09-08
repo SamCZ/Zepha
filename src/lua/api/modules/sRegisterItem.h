@@ -7,12 +7,12 @@
 #include <sol2/sol.hpp>
 
 namespace ServerApi {
-    void register_item(sol::state& lua, sol::table& zeus) {
-        zeus["registered_items"] = lua.create_table();
+    void register_item(sol::state& lua, sol::table& core) {
+        core["registered_items"] = lua.create_table();
 
-        zeus.set_function("register_item", [&](std::string identifier, sol::table data) {
+        core.set_function("register_item", [&](std::string identifier, sol::table data) {
             if (identifier.length() == 0) throw "Missing Identifier";
-            zeus["registered_items"][identifier] = data;
+            core["registered_items"][identifier] = data;
         });
     }
 }

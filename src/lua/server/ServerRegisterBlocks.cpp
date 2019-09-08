@@ -4,9 +4,9 @@
 
 #include "ServerRegisterBlocks.h"
 
-ServerRegisterBlocks::ServerRegisterBlocks(sol::table& zeus, ServerDefs &defs) {
-    //Register all of the blocks in the zeus.registered_blocks table.
-    for (auto blockRef : zeus.get<sol::table>("registered_blocks")) {
+ServerRegisterBlocks::ServerRegisterBlocks(sol::table& core, ServerDefs &defs) {
+    //Register all of the blocks in the zepha.registered_blocks table.
+    for (auto blockRef : core.get<sol::table>("registered_blocks")) {
         //Get the unique identifier of the block
         std::string identifier = blockRef.first.as<std::string>();
 
@@ -28,9 +28,9 @@ ServerRegisterBlocks::ServerRegisterBlocks(sol::table& zeus, ServerDefs &defs) {
         bool culls   = blockTable.get_or("culls", true);
         bool solid   = blockTable.get_or("solid", true);
 
-        //Get the identifier for the blockModel, and then get the model from the zeus.registered_blockmodels table.
+        //Get the identifier for the blockModel, and then get the model from the zepha.registered_blockmodels table.
         std::string modelStr = (modelStrOpt ? *modelStrOpt : "default:cube");
-        sol::optional<sol::table> modelOpt = zeus.get<sol::table>("registered_blockmodels").get<sol::table>(modelStr);
+        sol::optional<sol::table> modelOpt = core.get<sol::table>("registered_blockmodels").get<sol::table>(modelStr);
         if (!modelOpt) throw identifier + " specifies invalid model " + modelStr + "!";
 
         //Create a vector of selection boxes

@@ -1,4 +1,4 @@
 print("Hello from kinetic")
 
-dofile("zeus:kinetic/models/axle")
-dofile("zeus:kinetic/blocks/axle")
+runfile("zeus:kinetic/models/axle")
+runfile("zeus:kinetic/blocks/axle")

@@ -7,7 +7,7 @@
 local wave_amplitude = 0.6
 local offset_amplitude = 0.3
 
-zeus.register_blockmodel("default:plantlike", {
+zepha.register_blockmodel("default:plantlike", {
     mesh_mods = {
         {
             type = "offset_x",

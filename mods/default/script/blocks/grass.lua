@@ -1,4 +1,4 @@
-zeus.register_block("default:grass", {
+zepha.register_block("default:grass", {
     name = "Grass",
     model = "default:block_foliage",
     textures = {

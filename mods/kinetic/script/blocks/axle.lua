@@ -1,4 +1,4 @@
-zeus.register_block('kinetic:axle_0', {
+zepha.register_block('kinetic:axle_0', {
     name = "Axle",
     model = "kinetic:axle_0",
     textures = {"zeus:kinetic:axle"},
@@ -9,23 +9,23 @@ zeus.register_block('kinetic:axle_0', {
     on_place = function(pos)
         for i = 0, 9 do
             pos.x = pos.x + 1
-            zeus.set_block(pos, "kinetic:axle_0")
+            zepha.set_block(pos, "kinetic:axle_0")
         end
     end,
     on_place_client = function(pos)
         for i = 0, 9 do
             pos.x = pos.x + 1
-            zeus.set_block(pos, "kinetic:axle_0")
+            zepha.set_block(pos, "kinetic:axle_0")
         end
     end,
     on_construct = function(pos)
-        zeus.delay(function()
-            zeus.set_block(pos, "kinetic:axle_1")
+        zepha.delay(function()
+            zepha.set_block(pos, "kinetic:axle_1")
         end, 4)
     end
 })
 
-zeus.register_block('kinetic:axle_1', {
+zepha.register_block('kinetic:axle_1', {
     name = "Axle",
     model = "kinetic:axle_1",
     textures = {"zeus:kinetic:axle"},
@@ -34,13 +34,13 @@ zeus.register_block('kinetic:axle_1', {
         {0, 6/16, 6/16, 1, 10/16, 10/16}
     },
     on_construct = function(pos)
-        zeus.delay(function()
-            zeus.set_block(pos, "kinetic:axle_2")
+        zepha.delay(function()
+            zepha.set_block(pos, "kinetic:axle_2")
         end, 4)
     end
 })
 
-zeus.register_block('kinetic:axle_2', {
+zepha.register_block('kinetic:axle_2', {
     name = "Axle",
     model = "kinetic:axle_2",
     textures = {"zeus:kinetic:axle"},
@@ -49,13 +49,13 @@ zeus.register_block('kinetic:axle_2', {
         {0, 6/16, 6/16, 1, 10/16, 10/16}
     },
     on_construct = function(pos)
-        zeus.delay(function()
-            zeus.set_block(pos, "kinetic:axle_3")
+        zepha.delay(function()
+            zepha.set_block(pos, "kinetic:axle_3")
         end, 4)
     end
 })
 
-zeus.register_block('kinetic:axle_3', {
+zepha.register_block('kinetic:axle_3', {
     name = "Axle",
     model = "kinetic:axle_3",
     textures = {"zeus:kinetic:axle"},
@@ -64,8 +64,8 @@ zeus.register_block('kinetic:axle_3', {
         {0, 6/16, 6/16, 1, 10/16, 10/16}
     },
     on_construct = function(pos)
-        zeus.delay(function()
-            zeus.set_block(pos, "kinetic:axle_0")
+        zepha.delay(function()
+            zepha.set_block(pos, "kinetic:axle_0")
         end, 4)
     end
 })

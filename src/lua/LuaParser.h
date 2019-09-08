@@ -34,7 +34,7 @@ public:
     sol::table vecToTable(glm::vec3 vec);
 
     sol::state lua;
-    sol::table zeus;
+    sol::table core;
 
     std::list<DelayedFunction> delayed_functions;
 };
