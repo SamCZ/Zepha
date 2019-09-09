@@ -95,7 +95,7 @@ void Player::viewUpdate(double deltaX, double deltaY) {
 
     camera.setYaw(yaw);
     camera.setPitch(pitch);
-    camera.setPos(pos);
+    camera.setPos({pos.x, pos.y + EYE_HEIGHT, pos.z});
 }
 
 void Player::pointerUpdate(InputManager &input, double delta) {
@@ -157,10 +157,20 @@ void Player::pointerUpdate(InputManager &input, double delta) {
 bool Player::collides(glm::vec3 pos) {
     float colSize = 0.3;
 
-    return (world.solidAt(glm::vec3(pos.x - colSize, pos.y - EYE_HEIGHT, pos.z - colSize)) ||
-            world.solidAt(glm::vec3(pos.x + colSize, pos.y - EYE_HEIGHT, pos.z - colSize)) ||
-            world.solidAt(glm::vec3(pos.x + colSize, pos.y - EYE_HEIGHT, pos.z + colSize)) ||
-            world.solidAt(glm::vec3(pos.x - colSize, pos.y - EYE_HEIGHT, pos.z + colSize)) );
+    return (world.solidAt(glm::vec3(pos.x - colSize, pos.y, pos.z - colSize)) ||
+            world.solidAt(glm::vec3(pos.x + colSize, pos.y, pos.z - colSize)) ||
+            world.solidAt(glm::vec3(pos.x + colSize, pos.y, pos.z + colSize)) ||
+            world.solidAt(glm::vec3(pos.x - colSize, pos.y, pos.z + colSize)) ||
+
+            world.solidAt(glm::vec3(pos.x - colSize, pos.y + 1, pos.z - colSize)) ||
+            world.solidAt(glm::vec3(pos.x + colSize, pos.y + 1, pos.z - colSize)) ||
+            world.solidAt(glm::vec3(pos.x + colSize, pos.y + 1, pos.z + colSize)) ||
+            world.solidAt(glm::vec3(pos.x - colSize, pos.y + 1, pos.z + colSize)) ||
+
+            world.solidAt(glm::vec3(pos.x - colSize, pos.y + 1.8, pos.z - colSize)) ||
+            world.solidAt(glm::vec3(pos.x + colSize, pos.y + 1.8, pos.z - colSize)) ||
+            world.solidAt(glm::vec3(pos.x + colSize, pos.y + 1.8, pos.z + colSize)) ||
+            world.solidAt(glm::vec3(pos.x - colSize, pos.y + 1.8, pos.z + colSize)) );
 }
 
 void Player::moveCollide() {
@@ -183,6 +193,8 @@ void Player::moveCollide() {
 
             if (!collides(newPos))
                 pos = newPos;
+            else if (vel.y > 0)
+                vel.y = 0;
         }
 
         moved = 0;

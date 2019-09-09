@@ -21,6 +21,7 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
         swayData[i*4+3] = 255;
     }
 
+    swayNoise.SetFrequency(0.5);
     swayNoise.SetOctaveCount(2);
     swayMap.loadFromBytes(swayData, 16, 16, GL_LINEAR, GL_MIRRORED_REPEAT);
 
@@ -47,6 +48,7 @@ void Renderer::createWorldShaders() {
     wgu.time   = worldGeometryShader.getUniform("time");
 
     worldGeometryShader.use();
+    glUniform1i(wgu.swaySampler, 1);
 
     glGenFramebuffers(1, &gBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
@@ -98,6 +100,7 @@ void Renderer::createWorldShaders() {
     egu.proj   = entityGeometryShader.getUniform("projection");
     egu.model  = entityGeometryShader.getUniform("model");
     egu.view   = entityGeometryShader.getUniform("view");
+
     egu.uBones = entityGeometryShader.getUniform("uBones");
 
     //Initialize Lighting Shader for Deferred Rendering
@@ -150,7 +153,7 @@ void Renderer::update(double delta) {
     window.update();
     elapsedTime += delta;
 
-    swayOffset += delta * 0.9;
+    swayOffset += delta * 1.4;
     for (int i = 0; i < 16 * 16; i++) {
         swayData[i*4]   = static_cast<unsigned char>((fmax(-1, fmin(1, swayNoise.GetValue((i / 16) / 3.f, (i % 16) / 3.f, swayOffset)))       + 1) / 2.f * 255.f);
         swayData[i*4+1] = static_cast<unsigned char>((fmax(-1, fmin(1, swayNoise.GetValue((i / 16) / 3.f, (i % 16) / 3.f, swayOffset + 50)))  + 1) / 2.f * 255.f);
@@ -223,7 +226,6 @@ void Renderer::beginChunkDeferredCalls() {
     glUniform1f(wgu.time, static_cast<float>(elapsedTime));
 
     swayMap.use(1);
-    glUniform1i(wgu.swaySampler, 1);
 }
 
 void Renderer::beginEntityDeferredCalls() {

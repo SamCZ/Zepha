@@ -97,7 +97,7 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
     }
 
     { //Top-left Data
-        glm::vec3 footPos = TransPos::roundPos(player.getPos()) + glm::vec3(0, -2, 0);
+        glm::vec3 footPos = TransPos::roundPos(player.getPos()) - glm::vec3(0, 0.02, 0);
 
         unsigned int blockID = world.getBlock(footPos);
         std::string on = defs.defs().fromId(blockID).identifier;

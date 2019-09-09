@@ -88,15 +88,22 @@ sol::protected_function_result LocalLuaParser::DoFileSandboxed(std::string file)
         if (strncmp(mod.config.name.c_str(), modname.c_str(), modname_length) == 0) {
             for (LuaModFile& f : mod.files) {
                 if (f.path == file) {
-                    auto pfr = lua.safe_script(f.file, [&](lua_State*, sol::protected_function_result errPfr) {
+
+                    sol::environment env(lua, sol::create, lua.globals());
+                    env["_PATH"] = f.path.substr(0, f.path.find_last_of('/') + 1);
+                    env["_FILE"] = f.path;
+                    env["_MODNAME"] = mod.config.name;
+
+                    auto pfr = lua.safe_script(f.file, env, [&](lua_State*, sol::protected_function_result errPfr) {
                         sol::error err = errPfr;
                         std::cout << Log::err << file << " returned an error: " << err.what() << Log::endl;
                         return errPfr;
-                    }, "@" + f.path);
+                    }, "@" + f.path, sol::load_mode::text);
+
                     return pfr;
                 }
             }
-            // TODO: No file found by that name - throw error?
+
             std::cout << Log::err << "Error opening \"" + file + "\", not found." << Log::endl;
             break;
         }

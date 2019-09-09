@@ -189,7 +189,6 @@ std::vector<LuaMod> ServerLuaParser::createLuaMods(std::list<std::string> modDir
 
             std::ifstream t(file);
             std::string fileStr((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-            fileStr.insert(0, "local PATH = \"" + modPath + "/\"; ");
 
             LuaModFile f {modPath, fileStr};
             mod.files.push_back(f);
@@ -314,7 +313,13 @@ sol::protected_function_result ServerLuaParser::DoFileSandboxed(std::string file
         if (strncmp(mod.config.name.c_str(), modname.c_str(), modname_length) == 0) {
             for (LuaModFile& f : mod.files) {
                 if (f.path == file) {
-                    auto pfr = lua.safe_script(f.file, [&](lua_State*, sol::protected_function_result errPfr) {
+
+                    sol::environment env(lua, sol::create, lua.globals());
+                    env["_PATH"] = f.path.substr(0, f.path.find_last_of('/') + 1);
+                    env["_FILE"] = f.path;
+                    env["_MODNAME"] = mod.config.name;
+
+                    auto pfr = lua.safe_script(f.file, env, [&](lua_State*, sol::protected_function_result errPfr) {
                         sol::error err = errPfr;
                         std::cout << Log::err << file << " returned an error: \n" << err.what() << Log::endl;
                         return errPfr;
@@ -322,7 +327,7 @@ sol::protected_function_result ServerLuaParser::DoFileSandboxed(std::string file
                     return pfr;
                 }
             }
-            // TODO: No file found by that name - throw error?
+
             std::cout << Log::err << "Error opening \"" + file + "\", not found." << Log::endl;
             break;
         }

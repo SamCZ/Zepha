@@ -1,5 +1,5 @@
 print("Hello from default")
 
-runfile("zeus:default/models")
-runfile("zeus:default/blocks")
-runfile("zeus:default/items")
+runfile(_PATH .. "models")
+runfile(_PATH .. "blocks")
+runfile(_PATH .. "items")
