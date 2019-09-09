@@ -92,7 +92,7 @@ sol::protected_function_result LocalLuaParser::DoFileSandboxed(std::string file)
                         sol::error err = errPfr;
                         std::cout << Log::err << file << " returned an error: " << err.what() << Log::endl;
                         return errPfr;
-                    });
+                    }, "@" + f.path);
                     return pfr;
                 }
             }

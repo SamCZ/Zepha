@@ -316,9 +316,9 @@ sol::protected_function_result ServerLuaParser::DoFileSandboxed(std::string file
                 if (f.path == file) {
                     auto pfr = lua.safe_script(f.file, [&](lua_State*, sol::protected_function_result errPfr) {
                         sol::error err = errPfr;
-                        std::cout << Log::err << file << " returned an error: " << err.what() << Log::endl;
+                        std::cout << Log::err << file << " returned an error: \n" << err.what() << Log::endl;
                         return errPfr;
-                    });
+                    }, "@" + f.path);
                     return pfr;
                 }
             }
