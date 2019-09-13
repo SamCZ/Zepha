@@ -2,15 +2,20 @@
 // Created by aurailus on 17/12/18.
 //
 
+#include <random>
 #include "Renderer.h"
 
 Renderer::Renderer() : Renderer(1366, 768) {};
 
-Renderer::Renderer(GLint winWidth, GLint winHeight) :
-        activeTexture(nullptr),
+float lerp(float a, float b, float f) {
+    return a + f * (b - a);
+}
 
-        window(winWidth, winHeight),
-        swayData(new unsigned char[16 * 4 * 16]) {
+Renderer::Renderer(GLint winWidth, GLint winHeight) :
+    activeTexture(nullptr),
+
+    window(winWidth, winHeight),
+    swayData(new unsigned char[16 * 4 * 16]) {
 
     window.initialize();
     auto winSize = window.getSize();
@@ -23,7 +28,56 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
 
     swayNoise.SetFrequency(0.5);
     swayNoise.SetOctaveCount(2);
-    swayMap.loadFromBytes(swayData, 16, 16, GL_LINEAR, GL_MIRRORED_REPEAT);
+    swayTex.loadFromBytes(swayData, 16, 16, GL_LINEAR, GL_MIRRORED_REPEAT);
+
+    std::uniform_real_distribution<float> randomFloats(0.0, 1.0); // random floats between 0.0 - 1.0
+    std::default_random_engine generator;
+    for (unsigned int i = 0; i < 64; ++i) {
+        glm::vec3 sample(
+                randomFloats(generator) * 2.0 - 1.0,
+                randomFloats(generator) * 2.0 - 1.0,
+                randomFloats(generator)
+        );
+        sample = glm::normalize(sample);
+        sample *= randomFloats(generator);
+        float scale = static_cast<float>(i / 64.0);
+        scale = lerp(0.1f, 1.0f, scale * scale);
+        sample *= scale;
+        ssaoKernel.push_back(sample);
+    }
+
+    for (unsigned int i = 0; i < 16; i++) {
+        ssaoNoise.emplace_back(randomFloats(generator) * 2.0 - 1.0,
+                               randomFloats(generator) * 2.0 - 1.0,
+                               0.0f);
+    }
+
+    ssaoShader = Shader();
+    ssaoShader.createFromFile("./assets/shader/post/ssaoShader.vs", "./assets/shader/post/ssaoShader.fs");
+
+    sau.proj = ssaoShader.getUniform("projection");
+    sau.view = ssaoShader.getUniform("view");
+
+    glGenTextures(1, &ssaoTex);
+    glBindTexture(GL_TEXTURE_2D, ssaoTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 4, 4, 0, GL_RGB, GL_FLOAT, &ssaoNoise[0]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glGenFramebuffers(1, &ssaoFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+
+    glGenTextures(1, &ssaoColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, winWidth / 2, winHeight / 2, 0, GL_RGB, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer, 0);
+
+    sau.matrix = camera.getProjectionMatrix();
 
     createWorldShaders();
     createGUIShader();
@@ -62,6 +116,8 @@ void Renderer::createWorldShaders() {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, static_cast<int>(winSize.x), static_cast<int>(winSize.y), 0, GL_RGB, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
 
     glGenTextures(1, &gNormal);
@@ -89,6 +145,7 @@ void Renderer::createWorldShaders() {
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "Framebuffer not complete!" << std::endl;
     }
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     //Initialize Entity Geometry Shader
@@ -121,20 +178,20 @@ void Renderer::createWorldShaders() {
 
     //Initialize Shading Shader for Shadowmapping
 
-    const unsigned int SHADOW_SCALE = 2048;
-    glGenFramebuffers(1, &sBuffer);
-    glGenTextures(1, &sDepthMap);
-    glBindTexture(GL_TEXTURE_2D, sDepthMap);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_SCALE, SHADOW_SCALE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glBindFramebuffer(GL_FRAMEBUFFER, sBuffer);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, sDepthMap, 0);
-    glDrawBuffer(GL_NONE);
-    glReadBuffer(GL_NONE);
-    glBindBuffer(GL_FRAMEBUFFER, 0);
+//    const unsigned int SHADOW_SCALE = 2048;
+//    glGenFramebuffers(1, &sBuffer);
+//    glGenTextures(1, &sDepthMap);
+//    glBindTexture(GL_TEXTURE_2D, sDepthMap);
+//    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_SCALE, SHADOW_SCALE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//    glBindFramebuffer(GL_FRAMEBUFFER, sBuffer);
+//    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, sDepthMap, 0);
+//    glDrawBuffer(GL_NONE);
+//    glReadBuffer(GL_NONE);
+//    glBindBuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Renderer::createGUIShader() {
@@ -159,7 +216,7 @@ void Renderer::update(double delta) {
         swayData[i*4+1] = static_cast<unsigned char>((fmax(-1, fmin(1, swayNoise.GetValue((i / 16) / 3.f, (i % 16) / 3.f, swayOffset + 50)))  + 1) / 2.f * 255.f);
         swayData[i*4+2] = static_cast<unsigned char>((fmax(-1, fmin(1, swayNoise.GetValue((i / 16) / 3.f, (i % 16) / 3.f, swayOffset + 100))) + 1) / 2.f * 255.f);
     }
-    swayMap.updateTexture(0, 0, 16, 16, swayData);
+    swayTex.updateTexture(0, 0, 16, 16, swayData);
 
     if (window.resized) {
         resized = true;
@@ -196,8 +253,13 @@ void Renderer::update(double delta) {
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+        glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, static_cast<int>(winSize.x / 2), static_cast<int>(winSize.y / 2), 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
+
         wgu.matrix = camera.getProjectionMatrix();
         egu.matrix = camera.getProjectionMatrix();
+        sau.matrix = camera.getProjectionMatrix();
         gu.matrix = camera.getOrthographicMatrix();
     }
 }
@@ -225,7 +287,7 @@ void Renderer::beginChunkDeferredCalls() {
 
     glUniform1f(wgu.time, static_cast<float>(elapsedTime));
 
-    swayMap.use(1);
+    swayTex.use(1);
 }
 
 void Renderer::beginEntityDeferredCalls() {
@@ -238,6 +300,28 @@ void Renderer::beginEntityDeferredCalls() {
 
 void Renderer::endDeferredCalls() {
     activeTexture = nullptr;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+
+    ssaoShader.use();
+    glUniformMatrix4fv(sau.proj, 1, GL_FALSE, glm::value_ptr(sau.matrix));
+    glUniformMatrix4fv(sau.view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    for (unsigned int i = 0; i < 64; ++i)
+        glUniform3f(ssaoShader.getUniform("samples[" + std::to_string(i) + "]"), ssaoKernel[i].x, ssaoKernel[i].y, ssaoKernel[i].z);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, gPosition);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, gNormal);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, ssaoTex);
+
+    renderQuad();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     auto winSize = window.getSize();
@@ -300,9 +384,9 @@ Camera& Renderer::getCamera() {
 void Renderer::renderQuad() {
     if (quadVAO == 0) {
         float quadVertices[] = {
-            -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
             -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-             1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+             1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
              1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
         };
 
@@ -335,7 +419,7 @@ void Renderer::enableTexture(Texture *texture) {
 Renderer::~Renderer() {
     worldGeometryShader.cleanup();
     guiShader.cleanup();
-    swayMap.clear();
+    swayTex.clear();
     delete[] swayData;
 }
 

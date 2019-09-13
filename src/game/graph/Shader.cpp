@@ -76,8 +76,8 @@ void Shader::use() {
     glUseProgram(shaderID);
 }
 
-GLint Shader::getUniform(const char *name) {
-    return glGetUniformLocation(shaderID, name);
+GLint Shader::getUniform(const std::string& name) {
+    return glGetUniformLocation(shaderID, name.c_str());
 }
 
 void Shader::cleanup() {

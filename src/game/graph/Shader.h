@@ -21,7 +21,7 @@ public:
 
     std::string readFile(const std::string& fileLocation);
 
-    GLint getUniform(const char *name);
+    GLint getUniform(const std::string& name);
 
     void use();
 

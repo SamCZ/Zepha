@@ -13,6 +13,7 @@
 #include "uniform/WorldLightingUniforms.h"
 #include "uniform/WorldGeometryUniforms.h"
 #include "uniform/EntityGeometryUniforms.h"
+#include "uniform/SSAOUniforms.h"
 #include <glm/ext.hpp>
 #include <noise/noise.h>
 
@@ -54,12 +55,17 @@ private:
     Camera camera;
 
     unsigned int gBuffer, gPosition, gNormal, gColorSpec, rboDepth;
+    unsigned int ssaoFBO, ssaoColorBuffer;
     unsigned int sBuffer, sDepthMap;
 
-    Texture swayMap;
+    Texture swayTex;
     double swayOffset = 0;
     noise::module::Perlin swayNoise;
     unsigned char* swayData = nullptr;
+
+    std::vector<glm::vec3> ssaoKernel;
+    std::vector<glm::vec3> ssaoNoise;
+    unsigned int ssaoTex;
 
     glm::vec4 clearColor {0, 0, 0, 1};
     Texture* activeTexture;
@@ -68,6 +74,8 @@ private:
     WorldGeometryUniforms wgu;
     Shader entityGeometryShader;
     EntityGeometryUniforms egu;
+    Shader ssaoShader;
+    SSAOUniforms sau;
     Shader worldLightingShader;
     WorldLightingUniforms wlu;
     Shader guiShader;
