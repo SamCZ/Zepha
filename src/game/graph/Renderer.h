@@ -56,6 +56,7 @@ private:
 
     unsigned int gBuffer, gPosition, gNormal, gColorSpec, rboDepth;
     unsigned int ssaoFBO, ssaoColorBuffer;
+    unsigned int ssaoBlurFBO, ssaoColorBufferBlur;
     unsigned int sBuffer, sDepthMap;
 
     Texture swayTex;
@@ -75,6 +76,7 @@ private:
     Shader entityGeometryShader;
     EntityGeometryUniforms egu;
     Shader ssaoShader;
+    Shader ssaoBlur;
     SSAOUniforms sau;
     Shader worldLightingShader;
     WorldLightingUniforms wlu;

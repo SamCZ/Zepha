@@ -53,7 +53,7 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
     }
 
     ssaoShader = Shader();
-    ssaoShader.createFromFile("./assets/shader/post/ssaoShader.vs", "./assets/shader/post/ssaoShader.fs");
+    ssaoShader.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoCalc.fs");
 
     sau.proj = ssaoShader.getUniform("projection");
     sau.view = ssaoShader.getUniform("view");
@@ -74,10 +74,23 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, winWidth / 2, winHeight / 2, 0, GL_RGB, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer, 0);
 
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     sau.matrix = camera.getProjectionMatrix();
+
+    ssaoBlur = Shader();
+    ssaoBlur.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoBlur.fs");
+
+    glGenFramebuffers(1, &ssaoBlurFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
+    glGenTextures(1, &ssaoColorBufferBlur);
+    glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, winWidth, winHeight, 0, GL_RGB, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBufferBlur, 0);
 
     createWorldShaders();
     createGUIShader();
@@ -163,7 +176,7 @@ void Renderer::createWorldShaders() {
     //Initialize Lighting Shader for Deferred Rendering
 
     worldLightingShader = Shader();
-    worldLightingShader.createFromFile("./assets/shader/world/deferredLighting.vs", "./assets/shader/world/deferredLighting.fs");
+    worldLightingShader.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/deferredLighting.fs");
 
     wlu.gPosition  = worldLightingShader.getUniform("gPosition");
     wlu.gNormal    = worldLightingShader.getUniform("gNormal");
@@ -257,6 +270,10 @@ void Renderer::update(double delta) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, static_cast<int>(winSize.x / 2), static_cast<int>(winSize.y / 2), 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
 
+        glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, static_cast<int>(winSize.x / 2), static_cast<int>(winSize.y / 2), 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
+
         wgu.matrix = camera.getProjectionMatrix();
         egu.matrix = camera.getProjectionMatrix();
         sau.matrix = camera.getProjectionMatrix();
@@ -300,7 +317,6 @@ void Renderer::beginEntityDeferredCalls() {
 
 void Renderer::endDeferredCalls() {
     activeTexture = nullptr;
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
 
@@ -322,10 +338,18 @@ void Renderer::endDeferredCalls() {
     glBindTexture(GL_TEXTURE_2D, ssaoTex);
 
     renderQuad();
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     auto winSize = window.getSize();
     glViewport(0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y));
+
+    glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
+    ssaoBlur.use();
+    glClear(GL_COLOR_BUFFER_BIT);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+    renderQuad();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -334,8 +358,10 @@ void Renderer::endDeferredCalls() {
 
     glUniform3f(wlu.camPosition, camera.getPos().x, camera.getPos().y, camera.getPos().z);
 
+//    glActiveTexture(GL_TEXTURE0);
+//    glBindTexture(GL_TEXTURE_2D, gPosition);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, gPosition);
+    glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, gNormal);
     glActiveTexture(GL_TEXTURE2);

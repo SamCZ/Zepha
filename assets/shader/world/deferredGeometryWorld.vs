@@ -86,9 +86,9 @@ void main() {
 
     vec4 worldPos = model * pos;
 
-    fragPos = worldPos.xyz;
+    fragPos = (view * worldPos).xyz;
     texCoords = aTexCoords;
-    normal = nml.xyz;
+    normal = mat3(view) * nml.xyz;
 
     gl_Position = projection * view * worldPos;
 }

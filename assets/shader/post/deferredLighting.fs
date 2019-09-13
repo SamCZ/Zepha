@@ -7,16 +7,18 @@ out vec4 outColor;
 
 in vec2 texCoords;
 
-uniform sampler2D gPosition;
+//uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D gColorSpec;
+uniform sampler2D ssaoSampler;
 
 uniform vec3 camPosition;
 
 void main() {
-    vec3 fragPos = texture(gPosition, texCoords).rgb;
+//    vec3 fragPos = texture(gPosition, texCoords).rgb;
     vec3 normal  = texture(gNormal, texCoords).rgb;
     vec3 color   = texture(gColorSpec, texCoords).rgb;
+    float ssao   = texture(ssaoSampler, texCoords).r;
 
     //Discard fragments without normals
     if (normal == vec3(0)) discard;
@@ -41,11 +43,12 @@ void main() {
 //    }
 
     //Apply fog color based on distance from camera
-    float dist = distance(vec3(0, 0, 0), vec3(fragPos));
-    float nearFog = min(max(dist - 200, 0) / 100, 1);
-    float farFog = min(max(dist - 250, 0) / 100, 1);
+//    float dist = distance(vec3(0, 0, 0), vec3(fragPos));
+//    float nearFog = min(max(dist - 200, 0) / 100, 1);
+//    float farFog = min(max(dist - 250, 0) / 100, 1);
 
-    color = mix(mix(vec3(lighting), NEAR_FOG, nearFog), FAR_FOG, farFog);
+//    color = mix(mix(vec3(lighting), NEAR_FOG, nearFog), FAR_FOG, farFog);
+    color = lighting * ssao;
 
-    outColor = vec4(lighting, 1);
+    outColor = vec4(color, 1);
 }
