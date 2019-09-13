@@ -64,9 +64,9 @@ void main() {
         float sampleDepth = vec3(view * texture(gPosition, offset.xy)).z;
         float fragDepth = vec3(view * texture(gPosition, fragSample.xy)).z;
 
-        float rangeCheck = smoothstep(0.0, 1.0, RADIUS / abs(sampleDepth - fragDepth));
-        occlusion += (sampleDepth <= fragDepth + BIAS ? 1.0 : 0.0) * rangeCheck;
+        float rangeCheck = smoothstep(0.0, 1.0, RADIUS / abs(fragDepth - sampleDepth));
+        occlusion += (sampleDepth >= fragDepth + BIAS ? 1.0 : 0.0) * rangeCheck;
     }
 
-    outColor = occlusion / KERNELS;
+    outColor = 1.0 - (occlusion / KERNELS);
 }
