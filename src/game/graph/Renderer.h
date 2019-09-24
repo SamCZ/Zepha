@@ -4,16 +4,16 @@
 
 #pragma once
 
-#include "ChunkMesh.h"
-#include "Shader.h"
+#include "meshtypes/ChunkMesh.h"
+#include "shader/Shader.h"
 #include "window/Window.h"
 #include "Camera.h"
 #include "Texture.h"
-#include "GuiUniforms.h"
-#include "uniform/WorldLightingUniforms.h"
-#include "uniform/WorldGeometryUniforms.h"
-#include "uniform/EntityGeometryUniforms.h"
-#include "uniform/SSAOUniforms.h"
+#include "shader/uniform/GuiUniforms.h"
+#include "shader/uniform/WorldLightingUniforms.h"
+#include "shader/uniform/WorldGeometryUniforms.h"
+#include "shader/uniform/EntityGeometryUniforms.h"
+#include "shader/uniform/SSAOUniforms.h"
 #include <glm/ext.hpp>
 #include <noise/noise.h>
 
@@ -50,6 +50,7 @@ private:
 
     unsigned int quadVAO = 0, quadVBO;
     float renderScale = 2.0f;
+    unsigned int samples = 32;
 
     Window window;
     Camera camera;

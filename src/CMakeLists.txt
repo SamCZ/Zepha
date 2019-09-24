@@ -1,10 +1,10 @@
 set(ZEPHA_SRC
-        game/graph/ChunkMesh.cpp
-        game/graph/ChunkMesh.h
+        game/graph/meshtypes/ChunkMesh.cpp
+        game/graph/meshtypes/ChunkMesh.h
         game/entity/Entity.cpp
         game/entity/Entity.h
-        game/graph/Shader.cpp
-        game/graph/Shader.h
+        game/graph/shader/Shader.cpp
+        game/graph/shader/Shader.h
         game/graph/window/Window.cpp
         game/graph/window/Window.h
         game/graph/Camera.cpp
@@ -140,12 +140,12 @@ set(ZEPHA_SRC
         lua/Callback.h
         lua/api/modules/cRegisterBlock.h
         lua/api/modules/cDelay.h
-        game/graph/uniform/WorldGeometryUniforms.h
-        game/graph/GuiUniforms.h
-        game/graph/uniform/WorldLightingUniforms.h
-        game/graph/EntityMesh.cpp
-        game/graph/EntityMesh.h
-        game/graph/uniform/EntityGeometryUniforms.h
+        game/graph/shader/uniform/WorldGeometryUniforms.h
+        game/graph/shader/uniform/GuiUniforms.h
+        game/graph/shader/uniform/WorldLightingUniforms.h
+        game/graph/meshtypes/EntityMesh.cpp
+        game/graph/meshtypes/EntityMesh.h
+        game/graph/shader/uniform/EntityGeometryUniforms.h
         lua/api/modules/cRegisterBlockmodel.h
         lua/api/modules/cSetBlock.h
         lua/api/modules/cGetBlock.h
@@ -187,13 +187,13 @@ set(ZEPHA_SRC
         def/texture/Font.h
         game/entity/Model.cpp
         game/entity/Model.h
-        game/graph/EntityVertex.h
-        game/graph/ChunkVertex.h
-        game/graph/Mesh.cpp
-        game/graph/Mesh.h
-        game/graph/GuiMesh.cpp
-        game/graph/GuiMesh.h
-        game/graph/GuiVertex.h
+        game/graph/meshtypes/EntityVertex.h
+        game/graph/meshtypes/ChunkVertex.h
+        game/graph/meshtypes/Mesh.cpp
+        game/graph/meshtypes/Mesh.h
+        game/graph/meshtypes/GuiMesh.cpp
+        game/graph/meshtypes/GuiMesh.h
+        game/graph/meshtypes/GuiVertex.h
         game/hud/GuiEntity.cpp
         game/hud/GuiEntity.h 
         util/Mat4Conv.h 
@@ -211,6 +211,6 @@ set(ZEPHA_SRC
         lua/api/customization/pVec3.cpp
         lua/api/customization/pVec3.h
         StartGame.h
-        game/graph/uniform/SSAOUniforms.h)
+        game/graph/shader/uniform/SSAOUniforms.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

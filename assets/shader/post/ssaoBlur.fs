@@ -1,5 +1,8 @@
 #version 440 core
 
+#define RAD 2
+#define DIVIDEBY ((RAD * 2) * (RAD * 2))
+
 out float outColor;
 
 in vec2 texCoords;
@@ -10,12 +13,12 @@ void main() {
     vec2 texelSize = 1.0 / vec2(textureSize(ssaoInput, 0));
 
     float result = 0.0;
-    for (int x = -2; x < 2; x++) {
-        for (int y = -2; y < 2; y++) {
+    for (int x = -RAD; x < RAD; x++) {
+        for (int y = -RAD; y < RAD; y++) {
             vec2 offset = vec2(float(x), float(y)) * texelSize;
             result += texture(ssaoInput, texCoords + offset).r;
         }
     }
 
-    outColor = result / 16;
+    outColor = result / DIVIDEBY;
 }

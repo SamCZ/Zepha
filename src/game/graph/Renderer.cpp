@@ -32,7 +32,7 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
 
     std::uniform_real_distribution<float> randomFloats(0.0, 1.0); // random floats between 0.0 - 1.0
     std::default_random_engine generator;
-    for (unsigned int i = 0; i < 64; ++i) {
+    for (unsigned int i = 0; i < samples; i++) {
         glm::vec3 sample(
                 randomFloats(generator) * 2.0 - 1.0,
                 randomFloats(generator) * 2.0 - 1.0,
@@ -55,8 +55,9 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
     ssaoShader = Shader();
     ssaoShader.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoCalc.fs");
 
-    sau.proj = ssaoShader.getUniform("projection");
-    sau.view = ssaoShader.getUniform("view");
+    sau.proj = ssaoShader.get("projection");
+    sau.view = ssaoShader.get("view");
+    sau.kernels = ssaoShader.get("kernels");
 
     glGenTextures(1, &ssaoTex);
     glBindTexture(GL_TEXTURE_2D, ssaoTex);
@@ -106,16 +107,16 @@ void Renderer::createWorldShaders() {
     worldGeometryShader.createFromFile("./assets/shader/world/deferredGeometryWorld.vs", "./assets/shader/world/deferredGeometryWorld.fs");
 
     wgu.matrix = camera.getProjectionMatrix();
-    wgu.proj   = worldGeometryShader.getUniform("projection");
-    wgu.model  = worldGeometryShader.getUniform("model");
-    wgu.view   = worldGeometryShader.getUniform("view");
+    wgu.proj   = worldGeometryShader.get("projection");
+    wgu.model  = worldGeometryShader.get("model");
+    wgu.view   = worldGeometryShader.get("view");
 
-    wgu.swaySampler = worldGeometryShader.getUniform("swayTex");
+    wgu.swaySampler = worldGeometryShader.get("swayTex");
 
-    wgu.time   = worldGeometryShader.getUniform("time");
+    wgu.time   = worldGeometryShader.get("time");
 
     worldGeometryShader.use();
-    glUniform1i(wgu.swaySampler, 1);
+    worldGeometryShader.set(wgu.swaySampler, 1);
 
     glGenFramebuffers(1, &gBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
@@ -167,27 +168,27 @@ void Renderer::createWorldShaders() {
     entityGeometryShader.createFromFile("./assets/shader/world/deferredGeometryEntity.vs", "./assets/shader/world/deferredGeometryEntity.fs");
 
     egu.matrix = camera.getProjectionMatrix();
-    egu.proj   = entityGeometryShader.getUniform("projection");
-    egu.model  = entityGeometryShader.getUniform("model");
-    egu.view   = entityGeometryShader.getUniform("view");
+    egu.proj   = entityGeometryShader.get("projection");
+    egu.model  = entityGeometryShader.get("model");
+    egu.view   = entityGeometryShader.get("view");
 
-    egu.uBones = entityGeometryShader.getUniform("uBones");
+    egu.uBones = entityGeometryShader.get("uBones");
 
     //Initialize Lighting Shader for Deferred Rendering
 
     worldLightingShader = Shader();
     worldLightingShader.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/deferredLighting.fs");
 
-    wlu.gPosition  = worldLightingShader.getUniform("gPosition");
-    wlu.gNormal    = worldLightingShader.getUniform("gNormal");
-    wlu.gColorSpec = worldLightingShader.getUniform("gColorSpec");
+    wlu.gPosition  = worldLightingShader.get("gPosition");
+    wlu.gNormal    = worldLightingShader.get("gNormal");
+    wlu.gColorSpec = worldLightingShader.get("gColorSpec");
 
-    wlu.camPosition = worldLightingShader.getUniform("camPosition");
+    wlu.camPosition = worldLightingShader.get("camPosition");
 
     worldLightingShader.use();
-    glUniform1i(wlu.gPosition, 0);
-    glUniform1i(wlu.gNormal, 1);
-    glUniform1i(wlu.gColorSpec, 2);
+    worldLightingShader.set(wlu.gPosition, 0);
+    worldLightingShader.set(wlu.gNormal, 1);
+    worldLightingShader.set(wlu.gColorSpec, 2);
 
     //Initialize Shading Shader for Shadowmapping
 
@@ -212,8 +213,8 @@ void Renderer::createGUIShader() {
     guiShader.createFromFile("./assets/shader/ortho/hud.vs", "./assets/shader/ortho/hud.fs");
 
     gu.matrix = camera.getOrthographicMatrix();
-    gu.ortho  = guiShader.getUniform("ortho");
-    gu.model  = guiShader.getUniform("model");
+    gu.ortho  = guiShader.get("ortho");
+    gu.model  = guiShader.get("model");
 }
 
 void Renderer::update(double delta) {
@@ -299,10 +300,10 @@ void Renderer::beginChunkDeferredCalls() {
 
     worldGeometryShader.use();
 
-    glUniformMatrix4fv(wgu.proj, 1, GL_FALSE, glm::value_ptr(wgu.matrix));
-    glUniformMatrix4fv(wgu.view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
+    worldGeometryShader.set(wgu.proj, wgu.matrix);
+    worldGeometryShader.set(wgu.view, camera.getViewMatrix());
 
-    glUniform1f(wgu.time, static_cast<float>(elapsedTime));
+    worldGeometryShader.set(wgu.time, static_cast<float>(elapsedTime));
 
     swayTex.use(1);
 }
@@ -311,24 +312,26 @@ void Renderer::beginEntityDeferredCalls() {
     currentModelUniform = egu.model;
 
     entityGeometryShader.use();
-    glUniformMatrix4fv(egu.proj, 1, GL_FALSE, glm::value_ptr(egu.matrix));
-    glUniformMatrix4fv(egu.view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
+
+    entityGeometryShader.set(egu.proj, egu.matrix);
+    entityGeometryShader.set(egu.view, camera.getViewMatrix());
 }
 
 void Renderer::endDeferredCalls() {
     activeTexture = nullptr;
 
     glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
-
-    ssaoShader.use();
-    glUniformMatrix4fv(sau.proj, 1, GL_FALSE, glm::value_ptr(sau.matrix));
-    glUniformMatrix4fv(sau.view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
-
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    for (unsigned int i = 0; i < 64; ++i)
-        glUniform3f(ssaoShader.getUniform("samples[" + std::to_string(i) + "]"), ssaoKernel[i].x, ssaoKernel[i].y, ssaoKernel[i].z);
+    ssaoShader.use();
+    ssaoShader.set(sau.proj, sau.matrix);
+    ssaoShader.set(sau.view, camera.getViewMatrix());
+    ssaoShader.set(sau.kernels, samples);
+
+    for (unsigned int i = 0; i < samples; i++) {
+        ssaoShader.set(ssaoShader.get("samples[" + std::to_string(i) + "]"), ssaoKernel[i]);
+    }
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gPosition);
@@ -343,8 +346,8 @@ void Renderer::endDeferredCalls() {
     glViewport(0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y));
 
     glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
-    ssaoBlur.use();
     glClear(GL_COLOR_BUFFER_BIT);
+    ssaoBlur.use();
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
     renderQuad();
@@ -356,7 +359,7 @@ void Renderer::endDeferredCalls() {
 
     worldLightingShader.use();
 
-    glUniform3f(wlu.camPosition, camera.getPos().x, camera.getPos().y, camera.getPos().z);
+    worldLightingShader.set(wlu.camPosition, camera.getPos());
 
 //    glActiveTexture(GL_TEXTURE0);
 //    glBindTexture(GL_TEXTURE_2D, gPosition);
@@ -391,7 +394,7 @@ void Renderer::beginGUIDrawCalls() {
     glDisable(GL_DEPTH_TEST);
 
     guiShader.use();
-    glUniformMatrix4fv(gu.ortho, 1, GL_FALSE, glm::value_ptr(gu.matrix));
+    guiShader.set(gu.ortho, gu.matrix);
 }
 
 void Renderer::swapBuffers() {
@@ -455,5 +458,5 @@ void Renderer::setClearColor(unsigned char r, unsigned char g, unsigned char b) 
 
 void Renderer::setBones(std::vector<glm::mat4> &transforms) {
     if (transforms.empty()) return;
-    glUniformMatrix4fv(egu.uBones, static_cast<GLsizei>(transforms.size()), GL_FALSE, glm::value_ptr(transforms.at(0)));
+    entityGeometryShader.setArr(egu.uBones, static_cast<GLsizei>(transforms.size()), transforms.at(0));
 }

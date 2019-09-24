@@ -14,7 +14,7 @@
 #include <glm/ext.hpp>
 #include "ModelBone.h"
 #include "ModelAnimation.h"
-#include "../graph/EntityMesh.h"
+#include "../graph/meshtypes/EntityMesh.h"
 #include "../../def/texture/TextureAtlas.h"
 #include "../../util/Mat4Conv.h"
 #include "../../util/Pointer.h"

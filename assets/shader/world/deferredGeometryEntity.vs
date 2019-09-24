@@ -34,7 +34,7 @@ void main() {
     vec4 worldPos = model * boneTransform * vec4(aPos, 1.0);
     normal = transpose(inverse(mat3(model))) * (boneTransform * vec4(normalize(aNormal), 0.0)).xyz;
 
-    fragPos = worldPos.xyz;
+    fragPos = (view * worldPos).xyz;
     colorData = aColorData;
     colorBlend = aColorBlend;
     useTex = aUseTex;

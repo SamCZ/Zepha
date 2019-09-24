@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "../graph/EntityMesh.h"
+#include "../graph/meshtypes/EntityMesh.h"
 #include "../graph/drawable/Drawable.h"
 #include "Model.h"
 #include "AnimationState.h"

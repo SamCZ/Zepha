@@ -88,7 +88,7 @@ void main() {
 
     fragPos = (view * worldPos).xyz;
     texCoords = aTexCoords;
-    normal = mat3(view) * nml.xyz;
+    normal = nml.xyz;
 
     gl_Position = projection * view * worldPos;
 }

@@ -6,7 +6,7 @@
 
 #include <vector>
 #include <glm/vec3.hpp>
-#include "../../graph/ChunkMesh.h"
+#include "../../graph/meshtypes/ChunkMesh.h"
 
 struct MeshDetails {
     std::vector<ChunkVertex> vertices;

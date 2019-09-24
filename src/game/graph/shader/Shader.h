@@ -10,7 +10,9 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
-#include "../../util/Log.h"
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include "../../../util/Log.h"
 
 class Shader {
 public:
@@ -19,24 +21,33 @@ public:
     void createFromString(std::string& vertexSource, std::string& fragmentSource);
     void createFromFile(const std::string& vertexFile, const std::string& fragmentFile);
 
-    std::string readFile(const std::string& fileLocation);
-
-    GLint getUniform(const std::string& name);
+    GLint get(const std::string &name);
 
     void use();
+    static void clearShader();
 
-    static void clearShader() {
-        glUseProgram(0);
-    }
+    void set(int loc, uint val);
+    void set(int loc, int val);
+    void set(int loc, float val);
+    void set(int loc, glm::vec3 val);
+    void set(int loc, glm::mat4 val);
+
+    void setArr(int loc, uint count, glm::mat4 &start);
 
     void cleanup();
 
     ~Shader();
 
 private:
-    GLuint shaderID;
+    std::string readFile(const std::string& fileLocation);
 
     void compileShader(const std::string& vertexSource, const std::string& fragmentSource);
     void addShader(GLuint program, const std::string& shaderCode, GLenum shaderType);
+
+    void crashIfInactive();
+
+    GLuint shaderID;
+    std::string vertexFile = "string";
+    std::string fragmentFile = "string";
 };
 

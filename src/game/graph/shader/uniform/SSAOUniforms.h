@@ -11,11 +11,9 @@ struct SSAOUniforms {
     glm::mat4 matrix;
 
     GLint proj;
-//    GLint model;
     GLint view;
 
-//    GLint swaySampler;
-
-//    GLint time;
+    GLint kernels;
+    GLint ssaoSampler;
 };
 

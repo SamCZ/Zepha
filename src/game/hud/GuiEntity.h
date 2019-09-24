@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "../graph/GuiMesh.h"
+#include "../graph/meshtypes/GuiMesh.h"
 #include "../graph/drawable/Drawable.h"
 
 class GuiEntity : public Drawable {
