@@ -18,14 +18,14 @@ uniform vec3 samples[64]; //Must be a constant, setting to 64 because it's unlik
 uniform mat4 projection;
 uniform mat4 view;
 
-float scale = 2;
+uniform float sampleScale;
 
 const vec2 noiseScale = vec2(1920.0/4.0, 1004.0/4.0);
 
 void main() {
-    vec3 fragPos   = vec3(vec4(texture(gPosition, texCoords * scale).xyz, 1.0f));
-    vec3 normal    = normalize(mat3(view) * texture(gNormal, texCoords * scale).xyz);
-    vec3 randomVec = normalize(texture(texNoise, texCoords * scale * noiseScale).xyz);
+    vec3 fragPos   = vec3(vec4(texture(gPosition, texCoords * sampleScale).xyz, 1.0f));
+    vec3 normal    = normalize(mat3(view) * texture(gNormal, texCoords * sampleScale).xyz);
+    vec3 randomVec = normalize(texture(texNoise, texCoords * sampleScale * noiseScale).xyz);
 
     vec3 tangent   = normalize(randomVec - normal * dot(randomVec, normal));
     vec3 bitangent = cross(normal, tangent);

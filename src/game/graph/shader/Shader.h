@@ -21,6 +21,8 @@ public:
     void createFromString(std::string& vertexSource, std::string& fragmentSource);
     void createFromFile(const std::string& vertexFile, const std::string& fragmentFile);
 
+    virtual void postCreate() {};
+
     GLint get(const std::string &name);
 
     void use();

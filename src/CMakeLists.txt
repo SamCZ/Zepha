@@ -211,6 +211,6 @@ set(ZEPHA_SRC
         lua/api/customization/pVec3.cpp
         lua/api/customization/pVec3.h
         StartGame.h
-        game/graph/shader/uniform/SSAOUniforms.h)
+        game/graph/shader/SSAOShader.cpp game/graph/shader/SSAOShader.h game/graph/shader/BlurShader.cpp game/graph/shader/BlurShader.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

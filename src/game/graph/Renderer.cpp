@@ -2,20 +2,17 @@
 // Created by aurailus on 17/12/18.
 //
 
-#include <random>
 #include "Renderer.h"
 
 Renderer::Renderer() : Renderer(1366, 768) {};
 
-float lerp(float a, float b, float f) {
-    return a + f * (b - a);
-}
-
 Renderer::Renderer(GLint winWidth, GLint winHeight) :
     activeTexture(nullptr),
-
     window(winWidth, winHeight),
-    swayData(new unsigned char[16 * 4 * 16]) {
+    swayData(new unsigned char[16 * 4 * 16]),
+
+    ssao({winWidth, winHeight}, 1, 32),
+    blur({winWidth, winHeight}, 1) {
 
     window.initialize();
     auto winSize = window.getSize();
@@ -30,68 +27,8 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
     swayNoise.SetOctaveCount(2);
     swayTex.loadFromBytes(swayData, 16, 16, GL_LINEAR, GL_MIRRORED_REPEAT);
 
-    std::uniform_real_distribution<float> randomFloats(0.0, 1.0); // random floats between 0.0 - 1.0
-    std::default_random_engine generator;
-    for (unsigned int i = 0; i < samples; i++) {
-        glm::vec3 sample(
-                randomFloats(generator) * 2.0 - 1.0,
-                randomFloats(generator) * 2.0 - 1.0,
-                randomFloats(generator)
-        );
-        sample = glm::normalize(sample);
-        sample *= randomFloats(generator);
-        float scale = static_cast<float>(i / 64.0);
-        scale = lerp(0.1f, 1.0f, scale * scale);
-        sample *= scale;
-        ssaoKernel.push_back(sample);
-    }
-
-    for (unsigned int i = 0; i < 16; i++) {
-        ssaoNoise.emplace_back(randomFloats(generator) * 2.0 - 1.0,
-                               randomFloats(generator) * 2.0 - 1.0,
-                               0.0f);
-    }
-
-    ssaoShader = Shader();
-    ssaoShader.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoCalc.fs");
-
-    sau.proj = ssaoShader.get("projection");
-    sau.view = ssaoShader.get("view");
-    sau.kernels = ssaoShader.get("kernels");
-
-    glGenTextures(1, &ssaoTex);
-    glBindTexture(GL_TEXTURE_2D, ssaoTex);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 4, 4, 0, GL_RGB, GL_FLOAT, &ssaoNoise[0]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    glGenFramebuffers(1, &ssaoFBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
-
-    glGenTextures(1, &ssaoColorBuffer);
-    glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, winWidth / 2, winHeight / 2, 0, GL_RGB, GL_FLOAT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer, 0);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    sau.matrix = camera.getProjectionMatrix();
-
-    ssaoBlur = Shader();
-    ssaoBlur.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoBlur.fs");
-
-    glGenFramebuffers(1, &ssaoBlurFBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
-    glGenTextures(1, &ssaoColorBufferBlur);
-    glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, winWidth, winHeight, 0, GL_RGB, GL_FLOAT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBufferBlur, 0);
+    ssao.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoCalc.fs");
+    blur.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoBlur.fs");
 
     createWorldShaders();
     createGUIShader();
@@ -233,6 +170,9 @@ void Renderer::update(double delta) {
     swayTex.updateTexture(0, 0, 16, 16, swayData);
 
     if (window.resized) {
+        ssao.windowResized(window.getSize());
+        blur.windowResized(window.getSize());
+
         resized = true;
         window.resized = false;
 
@@ -266,18 +206,17 @@ void Renderer::update(double delta) {
             std::cout << "Framebuffer not complete!" << std::endl;
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, static_cast<int>(winSize.x / 2), static_cast<int>(winSize.y / 2), 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
-
-        glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, static_cast<int>(winSize.x / 2), static_cast<int>(winSize.y / 2), 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
+//
+//        glBindTexture(GL_TEXTURE_2D, ssao.colorBuffer);
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, static_cast<int>(winSize.x / 2), static_cast<int>(winSize.y / 2), 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+//        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
+//
+//        glBindTexture(GL_TEXTURE_2D, blur.colorBuffer);
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, static_cast<int>(winSize.x / 2), static_cast<int>(winSize.y / 2), 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+//        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
 
         wgu.matrix = camera.getProjectionMatrix();
         egu.matrix = camera.getProjectionMatrix();
-        sau.matrix = camera.getProjectionMatrix();
         gu.matrix = camera.getOrthographicMatrix();
     }
 }
@@ -320,17 +259,17 @@ void Renderer::beginEntityDeferredCalls() {
 void Renderer::endDeferredCalls() {
     activeTexture = nullptr;
 
-    glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, ssao.fbo);
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    ssaoShader.use();
-    ssaoShader.set(sau.proj, sau.matrix);
-    ssaoShader.set(sau.view, camera.getViewMatrix());
-    ssaoShader.set(sau.kernels, samples);
+    ssao.use();
+    ssao.set(ssao.uniforms.proj, camera.getProjectionMatrix());
+    ssao.set(ssao.uniforms.view, camera.getViewMatrix());
+    ssao.set(ssao.uniforms.kernelCount, ssao.kernelCount);
 
-    for (unsigned int i = 0; i < samples; i++) {
-        ssaoShader.set(ssaoShader.get("samples[" + std::to_string(i) + "]"), ssaoKernel[i]);
+    for (unsigned int i = 0; i < ssao.kernelCount; i++) {
+        ssao.set(ssao.get("samples[" + std::to_string(i) + "]"), ssao.kernels[i]);
     }
 
     glActiveTexture(GL_TEXTURE0);
@@ -338,18 +277,18 @@ void Renderer::endDeferredCalls() {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, gNormal);
     glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, ssaoTex);
+    glBindTexture(GL_TEXTURE_2D, ssao.tex);
 
     renderQuad();
 
     auto winSize = window.getSize();
     glViewport(0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y));
 
-    glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, blur.fbo);
     glClear(GL_COLOR_BUFFER_BIT);
-    ssaoBlur.use();
+    blur.use();
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, ssao.colorBuffer);
     renderQuad();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -361,10 +300,8 @@ void Renderer::endDeferredCalls() {
 
     worldLightingShader.set(wlu.camPosition, camera.getPos());
 
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, gPosition);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
+    glBindTexture(GL_TEXTURE_2D, blur.colorBuffer);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, gNormal);
     glActiveTexture(GL_TEXTURE2);

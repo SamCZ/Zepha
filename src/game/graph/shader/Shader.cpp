@@ -20,6 +20,8 @@ void Shader::createFromFile(const std::string& vertexFile, const std::string& fr
     std::string fragmentSource = readFile(fragmentFile);
 
     compileShader(vertexSource, fragmentSource);
+
+    postCreate();
 }
 
 std::string Shader::readFile(const std::string& fileLocation) {

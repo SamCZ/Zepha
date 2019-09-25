@@ -6,6 +6,8 @@
 
 #include "meshtypes/ChunkMesh.h"
 #include "shader/Shader.h"
+#include "shader/SSAOShader.h"
+#include "shader/BlurShader.h"
 #include "window/Window.h"
 #include "Camera.h"
 #include "Texture.h"
@@ -13,7 +15,6 @@
 #include "shader/uniform/WorldLightingUniforms.h"
 #include "shader/uniform/WorldGeometryUniforms.h"
 #include "shader/uniform/EntityGeometryUniforms.h"
-#include "shader/uniform/SSAOUniforms.h"
 #include <glm/ext.hpp>
 #include <noise/noise.h>
 
@@ -50,24 +51,17 @@ private:
 
     unsigned int quadVAO = 0, quadVBO;
     float renderScale = 2.0f;
-    unsigned int samples = 32;
 
     Window window;
     Camera camera;
 
     unsigned int gBuffer, gPosition, gNormal, gColorSpec, rboDepth;
-    unsigned int ssaoFBO, ssaoColorBuffer;
-    unsigned int ssaoBlurFBO, ssaoColorBufferBlur;
     unsigned int sBuffer, sDepthMap;
 
     Texture swayTex;
     double swayOffset = 0;
     noise::module::Perlin swayNoise;
     unsigned char* swayData = nullptr;
-
-    std::vector<glm::vec3> ssaoKernel;
-    std::vector<glm::vec3> ssaoNoise;
-    unsigned int ssaoTex;
 
     glm::vec4 clearColor {0, 0, 0, 1};
     Texture* activeTexture;
@@ -76,9 +70,8 @@ private:
     WorldGeometryUniforms wgu;
     Shader entityGeometryShader;
     EntityGeometryUniforms egu;
-    Shader ssaoShader;
-    Shader ssaoBlur;
-    SSAOUniforms sau;
+    SSAOShader ssao;
+    BlurShader blur;
     Shader worldLightingShader;
     WorldLightingUniforms wlu;
     Shader guiShader;
