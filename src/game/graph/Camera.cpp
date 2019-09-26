@@ -28,8 +28,8 @@ void Camera::createMatrices() {
     orthographicMatrix = glm::ortho(0.0f, bufferDimensions.x, bufferDimensions.y, 0.0f, 0.0f, 100.0f);
 }
 
-void Camera::changeWindowDimensions(float buffWidth, float buffHeight) {
-    this->bufferDimensions = glm::vec2(buffWidth, buffHeight);
+void Camera::changeWindowDimensions(glm::vec2 size) {
+    this->bufferDimensions = size;
     createMatrices();
 }
 

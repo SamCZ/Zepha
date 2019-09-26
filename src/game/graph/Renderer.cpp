@@ -9,123 +9,32 @@ Renderer::Renderer() : Renderer(1366, 768) {};
 Renderer::Renderer(GLint winWidth, GLint winHeight) :
     activeTexture(nullptr),
     window(winWidth, winHeight),
-    swayData(new unsigned char[16 * 4 * 16]),
 
-    ssao({winWidth, winHeight}, 1, 32),
-    blur({winWidth, winHeight}, 1) {
+    world({winWidth, winHeight}, 2),
+    entity({winWidth, winHeight}, 2),
+    ssao({winWidth, winHeight}, 1, 16),
+    blur({winWidth, winHeight}, 1),
+    lighting({winWidth, winHeight}, 2) {
 
     window.initialize();
-    auto winSize = window.getSize();
-    camera.create(winSize.x, winSize.y, glm::vec3(0, 1, 0));
-
-    for (int i = 0; i < 16 * 16; i++) {
-        swayData[i*4+1] = 127;
-        swayData[i*4+3] = 255;
-    }
-
-    swayNoise.SetFrequency(0.5);
-    swayNoise.SetOctaveCount(2);
-    swayTex.loadFromBytes(swayData, 16, 16, GL_LINEAR, GL_MIRRORED_REPEAT);
+    camera.create(window.getSize().x, window.getSize().y, glm::vec3(0, 1, 0));
 
     ssao.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoCalc.fs");
     blur.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoBlur.fs");
+    lighting.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/deferredLighting.fs");
+    world.createFromFile("./assets/shader/world/deferredGeometryWorld.vs", "./assets/shader/world/deferredGeometryWorld.fs");
+    entity.createFromFile("./assets/shader/world/deferredGeometryEntity.vs", "./assets/shader/world/deferredGeometryEntity.fs");
 
-    createWorldShaders();
-    createGUIShader();
+    guiShader = Shader();
+    guiShader.createFromFile("./assets/shader/ortho/hud.vs", "./assets/shader/ortho/hud.fs");
+
+    gu.matrix = camera.getOrthographicMatrix();
+    gu.ortho  = guiShader.get("ortho");
+    gu.model  = guiShader.get("model");
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_CULL_FACE);
 }
-
-void Renderer::createWorldShaders() {
-    //Initialize World Geometry Shader
-
-    worldGeometryShader = Shader();
-    worldGeometryShader.createFromFile("./assets/shader/world/deferredGeometryWorld.vs", "./assets/shader/world/deferredGeometryWorld.fs");
-
-    wgu.matrix = camera.getProjectionMatrix();
-    wgu.proj   = worldGeometryShader.get("projection");
-    wgu.model  = worldGeometryShader.get("model");
-    wgu.view   = worldGeometryShader.get("view");
-
-    wgu.swaySampler = worldGeometryShader.get("swayTex");
-
-    wgu.time   = worldGeometryShader.get("time");
-
-    worldGeometryShader.use();
-    worldGeometryShader.set(wgu.swaySampler, 1);
-
-    glGenFramebuffers(1, &gBuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-
-    auto winSize = window.getSize();
-
-    winSize *= renderScale;
-
-    glGenTextures(1, &gPosition);
-    glBindTexture(GL_TEXTURE_2D, gPosition);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, static_cast<int>(winSize.x), static_cast<int>(winSize.y), 0, GL_RGB, GL_FLOAT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
-
-    glGenTextures(1, &gNormal);
-    glBindTexture(GL_TEXTURE_2D, gNormal);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, static_cast<int>(winSize.x), static_cast<int>(winSize.y), 0, GL_RGB, GL_FLOAT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
-
-    glGenTextures(1, &gColorSpec);
-    glBindTexture(GL_TEXTURE_2D, gColorSpec);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<int>(winSize.x), static_cast<int>(winSize.y), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
-
-    unsigned int attachments[3] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
-    glDrawBuffers(3, attachments);
-
-    glGenRenderbuffers(1, &rboDepth);
-    glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, static_cast<int>(winSize.x), static_cast<int>(winSize.y));
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
-
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        std::cout << "Framebuffer not complete!" << std::endl;
-    }
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    //Initialize Entity Geometry Shader
-
-    entityGeometryShader = Shader();
-    entityGeometryShader.createFromFile("./assets/shader/world/deferredGeometryEntity.vs", "./assets/shader/world/deferredGeometryEntity.fs");
-
-    egu.matrix = camera.getProjectionMatrix();
-    egu.proj   = entityGeometryShader.get("projection");
-    egu.model  = entityGeometryShader.get("model");
-    egu.view   = entityGeometryShader.get("view");
-
-    egu.uBones = entityGeometryShader.get("uBones");
-
-    //Initialize Lighting Shader for Deferred Rendering
-
-    worldLightingShader = Shader();
-    worldLightingShader.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/deferredLighting.fs");
-
-    wlu.gPosition  = worldLightingShader.get("gPosition");
-    wlu.gNormal    = worldLightingShader.get("gNormal");
-    wlu.gColorSpec = worldLightingShader.get("gColorSpec");
-
-    wlu.camPosition = worldLightingShader.get("camPosition");
-
-    worldLightingShader.use();
-    worldLightingShader.set(wlu.gPosition, 0);
-    worldLightingShader.set(wlu.gNormal, 1);
-    worldLightingShader.set(wlu.gColorSpec, 2);
 
     //Initialize Shading Shader for Shadowmapping
 
@@ -143,124 +52,59 @@ void Renderer::createWorldShaders() {
 //    glDrawBuffer(GL_NONE);
 //    glReadBuffer(GL_NONE);
 //    glBindBuffer(GL_FRAMEBUFFER, 0);
-}
-
-void Renderer::createGUIShader() {
-    guiShader = Shader();
-    guiShader.createFromFile("./assets/shader/ortho/hud.vs", "./assets/shader/ortho/hud.fs");
-
-    gu.matrix = camera.getOrthographicMatrix();
-    gu.ortho  = guiShader.get("ortho");
-    gu.model  = guiShader.get("model");
-}
 
 void Renderer::update(double delta) {
     //VSync 1 = On, 0 = Off
     glfwSwapInterval(1);
-
-    window.update();
     elapsedTime += delta;
 
-    swayOffset += delta * 1.4;
-    for (int i = 0; i < 16 * 16; i++) {
-        swayData[i*4]   = static_cast<unsigned char>((fmax(-1, fmin(1, swayNoise.GetValue((i / 16) / 3.f, (i % 16) / 3.f, swayOffset)))       + 1) / 2.f * 255.f);
-        swayData[i*4+1] = static_cast<unsigned char>((fmax(-1, fmin(1, swayNoise.GetValue((i / 16) / 3.f, (i % 16) / 3.f, swayOffset + 50)))  + 1) / 2.f * 255.f);
-        swayData[i*4+2] = static_cast<unsigned char>((fmax(-1, fmin(1, swayNoise.GetValue((i / 16) / 3.f, (i % 16) / 3.f, swayOffset + 100))) + 1) / 2.f * 255.f);
-    }
-    swayTex.updateTexture(0, 0, 16, 16, swayData);
+    window.update();
+    world.updateSwayMap(delta);
 
     if (window.resized) {
         ssao.windowResized(window.getSize());
         blur.windowResized(window.getSize());
+        lighting.windowResized(window.getSize());
+        world.windowResized(window.getSize());
 
         resized = true;
         window.resized = false;
+        camera.changeWindowDimensions(window.getSize());
 
-        auto winSize = window.getSize();
-        camera.changeWindowDimensions(winSize.x, winSize.y);
-
-        winSize *= renderScale;
-
-        glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-
-        glBindTexture(GL_TEXTURE_2D, gPosition);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, static_cast<int>(winSize.x), static_cast<int>(winSize.y), 0, GL_RGB, GL_FLOAT, nullptr);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
-
-        glBindTexture(GL_TEXTURE_2D, gNormal);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, static_cast<int>(winSize.x), static_cast<int>(winSize.y), 0, GL_RGB, GL_FLOAT, nullptr);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
-
-        glBindTexture(GL_TEXTURE_2D, gColorSpec);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<int>(winSize.x), static_cast<int>(winSize.y), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
-
-        unsigned int attachments[3] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
-        glDrawBuffers(3, attachments);
-
-        glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, static_cast<int>(winSize.x), static_cast<int>(winSize.y));
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
-
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            std::cout << "Framebuffer not complete!" << std::endl;
-        }
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//
-//        glBindTexture(GL_TEXTURE_2D, ssao.colorBuffer);
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, static_cast<int>(winSize.x / 2), static_cast<int>(winSize.y / 2), 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-//        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
-//
-//        glBindTexture(GL_TEXTURE_2D, blur.colorBuffer);
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, static_cast<int>(winSize.x / 2), static_cast<int>(winSize.y / 2), 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-//        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gColorSpec, 0);
-
-        wgu.matrix = camera.getProjectionMatrix();
-        egu.matrix = camera.getProjectionMatrix();
         gu.matrix = camera.getOrthographicMatrix();
     }
 }
 
 void Renderer::beginChunkDeferredCalls() {
     activeTexture = nullptr;
-    currentModelUniform = wgu.model;
+    currentModelUniform = world.uniforms.model;
 
-    auto winSize = window.getSize();
-    winSize *= renderScale;
-
-    glClearColor(clearColor.x, clearColor.y, clearColor.z, 0);
+    glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
-    glViewport(0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y));
+    glViewport(0, 0, static_cast<int>(world.windowSize.x * world.bufferScale), static_cast<int>(world.windowSize.y * world.bufferScale));
 
-    glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    worldGeometryShader.use();
-
-    worldGeometryShader.set(wgu.proj, wgu.matrix);
-    worldGeometryShader.set(wgu.view, camera.getViewMatrix());
-
-    worldGeometryShader.set(wgu.time, static_cast<float>(elapsedTime));
-
-    swayTex.use(1);
+    world.use();
+    world.set(world.uniforms.proj, camera.getProjectionMatrix());
+    world.set(world.uniforms.view, camera.getViewMatrix());
+    world.set(world.uniforms.time, static_cast<float>(elapsedTime));
+    world.swayTex.use(1);
 }
 
 void Renderer::beginEntityDeferredCalls() {
-    currentModelUniform = egu.model;
+    currentModelUniform = entity.uniforms.model;
 
-    entityGeometryShader.use();
-
-    entityGeometryShader.set(egu.proj, egu.matrix);
-    entityGeometryShader.set(egu.view, camera.getViewMatrix());
+    entity.use();
+    entity.set(entity.uniforms.proj, camera.getProjectionMatrix());
+    entity.set(entity.uniforms.view, camera.getViewMatrix());
 }
 
 void Renderer::endDeferredCalls() {
     activeTexture = nullptr;
 
     glBindFramebuffer(GL_FRAMEBUFFER, ssao.fbo);
-    glClearColor(0, 0, 0, 0);
+    glClearColor(clearColor.x, clearColor.y, clearColor.z, 0);
     glClear(GL_COLOR_BUFFER_BIT);
 
     ssao.use();
@@ -269,13 +113,14 @@ void Renderer::endDeferredCalls() {
     ssao.set(ssao.uniforms.kernelCount, ssao.kernelCount);
 
     for (unsigned int i = 0; i < ssao.kernelCount; i++) {
-        ssao.set(ssao.get("samples[" + std::to_string(i) + "]"), ssao.kernels[i]);
+        GLint uni = ssao.get("samples[" + std::to_string(i) + "]");
+        ssao.set(uni, ssao.kernels[i]);
     }
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, gPosition);
+    glBindTexture(GL_TEXTURE_2D, lighting.gPosition);
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, gNormal);
+    glBindTexture(GL_TEXTURE_2D, lighting.gNormal);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, ssao.tex);
 
@@ -296,16 +141,15 @@ void Renderer::endDeferredCalls() {
     glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    worldLightingShader.use();
-
-    worldLightingShader.set(wlu.camPosition, camera.getPos());
+    lighting.use();
+    lighting.set(lighting.uniforms.camPosition, camera.getPos());
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, blur.colorBuffer);
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, gNormal);
+    glBindTexture(GL_TEXTURE_2D, lighting.gNormal);
     glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, gColorSpec);
+    glBindTexture(GL_TEXTURE_2D, lighting.gColorSpec);
 
     glEnable(GL_BLEND);
     renderQuad();
@@ -382,18 +226,11 @@ void Renderer::enableTexture(Texture *texture) {
     }
 }
 
-Renderer::~Renderer() {
-    worldGeometryShader.cleanup();
-    guiShader.cleanup();
-    swayTex.clear();
-    delete[] swayData;
-}
-
 void Renderer::setClearColor(unsigned char r, unsigned char g, unsigned char b) {
     clearColor = {static_cast<float>(r)/255.f, static_cast<float>(g)/255.f, static_cast<float>(b)/255.f, 1};
 }
 
 void Renderer::setBones(std::vector<glm::mat4> &transforms) {
     if (transforms.empty()) return;
-    entityGeometryShader.setArr(egu.uBones, static_cast<GLsizei>(transforms.size()), transforms.at(0));
+    entity.setArr(entity.uniforms.bones, static_cast<GLsizei>(transforms.size()), transforms.at(0));
 }

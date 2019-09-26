@@ -4,27 +4,24 @@
 
 #pragma once
 
-#include "meshtypes/ChunkMesh.h"
+#include <glm/ext.hpp>
+#include <noise/noise.h>
+#include "Camera.h"
+#include "Texture.h"
+#include "window/Window.h"
 #include "shader/Shader.h"
 #include "shader/SSAOShader.h"
 #include "shader/BlurShader.h"
-#include "window/Window.h"
-#include "Camera.h"
-#include "Texture.h"
+#include "shader/LightingShader.h"
+#include "shader/WorldGeometryShader.h"
+#include "shader/EntityGeometryShader.h"
 #include "shader/uniform/GuiUniforms.h"
-#include "shader/uniform/WorldLightingUniforms.h"
-#include "shader/uniform/WorldGeometryUniforms.h"
-#include "shader/uniform/EntityGeometryUniforms.h"
-#include <glm/ext.hpp>
-#include <noise/noise.h>
+#include "meshtypes/ChunkMesh.h"
 
 class Renderer {
 public:
     Renderer();
     Renderer(GLint winWidth, GLint winHeight);
-
-    void createWorldShaders();
-    void createGUIShader();
 
     void update(double delta);
 
@@ -43,37 +40,26 @@ public:
     Window& getWindow();
     Camera& getCamera();
 
-    ~Renderer();
-
     bool resized;
 private:
     void renderQuad();
 
     unsigned int quadVAO = 0, quadVBO;
-    float renderScale = 2.0f;
 
     Window window;
     Camera camera;
 
-    unsigned int gBuffer, gPosition, gNormal, gColorSpec, rboDepth;
     unsigned int sBuffer, sDepthMap;
-
-    Texture swayTex;
-    double swayOffset = 0;
-    noise::module::Perlin swayNoise;
-    unsigned char* swayData = nullptr;
 
     glm::vec4 clearColor {0, 0, 0, 1};
     Texture* activeTexture;
 
-    Shader worldGeometryShader;
-    WorldGeometryUniforms wgu;
-    Shader entityGeometryShader;
-    EntityGeometryUniforms egu;
+    WorldGeometryShader world;
+    EntityGeometryShader entity;
     SSAOShader ssao;
     BlurShader blur;
-    Shader worldLightingShader;
-    WorldLightingUniforms wlu;
+    LightingShader lighting;
+
     Shader guiShader;
     GuiUniforms gu;
 

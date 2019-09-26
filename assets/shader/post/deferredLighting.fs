@@ -15,10 +15,9 @@ uniform sampler2D ssaoSampler;
 uniform vec3 camPosition;
 
 void main() {
-//    vec3 fragPos = texture(gPosition, texCoords).rgb;
-    vec3 normal  = texture(gNormal, texCoords).rgb;
-    vec3 color   = texture(gColorSpec, texCoords).rgb;
-    float ssao   = texture(ssaoSampler, texCoords).r;
+    vec3 normal = texture(gNormal, texCoords).rgb;
+    vec3 color  = texture(gColorSpec, texCoords).rgb;
+    float ssao  = texture(ssaoSampler, texCoords).r;
 
     //Discard fragments without normals
     if (normal == vec3(0)) discard;

@@ -140,12 +140,9 @@ set(ZEPHA_SRC
         lua/Callback.h
         lua/api/modules/cRegisterBlock.h
         lua/api/modules/cDelay.h
-        game/graph/shader/uniform/WorldGeometryUniforms.h
         game/graph/shader/uniform/GuiUniforms.h
-        game/graph/shader/uniform/WorldLightingUniforms.h
         game/graph/meshtypes/EntityMesh.cpp
         game/graph/meshtypes/EntityMesh.h
-        game/graph/shader/uniform/EntityGeometryUniforms.h
         lua/api/modules/cRegisterBlockmodel.h
         lua/api/modules/cSetBlock.h
         lua/api/modules/cGetBlock.h
@@ -211,6 +208,6 @@ set(ZEPHA_SRC
         lua/api/customization/pVec3.cpp
         lua/api/customization/pVec3.h
         StartGame.h
-        game/graph/shader/SSAOShader.cpp game/graph/shader/SSAOShader.h game/graph/shader/BlurShader.cpp game/graph/shader/BlurShader.h)
+        game/graph/shader/SSAOShader.cpp game/graph/shader/SSAOShader.h game/graph/shader/BlurShader.cpp game/graph/shader/BlurShader.h game/graph/shader/LightingShader.cpp game/graph/shader/LightingShader.h game/graph/shader/WorldGeometryShader.cpp game/graph/shader/WorldGeometryShader.h game/graph/shader/EntityGeometryShader.cpp game/graph/shader/EntityGeometryShader.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

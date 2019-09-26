@@ -68,6 +68,8 @@ void SSAOShader::postCreate() {
 }
 
 void SSAOShader::windowResized(glm::vec2 windowSize) {
+    this->windowSize = windowSize;
+
     glBindTexture(GL_TEXTURE_2D, colorBuffer);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, static_cast<int>(windowSize.x * bufferScale), static_cast<int>(windowSize.y * bufferScale), 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);

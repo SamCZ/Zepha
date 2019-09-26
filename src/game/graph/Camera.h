@@ -15,7 +15,7 @@ public:
     Camera();
     void create(float buffWidth, float buffHeight, glm::vec3 up);
 
-    void changeWindowDimensions(float buffWidth, float buffHeight);
+    void changeWindowDimensions(glm::vec2 size);
 
     glm::vec3 getPos();
     void setPos(glm::vec3 pos);
