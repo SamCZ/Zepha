@@ -27,6 +27,9 @@ void main() {
     vec3 normal    = normalize(mat3(view) * texture(gNormal, texCoords * sampleScale).xyz);
     vec3 randomVec = normalize(texture(texNoise, texCoords * sampleScale * noiseScale).xyz);
 
+    if (normal == vec3(0, 0, 0)) discard;
+
+
     vec3 tangent   = normalize(randomVec - normal * dot(randomVec, normal));
     vec3 bitangent = cross(normal, tangent);
     mat3 tbn       = mat3(tangent, bitangent, normal);

@@ -81,9 +81,19 @@ void Renderer::beginChunkDeferredCalls() {
 
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
+
     glViewport(0, 0, static_cast<int>(world.windowSize.x * world.bufferScale), static_cast<int>(world.windowSize.y * world.bufferScale));
+
+    glBindFramebuffer(GL_FRAMEBUFFER, lighting.gBuffer);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    const float skyColor[] = {clearColor.x, clearColor.y, clearColor.z, 1};
+    static const float clearTransparent[] = {0, 0, 0, 1};
+    glClearBufferfv(GL_COLOR, 0, clearTransparent);
+    glClearBufferfv(GL_COLOR, 1, clearTransparent);
+    glClearBufferfv(GL_COLOR, 2, skyColor);
 
     world.use();
     world.set(world.uniforms.proj, camera.getProjectionMatrix());
