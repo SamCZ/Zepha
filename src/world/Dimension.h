@@ -10,10 +10,13 @@
 #include "../util/Vec.h"
 #include "../game/scene/world/graph/MeshChunk.h"
 #include "../game/scene/world/graph/ChunkRenderRef.h"
-//#include "../game/scene/world/MeshGenStream.h"
+#include "../game/scene/world/MeshGenStream.h"
 
+//TODO: Seperate into local/server because OHMYGOD
 class Dimension {
 public:
+    Dimension() = default; //Only use on the server //TODO: Temporary
+    explicit Dimension(LocalDefs& defs);
 
     void setChunk(std::shared_ptr<BlockChunk> chunk);
     void setMeshChunk(std::shared_ptr<MeshChunk> chunk);
@@ -28,15 +31,21 @@ public:
     int getMeshChunkCount();
 
     std::shared_ptr<BlockChunk> getChunk(glm::vec3 pos);
+
+    int lastMeshUpdates = 0;
 private:
-//    void attemptMeshChunk(const sptr<BlockChunk>& chunk);
-//    bool getAdjacentExists(glm::vec3 pos);
+    void finishMeshes();
+    void queueMeshes();
+
+    void attemptMeshChunk(const sptr<BlockChunk>& chunk, bool updateAdjacents = true);
+    bool getAdjacentExists(glm::vec3 pos, bool updateAdjacents);
 
     glm::vec3 playerPos {};
 
-//    MeshGenStream meshGenStream;
-    std::unordered_map<glm::vec3, ChunkRenderRef, VecUtils::compareFunc> renderRefs;
-    std::list<std::shared_ptr<ChunkRenderElem>> renderElems;
+    uptr<MeshGenStream> meshGenStream = nullptr;
+    std::vector<glm::vec3> pendingMesh {};
+    std::unordered_map<glm::vec3, ChunkRenderRef, VecUtils::compareFunc> renderRefs {};
+    std::list<std::shared_ptr<ChunkRenderElem>> renderElems {};
 
     typedef std::unordered_map<glm::vec3, std::shared_ptr<BlockChunk>, VecUtils::compareFunc> block_chunk_map;
     block_chunk_map blockChunks;

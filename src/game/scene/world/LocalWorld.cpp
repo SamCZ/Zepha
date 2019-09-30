@@ -10,7 +10,7 @@
 
 LocalWorld::LocalWorld(LocalDefs& defs, glm::vec3* playerPos, ClientNetworkInterpreter* server) :
     playerPos(playerPos),
-    meshGenStream(defs, dimension),
+    dimension(defs),
     server(server),
     defs(defs) {}
 
@@ -22,8 +22,6 @@ void LocalWorld::init() {
 void LocalWorld::update(double delta) {
     playerChunkPos = TransPos::roundPos(*playerPos / glm::vec3(TransPos::CHUNK_SIZE));
 
-    finishMeshes();
-    queueMeshes();
     finishChunks();
 
     updateBlockDamages(delta);
@@ -76,44 +74,6 @@ void LocalWorld::damageBlock(glm::vec3 pos, float amount) {
     }
 }
 
-void LocalWorld::finishMeshes() {
-    lastMeshUpdates = 0;
-    auto finishedMeshes = meshGenStream.update();
-
-    for (MeshDetails* meshDetails : finishedMeshes) {
-
-        if (!meshDetails->vertices.empty()) {
-            auto meshChunk = std::make_shared<MeshChunk>();
-            meshChunk->create(meshDetails->vertices, meshDetails->indices);
-            meshChunk->setPos(meshDetails->pos);
-
-            dimension.setMeshChunk(meshChunk);
-            lastMeshUpdates++;
-        } else {
-            dimension.removeMeshChunk(meshDetails->pos);
-        }
-
-        delete meshDetails;
-    }
-}
-
-void LocalWorld::queueMeshes() {
-    if (meshGenStream.spaceInQueue()) {
-        bool moreSpace = true;
-
-        while (moreSpace && !pendingMesh.empty()) {
-            auto it = pendingMesh.begin();
-            glm::vec3 pos = *it;
-
-            if (!meshGenStream.isQueued(pos)) {
-                moreSpace = meshGenStream.tryToQueue(pos);
-            }
-
-            pendingMesh.erase(it);
-        }
-    }
-}
-
 void LocalWorld::finishChunks() {
     auto finishedChunks = worldGenStream->update();
 
@@ -159,48 +119,16 @@ void LocalWorld::updateBlockDamages(double delta) {
     }
 }
 
-
 void LocalWorld::loadChunkPacket(Packet p) {
     worldGenStream->pushBack(p);
 }
+
 std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::vec3 chunkPos) {
     return dimension.getChunk(chunkPos);
 }
+
 void LocalWorld::commitChunk(glm::vec3 pos, std::shared_ptr<BlockChunk> c) {
     dimension.setChunk(std::move(c));
-    attemptMeshChunk(pos);
-}
-void LocalWorld::remeshChunk(glm::vec3 pos) {
-    attemptMeshChunk(pos);
-}
-
-void LocalWorld::attemptMeshChunk(glm::vec3 pos) {
-    auto thisChunk = getChunk(pos);
-    if (thisChunk == nullptr) return;
-
-    auto vectors = VecUtils::getCardinalVectors();
-    for (int i = 0; i < vectors.size(); i++) {
-        thisChunk->adjacent[i] = getAdjacentExists(pos + vectors[i], pos);
-    }
-
-    if (thisChunk->allAdjacentsExist() && thisChunk->shouldRender()) pendingMesh.push_back(pos);
-}
-bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
-    auto chunk = getChunk(pos);
-    glm::vec3 diff = otherPos - pos;
-
-    if (chunk != nullptr) {
-        auto vectors = VecUtils::getCardinalVectors();
-        for (int i = 0; i < vectors.size(); i++) {
-            if (diff == vectors[i]) {
-                chunk->adjacent[i] = true;
-            }
-        }
-
-        if (chunk->allAdjacentsExist() && chunk->shouldRender()) pendingMesh.push_back(pos);
-        return true;
-    }
-    return false;
 }
 
 int LocalWorld::renderChunks(Renderer &renderer) {
@@ -248,12 +176,10 @@ void LocalWorld::localSetBlock(glm::vec3 pos, unsigned int block) {
 
     server->setBlock(pos, block);
     dimension.setBlock(pos, block);
-    remeshChunk(TransPos::chunkFromVec(TransPos::roundPos(pos)));
 }
 
 void LocalWorld::setBlock(glm::vec3 pos, unsigned int block) {
     dimension.setBlock(pos, block);
-    remeshChunk(TransPos::chunkFromVec(TransPos::roundPos(pos)));
 }
 
 bool LocalWorld::solidAt(glm::vec3 pos) {

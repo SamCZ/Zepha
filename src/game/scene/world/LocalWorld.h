@@ -41,12 +41,8 @@ public:
     void loadChunkPacket(Packet p);
     std::shared_ptr<BlockChunk> getChunk(glm::vec3 chunkPos);
     void commitChunk(glm::vec3 pos, std::shared_ptr<BlockChunk>);
-    void remeshChunk(glm::vec3 pos);
 
     void damageBlock(glm::vec3 pos, float amount);
-
-    void attemptMeshChunk(glm::vec3 pos);
-    bool getAdjacentExists(glm::vec3 pos, glm::vec3 myPos);
 
     int renderChunks(Renderer &render);
     void renderEntities(Renderer &renderer);
@@ -61,10 +57,8 @@ public:
 
     bool solidAt(glm::vec3 pos);
 
-    int lastGenUpdates = 0, lastMeshUpdates = 0;
+    int lastGenUpdates = 0;
 private:
-    void finishMeshes();
-    void queueMeshes();
     void finishChunks();
     void updateBlockDamages(double delta);
 
@@ -80,6 +74,4 @@ private:
     ClientNetworkInterpreter* server = nullptr;
     WorldInterpolationStream* worldGenStream = nullptr;
     Dimension dimension;
-    MeshGenStream meshGenStream;
-    std::vector<glm::vec3> pendingMesh;
 };

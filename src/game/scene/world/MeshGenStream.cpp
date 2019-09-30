@@ -4,6 +4,8 @@
 
 #include "MeshGenStream.h"
 
+#include "../../../world/Dimension.h"
+
 MeshGenStream::MeshGenStream(LocalDefs &defs, Dimension &dimension) :
     defs(defs),
     dimension(dimension),

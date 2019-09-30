@@ -4,6 +4,8 @@
 
 #include "Dimension.h"
 
+Dimension::Dimension(LocalDefs &defs) : meshGenStream(std::make_unique<MeshGenStream>(defs, *this)) {}
+
 Dimension::Dimension(glm::vec3 *playerPos) {
     this->playerPos = playerPos;
 }
@@ -76,6 +78,44 @@ void Dimension::update() {
     }
 }
 
+void Dimension::finishMeshes() {
+    lastMeshUpdates = 0;
+    auto finishedMeshes = meshGenStream->update();
+
+    for (MeshDetails* meshDetails : finishedMeshes) {
+
+        if (!meshDetails->vertices.empty()) {
+            auto meshChunk = std::make_shared<MeshChunk>();
+            meshChunk->create(meshDetails->vertices, meshDetails->indices);
+            meshChunk->setPos(meshDetails->pos);
+
+            setMeshChunk(meshChunk);
+            lastMeshUpdates++;
+        } else {
+            removeMeshChunk(meshDetails->pos);
+        }
+
+        delete meshDetails;
+    }
+}
+
+void Dimension::queueMeshes() {
+    if (meshGenStream->spaceInQueue()) {
+        bool moreSpace = true;
+
+        while (moreSpace && !pendingMesh.empty()) {
+            auto it = pendingMesh.begin();
+            glm::vec3 pos = *it;
+
+            if (!meshGenStream->isQueued(pos)) {
+                moreSpace = meshGenStream->tryToQueue(pos);
+            }
+
+            pendingMesh.erase(it);
+        }
+    }
+}
+
 int Dimension::render(Renderer &renderer) {
     int count = 0;
 
@@ -101,6 +141,10 @@ void Dimension::setBlock(glm::vec3 pos, unsigned int block) {
 
     auto chunk = getChunk(chunkPos);
     if (chunk != nullptr) chunk->setBlock(local, block);
+    chunk->dirty = true;
+
+    auto dirs = VecUtils::getCardinalVectors();
+    attemptMeshChunk(chunk);
 }
 
 unsigned int Dimension::getBlock(glm::vec3 pos) {

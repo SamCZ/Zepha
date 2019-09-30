@@ -90,7 +90,7 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
     }
 
     { //Bottom Right Graphs
-        get<GUILabelledGraph>("meshGraph")->pushValue(world.lastMeshUpdates);
+        get<GUILabelledGraph>("meshGraph")->pushValue(world.lastGenUpdates); //TODO: Wrong value
         get<GUILabelledGraph>("interpGraph")->pushValue(world.lastGenUpdates);
         get<GUILabelledGraph>("genGraph")->pushValue(static_cast<float>(ssGen));
         get<GUILabelledGraph>("packetGraph")->pushValue(static_cast<float>(ssPack));

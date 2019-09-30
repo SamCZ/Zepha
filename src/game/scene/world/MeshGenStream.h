@@ -12,9 +12,10 @@
 #include "../../../def/LocalDefinitionAtlas.h"
 #include "graph/MeshGenerator.h"
 #include "../../../util/Vec.h"
-#include "../../../world/Dimension.h"
 #include "../../../def/LocalDefs.h"
 #include "MeshDetails.h"
+
+class Dimension;
 
 class MeshGenStream {
 public:
