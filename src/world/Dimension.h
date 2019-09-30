@@ -4,25 +4,23 @@
 
 #pragma once
 
-
 #include <unordered_map>
 #include <glm/vec3.hpp>
 #include "region/Region.h"
 #include "../util/Vec.h"
 #include "../game/scene/world/graph/MeshChunk.h"
+#include "../game/scene/world/graph/ChunkRenderRef.h"
+#include "../game/scene/world/MeshGenStream.h"
 
 class Dimension {
 public:
-    typedef std::unordered_map<glm::vec3, std::shared_ptr<BlockChunk>, VecUtils::compareFunc> chunk_map;
 
-    Dimension() = default;
-    explicit Dimension(glm::vec3* playerPos);
-
-    void addBlockChunk(std::shared_ptr<BlockChunk> chunk);
-    void addMeshChunk(MeshChunk* chunk);
+    void setChunk(std::shared_ptr<BlockChunk> chunk);
+    void setMeshChunk(std::shared_ptr<MeshChunk> chunk);
     void removeMeshChunk(const glm::vec3& pos);
 
-    void update();
+    void update(glm::vec3 playerPos);
+
     void setBlock(glm::vec3 pos, unsigned int block);
     unsigned int getBlock(glm::vec3 pos);
 
@@ -30,11 +28,17 @@ public:
     int getMeshChunkCount();
 
     std::shared_ptr<BlockChunk> getChunk(glm::vec3 pos);
-
-    ~Dimension();
 private:
-    glm::vec3* playerPos = nullptr;
-    std::list<MeshChunk*> meshChunks;
-    chunk_map blockChunks;
+    void attemptMeshChunk(const sptr<BlockChunk>& chunk);
+    bool getAdjacentExists(glm::vec3 pos);
+
+    glm::vec3 playerPos {};
+
+    MeshGenStream meshGenStream;
+    std::unordered_map<glm::vec3, ChunkRenderRef, VecUtils::compareFunc> renderRefs;
+    std::list<std::shared_ptr<ChunkRenderElem>> renderElems;
+
+    typedef std::unordered_map<glm::vec3, std::shared_ptr<BlockChunk>, VecUtils::compareFunc> block_chunk_map;
+    block_chunk_map blockChunks;
 };
 

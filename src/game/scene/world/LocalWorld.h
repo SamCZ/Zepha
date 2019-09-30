@@ -45,9 +45,6 @@ public:
 
     void damageBlock(glm::vec3 pos, float amount);
 
-    void attemptMeshChunk(glm::vec3 pos);
-    bool getAdjacentExists(glm::vec3 pos, glm::vec3 myPos);
-
     int renderChunks(Renderer &render);
     void renderEntities(Renderer &renderer);
     int getMeshChunkCount();
@@ -80,6 +77,5 @@ private:
     ClientNetworkInterpreter* server = nullptr;
     WorldInterpolationStream* worldGenStream = nullptr;
     Dimension dimension;
-    MeshGenStream meshGenStream;
     std::vector<glm::vec3> pendingMesh;
 };
