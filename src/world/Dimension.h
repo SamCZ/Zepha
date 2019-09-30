@@ -10,7 +10,7 @@
 #include "../util/Vec.h"
 #include "../game/scene/world/graph/MeshChunk.h"
 #include "../game/scene/world/graph/ChunkRenderRef.h"
-#include "../game/scene/world/MeshGenStream.h"
+//#include "../game/scene/world/MeshGenStream.h"
 
 class Dimension {
 public:
@@ -29,12 +29,12 @@ public:
 
     std::shared_ptr<BlockChunk> getChunk(glm::vec3 pos);
 private:
-    void attemptMeshChunk(const sptr<BlockChunk>& chunk);
-    bool getAdjacentExists(glm::vec3 pos);
+//    void attemptMeshChunk(const sptr<BlockChunk>& chunk);
+//    bool getAdjacentExists(glm::vec3 pos);
 
     glm::vec3 playerPos {};
 
-    MeshGenStream meshGenStream;
+//    MeshGenStream meshGenStream;
     std::unordered_map<glm::vec3, ChunkRenderRef, VecUtils::compareFunc> renderRefs;
     std::list<std::shared_ptr<ChunkRenderElem>> renderElems;
 

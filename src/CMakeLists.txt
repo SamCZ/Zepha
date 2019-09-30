@@ -192,12 +192,12 @@ set(ZEPHA_SRC
         game/graph/meshtypes/GuiMesh.h
         game/graph/meshtypes/GuiVertex.h
         game/hud/GuiEntity.cpp
-        game/hud/GuiEntity.h 
-        util/Mat4Conv.h 
-        game/entity/ModelBone.cpp 
-        game/entity/ModelBone.h 
-        game/entity/ModelAnimation.cpp 
-        game/entity/ModelAnimation.h 
+        game/hud/GuiEntity.h
+        util/Mat4Conv.h
+        game/entity/ModelBone.cpp
+        game/entity/ModelBone.h
+        game/entity/ModelAnimation.cpp
+        game/entity/ModelAnimation.h
         game/entity/AnimChannel.cpp
         game/entity/AnimChannel.h
         game/entity/AnimationState.cpp

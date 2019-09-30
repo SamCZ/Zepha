@@ -168,10 +168,39 @@ std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::vec3 chunkPos) {
 }
 void LocalWorld::commitChunk(glm::vec3 pos, std::shared_ptr<BlockChunk> c) {
     dimension.setChunk(std::move(c));
-//    attemptMeshChunk(pos);
+    attemptMeshChunk(pos);
 }
 void LocalWorld::remeshChunk(glm::vec3 pos) {
-//    attemptMeshChunk(pos);
+    attemptMeshChunk(pos);
+}
+
+void LocalWorld::attemptMeshChunk(glm::vec3 pos) {
+    auto thisChunk = getChunk(pos);
+    if (thisChunk == nullptr) return;
+
+    auto vectors = VecUtils::getCardinalVectors();
+    for (int i = 0; i < vectors.size(); i++) {
+        thisChunk->adjacent[i] = getAdjacentExists(pos + vectors[i], pos);
+    }
+
+    if (thisChunk->allAdjacentsExist() && thisChunk->shouldRender()) pendingMesh.push_back(pos);
+}
+bool LocalWorld::getAdjacentExists(glm::vec3 pos, glm::vec3 otherPos) {
+    auto chunk = getChunk(pos);
+    glm::vec3 diff = otherPos - pos;
+
+    if (chunk != nullptr) {
+        auto vectors = VecUtils::getCardinalVectors();
+        for (int i = 0; i < vectors.size(); i++) {
+            if (diff == vectors[i]) {
+                chunk->adjacent[i] = true;
+            }
+        }
+
+        if (chunk->allAdjacentsExist() && chunk->shouldRender()) pendingMesh.push_back(pos);
+        return true;
+    }
+    return false;
 }
 
 int LocalWorld::renderChunks(Renderer &renderer) {
