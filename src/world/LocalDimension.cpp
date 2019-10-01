@@ -2,9 +2,9 @@
 // Created by aurailus on 04/04/19.
 //
 
-#include "Dimension.h"
+#include "LocalDimension.h"
 
-Dimension::Dimension(LocalDefs &defs) : meshGenStream(std::make_unique<MeshGenStream>(defs, *this)) {}
+LocalDimension::LocalDimension(LocalDefs &defs) : meshGenStream(std::make_unique<MeshGenStream>(defs, *this)) {}
 
 Dimension::Dimension(glm::vec3 *playerPos) {
     this->playerPos = playerPos;
@@ -72,13 +72,13 @@ void Dimension::update() {
             }
         }
         else {
-            std::cout << Log::err << "Deleted Null Chunk in Dimension." << Log::endl;
+            std::cout << Log::err << "Deleted Null Chunk in LocalDimension." << Log::endl;
             it = blockChunks.erase(it);
         }
     }
 }
 
-void Dimension::finishMeshes() {
+void LocalDimension::finishMeshes() {
     lastMeshUpdates = 0;
     auto finishedMeshes = meshGenStream->update();
 
@@ -99,7 +99,7 @@ void Dimension::finishMeshes() {
     }
 }
 
-void Dimension::queueMeshes() {
+void LocalDimension::queueMeshes() {
     if (meshGenStream->spaceInQueue()) {
         bool moreSpace = true;
 
@@ -116,7 +116,7 @@ void Dimension::queueMeshes() {
     }
 }
 
-int Dimension::render(Renderer &renderer) {
+int LocalDimension::render(Renderer &renderer) {
     int count = 0;
 
     for (auto &chunk : meshChunks) {
@@ -135,7 +135,7 @@ int Dimension::getMeshChunkCount() {
     return (int)meshChunks.size();
 }
 
-void Dimension::setBlock(glm::vec3 pos, unsigned int block) {
+void LocalDimension::setBlock(glm::vec3 pos, unsigned int block) {
     auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
     auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
 
@@ -143,11 +143,10 @@ void Dimension::setBlock(glm::vec3 pos, unsigned int block) {
     if (chunk != nullptr) chunk->setBlock(local, block);
     chunk->dirty = true;
 
-    auto dirs = VecUtils::getCardinalVectors();
     attemptMeshChunk(chunk);
 }
 
-unsigned int Dimension::getBlock(glm::vec3 pos) {
+unsigned int LocalDimension::getBlock(glm::vec3 pos) {
     auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
     auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
 

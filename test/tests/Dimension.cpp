@@ -3,11 +3,11 @@
 //
 
 #include <catch.hpp>
-#include "../../src/world/Dimension.h"
+#include "../../src/world/LocalDimension.h"
 
-TEST_CASE("Dimension", "[world]") {
+TEST_CASE("LocalDimension", "[world]") {
 
-    Dimension d;
+    LocalDimension d;
 
 //    SECTION("Inputting") {
 //        SECTION("[0, 0, 0]") {

@@ -16,12 +16,11 @@
 
 class BlockChunk {
 public:
-    BlockChunk();
-    explicit BlockChunk(const std::vector<unsigned int>& blocks);
-    BlockChunk(const std::vector<unsigned int>& blocks, glm::vec3 pos);
+    BlockChunk() = default;
+    explicit BlockChunk(const std::array<uint, 4096>& blocks);
+    BlockChunk(const std::array<uint, 4096>& blocks, glm::vec3 pos);
 
     bool shouldRender();
-    bool allAdjacentsExist();
 
     unsigned int getBlock(unsigned int ind) const;
     unsigned int getBlock(const glm::vec3& pos) const;
@@ -29,20 +28,19 @@ public:
     bool setBlock(const glm::vec3& pos, unsigned int ind);
 
     std::vector<unsigned int> rleEncode();
-    void rleDecode(std::vector<unsigned int>& blocksRle, std::vector<unsigned int>& buffer);
+    void rleDecode(std::vector<unsigned int>& blocksRle, std::array<uint, 4096>& buffer);
 
     std::string serialize();
     bool deserialize(std::string gzip);
 
     glm::vec3 pos;
-    bool adjacent[6] = {false, false, false, false, false, false};
 
     MeshChunk* meshChunk = nullptr;
     std::list<MeshChunk*>::iterator meshChunkIter;
 
     bool renderedEmpty = true;
 private:
-    std::vector<unsigned int> blocks;
+    std::array<uint, 4096> blocks {};
     unsigned short fullBlocks = 0;
     bool empty = true;
 };

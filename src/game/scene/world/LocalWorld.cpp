@@ -26,6 +26,7 @@ void LocalWorld::update(double delta) {
 
     updateBlockDamages(delta);
     dimension.update(*playerPos);
+    lastMeshUpdates = dimension.lastMeshUpdates;
 
     auto end = particles.begin();
     for (auto i = particles.begin(); i < particles.end(); i++) {

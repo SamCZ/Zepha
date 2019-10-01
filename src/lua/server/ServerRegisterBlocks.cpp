@@ -20,6 +20,7 @@ ServerRegisterBlocks::ServerRegisterBlocks(sol::table& core, ServerDefs &defs) {
         auto modelStrOpt  = blockTable.get<sol::optional<std::string>>("model");
         auto texturesOpt  = blockTable.get<sol::optional<sol::table>> ("textures");
         auto selectionOpt = blockTable.get<sol::optional<sol::table>> ("selection_box");
+        auto ldTexturesOpt= blockTable.get<sol::optional<sol::table>> ("lowdef_textures");
 
         if (!nameOpt) throw identifier + " is missing name property!";
         if (!texturesOpt) throw identifier + " is missing textures property!";
@@ -27,6 +28,7 @@ ServerRegisterBlocks::ServerRegisterBlocks(sol::table& core, ServerDefs &defs) {
         bool visible = blockTable.get_or("visible", true);
         bool culls   = blockTable.get_or("culls", true);
         bool solid   = blockTable.get_or("solid", true);
+        auto ldRender= blockTable.get_or("lowdef_render", true);
 
         //Get the identifier for the blockModel, and then get the model from the zepha.registered_blockmodels table.
         std::string modelStr = (modelStrOpt ? *modelStrOpt : "default:cube");
@@ -58,6 +60,19 @@ ServerRegisterBlocks::ServerRegisterBlocks(sol::table& core, ServerDefs &defs) {
             textures.push_back(pair.second.as<std::string>());
         }
         if (textures.size() == 0) textures.push_back("_missing");
+
+        //Convert LowDef Textures Table to Vector
+        std::vector<std::string> lowdef_textures;
+        if (ldTexturesOpt) {
+            for (auto pair : *ldTexturesOpt) {
+                if (!pair.second.is<std::string>()) throw "Textures table has non-string value!";
+                lowdef_textures.push_back(pair.second.as<std::string>());
+            }
+            if (lowdef_textures.size() == 0) lowdef_textures.push_back("_missing");
+        }
+        else {
+            lowdef_textures = textures;
+        }
 
         //Add Mesh Mods
         sol::optional<sol::table> meshModTable = model.get<sol::optional<sol::table>>("mesh_mods");
@@ -172,8 +187,12 @@ ServerRegisterBlocks::ServerRegisterBlocks(sol::table& core, ServerDefs &defs) {
             blockModel.parts[d].push_back(meshPart);
         });
 
+        BlockModel lowdefBlockModel = BlockModel::createCube({});
+        lowdefBlockModel.culls = ldRender;
+        lowdefBlockModel.visible = ldRender;
+
         //TODO: Update the selection boxes thingy
-        BlockDef* blockDef = new BlockDef(identifier, defs.blocks().size(), *nameOpt, blockModel, solid, std::move(sBoxes));
+        BlockDef* blockDef = new BlockDef(identifier, defs.blocks().size(), *nameOpt, lowdefBlockModel, solid, std::move(sBoxes));
 
         //Bind Callbacks
         auto on_place = blockTable.get<sol::optional<sol::function>>("on_place");

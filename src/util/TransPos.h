@@ -63,7 +63,7 @@ namespace TransPos {
     }
 
     namespace Dimension {
-        //Used to get the chunk position from a global coordinate in Dimension
+        //Used to get the chunk position from a global coordinate in LocalDimension
 
         //Retrieve the region pos from a block pos
         static inline glm::vec3 regionFromVec(glm::vec3 vec) {

@@ -15,15 +15,15 @@
 #include "../../../def/LocalDefs.h"
 #include "MeshDetails.h"
 
-class Dimension;
+class LocalDimension;
 
 class MeshGenStream {
 public:
     static const int THREAD_QUEUE_SIZE = 32;
-    static const int THREADS = 4;
+    static const int THREADS = 2;
     static const int TOTAL_QUEUE_SIZE = THREADS * THREAD_QUEUE_SIZE;
 
-    explicit MeshGenStream(LocalDefs& defs, Dimension& dimension);
+    explicit MeshGenStream(LocalDefs& defs, LocalDimension& dimension);
     ~MeshGenStream();
 
     bool spaceInQueue();
@@ -37,8 +37,8 @@ public:
     std::vector<MeshDetails*> update();
 
     struct Unit {
-        std::shared_ptr<BlockChunk> thisChunk = nullptr;
-        std::array<std::shared_ptr<BlockChunk>, 6> adjacentChunks {};
+        sptr<BlockChunk> thisChunk = nullptr;
+        std::array<sptr<BlockChunk>, 6> adjacentChunks {};
 
         MeshDetails* meshDetails = new MeshDetails();
 
@@ -61,7 +61,7 @@ public:
 private:
     static void threadFunction(Thread* thread);
 
-    Dimension& dimension;
+    LocalDimension& dimension;
     LocalDefs& defs;
 
     std::array<NoiseSample, 3> noiseSampler;

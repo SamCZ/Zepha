@@ -13,7 +13,7 @@ zepha.register_block("default:grass", {
     lowdef_textures = {
         "zeus:default:grass_top",
         "zeus:default:dirt",
-        "zeus:default:grass_side"
+        "zeus:default:grass_side_ld"
     },
     toughness = {
         hand = 3,

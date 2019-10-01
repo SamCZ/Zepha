@@ -4,9 +4,9 @@
 
 #include "MeshGenStream.h"
 
-#include "../../../world/Dimension.h"
+#include "../../../world/LocalDimension.h"
 
-MeshGenStream::MeshGenStream(LocalDefs &defs, Dimension &dimension) :
+MeshGenStream::MeshGenStream(LocalDefs &defs, LocalDimension &dimension) :
     defs(defs),
     dimension(dimension),
     noiseSampler({NoiseSample(1, 1), NoiseSample(1, 1), NoiseSample(1, 1)}) {

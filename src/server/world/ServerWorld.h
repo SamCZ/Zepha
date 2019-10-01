@@ -11,9 +11,9 @@
 #include "../conn/ServerPlayer.h"
 #include "../../world/chunk/BlockChunk.h"
 #include "../../util/Vec.h"
-#include "../../world/Dimension.h"
 #include "../../def/ServerDefs.h"
 #include "../conn/ServerClients.h"
+#include "ServerDimension.h"
 
 class ServerWorld {
 public:
@@ -34,7 +34,7 @@ private:
     bool isInBounds(glm::vec3 pos, std::pair<glm::vec3, glm::vec3>& bounds);
 
     WorldGenStream* genStream = nullptr;
-    Dimension dimension;
+    ServerDimension dimension;
 
     std::unordered_set<glm::vec3, VecUtils::compareFunc> generateQueueMap;
     std::vector<glm::vec3> generateQueueList;

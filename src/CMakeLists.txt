@@ -95,8 +95,8 @@ set(ZEPHA_SRC
         game/scene/world/MeshGenStream.cpp
         game/scene/world/MeshGenStream.h
         util/Vec.h
-        world/Dimension.cpp
-        world/Dimension.h
+        world/LocalDimension.cpp
+        world/LocalDimension.h
         world/region/Region.h
         game/entity/world/WireframeEntity.cpp
         game/entity/world/WireframeEntity.h

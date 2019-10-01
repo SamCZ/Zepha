@@ -12,11 +12,9 @@
 #include "../game/scene/world/graph/ChunkRenderRef.h"
 #include "../game/scene/world/MeshGenStream.h"
 
-//TODO: Seperate into local/server because OHMYGOD
-class Dimension {
+class LocalDimension {
 public:
-    Dimension() = default; //Only use on the server //TODO: Temporary
-    explicit Dimension(LocalDefs& defs);
+    explicit LocalDimension(LocalDefs& defs);
 
     void setChunk(std::shared_ptr<BlockChunk> chunk);
     void setMeshChunk(std::shared_ptr<MeshChunk> chunk);

@@ -17,7 +17,7 @@
 #include "../../../def/gen/MapGen.h"
 #include "../../../util/TransPos.h"
 #include "../../../util/Vec.h"
-#include "../../../world/Dimension.h"
+#include "../../../world/LocalDimension.h"
 #include "../../../def/LocalDefs.h"
 #include "../../../world/block/PointedThing.h"
 #include "../../../game/graph/drawable/DrawableGroup.h"
@@ -58,6 +58,7 @@ public:
     bool solidAt(glm::vec3 pos);
 
     int lastGenUpdates = 0;
+    int lastMeshUpdates = 0;
 private:
     void finishChunks();
     void updateBlockDamages(double delta);
@@ -73,5 +74,5 @@ private:
 
     ClientNetworkInterpreter* server = nullptr;
     WorldInterpolationStream* worldGenStream = nullptr;
-    Dimension dimension;
+    LocalDimension dimension;
 };

@@ -14,7 +14,7 @@
 class WorldInterpolationStream {
 public:
     static const int THREAD_QUEUE_SIZE = 32;
-    static const int THREADS = 4;
+    static const int THREADS = 2;
 
     WorldInterpolationStream(unsigned int seed,  LocalDefs& defs);
     ~WorldInterpolationStream();

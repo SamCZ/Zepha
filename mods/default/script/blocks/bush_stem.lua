@@ -6,6 +6,7 @@ zepha.register_block("default:bush_stem", {
     textures = {
         "zeus:default:bush_stem"
     },
+    lowdef_render = false,
     toughness = {
         hand = 0.3,
         axe = 0.1

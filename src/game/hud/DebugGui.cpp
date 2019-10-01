@@ -27,11 +27,11 @@ DebugGui::DebugGui(glm::vec2 bufferSize, TextureAtlas& atlas) :
     add(interpGraph);
 
     auto meshGraph = std::make_shared<GUILabelledGraph>("meshGraph");
-    meshGraph->create({244, 64}, {}, "Mesh", 120, 128, genericHistogramRef, f);
+    meshGraph->create({244, 64}, {}, "Mesh", 120, 32, genericHistogramRef, f);
     add(meshGraph);
 
     auto genGraph = std::make_shared<GUILabelledGraph>("genGraph");
-    genGraph->create({244, 64}, {}, "Gen", 120, 512, genericHistogramRef, f);
+    genGraph->create({244, 64}, {}, "Gen", 120, 256, genericHistogramRef, f);
     add(genGraph);
 
     auto packetGraph = std::make_shared<GUILabelledGraph>("packetGraph");
@@ -90,7 +90,7 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
     }
 
     { //Bottom Right Graphs
-        get<GUILabelledGraph>("meshGraph")->pushValue(world.lastGenUpdates); //TODO: Wrong value
+        get<GUILabelledGraph>("meshGraph")->pushValue(world.lastMeshUpdates);
         get<GUILabelledGraph>("interpGraph")->pushValue(world.lastGenUpdates);
         get<GUILabelledGraph>("genGraph")->pushValue(static_cast<float>(ssGen));
         get<GUILabelledGraph>("packetGraph")->pushValue(static_cast<float>(ssPack));

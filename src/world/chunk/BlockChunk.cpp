@@ -10,16 +10,12 @@
 #include <gzip/decompress.hpp>
 #include <gzip/utils.hpp>
 
-BlockChunk::BlockChunk() :
-    blocks(static_cast<unsigned long>(pow(TransPos::CHUNK_SIZE, 3))) {}
-
-BlockChunk::BlockChunk(const std::vector<unsigned int>& blocks) : BlockChunk(blocks, {0, 0, 0}) {}
-
-BlockChunk::BlockChunk(const std::vector<unsigned int>& blocks, glm::vec3 pos) :
+BlockChunk::BlockChunk(const std::array<uint, 4096>& blocks) : BlockChunk(blocks, {0, 0, 0}) {}
+BlockChunk::BlockChunk(const std::array<uint, 4096>& blocks, glm::vec3 pos) :
     blocks(blocks),
     pos(pos) {
 
-    for (int i : this->blocks) {
+    for (uint i : this->blocks) {
         if (i != 0) {
             empty = false;
             fullBlocks++;
@@ -65,10 +61,6 @@ bool BlockChunk::setBlock(const glm::vec3& pos, unsigned int block) {
     return false;
 }
 
-bool BlockChunk::allAdjacentsExist() {
-    return adjacent[0] && adjacent[1] && adjacent[2] && adjacent[3] && adjacent[4] && adjacent[5];
-}
-
 bool BlockChunk::shouldRender() {
     bool should = !empty || !renderedEmpty;
     renderedEmpty = true;
@@ -99,7 +91,7 @@ std::vector<unsigned int> BlockChunk::rleEncode() {
     return rle;
 }
 
-void BlockChunk::rleDecode(std::vector<unsigned int>& blocksRle, std::vector<unsigned int>& buffer) {
+void BlockChunk::rleDecode(std::vector<unsigned int>& blocksRle, std::array<uint, 4096>& buffer) {
     int ind = 0;
 
     this->empty = true;
@@ -137,7 +129,7 @@ bool BlockChunk::deserialize(std::string gzip) {
         std::string str = gzip::decompress(gzip.data(), gzip.length());
         std::vector<unsigned int> rle = Serializer::decodeUIntVec(str);
 
-        rleDecode(rle, this->blocks);
+        rleDecode(rle, blocks);
         return true;
     }
     return false;
