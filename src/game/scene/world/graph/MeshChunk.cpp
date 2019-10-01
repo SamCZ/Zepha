@@ -4,16 +4,15 @@
 
 #include "MeshChunk.h"
 
-void MeshChunk::build(std::vector<ChunkVertex>& vertices, std::vector<unsigned int>& indices) {
-    auto mesh = new ChunkMesh();
+void MeshChunk::create(std::vector<ChunkVertex> &vertices, std::vector<unsigned int> &indices) {
+    this->mesh = std::make_unique<ChunkMesh>();
     mesh->create(vertices, indices);
-
-    cleanup();
-    this->mesh = mesh;
 }
 
 void MeshChunk::draw(Renderer& renderer) {
-    renderer.setModelMatrix(getModelMatrix());
+    glm::mat4 model = glm::mat4(1.0);
+    model = glm::translate(model, pos * static_cast<float>(TransPos::CHUNK_SIZE));
+    renderer.setModelMatrix(model);
     mesh->draw();
 }
 
@@ -25,17 +24,6 @@ glm::vec3 MeshChunk::getPos() {
     return pos;
 }
 
-glm::mat4 MeshChunk::getModelMatrix() {
-    glm::mat4 model = glm::mat4(1.0);
-    model = glm::translate(model, pos * static_cast<float>(TransPos::CHUNK_SIZE));
-    return model;
-}
-
-void MeshChunk::cleanup() {
-    delete mesh;
-    mesh = nullptr;
-}
-
-MeshChunk::~MeshChunk() {
-    cleanup();
+bool MeshChunk::updateChunkUse(glm::vec3 pos, bool used) {
+    return used;
 }

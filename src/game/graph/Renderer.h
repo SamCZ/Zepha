@@ -15,7 +15,7 @@
 #include "shader/LightingShader.h"
 #include "shader/WorldGeometryShader.h"
 #include "shader/EntityGeometryShader.h"
-#include "shader/uniform/GuiUniforms.h"
+#include "shader/GuiUniforms.h"
 #include "meshtypes/ChunkMesh.h"
 
 class Renderer {

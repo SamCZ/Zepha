@@ -77,7 +77,7 @@ void ServerWorld::update() {
     generatedChunks = (int)finished.size();
 
     for (const auto& chunk : finished) {
-        dimension.addBlockChunk(chunk);
+        dimension.setChunk(chunk);
 
         for (auto& client : clientList.clients) {
             if (client->hasPlayer()) {

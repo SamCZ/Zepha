@@ -89,6 +89,7 @@ void Renderer::beginChunkDeferredCalls() {
 
     glBindFramebuffer(GL_FRAMEBUFFER, lighting.gBuffer);
     glClear(GL_DEPTH_BUFFER_BIT);
+
     const float skyColor[] = {clearColor.x, clearColor.y, clearColor.z, 1};
     static const float clearTransparent[] = {0, 0, 0, 1};
     glClearBufferfv(GL_COLOR, 0, clearTransparent);

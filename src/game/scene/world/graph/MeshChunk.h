@@ -7,26 +7,24 @@
 
 #pragma once
 
+#include <list>
+#include "ChunkRenderElem.h"
 #include "../../../entity/Entity.h"
 #include "../../../../util/TransPos.h"
 
-class MeshChunk : Drawable {
+class MeshChunk : public ChunkRenderElem, Drawable {
 public:
     MeshChunk() = default;
-    void build(std::vector<ChunkVertex>& vertices, std::vector<unsigned int>& indices);
-
+    void create(std::vector<ChunkVertex> &vertices, std::vector<unsigned int> &indices);
     void draw(Renderer& renderer) override;
 
+    bool updateChunkUse(glm::vec3 chunk, bool used) override;
+
     void setPos(glm::vec3 pos);
-    glm::vec3 getPos();
-
-    ~MeshChunk();
+    glm::vec3 getPos() override;
 private:
-    void cleanup();
-    glm::mat4 getModelMatrix();
-
-    ChunkMesh* mesh = nullptr;
-    glm::vec3 pos;
+    uptr<ChunkMesh> mesh = nullptr;
+    glm::vec3 pos {};
 };
 
 

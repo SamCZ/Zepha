@@ -8,12 +8,12 @@
 #include <glm/vec3.hpp>
 #include <thread>
 #include <unordered_set>
+#include "MeshDetails.h"
+#include "graph/MeshGenerator.h"
 #include "../../../world/chunk/BlockChunk.h"
 #include "../../../def/LocalDefinitionAtlas.h"
-#include "graph/MeshGenerator.h"
 #include "../../../util/Vec.h"
 #include "../../../def/LocalDefs.h"
-#include "MeshDetails.h"
 
 class LocalDimension;
 

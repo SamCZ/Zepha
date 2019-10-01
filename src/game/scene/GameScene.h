@@ -29,16 +29,16 @@ public:
     LocalDefs& defs;
 
     glm::vec3 playerPos;
+    Player player;
 
     ClientNetworkInterpreter server;
-    Player player;
     LocalWorld world;
 
     std::vector<Drawable*> entities;
     std::vector<Drawable*> gui;
 
-    DebugGui debugGui;
     GameGui gameGui;
+    DebugGui debugGui;
 
     int drawCalls = 0;
 

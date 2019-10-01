@@ -83,7 +83,9 @@ void GameScene::draw() {
     renderer.beginChunkDeferredCalls();
     renderer.enableTexture(&defs.textures().getAtlasTexture());
 
+    Timer t("rendering chunks");
     drawCalls = world.renderChunks(renderer);
+//    t.printElapsedMs();
 
     renderer.beginEntityDeferredCalls();
 

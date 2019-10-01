@@ -6,66 +6,26 @@
 
 LocalDimension::LocalDimension(LocalDefs &defs) : meshGenStream(std::make_unique<MeshGenStream>(defs, *this)) {}
 
-Dimension::Dimension(glm::vec3 *playerPos) {
+void LocalDimension::update(glm::vec3 playerPos) {
+    if (meshGenStream != nullptr) {
+        finishMeshes();
+        queueMeshes();
+    }
+
     this->playerPos = playerPos;
-}
+    auto chunkPosOfPlayer = TransPos::chunkFromVec(playerPos);
 
-void Dimension::addBlockChunk(std::shared_ptr<BlockChunk> chunk) {
-    if (blockChunks.count(chunk->pos)) {
-        auto oldChunk = blockChunks[chunk->pos];
-        chunk->meshChunk = oldChunk->meshChunk;
-        chunk->meshChunkIter = oldChunk->meshChunkIter;
-        blockChunks.erase(chunk->pos);
-    }
-    blockChunks.insert({chunk->pos, chunk});
-}
-
-void Dimension::addMeshChunk(MeshChunk* meshChunk) {
-    auto blockChunk = blockChunks[meshChunk->getPos()];
-
-    if (!blockChunk) {
-        blockChunk = std::make_shared<BlockChunk>();
-        addBlockChunk(blockChunk);
-    }
-    else if (blockChunk->meshChunk != nullptr) {
-        meshChunks.erase(blockChunk->meshChunkIter);
-        delete blockChunk->meshChunk;
-    }
-
-    blockChunk->meshChunk = meshChunk;
-    meshChunks.push_back(meshChunk);
-    blockChunk->meshChunkIter = (std::list<MeshChunk*>::iterator) --meshChunks.end();
-}
-
-std::shared_ptr<BlockChunk> Dimension::getChunk(glm::vec3 pos) {
-    if (blockChunks.count(pos)) {
-        return blockChunks.at(pos);
-    }
-    return nullptr;
-}
-
-Dimension::~Dimension() {
-    for (auto chunk : blockChunks) {
-        delete chunk.second->meshChunk;
-    }
-}
-
-void Dimension::update() {
-    //TODO: Figure out why there are NULL CHUNK in the map
+    //TODO: Figure out why there are NULL CHUNKS in the map
     for (auto it = blockChunks.begin(); it != blockChunks.end();) {
-        auto chunk = it->second;
         auto pos = it->first;
 
-        if (chunk != nullptr) {
-            auto diffVec = pos - *playerPos;
+        if (it->second != nullptr) {
+            auto diffVec = pos - chunkPosOfPlayer;
             float distance = max(abs(diffVec.x), max(abs(diffVec.y), abs(diffVec.z)));
 
             //TODO: Don't hard code this number
             if (distance >= 24) {
-                if (chunk->meshChunk != nullptr) {
-                    meshChunks.erase(chunk->meshChunkIter);
-                    delete chunk->meshChunk;
-                }
+                removeMeshChunk(pos);
                 it = blockChunks.erase(it);
             } else {
                 it++;
@@ -118,21 +78,44 @@ void LocalDimension::queueMeshes() {
 
 int LocalDimension::render(Renderer &renderer) {
     int count = 0;
-
-    for (auto &chunk : meshChunks) {
-        FrustumAABB bbox(chunk->getPos() * glm::vec3(TransPos::CHUNK_SIZE), glm::vec3(TransPos::CHUNK_SIZE));
-
+    for (auto &renderElement : renderElems) {
+        FrustumAABB bbox(renderElement->getPos() * glm::vec3(TransPos::CHUNK_SIZE), glm::vec3(TransPos::CHUNK_SIZE));
         if (renderer.getCamera().inFrustum(bbox) != Frustum::OUTSIDE) {
-            chunk->draw(renderer);
+            renderElement->draw(renderer);
             count++;
         }
     }
-
     return count;
 }
 
-int Dimension::getMeshChunkCount() {
-    return (int)meshChunks.size();
+void LocalDimension::setChunk(sptr<BlockChunk> chunk) {
+    blockChunks.insert({chunk->pos, chunk});
+    attemptMeshChunk(chunk);
+}
+
+std::shared_ptr<BlockChunk> LocalDimension::getChunk(glm::vec3 pos) {
+    if (blockChunks.count(pos)) return blockChunks.at(pos);
+    return nullptr;
+}
+
+void LocalDimension::setMeshChunk(std::shared_ptr<MeshChunk> meshChunk) {
+    if (renderRefs.count(meshChunk->getPos())) removeMeshChunk(meshChunk->getPos());
+    renderElems.push_back(static_pointer_cast<ChunkRenderElem>(meshChunk));
+    renderRefs.emplace(meshChunk->getPos(), --renderElems.end());
+}
+
+void LocalDimension::removeMeshChunk(const glm::vec3& pos) {
+    if (!renderRefs.count(pos)) return;
+    auto refIter = renderRefs.at(pos).iter;
+
+    if (!refIter->get()->updateChunkUse(pos, false)) {
+        renderElems.erase(refIter);
+        renderRefs.erase(pos);
+    }
+}
+
+int LocalDimension::getMeshChunkCount() {
+    return static_cast<int>(renderElems.size());
 }
 
 void LocalDimension::setBlock(glm::vec3 pos, unsigned int block) {
@@ -155,13 +138,26 @@ unsigned int LocalDimension::getBlock(glm::vec3 pos) {
     return 0;
 }
 
-void Dimension::removeMeshChunk(const glm::vec3& pos) {
-    std::shared_ptr<BlockChunk> blockChunk = blockChunks[pos];
+void LocalDimension::attemptMeshChunk(const sptr<BlockChunk>& chunk, bool updateAdjacents) {
+//    if (!chunk->dirty) return; //TODO
 
-    if (blockChunk != nullptr && blockChunk->meshChunk != nullptr) {
-        meshChunks.erase(blockChunk->meshChunkIter);
-        delete blockChunk->meshChunk;
-        blockChunk->meshChunk = nullptr;
+    auto dirs = VecUtils::getCardinalVectors();
+    bool allExists = true;
+    for (auto dir : dirs) {
+        if (!getAdjacentExists(chunk->pos + dir, updateAdjacents)) {
+            allExists = false;
+        }
     }
 
+    if (allExists && chunk->shouldRender()) {
+        chunk->dirty = false;
+        pendingMesh.push_back(chunk->pos);
+    }
+}
+
+bool LocalDimension::getAdjacentExists(glm::vec3 pos, bool updateAdjacents) {
+    auto chunk = getChunk(pos);
+    if (chunk == nullptr) return false;
+    if (updateAdjacents) attemptMeshChunk(chunk, false);
+    return true;
 }

@@ -35,12 +35,11 @@ public:
 
     glm::vec3 pos;
 
-    MeshChunk* meshChunk = nullptr;
-    std::list<MeshChunk*>::iterator meshChunkIter;
-
     bool renderedEmpty = true;
+    bool dirty = true;
 private:
     std::array<uint, 4096> blocks {};
     unsigned short fullBlocks = 0;
+
     bool empty = true;
 };
