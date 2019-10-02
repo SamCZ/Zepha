@@ -19,9 +19,6 @@ void main() {
     vec3 color  = texture(gColorSpec, texCoords).rgb;
     float ssao  = texture(ssaoSampler, texCoords).r;
 
-    //Discard fragments without normals
-    if (normal == vec3(0)) discard;
-
     //Shade based on Normals
     float shading = (0.8 + abs(normal.x) * 0.15) + (normal.y * 0.15) + 0.2;
     color *= vec3(shading);

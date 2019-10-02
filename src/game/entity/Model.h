@@ -19,6 +19,7 @@
 #include "../../util/Mat4Conv.h"
 #include "../../util/Pointer.h"
 #include "../../def/block/BlockDef.h"
+#include "../../def/craftitem/CraftItemDef.h"
 
 class Model {
 public:
@@ -26,6 +27,7 @@ public:
 
     void fromMesh(uptr<EntityMesh> mesh);
     void fromBlock(BlockDef& def);
+    void fromItem(CraftItemDef& def, TextureAtlas& atlas);
     int  import(const std::string& path, const std::vector<std::shared_ptr<AtlasRef>>& texture);
 
     void getTransformsByFrame(double frame, std::tuple<int, int> bounds, std::vector<glm::mat4>& transforms);

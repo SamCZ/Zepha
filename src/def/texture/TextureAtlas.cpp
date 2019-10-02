@@ -254,13 +254,24 @@ std::shared_ptr<AtlasRef> TextureAtlas::getTextureRef(const std::string &name) {
     if (!textures.count(name)) {
         std::cout << Log::err << "Invalid texture name: \"" << name << "\"." << Log::endl;
         return textures["_missing"];
-//        return tryMakeGraphics(name);
     }
     return textures[name];
 }
 
 std::shared_ptr<AtlasRef> TextureAtlas::operator[](const std::string &name) {
     return getTextureRef(name);
+}
+
+glm::vec4 TextureAtlas::sampleTexturePixel(const sptr<AtlasRef> &atlasRef, glm::vec2 pixel) {
+    glm::vec2 absPos = {atlasRef->pos.x + pixel.x, atlasRef->pos.y + pixel.y};
+    uint index = (static_cast<unsigned int>(absPos.y) * pageWidth + static_cast<unsigned int>(absPos.x)) * 4;
+
+    return {
+        static_cast<float>(atlasData[index]) / 255.f,
+        static_cast<float>(atlasData[index + 1]) / 255.f,
+        static_cast<float>(atlasData[index + 2]) / 255.f,
+        static_cast<float>(atlasData[index + 3]) / 255.f,
+    };
 }
 
 TextureAtlas::~TextureAtlas() = default;

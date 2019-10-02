@@ -53,10 +53,11 @@ namespace ClientApi {
                 "new", sol::factories([&world, &defs, &lua](sol::table pos){
                     auto model = std::make_shared<Model>();
 //                    model->import("/home/aurailus/Zepha/mods/default/models/rabbit.b3d", {defs.textures()["zeus:default:rabbit"]});
-                    model->fromBlock(defs.defs().blockFromStr("default:sandstone"));
+//                    model->fromBlock(defs.defs().blockFromStr("default:sandstone"));
+                    model->fromItem(defs.defs().craftItemFromStr("materials:rock"), defs.textures());
 
                     auto rabbit = std::make_shared<Entity>(model);
-                    rabbit->setScale(1.0f/3.0f);
+                    rabbit->setScale(1.0f/2.0f);
                     rabbit->setPos({pos.get<float>("x") + 0.5, pos.get<float>("y") + 0.5, pos.get<float>("z") + 0.5});
 
                     auto entity = LuaEntity {std::move(rabbit)};

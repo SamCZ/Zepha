@@ -14,6 +14,7 @@
 #include "../../util/Log.h"
 #include "../../game/graph/Texture.h"
 #include "AtlasRef.h"
+#include "../../util/Pointer.h"
 
 class TextureAtlas {
 public:
@@ -26,6 +27,8 @@ public:
     Texture& getAtlasTexture();
     const unsigned char* getAtlasData();
     glm::vec2 getAtlasSize();
+
+    glm::vec4 sampleTexturePixel(const sptr<AtlasRef>& atlasRef, glm::vec2 pixel);
 
     std::shared_ptr<AtlasRef> addImage(unsigned char *data, std::string name, bool base, int texWidth, int texHeight);
     std::shared_ptr<AtlasRef> generateCrackImage(std::string &name, unsigned short crackLevel);
