@@ -34,7 +34,6 @@ void Server::update() {
 
             case ENET_EVENT_TYPE_CONNECT: {
                 clientList.handleConnect(event);
-                std::cout << "connect" << std::endl;
                 break;
             }
 
@@ -108,12 +107,12 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
             world.setBlock(pos, block);
 
             if (block == 0) {
-                auto def = defs.blocks().blockFromId(world.getBlock(pos));
+                auto def = defs.defs().blockFromId(world.getBlock(pos));
                 if (def.callbacks.count(Callback::BREAK)) {
                     def.callbacks[Callback::BREAK](defs.lua().vecToTable(pos));
                 }
             } else {
-                auto def = defs.blocks().blockFromId(block);
+                auto def = defs.defs().blockFromId(block);
                 if (def.callbacks.count(Callback::PLACE)) {
                     def.callbacks[Callback::PLACE](defs.lua().vecToTable(pos));
                 }

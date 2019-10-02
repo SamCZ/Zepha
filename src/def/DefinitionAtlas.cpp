@@ -40,22 +40,22 @@ BlockDef &DefinitionAtlas::blockFromStr(const std::string& identifier) {
     return static_cast<BlockDef&>(def);
 }
 
-BlockDef& DefinitionAtlas::craftItemFromId(unsigned int index) {
+CraftItemDef& DefinitionAtlas::craftItemFromId(unsigned int index) {
     ItemDef& def = fromId(index);
     if (def.type != ItemDef::Type::CRAFTITEM) {
-        std::cout << Log::err << "Invalid block id." << Log::endl;
+        std::cout << Log::err << "Invalid item id." << Log::endl;
         exit(0);
     }
-    return static_cast<BlockDef&>(def);
+    return static_cast<CraftItemDef&>(def);
 }
 
-BlockDef &DefinitionAtlas::craftItemFromStr(const std::string& identifier) {
+CraftItemDef &DefinitionAtlas::craftItemFromStr(const std::string& identifier) {
     ItemDef& def = fromStr(identifier);
     if (def.type != ItemDef::Type::CRAFTITEM) {
-        std::cout << Log::err << "Invalid block id." << Log::endl;
+        std::cout << Log::err << "Invalid item id." << Log::endl;
         exit(0);
     }
-    return static_cast<BlockDef&>(def);
+    return static_cast<CraftItemDef&>(def);
 }
 
 unsigned int DefinitionAtlas::size() {

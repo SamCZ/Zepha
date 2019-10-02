@@ -6,6 +6,8 @@
 #include <gzip/compress.hpp>
 #include "ServerLuaParser.h"
 #include "ServerRegisterBlocks.h"
+#include "ServerRegisterItems.h"
+
 #include "../../def/ServerDefs.h"
 
 #include "../api/modules/sDump.h"
@@ -16,6 +18,7 @@
 
 #include "../api/modules/sRegisterBlock.h"
 #include "../api/modules/sRegisterBlockmodel.h"
+#include "../api/modules/sRegisterItem.h"
 
 #include "../api/modules/sSetBlock.h"
 #include "../api/modules/sGetBlock.h"
@@ -35,7 +38,7 @@ void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world, std::string pat
     loadMods(defs, path + "mods");
 
     //Register Blocks
-    registerBlocks(defs);
+    registerDefinitions(defs);
 }
 
 void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
@@ -52,6 +55,7 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
 
     ServerApi::register_block(lua, core);
     ServerApi::register_blockmodel(lua, core);
+    ServerApi::register_item(lua, core);
 
     ServerApi::get_block(core, defs, world);
     ServerApi::set_block(core, defs, world);
@@ -62,8 +66,9 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
     lua.set_function("runfile", &ServerLuaParser::DoFileSandboxed, this);
 }
 
-void ServerLuaParser::registerBlocks(ServerDefs& defs) {
+void ServerLuaParser::registerDefinitions(ServerDefs &defs) {
     ServerRegisterBlocks(core, defs);
+    ServerRegisterItems(core, defs);
 }
 
 void ServerLuaParser::loadMods(ServerDefs& defs, const std::string& rootPath) {

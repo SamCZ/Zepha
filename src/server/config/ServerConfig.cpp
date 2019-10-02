@@ -8,9 +8,9 @@
 ServerConfig::ServerConfig(ServerDefs &defs) : defs(defs) {}
 
 void ServerConfig::init() {
-    identifierList.reserve(static_cast<unsigned long>(defs.blocks().size()));
-    for (unsigned int i = 0; i < defs.blocks().size(); i++) {
-        identifierList.push_back(defs.blocks().fromId(i).identifier);
+    identifierList.reserve(static_cast<unsigned long>(defs.defs().size()));
+    for (unsigned int i = 0; i < defs.defs().size(); i++) {
+        identifierList.push_back(defs.defs().fromId(i).identifier);
     }
 }
 

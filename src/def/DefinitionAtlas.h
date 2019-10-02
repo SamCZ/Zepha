@@ -7,6 +7,7 @@
 #include <string>
 #include "block/BlockDef.h"
 #include "ItemDef.h"
+#include "craftitem/CraftItemDef.h"
 
 class DefinitionAtlas {
 public:
@@ -18,9 +19,8 @@ public:
     //Specializations that throw an error upon an invalid type.
     BlockDef& blockFromId(unsigned int index);
     BlockDef& blockFromStr(const std::string& identifier);
-
-    inline BlockDef& craftItemFromId(unsigned int index);
-    inline BlockDef& craftItemFromStr(const std::string& identifier);
+    CraftItemDef& craftItemFromId(unsigned int index);
+    CraftItemDef& craftItemFromStr(const std::string& identifier);
 
     unsigned int size();
 

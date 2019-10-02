@@ -192,7 +192,7 @@ ServerRegisterBlocks::ServerRegisterBlocks(sol::table& core, ServerDefs &defs) {
         lowdefBlockModel.visible = ldRender;
 
         //TODO: Update the selection boxes thingy
-        BlockDef* blockDef = new BlockDef(identifier, defs.blocks().size(), *nameOpt, lowdefBlockModel, solid, std::move(sBoxes));
+        BlockDef* blockDef = new BlockDef(identifier, defs.defs().size(), *nameOpt, lowdefBlockModel, solid, std::move(sBoxes));
 
         //Bind Callbacks
         auto on_place = blockTable.get<sol::optional<sol::function>>("on_place");
@@ -214,6 +214,6 @@ ServerRegisterBlocks::ServerRegisterBlocks(sol::table& core, ServerDefs &defs) {
         if (after_destruct) blockDef->callbacks.insert({Callback::AFTER_DESTRUCT, *after_destruct});
 
         //Add Block Definition to the Atlas
-        defs.blocks().registerDef(blockDef);
+        defs.defs().registerDef(blockDef);
     }
 }

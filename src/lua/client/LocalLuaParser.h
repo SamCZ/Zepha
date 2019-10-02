@@ -18,7 +18,7 @@ public:
 
     void loadModules(LocalDefs& defs, LocalWorld& world, GameGui& gui);
     void loadMods();
-    void registerBlocks(LocalDefs& defs);
+    void registerDefinitions(LocalDefs &defs);
 
     ~LocalLuaParser() = default;
 

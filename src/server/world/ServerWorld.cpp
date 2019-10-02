@@ -34,7 +34,7 @@ ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& cli
 
 void ServerWorld::init() {
     delete genStream;
-    genStream = new WorldGenStream(seed, defs.blocks());
+    genStream = new WorldGenStream(seed, defs.defs());
 }
 
 void ServerWorld::changedChunks(ServerClient& client) {
@@ -118,13 +118,13 @@ void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {
     auto oldBlock = getBlock(pos);
 
     if (block == DefinitionAtlas::AIR) {
-        auto def = defs.blocks().blockFromId(oldBlock);
+        auto def = defs.defs().blockFromId(oldBlock);
         if (def.callbacks.count(Callback::DESTRUCT)) {
             def.callbacks[Callback::DESTRUCT](defs.lua().vecToTable(pos));
         }
     }
     else {
-        auto def = defs.blocks().blockFromId(block);
+        auto def = defs.defs().blockFromId(block);
         if (def.callbacks.count(Callback::CONSTRUCT)) {
             def.callbacks[Callback::CONSTRUCT](defs.lua().vecToTable(pos));
         }
@@ -149,13 +149,13 @@ void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {
     }
 
     if (block == DefinitionAtlas::AIR) {
-        auto def = defs.blocks().blockFromId(oldBlock);
+        auto def = defs.defs().blockFromId(oldBlock);
         if (def.callbacks.count(Callback::AFTER_DESTRUCT)) {
             def.callbacks[Callback::AFTER_DESTRUCT](defs.lua().vecToTable(pos));
         }
     }
     else {
-        auto def = defs.blocks().blockFromId(block);
+        auto def = defs.defs().blockFromId(block);
         if (def.callbacks.count(Callback::AFTER_CONSTRUCT)) {
             def.callbacks[Callback::AFTER_CONSTRUCT](defs.lua().vecToTable(pos));
         }

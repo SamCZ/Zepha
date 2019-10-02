@@ -15,7 +15,7 @@ class ServerDefs {
 public:
     void init(ServerWorld& world, const std::string& path);
 
-    ServerDefinitionAtlas& blocks();
+    ServerDefinitionAtlas& defs();
     ServerLuaParser& lua();
     ServerTextureStorage& textures();
 

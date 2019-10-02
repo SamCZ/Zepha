@@ -11,8 +11,7 @@ public:
     enum class Type {
         INVALID,
         BLOCK,
-        CRAFTITEM,
-        TOOL
+        CRAFTITEM
     };
 
     std::string identifier = "";

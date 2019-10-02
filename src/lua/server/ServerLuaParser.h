@@ -22,7 +22,7 @@ public:
 
     void loadModules(ServerDefs& defs, ServerWorld& world);
     void loadMods(ServerDefs& defs, const std::string& rootPath);
-    void registerBlocks(ServerDefs& defs);
+    void registerDefinitions(ServerDefs &defs);
 
     ~ServerLuaParser() = default;
 

@@ -205,9 +205,22 @@ set(ZEPHA_SRC
         game/entity/AnimationSegment.h
         util/Pointer.h
         lua/api/type/cEntity.h
-        lua/api/customization/pVec3.cpp
-        lua/api/customization/pVec3.h
         StartGame.h
-        game/graph/shader/SSAOShader.cpp game/graph/shader/SSAOShader.h game/graph/shader/BlurShader.cpp game/graph/shader/BlurShader.h game/graph/shader/LightingShader.cpp game/graph/shader/LightingShader.h game/graph/shader/WorldGeometryShader.cpp game/graph/shader/WorldGeometryShader.h game/graph/shader/EntityGeometryShader.cpp game/graph/shader/EntityGeometryShader.h game/scene/world/graph/ChunkRenderElem.h game/scene/world/graph/ChunkRenderRef.h server/world/ServerDimension.cpp server/world/ServerDimension.h)
+        game/graph/shader/SSAOShader.cpp
+        game/graph/shader/SSAOShader.h
+        game/graph/shader/BlurShader.cpp
+        game/graph/shader/BlurShader.h
+        game/graph/shader/LightingShader.cpp
+        game/graph/shader/LightingShader.h
+        game/graph/shader/WorldGeometryShader.cpp
+        game/graph/shader/WorldGeometryShader.h
+        game/graph/shader/EntityGeometryShader.cpp
+        game/graph/shader/EntityGeometryShader.h
+        game/scene/world/graph/ChunkRenderElem.h
+        game/scene/world/graph/ChunkRenderRef.h
+        server/world/ServerDimension.cpp
+        server/world/ServerDimension.h
+        lua/client/LocalRegisterItems.cpp
+        lua/client/LocalRegisterItems.h def/craftitem/CraftItemDef.cpp def/craftitem/CraftItemDef.h lua/server/ServerRegisterItems.cpp lua/server/ServerRegisterItems.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

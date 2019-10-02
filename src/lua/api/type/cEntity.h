@@ -6,7 +6,6 @@
 
 #include "../../../def/LocalDefs.h"
 #include "../../../game/scene/world/LocalWorld.h"
-#include "../customization/pVec3.h"
 #include <sol2/sol.hpp>
 
 namespace ClientApi {

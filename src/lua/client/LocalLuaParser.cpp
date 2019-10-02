@@ -4,6 +4,8 @@
 
 #include "LocalLuaParser.h"
 #include "LocalRegisterBlocks.h"
+#include "LocalRegisterItems.h"
+
 #include "../../def/LocalDefs.h"
 #include "../../game/hud/GameGui.h"
 
@@ -17,6 +19,7 @@
 
 #include "../api/modules/cRegisterBlock.h"
 #include "../api/modules/cRegisterBlockmodel.h"
+#include "../api/modules/cRegisterItem.h"
 
 #include "../api/modules/cSetBlock.h"
 #include "../api/modules/cGetBlock.h"
@@ -38,7 +41,7 @@ void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world, GameGui& gui) {
     loadMods();
 
     //Register Blocks
-    registerBlocks(defs);
+    registerDefinitions(defs);
 }
 
 void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, GameGui& gui) {
@@ -58,6 +61,7 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, GameGui& gu
 
     ClientApi::register_block(lua, core);
     ClientApi::register_blockmodel(lua, core);
+    ClientApi::register_item(lua, core);
 
     ClientApi::get_block(core, defs, world);
     ClientApi::set_block(core, defs, world);
@@ -76,8 +80,9 @@ void LocalLuaParser::loadMods() {
     }
 }
 
-void LocalLuaParser::registerBlocks(LocalDefs& defs) {
+void LocalLuaParser::registerDefinitions(LocalDefs &defs) {
     LocalRegisterBlocks(core, defs);
+    LocalRegisterItems(core, defs);
 }
 
 sol::protected_function_result LocalLuaParser::DoFileSandboxed(std::string file) {
