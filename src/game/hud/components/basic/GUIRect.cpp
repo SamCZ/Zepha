@@ -68,3 +68,26 @@ void GUIRect::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<AtlasRe
     entity.setMesh(mesh);
     entity.setScale({scale.x + padding.w + padding.y, scale.y + padding.x + padding.z});
 }
+
+void GUIRect::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<AtlasRef> texture, glm::vec3 tint) {
+    // Texture Constructor
+    // Creates a GUIRect object with a textured background
+    // defined by the 'texture' reference.
+
+    this->scale = scale;
+    this->padding = padding;
+    this->texture = std::move(texture);
+
+    std::vector<GuiVertex> vertices {
+            {{0, 0}, {this->texture->uv.x, this->texture->uv.y, 0, 0}, tint, true},
+            {{0, 1}, {this->texture->uv.x, this->texture->uv.w, 0, 0}, tint, true},
+            {{1, 1}, {this->texture->uv.z, this->texture->uv.w, 0, 0}, tint, true},
+            {{1, 0}, {this->texture->uv.z, this->texture->uv.y, 0, 0}, tint, true}
+    };
+    std::vector<unsigned int> indices {0, 1, 2, 2, 3, 0};
+
+    auto mesh = new GuiMesh();
+    mesh->create(vertices, indices);
+    entity.setMesh(mesh);
+    entity.setScale({scale.x + padding.w + padding.y, scale.y + padding.x + padding.z});
+}

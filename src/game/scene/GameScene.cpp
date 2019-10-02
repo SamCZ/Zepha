@@ -13,7 +13,7 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     player(world, defs, state.renderer.getCamera()),
 
     gameGui (state.renderer.getCamera().getBufferDimensions(), defs.textures()),
-    debugGui(state.renderer.getCamera().getBufferDimensions(), defs.textures()) {
+    debugGui(state.renderer.getCamera().getBufferDimensions(), defs) {
 
     state.renderer.setClearColor(148, 194, 240);
     state.renderer.getWindow().lockMouse(true);
@@ -23,6 +23,8 @@ GameScene::GameScene(ClientState& state) : Scene(state),
 
     gui.push_back(&gameGui);
     gui.push_back(&debugGui);
+
+    debugGui.initItemDisplays(defs);
 
     entities.push_back(&player);
 

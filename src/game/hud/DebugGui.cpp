@@ -5,14 +5,14 @@
 #include "DebugGui.h"
 #include "../../def/texture/Font.h"
 
-DebugGui::DebugGui(glm::vec2 bufferSize, TextureAtlas& atlas) :
+DebugGui::DebugGui(glm::vec2 bufferSize, LocalDefs& defs) :
     displayMode(0) {
 
-    auto fpsHistogramRef = atlas.getTextureRef("histogram");
-    auto genericHistogramRef = atlas.getTextureRef("histogram_white");
-    auto fontRef = atlas.getTextureRef("font");
+    auto fpsHistogramRef = defs.textures().getTextureRef("histogram");
+    auto genericHistogramRef = defs.textures().getTextureRef("histogram_white");
+    auto fontRef = defs.textures().getTextureRef("font");
 
-    Font f(atlas, fontRef);
+    Font f(defs.textures(), fontRef);
 
     auto crosshairText = std::make_shared<GUIText>("crosshairText");
     crosshairText->create({2, 2}, {}, {0.2, 0.2, 0.2, 0.5}, {1, 1, 1, 1}, f);
@@ -38,7 +38,6 @@ DebugGui::DebugGui(glm::vec2 bufferSize, TextureAtlas& atlas) :
     packetGraph->create({244, 64}, {}, "Packets", 120, 512, genericHistogramRef, f);
     add(packetGraph);
 
-
     auto fpsGraph = std::make_shared<GUILabelledGraph>("fpsGraph");
     fpsGraph->create({244, 64}, {}, "FPS", 120, 60, fpsHistogramRef, f);
     add(fpsGraph);
@@ -52,6 +51,24 @@ DebugGui::DebugGui(glm::vec2 bufferSize, TextureAtlas& atlas) :
     add(gpuGraph);
 
     positionElements(bufferSize);
+}
+
+void DebugGui::initItemDisplays(LocalDefs& defs) {
+    uint xOff = 350;
+    for (uint i = 0; i < defs.defs().size(); i++) {
+        ItemDef& def = defs.defs().fromId(i);
+        if (def.type == ItemDef::Type::CRAFTITEM) {
+            auto itemBG = std::make_shared<GUIRect>("item_" + to_string(i));
+            itemBG->create({48, 48}, {}, defs.textures().getTextureRef(static_cast<CraftItemDef&>(def).textures[0]), {0.5, 0.5, 0.5});
+            itemBG->setPos({xOff + 3, 67});
+            add(itemBG);
+            auto item = std::make_shared<GUIRect>("item_" + to_string(i));
+            item->create({48, 48}, {}, defs.textures().getTextureRef(static_cast<CraftItemDef&>(def).textures[0]));
+            item->setPos({xOff, 64});
+            add(item);
+            xOff += 64;
+        }
+    }
 }
 
 void DebugGui::positionElements(glm::vec2 bufferSize) {

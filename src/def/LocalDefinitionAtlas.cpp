@@ -22,7 +22,7 @@ LocalDefinitionAtlas::LocalDefinitionAtlas() {
 
 void LocalDefinitionAtlas::setIdentifiers(std::vector<std::string> &identifiers) {
     for (unsigned int i = 0; i < identifiers.size(); i++) {
-        defs.emplace_back();
+        if (i >= 2) defs.emplace_back(); //Don't emplace air or ignore
         defTable.insert({identifiers[i], i});
     }
 }
