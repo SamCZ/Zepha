@@ -12,7 +12,7 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
 
     world({winWidth, winHeight}, 2),
     entity({winWidth, winHeight}, 2),
-    ssao({winWidth, winHeight}, 1, 16),
+    ssao({winWidth, winHeight}, 1, 24),
     blur({winWidth, winHeight}, 1),
     lighting({winWidth, winHeight}, 2) {
 

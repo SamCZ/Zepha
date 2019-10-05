@@ -145,7 +145,7 @@ void Player::pointerUpdate(InputManager &input, double delta) {
         }
         if (input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
             world.localSetBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face),
-                                defs.defs().blockFromStr("default:sandstone").index);
+                                defs.defs().blockFromStr("kinetic:axle_0").index);
         }
     }
     else {

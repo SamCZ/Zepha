@@ -44,22 +44,23 @@ void Model::fromBlock(BlockDef& def) {
     meshes.push_back(std::move(mesh));
 }
 
+//TODO: Store item models statically
 void Model::fromItem(CraftItemDef &def, TextureAtlas& atlas) {
     uptr<EntityMesh> mesh = std::make_unique<EntityMesh>();
 
     std::vector<EntityVertex> vertices;
-    std::vector<unsigned int> indices {0, 1, 2, 2, 3, 0, 0+4, 3+4, 2+4, 2+4, 1+4, 0+4};
+    std::vector<unsigned int> indices {0, 1, 2, 2, 3, 0, 4, 7, 6, 6, 5, 4};
 
     const sptr<AtlasRef>& ref = def.textureRefs[0];
-    static const float xo = 0.050f;
+    static const float xo = 0.040f;
 
     for (uint i = 0; i <= 1; i++) {
         float xx = xo * (i == 1 ? -1 : 1);
         std::vector<EntityVertex> myVerts = {
-                {{xx, -0.5, -0.5}, {ref->uv.x, ref->uv.w, 0, 0}, {1, 1, 1}, true, {1, 0, 0}, {}, {}},
-                {{xx,  0.5, -0.5}, {ref->uv.x, ref->uv.y, 0, 0}, {1, 1, 1}, true, {1, 0, 0}, {}, {}},
-                {{xx,  0.5,  0.5}, {ref->uv.z, ref->uv.y, 0, 0}, {1, 1, 1}, true, {1, 0, 0}, {}, {}},
-                {{xx, -0.5,  0.5}, {ref->uv.z, ref->uv.w, 0, 0}, {1, 1, 1}, true, {1, 0, 0}, {}, {}}
+                {{xx, -0.5, -0.5}, {ref->uv.x, ref->uv.w, 0, 0}, {1, 1, 1}, true, {(i == 1 ? -1 : 1), 0, 0}, {}, {}},
+                {{xx,  0.5, -0.5}, {ref->uv.x, ref->uv.y, 0, 0}, {1, 1, 1}, true, {(i == 1 ? -1 : 1), 0, 0}, {}, {}},
+                {{xx,  0.5,  0.5}, {ref->uv.z, ref->uv.y, 0, 0}, {1, 1, 1}, true, {(i == 1 ? -1 : 1), 0, 0}, {}, {}},
+                {{xx, -0.5,  0.5}, {ref->uv.z, ref->uv.w, 0, 0}, {1, 1, 1}, true, {(i == 1 ? -1 : 1), 0, 0}, {}, {}}
         };
         vertices.insert(vertices.end(), myVerts.begin(), myVerts.end());
     }

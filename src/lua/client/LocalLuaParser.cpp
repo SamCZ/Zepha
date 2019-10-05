@@ -20,10 +20,13 @@
 #include "../api/modules/cRegisterBlock.h"
 #include "../api/modules/cRegisterBlockmodel.h"
 #include "../api/modules/cRegisterItem.h"
+#include "../api/modules/cRegisterEntity.h"
 
 #include "../api/modules/cSetBlock.h"
 #include "../api/modules/cGetBlock.h"
 #include "../api/modules/cRemoveBlock.h"
+
+#include "../api/modules/cAddEntity.h"
 
 #include "../api/modules/cShowMenu.h"
 
@@ -50,7 +53,7 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, GameGui& gu
     lua["zepha"] = core;
 
     //Load Types
-    ClientApi::entity(lua, core, defs, world);
+    ClientApi::entity(lua, world);
 
     //Load Modules
     ClientApi::dump(lua);
@@ -62,10 +65,13 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, GameGui& gu
     ClientApi::register_block(lua, core);
     ClientApi::register_blockmodel(lua, core);
     ClientApi::register_item(lua, core);
+    ClientApi::register_entity(lua, core);
 
     ClientApi::get_block(core, defs, world);
     ClientApi::set_block(core, defs, world);
     ClientApi::remove_block(core, defs, world);
+
+    ClientApi::add_entity(lua, core, defs, world);
 
     ClientApi::show_menu(core, defs, gui);
 

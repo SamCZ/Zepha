@@ -15,6 +15,9 @@ namespace ServerApi {
                     if type(k) == "number" then
                         k = "[" .. k .. "]"
                     end
+                    if type(v) == "function" then
+                        v = "[function]"
+                    end
                     local indentString = string.rep("  ", indent)
                     local formatting = indentString .. k .. " = "
                     if type(v) == "table" then

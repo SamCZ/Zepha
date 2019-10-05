@@ -35,7 +35,7 @@ void SSAOShader::postCreate() {
         sample = glm::normalize(sample);
         sample *= rand(generator);
 
-        float scale = static_cast<float>(i / 64.0); //TODO: Test kernels
+        float scale = static_cast<float>(i / kernelCount); //TODO: Test kernels
         scale = lerp(0.1f, 1.0f, scale * scale);
         sample *= scale;
 

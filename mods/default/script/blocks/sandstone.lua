@@ -1,12 +1,3 @@
-local entities = {}
-
-local function collides(entity)
-    return zepha.get_block({
-        x = math.floor(entity.pos.x),
-        y = math.floor(entity.pos.y - 0.5),
-        z = math.floor(entity.pos.z)}) ~= "air"
-end
-
 zepha.register_block("default:sandstone", {
     name = "Sandstone",
     model = "default:block",
@@ -15,4 +6,9 @@ zepha.register_block("default:sandstone", {
         hand = 14,
         pick = 3
     },
+    drop = "default:sand",
+    on_break_client = function(pos)
+        zepha.add_entity("default:dropped_item", {x = pos.x + 0.5, y = pos.y + 0.5, z = pos.z + 0.5},
+            {object = zepha.registered_blocks["default:sandstone"].drop});
+    end
 })

@@ -20,10 +20,7 @@ void LocalWorld::init() {
 }
 
 void LocalWorld::update(double delta) {
-    playerChunkPos = TransPos::roundPos(*playerPos / glm::vec3(TransPos::CHUNK_SIZE));
-
     finishChunks();
-
     updateBlockDamages(delta);
     dimension.update(*playerPos);
     lastMeshUpdates = dimension.lastMeshUpdates;
@@ -38,17 +35,13 @@ void LocalWorld::update(double delta) {
     }
     if (end != particles.begin()) particles.erase(particles.begin(), end + 1);
 
-    for (auto it = luaEntities.begin(); it != luaEntities.end();) {
-        if (auto ptr = (*it).lock()) {
-            ptr->update(delta);
-            it++;
-        }
-        else it = luaEntities.erase(it);
+    for (auto& ent : luaEntities) {
+        ent->entity->update(delta);
     }
 }
 
-void LocalWorld::addEntity(const wptr<Entity> &entity) {
-    luaEntities.push_back(entity);
+void LocalWorld::addEntity(const sptr<LuaEntity>& entity) {
+    luaEntities.emplace_back(entity);
 }
 
 void LocalWorld::damageBlock(glm::vec3 pos, float amount) {
@@ -140,11 +133,8 @@ void LocalWorld::renderEntities(Renderer &renderer) {
     for (auto block : crackedBlocks) block->draw(renderer);
     for (auto &p : particles) p->draw(renderer);
 
-    for (auto it = luaEntities.begin(); it != luaEntities.end();) {
-        if (auto ptr = (*it).lock()) {
-            ptr->draw(renderer);
-            it++;
-        } else it = luaEntities.erase(it);
+    for (auto& ent : luaEntities) {
+        ent->entity->draw(renderer);
     }
 }
 

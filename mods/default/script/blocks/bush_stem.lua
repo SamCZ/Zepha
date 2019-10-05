@@ -10,5 +10,10 @@ zepha.register_block("default:bush_stem", {
     toughness = {
         hand = 0.3,
         axe = 0.1
-    }
+    },
+    drop = "default:wood",
+    on_break_client = function(pos)
+        zepha.add_entity("default:dropped_item", {x = pos.x + 0.5, y = pos.y + 0.5, z = pos.z + 0.5},
+            {object = zepha.registered_blocks["default:bush_stem"].drop});
+    end
 })

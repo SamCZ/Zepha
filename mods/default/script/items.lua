@@ -1,1 +1,0 @@
---runfile("zeus:default/items/stick")

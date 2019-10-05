@@ -1,7 +1,0 @@
-runfile("zeus:default/models/block")
-runfile("zeus:default/models/block_foliage")
-runfile("zeus:default/models/plantlike")
-runfile("zeus:default/models/leaflike")
-runfile("zeus:default/models/halfslab")
-runfile("zeus:default/models/halfslab_foliage")
-runfile("zeus:default/models/crosslarge")

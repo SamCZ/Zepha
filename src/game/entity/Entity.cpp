@@ -14,13 +14,13 @@ Entity::Entity(std::shared_ptr<Model> model) : animState(*model), model(model) {
 
 void Entity::setModel(std::shared_ptr<Model> model) {
     animState = AnimationState(*model);
-    model = std::move(model);
+    this->model = std::move(model);
 }
 
 void Entity::update(double delta) {
     animState.update(delta);
 
-    float factor = static_cast<float>(fmin(delta * 10, 1));
+    float factor = static_cast<float>(fmin(delta * 8, 1));
 
     visualPosition = visualPosition * (1 - factor) + position * factor;
     visualVisualOffset = visualVisualOffset * (1 - factor) + visualOffset * factor;
@@ -30,8 +30,7 @@ void Entity::update(double delta) {
 
 void Entity::draw(Renderer& renderer) {
     if (visible) {
-        auto mm = getModelMatrix();
-        renderer.setModelMatrix(mm);
+        renderer.setModelMatrix(getModelMatrix());
 
         model->getTransformsByFrame(animState.getFrame(), animState.getBounds(), transforms);
         renderer.setBones(transforms);

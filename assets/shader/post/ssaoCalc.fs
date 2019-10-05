@@ -1,8 +1,8 @@
 #version 440 core
 
 #define RADIUS 1.0
-#define RANGE 0.05
-#define BIAS 0.11
+#define RANGE 0.50
+#define BIAS 0.08
 
 out float outColor;
 
@@ -27,8 +27,7 @@ void main() {
     vec3 normal    = normalize(mat3(view) * texture(gNormal, texCoords * sampleScale).xyz);
     vec3 randomVec = normalize(texture(texNoise, texCoords * sampleScale * noiseScale).xyz);
 
-    if (normal == vec3(0, 0, 0)) discard;
-
+    if (normal == vec3(0)) discard;
 
     vec3 tangent   = normalize(randomVec - normal * dot(randomVec, normal));
     vec3 bitangent = cross(normal, tangent);
@@ -53,9 +52,9 @@ void main() {
 
         float sampleDepth = vec3(texture(gPosition, offset.xy)).z;
 
-        float rangeCheck = smoothstep(0.0, 1.0, RANGE / abs(sampleDepth - fragDepth));
+        float rangeCheck = smoothstep(0.0, 1.0, RANGE / abs(fragDepth - sampleDepth));
         occlusion += (sampleDepth >= fragDepth + BIAS ? 1.0 : 0.0) * rangeCheck;
     }
 
-    outColor = 1.0 - (occlusion / kernels * 4);
+    outColor = 1.0 - (occlusion / kernels / 2);
 }

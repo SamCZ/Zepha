@@ -23,6 +23,7 @@
 #include "../../../game/graph/drawable/DrawableGroup.h"
 #include "../../entity/world/BlockCrackEntity.h"
 #include "../../entity/world/ParticleEntity.h"
+#include "../../entity/world/LuaEntity.h"
 #include "graph/MeshChunk.h"
 #include "WorldInterpolationStream.h"
 #include "MeshGenStream.h"
@@ -36,7 +37,7 @@ public:
     void init();
     void update(double delta);
 
-    void addEntity(const wptr<Entity> &entity);
+    void addEntity(const sptr<LuaEntity>& entity);
 
     void loadChunkPacket(Packet p);
     std::shared_ptr<BlockChunk> getChunk(glm::vec3 chunkPos);
@@ -65,12 +66,11 @@ private:
 
     LocalDefs& defs;
     glm::vec3* playerPos;
-    glm::vec3 playerChunkPos {};
 
     std::vector<BlockCrackEntity*> crackedBlocks;
     std::vector<ParticleEntity*> particles;
 
-    std::list<wptr<Entity>> luaEntities;
+    std::vector<sptr<LuaEntity>> luaEntities;
 
     ClientNetworkInterpreter* server = nullptr;
     WorldInterpolationStream* worldGenStream = nullptr;
