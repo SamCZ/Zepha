@@ -129,8 +129,8 @@ void Player::pointerUpdate(InputManager &input, double delta) {
     stop:
 
     if (found) {
-        const static float DAMAGE = 0.25f;
-        const static float INTERVAL = 0.1f;
+        const static float DAMAGE = 0.45f;
+        const static float INTERVAL = 0.33f;
 
         if (input.isMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
             if (breakInterval == 0) {

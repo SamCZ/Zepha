@@ -6,6 +6,7 @@ zepha.register_block('kinetic:axle_0', {
     selection_box = {
         {0, 6/16, 6/16, 1, 10/16, 10/16}
     },
+    drop = "kinetic:axle_0",
     on_place = function(pos)
         for i = 0, 9 do
             pos.x = pos.x + 1
@@ -22,6 +23,10 @@ zepha.register_block('kinetic:axle_0', {
         zepha.delay(function()
             zepha.set_block(pos, "kinetic:axle_1")
         end, 4)
+    end,
+    on_break_client = function(pos)
+        zepha.add_entity("default:dropped_item", {x = pos.x + 0.5, y = pos.y + 0.5, z = pos.z + 0.5},
+            {object = zepha.registered_blocks["kinetic:axle_0"].drop});
     end
 })
 
