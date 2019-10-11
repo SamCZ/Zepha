@@ -21,7 +21,7 @@ public:
 private:
     void getCharWidths(TextureAtlas& atlas);
 
-    glm::vec2 atlasSize;
+    glm::vec2 atlasSize {};
 
     std::shared_ptr<AtlasRef> fontTex = nullptr;
     std::array<unsigned short, 95> charWidths {};

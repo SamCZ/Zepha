@@ -161,18 +161,6 @@ void ConnectScene::update() {
                 }
                 else if (p.type == PacketType::MEDIA_DONE) {
                     components.get<GUIRect>("loadBar")->setScale({state.renderer.getWindow().getSize().x, 32});
-//                    std::string order = Serializer::decodeString(&p.data[0]);
-//
-//                    size_t pos = 0;
-//                    std::string token;
-//                    while ((pos = order.find(',')) != std::string::npos) {
-//                        token = order.substr(0, pos);
-//                        state.defs.lua().modsOrder.push_back(token);
-//                        order.erase(0, pos + 1);
-//                    }
-//                    state.defs.lua().modsOrder.push_back(order);
-
-
                     statusText->setText(statusText->getText() + "Done downloading media.\nJoining world...\n");
 
                     connectState = State::DONE;

@@ -26,7 +26,7 @@ public:
 
     void fromMesh(uptr<EntityMesh> mesh);
     int  fromFile(const std::string &path, const std::vector<std::shared_ptr<AtlasRef>> &texture);
-    int  fromModel(const SerializedModel& model, const std::vector<std::shared_ptr<AtlasRef>> &texture);
+    int  fromSerialized(const SerializedModel &model, const std::vector<std::shared_ptr<AtlasRef>> &texture);
 
     void getTransformsByFrame(double frame, std::tuple<int, int> bounds, std::vector<glm::mat4>& transforms);
 //    void getTransformsByTime(double time, std::tuple<uint> bounds, std::vector<glm::mat4>& transforms);

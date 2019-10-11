@@ -61,21 +61,14 @@ void LuaEntity::set_display_type(const std::string &type, const std::string &arg
     if (type == std::string("gameobject")) {
         ItemDef& def = defs.defs().fromStr(arg);
 
-        switch (def.type) {
-            case ItemDef::Type::BLOCK:
-                entity->setModel(static_cast<BlockDef&>(def).entityModel);
-                break;
-            case ItemDef::Type::CRAFTITEM: {
-                entity->setModel(static_cast<CraftItemDef&>(def).entityModel);
-                break;
-            }
-            default:
-                throw "Invalid definition type.";
-        }
+        if (def.type == ItemDef::Type::BLOCK)
+            entity->setModel(static_cast<BlockDef&>(def).entityModel);
+        else if (def.type == ItemDef::Type::CRAFTITEM)
+            entity->setModel(static_cast<CraftItemDef&>(def).entityModel);
     }
     else if (type == std::string("model") && arg2 && !arg2->empty()) {
         auto model = std::make_shared<Model>();
-        model->fromModel(defs.models().models[arg], {defs.textures().getTextureRef(*arg2)});
+        model->fromSerialized(defs.models().models[arg], {defs.textures().getTextureRef(*arg2)});
         entity->setModel(model);
     }
 }

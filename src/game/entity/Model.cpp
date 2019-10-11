@@ -31,7 +31,7 @@ int Model::fromFile(const std::string &path, const std::vector<std::shared_ptr<A
     return 0;
 }
 
-int Model::fromModel(const SerializedModel& model, const std::vector<std::shared_ptr<AtlasRef>> &textures) {
+int Model::fromSerialized(const SerializedModel& model, const std::vector<std::shared_ptr<AtlasRef>>& textures) {
     this->textures = textures;
 
     Assimp::Importer importer;
@@ -46,9 +46,7 @@ int Model::fromModel(const SerializedModel& model, const std::vector<std::shared
     loadAnimations(scene);
 
     calcBoneHeirarchy(scene->mRootNode, scene, -1);
-
     globalInverseTransform = glm::inverse(MatConv::AiToGLMMat4(scene->mRootNode->mTransformation));
-
     return 0;
 }
 

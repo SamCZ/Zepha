@@ -7,7 +7,6 @@
 #include "MapGen.h"
 #include "../../util/Timer.h"
 #include "NoiseSample.h"
-#include "../../util/Vec.h"
 
 MapGen::MapGen(unsigned int seed, DefinitionAtlas& atlas) {
     this->seed = seed;

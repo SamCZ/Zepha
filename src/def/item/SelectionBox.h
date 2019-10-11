@@ -14,18 +14,9 @@
 
 class SelectionBox {
 public:
-    SelectionBox() {
-        set({0, 0, 0}, {1, 1, 1});
-    }
-
-    SelectionBox(glm::vec3 a, glm::vec3 b) {
-        set(a, b);
-    }
-
-    SelectionBox& operator=(const SelectionBox &s) {
-        a = s.a;
-        b = s.b;
-    }
+    SelectionBox() = default;
+    SelectionBox(glm::vec3 a, glm::vec3 b) : a(a), b(b) {};
+    SelectionBox& operator=(const SelectionBox &s) = default;
 
     bool operator==(const SelectionBox &o) {
         return (a == o.a && b == o.b);
@@ -45,12 +36,12 @@ public:
 
         vec -= blockOffset; //Normalize Vector Position
 
-        if (fabs(vec.y - b.y) < THRESH && vec.x > a.x && vec.x < b.x && vec.z > a.z && vec.z < b.z) return TOP;
-        if (fabs(vec.y - a.y) < THRESH && vec.x > a.x && vec.x < b.x && vec.z > a.z && vec.z < b.z) return BOTTOM;
-        if (fabs(vec.z - a.z) < THRESH && vec.x > a.x && vec.x < b.x && vec.y > a.y && vec.y < b.y) return FRONT;
-        if (fabs(vec.z - b.z) < THRESH && vec.x > a.x && vec.x < b.x && vec.y > a.y && vec.y < b.y) return BACK;
-        if (fabs(vec.x - b.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return LEFT;
-        if (fabs(vec.x - a.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return RIGHT;
+        if (std::abs(vec.y - b.y) < THRESH && vec.x > a.x && vec.x < b.x && vec.z > a.z && vec.z < b.z) return TOP;
+        if (std::abs(vec.y - a.y) < THRESH && vec.x > a.x && vec.x < b.x && vec.z > a.z && vec.z < b.z) return BOTTOM;
+        if (std::abs(vec.z - a.z) < THRESH && vec.x > a.x && vec.x < b.x && vec.y > a.y && vec.y < b.y) return FRONT;
+        if (std::abs(vec.z - b.z) < THRESH && vec.x > a.x && vec.x < b.x && vec.y > a.y && vec.y < b.y) return BACK;
+        if (std::abs(vec.x - b.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return LEFT;
+        if (std::abs(vec.x - a.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return RIGHT;
 
         return NONE;
     }
@@ -68,6 +59,6 @@ public:
         return positionOffsets[f];
     }
 
-    glm::vec3 a {}, b {};
+    glm::vec3 a {}, b {1, 1, 1};
 };
 

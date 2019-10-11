@@ -31,12 +31,12 @@ void NoiseSample::set(glm::vec3 pos, float value) {
 }
 
 float NoiseSample::get(glm::vec3& pos) {
-    int xInt = (int)pos.x;
-    int yInt = (int)pos.y;
-    int zInt = (int)pos.z;
+    auto xInt = static_cast<int>(pos.x);
+    auto yInt = static_cast<int>(pos.y);
+    auto zInt = static_cast<int>(pos.z);
 
-    int offsetH = (int)((float)TransPos::CHUNK_SIZE / hPrecision);
-    int offsetV = (int)((float)TransPos::CHUNK_SIZE / vPrecision);
+    int offsetH = static_cast<int>(static_cast<float>(TransPos::CHUNK_SIZE) / hPrecision);
+    int offsetV = static_cast<int>(static_cast<float>(TransPos::CHUNK_SIZE) / vPrecision);
 
     auto xBase = xInt / offsetH;
     auto yBase = yInt / offsetV;

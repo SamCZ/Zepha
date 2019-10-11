@@ -7,7 +7,7 @@
 #include <map>
 #include <memory>
 #include <vector>
-#include <tgmath.h>
+#include <ctgmath>
 #include <glm/vec2.hpp>
 #include <GL/glew.h>
 #include <cute_files/cute_files.h>

@@ -12,7 +12,7 @@ namespace ClientApi {
         core.set_function("delay", [&](sol::function function, float delay, sol::variadic_args args) {
             std::vector<sol::object> argsObject;
             for (auto arg : args) argsObject.push_back(arg);
-            funcs.push_back({function, argsObject, delay, delay});
+            funcs.push_back(LocalLuaParser::DelayedFunction{function, argsObject, delay, delay});
         });
     }
 }

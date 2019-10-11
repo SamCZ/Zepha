@@ -2,6 +2,9 @@
 // Created by aurailus on 13/08/19.
 //
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cppcoreguidelines-pro-type-static-cast-downcast"
+
 #include "DefinitionAtlas.h"
 
 ItemDef& DefinitionAtlas::fromId(unsigned int id) {
@@ -65,3 +68,5 @@ unsigned int DefinitionAtlas::size() {
 DefinitionAtlas::~DefinitionAtlas() {
     for (auto def : defs) delete def;
 }
+
+#pragma clang diagnostic pop

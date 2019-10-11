@@ -26,7 +26,7 @@ void BlockDef::createModel() {
         for (MeshPart& p : pArray) {
             for (const BlockModelVertex &vertex : p.vertices) {
                 vertices.push_back(EntityVertex {
-                        vertex.pos - glm::vec3(0.5),
+                        vertex.pos - glm::vec3(0.5f),
                         {vertex.tex.x, vertex.tex.y, 0, 0},
                         {1, 1, 1},
                         true,

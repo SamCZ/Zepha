@@ -18,13 +18,10 @@ struct MapGenJob {
 
     glm::vec3 pos {};
 
-    explicit MapGenJob(glm::vec3 pos) {
-
-        this->pos = pos;
-
-        blocks = std::array<uint, 4096>();
-        density = std::vector<float>((unsigned long)pow(TransPos::CHUNK_SIZE, 3));
-        depth = std::vector<int>((unsigned long)pow(TransPos::CHUNK_SIZE, 3));
-        depthFloat = std::vector<float>((unsigned long)pow(TransPos::CHUNK_SIZE, 3));
-    }
+    explicit MapGenJob(glm::vec3 pos) :
+        pos(pos),
+        blocks(),
+        density(4096),
+        depth(4096),
+        depthFloat(4096) {}
 };
