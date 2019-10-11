@@ -7,7 +7,7 @@
 
 #include <sol2/sol.hpp>
 #include "../../def/ServerDefs.h"
-#include "../../def/block/BlockModel.h"
+#include "../../def/item/BlockModel.h"
 
 class ServerRegisterBlocks {
 public:

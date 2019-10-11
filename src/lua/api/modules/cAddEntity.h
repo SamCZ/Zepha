@@ -29,7 +29,7 @@ namespace ClientApi {
                 auto displayObject = luaEntity.get<sol::optional<std::string>>("display_object");
                 if (!displayType || !displayObject) throw "Missing display or display_object field.";
 
-                entityRef->set_display_type(*displayType, *displayObject);
+                entityRef->set_display_type(*displayType, *displayObject, sol::optional<std::string>{});
 
                 core.get<sol::table>("entities").add(luaEntity);
                 entityDef.get<sol::function>("on_load")(luaEntity, staticData);

@@ -7,7 +7,7 @@
 
 #include "ServerDefinitionAtlas.h"
 #include "../lua/server/ServerLuaParser.h"
-#include "texture/ServerTextureStorage.h"
+#include "../server/asset/AssetStorage.h"
 
 class ServerWorld;
 
@@ -17,15 +17,15 @@ public:
 
     ServerDefinitionAtlas& defs();
     ServerLuaParser& lua();
-    ServerTextureStorage& textures();
-
+    
+    AssetStorage& assets();
     void update(double delta);
 
     ~ServerDefs() = default;
 private:
     double delta = 0;
 
-    ServerTextureStorage textureStorage;
+    AssetStorage assetStorage;
     ServerDefinitionAtlas blockAtlas;
     ServerLuaParser luaApi;
 };

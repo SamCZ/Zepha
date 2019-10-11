@@ -4,12 +4,13 @@
 
 #pragma once
 
-
 #include <vector>
 #include "ServerTexture.h"
+#include "../../def/model/SerializedModel.h"
 
-class ServerTextureStorage {
+class AssetStorage {
 public:
     std::vector<ServerTexture> textures;
+    std::vector<SerializedModel> models;
 };
 

@@ -34,9 +34,8 @@ LocalRegisterItems::LocalRegisterItems(sol::table& core, LocalDefs &defs) {
             textureRefs.push_back(defs.textures().getTextureRef("_missing"));
         }
 
-        std::cout << *nameOpt << std::endl;
-
         CraftItemDef* itemDef = new CraftItemDef(identifier, defs.defs().size(), *nameOpt, textures, textureRefs);
+        itemDef->createModel(defs.textures());
 
         //Add Block Definition to the Atlas
         defs.defs().registerDef(itemDef);

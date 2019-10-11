@@ -8,12 +8,13 @@ end
 if not zepha.is_server() then
     zepha.register_entity("default:dropped_item", {
         display = "gameobject",
-        display_object = "default:leaves",
+        display_object = "default:stone",
 
         on_load = function(self, static)
             if static == nil then static = {} end
 
             if (static.object) then self.entity:set_display_type("gameobject", static.object) end
+--            self.entity:set_display_type("model", "zeus:default:rabbit", "zeus:default:rabbit")
 
             self.speed = static.speed or 60
             self.velocityY = static.velocityY or -3

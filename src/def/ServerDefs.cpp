@@ -18,8 +18,8 @@ ServerLuaParser &ServerDefs::lua() {
     return luaApi;
 }
 
-ServerTextureStorage &ServerDefs::textures() {
-    return textureStorage;
+AssetStorage &ServerDefs::assets() {
+    return assetStorage;
 }
 
 void ServerDefs::update(double delta) {

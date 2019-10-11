@@ -2,6 +2,9 @@
 // Created by aurailus on 03/10/19.
 //
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cppcoreguidelines-pro-type-static-cast-downcast"
+
 #include "LuaEntity.h"
 
 void LuaEntity::set_pos(const sol::table &pos) {
@@ -54,22 +57,27 @@ float LuaEntity::get_scale() {
     return entity->getScale();
 }
 
-void LuaEntity::set_display_type(const std::string &type, const std::string &arg) {
+void LuaEntity::set_display_type(const std::string &type, const std::string &arg, sol::optional<std::string> arg2) {
     if (type == std::string("gameobject")) {
         ItemDef& def = defs.defs().fromStr(arg);
-        auto model = std::make_shared<Model>();
 
         switch (def.type) {
             case ItemDef::Type::BLOCK:
-                model->fromBlock(static_cast<BlockDef&>(def));
+                entity->setModel(static_cast<BlockDef&>(def).entityModel);
                 break;
-            case ItemDef::Type::CRAFTITEM:
-                model->fromItem(static_cast<CraftItemDef&>(def), defs.textures());
+            case ItemDef::Type::CRAFTITEM: {
+                entity->setModel(static_cast<CraftItemDef&>(def).entityModel);
                 break;
+            }
             default:
                 throw "Invalid definition type.";
         }
-
+    }
+    else if (type == std::string("model") && arg2 && !arg2->empty()) {
+        auto model = std::make_shared<Model>();
+        model->fromModel(defs.models().models[arg], {defs.textures().getTextureRef(*arg2)});
         entity->setModel(model);
     }
 }
+
+#pragma clang diagnostic pop

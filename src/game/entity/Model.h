@@ -18,17 +18,15 @@
 #include "../../def/texture/TextureAtlas.h"
 #include "../../util/Mat4Conv.h"
 #include "../../util/Pointer.h"
-#include "../../def/block/BlockDef.h"
-#include "../../def/craftitem/CraftItemDef.h"
+#include "../../def/model/SerializedModel.h"
 
 class Model {
 public:
     Model() = default;
 
     void fromMesh(uptr<EntityMesh> mesh);
-    void fromBlock(BlockDef& def);
-    void fromItem(CraftItemDef& def, TextureAtlas& atlas);
-    int  import(const std::string& path, const std::vector<std::shared_ptr<AtlasRef>>& texture);
+    int  fromFile(const std::string &path, const std::vector<std::shared_ptr<AtlasRef>> &texture);
+    int  fromModel(const SerializedModel& model, const std::vector<std::shared_ptr<AtlasRef>> &texture);
 
     void getTransformsByFrame(double frame, std::tuple<int, int> bounds, std::vector<glm::mat4>& transforms);
 //    void getTransformsByTime(double time, std::tuple<uint> bounds, std::vector<glm::mat4>& transforms);

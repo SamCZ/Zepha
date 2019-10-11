@@ -5,7 +5,7 @@
 #pragma once
 
 #include "../Entity.h"
-#include "../../../def/block/BlockDef.h"
+#include "../../../def/item/BlockDef.h"
 
 class ParticleEntity : public Entity {
 public:

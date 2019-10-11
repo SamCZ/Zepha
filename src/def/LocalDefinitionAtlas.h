@@ -5,7 +5,7 @@
 #pragma once
 
 #include <vector>
-#include "block/BlockDef.h"
+#include "item/BlockDef.h"
 #include "texture/TextureAtlas.h"
 #include "DefinitionAtlas.h"
 

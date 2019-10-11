@@ -5,9 +5,9 @@
 #pragma once
 
 #include <string>
-#include "block/BlockDef.h"
+#include "item/BlockDef.h"
 #include "ItemDef.h"
-#include "craftitem/CraftItemDef.h"
+#include "item/CraftItemDef.h"
 
 class DefinitionAtlas {
 public:

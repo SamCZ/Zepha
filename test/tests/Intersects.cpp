@@ -4,7 +4,7 @@
 
 #include <catch.hpp>
 #include <iostream>
-#include "../../src/def/block/SelectionBox.h"
+#include "../../src/def/item/SelectionBox.h"
 
 TEST_CASE("Test Intersection", "math") {
     SelectionBox s({0, 0, 0}, {1, 1, 1});

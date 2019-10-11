@@ -75,6 +75,7 @@ void ServerLuaParser::loadMods(ServerDefs& defs, const std::string& rootPath) {
     auto modDirs = findModDirs(rootPath);
     mods = createLuaMods(modDirs);
     createTextures(defs);
+    createModels(defs);
     handleDependencies();
     serializeMods();
 
@@ -206,11 +207,7 @@ std::vector<LuaMod> ServerLuaParser::createLuaMods(std::list<std::string> modDir
 }
 
 void ServerLuaParser::createTextures(ServerDefs &defs) {
-    std::vector<std::string> seekDirs;
-    std::vector<std::string> texturePaths;
-
     cf_dir_t dir;
-
     for (const LuaMod& mod : mods) {
         std::string root = mod.modPath + "/textures";
 
@@ -219,6 +216,9 @@ void ServerLuaParser::createTextures(ServerDefs &defs) {
         while (!dirsToScan.empty()) {
             std::string dirStr = *dirsToScan.begin();
             dirsToScan.erase(dirsToScan.begin());
+
+            if (!cf_file_exists(dirStr.c_str())) continue;
+            cf_dir_open(&dir, dirStr.c_str());
 
             cf_dir_open(&dir, dirStr.c_str());
 
@@ -242,7 +242,52 @@ void ServerLuaParser::createTextures(ServerDefs &defs) {
                             std::string comp = gzip::compress(str.data(), str.length());
                             free(data);
 
-                            defs.textures().textures.push_back({std::move(name), comp, width, height});
+                            defs.assets().textures.push_back({std::move(name), comp, width, height});
+                        }
+                    }
+                }
+
+                cf_dir_next(&dir);
+            }
+
+            cf_dir_close(&dir);
+        }
+    }
+}
+
+void ServerLuaParser::createModels(ServerDefs &defs) {
+    cf_dir_t dir;
+    for (const LuaMod& mod : mods) {
+        std::string root = mod.modPath + "/models";
+
+        std::list<std::string> dirsToScan {root};
+
+        while (!dirsToScan.empty()) {
+            std::string dirStr = *dirsToScan.begin();
+            dirsToScan.erase(dirsToScan.begin());
+
+            if (!cf_file_exists(dirStr.c_str())) continue;
+            cf_dir_open(&dir, dirStr.c_str());
+
+            while (dir.has_next) {
+                // Read through files in the directory
+                cf_file_t scannedFile;
+                cf_read_file(&dir, &scannedFile);
+
+                if (strncmp(scannedFile.name, ".", 1) != 0) {
+                    if (scannedFile.is_dir) dirsToScan.emplace_back(scannedFile.path);
+                    else {
+                        char *dot = strrchr(scannedFile.path, '.');
+                        if (dot && strncmp(dot, ".b3d", 4) == 0) {
+
+                            std::string name = std::string(scannedFile.name).substr(0, std::string(scannedFile.name).size() - 4);
+                            name.insert(0, mod.config.name + ":");
+
+                            std::ifstream t(scannedFile.path);
+                            std::stringstream buffer;
+                            buffer << t.rdbuf();
+
+                            defs.assets().models.push_back({std::move(name), buffer.str(), "b3d"});
                         }
                     }
                 }

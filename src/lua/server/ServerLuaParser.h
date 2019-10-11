@@ -7,7 +7,7 @@
 #include "../LuaMod.h"
 #include "../LuaParser.h"
 #include "../../util/Timer.h"
-#include "../../def/texture/ServerTexture.h"
+#include "../../server/asset/ServerTexture.h"
 #include <cute_files/cute_files.h>
 #include <json/json.hpp>
 
@@ -31,6 +31,7 @@ private:
     std::list<std::string> findModDirs(const std::string& rootPath);
     std::vector<LuaMod> createLuaMods(std::list<std::string> modDirs);
     void createTextures(ServerDefs& defs);
+    void createModels(ServerDefs& defs);
     void handleDependencies();
     void serializeMods();
 

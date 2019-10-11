@@ -205,6 +205,7 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& core, LocalDefs &defs) {
 
         //TODO: Update the selection boxes thingy
         BlockDef* blockDef = new BlockDef(identifier, defs.defs().size(), *nameOpt, blockModel, solid, std::move(sBoxes));
+        blockDef->createModel();
 
         //Bind Callbacks
         auto on_place_client = blockTable.get<sol::optional<sol::function>>("on_place_client");

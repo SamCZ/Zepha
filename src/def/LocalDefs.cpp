@@ -27,6 +27,10 @@ TextureAtlas &LocalDefs::textures() {
     return textureAtlas;
 }
 
+ModelStore &LocalDefs::models() {
+    return modelStore;
+}
+
 LocalLuaParser &LocalDefs::lua() {
     return luaApi;
 }

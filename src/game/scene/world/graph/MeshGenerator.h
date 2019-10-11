@@ -17,7 +17,7 @@
 #include "../MeshDetails.h"
 #include "../../../../world/chunk/BlockChunk.h"
 #include "../../../../def/LocalDefinitionAtlas.h"
-#include "../../../../def/block/BlockDef.h"
+#include "../../../../def/item/BlockDef.h"
 #include "../../../../def/gen/NoiseSample.h"
 #include "../../../../util/Vec.h"
 #include "../../../../util/Timer.h"

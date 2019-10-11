@@ -4,6 +4,7 @@
 
 #include <gzip/decompress.hpp>
 #include "ConnectScene.h"
+#include "../../server/asset/AssetType.h"
 
 ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
     connection(state.connection) {
@@ -118,31 +119,45 @@ void ConnectScene::update() {
                 auto statusText = components.get<GUIText>("statusText");
 
                 if (p.type == PacketType::MEDIA) {
-                    std::string texName = Serializer::decodeString(&p.data[0]);
-                    size_t offset = texName.length() + 4;
+                    AssetType t = static_cast<AssetType>(Serializer::decodeInt(&p.data[0]));
+                    size_t offset = 4;
                     unsigned int count = 0;
 
-                    while (texName != "end") {
-                        int width = Serializer::decodeInt(&p.data[offset]);
-                        offset += 4;
-                        int height = Serializer::decodeInt(&p.data[offset]);
-                        offset += 4;
+                    while (t != AssetType::END) {
+                        std::string assetName = Serializer::decodeString(&p.data[offset]);
+                        offset += assetName.length() + 4;
 
-                        std::string data = Serializer::decodeString(&p.data[offset]);
-                        std::string uncompressed = gzip::decompress(data.data(), data.length());
+                        if (t == AssetType::TEXTURE) {
+                            int width = Serializer::decodeInt(&p.data[offset]);
+                            offset += 4;
+                            int height = Serializer::decodeInt(&p.data[offset]);
+                            offset += 4;
 
-                        state.defs.textures().addImage(reinterpret_cast<unsigned char*>(const_cast<char*>(uncompressed.data())), texName, true, width, height);
+                            std::string data = Serializer::decodeString(&p.data[offset]);
+                            std::string uncompressed = gzip::decompress(data.data(), data.length());
 
-                        offset += data.length() + 4;
+                            state.defs.textures().addImage(
+                                    reinterpret_cast<unsigned char *>(const_cast<char *>(uncompressed.data())),
+                                    assetName, true, width, height);
+
+                            offset += data.length() + 4;
+                        }
+                        else if (t == AssetType::MODEL) {
+                            std::string format = Serializer::decodeString(&p.data[offset]);
+                            offset += format.length() + 4;
+                            std::string data = Serializer::decodeString(&p.data[offset]);
+                            offset += data.length() + 4;
+
+                            state.defs.models().models.insert({assetName, SerializedModel{assetName, data, format}});
+                        }
+
                         count++;
 
-                        texName = Serializer::decodeString(&p.data[offset]);
-                        offset += texName.length() + 4;
+                        t = static_cast<AssetType>(Serializer::decodeInt(&p.data[offset]));
+                        offset += 4;
                     }
 
                     statusText->setText(statusText->getText() + "Received " + to_string(count) + "x media files.\n");
-
-//                    state.defs.lua().mods.push_back(std::move(luaMod));'
                 }
                 else if (p.type == PacketType::MEDIA_DONE) {
                     components.get<GUIRect>("loadBar")->setScale({state.renderer.getWindow().getSize().x, 32});

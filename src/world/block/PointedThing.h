@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../def/block/BlockDef.h"
+#include "../../def/item/BlockDef.h"
 #include "../../def/LocalDefs.h"
 
 struct PointedThing {

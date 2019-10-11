@@ -31,5 +31,5 @@ public:
     void int_scale(float scale);
     float get_scale();
 
-    void set_display_type(const std::string& type, const std::string& arg);
+    void set_display_type(const std::string& type, const std::string& arg, sol::optional<std::string> arg2);
 };

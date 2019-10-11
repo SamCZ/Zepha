@@ -17,9 +17,9 @@ set(ZEPHA_SRC
     util/Timer.h
     def/LocalDefinitionAtlas.cpp
     def/LocalDefinitionAtlas.h
-    def/block/MeshPart.cpp
-    def/block/MeshPart.h
-    def/block/ShaderMod.h
+        def/item/MeshPart.cpp
+        def/item/MeshPart.h
+        def/item/ShaderMod.h
     game/scene/world/graph/BlockModelVertex.h
     game/scene/world/LocalWorld.cpp
     game/scene/world/LocalWorld.h
@@ -100,7 +100,7 @@ set(ZEPHA_SRC
     world/region/Region.h
     game/entity/world/WireframeEntity.cpp
     game/entity/world/WireframeEntity.h
-    def/block/SelectionBox.h
+        def/item/SelectionBox.h
     game/graph/drawable/Drawable.h
     game/graph/drawable/DrawableGroup.cpp
     game/graph/drawable/DrawableGroup.h
@@ -126,8 +126,8 @@ set(ZEPHA_SRC
     def/ServerDefs.h
     def/ServerDefinitionAtlas.cpp
     def/ServerDefinitionAtlas.h
-    def/block/BlockDef.cpp
-    def/block/BlockDef.h
+        def/item/BlockDef.cpp
+        def/item/BlockDef.h
     util/Dir.h
     def/DefinitionAtlas.h
     lua/LuaParser.cpp
@@ -173,12 +173,12 @@ set(ZEPHA_SRC
     lua/LuaModFile.h
     lua/LuaMod.h
     lua/LuaModConfig.h
-    def/texture/ServerTexture.h
-    def/texture/ServerTextureStorage.h
+        server/asset/ServerTexture.h
+        server/asset/AssetStorage.h
     lua/LuaMod.cpp
     def/ItemDef.h
     def/DefinitionAtlas.cpp
-    def/block/BlockModel.h
+        def/item/BlockModel.h
     lua/api/modules/sRegisterItem.h
     def/texture/Font.cpp
     def/texture/Font.h
@@ -222,14 +222,14 @@ set(ZEPHA_SRC
     server/world/ServerDimension.h
     lua/client/LocalRegisterItems.cpp
     lua/client/LocalRegisterItems.h
-    def/craftitem/CraftItemDef.cpp
-    def/craftitem/CraftItemDef.h
+        def/item/CraftItemDef.cpp
+        def/item/CraftItemDef.h
     lua/server/ServerRegisterItems.cpp
     lua/server/ServerRegisterItems.h
     lua/api/modules/cAddEntity.h
     game/entity/world/LuaEntity.cpp
     game/entity/world/LuaEntity.h
     lua/api/modules/cRegisterEntity.h
-)
+        def/model/SerializedModel.h server/asset/AssetType.h def/model/ModelStore.cpp def/model/ModelStore.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

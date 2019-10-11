@@ -8,7 +8,7 @@
 #include <vector>
 #include <iostream>
 #include <unordered_map>
-#include "block/BlockDef.h"
+#include "item/BlockDef.h"
 #include "DefinitionAtlas.h"
 
 class ServerDefinitionAtlas : public DefinitionAtlas {
