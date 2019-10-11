@@ -35,10 +35,10 @@ LocalLuaParser &LocalDefs::lua() {
     return luaApi;
 }
 
-void LocalDefs::update(float delta) {
+void LocalDefs::update(double delta) {
     this->delta += delta;
-    while (this->delta > 48) {
-        luaApi.update();
-        this->delta -= 48;
+    while (this->delta > 0.05f) {
+        luaApi.update(this->delta);
+        this->delta -= 0.05f;
     }
 }

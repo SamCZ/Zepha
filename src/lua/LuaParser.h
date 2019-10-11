@@ -29,7 +29,7 @@ public:
         float initial_timeout;
     };
 
-    virtual void update();
+    virtual void update(double delta);
 
     sol::table vecToTable(glm::vec3 vec);
 

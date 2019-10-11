@@ -20,11 +20,11 @@ public:
     LocalLuaParser& lua();
 
     void initLuaApi(LocalWorld &world, GameGui& gui);
-    void update(float delta);
+    void update(double delta);
 
     ~LocalDefs() = default;
 private:
-    float delta = 0;
+    double delta = 0;
 
     std::string tex_path;
 

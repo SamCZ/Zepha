@@ -21,6 +21,8 @@ void ClientNetworkInterpreter::init(std::vector<Drawable *> &entities, LocalWorl
 void ClientNetworkInterpreter::update(Player &player) {
     recvPackets = 0;
 
+//    enet_peer_ping(connection.getPeer());
+
     ENetEvent event;
     while (connection.pollEvents(&event)) {
         recvPackets++;

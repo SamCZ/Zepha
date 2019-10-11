@@ -229,6 +229,6 @@ set(ZEPHA_SRC
     game/entity/world/LuaEntity.cpp
     game/entity/world/LuaEntity.h
     lua/api/modules/cRegisterEntity.h
-        def/model/SerializedModel.h server/asset/AssetType.h def/model/ModelStore.h lua/api/modules/cRemoveEntity.h)
+        def/model/SerializedModel.h server/asset/AssetType.h def/model/ModelStore.h lua/api/modules/cRemoveEntity.h lua/api/functions/cUpdateEntities.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

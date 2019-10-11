@@ -143,9 +143,10 @@ void LocalDimension::setBlock(glm::vec3 pos, unsigned int block) {
     auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
 
     auto chunk = getChunk(chunkPos);
-    if (chunk != nullptr) chunk->setBlock(local, block);
-    chunk->dirty = true;
+    if (chunk == nullptr) return;
 
+    chunk->setBlock(local, block);
+    chunk->dirty = true;
     attemptMeshChunk(chunk);
 }
 

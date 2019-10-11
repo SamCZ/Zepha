@@ -31,6 +31,8 @@
 
 #include "../api/modules/cShowMenu.h"
 
+#include "../api/functions/cUpdateEntities.h"
+
 void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world, GameGui& gui) {
     //Load Base Libraries
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
@@ -52,6 +54,7 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, GameGui& gu
     //Create Zepha Table
     core = lua.create_table();
     lua["zepha"] = core;
+    core["__builtin"] = lua.create_table();
 
     //Load Types
     ClientApi::entity(lua, world);
@@ -77,6 +80,8 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, GameGui& gu
 
     ClientApi::show_menu(core, defs, gui);
 
+    ClientApi::update_entities(lua);
+
     //Sandbox the dofile function
     lua["dofile"] = sol::nil;
     lua.set_function("runfile", &LocalLuaParser::DoFileSandboxed, this);
@@ -91,6 +96,11 @@ void LocalLuaParser::loadMods() {
 void LocalLuaParser::registerDefinitions(LocalDefs &defs) {
     LocalRegisterBlocks(core, defs);
     LocalRegisterItems(core, defs);
+}
+
+void LocalLuaParser::update(double delta) {
+    LuaParser::update(delta);
+    core["__builtin"]["update_entities"](delta);
 }
 
 sol::protected_function_result LocalLuaParser::DoFileSandboxed(std::string file) {

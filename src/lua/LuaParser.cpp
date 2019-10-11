@@ -4,12 +4,12 @@
 
 #include "LuaParser.h"
 
-void LuaParser::update() {
+void LuaParser::update(double delta) {
     //Loop through and call delayed functions
     auto it = delayed_functions.begin();
     while (it != delayed_functions.end()) {
         DelayedFunction& f = *it;
-        f.timeout -= 0.048f;
+        f.timeout -= delta;
         if (f.timeout <= 0) {
             if (f.function(sol::as_args(f.args))) {
                 f.timeout = f.initial_timeout;

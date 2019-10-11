@@ -30,7 +30,9 @@ void Server::update() {
     while (handler.update(&event) && loop.elapsedNs() < interval_ns) {
         switch (event.type) {
             default:
-            case ENET_EVENT_TYPE_NONE: break;
+            case ENET_EVENT_TYPE_NONE:
+                std::cout << "Unknown packet type: " << event.type << std::endl;
+                break;
 
             case ENET_EVENT_TYPE_CONNECT: {
                 clientList.handleConnect(event);
@@ -66,7 +68,7 @@ void Server::update() {
     long sleep_for = interval_ns - loop.elapsedNs();
     if (sleep_for > 0) std::this_thread::sleep_for(std::chrono::nanoseconds(sleep_for));
 
-    deltaTime = loop.elapsedNs() / 1000000.0;
+    deltaTime = loop.elapsedNs() / 1000000.f / 1000.f;
     elapsedSeconds += deltaTime;
 }
 

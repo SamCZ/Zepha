@@ -20,6 +20,8 @@ public:
     void loadMods();
     void registerDefinitions(LocalDefs &defs);
 
+    void update(double delta) override;
+
     ~LocalLuaParser() = default;
 
     std::vector<LuaMod> mods;

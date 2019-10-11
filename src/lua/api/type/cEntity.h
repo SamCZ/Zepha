@@ -11,6 +11,8 @@
 namespace ClientApi {
     void entity(sol::state& lua, LocalWorld& world) {
         lua.new_usertype<LuaEntity>("LuaEntity",
+                "id", sol::readonly(&LuaEntity::id),
+
                 "set_pos", &LuaEntity::set_pos,
                 "int_pos", &LuaEntity::int_pos,
                 "get_pos", &LuaEntity::get_pos,

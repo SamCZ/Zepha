@@ -33,8 +33,8 @@ namespace ClientApi {
 
                 entityRef->set_display_type(*displayType, *displayObject, sol::optional<std::string>{});
 
-                core.get<sol::table>("entities").add(luaEntity);
-                entityDef.get<sol::function>("on_load")(luaEntity, staticData);
+                core.get<sol::table>("entities")[entityRef->id] = luaEntity;
+                entityDef.get<sol::function>("on_create")(luaEntity, staticData);
 
                 world.dimension.addLuaEntity(entityRef);
                 return luaEntity;
