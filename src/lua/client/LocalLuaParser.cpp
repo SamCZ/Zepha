@@ -27,6 +27,7 @@
 #include "../api/modules/cRemoveBlock.h"
 
 #include "../api/modules/cAddEntity.h"
+#include "../api/modules/cRemoveEntity.h"
 
 #include "../api/modules/cShowMenu.h"
 
@@ -72,6 +73,7 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, GameGui& gu
     ClientApi::remove_block(core, defs, world);
 
     ClientApi::add_entity(lua, core, defs, world);
+    ClientApi::remove_entity(lua, core, defs, world);
 
     ClientApi::show_menu(core, defs, gui);
 

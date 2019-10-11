@@ -37,8 +37,6 @@ public:
     void init();
     void update(double delta);
 
-    void addEntity(const sptr<LuaEntity>& entity);
-
     void loadChunkPacket(Packet p);
     std::shared_ptr<BlockChunk> getChunk(glm::vec3 chunkPos);
     void commitChunk(glm::vec3 pos, std::shared_ptr<BlockChunk>);
@@ -60,6 +58,8 @@ public:
 
     int lastGenUpdates = 0;
     int lastMeshUpdates = 0;
+
+    LocalDimension dimension;
 private:
     void finishChunks();
     void updateBlockDamages(double delta);
@@ -70,9 +70,6 @@ private:
     std::vector<BlockCrackEntity*> crackedBlocks;
     std::vector<ParticleEntity*> particles;
 
-    std::vector<sptr<LuaEntity>> luaEntities;
-
     ClientNetworkInterpreter* server = nullptr;
     WorldInterpolationStream* worldGenStream = nullptr;
-    LocalDimension dimension;
 };

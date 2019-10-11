@@ -217,8 +217,7 @@ set(ZEPHA_SRC
     game/graph/shader/EntityGeometryShader.cpp
     game/graph/shader/EntityGeometryShader.h
     game/scene/world/graph/ChunkRenderElem.h
-    game/scene/world/graph/ChunkRenderRef.h
-    server/world/ServerDimension.cpp
+        server/world/ServerDimension.cpp
     server/world/ServerDimension.h
     lua/client/LocalRegisterItems.cpp
     lua/client/LocalRegisterItems.h
@@ -230,6 +229,6 @@ set(ZEPHA_SRC
     game/entity/world/LuaEntity.cpp
     game/entity/world/LuaEntity.h
     lua/api/modules/cRegisterEntity.h
-        def/model/SerializedModel.h server/asset/AssetType.h def/model/ModelStore.h)
+        def/model/SerializedModel.h server/asset/AssetType.h def/model/ModelStore.h lua/api/modules/cRemoveEntity.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

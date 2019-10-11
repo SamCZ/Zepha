@@ -9,6 +9,8 @@
 #include "../../../game/scene/world/LocalWorld.h"
 
 namespace ClientApi {
+    static int local_entities_ind = 0;
+
     void add_entity(sol::state& lua, sol::table& core, LocalDefs& defs, LocalWorld& world) {
         core["entities"] = lua.create_table();
 
@@ -18,11 +20,11 @@ namespace ClientApi {
 
                 auto entity = std::make_unique<Entity>();
                 entity->setPos({pos.get<float>("x"), pos.get<float>("y"), pos.get<float>("z")});
-                auto entityRef = std::make_shared<LuaEntity>(std::move(entity), defs);
+                auto entityRef = std::make_shared<LuaEntity>(std::move(entity), local_entities_ind++, defs);
 
                 sol::table luaEntity = lua.create_table();
                 luaEntity[sol::metatable_key] = entityDef;
-                luaEntity["entity"] = entityRef;
+                luaEntity["object"] = entityRef;
                 luaEntity["name"] = entityStr;
 
                 auto displayType = luaEntity.get<sol::optional<std::string>>("display");
@@ -34,7 +36,7 @@ namespace ClientApi {
                 core.get<sol::table>("entities").add(luaEntity);
                 entityDef.get<sol::function>("on_load")(luaEntity, staticData);
 
-                world.addEntity(entityRef);
+                world.dimension.addLuaEntity(entityRef);
                 return luaEntity;
             }
             throw "Tried to create undefined entity.";

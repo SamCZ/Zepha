@@ -6,13 +6,14 @@
 
 LocalDimension::LocalDimension(LocalDefs &defs) : meshGenStream(std::make_unique<MeshGenStream>(defs, *this)) {}
 
-void LocalDimension::update(glm::vec3 playerPos) {
-    if (meshGenStream != nullptr) {
-        finishMeshes();
-        queueMeshes();
+void LocalDimension::update(double delta, glm::vec3 playerPos) {
+    finishMeshes();
+    queueMeshes();
+
+    for (auto& entities : luaEntities) {
+        entities->entity->update(delta);
     }
 
-    this->playerPos = playerPos;
     auto chunkPosOfPlayer = TransPos::chunkFromVec(playerPos);
 
     //TODO: Figure out why there are NULL CHUNKS in the map
@@ -76,7 +77,7 @@ void LocalDimension::queueMeshes() {
     }
 }
 
-int LocalDimension::render(Renderer &renderer) {
+int LocalDimension::renderChunks(Renderer &renderer) {
     int count = 0;
     for (auto &renderElement : renderElems) {
         FrustumAABB bbox(renderElement->getPos() * glm::vec3(TransPos::CHUNK_SIZE), glm::vec3(TransPos::CHUNK_SIZE));
@@ -86,6 +87,12 @@ int LocalDimension::render(Renderer &renderer) {
         }
     }
     return count;
+}
+
+void LocalDimension::renderEntities(Renderer &renderer) {
+    for (auto& entity : luaEntities) {
+        entity->entity->draw(renderer);
+    }
 }
 
 void LocalDimension::setChunk(sptr<BlockChunk> chunk) {
@@ -106,12 +113,25 @@ void LocalDimension::setMeshChunk(std::shared_ptr<MeshChunk> meshChunk) {
 
 void LocalDimension::removeMeshChunk(const glm::vec3& pos) {
     if (!renderRefs.count(pos)) return;
-    auto refIter = renderRefs.at(pos).iter;
+    auto refIter = renderRefs.at(pos);
 
     if (!refIter->get()->updateChunkUse(pos, false)) {
         renderElems.erase(refIter);
         renderRefs.erase(pos);
     }
+}
+
+void LocalDimension::addLuaEntity(sptr<LuaEntity> &entity) {
+    luaEntities.push_back(entity);
+    luaEntityRefs.emplace(entity->id, --luaEntities.end());
+}
+
+void LocalDimension::removeLuaEntity(sptr<LuaEntity> &entity) {
+    if (!luaEntityRefs.count(entity->id)) return;
+    auto refIter = luaEntityRefs.at(entity->id);
+
+    luaEntities.erase(refIter);
+    luaEntityRefs.erase(entity->id);
 }
 
 int LocalDimension::getMeshChunkCount() {

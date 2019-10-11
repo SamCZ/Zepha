@@ -10,9 +10,11 @@
 
 class LuaEntity {
 public:
-    LuaEntity(std::unique_ptr<Entity> entity, LocalDefs& defs) : entity(std::move(entity)), defs(defs) {}
+    LuaEntity(std::unique_ptr<Entity> entity, unsigned int id, LocalDefs& defs) :
+        entity(std::move(entity)), id(id), defs(defs) {}
 
     std::unique_ptr<Entity> entity = nullptr;
+    unsigned int id;
     LocalDefs& defs;
 
     void set_pos(const sol::table& pos);
