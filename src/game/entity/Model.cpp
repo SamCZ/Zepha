@@ -153,43 +153,46 @@ void Model::loadAnimations(const aiScene *scene) {
         animation.ticksPerSecond = aiAnim->mTicksPerSecond;
 
         animation.channels.resize(bones.size());
-        assert(aiAnim->mNumChannels <= bones.size());
 
         for (unsigned int j = 0; j < aiAnim->mNumChannels; j++) {
             const aiNodeAnim* aiChannel = aiAnim->mChannels[j];
 
             int index = -1;
             for (unsigned int k = 0; k < bones.size(); k++) {
-                if (std::string(aiChannel->mNodeName.data) == bones[k].name) {
+                if (std::string {aiChannel->mNodeName.data} == bones[k].name) {
                     index = k;
                     continue;
                 }
             }
 
-            assert(index != -1);
-
-            animation.channels[index] = AnimChannel(static_cast<unsigned int>(index), aiChannel->mNodeName.data);
-            AnimChannel& channel = animation.channels[index];
-
-            //Copy Rotation Keys
-            channel.rotationKeys.reserve(aiChannel->mNumRotationKeys);
-            for (unsigned int k = 0; k < aiChannel->mNumRotationKeys; k++) {
-                aiQuatKey* key = &aiChannel->mRotationKeys[k];
-                channel.rotationKeys.emplace_back(key->mTime, key->mValue);
+            if (index == -1) {
+//                std::cout << aiChannel->mNodeName.data << std::endl;
             }
+            else {
+                animation.channels[index] = AnimChannel(static_cast<unsigned int>(index), aiChannel->mNodeName.data);
+                AnimChannel &channel = animation.channels[index];
 
-            //Copy Position Keys
-            channel.positionKeys.reserve(aiChannel->mNumPositionKeys);
-            for (unsigned int k = 0; k < aiChannel->mNumPositionKeys; k++) {
-                aiVectorKey* key = &aiChannel->mPositionKeys[k];
-                channel.positionKeys.emplace_back(key->mTime, glm::vec3 {key->mValue.x, key->mValue.y, key->mValue.z});
-            }
+                //Copy Rotation Keys
+                channel.rotationKeys.reserve(aiChannel->mNumRotationKeys);
+                for (unsigned int k = 0; k < aiChannel->mNumRotationKeys; k++) {
+                    aiQuatKey *key = &aiChannel->mRotationKeys[k];
+                    channel.rotationKeys.emplace_back(key->mTime, key->mValue);
+                }
 
-            //Copy Scale Keys
-            channel.scaleKeys.reserve(aiChannel->mNumScalingKeys);
-            for (unsigned int k = 0; k < aiChannel->mNumScalingKeys; k++) {
-                aiVectorKey* key = &aiChannel->mScalingKeys[k];
-                channel.scaleKeys.emplace_back(key->mTime, glm::vec3 {key->mValue.x, key->mValue.y, key->mValue.z});
+                //Copy Position Keys
+                channel.positionKeys.reserve(aiChannel->mNumPositionKeys);
+                for (unsigned int k = 0; k < aiChannel->mNumPositionKeys; k++) {
+                    aiVectorKey *key = &aiChannel->mPositionKeys[k];
+                    channel.positionKeys.emplace_back(key->mTime,
+                                                      glm::vec3{key->mValue.x, key->mValue.y, key->mValue.z});
+                }
+
+                //Copy Scale Keys
+                channel.scaleKeys.reserve(aiChannel->mNumScalingKeys);
+                for (unsigned int k = 0; k < aiChannel->mNumScalingKeys; k++) {
+                    aiVectorKey *key = &aiChannel->mScalingKeys[k];
+                    channel.scaleKeys.emplace_back(key->mTime, glm::vec3{key->mValue.x, key->mValue.y, key->mValue.z});
+                }
             }
         }
     }
@@ -202,7 +205,10 @@ void Model::calcBoneHeirarchy(aiNode *node, const aiScene *scene, int parentBone
         if (bone.name == std::string(node->mName.data)) {
             bone.parent = parentBoneIndex;
             index = bone.index;
-            if (parentBoneIndex == -1) rootBone = &bone;
+            if (parentBoneIndex == -1) {
+                rootBone = &bone;
+                std::cout << bone.name << std::endl;
+            }
             else bones[bone.parent].children.push_back(&bone);
             break;
         }

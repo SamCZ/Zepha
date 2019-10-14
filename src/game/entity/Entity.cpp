@@ -15,10 +15,13 @@ Entity::Entity(std::shared_ptr<Model> model) : animState(*model), model(model) {
 void Entity::setModel(std::shared_ptr<Model> model) {
     animState = AnimationState(*model);
     this->model = std::move(model);
+    animState.setPlaying(true);
 }
 
 void Entity::update(double delta) {
     animState.update(delta);
+
+    if (animState.getFrame() > 295  ) animState.setFrame(1);
 
     float factor = static_cast<float>(fmin(delta * 8, 1));
 

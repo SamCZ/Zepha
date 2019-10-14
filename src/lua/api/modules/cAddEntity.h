@@ -29,12 +29,15 @@ namespace ClientApi {
 
                 auto displayType = luaEntity.get<sol::optional<std::string>>("display");
                 auto displayObject = luaEntity.get<sol::optional<std::string>>("display_object");
+                auto displayTexture = luaEntity.get<sol::optional<std::string>>("display_texture");
                 if (!displayType || !displayObject) throw "Missing display or display_object field.";
+                if (*displayType == "model" && !displayTexture) throw "Missing model display_texture field.";
 
-                entityRef->set_display_type(*displayType, *displayObject, sol::optional<std::string>{});
+                entityRef->set_display_type(*displayType, *displayObject, displayTexture);
 
                 core.get<sol::table>("entities")[entityRef->id] = luaEntity;
-                entityDef.get<sol::function>("on_create")(luaEntity, staticData);
+                auto on_create = entityDef.get<sol::optional<sol::function>>("on_create");
+                if (on_create) (*on_create)(luaEntity, staticData);
 
                 world.dimension.addLuaEntity(entityRef);
                 return luaEntity;

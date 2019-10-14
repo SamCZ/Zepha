@@ -99,5 +99,70 @@ namespace Util {
 
         return color;
     }
+
+    static std::string getKeyStr(ushort key) {
+        switch (key) {
+            case 32: return " ";
+            case 39: return "'";
+            case 44: return ",";
+            case 45: return "-";
+            case 46: return ".";
+            case 47: return "/";
+            case 48: return "0";
+            case 49: return "1";
+            case 50: return "2";
+            case 51: return "3";
+            case 52: return "4";
+            case 53: return "5";
+            case 54: return "6";
+            case 55: return "7";
+            case 56: return "8";
+            case 57: return "9";
+            case 59: return ";";
+            case 61: return "=";
+            case 65: return "a";
+            case 66: return "b";
+            case 67: return "c";
+            case 68: return "d";
+            case 69: return "e";
+            case 70: return "f";
+            case 71: return "g";
+            case 72: return "h";
+            case 73: return "i";
+            case 74: return "j";
+            case 75: return "k";
+            case 76: return "l";
+            case 77: return "m";
+            case 78: return "n";
+            case 79: return "o";
+            case 80: return "p";
+            case 81: return "q";
+            case 82: return "r";
+            case 83: return "s";
+            case 84: return "t";
+            case 85: return "u";
+            case 86: return "v";
+            case 87: return "w";
+            case 88: return "x";
+            case 89: return "y";
+            case 90: return "z";
+            case 91: return "[";
+            case 92: return "\\";
+            case 93: return "]";
+            case 96: return "`";
+            case 161: return "world_1";
+            case 162: return "world_2";
+            case 256: return "escape";
+            case 257: return "enter";
+            case 258: return "tab";
+            case 259: return "backspace";
+            case 260: return "insert";
+            case 261: return "delete";
+            case 262: return "right";
+            case 263: return "left";
+//            case 262: return "right";
+//            case 262: return "right";
+        }
+    }
 };
 

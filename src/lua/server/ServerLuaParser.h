@@ -10,6 +10,7 @@
 #include "../../server/asset/ServerTexture.h"
 #include <cute_files/cute_files.h>
 #include <json/json.hpp>
+#include <iomanip>
 
 using nlohmann::json;
 

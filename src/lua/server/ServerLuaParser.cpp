@@ -2,13 +2,16 @@
 // Created by aurailus on 11/06/19.
 //
 
-#include <iomanip>
 #include <gzip/compress.hpp>
+
 #include "ServerLuaParser.h"
 #include "ServerRegisterBlocks.h"
 #include "ServerRegisterItems.h"
 
+
 #include "../../def/ServerDefs.h"
+
+
 
 #include "../api/modules/sDump.h"
 #include "../api/modules/sPrintE.h"
@@ -19,10 +22,13 @@
 #include "../api/modules/sRegisterBlock.h"
 #include "../api/modules/sRegisterBlockmodel.h"
 #include "../api/modules/sRegisterItem.h"
+#include "../api/modules/sRegisterEntity.h"
 
 #include "../api/modules/sSetBlock.h"
 #include "../api/modules/sGetBlock.h"
 #include "../api/modules/sRemoveBlock.h"
+
+#include "../api/modules/sRegisterKeybind.h"
 
 void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world, std::string path) {
     //Load Base Libraries
@@ -56,10 +62,13 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
     ServerApi::register_block(lua, core);
     ServerApi::register_blockmodel(lua, core);
     ServerApi::register_item(lua, core);
+    ServerApi::register_entity(lua, core);
 
     ServerApi::get_block(core, defs, world);
     ServerApi::set_block(core, defs, world);
     ServerApi::remove_block(core, defs, world);
+
+    ServerApi::register_keybind(lua, core);
 
     //Sandbox the dofile function
     lua["dofile"] = sol::nil;

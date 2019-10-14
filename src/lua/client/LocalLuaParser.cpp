@@ -5,6 +5,7 @@
 #include "LocalLuaParser.h"
 #include "LocalRegisterBlocks.h"
 #include "LocalRegisterItems.h"
+#include "LocalRegisterKeybinds.h"
 
 #include "../../def/LocalDefs.h"
 #include "../../game/hud/GameGui.h"
@@ -30,6 +31,7 @@
 #include "../api/modules/cRemoveEntity.h"
 
 #include "../api/modules/cShowMenu.h"
+#include "../api/modules/cRegisterKeybind.h"
 
 #include "../api/functions/cUpdateEntities.h"
 
@@ -79,6 +81,7 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, GameGui& gu
     ClientApi::remove_entity(lua, core, defs, world);
 
     ClientApi::show_menu(core, defs, gui);
+    ClientApi::register_keybind(lua, core);
 
     ClientApi::update_entities(lua);
 
@@ -96,6 +99,7 @@ void LocalLuaParser::loadMods() {
 void LocalLuaParser::registerDefinitions(LocalDefs &defs) {
     LocalRegisterBlocks(core, defs);
     LocalRegisterItems(core, defs);
+    LocalRegisterKeybinds(core, defs);
 }
 
 void LocalLuaParser::update(double delta) {

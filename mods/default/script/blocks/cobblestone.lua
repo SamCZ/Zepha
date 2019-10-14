@@ -1,7 +1,7 @@
-zepha.register_block("default:stone", {
+zepha.register_block("default:cobblestone", {
     name = "Stone",
     model = "default:block",
-    textures = {"zeus:default:stone"},
+    textures = {"zeus:default:cobblestone"},
     toughness = {
         hand = 14,
         pick = 3

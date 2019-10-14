@@ -104,6 +104,8 @@ void Renderer::beginChunkDeferredCalls() {
 }
 
 void Renderer::beginEntityDeferredCalls() {
+//    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
     currentModelUniform = entity.uniforms.model;
 
     entity.use();
@@ -112,6 +114,8 @@ void Renderer::beginEntityDeferredCalls() {
 }
 
 void Renderer::endDeferredCalls() {
+//    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+
     activeTexture = nullptr;
 
     glBindFramebuffer(GL_FRAMEBUFFER, ssao.fbo);
