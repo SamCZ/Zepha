@@ -52,7 +52,10 @@ int Model::fromSerialized(const SerializedModel& model, const std::vector<std::s
 
 void Model::getTransformsByFrame(double frame, std::tuple<int, int> bounds, std::vector<glm::mat4>& transforms) {
     transforms.resize(bones.size());
-    if (rootBone) calcBoneTransformation(frame, *rootBone, glm::mat4(1.0f), bounds, transforms);
+
+    if (!rootBones.empty())
+        for (auto bone : rootBones)
+            calcBoneTransformation(frame, *bone, glm::mat4(1.0f), bounds, transforms);
 }
 
 //void Model::getTransformsByTime(double time, std::vector<glm::mat4>& transforms) {
@@ -205,10 +208,7 @@ void Model::calcBoneHeirarchy(aiNode *node, const aiScene *scene, int parentBone
         if (bone.name == std::string(node->mName.data)) {
             bone.parent = parentBoneIndex;
             index = bone.index;
-            if (parentBoneIndex == -1) {
-                rootBone = &bone;
-                std::cout << bone.name << std::endl;
-            }
+            if (parentBoneIndex == -1) rootBones.push_back(&bone);
             else bones[bone.parent].children.push_back(&bone);
             break;
         }

@@ -99,12 +99,17 @@ void LocalLuaParser::loadMods() {
 void LocalLuaParser::registerDefinitions(LocalDefs &defs) {
     LocalRegisterBlocks(core, defs);
     LocalRegisterItems(core, defs);
-    LocalRegisterKeybinds(core, defs);
+    LocalRegisterKeybinds(core, defs, manager);
 }
 
-void LocalLuaParser::update(double delta) {
-    LuaParser::update(delta);
-    core["__builtin"]["update_entities"](delta);
+void LocalLuaParser::update(double delta, bool* keys) {
+    this->delta += delta;
+    while (this->delta > 0.05f) {
+        core["__builtin"]["update_entities"](delta);
+        manager.triggerKeybinds();
+        this->delta -= 0.05f;
+    }
+    manager.update(keys);
 }
 
 sol::protected_function_result LocalLuaParser::DoFileSandboxed(std::string file) {

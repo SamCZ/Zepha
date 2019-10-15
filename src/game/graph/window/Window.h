@@ -33,14 +33,13 @@ public:
     ~Window();
 
     InputManager input;
+    bool keys[1024] {};
 private:
     GLFWwindow *mainWindow;
 
     GLint width, height;
     GLint centerX, centerY;
     bool mouseIsLocked, forceMouseUnlocked;
-
-    bool keys[1024] {};
 
     GLint bufferWidth, bufferHeight;
 

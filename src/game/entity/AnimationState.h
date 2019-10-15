@@ -20,7 +20,7 @@ public:
     void setAnimation(const std::string& animationName, double interpolateTime, bool loop);
     void setPlaying(bool playing);
 
-    void setFrame(double frameTime);
+    void setFrame(double frame);
     double getFrame();
     std::tuple<int, int> getBounds();
 

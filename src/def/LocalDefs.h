@@ -20,12 +20,10 @@ public:
     LocalLuaParser& lua();
 
     void initLuaApi(LocalWorld &world, GameGui& gui);
-    void update(double delta);
+    void update(double delta, bool* keys);
 
     ~LocalDefs() = default;
 private:
-    double delta = 0;
-
     std::string tex_path;
 
     TextureAtlas textureAtlas;

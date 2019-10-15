@@ -229,6 +229,6 @@ set(ZEPHA_SRC
     game/entity/world/LuaEntity.cpp
     game/entity/world/LuaEntity.h
     lua/api/modules/cRegisterEntity.h
-        def/model/SerializedModel.h server/asset/AssetType.h def/model/ModelStore.h lua/api/modules/cRemoveEntity.h lua/api/functions/cUpdateEntities.h lua/api/modules/sRegisterEntity.h lua/api/modules/cRegisterKeybind.h lua/client/LocalRegisterKeybinds.cpp lua/client/LocalRegisterKeybinds.h lua/api/modules/sRegisterKeybind.h)
+        def/model/SerializedModel.h server/asset/AssetType.h def/model/ModelStore.h lua/api/modules/cRemoveEntity.h lua/api/functions/cUpdateEntities.h lua/api/modules/sRegisterEntity.h lua/api/modules/cRegisterKeybind.h lua/client/LocalRegisterKeybinds.cpp lua/client/LocalRegisterKeybinds.h lua/api/modules/sRegisterKeybind.h lua/client/LuaInputManager.cpp lua/client/LuaInputManager.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

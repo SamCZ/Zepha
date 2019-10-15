@@ -21,7 +21,7 @@ void Entity::setModel(std::shared_ptr<Model> model) {
 void Entity::update(double delta) {
     animState.update(delta);
 
-    if (animState.getFrame() > 295  ) animState.setFrame(1);
+    if (animState.getFrame() > 394) animState.setFrame(302);
 
     float factor = static_cast<float>(fmin(delta * 8, 1));
 

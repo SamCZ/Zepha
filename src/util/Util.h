@@ -102,6 +102,7 @@ namespace Util {
 
     static std::string getKeyStr(ushort key) {
         switch (key) {
+            default: return "";
             case 32: return " ";
             case 39: return "'";
             case 44: return ",";
@@ -150,8 +151,8 @@ namespace Util {
             case 92: return "\\";
             case 93: return "]";
             case 96: return "`";
-            case 161: return "world_1";
-            case 162: return "world_2";
+            case 161: return "world1";
+            case 162: return "world2";
             case 256: return "escape";
             case 257: return "enter";
             case 258: return "tab";
@@ -160,8 +161,66 @@ namespace Util {
             case 261: return "delete";
             case 262: return "right";
             case 263: return "left";
-//            case 262: return "right";
-//            case 262: return "right";
+            case 264: return "down";
+            case 265: return "up";
+            case 266: return "pageup";
+            case 267: return "pagedown";
+            case 268: return "home";
+            case 269: return "end";
+            case 280: return "capslock";
+            case 281: return "scrolllock";
+            case 282: return "numlock";
+            case 283: return "printscreen";
+            case 284: return "pause";
+            case 290: return "f1";
+            case 291: return "f2";
+            case 292: return "f3";
+            case 293: return "f4";
+            case 294: return "f5";
+            case 295: return "f6";
+            case 296: return "f7";
+            case 297: return "f8";
+            case 298: return "f9";
+            case 299: return "f10";
+            case 300: return "f11";
+            case 301: return "f12";
+            case 302: return "f13";
+            case 303: return "f14";
+            case 304: return "f15";
+            case 305: return "f16";
+            case 306: return "f17";
+            case 307: return "f18";
+            case 308: return "f19";
+            case 309: return "f20";
+            case 310: return "f21";
+            case 311: return "f22";
+            case 312: return "f23";
+            case 313: return "f24";
+            case 314: return "f25";
+            case 320: return "num0";
+            case 321: return "num1";
+            case 322: return "num2";
+            case 323: return "num3";
+            case 324: return "num4";
+            case 325: return "num5";
+            case 326: return "num6";
+            case 327: return "num7";
+            case 328: return "num8";
+            case 329: return "num9";
+            case 330: return "num.";
+            case 331: return "num/";
+            case 332: return "num*";
+            case 333: return "num-";
+            case 334: return "num+";
+            case 335: return "numenter";
+            case 336: return "num=";
+            case 341: return "leftshift";
+            case 342: return "leftctrl";
+            case 343: return "leftalt";
+            case 344: return "rightshift";
+            case 345: return "rightctrl";
+            case 346: return "rightalt";
+            case 348: return "menu";
         }
     }
 };

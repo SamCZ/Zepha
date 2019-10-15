@@ -4,7 +4,6 @@
 
 #pragma once
 
-
 class InputManager {
 public:
     InputManager();
@@ -28,4 +27,3 @@ private:
     bool leftPressed, leftDown, leftReleased;
     bool rightReleased, rightDown, rightPressed;
 };
-

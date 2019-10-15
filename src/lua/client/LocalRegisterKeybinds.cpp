@@ -4,7 +4,7 @@
 
 #include "LocalRegisterKeybinds.h"
 
-LocalRegisterKeybinds::LocalRegisterKeybinds(sol::table& core, LocalDefs &defs) {
+LocalRegisterKeybinds::LocalRegisterKeybinds(sol::table& core, LocalDefs &defs, LuaInputManager& manager) {
     //Register all of the items in the zepha.registered_keybinds table.
     for (auto keybindRef : core.get<sol::table>("registered_keybinds")) {
         //Get the unique identifier of the item
@@ -12,35 +12,14 @@ LocalRegisterKeybinds::LocalRegisterKeybinds(sol::table& core, LocalDefs &defs) 
         //Make sure the keybind table is actually a table, and get it.
         if (!keybindRef.second || !keybindRef.second.is<sol::table>()) throw identifier + "'s definition table is not a table!";
         sol::table keybindTbl = keybindRef.second.as<sol::table>();
+        ushort def = keybindTbl.get<ushort>("default");
 
-        std::cout << identifier << ": " << keybindTbl.get<std::string>("default") << std::endl;
+        std::cout << identifier << ": " << def << std::endl;
 
-//        for ()
-//
-//        //Get item properties and throw errors if required ones are missing
-//        auto nameOpt      = itemTable.get<sol::optional<std::string>>("name");
-//        auto texturesOpt  = itemTable.get<sol::optional<sol::table>> ("textures");
-//
-//        if (!nameOpt) throw identifier + " is missing name property!";
-//        if (!texturesOpt) throw identifier + " is missing textures property!";
-//
-//        //Convert Textures Table to Vector
-//        std::vector<std::string> textures;
-//        std::vector<sptr<AtlasRef>> textureRefs;
-//        for (auto pair : *texturesOpt) {
-//            if (!pair.second.is<std::string>()) throw "Textures table has non-string value!";
-//            textures.push_back(pair.second.as<std::string>());
-//            textureRefs.push_back(defs.textures().getTextureRef(pair.second.as<std::string>()));
-//        }
-//        if (textures.size() == 0) {
-//            textures.push_back("_missing");
-//            textureRefs.push_back(defs.textures().getTextureRef("_missing"));
-//        }
-//
-//        CraftItemDef* itemDef = new CraftItemDef(identifier, defs.defs().size(), *nameOpt, textures, textureRefs);
-//        itemDef->createModel(defs.textures());
-//
-//        //Add Block Definition to the Atlas
-//        defs.defs().registerDef(itemDef);
+        auto onPress = keybindTbl.get<sol::optional<sol::function>>("on_press");
+        auto onRelease = keybindTbl.get<sol::optional<sol::function>>("on_release");
+
+        if (onPress) manager.bindOnDown(def, *onPress);
+        if (onRelease) manager.bindOnUp(def, *onRelease);
     }
 }

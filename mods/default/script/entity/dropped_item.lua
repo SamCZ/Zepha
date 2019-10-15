@@ -10,12 +10,27 @@ zepha.register_entity("default:test", {
     display_object = "zeus:default:player",
     display_texture = "zeus:default:player",
     on_create = function(self)
-        self.object:set_scale(1/4)
+--        self.object:set_scale(1/4)
+    end,
+    on_update = function(self)
+--        local pos = self.object.pos
+--        pos.z = pos.z + 0.08
+--        if pos.z > 13 then
+--            pos.z = 0
+--        end
+--        self.object:int_pos(pos)
+--        self.object.yaw = self.object.yaw + 1;
+
+        self.object:int_pos({
+            x = self.object.pos.x + 0.08 * math.sin(math.rad(self.object.yaw)),
+            y = self.object.pos.y,
+            z = self.object.pos.z + 0.08 * math.cos(math.rad(self.object.yaw))})
+        self.object:int_yaw(self.object.yaw + 2)
     end
 })
 
 if not zepha.is_server() then
-    zepha.add_entity("default:test", {x = 10, y = 64, z = 0})
+    zepha.add_entity("default:test", {x = 10, y = 35, z = 0})
 end
 
 zepha.register_entity("default:dropped_item", {

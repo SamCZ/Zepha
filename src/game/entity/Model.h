@@ -51,7 +51,7 @@ private:
     unsigned int findScaleIndex(double animTime, AnimChannel& channel);
 
     ModelAnimation animation {};
-    ModelBone* rootBone = nullptr;
+    std::vector<ModelBone*> rootBones {};
     std::vector<ModelBone> bones {};
     std::vector<std::shared_ptr<AtlasRef>> textures {};
 

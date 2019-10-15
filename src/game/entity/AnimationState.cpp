@@ -36,8 +36,8 @@ void AnimationState::setPlaying(bool playing) {
     this->playing = playing;
 }
 
-void AnimationState::setFrame(double frameTime) {
-    currentFrame = frameTime;
+void AnimationState::setFrame(double frame) {
+    currentFrame = frame;
 }
 
 double AnimationState::getFrame() {

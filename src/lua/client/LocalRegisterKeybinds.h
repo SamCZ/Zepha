@@ -8,5 +8,5 @@
 
 class LocalRegisterKeybinds {
 public:
-    LocalRegisterKeybinds(sol::table& core, LocalDefs &defs);
+    LocalRegisterKeybinds(sol::table& core, LocalDefs &defs, LuaInputManager& manager);
 };

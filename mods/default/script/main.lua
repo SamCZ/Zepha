@@ -6,22 +6,16 @@ runfile(_PATH .. "entity/_index")
 
 zepha.register_keybind("open_inventory", {
     description = "Open Inventory",
-    default = "E",
+    default = zepha.keys.e,
     on_press = function()
-        print("Inventory Key Down")
-    end,
-    on_release = function()
-        print("Inventory Key Up")
+        print("Inventory Toggle")
     end
 })
 
 zepha.register_keybind("open_chat", {
     description = "Open Chat",
-    default = "T",
+    default = zepha.keys.t,
     on_press = function()
-        print("Chat Key Down")
-    end,
-    on_release = function()
-        print("Chat Key Up")
+        print("Chat Toggle")
     end
 })

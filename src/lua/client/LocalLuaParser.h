@@ -7,6 +7,7 @@
 #include <cute_files/cute_files.h>
 #include "../LuaParser.h"
 #include "../LuaMod.h"
+#include "LuaInputManager.h"
 
 class LocalDefs;
 class LocalWorld;
@@ -20,12 +21,14 @@ public:
     void loadMods();
     void registerDefinitions(LocalDefs &defs);
 
-    void update(double delta) override;
+    void update(double delta, bool* keys);
 
     ~LocalLuaParser() = default;
 
     std::vector<LuaMod> mods;
     std::vector<std::string> modsOrder;
 private:
+    double delta = 0;
     sol::protected_function_result DoFileSandboxed(std::string file);
+    LuaInputManager manager;
 };
