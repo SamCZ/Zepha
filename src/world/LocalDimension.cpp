@@ -10,9 +10,8 @@ void LocalDimension::update(double delta, glm::vec3 playerPos) {
     finishMeshes();
     queueMeshes();
 
-    for (auto& entities : luaEntities) {
-        entities->entity->update(delta);
-    }
+    for (auto& entities : luaEntities) entities->entity->update(delta);
+    for (auto& playerEnt : playerEntities) playerEnt.update(delta);
 
     auto chunkPosOfPlayer = TransPos::chunkFromVec(playerPos);
 
@@ -90,9 +89,8 @@ int LocalDimension::renderChunks(Renderer &renderer) {
 }
 
 void LocalDimension::renderEntities(Renderer &renderer) {
-    for (auto& entity : luaEntities) {
-        entity->entity->draw(renderer);
-    }
+    for (auto& entity : luaEntities) entity->entity->draw(renderer);
+    for (auto& entity : playerEntities) entity.draw(renderer);
 }
 
 void LocalDimension::setChunk(sptr<BlockChunk> chunk) {

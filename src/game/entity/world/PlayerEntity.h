@@ -10,9 +10,6 @@
 
 class PlayerEntity : public Entity {
 public:
-    PlayerEntity(glm::vec3 pos, int peer_id, std::shared_ptr<AtlasRef> playerFrontTex, std::shared_ptr<AtlasRef> playerBackTex, std::shared_ptr<AtlasRef> shadowTex);
-
+    PlayerEntity(glm::vec3 pos, int peer_id, const std::shared_ptr<Model>& playerModel);
     int peer_id;
-private:
-    std::shared_ptr<AtlasRef> playerFrontTex, playerBackTex, shadowTex;
 };

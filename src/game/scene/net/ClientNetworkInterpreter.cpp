@@ -6,22 +6,17 @@
 
 ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, LocalDefs &defs) :
     connection(connection),
-    entities(new DrawableGroup()),
     world(nullptr),
+    playerModel(std::make_shared<Model>()){
+    playerModel->fromSerialized(defs.models().models["zeus:default:player"], {defs.textures().getTextureRef("zeus:default:player")});
+}
 
-    playerFrontTex(defs.textures().getTextureRef("player_front")),
-    playerBackTex(defs.textures().getTextureRef("player_back")),
-    shadowTex(defs.textures().getTextureRef("player_shadow")) {}
-
-void ClientNetworkInterpreter::init(std::vector<Drawable *> &entities, LocalWorld *world) {
-    entities.push_back(this->entities);
+void ClientNetworkInterpreter::init(LocalWorld *world) {
     this->world = world;
 }
 
 void ClientNetworkInterpreter::update(Player &player) {
     recvPackets = 0;
-
-//    enet_peer_ping(connection.getPeer());
 
     ENetEvent event;
     while (connection.pollEvents(&event)) {
@@ -52,27 +47,20 @@ void ClientNetworkInterpreter::update(Player &player) {
                         auto playerAngle = Serializer::decodeFloat(&p.data[16]);
 
                         bool found = false;
-                        for (auto ent : entities->getChildren()) {
-                            auto playerEntity = static_cast<PlayerEntity*>(ent);
-
-                            if (playerEntity->peer_id == peer_id) {
-
-                                playerEntity->setPos(playerPos);
-                                playerEntity->setAngle(-playerAngle);
-
+                        for (auto& ent : world->dimension.playerEntities) {
+                            if (ent.peer_id == peer_id) {
+                                ent.interpPos(playerPos);
+                                ent.interpAngle(-playerAngle + 90);
                                 found = true;
                                 break;
                             }
                         }
-
-                        if (!found) {
-                            entities->addDrawable(new PlayerEntity(playerPos, peer_id, playerFrontTex, playerBackTex, shadowTex));
-                        }
+                        if (!found) world->dimension.playerEntities.emplace_back(playerPos, peer_id, playerModel);
                         break;
                     }
                     case PacketType::BLOCK_SET: {
                         auto pos = Serializer::decodeIntVec3(&p.data[0]);
-                        auto block = Serializer::decodeInt(&p.data[12]);
+                        uint block = static_cast<uint>(Serializer::decodeInt(&p.data[12]));
                         world->setBlock(pos, block);
                         break;
                     }
@@ -105,7 +93,7 @@ void ClientNetworkInterpreter::update(Player &player) {
     //Send Player Position
     Packet p(PacketType::PLAYER);
     Serializer::encodeFloat(p.data, player.getPos().x);
-    Serializer::encodeFloat(p.data, player.getPos().y - Player::EYE_HEIGHT);
+    Serializer::encodeFloat(p.data, player.getPos().y);
     Serializer::encodeFloat(p.data, player.getPos().z);
     Serializer::encodeFloat(p.data, player.getYaw());
     p.sendTo(connection.getPeer(), PacketChannel::PLAYER);

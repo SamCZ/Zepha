@@ -60,11 +60,11 @@ public:
     int lastMeshUpdates = 0;
 
     LocalDimension dimension;
+    LocalDefs& defs;
 private:
     void finishChunks();
     void updateBlockDamages(double delta);
 
-    LocalDefs& defs;
     glm::vec3* playerPos;
 
     std::vector<BlockCrackEntity*> crackedBlocks;

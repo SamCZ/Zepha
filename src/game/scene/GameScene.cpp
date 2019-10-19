@@ -25,10 +25,8 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     gui.push_back(&debugGui);
 
     debugGui.initItemDisplays(defs);
-
     entities.push_back(&player);
-
-    server.init(entities, &world);
+    server.init(&world);
 
     Packet r(PacketType::CONNECT_DATA_RECVD);
     r.sendTo(state.connection.getPeer(), PacketChannel::CONNECT);

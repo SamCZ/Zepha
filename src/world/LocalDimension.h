@@ -11,6 +11,7 @@
 #include "../game/scene/world/graph/MeshChunk.h"
 #include "../game/scene/world/MeshGenStream.h"
 #include "../game/entity/world/LuaEntity.h"
+#include "../game/entity/world/PlayerEntity.h"
 
 class LocalDimension {
 public:
@@ -34,6 +35,7 @@ public:
     std::shared_ptr<BlockChunk> getChunk(glm::vec3 pos);
 
     int lastMeshUpdates = 0;
+    std::vector<PlayerEntity> playerEntities;
 private:
     typedef std::unordered_map<glm::vec3, std::shared_ptr<BlockChunk>, VecUtils::compareFunc> block_chunk_map;
     typedef std::list<sptr<ChunkRenderElem>>::iterator chunk_ref;

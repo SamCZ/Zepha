@@ -23,7 +23,7 @@ public:
     ClientNetworkInterpreter(ServerConnection& connection, LocalDefs& defs);
     ClientNetworkInterpreter(const ClientNetworkInterpreter& other) = default;
 
-    void init(std::vector<Drawable*> &entities, LocalWorld* world);
+    void init(LocalWorld* world);
     void update(Player &player);
     void cleanup();
 
@@ -38,8 +38,8 @@ private:
     std::shared_ptr<AtlasRef> playerFrontTex, playerBackTex, shadowTex;
     int id = 0;
 
-    DrawableGroup* entities = nullptr;
     LocalWorld* world = nullptr;
     ServerConnection& connection;
+    sptr<Model> playerModel;
 };
 
