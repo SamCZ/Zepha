@@ -217,13 +217,10 @@ void Player::moveCollide() {
             glm::vec3 newPos = glm::vec3(pos);
             newPos.z += move * (vel.z < 0 ? -1 : 1);
 
-            if (!collides(newPos))
-                pos = newPos;
+            if (!collides(newPos)) pos = newPos;
         }
     }
-    else {
-        pos += vel;
-    }
+    else pos += vel;
 }
 
 glm::vec3 Player::getPos() {
@@ -243,8 +240,16 @@ void Player::setVel(glm::vec3 vel) {
     this->vel = vel;
 }
 
+void Player::setYaw(float yaw) {
+    this->yaw = yaw;
+}
+
 float Player::getYaw() {
     return yaw;
+}
+
+void Player::setPitch(float pitch) {
+    this->pitch = pitch;
 }
 
 float Player::getPitch() {

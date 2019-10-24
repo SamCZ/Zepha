@@ -14,8 +14,6 @@ LocalRegisterKeybinds::LocalRegisterKeybinds(sol::table& core, LocalDefs &defs, 
         sol::table keybindTbl = keybindRef.second.as<sol::table>();
         ushort def = keybindTbl.get<ushort>("default");
 
-        std::cout << identifier << ": " << def << std::endl;
-
         auto onPress = keybindTbl.get<sol::optional<sol::function>>("on_press");
         auto onRelease = keybindTbl.get<sol::optional<sol::function>>("on_release");
 

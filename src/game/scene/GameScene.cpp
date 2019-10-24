@@ -18,7 +18,7 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     state.renderer.setClearColor(148, 194, 240);
     state.renderer.getWindow().lockMouse(true);
 
-    defs.initLuaApi(world, gameGui);
+    defs.initLuaApi(world, gameGui, player);
     world.init();
 
     gui.push_back(&gameGui);

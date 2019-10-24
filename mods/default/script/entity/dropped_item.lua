@@ -74,7 +74,7 @@ zepha.register_entity("default:dropped_item", {
             self.time = self.time + delta
         end
 
-        if self.time > 5 then
+        if self.time > 5 * 60 then
             zepha.remove_entity(self)
         end
     end,

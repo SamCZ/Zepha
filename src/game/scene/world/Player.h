@@ -32,14 +32,16 @@ public:
     bool collides(glm::vec3 pos);
     void moveCollide();
 
-    glm::vec3 getPos();
     void setPos(glm::vec3 pos);
+    glm::vec3 getPos();
 
-    float getYaw();
-    float getPitch();
-
-    glm::vec3 getVel();
     void setVel(glm::vec3 vel);
+    glm::vec3 getVel();
+
+    void setYaw(float yaw);
+    float getYaw();
+    void setPitch(float pitch);
+    float getPitch();
 
     void draw(Renderer& renderer) override;
 

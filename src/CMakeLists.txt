@@ -17,9 +17,9 @@ set(ZEPHA_SRC
     util/Timer.h
     def/LocalDefinitionAtlas.cpp
     def/LocalDefinitionAtlas.h
-        def/item/MeshPart.cpp
-        def/item/MeshPart.h
-        def/item/ShaderMod.h
+    def/item/MeshPart.cpp
+    def/item/MeshPart.h
+    def/item/ShaderMod.h
     game/scene/world/graph/BlockModelVertex.h
     game/scene/world/LocalWorld.cpp
     game/scene/world/LocalWorld.h
@@ -100,7 +100,7 @@ set(ZEPHA_SRC
     world/region/Region.h
     game/entity/world/WireframeEntity.cpp
     game/entity/world/WireframeEntity.h
-        def/item/SelectionBox.h
+    def/item/SelectionBox.h
     game/graph/drawable/Drawable.h
     game/graph/drawable/DrawableGroup.cpp
     game/graph/drawable/DrawableGroup.h
@@ -126,8 +126,8 @@ set(ZEPHA_SRC
     def/ServerDefs.h
     def/ServerDefinitionAtlas.cpp
     def/ServerDefinitionAtlas.h
-        def/item/BlockDef.cpp
-        def/item/BlockDef.h
+    def/item/BlockDef.cpp
+    def/item/BlockDef.h
     util/Dir.h
     def/DefinitionAtlas.h
     lua/LuaParser.cpp
@@ -173,12 +173,12 @@ set(ZEPHA_SRC
     lua/LuaModFile.h
     lua/LuaMod.h
     lua/LuaModConfig.h
-        server/asset/ServerTexture.h
-        server/asset/AssetStorage.h
+    server/asset/ServerTexture.h
+    server/asset/AssetStorage.h
     lua/LuaMod.cpp
     def/ItemDef.h
     def/DefinitionAtlas.cpp
-        def/item/BlockModel.h
+    def/item/BlockModel.h
     lua/api/modules/sRegisterItem.h
     def/texture/Font.cpp
     def/texture/Font.h
@@ -217,18 +217,33 @@ set(ZEPHA_SRC
     game/graph/shader/EntityGeometryShader.cpp
     game/graph/shader/EntityGeometryShader.h
     game/scene/world/graph/ChunkRenderElem.h
-        server/world/ServerDimension.cpp
+    server/world/ServerDimension.cpp
     server/world/ServerDimension.h
     lua/client/LocalRegisterItems.cpp
     lua/client/LocalRegisterItems.h
-        def/item/CraftItemDef.cpp
-        def/item/CraftItemDef.h
+    def/item/CraftItemDef.cpp
+    def/item/CraftItemDef.h
     lua/server/ServerRegisterItems.cpp
     lua/server/ServerRegisterItems.h
     lua/api/modules/cAddEntity.h
     game/entity/world/LuaEntity.cpp
     game/entity/world/LuaEntity.h
     lua/api/modules/cRegisterEntity.h
-        def/model/SerializedModel.h server/asset/AssetType.h def/model/ModelStore.h lua/api/modules/cRemoveEntity.h lua/api/functions/cUpdateEntities.h lua/api/modules/sRegisterEntity.h lua/api/modules/cRegisterKeybind.h lua/client/LocalRegisterKeybinds.cpp lua/client/LocalRegisterKeybinds.h lua/api/modules/sRegisterKeybind.h lua/client/LuaInputManager.cpp lua/client/LuaInputManager.h)
+    def/model/SerializedModel.h
+    server/asset/AssetType.h
+    def/model/ModelStore.h
+    lua/api/modules/cRemoveEntity.h
+    lua/api/functions/cUpdateEntities.h
+    lua/api/modules/sRegisterEntity.h
+    lua/api/modules/cRegisterKeybind.h
+    lua/client/LocalRegisterKeybinds.cpp
+    lua/client/LocalRegisterKeybinds.h
+    lua/api/modules/sRegisterKeybind.h
+    lua/client/LuaInputManager.cpp
+    lua/client/LuaInputManager.h
+    lua/api/type/cLuaPlayer.h
+    lua/api/type/LuaPlayer.cpp
+    lua/api/type/LuaPlayer.h
+)
 
 add_library (Zepha_Core ${ZEPHA_SRC})
