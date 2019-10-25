@@ -26,7 +26,9 @@ namespace ClientApi {
                 "block_pos", sol::property(&LuaPlayer::get_block_pos, &LuaPlayer::set_pos),
                 "vel", sol::property(&LuaPlayer::get_vel, &LuaPlayer::set_vel),
                 "look_yaw", sol::property(&LuaPlayer::get_look_yaw, &LuaPlayer::set_look_yaw),
-                "look_yaw", sol::property(&LuaPlayer::get_look_pitch, &LuaPlayer::set_look_pitch)
+                "look_yaw", sol::property(&LuaPlayer::get_look_pitch, &LuaPlayer::set_look_pitch),
+
+                "menu_state", sol::property(&LuaPlayer::get_menu_state)
         );
     }
 }

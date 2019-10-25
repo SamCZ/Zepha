@@ -10,22 +10,14 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     server(state.connection, defs),
     world(defs, &playerPos, &server),
 
-    player(world, defs, state.renderer.getCamera()),
-
-    gameGui (state.renderer.getCamera().getBufferDimensions(), defs.textures()),
+    player(world, defs, state.renderer),
     debugGui(state.renderer.getCamera().getBufferDimensions(), defs) {
 
     state.renderer.setClearColor(148, 194, 240);
     state.renderer.getWindow().lockMouse(true);
 
-    defs.initLuaApi(world, gameGui, player);
+    defs.initLuaApi(world, player);
     world.init();
-
-    gui.push_back(&gameGui);
-    gui.push_back(&debugGui);
-
-    debugGui.initItemDisplays(defs);
-    entities.push_back(&player);
     server.init(&world);
 
     Packet r(PacketType::CONNECT_DATA_RECVD);
@@ -39,15 +31,14 @@ void GameScene::update() {
 
     Window& window = state.renderer.getWindow();
 
-    playerPos = player.getPos();
+    //Update Player
     player.update(window.input, state.deltaTime, window.getDeltaX(), window.getDeltaY());
+    playerPos = player.getPos();
 
     for (auto entity : entities) entity->update(state.deltaTime);
 
     if (state.renderer.resized) {
         debugGui.bufferResized(state.renderer.getCamera().getBufferDimensions());
-        gameGui.bufferResized(state.renderer.getCamera().getBufferDimensions());
-
         state.renderer.resized = false;
     }
 
@@ -61,7 +52,7 @@ void GameScene::update() {
     if (window.input.isKeyPressed(GLFW_KEY_F1)) {
         hudVisible = !hudVisible;
         debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
-        gameGui.setVisible(hudVisible);
+        player.setGuiVisible(hudVisible);
     }
 
     if (window.input.isKeyPressed(GLFW_KEY_F3)) {
@@ -83,20 +74,20 @@ void GameScene::draw() {
     renderer.beginChunkDeferredCalls();
     renderer.enableTexture(&defs.textures().getAtlasTexture());
 
-    Timer t("rendering chunks");
     drawCalls = world.renderChunks(renderer);
-//    t.printElapsedMs();
 
     renderer.beginEntityDeferredCalls();
 
     for (auto entity : entities) entity->draw(renderer);
     world.renderEntities(renderer);
+    player.draw(renderer);
 
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
     renderer.enableTexture(&defs.textures().getAtlasTexture());
 
-    for (auto entity : gui) entity->draw(renderer);
+    player.drawGUI(renderer);
+    debugGui.draw(renderer);
 
     renderer.swapBuffers();
 }

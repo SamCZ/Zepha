@@ -11,14 +11,13 @@
 
 class LocalDefs;
 class LocalWorld;
-class GameGui;
 class Player;
 
 class LocalLuaParser : public LuaParser {
 public:
-    void init(LocalDefs& defs, LocalWorld& world, GameGui& gui, Player& player);
+    void init(LocalDefs& defs, LocalWorld& world, Player& player);
 
-    void loadModules(LocalDefs& defs, LocalWorld& world, GameGui& gui, Player& player);
+    void loadModules(LocalDefs& defs, LocalWorld& world, Player& player);
     void loadMods();
     void registerDefinitions(LocalDefs &defs);
 

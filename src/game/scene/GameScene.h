@@ -35,9 +35,7 @@ public:
     LocalWorld world;
 
     std::vector<Drawable*> entities;
-    std::vector<Drawable*> gui;
 
-    GameGui gameGui;
     DebugGui debugGui;
 
     int drawCalls = 0;

@@ -5,13 +5,18 @@
 #include "Player.h"
 #include "../../../util/Ray.h"
 
-Player::Player(LocalWorld& world, LocalDefs& defs, Camera& camera) :
+Player::Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer) :
     world(world),
-    camera(camera),
+    renderer(renderer),
     defs(defs),
+    gameGui(renderer.getCamera().getBufferDimensions(), defs.textures()),
     wireframe(WireframeEntity({}, 0.01, {1, 1, 1})) {}
 
 void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
+    if (renderer.resized) {
+        gameGui.bufferResized(renderer.getCamera().getBufferDimensions());
+        //Gamescene unsets renderer.resized right after
+    }
     posUpdate(input, delta);
     viewUpdate(mouseX, mouseY);
     pointerUpdate(input, delta);
@@ -44,6 +49,7 @@ void Player::posUpdate(InputManager &input, double delta) {
         }
     }
 
+    auto& camera = renderer.getCamera();
     glm::vec3 frontFlat = glm::normalize(glm::vec3(camera.getFront().x, 0, camera.getFront().z));
     glm::vec3 rightFlat = glm::normalize(glm::vec3(camera.getRight().x, 0, camera.getRight().z));
 
@@ -93,6 +99,7 @@ void Player::viewUpdate(double deltaX, double deltaY) {
     if (pitch > 90.f)  pitch = 90.f;
     if (pitch < -90.f) pitch = -90.f;
 
+    auto& camera = renderer.getCamera();
     camera.setYaw(yaw);
     camera.setPitch(pitch);
     camera.setPos({pos.x, pos.y + EYE_HEIGHT, pos.z});
@@ -145,7 +152,7 @@ void Player::pointerUpdate(InputManager &input, double delta) {
         }
         if (input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
             world.localSetBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face),
-                                defs.defs().blockFromStr("default:cobblestone").index);
+                                defs.defs().blockFromStr("zeus:default:cobblestone").index);
         }
     }
     else {
@@ -229,7 +236,7 @@ glm::vec3 Player::getPos() {
 
 void Player::setPos(glm::vec3 pos) {
     this->pos = pos;
-    camera.setPos(pos);
+    this->renderer.getCamera().setPos({pos.x, pos.y + EYE_HEIGHT, pos.z});
 }
 
 glm::vec3 Player::getVel() {
@@ -262,4 +269,26 @@ PointedThing& Player::getPointedThing() {
 
 void Player::draw(Renderer &renderer) {
     wireframe.draw(renderer);
+}
+
+void Player::drawGUI(Renderer &renderer) {
+    gameGui.draw(renderer);
+}
+
+void Player::setGuiVisible(bool hudVisible) {
+    gameGui.setVisible(hudVisible);
+}
+
+GameGui& Player::getGui() {
+    return gameGui;
+}
+
+void Player::setMenu(const std::string& state, sptr<GUIComponent> root) {
+    gameGui.setMenu(state, root);
+    renderer.getWindow().lockMouse(false);
+}
+
+void Player::closeMenu() {
+    gameGui.closeMenu();
+    renderer.getWindow().lockMouse(true);
 }

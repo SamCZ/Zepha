@@ -42,3 +42,7 @@ void LuaPlayer::set_look_pitch(float rot) {
 float LuaPlayer::get_look_pitch() {
     return player.getPitch();
 }
+
+std::string LuaPlayer::get_menu_state() {
+    return player.getGui().getMenuState();
+}

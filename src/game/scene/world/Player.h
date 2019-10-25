@@ -14,6 +14,7 @@
 #include "../../entity/world/BlockCrackEntity.h"
 #include "../../graph/drawable/DrawableGroup.h"
 #include "../../../world/block/PointedThing.h"
+#include "../../hud/GameGui.h"
 
 class Player : public Drawable {
 public:
@@ -21,7 +22,7 @@ public:
     static constexpr float LOOK_PRECISION = 0.01f;
     static constexpr float EYE_HEIGHT = 1.65f;
 
-    Player(LocalWorld& world, LocalDefs& defs, Camera& camera);
+    Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer);
 
     void update(InputManager &input, double delta, double mouseX, double mouseY);
 
@@ -43,13 +44,21 @@ public:
     void setPitch(float pitch);
     float getPitch();
 
+    GameGui& getGui();
+    void setMenu(const std::string& state, sptr<GUIComponent> root);
+    void closeMenu();
+    void setGuiVisible(bool hudVisible);
+
     void draw(Renderer& renderer) override;
+    void drawGUI(Renderer& renderer);
 
     PointedThing& getPointedThing();
+
 private:
-    Camera& camera;
+    Renderer& renderer;
     LocalDefs& defs;
     LocalWorld& world;
+    GameGui gameGui;
 
     glm::vec3 pos {};
     glm::vec3 vel {};

@@ -7,7 +7,6 @@
 #include "components/basic/GUIRect.h"
 #include "components/basic/GUIContainer.h"
 #include "../graph/drawable/DrawableGroup.h"
-#include "../ClientState.h"
 #include "../entity/Entity.h"
 
 class GameGui : public GUIContainer {
@@ -16,9 +15,11 @@ public:
     void bufferResized(glm::vec2 bufferSize);
 
     void setVisible(bool visible) override;
-    void setInvOpen(bool open);
-    bool isInvOpen();
 
-    bool invOpen;
+    void setMenu(const std::string& state, std::shared_ptr<GUIComponent> component);
+    void closeMenu();
+    const std::string& getMenuState();
+
+    std::string menuState = "";
 };
 

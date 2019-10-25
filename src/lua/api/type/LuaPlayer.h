@@ -26,4 +26,6 @@ public:
 
     void set_look_pitch(float rot);
     float get_look_pitch();
+
+    std::string get_menu_state();
 };

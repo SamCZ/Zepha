@@ -136,11 +136,11 @@ void processElement(LocalDefs& defs, sol::table& element, std::shared_ptr<GUICom
 }
 
 namespace ClientApi {
-    void show_menu(sol::table &core, LocalDefs& defs, GameGui& gui) {
+    void show_menu(sol::table &core, LocalDefs& defs, Player& player) {
 
-        core.set_function("show_menu", [&](sol::table gui_root) {
-            auto root = std::make_shared<GUIContainer>("root");
-            gui.add(root);
+        core.set_function("show_menu", [&](std::string state, sol::table gui_root) {
+            auto root = std::make_shared<GUIContainer>("__lua_root");
+            player.setMenu(state, root);
 
             processElement(defs, gui_root, static_pointer_cast<GUIComponent>(root));
         });

@@ -8,7 +8,6 @@
 #include "LocalRegisterKeybinds.h"
 
 #include "../../def/LocalDefs.h"
-#include "../../game/hud/GameGui.h"
 #include "../api/type/LuaPlayer.h"
 #include "../../game/scene/world/Player.h"
 
@@ -34,11 +33,12 @@
 #include "../api/modules/cRemoveEntity.h"
 
 #include "../api/modules/cShowMenu.h"
+#include "../api/modules/cCloseMenu.h"
 #include "../api/modules/cRegisterKeybind.h"
 
 #include "../api/functions/cUpdateEntities.h"
 
-void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world, GameGui& gui, Player& player) {
+void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world, Player& player) {
     //Load Base Libraries
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
 
@@ -46,7 +46,7 @@ void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world, GameGui& gui, Play
 //    lua_atpanic(lua, sol::c_call<decltype(&LuaParser::override_panic), &LuaParser::override_panic>);
 
     //Load Modules
-    loadModules(defs, world, gui, player);
+    loadModules(defs, world, player);
 
     //Load Mods
     loadMods();
@@ -55,7 +55,7 @@ void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world, GameGui& gui, Play
     registerDefinitions(defs);
 }
 
-void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, GameGui& gui, Player& player) {
+void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& player) {
     //Create Zepha Table
     core = lua.create_table();
     lua["zepha"] = core;
@@ -86,7 +86,8 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, GameGui& gu
     ClientApi::add_entity(lua, core, defs, world);
     ClientApi::remove_entity(lua, core, defs, world);
 
-    ClientApi::show_menu(core, defs, gui);
+    ClientApi::show_menu(core, defs, player);
+    ClientApi::close_menu(core, defs, player);
     ClientApi::register_keybind(lua, core);
 
     ClientApi::update_entities(lua);
