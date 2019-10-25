@@ -87,7 +87,7 @@ local function create_model_def(speed)
     }
 end
 
-zepha.register_blockmodel("kinetic:axle_0", create_model_def(0));
-zepha.register_blockmodel("kinetic:axle_1", create_model_def(0.5));
-zepha.register_blockmodel("kinetic:axle_2", create_model_def(1));
-zepha.register_blockmodel("kinetic:axle_3", create_model_def(2));
+zepha.register_blockmodel("zeus:kinetic:axle_0", create_model_def(0));
+zepha.register_blockmodel("zeus:kinetic:axle_1", create_model_def(0.5));
+zepha.register_blockmodel("zeus:kinetic:axle_2", create_model_def(1));
+zepha.register_blockmodel("zeus:kinetic:axle_3", create_model_def(2));

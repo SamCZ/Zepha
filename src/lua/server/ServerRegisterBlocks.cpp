@@ -32,7 +32,7 @@ ServerRegisterBlocks::ServerRegisterBlocks(sol::table& core, ServerDefs &defs) {
 
         //Get the identifier for the blockModel, and then get the model from the zepha.registered_blockmodels table.
         std::string modelStr = (modelStrOpt ? *modelStrOpt : "default:cube");
-        sol::optional<sol::table> modelOpt = core.get<sol::table>("registered_blockmodels").get<sol::table>(modelStr);
+        auto modelOpt = core.get<sol::table>("registered_blockmodels").get<sol::optional<sol::table>>(modelStr);
         if (!modelOpt) throw identifier + " specifies invalid model " + modelStr + "!";
 
         //Create a vector of selection boxes

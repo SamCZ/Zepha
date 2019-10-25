@@ -97,8 +97,18 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, GameGui& gu
 }
 
 void LocalLuaParser::loadMods() {
+    //Load "base" if it exists.
     for (const std::string& modName : modsOrder) {
-        DoFileSandboxed(modName + "/main");
+        if (modName == "base") {
+            DoFileSandboxed(modName + "/main");
+            break;
+        }
+    }
+
+    for (const std::string& modName : modsOrder) {
+        if (modName != "base") {
+            DoFileSandboxed(modName + "/main");
+        }
     }
 }
 

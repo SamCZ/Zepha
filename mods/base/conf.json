@@ -1,0 +1,6 @@
+{
+  "name": "base",
+  "description": "Base definitions for Zepha.",
+  "version": "1.0.0",
+  "depends": []
+}

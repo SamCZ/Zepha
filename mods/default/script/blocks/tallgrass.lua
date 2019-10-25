@@ -1,9 +1,9 @@
 for i=1,5,1 do
-    zepha.register_block("default:tallgrass_" .. i, {
+    zepha.register_block("zeus:default:tallgrass_" .. i, {
         culls = false,
         solid = false,
         name = "Tall Grass",
-        model = "default:plantlike",
+        model = "base:cross_plant",
         textures = {
             "zeus:default:tallgrass_" .. i,
         },

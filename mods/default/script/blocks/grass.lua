@@ -1,6 +1,6 @@
-zepha.register_block("default:grass", {
+zepha.register_block("zeus:default:grass", {
     name = "Grass",
-    model = "default:block_foliage",
+    model = "base:block_foliage",
     textures = {
         "zeus:default:grass_top",
         "zeus:default:dirt",
@@ -22,7 +22,7 @@ zepha.register_block("default:grass", {
     },
     drop = "default:dirt",
     on_break_client = function(pos)
-        zepha.add_entity("default:dropped_item", {x = pos.x + 0.5, y = pos.y + 0.5, z = pos.z + 0.5},
+        zepha.add_entity("zeus:default:dropped_item", {x = pos.x + 0.5, y = pos.y + 0.5, z = pos.z + 0.5},
             {object = zepha.registered_blocks["default:grass"].drop});
     end
 })

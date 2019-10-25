@@ -1,8 +1,8 @@
-zepha.register_block("default:leaves", {
+zepha.register_block("zeus:default:leaves", {
     visible = true,
     culls = false,
     name = "Leaves",
-    model = "default:leaflike",
+    model = "base:leaf_like",
     textures = {
         "zeus:default:leaves",
         "zeus:default:leaves_puff"
@@ -16,7 +16,7 @@ zepha.register_block("default:leaves", {
     },
     drop = "materials:stick",
     on_break_client = function(pos)
-        zepha.add_entity("default:dropped_item", {x = pos.x + 0.5, y = pos.y + 0.5, z = pos.z + 0.5},
+        zepha.add_entity("zeus:default:dropped_item", {x = pos.x + 0.5, y = pos.y + 0.5, z = pos.z + 0.5},
             {object = zepha.registered_blocks["default:leaves"].drop});
     end
 })

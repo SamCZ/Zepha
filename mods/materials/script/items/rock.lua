@@ -1,4 +1,4 @@
-zepha.register_item("materials:rock", {
+zepha.register_item("zeus:materials:rock", {
     name = "Rock",
     groups = {
         rock = 1,

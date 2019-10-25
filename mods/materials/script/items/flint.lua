@@ -1,4 +1,4 @@
-zepha.register_item("materials:flint", {
+zepha.register_item("zeus:materials:flint", {
     name = "Flint",
     textures = {
         "zeus:materials:flint",

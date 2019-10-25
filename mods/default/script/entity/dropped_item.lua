@@ -5,7 +5,7 @@ local function collides(entity)
         z = math.floor(entity.pos.z)}) ~= "air"
 end
 
-zepha.register_entity("default:test", {
+zepha.register_entity("zeus:default:test", {
     display = "model",
     display_object = "zeus:default:player",
     display_texture = "zeus:default:player",
@@ -30,10 +30,10 @@ zepha.register_entity("default:test", {
 })
 
 if not zepha.is_server() then
-    zepha.add_entity("default:test", {x = 10, y = 35, z = 0})
+    zepha.add_entity("zeus:default:test", {x = 10, y = 35, z = 0})
 end
 
-zepha.register_entity("default:dropped_item", {
+zepha.register_entity("zeus:default:dropped_item", {
     display = "gameobject",
     display_object = "default:stone",
 

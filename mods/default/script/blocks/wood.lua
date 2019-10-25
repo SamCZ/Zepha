@@ -1,6 +1,6 @@
-zepha.register_block("default:wood", {
+zepha.register_block("zeus:default:wood", {
     name = "Log",
-    model = "default:block",
+    model = "base:block",
     textures = {
         "zeus:default:oak_log_top",
         "zeus:default:oak_log_top",
@@ -12,7 +12,7 @@ zepha.register_block("default:wood", {
     },
     drop = "default:wood",
     on_break_client = function(pos)
-        zepha.add_entity("default:dropped_item", {x = pos.x + 0.5, y = pos.y + 0.5, z = pos.z + 0.5},
+        zepha.add_entity("zeus:default:dropped_item", {x = pos.x + 0.5, y = pos.y + 0.5, z = pos.z + 0.5},
             {object = zepha.registered_blocks["default:wood"].drop});
     end
 })

@@ -1,6 +1,6 @@
-zepha.register_block("default:sand", {
+zepha.register_block("zeus:default:sand", {
     name = "Sand",
-    model = "default:block",
+    model = "base:block",
     textures = {"zeus:default:sand"},
     toughness = {
         hand = 3,
@@ -9,7 +9,7 @@ zepha.register_block("default:sand", {
     },
     drop = "default:sand",
     on_break_client = function(pos)
-        zepha.add_entity("default:dropped_item", {x = pos.x + 0.5, y = pos.y + 0.5, z = pos.z + 0.5},
+        zepha.add_entity("zeus:default:dropped_item", {x = pos.x + 0.5, y = pos.y + 0.5, z = pos.z + 0.5},
             {object = zepha.registered_blocks["default:sand"].drop});
     end
 })

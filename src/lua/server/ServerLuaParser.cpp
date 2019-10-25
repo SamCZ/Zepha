@@ -88,8 +88,18 @@ void ServerLuaParser::loadMods(ServerDefs& defs, const std::string& rootPath) {
     handleDependencies();
     serializeMods();
 
+    //Load "base" if it exists.
     for (LuaMod& mod : mods) {
-        DoFileSandboxed(mod.config.name + "/main");
+        if (mod.config.name == "base") {
+            DoFileSandboxed(mod.config.name + "/main");
+            break;
+        }
+    }
+
+    for (LuaMod& mod : mods) {
+        if (mod.config.name != "base") {
+            DoFileSandboxed(mod.config.name + "/main");
+        }
     }
 }
 
