@@ -13,6 +13,10 @@ Player::Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer) :
     wireframe(WireframeEntity({}, 0.01, {1, 1, 1})) {}
 
 void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
+    if (selectedBlockID == -1) {
+        selectedBlockID = defs.defs().blockFromStr("zeus:default:stone").index;
+    }
+
     if (renderer.resized) {
         gameGui.bufferResized(renderer.getCamera().getBufferDimensions());
         //Gamescene unsets renderer.resized right after
@@ -151,8 +155,7 @@ void Player::pointerUpdate(InputManager &input, double delta) {
             if (breakInterval > INTERVAL) breakInterval = 0;
         }
         if (input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
-            world.localSetBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face),
-                                defs.defs().blockFromStr("zeus:default:cobblestone").index);
+            world.localSetBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face), selectedBlockID);
         }
     }
     else {
@@ -265,6 +268,10 @@ float Player::getPitch() {
 
 PointedThing& Player::getPointedThing() {
     return pointedThing;
+}
+
+void Player::setActiveBlock(const std::string& block) {
+    selectedBlockID = defs.defs().blockFromStr(block).index;
 }
 
 void Player::draw(Renderer &renderer) {

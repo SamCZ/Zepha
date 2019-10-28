@@ -28,4 +28,5 @@ public:
     float get_look_pitch();
 
     std::string get_menu_state();
+    void set_selected_block(std::string block);
 };

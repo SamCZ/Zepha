@@ -9,7 +9,7 @@ WorldGeometryShader::WorldGeometryShader(glm::vec2 windowSize, float bufferScale
     bufferScale(bufferScale),
     swayData(new unsigned char[16 * 4 * 16]) {
 
-    swayNoise.SetFrequency(0.5);
+    swayNoise.SetFrequency(0.20);
     swayNoise.SetOctaveCount(2);
 }
 
@@ -31,7 +31,7 @@ void WorldGeometryShader::windowResized(glm::vec2 windowSize) {
     this->windowSize = windowSize;
 }
 void WorldGeometryShader::updateSwayMap(double delta) {
-    swayOffset += delta * 1.4;
+    swayOffset += delta * 2.8;
     for (int i = 0; i < 16 * 16; i++) {
         swayData[i*4]   = static_cast<unsigned char>((fmax(-1, fmin(1, swayNoise.GetValue((i / 16) / 3.f, (i % 16) / 3.f, swayOffset)))       + 1) / 2.f * 255.f);
         swayData[i*4+1] = static_cast<unsigned char>((fmax(-1, fmin(1, swayNoise.GetValue((i / 16) / 3.f, (i % 16) / 3.f, swayOffset + 50)))  + 1) / 2.f * 255.f);

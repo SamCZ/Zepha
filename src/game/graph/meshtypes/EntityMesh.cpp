@@ -20,6 +20,7 @@ void EntityMesh::create(const std::vector<EntityVertex>& vertices, const std::ve
 }
 
 void EntityMesh::initModel() {
+    if (vertices.size() == 0) return;
 
     genArrays(static_cast<unsigned int>(vertices.size() * sizeof(EntityVertex)),
               static_cast<unsigned int>(indices.size() * sizeof(unsigned int)),

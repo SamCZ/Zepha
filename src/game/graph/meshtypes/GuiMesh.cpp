@@ -9,6 +9,8 @@ GuiMesh::GuiMesh(const GuiMesh &o) {
 }
 
 void GuiMesh::create(const std::vector<GuiVertex>& vertices, const std::vector<unsigned int>& indices) {
+    if (vertices.size() == 0) return;
+
     indCount = static_cast<GLsizei>(indices.size());
 
     genArrays(static_cast<unsigned int>(vertices.size() * sizeof(GuiVertex)),

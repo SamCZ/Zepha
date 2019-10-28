@@ -44,6 +44,8 @@ public:
     void setPitch(float pitch);
     float getPitch();
 
+    void setActiveBlock(const std::string& block);
+
     GameGui& getGui();
     void setMenu(const std::string& state, sptr<GUIComponent> root);
     void closeMenu();
@@ -65,6 +67,8 @@ private:
     bool flying = false;
     float yaw = 0;
     float pitch = 0;
+
+    unsigned int selectedBlockID = -1;
 
     PointedThing pointedThing;
     WireframeEntity wireframe;

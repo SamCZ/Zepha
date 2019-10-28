@@ -46,3 +46,7 @@ float LuaPlayer::get_look_pitch() {
 std::string LuaPlayer::get_menu_state() {
     return player.getGui().getMenuState();
 }
+
+void LuaPlayer::set_selected_block(std::string block) {
+    player.setActiveBlock(block);
+}

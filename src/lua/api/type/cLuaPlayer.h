@@ -28,7 +28,8 @@ namespace ClientApi {
                 "look_yaw", sol::property(&LuaPlayer::get_look_yaw, &LuaPlayer::set_look_yaw),
                 "look_yaw", sol::property(&LuaPlayer::get_look_pitch, &LuaPlayer::set_look_pitch),
 
-                "menu_state", sol::property(&LuaPlayer::get_menu_state)
+                "menu_state", sol::property(&LuaPlayer::get_menu_state),
+                "set_selected_block", &LuaPlayer::set_selected_block
         );
     }
 }
