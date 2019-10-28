@@ -26,8 +26,8 @@ zepha.register_entity("zeus:default:test", {
             y = self.object.pos.y,
             z = self.object.pos.z + 0.08 * math.cos(math.rad(self.object.yaw))})
         self.object:int_yaw(self.object.yaw + 2)
-
-        self.object:int_yaw(math.deg(math.atan2(zepha.player.pos.x - self.object.pos.x, zepha.player.pos.z - self.object.pos.z)) + 180)
+--
+--         self.object:int_yaw(math.deg(math.atan2(zepha.player.pos.x - self.object.pos.x, zepha.player.pos.z - self.object.pos.z)) + 180)
     end
 })
 
