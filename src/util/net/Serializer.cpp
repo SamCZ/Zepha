@@ -5,7 +5,7 @@
 #include "Serializer.h"
 
 void Serializer::encodeInt(string &target, int num) {
-    convert_union cv {.in = num};
+    int_union cv = {num};
 
     target += cv.bytes[0];
     target += cv.bytes[1];
@@ -14,7 +14,7 @@ void Serializer::encodeInt(string &target, int num) {
 }
 
 void Serializer::encodeFloat(string &target, float num) {
-    convert_union cv {.fl = num};
+    float_union cv {num};
 
     target += cv.bytes[0];
     target += cv.bytes[1];
@@ -58,23 +58,21 @@ void Serializer::encodeFloatVec(string &target, vector<float> &vec){
 }
 
 int Serializer::decodeInt(char *in) {
-    convert_union cv {.bytes = {
-            *(in),
-            *(in+1),
-            *(in+2),
-            *(in+3)
-    }};
+    int_union cv;
+    cv.bytes[0] = *(in);
+    cv.bytes[1] = *(in+1);
+    cv.bytes[2] = *(in+2);
+    cv.bytes[3] = *(in+3);
 
     return cv.in;
 }
 
 float Serializer::decodeFloat(char *in) {
-    convert_union cv {.bytes = {
-            *(in),
-            *(in+1),
-            *(in+2),
-            *(in+3)
-    }};
+    float_union cv;
+    cv.bytes[0] = *(in);
+    cv.bytes[1] = *(in+1);
+    cv.bytes[2] = *(in+2);
+    cv.bytes[3] = *(in+3);
 
     return cv.fl;
 }
@@ -105,17 +103,17 @@ vector<float> Serializer::decodeFloatVec(string &string) {
 }
 
 glm::vec3 Serializer::decodeFloatVec3(char *vecStart) {
-    glm::vec3 o;
-    o.x = decodeFloat(vecStart);
-    o.y = decodeFloat(vecStart + 4);
-    o.z = decodeFloat(vecStart + 8);
-    return o;
+    return {
+        decodeFloat(vecStart),
+        decodeFloat(vecStart + 4),
+        decodeFloat(vecStart + 8)
+    };
 }
 
 glm::vec3 Serializer::decodeIntVec3(char *vecStart) {
-    glm::vec3 o;
-    o.x = decodeInt(vecStart);
-    o.y = decodeInt(vecStart + 4);
-    o.z = decodeInt(vecStart + 8);
-    return o;
+    return {
+        decodeInt(vecStart),
+        decodeInt(vecStart + 4),
+        decodeInt(vecStart + 8)
+    };
 }

@@ -34,8 +34,12 @@ public:
 private:
     typedef union {
         float fl;
-        int   in;
         char bytes[4];
-    } convert_union;
+    } float_union;
+
+    typedef union {
+        int in;
+        char bytes[4];
+    } int_union;
 };
 
