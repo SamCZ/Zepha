@@ -59,12 +59,6 @@ void GameScene::update() {
         debugVisible = !debugVisible;
         debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
     }
-//
-//    if (window.input.isKeyPressed(GLFW_KEY_E)) {
-//        bool open = !gameGui.isInvOpen();
-//        gameGui.setInvOpen(open);
-//        window.lockMouse(!open);
-//    }
 }
 
 void GameScene::draw() {
@@ -90,9 +84,4 @@ void GameScene::draw() {
     debugGui.draw(renderer);
 
     renderer.swapBuffers();
-}
-
-void GameScene::cleanup() {
-//    for (auto entity : entities) delete entity;
-//    for (auto guiItem : gui) delete guiItem;
 }

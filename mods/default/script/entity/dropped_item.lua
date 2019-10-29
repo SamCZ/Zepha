@@ -37,7 +37,7 @@ end
 
 zepha.register_entity("zeus:default:dropped_item", {
     display = "gameobject",
-    display_object = "default:stone",
+    display_object = "zeus:default:stone",
 
     on_create = function(self, static)
         if static == nil then static = {} end

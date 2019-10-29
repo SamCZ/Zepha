@@ -15,23 +15,24 @@
 #include "../../graph/drawable/DrawableGroup.h"
 #include "../../../world/block/PointedThing.h"
 #include "../../hud/GameGui.h"
+#include "../../entity/Collidable.h"
 
-class Player : public Drawable {
+class Player : Collidable, public Drawable {
 public:
+    static constexpr float MOUSE_SENSITIVITY = 0.1f;
     static constexpr float LOOK_DISTANCE = 6.5f;
     static constexpr float LOOK_PRECISION = 0.01f;
     static constexpr float EYE_HEIGHT = 1.65f;
+    static constexpr float BASE_MOVE_SPEED = 7.5f;
+    static constexpr float JUMP_VEL = 0.14f;
 
     Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer);
 
     void update(InputManager &input, double delta, double mouseX, double mouseY);
 
-    void posUpdate(InputManager &input, double delta);
-    void viewUpdate(double deltaX, double deltaY);
-    void pointerUpdate(InputManager &input, double delta);
-
-    bool collides(glm::vec3 pos);
-    void moveCollide();
+    void moveAndLook(InputManager &input, double delta, double deltaX, double deltaY);
+    void updateCamera();
+    void findSelectedBlock(InputManager &input, double delta);
 
     void setPos(glm::vec3 pos);
     glm::vec3 getPos();
@@ -59,16 +60,13 @@ public:
 private:
     Renderer& renderer;
     LocalDefs& defs;
-    LocalWorld& world;
     GameGui gameGui;
 
-    glm::vec3 pos {};
-    glm::vec3 vel {};
     bool flying = false;
     float yaw = 0;
     float pitch = 0;
 
-    unsigned int selectedBlockID = -1;
+    unsigned int activeBlock = -1;
 
     PointedThing pointedThing;
     WireframeEntity wireframe;

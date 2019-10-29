@@ -6,58 +6,48 @@
 #include "../../../util/Ray.h"
 
 Player::Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer) :
-    world(world),
-    renderer(renderer),
+    Collidable(world, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
+
     defs(defs),
-    gameGui(renderer.getCamera().getBufferDimensions(), defs.textures()),
-    wireframe(WireframeEntity({}, 0.01, {1, 1, 1})) {}
+    renderer(renderer),
+    wireframe(WireframeEntity({}, 0.01, {1, 1, 1})),
+    gameGui(renderer.getCamera().getBufferDimensions(), defs.textures()) {}
 
 void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
-    if (selectedBlockID == -1) {
-        selectedBlockID = defs.defs().blockFromStr("zeus:default:stone").index;
-    }
+    if (activeBlock == -1) activeBlock = defs.defs().blockFromStr("zeus:default:stone").index;
 
     if (renderer.resized) {
+        //Gamescene sets renderer.resized to false right after Player::update is called.
         gameGui.bufferResized(renderer.getCamera().getBufferDimensions());
-        //Gamescene unsets renderer.resized right after
     }
-    posUpdate(input, delta);
-    viewUpdate(mouseX, mouseY);
-    pointerUpdate(input, delta);
-    moveCollide();
+
+    if (input.isKeyPressed(GLFW_KEY_F)) flying = !flying; //TODO: Move to Lua Bind
+
+    moveAndLook(input, delta, mouseX, mouseY);
+    findSelectedBlock(input, delta);
 }
 
-void Player::posUpdate(InputManager &input, double delta) {
-    const static float moveSpeed = 7.5f;
-    const static float jumpVel = 0.14f;
+void Player::moveAndLook(InputManager &input, double delta, double deltaX, double deltaY) {
+    //Position movement
+    bool sprinting = input.isKeyDown(GLFW_KEY_LEFT_CONTROL);
 
+    double moveSpeed = BASE_MOVE_SPEED * delta * (sprinting ? 1.5 : 1);
     float friction = 0.3f;
 
-    double moveMult = moveSpeed * delta;
-
-    if (input.isKeyPressed(GLFW_KEY_F)) {
-        flying = !flying;
-    }
-
     if (flying) {
-        moveMult *= 4;
+        moveSpeed *= 4;
         friction = 0.15f;
-
-        if (input.isKeyDown(GLFW_KEY_LEFT_CONTROL)) {
-            moveMult *= 2;
-        }
     }
     else {
-        if (input.isKeyDown(GLFW_KEY_LEFT_CONTROL)) {
-            moveMult *= 1.5;
-        }
+        if (input.isKeyDown(GLFW_KEY_SPACE) && isOnGround()) vel.y = JUMP_VEL;
     }
 
+    //Calculate movement vector from camera angle.
     auto& camera = renderer.getCamera();
     glm::vec3 frontFlat = glm::normalize(glm::vec3(camera.getFront().x, 0, camera.getFront().z));
     glm::vec3 rightFlat = glm::normalize(glm::vec3(camera.getRight().x, 0, camera.getRight().z));
 
-    glm::vec3 mod(0, 0, 0);
+    glm::vec3 mod {0, 0, 0};
 
     if (input.isKeyDown(GLFW_KEY_W)) mod += frontFlat;
     if (input.isKeyDown(GLFW_KEY_S)) mod -= frontFlat;
@@ -68,48 +58,51 @@ void Player::posUpdate(InputManager &input, double delta) {
         if (input.isKeyDown(GLFW_KEY_SPACE)) mod.y += 1;
         if (input.isKeyDown(GLFW_KEY_LEFT_SHIFT)) mod.y -= 1;
     }
+    else {
+        if (!isOnGround()) vel.y = std::fmax(vel.y - 0.01, -3);
+        else if (vel.y < 0) vel.y = 0;
+    }
 
     if (glm::length(mod) != 0) mod = glm::normalize(mod);
-    mod = mod * (float)moveMult;
+    mod = mod * static_cast<float>(moveSpeed);
 
     if (!flying) {
-        glm::vec3 velFlat = glm::vec3(vel.x, 0, vel.z);
+        glm::vec3 velFlat = {vel.x, 0, vel.z};
+        //Add movement vector with friction.
         velFlat = velFlat * (1.0f-friction) + mod * friction;
 
         vel.x = velFlat.x;
         vel.z = velFlat.z;
-
-        if (input.isKeyDown(GLFW_KEY_SPACE) && collides(glm::vec3(pos.x, pos.y - 0.05, pos.z)) && vel.y >= 0) {
-            vel.y = jumpVel;
-        }
     }
     else {
+        //If flying factor in verticle mod values.
         vel = vel * (1.0f-friction) + mod * friction;
     }
-}
 
-void Player::viewUpdate(double deltaX, double deltaY) {
-    float turnSpeed = 0.1f;
-
-    deltaX *= turnSpeed;
-    deltaY *= turnSpeed;
+    //View movement
+    deltaX *= MOUSE_SENSITIVITY;
+    deltaY *= MOUSE_SENSITIVITY;
 
     yaw += deltaX;
     pitch += deltaY;
 
-    if (yaw > 360.f) yaw = 0;
-    if (yaw < 0.f)   yaw = 360.f;
+    while (yaw > 360.f) yaw -= 360.f;
+    while (yaw < 0.f)   yaw += 360.f;
 
-    if (pitch > 90.f)  pitch = 90.f;
-    if (pitch < -90.f) pitch = -90.f;
+    pitch = std::fmin(std::fmax(pitch, -90), 90);
 
+    moveCollide();
+    updateCamera();
+}
+
+void Player::updateCamera() {
     auto& camera = renderer.getCamera();
     camera.setYaw(yaw);
     camera.setPitch(pitch);
     camera.setPos({pos.x, pos.y + EYE_HEIGHT, pos.z});
 }
 
-void Player::pointerUpdate(InputManager &input, double delta) {
+void Player::findSelectedBlock(InputManager &input, double delta) {
     bool found = false;
 
     for (Ray ray(this); ray.getLength() < Player::LOOK_DISTANCE; ray.step(LOOK_PRECISION)) {
@@ -155,7 +148,7 @@ void Player::pointerUpdate(InputManager &input, double delta) {
             if (breakInterval > INTERVAL) breakInterval = 0;
         }
         if (input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
-            world.localSetBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face), selectedBlockID);
+            world.localSetBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face), activeBlock);
         }
     }
     else {
@@ -164,90 +157,25 @@ void Player::pointerUpdate(InputManager &input, double delta) {
     }
 }
 
-bool Player::collides(glm::vec3 pos) {
-    float colSize = 0.3;
-
-    return (world.solidAt(glm::vec3(pos.x - colSize, pos.y, pos.z - colSize)) ||
-            world.solidAt(glm::vec3(pos.x + colSize, pos.y, pos.z - colSize)) ||
-            world.solidAt(glm::vec3(pos.x + colSize, pos.y, pos.z + colSize)) ||
-            world.solidAt(glm::vec3(pos.x - colSize, pos.y, pos.z + colSize)) ||
-
-            world.solidAt(glm::vec3(pos.x - colSize, pos.y + 1, pos.z - colSize)) ||
-            world.solidAt(glm::vec3(pos.x + colSize, pos.y + 1, pos.z - colSize)) ||
-            world.solidAt(glm::vec3(pos.x + colSize, pos.y + 1, pos.z + colSize)) ||
-            world.solidAt(glm::vec3(pos.x - colSize, pos.y + 1, pos.z + colSize)) ||
-
-            world.solidAt(glm::vec3(pos.x - colSize, pos.y + 1.8, pos.z - colSize)) ||
-            world.solidAt(glm::vec3(pos.x + colSize, pos.y + 1.8, pos.z - colSize)) ||
-            world.solidAt(glm::vec3(pos.x + colSize, pos.y + 1.8, pos.z + colSize)) ||
-            world.solidAt(glm::vec3(pos.x - colSize, pos.y + 1.8, pos.z + colSize)) );
-}
-
-void Player::moveCollide() {
-    if (!flying) {
-        double increment = 0.05;
-
-        if (!collides(glm::vec3(pos.x, pos.y - increment, pos.z))) {
-            vel.y = (float) fmax(vel.y - 0.01, -3);
-        } else if (vel.y < 0) {
-            vel.y = 0;
-        }
-
-        double moved = 0;
-        for (int i = 0; i < fabs(vel.y) / increment; i++) {
-            double move = fmax(fmin(increment, fabs(vel.y) - moved), 0);
-            moved += increment;
-
-            glm::vec3 newPos = glm::vec3(pos);
-            newPos.y += move * (vel.y < 0 ? -1 : 1);
-
-            if (!collides(newPos))
-                pos = newPos;
-            else if (vel.y > 0)
-                vel.y = 0;
-        }
-
-        moved = 0;
-        for (int i = 0; i < fabs(vel.x) / increment; i++) {
-            double move = fmax(fmin(increment, fabs(vel.x) - moved), 0);
-            moved += increment;
-
-            glm::vec3 newPos = glm::vec3(pos);
-            newPos.x += move * (vel.x < 0 ? -1 : 1);
-
-            if (!collides(newPos))
-                pos = newPos;
-        }
-
-        moved = 0;
-        for (int i = 0; i < fabs(vel.z) / increment; i++) {
-            double move = fmax(fmin(increment, fabs(vel.z) - moved), 0);
-            moved += increment;
-
-            glm::vec3 newPos = glm::vec3(pos);
-            newPos.z += move * (vel.z < 0 ? -1 : 1);
-
-            if (!collides(newPos)) pos = newPos;
-        }
-    }
-    else pos += vel;
-}
-
-glm::vec3 Player::getPos() {
-    return pos;
-}
+/*
+ * Position, Velocity, Yaw, Pitch Getters & Setters
+ */
 
 void Player::setPos(glm::vec3 pos) {
     this->pos = pos;
     this->renderer.getCamera().setPos({pos.x, pos.y + EYE_HEIGHT, pos.z});
 }
 
-glm::vec3 Player::getVel() {
-    return vel;
+glm::vec3 Player::getPos() {
+    return pos;
 }
 
 void Player::setVel(glm::vec3 vel) {
     this->vel = vel;
+}
+
+glm::vec3 Player::getVel() {
+    return vel;
 }
 
 void Player::setYaw(float yaw) {
@@ -266,28 +194,20 @@ float Player::getPitch() {
     return pitch;
 }
 
+/*
+ * Pointed Thing
+ */
+
 PointedThing& Player::getPointedThing() {
     return pointedThing;
 }
 
+/*
+ * GUI Functions
+ */
+
 void Player::setActiveBlock(const std::string& block) {
-    selectedBlockID = defs.defs().blockFromStr(block).index;
-}
-
-void Player::draw(Renderer &renderer) {
-    wireframe.draw(renderer);
-}
-
-void Player::drawGUI(Renderer &renderer) {
-    gameGui.draw(renderer);
-}
-
-void Player::setGuiVisible(bool hudVisible) {
-    gameGui.setVisible(hudVisible);
-}
-
-GameGui& Player::getGui() {
-    return gameGui;
+    activeBlock = defs.defs().blockFromStr(block).index;
 }
 
 void Player::setMenu(const std::string& state, sptr<GUIComponent> root) {
@@ -298,4 +218,24 @@ void Player::setMenu(const std::string& state, sptr<GUIComponent> root) {
 void Player::closeMenu() {
     gameGui.closeMenu();
     renderer.getWindow().lockMouse(true);
+}
+
+void Player::setGuiVisible(bool hudVisible) {
+    gameGui.setVisible(hudVisible);
+}
+
+GameGui& Player::getGui() {
+    return gameGui;
+}
+
+/*
+ * Render functions
+ */
+
+void Player::draw(Renderer &renderer) {
+    wireframe.draw(renderer);
+}
+
+void Player::drawGUI(Renderer &renderer) {
+    gameGui.draw(renderer);
 }

@@ -244,6 +244,6 @@ set(ZEPHA_SRC
     lua/api/type/cLuaPlayer.h
     lua/api/type/LuaPlayer.cpp
     lua/api/type/LuaPlayer.h
-)
+        game/entity/Collidable.cpp game/entity/Collidable.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})
