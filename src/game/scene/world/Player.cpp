@@ -10,7 +10,7 @@ Player::Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer) :
 
     defs(defs),
     renderer(renderer),
-    wireframe(WireframeEntity({}, 0.01, {1, 1, 1})),
+    wireframe({}, 0.01, {1, 1, 1}),
     gameGui(renderer.getCamera().getBufferDimensions(), defs.textures()) {}
 
 void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
@@ -105,24 +105,37 @@ void Player::updateCamera() {
 void Player::findSelectedBlock(InputManager &input, double delta) {
     bool found = false;
 
-    for (Ray ray(this); ray.getLength() < Player::LOOK_DISTANCE; ray.step(LOOK_PRECISION)) {
-        auto rayEnd = *ray.getEnd();
-        auto pointedPos = TransPos::roundPos(rayEnd);
+    glm::vec3 chunkPos = {};
+    sptr<BlockChunk> blockChunk = nullptr;
 
-        auto blockID = world.getBlock(rayEnd);
+    for (Ray ray(this); ray.getLength() < LOOK_DISTANCE; ray.step(LOOK_PRECISION)) {
+        glm::vec3 rayEnd = ray.getEnd();
+        glm::vec3 roundedPos = TransPos::roundPos(rayEnd);
+
+        auto currChunkPos = TransPos::chunkFromVec(TransPos::roundPos(rayEnd));
+        if (currChunkPos != chunkPos || blockChunk == nullptr) {
+            chunkPos = currChunkPos;
+            blockChunk = world.getChunk(chunkPos);
+        }
+
+        unsigned int blockID = 0;
+        if (blockChunk != nullptr) {
+            blockID = blockChunk->getBlock(TransPos::chunkLocalFromVec(TransPos::roundPos(rayEnd)));
+        }
+
         auto& sBoxes = defs.defs().blockFromId(blockID).sBoxes;
 
         for (auto& sBox : sBoxes) {
-            auto intersects = sBox.intersects(*ray.getEnd(), pointedPos);
+            auto intersects = sBox.intersects(rayEnd, roundedPos);
 
             if (intersects != NONE) {
-                pointedThing.blockID = blockID;
                 pointedThing.blockDef = &defs.defs().blockFromId(blockID);
-                pointedThing.pos = pointedPos;
-                pointedThing.face = intersects;
+                pointedThing.blockID  = blockID;
+                pointedThing.pos      = roundedPos;
+                pointedThing.face     = intersects;
 
                 wireframe.updateMesh(sBoxes, 0.000005f + ray.getLength() * 0.0015f);
-                wireframe.setPos(pointedPos);
+                wireframe.setPos(roundedPos);
                 if (!wireframe.isVisible()) wireframe.setVisible(true);
 
                 found = true;
@@ -131,6 +144,7 @@ void Player::findSelectedBlock(InputManager &input, double delta) {
         }
     }
     stop:
+    //TODO: Move to a different function
 
     if (found) {
         const static float DAMAGE = 0.45f;

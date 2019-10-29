@@ -37,8 +37,8 @@ void Ray::step(float scale) {
     pos += (scale * dir);
 }
 
-glm::vec3* Ray::getEnd() {
-    return &pos;
+glm::vec3 Ray::getEnd() {
+    return pos;
 }
 
 float Ray::getLength() {

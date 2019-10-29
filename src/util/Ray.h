@@ -16,7 +16,7 @@ public:
     Ray(glm::vec3 pos, float yaw, float pitch);
 
     void step(float scale);
-    glm::vec3* getEnd();
+    glm::vec3 getEnd();
 
     float getLength();
 private:
