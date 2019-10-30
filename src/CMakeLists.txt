@@ -204,7 +204,7 @@ set(ZEPHA_SRC
     game/entity/AnimationState.h
     game/entity/AnimationSegment.h
     util/Pointer.h
-    lua/api/type/cEntity.h
+        lua/api/type/cLuaEntity.h
     StartGame.h
     game/graph/shader/SSAOShader.cpp
     game/graph/shader/SSAOShader.h
@@ -226,8 +226,8 @@ set(ZEPHA_SRC
     lua/server/ServerRegisterItems.cpp
     lua/server/ServerRegisterItems.h
     lua/api/modules/cAddEntity.h
-    game/entity/world/LuaEntity.cpp
-    game/entity/world/LuaEntity.h
+        lua/api/type/LuaEntity.cpp
+        lua/api/type/LuaEntity.h
     lua/api/modules/cRegisterEntity.h
     def/model/SerializedModel.h
     server/asset/AssetType.h

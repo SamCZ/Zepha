@@ -25,10 +25,12 @@ void GUIText::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 bgcolor, glm:
 
 void GUIText::setText(std::string text) {
     this->text = std::move(text);
-    uint indOffset = 0;
+    unsigned int indOffset = 0;
 
     std::vector<GuiVertex> textVertices;
+    textVertices.reserve(text.length()*8 + 200);
     std::vector<unsigned int> textIndices;
+    textIndices.reserve(text.length()*12 + 240);
 
     //Create background rectangles
     if (bgcolor.w != 0) {
@@ -36,30 +38,24 @@ void GUIText::setText(std::string text) {
         int yOffset = 0;
         int h = Font::CHAR_HEIGHT;
 
-        for (uint i = 0; i < this->text.length() + 1; i++) {
+        for (unsigned int i = 0; i < this->text.length() + 1; i++) {
             char c = this->text[i];
 
             if (c == '\n' || i == this->text.length()) {
                 if (lineWidth > 0) {
                     lineWidth += 2;
 
-                    std::vector<GuiVertex> vertices {
-                        {{-1,            yOffset - 1    }, bgcolor, {1, 1, 1}, false},
-                        {{-1,            yOffset + h + 1}, bgcolor, {1, 1, 1}, false},
-                        {{lineWidth + 1, yOffset + h + 1}, bgcolor, {1, 1, 1}, false},
-                        {{lineWidth + 1, yOffset - 1    }, bgcolor, {1, 1, 1}, false},
-                    };
-                    std::vector<uint> indices {
-                        indOffset,
-                        indOffset + 1,
-                        indOffset + 2,
-                        indOffset + 2,
-                        indOffset + 3,
-                        indOffset
-                    };
+                    textVertices.emplace_back(glm::vec2 {-1,            yOffset - 1    }, bgcolor, glm::vec3 {1, 1, 1}, 0.f);
+                    textVertices.emplace_back(glm::vec2 {-1,            yOffset + h + 1}, bgcolor, glm::vec3 {1, 1, 1}, 0.f);
+                    textVertices.emplace_back(glm::vec2 {lineWidth + 1, yOffset + h + 1}, bgcolor, glm::vec3 {1, 1, 1}, 0.f);
+                    textVertices.emplace_back(glm::vec2 {lineWidth + 1, yOffset - 1    }, bgcolor, glm::vec3 {1, 1, 1}, 0.f);
 
-                    textVertices.insert(textVertices.end(), vertices.begin(), vertices.end());
-                    textIndices.insert(textIndices.end(), indices.begin(), indices.end());
+                    textIndices.emplace_back(indOffset);
+                    textIndices.emplace_back(indOffset + 1);
+                    textIndices.emplace_back(indOffset + 2);
+                    textIndices.emplace_back(indOffset + 2);
+                    textIndices.emplace_back(indOffset + 3);
+                    textIndices.emplace_back(indOffset);
 
                     indOffset += 4;
                     yOffset += h + 2;
@@ -70,21 +66,19 @@ void GUIText::setText(std::string text) {
 
                 lineWidth = 0;
             }
-            else {
-                lineWidth += font.getCharWidth(c) + 1;
-            }
+            else lineWidth += font.getCharWidth(c) + 1;
         }
     }
 
     //Print the characters
-    uint xOffset = 0;
-    uint yOffset = 0;
+    unsigned int xOffset = 0;
+    unsigned int yOffset = 0;
 
     bool emptyLine = true;
 
-    for (uint i = 0; i < this->text.length() + 1; i++) {
+    for (unsigned int i = 0; i < this->text.length() + 1; i++) {
         char c = this->text[i];
-        uint h = Font::CHAR_HEIGHT;
+        unsigned int h = Font::CHAR_HEIGHT;
 
         if (c == '\n' || i == this->text.length()) {
             yOffset += (emptyLine) ? h / 2 : h + 2;
@@ -99,7 +93,7 @@ void GUIText::setText(std::string text) {
         auto charWidth = font.getCharWidth(c) + 1;
         auto charUVs = font.getCharUVs(c);
 
-        for (uint j = 0; j <= 1; j++) {
+        for (unsigned int j = 0; j <= 1; j++) {
             glm::vec3 color = {this->color.x, this->color.y, this->color.z};
 
             if (j == 0) {
@@ -112,23 +106,17 @@ void GUIText::setText(std::string text) {
                 yOffset -= 1;
             }
 
-            std::vector<GuiVertex> vertices {
-                    {{xOffset,             yOffset    }, {charUVs.x, charUVs.y, 0, 1}, color, true},
-                    {{xOffset,             yOffset + h}, {charUVs.x, charUVs.w, 0, 1}, color, true},
-                    {{xOffset + charWidth, yOffset + h}, {charUVs.z, charUVs.w, 0, 1}, color, true},
-                    {{xOffset + charWidth, yOffset    }, {charUVs.z, charUVs.y, 0, 1}, color, true},
-            };
-            std::vector<uint> indices{
-                    indOffset,
-                    indOffset + 1,
-                    indOffset + 2,
-                    indOffset + 2,
-                    indOffset + 3,
-                    indOffset
-            };
+            textVertices.emplace_back(glm::vec2 {xOffset,             yOffset    }, glm::vec4 {charUVs.x, charUVs.y, 0, 1}, color, 1.f);
+            textVertices.emplace_back(glm::vec2 {xOffset,             yOffset + h}, glm::vec4 {charUVs.x, charUVs.w, 0, 1}, color, 1.f);
+            textVertices.emplace_back(glm::vec2 {xOffset + charWidth, yOffset + h}, glm::vec4 {charUVs.z, charUVs.w, 0, 1}, color, 1.f);
+            textVertices.emplace_back(glm::vec2 {xOffset + charWidth, yOffset    }, glm::vec4 {charUVs.z, charUVs.y, 0, 1}, color, 1.f);
 
-            textVertices.insert(textVertices.end(), vertices.begin(), vertices.end());
-            textIndices.insert(textIndices.end(), indices.begin(), indices.end());
+            textIndices.emplace_back(indOffset);
+            textIndices.emplace_back(indOffset + 1);
+            textIndices.emplace_back(indOffset + 2);
+            textIndices.emplace_back(indOffset + 2);
+            textIndices.emplace_back(indOffset + 3);
+            textIndices.emplace_back(indOffset);
 
             indOffset += 4;
         }

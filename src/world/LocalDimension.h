@@ -10,7 +10,7 @@
 #include "../util/Vec.h"
 #include "../game/scene/world/graph/MeshChunk.h"
 #include "../game/scene/world/MeshGenStream.h"
-#include "../game/entity/world/LuaEntity.h"
+#include "../lua/api/type/LuaEntity.h"
 #include "../game/entity/world/PlayerEntity.h"
 
 class LocalDimension {

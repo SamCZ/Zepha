@@ -5,7 +5,7 @@
 #pragma once
 
 #include <sol2/sol.hpp>
-#include "../Entity.h"
+#include "../../../game/entity/Entity.h"
 #include "../../../def/LocalDefs.h"
 
 class LuaEntity {

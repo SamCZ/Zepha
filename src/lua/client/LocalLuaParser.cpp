@@ -11,7 +11,7 @@
 #include "../api/type/LuaPlayer.h"
 #include "../../game/scene/world/Player.h"
 
-#include "../api/type/cEntity.h"
+#include "../api/type/cLuaEntity.h"
 #include "../api/type/cLuaPlayer.h"
 
 #include "../api/modules/cDump.h"

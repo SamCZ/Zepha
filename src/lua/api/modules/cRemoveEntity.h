@@ -5,7 +5,7 @@
 #pragma once
 
 #include <sol2/sol.hpp>
-#include "../../../game/entity/world/LuaEntity.h"
+#include "../type/LuaEntity.h"
 #include "../../../game/scene/world/LocalWorld.h"
 
 namespace ClientApi {
