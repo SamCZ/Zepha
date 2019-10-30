@@ -7,10 +7,7 @@
 
 InventoryList::InventoryList(unsigned short size, unsigned short width) :
     itemstacks(size),
-    width(width) {
-
-    std::cout << itemstacks.size() << std::endl;
-}
+    width(width) {}
 
 
 void InventoryList::setUpdatedCallback(std::function<void()> cb) {
