@@ -22,7 +22,8 @@ GameScene::GameScene(ClientState& state) : Scene(state),
 
     l.addStack({defs.defs().craftItemFromStr("zeus:materials:stick").index, 16});
     debugGui.showInventory(l, defs);
-    l.addStack({defs.defs().craftItemFromStr("zeus:materials:rock").index, 16});
+    l.addStack({defs.defs().craftItemFromStr("zeus:materials:rock").index, 8});
+    l.addStack({defs.defs().craftItemFromStr("zeus:materials:flint").index, 1});
 
     Packet r(PacketType::CONNECT_DATA_RECVD);
     r.sendTo(state.connection.getPeer(), PacketChannel::CONNECT);
@@ -64,8 +65,10 @@ void GameScene::update() {
         debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
     }
 
-    l.addStack({defs.defs().craftItemFromStr("zeus:materials:rock").index, 1});
-    l.addStack({defs.defs().craftItemFromStr("zeus:materials:stick").index, 2});
+    if (window.input.isKeyPressed(GLFW_KEY_G)) {
+        l.addStack({defs.defs().craftItemFromStr("zeus:materials:rock").index, 1});
+        l.addStack({defs.defs().craftItemFromStr("zeus:materials:stick").index, 2});
+    }
 }
 
 void GameScene::draw() {

@@ -22,5 +22,5 @@ void GUIInventoryItem::create(glm::vec2 scale, unsigned short count, std::shared
     text->create(scale, {}, {}, {1, 1, 1, 1}, f);
     text->setText(to_string(count));
     add(text);
-    text->setPos({11 * scale.x, 9 * scale.y});
+    text->setPos({(19 - text->getWidth()) * scale.x, 9 * scale.y});
 }

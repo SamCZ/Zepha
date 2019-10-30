@@ -17,6 +17,8 @@ public:
 
     void create(glm::vec2 scale, glm::vec4 padding, glm::vec4 bgcolor, glm::vec4 color, Font font);
 
+    unsigned int getWidth();
+
     void setText(std::string text);
     std::string getText();
 private:
@@ -24,5 +26,7 @@ private:
     glm::vec4 bgcolor {};
     glm::vec4 color {};
     std::string text;
+
+    unsigned int maxLineWidth = 0;
 };
 

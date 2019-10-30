@@ -27,28 +27,32 @@ void GUIText::setText(std::string text) {
     this->text = std::move(text);
     unsigned int indOffset = 0;
 
+    maxLineWidth = 0;
+
     std::vector<GuiVertex> textVertices;
     textVertices.reserve(text.length()*8 + 200);
     std::vector<unsigned int> textIndices;
     textIndices.reserve(text.length()*12 + 240);
 
-    //Create background rectangles
-    if (bgcolor.w != 0) {
-        int lineWidth = 0;
-        int yOffset = 0;
-        int h = Font::CHAR_HEIGHT;
+    //Draw background & Measure Line Width
+    int lineWidth = 0;
+    int xOffset = 0, yOffset = 0;
+    int h = Font::CHAR_HEIGHT;
 
-        for (unsigned int i = 0; i < this->text.length() + 1; i++) {
-            char c = this->text[i];
+    for (unsigned int i = 0; i < this->text.length() + 1; i++) {
+        char c = this->text[i];
 
-            if (c == '\n' || i == this->text.length()) {
-                if (lineWidth > 0) {
-                    lineWidth += 2;
+        if (c == '\n' || i == this->text.length()) {
+            if (lineWidth > 0) {
+                lineWidth += 2;
 
-                    textVertices.emplace_back(glm::vec2 {-1,            yOffset - 1    }, bgcolor, glm::vec3 {1, 1, 1}, 0.f);
-                    textVertices.emplace_back(glm::vec2 {-1,            yOffset + h + 1}, bgcolor, glm::vec3 {1, 1, 1}, 0.f);
-                    textVertices.emplace_back(glm::vec2 {lineWidth + 1, yOffset + h + 1}, bgcolor, glm::vec3 {1, 1, 1}, 0.f);
-                    textVertices.emplace_back(glm::vec2 {lineWidth + 1, yOffset - 1    }, bgcolor, glm::vec3 {1, 1, 1}, 0.f);
+                if (lineWidth > maxLineWidth) maxLineWidth = lineWidth;
+
+                if (bgcolor.w != 0) {
+                    textVertices.emplace_back(glm::vec2{-1,            yOffset - 1    }, bgcolor, glm::vec3{1, 1, 1}, 0.f);
+                    textVertices.emplace_back(glm::vec2{-1,            yOffset + h + 1}, bgcolor, glm::vec3{1, 1, 1}, 0.f);
+                    textVertices.emplace_back(glm::vec2{lineWidth + 1, yOffset + h + 1}, bgcolor, glm::vec3{1, 1, 1}, 0.f);
+                    textVertices.emplace_back(glm::vec2{lineWidth + 1, yOffset - 1    }, bgcolor, glm::vec3{1, 1, 1}, 0.f);
 
                     textIndices.emplace_back(indOffset);
                     textIndices.emplace_back(indOffset + 1);
@@ -58,23 +62,23 @@ void GUIText::setText(std::string text) {
                     textIndices.emplace_back(indOffset);
 
                     indOffset += 4;
-                    yOffset += h + 2;
                 }
-                else {
-                    yOffset += h / 2; //Pad out the height if using just newlines.
-                }
-
-                lineWidth = 0;
+                yOffset += h + 2;
             }
-            else lineWidth += font.getCharWidth(c) + 1;
+            else {
+                yOffset += h / 2; //Pad out the height if using just newlines.
+            }
+
+            lineWidth = 0;
         }
+        else lineWidth += font.getCharWidth(c) + 1;
     }
 
-    //Print the characters
-    unsigned int xOffset = 0;
-    unsigned int yOffset = 0;
+    //Draw Characters
 
     bool emptyLine = true;
+    xOffset = 0;
+    yOffset = 0;
 
     for (unsigned int i = 0; i < this->text.length() + 1; i++) {
         char c = this->text[i];
@@ -131,4 +135,8 @@ void GUIText::setText(std::string text) {
 
 std::string GUIText::getText() {
     return text;
+}
+
+unsigned int GUIText::getWidth() {
+    return maxLineWidth;
 }

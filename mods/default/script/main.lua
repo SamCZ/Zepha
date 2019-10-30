@@ -3,6 +3,21 @@ print("Hello from default")
 runfile(_PATH .. "blocks/_index")
 runfile(_PATH .. "entity/_index")
 
+vector = {}
+
+vector.new = function(x, y, z)
+    if y == nil then return {x = x[1], y = x[2], z = x[3]} end
+    return {x = x, y = y, z = z}
+end
+
+v = vector.new
+
+local table = v{1, 2, 3}
+table2 = v(4, 5, 6)
+
+print(dump(table))
+print(dump(table2))
+
 local blockTypes = {
     "zeus:default:stone",
     "zeus:default:wood",
