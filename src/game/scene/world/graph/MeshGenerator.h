@@ -13,8 +13,8 @@
 #include <vector>
 #include <cstdio>
 
-#include "BlockModelVertex.h"
 #include "../MeshDetails.h"
+#include "../../../../def/item/BlockModelVertex.h"
 #include "../../../../world/chunk/BlockChunk.h"
 #include "../../../../def/LocalDefinitionAtlas.h"
 #include "../../../../def/item/BlockDef.h"

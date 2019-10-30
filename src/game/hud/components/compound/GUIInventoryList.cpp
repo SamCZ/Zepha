@@ -6,33 +6,36 @@
 
 GUIInventoryList::GUIInventoryList(const std::string &key) : GUIContainer(key) {}
 
-void GUIInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::vec2 innerPadding,
-        unsigned int listWidth, unsigned int listHeight, LocalDefs &defs) {
+void GUIInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::vec2 innerPadding, InventoryList &list, LocalDefs &defs) {
+    this->list = &list;
+    this->defs = &defs;
 
     this->scale = scale;
     this->padding = padding;
+    this->innerPadding = innerPadding;
 
-    auto fontRef = defs.textures().getTextureRef("font");
-    Font f(defs.textures(), fontRef);
+    drawContents();
+    list.setUpdatedCallback(std::bind(&GUIInventoryList::drawContents, this));
+}
 
+void GUIInventoryList::drawContents() {
     empty();
 
-    std::string data[4] = {
-            "zeus:materials:stick_0",
-            "zeus:materials:stick_2",
-            "zeus:materials:rock",
-            "zeus:materials:flint",
-    };
+    auto fontRef = defs->textures().getTextureRef("font");
+    Font f(defs->textures(), fontRef);
 
-    for (unsigned short i = 0; i < listHeight; i++) {
-        for (unsigned short j = 0; j < listWidth; j++) {
+    for (unsigned short i = 0; i < list->getLength() / list->getWidth(); i++) {
+        for (unsigned short j = 0; j < list->getWidth(); j++) {
             auto bg = std::make_shared<GUIRect>("background_" + to_string(i) + "_" + to_string(j));
             bg->create(scale * 16.f, {}, {.6, .6, .6, .3});
             add(bg);
             bg->setPos({padding.x + j * (16+innerPadding.x)*scale.x, padding.y + i * (16+innerPadding.y)*scale.y});
 
+            auto stack = list->getStack(j + i * list->getWidth());
+            if (stack.id == 0) continue;
+
             auto item = std::make_shared<GUIInventoryItem>("item_" + to_string(i) + "_" + to_string(j));
-            item->create(scale, random() % 4, defs.textures().getTextureRef(data[static_cast<int>(random() % 4)]), f);
+            item->create(scale, stack.count, defs->textures().getTextureRef(defs->defs().craftItemFromId(stack.id).textures[0]), f);
             add(item);
             item->setPos({padding.x + j * (16+innerPadding.x)*scale.x, padding.y + i * (16+innerPadding.y)*scale.y});
         }

@@ -51,30 +51,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize, LocalDefs& defs) :
     gpuGraph->create({244, 64}, {}, "GPU", 120, 1, genericHistogramRef, f);
     add(gpuGraph);
 
-    auto inventoryTemp = std::make_shared<GUIInventoryList>("inventory");
-    inventoryTemp->create({3, 3}, {}, {2, 2}, 9, 4, defs);
-    add(inventoryTemp);
-    inventoryTemp->setPos({300, 300});
-
     positionElements(bufferSize);
-}
-
-void DebugGui::initItemDisplays(LocalDefs& defs) {
-    uint xOff = 350;
-    for (uint i = 0; i < defs.defs().size(); i++) {
-        ItemDef& def = defs.defs().fromId(i);
-        if (def.type == ItemDef::Type::CRAFTITEM) {
-            auto itemBG = std::make_shared<GUIRect>("item_" + to_string(i));
-            itemBG->create({48, 48}, {}, defs.textures().getTextureRef(static_cast<CraftItemDef&>(def).textures[0]), {0.5, 0.5, 0.5, 1});
-            itemBG->setPos({xOff + 3, 67});
-            add(itemBG);
-            auto item = std::make_shared<GUIRect>("item_" + to_string(i));
-            item->create({48, 48}, {}, defs.textures().getTextureRef(static_cast<CraftItemDef&>(def).textures[0]));
-            item->setPos({xOff, 64});
-            add(item);
-            xOff += 64;
-        }
-    }
 }
 
 void DebugGui::positionElements(glm::vec2 bufferSize) {
@@ -205,4 +182,11 @@ void DebugGui::changeVisibilityState(int state) {
 
     setVisible(displayMode == 0);
     get<GUILabelledGraph>("fpsGraph")->setVisible(displayMode != 1);
+}
+
+void DebugGui::showInventory(InventoryList &list, LocalDefs& defs) {
+    auto inventoryTemp = std::make_shared<GUIInventoryList>("inventory");
+    inventoryTemp->create({3, 3}, {}, {2, 2}, list, defs);
+    add(inventoryTemp);
+    inventoryTemp->setPos({300, 300});
 }

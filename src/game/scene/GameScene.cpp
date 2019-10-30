@@ -3,7 +3,6 @@
 //
 
 #include "GameScene.h"
-#include "../entity/Model.h"
 
 GameScene::GameScene(ClientState& state) : Scene(state),
     defs(state.defs),
@@ -11,6 +10,7 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     world(defs, &playerPos, &server),
 
     player(world, defs, state.renderer),
+    l(24, 8),
     debugGui(state.renderer.getCamera().getBufferDimensions(), defs) {
 
     state.renderer.setClearColor(148, 194, 240);
@@ -19,6 +19,10 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     defs.initLuaApi(world, player);
     world.init();
     server.init(&world);
+
+    l.addStack({defs.defs().craftItemFromStr("zeus:materials:stick").index, 16});
+    debugGui.showInventory(l, defs);
+    l.addStack({defs.defs().craftItemFromStr("zeus:materials:rock").index, 16});
 
     Packet r(PacketType::CONNECT_DATA_RECVD);
     r.sendTo(state.connection.getPeer(), PacketChannel::CONNECT);
@@ -59,6 +63,9 @@ void GameScene::update() {
         debugVisible = !debugVisible;
         debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
     }
+
+    l.addStack({defs.defs().craftItemFromStr("zeus:materials:rock").index, 1});
+    l.addStack({defs.defs().craftItemFromStr("zeus:materials:stick").index, 2});
 }
 
 void GameScene::draw() {

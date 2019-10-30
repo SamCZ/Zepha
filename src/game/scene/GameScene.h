@@ -42,5 +42,7 @@ public:
 
     bool debugVisible = true;
     bool hudVisible = true;
+
+    InventoryList l;
 };
 

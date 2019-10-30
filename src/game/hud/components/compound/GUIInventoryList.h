@@ -9,12 +9,18 @@
 #include "../basic/GUIRect.h"
 #include "../basic/GUIInventoryItem.h"
 #include "../../../../def/texture/Font.h"
+#include "../../../scene/world/InventoryList.h"
 
 class GUIInventoryList : public GUIContainer {
 public:
     GUIInventoryList() = default;
     GUIInventoryList(const std::string& key);
 
-    void create(glm::vec2 scale, glm::vec4 padding, glm::vec2 innerPadding, unsigned int listWidth, unsigned int listHeight,
-                LocalDefs& defs);
+    void create(glm::vec2 scale, glm::vec4 padding, glm::vec2 innerPadding, InventoryList& list, LocalDefs& defs);
+private:
+    void drawContents();
+
+    InventoryList* list;
+    LocalDefs* defs;
+    glm::vec2 innerPadding;
 };

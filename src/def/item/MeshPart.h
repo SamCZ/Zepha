@@ -15,7 +15,7 @@
 
 #include "ShaderMod.h"
 #include "../texture/TextureAtlas.h"
-#include "../../game/scene/world/graph/BlockModelVertex.h"
+#include "BlockModelVertex.h"
 
 struct MeshPart {
     MeshPart(const std::vector<BlockModelVertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<AtlasRef> texture);

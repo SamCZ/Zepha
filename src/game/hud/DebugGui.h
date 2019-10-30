@@ -15,6 +15,7 @@
 #include "components/basic/GUIGraph.h"
 #include "components/basic/GUIText.h"
 #include "components/basic/GUIContainer.h"
+#include "../scene/world/InventoryList.h"
 
 class DebugGui : public GUIContainer {
 public:
@@ -24,7 +25,7 @@ public:
     void changeVisibilityState(int state);
     void positionElements(glm::vec2 bufferSize);
 
-    void initItemDisplays(LocalDefs& defs);
+    void showInventory(InventoryList& list, LocalDefs& defs);
 
     void update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
 private:
