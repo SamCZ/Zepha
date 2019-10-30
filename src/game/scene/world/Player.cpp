@@ -24,7 +24,9 @@ void Player::update(InputManager &input, double delta, double mouseX, double mou
     if (input.isKeyPressed(GLFW_KEY_F)) flying = !flying; //TODO: Move to Lua Bind
 
     moveAndLook(input, delta, mouseX, mouseY);
-    findSelectedBlock(input, delta);
+    findPointedThing(input);
+    updateWireframe();
+    breakBlock(input, delta);
 }
 
 void Player::moveAndLook(InputManager &input, double delta, double deltaX, double deltaY) {
@@ -102,9 +104,7 @@ void Player::updateCamera() {
     camera.setPos({pos.x, pos.y + EYE_HEIGHT, pos.z});
 }
 
-void Player::findSelectedBlock(InputManager &input, double delta) {
-    bool found = false;
-
+void Player::findPointedThing(InputManager &input) {
     glm::vec3 chunkPos = {};
     sptr<BlockChunk> blockChunk = nullptr;
 
@@ -112,7 +112,7 @@ void Player::findSelectedBlock(InputManager &input, double delta) {
         glm::vec3 rayEnd = ray.getEnd();
         glm::vec3 roundedPos = TransPos::roundPos(rayEnd);
 
-        auto currChunkPos = TransPos::chunkFromVec(TransPos::roundPos(rayEnd));
+        auto currChunkPos = TransPos::chunkFromVec(roundedPos);
         if (currChunkPos != chunkPos || blockChunk == nullptr) {
             chunkPos = currChunkPos;
             blockChunk = world.getChunk(chunkPos);
@@ -120,55 +120,62 @@ void Player::findSelectedBlock(InputManager &input, double delta) {
 
         unsigned int blockID = 0;
         if (blockChunk != nullptr) {
-            blockID = blockChunk->getBlock(TransPos::chunkLocalFromVec(TransPos::roundPos(rayEnd)));
+            blockID = blockChunk->getBlock(TransPos::chunkLocalFromVec(roundedPos));
         }
 
-        auto& sBoxes = defs.defs().blockFromId(blockID).sBoxes;
+        auto& boxes = defs.defs().blockFromId(blockID).sBoxes;
 
-        for (auto& sBox : sBoxes) {
-            auto intersects = sBox.intersects(rayEnd, roundedPos);
+        for (auto& sBox : boxes) {
+            auto face = sBox.intersects(rayEnd, roundedPos);
 
-            if (intersects != NONE) {
-                pointedThing.blockDef = &defs.defs().blockFromId(blockID);
-                pointedThing.blockID  = blockID;
-                pointedThing.pos      = roundedPos;
-                pointedThing.face     = intersects;
-
-                wireframe.updateMesh(sBoxes, 0.000005f + ray.getLength() * 0.0015f);
-                wireframe.setPos(roundedPos);
-                if (!wireframe.isVisible()) wireframe.setVisible(true);
-
-                found = true;
-                goto stop;
+            if (face != Dir::NONE) {
+                pointedThing.thing = PointedThing::Thing::BLOCK;
+                pointedThing.target.block = { blockID, roundedPos, face };
+                return;
             }
         }
     }
-    stop:
-    //TODO: Move to a different function
 
-    if (found) {
-        const static float DAMAGE = 0.45f;
-        const static float INTERVAL = 0.33f;
+    pointedThing.thing = PointedThing::Thing::NOTHING;
+    pointedThing.target.nothing = 0;
+}
 
+void Player::updateWireframe() {
+    if (!gameGui.isVisible()) {
+        wireframe.setVisible(false);
+    }
+    else if (pointedThing.thing == PointedThing::Thing::BLOCK) {
+        auto& boxes = defs.defs().blockFromId(pointedThing.target.block.blockId).sBoxes;
+        float distance = glm::distance(pos, pointedThing.target.block.pos + glm::vec3(0.5));
+
+        wireframe.updateMesh(boxes, 0.002f + distance * 0.0014f);
+        wireframe.setPos(pointedThing.target.block.pos);
+        wireframe.setVisible(true);
+    }
+    else {
+        wireframe.setVisible(false);
+    }
+}
+
+void Player::breakBlock(InputManager& input, double delta) {
+    if (pointedThing.thing == PointedThing::Thing::BLOCK) {
         if (input.isMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
             if (breakInterval == 0) {
-                world.damageBlock(pointedThing.pos, DAMAGE);
+                world.damageBlock(pointedThing.target.block.pos, BLOCK_DAMAGE);
             }
             breakInterval += delta;
-            if (breakInterval > INTERVAL) breakInterval = 0;
+            if (breakInterval > BLOCK_INTERVAL) breakInterval = 0;
         }
         else {
             if (breakInterval > 0) breakInterval += delta;
-            if (breakInterval > INTERVAL) breakInterval = 0;
+            if (breakInterval > BLOCK_INTERVAL) breakInterval = 0;
         }
+
         if (input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
-            world.localSetBlock(pointedThing.pos + SelectionBox::faceToOffset(pointedThing.face), activeBlock);
+            world.localSetBlock(pointedThing.target.block.pos + SelectionBox::faceToOffset(pointedThing.target.block.face), activeBlock);
         }
     }
-    else {
-        if (wireframe.isVisible()) wireframe.setVisible(false);
-        breakInterval = 0;
-    }
+    else breakInterval = 0;
 }
 
 /*

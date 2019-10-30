@@ -25,6 +25,8 @@ public:
     static constexpr float EYE_HEIGHT = 1.65f;
     static constexpr float BASE_MOVE_SPEED = 7.5f;
     static constexpr float JUMP_VEL = 0.15f;
+    static constexpr float BLOCK_DAMAGE = 0.45f;
+    static constexpr float BLOCK_INTERVAL = 0.33f;
 
     Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer);
 
@@ -32,7 +34,9 @@ public:
 
     void moveAndLook(InputManager &input, double delta, double deltaX, double deltaY);
     void updateCamera();
-    void findSelectedBlock(InputManager &input, double delta);
+    void findPointedThing(InputManager &input);
+    void updateWireframe();
+    void breakBlock(InputManager& input, double delta);
 
     void setPos(glm::vec3 pos);
     glm::vec3 getPos();

@@ -36,14 +36,14 @@ public:
 
         vec -= blockOffset; //Normalize Vector Position
 
-        if (std::abs(vec.y - b.y) < THRESH && vec.x > a.x && vec.x < b.x && vec.z > a.z && vec.z < b.z) return TOP;
-        if (std::abs(vec.y - a.y) < THRESH && vec.x > a.x && vec.x < b.x && vec.z > a.z && vec.z < b.z) return BOTTOM;
-        if (std::abs(vec.z - a.z) < THRESH && vec.x > a.x && vec.x < b.x && vec.y > a.y && vec.y < b.y) return FRONT;
-        if (std::abs(vec.z - b.z) < THRESH && vec.x > a.x && vec.x < b.x && vec.y > a.y && vec.y < b.y) return BACK;
-        if (std::abs(vec.x - b.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return LEFT;
-        if (std::abs(vec.x - a.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return RIGHT;
+        if (std::abs(vec.y - b.y) < THRESH && vec.x > a.x && vec.x < b.x && vec.z > a.z && vec.z < b.z) return Dir::TOP;
+        if (std::abs(vec.y - a.y) < THRESH && vec.x > a.x && vec.x < b.x && vec.z > a.z && vec.z < b.z) return Dir::BOTTOM;
+        if (std::abs(vec.z - a.z) < THRESH && vec.x > a.x && vec.x < b.x && vec.y > a.y && vec.y < b.y) return Dir::FRONT;
+        if (std::abs(vec.z - b.z) < THRESH && vec.x > a.x && vec.x < b.x && vec.y > a.y && vec.y < b.y) return Dir::BACK;
+        if (std::abs(vec.x - b.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return Dir::LEFT;
+        if (std::abs(vec.x - a.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return Dir::RIGHT;
 
-        return NONE;
+        return Dir::NONE;
     }
 
     static glm::vec3 faceToOffset(Dir f) {
@@ -56,7 +56,7 @@ public:
             { 0, 0, 1},
         };
 
-        return positionOffsets[f];
+        return positionOffsets[static_cast<int>(f)];
     }
 
     glm::vec3 a {}, b {1, 1, 1};

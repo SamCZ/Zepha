@@ -137,16 +137,6 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         glm::vec3 mapBlockCoordinate = TransPos::Dimension::mapBlockOffsetFromRegion(chunkPos);
         glm::vec3 regionCoordinate = TransPos::Dimension::regionFromVec(chunkPos);
 
-        auto thing = player.getPointedThing();
-        std::string face =
-            (thing.face == TOP)    ? "TOP"    :
-            (thing.face == BOTTOM) ? "BOTTOM" :
-            (thing.face == LEFT)   ? "LEFT"   :
-            (thing.face == RIGHT)  ? "RIGHT"  :
-            (thing.face == FRONT)  ? "FRONT"  :
-            (thing.face == BACK)   ? "BACK"   :
-            "NONE";
-
         std::ostringstream str;
 
         using namespace Util;
@@ -168,19 +158,38 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
 
         str << "Standing On: " << on << std::endl << std::endl;
 
-        if (thing.blockDef != nullptr) str << "Pointing At: " << thing.blockDef->identifier << std::endl;
-        str << "Pointed Position: " << vecToString(thing.pos) << std::endl;
-        str << "Pointed Face: " << face << std::endl;
+        PointedThing thing = player.getPointedThing();
+        if (thing.thing == PointedThing::Thing::BLOCK) {
+            std::string face = "NONE";
+            if (thing.thing == PointedThing::Thing::BLOCK) {
+                Dir faceDir = thing.target.block.face;
+                std::string face =
+                        (faceDir == Dir::TOP) ? "TOP" :
+                        (faceDir == Dir::BOTTOM) ? "BOTTOM" :
+                        (faceDir == Dir::LEFT) ? "LEFT" :
+                        (faceDir == Dir::RIGHT) ? "RIGHT" :
+                        (faceDir == Dir::FRONT) ? "FRONT" :
+                        (faceDir == Dir::BACK) ? "BACK" :
+                        "NONE";
+            }
+            str << "Pointing At: " << defs.defs().blockFromId(thing.target.block.blockId).identifier << std::endl;
+            str << "Pointed Position: " << vecToString(thing.target.block.pos) << std::endl;
+            str << "Pointed Face: " << face << std::endl;
+        }
+        else {
+            str << "No Target";
+        }
 
         get<GUIText>("dataText")->setText(str.str());
     }
 
     { //Crosshair Text
-        auto thing = player.getPointedThing();
+        PointedThing thing = player.getPointedThing();
 
         std::ostringstream crossText;
-        if (thing.blockDef != nullptr) {
-            crossText << thing.blockDef->name << " (" << thing.blockDef->identifier << ")" << std::endl;
+        if (thing.thing == PointedThing::Thing::BLOCK) {
+            crossText << defs.defs().blockFromId(thing.target.block.blockId).name
+                      << " (" << defs.defs().blockFromId(thing.target.block.blockId).identifier << ")" << std::endl;
         }
         get<GUIText>("crosshairText")->setText(crossText.str());
     }

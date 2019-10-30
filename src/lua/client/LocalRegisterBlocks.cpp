@@ -180,19 +180,19 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& core, LocalDefs &defs) {
             //Add the meshpart to the proper face vector
             std::string face = meshPartTable.get_or<std::string>("face", "nocull");
 
-            Dir d = face == "top"    ? TOP     :
-                    face == "bottom" ? BOTTOM  :
-                    face == "left"   ? LEFT    :
-                    face == "right"  ? RIGHT   :
-                    face == "front"  ? FRONT   :
-                    face == "back"   ? BACK    :
-                    face == "nocull" ? NO_CULL :
-                    INVALID;
+            Dir d = face == "top"    ? Dir::TOP     :
+                    face == "bottom" ? Dir::BOTTOM  :
+                    face == "left"   ? Dir::LEFT    :
+                    face == "right"  ? Dir::RIGHT   :
+                    face == "front"  ? Dir::FRONT   :
+                    face == "back"   ? Dir::BACK    :
+                    face == "nocull" ? Dir::NO_CULL :
+                    Dir::INVALID;
 
-            if (d == INVALID)
+            if (d == Dir::INVALID)
                 throw "Face value \"" + face + "\" is not one of 'top', 'bottom', 'left', 'right', 'front', 'back', 'nocull'.";
 
-            blockModel.parts[d].push_back(meshPart);
+            blockModel.parts[static_cast<int>(d)].push_back(meshPart);
         });
 
         std::vector<std::shared_ptr<AtlasRef>> refs;

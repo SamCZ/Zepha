@@ -52,19 +52,19 @@ MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefinitionAtlas& atl
 
             if (model.visible) {
                 check = off; check.x -= 1;
-                if (!getBlockAt(check).culls) addFaces(vis, model.parts[XNEG]);
+                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::XNEG)]);
                 check = off; check.x += 1;
-                if (!getBlockAt(check).culls) addFaces(vis, model.parts[XPOS]);
+                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::XPOS)]);
                 check = off; check.y -= 1;
-                if (!getBlockAt(check).culls) addFaces(vis, model.parts[YNEG]);
+                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::YNEG)]);
                 check = off; check.y += 1;
-                if (!getBlockAt(check).culls) addFaces(vis, model.parts[YPOS]);
+                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::YPOS)]);
                 check = off; check.z -= 1;
-                if (!getBlockAt(check).culls) addFaces(vis, model.parts[ZNEG]);
+                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::ZNEG)]);
                 check = off; check.z += 1;
-                if (!getBlockAt(check).culls) addFaces(vis, model.parts[ZPOS]);
+                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::ZPOS)]);
 
-                addFaces(vis, model.parts[NO_CULL]);
+                addFaces(vis, model.parts[static_cast<int>(Dir::NO_CULL)]);
             }
         }
     }
