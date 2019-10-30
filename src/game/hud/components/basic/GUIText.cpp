@@ -113,10 +113,10 @@ void GUIText::setText(std::string text) {
             }
 
             std::vector<GuiVertex> vertices {
-                    {{xOffset,             yOffset    }, {charUVs.x, charUVs.y, 0, 0}, color, true},
-                    {{xOffset,             yOffset + h}, {charUVs.x, charUVs.w, 0, 0}, color, true},
-                    {{xOffset + charWidth, yOffset + h}, {charUVs.z, charUVs.w, 0, 0}, color, true},
-                    {{xOffset + charWidth, yOffset    }, {charUVs.z, charUVs.y, 0, 0}, color, true},
+                    {{xOffset,             yOffset    }, {charUVs.x, charUVs.y, 0, 1}, color, true},
+                    {{xOffset,             yOffset + h}, {charUVs.x, charUVs.w, 0, 1}, color, true},
+                    {{xOffset + charWidth, yOffset + h}, {charUVs.z, charUVs.w, 0, 1}, color, true},
+                    {{xOffset + charWidth, yOffset    }, {charUVs.z, charUVs.y, 0, 1}, color, true},
             };
             std::vector<uint> indices{
                     indOffset,

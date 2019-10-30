@@ -4,6 +4,7 @@
 
 #include "DebugGui.h"
 #include "../../def/texture/Font.h"
+#include "components/compound/GUIInventoryList.h"
 
 DebugGui::DebugGui(glm::vec2 bufferSize, LocalDefs& defs) :
     displayMode(0) {
@@ -50,6 +51,11 @@ DebugGui::DebugGui(glm::vec2 bufferSize, LocalDefs& defs) :
     gpuGraph->create({244, 64}, {}, "GPU", 120, 1, genericHistogramRef, f);
     add(gpuGraph);
 
+    auto inventoryTemp = std::make_shared<GUIInventoryList>("inventory");
+    inventoryTemp->create({3, 3}, {}, {2, 2}, 9, 4, defs);
+    add(inventoryTemp);
+    inventoryTemp->setPos({300, 300});
+
     positionElements(bufferSize);
 }
 
@@ -59,7 +65,7 @@ void DebugGui::initItemDisplays(LocalDefs& defs) {
         ItemDef& def = defs.defs().fromId(i);
         if (def.type == ItemDef::Type::CRAFTITEM) {
             auto itemBG = std::make_shared<GUIRect>("item_" + to_string(i));
-            itemBG->create({48, 48}, {}, defs.textures().getTextureRef(static_cast<CraftItemDef&>(def).textures[0]), {0.5, 0.5, 0.5});
+            itemBG->create({48, 48}, {}, defs.textures().getTextureRef(static_cast<CraftItemDef&>(def).textures[0]), {0.5, 0.5, 0.5, 1});
             itemBG->setPos({xOff + 3, 67});
             add(itemBG);
             auto item = std::make_shared<GUIRect>("item_" + to_string(i));

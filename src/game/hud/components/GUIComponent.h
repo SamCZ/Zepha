@@ -32,6 +32,7 @@ public:
         }
     };
     void remove(std::string key);
+    void empty();
 
     void setVisible(bool visible) override;
     void draw(Renderer& renderer) override;

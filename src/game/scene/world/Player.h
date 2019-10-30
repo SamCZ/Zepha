@@ -24,7 +24,7 @@ public:
     static constexpr float LOOK_PRECISION = 0.01f;
     static constexpr float EYE_HEIGHT = 1.65f;
     static constexpr float BASE_MOVE_SPEED = 7.5f;
-    static constexpr float JUMP_VEL = 0.14f;
+    static constexpr float JUMP_VEL = 0.15f;
 
     Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer);
 

@@ -57,6 +57,12 @@ void GUIComponent::remove(std::string key) {
     }
 }
 
+void GUIComponent::empty() {
+    for (auto it = children.cbegin(); it != children.cend();) {
+        it = children.erase(it);
+    }
+}
+
 void GUIComponent::draw(Renderer& renderer) {
     entity.draw(renderer);
     for (const auto& child : children) {
