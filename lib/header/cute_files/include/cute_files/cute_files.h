@@ -131,7 +131,12 @@ void cf_do_unit_tests();
 #if !defined _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
+
+#ifdef _WIN32
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#endif
 
 	struct cf_file_t
 	{

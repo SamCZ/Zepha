@@ -15,6 +15,7 @@ WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, LocalDefs&
 
 bool WorldInterpolationStream::pushBack(Packet p) {
     queuedTasks.push_back(std::move(p));
+	return true;
 }
 
 std::vector<std::shared_ptr<BlockChunk>> WorldInterpolationStream::update() {

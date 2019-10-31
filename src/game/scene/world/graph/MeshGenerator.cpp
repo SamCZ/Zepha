@@ -102,7 +102,7 @@ void MeshGenerator::addFaces(const glm::vec3 &offset, const vector<MeshPart> &me
             case ShaderMod::ROTATE_Z:
             case ShaderMod::SWAY_ATTACHED:
             case ShaderMod::SWAY_FULL_BLOCK: {
-                modData = {Util::packFloat((offset - 8.f) / 8), mp.modValue, 0};
+                modData = {Util::packFloat((offset - 8.f) / 8.f), mp.modValue, 0};
                 break;
             }
         }

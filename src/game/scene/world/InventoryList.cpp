@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <algorithm>
 #include "InventoryList.h"
 
 InventoryList::InventoryList(unsigned short size, unsigned short width) :

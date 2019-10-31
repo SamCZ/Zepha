@@ -56,6 +56,8 @@ void Client::loop() {
 }
 
 Client::~Client() {
-    if (serverPID != 0) kill(serverPID, SIGKILL);
+#ifndef _WIN32
+	if (serverPID != 0) kill(serverPID, SIGKILL);
+#endif
     sceneManager.cleanupScene();
 }

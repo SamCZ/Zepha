@@ -14,6 +14,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "../../../util/Log.h"
 
+typedef unsigned int uint;
+
 class Shader {
 public:
     Shader();

@@ -4,6 +4,7 @@
 //
 
 #include "Model.h"
+typedef unsigned int uint;
 
 void Model::fromMesh(uptr<EntityMesh> mesh) {
     meshes.clear();

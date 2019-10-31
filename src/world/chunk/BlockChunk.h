@@ -14,6 +14,8 @@
 #include "../../game/scene/world/graph/MeshChunk.h"
 #include "../../util/Log.h"
 
+typedef unsigned int uint;
+
 class BlockChunk {
 public:
     BlockChunk() = default;
