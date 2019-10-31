@@ -17,6 +17,7 @@ uint64_t constexpr hashStr(const char * m) {
 
 int StartGame(int argc, char* argv[]) {
     Address addr {"127.0.0.1", 32000};
+    std::string path = argv[0];
 
     enum class Mode {
             NONE, CLIENT, SERVER, LOCAL_SERVER
@@ -72,19 +73,20 @@ int StartGame(int argc, char* argv[]) {
     //Start the game
     switch (mode) {
         default: {
-            std::cout << Log::err << "Mode not setText." << Log::endl;
+            std::cout << Log::err << "Mode not set." << Log::endl;
             return -1;
         }
         case Mode::CLIENT: {
-            Client c(argv[0], addr, 1366, 768);
+            Client c(addr, {1366, 768});
             break;
         }
         case Mode::LOCAL_SERVER: {
-            Client c(argv[0], addr, 1366, 768);
+            auto localServer = std::make_unique<LocalServerInstance>(path, addr.port);
+            Client c(std::move(localServer), {1366, 768});
             break;
         }
         case Mode::SERVER: {
-            Server s(argv[0], addr.port);
+            Server s(path, addr.port);
             break;
         }
     }

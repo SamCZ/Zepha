@@ -242,6 +242,6 @@ set(ZEPHA_SRC
     lua/api/type/cLuaPlayer.h
     lua/api/type/LuaPlayer.cpp
     lua/api/type/LuaPlayer.h
-        game/entity/Collidable.cpp game/entity/Collidable.h game/hud/components/compound/GUIInventoryList.cpp game/hud/components/compound/GUIInventoryList.h game/hud/components/basic/GUIInventoryItem.cpp game/hud/components/basic/GUIInventoryItem.h game/scene/world/InventoryList.cpp game/scene/world/InventoryList.h game/scene/world/ItemStack.cpp game/scene/world/ItemStack.h)
+        game/entity/Collidable.cpp game/entity/Collidable.h game/hud/components/compound/GUIInventoryList.cpp game/hud/components/compound/GUIInventoryList.h game/hud/components/basic/GUIInventoryItem.cpp game/hud/components/basic/GUIInventoryItem.h game/scene/world/InventoryList.cpp game/scene/world/InventoryList.h game/scene/world/ItemStack.cpp game/scene/world/ItemStack.h server/LocalServerInstance.cpp server/LocalServerInstance.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

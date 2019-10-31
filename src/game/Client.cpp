@@ -4,23 +4,23 @@
 
 #include "Client.h"
 
-Client::Client(char* path, const Address& addr, int width, int height) :
+Client::Client(const Address &addr, glm::vec2 dimensions) :
     addr(addr),
-    renderer(width, height),
+    renderer(dimensions.x, dimensions.y),
     state {renderer, {}, LocalDefs("./assets/textures"), "this", 0, 0} {
+    init();
+}
 
-//    Start Local Server
-//    if (path != nullptr) {
-//        int pid = fork();
-//        if (pid == 0) {
-//            char *arr[] =
-//                {(char*)"", (char*)"-iconic", (char*)"-e", path, (char*)"--mode=server", (char*)nullptr};
-//
-//            execvp("xterm", arr);
-//        } else {
-//            serverPID = pid;
-//        }
-//    }
+Client::Client(uptr<LocalServerInstance> localServer, glm::vec2 dimensions) :
+    localServer(std::move(localServer)),
+    addr(Address {"127.0.0.1", this->localServer->port}),
+    renderer(dimensions.x, dimensions.y),
+    state {renderer, {}, LocalDefs("./assets/textures"), "this", 0, 0} {
+    init();
+}
+
+void Client::init() {
+    if (localServer != nullptr) localServer->start();
 
     std::unique_ptr<Scene> scene = std::make_unique<MenuScene>(state);
     sceneManager.setScene(std::move(scene));
@@ -56,6 +56,6 @@ void Client::loop() {
 }
 
 Client::~Client() {
-    if (serverPID != 0) kill(serverPID, SIGKILL);
+    if (localServer != nullptr) localServer->stop();
     sceneManager.cleanupScene();
 }

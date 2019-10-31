@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <zconf.h>
-#include <signal.h>
 #include "ClientState.h"
 #include "graph/Renderer.h"
 #include "graph/scene/SceneManager.h"
@@ -13,16 +11,20 @@
 #include "scene/GameScene.h"
 #include "scene/MenuScene.h"
 #include "scene/ConnectScene.h"
+#include "../server/LocalServerInstance.h"
 
 class Client {
 public:
-    Client(char* path, const Address& addr, int width, int height);
+    Client(const Address& addr, glm::vec2 dimensions);
+    Client(uptr<LocalServerInstance> localServer, glm::vec2 dimensions);
     ~Client();
 
 private:
+    void init();
     void loop();
 
-    Address addr;
+    uptr<LocalServerInstance> localServer = nullptr;
+    Address addr {};
 
     Renderer renderer;
     ClientState state;
@@ -31,7 +33,5 @@ private:
 
     double timeElapsed = 0.0f;
     bool startedGame = false;
-
-    int serverPID = 0;
 };
 
