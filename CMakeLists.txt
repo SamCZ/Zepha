@@ -18,11 +18,7 @@ find_path(NOISE_HEADERS noise/noise.h)
 find_path(GLM_HEADERS glm/glm.hpp)
 find_path(PTHREAD_HEADERS pthread.h)
 
-if (WIN32)
-find_library(GLEW_LIB glew32)
-else()
-set(GLEW_LIB ${CMAKE_SOURCE_DIR}/lib/static/glew/libGLEW.a)
-endif()
+find_library(GLEW_LIB NAMES glew32 GLEW glew glew32s)
 
 if (WIN32)
 find_library(GLFW_LIB glfw3dll)
