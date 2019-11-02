@@ -7,6 +7,8 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
+typedef unsigned short ushort;
+
 LuaInputManager::LuaInputManager() {
     for (bool& key : keysDown) key = false;
     for (bool& key : keysPressed) key = false;

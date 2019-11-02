@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include "AnimChannel.h"
+typedef unsigned int uint;
 
 class ModelAnimation {
 public:

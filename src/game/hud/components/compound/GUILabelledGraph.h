@@ -22,8 +22,6 @@ public:
 
     void pushValue(float value);
 private:
-    const static int GRAPH_PAD_X = 2, GRAPH_PAD_Y = 62, TEXT_PAD_X = 4, TEXT_PAD_Y = 8;
-
     std::string title;
 
     std::shared_ptr<AtlasRef> graphTextureRef;

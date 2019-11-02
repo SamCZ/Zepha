@@ -12,6 +12,8 @@
 #include <iostream>
 #include "Log.h"
 
+typedef unsigned short ushort;
+
 namespace Util {
     struct EnumClassHash {
         template <typename T>

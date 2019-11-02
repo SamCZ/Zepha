@@ -6,6 +6,8 @@
 #include <stb_image/stb_image.h>
 #include <stb_image/stb_image_write.h>
 
+typedef unsigned int uint;
+
 //Height is optional and defaults to 0
 TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) :
     pageWidth(width),

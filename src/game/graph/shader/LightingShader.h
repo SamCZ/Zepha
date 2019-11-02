@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Shader.h"
+typedef unsigned int uint;
 
 class LightingShader : public Shader {
 public:

@@ -9,6 +9,8 @@
 #include <glm/vec3.hpp>
 #include "../../util/TransPos.h"
 
+typedef unsigned int uint;
+
 struct MapGenJob {
 
     std::array<uint, 4096> blocks;

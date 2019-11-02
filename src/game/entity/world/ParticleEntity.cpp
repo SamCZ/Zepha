@@ -1,9 +1,9 @@
-#include <cmath>
-
 //
 // Created by aurailus on 15/05/19.
 //
 
+#include <cmath>
+#include <random>
 #include "ParticleEntity.h"
 
 ParticleEntity::ParticleEntity(glm::vec3 pos, BlockDef &block) {
@@ -41,7 +41,7 @@ ParticleEntity::ParticleEntity(glm::vec3 pos, BlockDef &block) {
         0, 2, 1, 2, 0, 3,
     };
 
-    auto dir = glm::radians(static_cast<float>(random() % 360));
+    auto dir = glm::radians(static_cast<float>(rand() % 360));
     float xDir = sinf(dir);
     float zDir = cosf(dir);
 

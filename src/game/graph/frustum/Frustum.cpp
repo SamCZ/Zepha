@@ -34,8 +34,8 @@ void Frustum::update(glm::vec3 &pos, glm::vec3 &look, glm::vec3 &up, glm::vec3 &
     planes[BOTTOM].setPoints(nbl,nbr,fbr);
     planes[LEFT].setPoints(ntl,nbl,fbl);
     planes[RIGHT].setPoints(nbr,ntr,fbr);
-    planes[NEAR].setPoints(ntl,ntr,nbr);
-    planes[FAR].setPoints(ftr,ftl,fbl);
+    planes[FNEAR].setPoints(ntl,ntr,nbr);
+    planes[FFAR].setPoints(ftr,ftl,fbl);
 }
 
 int Frustum::pointInFrustum(glm::vec3 &p) {

@@ -6,6 +6,8 @@
 
 #include <sol2/sol.hpp>
 
+typedef unsigned short ushort;
+
 class LuaInputManager {
 public:
     LuaInputManager();
