@@ -16,7 +16,7 @@ find_path(NOISE_HEADERS noise/noise.h)
 find_path(GLM_HEADERS glm/glm.hpp)
 find_path(PTHREAD_HEADERS pthread.h)
 
-find_library(GLEW_LIB glew32)
+find_library(GLEW_LIB NAMES glew32 GLEW glew glew32s)
 find_library(GLFW_LIB glfw3dll)
 find_library(LUA_LIB lua)
 
