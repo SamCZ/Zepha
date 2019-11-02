@@ -9,27 +9,41 @@ project (${PROJECT_NAME})
 
 find_path(GLEW_HEADERS GL/glew.h)
 find_path(GLFW_HEADERS GLFW/glfw3.h)
-find_path(LUA_HEADERS lua.hpp)
+find_path(LUA_HEADERS lua.hpp
+        /usr/include/lua5.1
+        /usr/local/include/lua5.1)
 find_path(ASSIMP_HEADERS assimp/Importer.hpp)
 find_path(ENET_HEADERS enet/enet.h)
 find_path(NOISE_HEADERS noise/noise.h)
 find_path(GLM_HEADERS glm/glm.hpp)
 find_path(PTHREAD_HEADERS pthread.h)
 
-find_library(GLEW_LIB NAMES glew32 GLEW glew glew32s)
-find_library(GLFW_LIB glfw3dll)
-find_library(LUA_LIB lua)
+if (WIN32)
+find_library(GLEW_LIB glew32)
+else()
+set(GLEW_LIB ${CMAKE_SOURCE_DIR}/lib/static/glew/libGLEW.a)
+endif()
 
 if (WIN32)
-find_library(ASSIMP_LIB assimp)
-# find_library(ASSIMP_LIB assimp-vc142-mt)
+find_library(GLFW_LIB glfw3dll)
+else()
+find_library(GLFW_LIB glfw3)
+endif()
+
+find_library(LUA_LIB NAMES lua lua5.1 PATHS
+        /usr/lib/x86_64-linux-gnu
+        /usr/lib
+        /usr/local/lib)
+
+if (WIN32)
+find_library(ASSIMP_LIB assimp-vc142-mt)
 else()
 find_library(ASSIMP_LIB assimp)
 endif()
 
 find_library(ENET_LIB enet)
-find_library(NOISE_LIB noise-static)
-find_library(NOISEUTIL_LIB noiseutils-static)
+find_library(NOISE_LIB NAMES libnoise noise noise-static)
+
 if (WIN32)
 find_library(PTHREAD_LIB pthreadVC3)
 else()
@@ -47,18 +61,12 @@ include_directories(
     lib/header/json/include        # JSON header library.
 
     # Include Static Library Headers
-   # lib/static/glew/include        # GLEW headers.
-   # lib/static/glfw/include        # GLFW headers.
-   # lib/static/assimp/include      # Assimp headers.
-   # lib/static/lua/install/include # Lua headers.
-   # lib/static/enet/include        # ENet headers.
-   # lib/static/noise/include       # Noise headers.
-   ${GLEW_HEADERS}
-   ${LUA_HEADERS}
-   ${ASSIMP_HEADERS}
-   ${ENET_HEADERS}
-   ${NOISE_HEADERS}
-   ${PTHREAD_HEADERS}
+    ${GLEW_HEADERS}
+    ${LUA_HEADERS}
+    ${ASSIMP_HEADERS}
+    ${ENET_HEADERS}
+    ${NOISE_HEADERS}
+    ${PTHREAD_HEADERS}
 )
 
 
