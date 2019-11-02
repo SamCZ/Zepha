@@ -13,6 +13,7 @@
 #include <vector>
 #include <cstdio>
 
+#include "../../../../def/item/MeshPart.h"
 #include "../MeshDetails.h"
 #include "../../../../def/item/BlockModelVertex.h"
 #include "../../../../world/chunk/BlockChunk.h"
@@ -29,7 +30,7 @@ public:
                   std::array<NoiseSample, 3>& blockOffsets);
 private:
     BlockDef& getBlockAt(const glm::vec3 &pos);
-    void addFaces(const glm::vec3 &offset, const vector<MeshPart> &meshParts);
+    void addFaces(const glm::vec3 &offset, const std::vector<MeshPart> &meshParts);
 
     unsigned int indOffset = 0;
 

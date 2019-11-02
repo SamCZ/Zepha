@@ -5,7 +5,7 @@
 #pragma once
 
 
-#include <GL/gl.h>
+#include <GL/glew.h>
 #include <glm/mat4x4.hpp>
 
 struct GuiUniforms {

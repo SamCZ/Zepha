@@ -49,7 +49,7 @@ namespace MatConv {
     }
 
     static inline glm::mat3 AiToGLMMat3(const aiMatrix3x3 &in_mat) {
-        glm::mat4 tmp;
+        glm::mat3 tmp;
 
         tmp[0][0] = in_mat.a1;
         tmp[1][0] = in_mat.b1;

@@ -3,6 +3,7 @@
 //
 
 #include "AnimationState.h"
+typedef unsigned int uint;
 
 AnimationState::AnimationState(Model &source) {
     const ModelAnimation& animation = source.getAnimation();

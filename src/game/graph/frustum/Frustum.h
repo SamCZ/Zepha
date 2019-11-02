@@ -16,8 +16,8 @@ private:
         BOTTOM,
         LEFT,
         RIGHT,
-        NEAR,
-        FAR
+        FNEAR,
+        FFAR
     };
 
 public:

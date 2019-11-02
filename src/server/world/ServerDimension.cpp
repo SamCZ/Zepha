@@ -4,6 +4,8 @@
 
 #include "ServerDimension.h"
 
+typedef unsigned int uint;
+
 void ServerDimension::setChunk(sptr<BlockChunk> chunk) {
     blockChunks.insert({chunk->pos, chunk});
 }

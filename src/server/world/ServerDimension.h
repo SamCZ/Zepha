@@ -8,6 +8,8 @@
 #include <glm/vec3.hpp>
 #include "../../world/chunk/BlockChunk.h"
 
+typedef unsigned int uint;
+
 class ServerDimension {
 public:
     ServerDimension() = default;

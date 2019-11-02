@@ -6,6 +6,7 @@
 
 #include "Shader.h"
 #include <random>
+typedef unsigned int uint;
 
 class SSAOShader : public Shader {
 public:

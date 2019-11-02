@@ -21,7 +21,7 @@ void NetHandler::initServer(unsigned short port, short max_clients) {
 
     if (enet_initialize() != 0) {
         fprintf(stderr, "[FATAL] Failed to Initialize ENet.\n");
-        state = NetState::ERROR;
+        state = NetState::ENET_ERROR;
         return;
     }
 
@@ -33,7 +33,7 @@ void NetHandler::initServer(unsigned short port, short max_clients) {
 
     if (host == nullptr) {
         fprintf(stderr, "[FATAL] Failed to create ENet host.\n");
-        state = NetState::ERROR;
+        state = NetState::ENET_ERROR;
         return;
     }
 
@@ -45,7 +45,7 @@ void NetHandler::initClient(Address hostAddress, int attempts, int timeout) {
 
     if (enet_initialize() != 0) {
         fprintf(stderr, "[FATAL] Failed to Initialize ENet.\n");
-        state = NetState::ERROR;
+        state = NetState::ENET_ERROR;
         return;
     }
 
@@ -53,7 +53,7 @@ void NetHandler::initClient(Address hostAddress, int attempts, int timeout) {
 
     if (host == nullptr) {
         fprintf(stderr, "[FATAL] Failed to create ENet client.\n");
-        state = NetState::ERROR;
+        state = NetState::ENET_ERROR;
         return;
     }
 
@@ -67,7 +67,7 @@ void NetHandler::initClient(Address hostAddress, int attempts, int timeout) {
 
         if (peer == nullptr) {
             fprintf(stderr, "[FATAL] Failed to find ENet peer.\n");
-            state = NetState::ERROR;
+            state = NetState::ENET_ERROR;
             return;
         }
 

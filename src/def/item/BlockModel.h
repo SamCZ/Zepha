@@ -8,6 +8,8 @@
 #include <vector>
 #include "MeshPart.h"
 #include "../../util/Dir.h"
+#include <algorithm>
+#include <limits>
 
 struct BlockModel {
     std::array<std::vector<MeshPart>, 7> parts;
@@ -32,7 +34,7 @@ struct BlockModel {
                 {glm::vec3{0, 1, 1}, glm::vec3{}, glm::vec2{1, 0}, glm::vec2{}},
                 {glm::vec3{0, 1, 0}, glm::vec3{}, glm::vec2{0, 0}, glm::vec2{}}};
         indices = {0, 1, 2, 2, 3, 0};
-        MeshPart leftMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[std::min(static_cast<int>(textureRefs.size() - 1), 2)]);
+        MeshPart leftMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[(std::min)(static_cast<int>(textureRefs.size() - 1), 2)]);
         blockModel.parts[static_cast<int>(Dir::LEFT)].push_back(leftMeshPart);
 
         //Right Face
@@ -42,7 +44,7 @@ struct BlockModel {
                 {glm::vec3{1, 0, 0}, glm::vec3{}, glm::vec2{0, 1}, glm::vec2{}},
                 {glm::vec3{1, 1, 0}, glm::vec3{}, glm::vec2{0, 0}, glm::vec2{}}};
         indices = {0, 1, 2, 2, 3, 0};
-        MeshPart rightMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[std::min(static_cast<int>(textureRefs.size() - 1), 3)]);
+        MeshPart rightMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[(std::min)(static_cast<int>(textureRefs.size() - 1), 3)]);
         blockModel.parts[static_cast<int>(Dir::RIGHT)].push_back(rightMeshPart);
 
         //Top Face
@@ -52,7 +54,7 @@ struct BlockModel {
                 {glm::vec3{1, 1, 1}, glm::vec3{}, glm::vec2{1, 1}, glm::vec2{}},
                 {glm::vec3{1, 1, 0}, glm::vec3{}, glm::vec2{1, 0}, glm::vec2{}}};
         indices = {0, 1, 2, 2, 3, 0};
-        MeshPart topMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[std::min(static_cast<int>(textureRefs.size() - 1), 0)]);
+        MeshPart topMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[(std::min)(static_cast<int>(textureRefs.size() - 1), 0)]);
         blockModel.parts[static_cast<int>(Dir::TOP)].push_back(topMeshPart);
 
         //Bottom Face
@@ -62,7 +64,7 @@ struct BlockModel {
                 {glm::vec3{1, 0, 1}, glm::vec3{}, glm::vec2{1, 1}, glm::vec2{}},
                 {glm::vec3{0, 0, 1}, glm::vec3{}, glm::vec2{0, 1}, glm::vec2{}}};
         indices = {0, 1, 2, 2, 3, 0};
-        MeshPart bottomMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[std::min(static_cast<int>(textureRefs.size() - 1), 1)]);
+        MeshPart bottomMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[(std::min)(static_cast<int>(textureRefs.size() - 1), 1)]);
         blockModel.parts[static_cast<int>(Dir::BOTTOM)].push_back(bottomMeshPart);
 
         //Front Face
@@ -72,7 +74,7 @@ struct BlockModel {
                 {glm::vec3{1, 1, 1}, glm::vec3{}, glm::vec2{1, 0}, glm::vec2{}},
                 {glm::vec3{0, 1, 1}, glm::vec3{}, glm::vec2{0, 0}, glm::vec2{}}};
         indices = {0, 1, 2, 2, 3, 0};
-        MeshPart frontMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[std::min(static_cast<int>(textureRefs.size() - 1), 4)]);
+        MeshPart frontMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[(std::min)(static_cast<int>(textureRefs.size() - 1), 4)]);
         blockModel.parts[static_cast<int>(Dir::FRONT)].push_back(frontMeshPart);
 
         //Back Face
@@ -82,7 +84,7 @@ struct BlockModel {
                 {glm::vec3{1, 1, 0}, glm::vec3{}, glm::vec2{1, 0}, glm::vec2{}},
                 {glm::vec3{1, 0, 0}, glm::vec3{}, glm::vec2{1, 1}, glm::vec2{}}};
         indices = {0, 1, 2, 2, 3, 0};
-        MeshPart backMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[std::min(static_cast<int>(textureRefs.size() - 1), 5)]);
+        MeshPart backMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[(std::min)(static_cast<int>(textureRefs.size() - 1), 5)]);
         blockModel.parts[static_cast<int>(Dir::BACK)].push_back(backMeshPart);
 
         return blockModel;

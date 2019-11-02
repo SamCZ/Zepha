@@ -8,7 +8,7 @@
 enum class NetState {
     UNINITIALIZED,
     FAILED_CONNECT,
-    ERROR,
+    ENET_ERROR,
     CLIENT,
     HOST,
     CLOSED

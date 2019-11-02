@@ -3,6 +3,7 @@
 //
 
 #include "SSAOShader.h"
+typedef unsigned int uint;
 
 SSAOShader::SSAOShader(glm::vec2 windowSize, float bufferScale, uint kernelCount) : Shader(),
     windowSize(windowSize),
