@@ -5,16 +5,24 @@ target_link_libraries(${MAIN_EXEC_NAME} ${ENET_LIB})
 find_package (OpenGL REQUIRED)
 target_link_libraries(${MAIN_EXEC_NAME} ${OPENGL_gl_LIBRARY})
 
-# Build and Link GLFW
-set (GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set (GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set (GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-
-# Find GLFW
+# Build GLFW
 if (WIN32)
-target_link_libraries (${MAIN_EXEC_NAME} glfw3dll)
+    find_library(GLFW_LIB glfw3dll)
 else()
-target_link_libraries (${MAIN_EXEC_NAME} glfw)
+    set (GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+    set (GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set (GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+
+    add_subdirectory (lib/static/glfw)
+    target_link_libraries (${MAIN_EXEC_NAME} glfw)
+    include_directories(lib/static/glfw/src)
+endif()
+
+# Link GLFW
+if (WIN32)
+    find_library(GLEW_LIB glew32)
+else()
+    set(GLEW_LIB ${CMAKE_SOURCE_DIR}/lib/static/glew/libGLEW.a)
 endif()
 
 # Link Glew

@@ -59,7 +59,7 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
     auto bufferHeight = (int)bufferSize.y;
 
     get<GUIText>("crosshairText")->setPos({bufferWidth / 2 + 22, bufferHeight / 2 - 7});
-    get<GUIText>("dataText")->setPos(glm::vec3(10, 10, 0));
+    get<GUIText>("dataText")->setPos({10, 10});
 
     get<GUILabelledGraph>("genGraph")->setPos({bufferWidth - 254, bufferHeight - 70 - 160});
     get<GUILabelledGraph>("packetGraph")->setPos({bufferWidth - 254, bufferHeight - 70 - 240});

@@ -236,7 +236,7 @@ void Model::calcBoneTransformation(double animTime, ModelBone& bone, glm::mat4 p
 
         aiQuaternion rotation;
         calcInterpolatedRotation(rotation, animTime, bone, *channel, bounds);
-        glm::mat4 rotationMat = glm::transpose(MatConv::AiToGLMMat3(rotation.GetMatrix()));
+        glm::mat4 rotationMat = glm::transpose(glm::mat4(MatConv::AiToGLMMat3(rotation.GetMatrix())));
 
         glm::vec3 position;
         calcInterpolatedPosition(position, animTime, bone, *channel, bounds);
@@ -288,7 +288,7 @@ void Model::calcInterpolatedRotation(aiQuaternion &rotation, double animTime, Mo
     const aiQuaternion& startRotation = channel.rotationKeys[index].second;
     const aiQuaternion& endRotation = channel.rotationKeys[nextIndex].second;
 
-    aiQuaternion::Interpolate(rotation, startRotation, endRotation, static_cast<ai_real>(factor));
+    aiQuaternion::Interpolate(rotation, startRotation, endRotation, factor);
     rotation = rotation.Normalize();
 }
 

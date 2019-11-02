@@ -18,14 +18,6 @@ find_path(NOISE_HEADERS noise/noise.h)
 find_path(GLM_HEADERS glm/glm.hpp)
 find_path(PTHREAD_HEADERS pthread.h)
 
-find_library(GLEW_LIB NAMES glew32 GLEW glew glew32s)
-
-if (WIN32)
-find_library(GLFW_LIB glfw3dll)
-else()
-find_library(GLFW_LIB glfw3)
-endif()
-
 find_library(LUA_LIB NAMES lua lua5.1 PATHS
         /usr/lib/x86_64-linux-gnu
         /usr/lib

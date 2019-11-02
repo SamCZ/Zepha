@@ -8,7 +8,12 @@ GUILabelledGraph::GUILabelledGraph(const std::string &key) : GUIContainer(key) {
 
 void GUILabelledGraph::create(glm::vec2 scale, glm::vec4 padding, const std::string &title,
     unsigned int graphLength, unsigned int graphScale,
-    std::shared_ptr <AtlasRef> graphTextureRef, Font font) {
+    std::shared_ptr<AtlasRef> graphTextureRef, Font font) {
+
+    const static int GRAPH_PAD_X = 2;
+    const static int GRAPH_PAD_Y = 62;
+    const static int TEXT_PAD_X = 4;
+    const static int TEXT_PAD_Y = 8;
 
     this->scale = scale;
     this->padding = padding;
