@@ -17,7 +17,7 @@
 
 class WorldGenStream {
 public:
-    static const int THREAD_QUEUE_SIZE = 32;
+    static const int THREAD_QUEUE_SIZE = 64;
     static const int THREADS = 4;
     static const int TOTAL_QUEUE_SIZE = THREADS * THREAD_QUEUE_SIZE;
 
