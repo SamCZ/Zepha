@@ -23,12 +23,6 @@ find_library(LUA_LIB NAMES lua lua5.1 PATHS
         /usr/lib
         /usr/local/lib)
 
-if (WIN32)
-find_library(ASSIMP_LIB assimp-vc142-mt)
-else()
-find_library(ASSIMP_LIB assimp)
-endif()
-
 find_library(ENET_LIB enet)
 find_library(NOISE_LIB NAMES libnoise noise noise-static)
 
@@ -38,12 +32,18 @@ else()
 find_library(PTHREAD_LIB pthread)
 endif()
 
+if (WIN32)
+set(SOL_HEADERS lib/header/sol2/include_win)
+else()
+set(SOL_HEADERS lib/header/sol2/include_linux)
+endif()
+
 include_directories(
     # Include Header Only Libraries
     lib/header/catch2/include      # Catch2 unit testing library.
     lib/header/gzip/include        # GZip Compression header library.
     ${GLM_HEADERS}                 # OpenGL Mathematics Library.
-    lib/header/sol2/include        # Sol2 Lua Parser library.
+    ${SOL_HEADERS}                 # Sol2 Lua Parser library.
     lib/header/cute_files/include  # Cute file traversal header library.
     lib/header/stb_image/include   # STB Image processor header library.
     lib/header/json/include        # JSON header library.

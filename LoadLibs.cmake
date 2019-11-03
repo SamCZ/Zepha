@@ -29,17 +29,23 @@ endif()
 target_link_libraries(${MAIN_EXEC_NAME} ${GLEW_LIB})
 
 # Build and Link Assimp
-set(BUILD_SHARED_LIBS OFF)
-set(ASSIMP_NO_EXPORT ON)
-set(ASSIMP_BUILD_TESTS OFF)
-set(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
 
-set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF)
-set(ASSIMP_BUILD_B3D_IMPORTER ON)
-set(ASSIMP_BUILD_X3D_IMPORTER ON) # Doesn't compile if not defined
+if (WIN32)
+    find_library(ASSIMP_LIB assimp-vc142-mt)
+else()
+    set(BUILD_SHARED_LIBS OFF)
+    set(ASSIMP_NO_EXPORT ON)
+    set(ASSIMP_BUILD_TESTS OFF)
+    set(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
 
-# add_subdirectory(lib/static/assimp)
-target_link_libraries(${MAIN_EXEC_NAME} assimp)
+    set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF)
+    set(ASSIMP_BUILD_B3D_IMPORTER ON)
+    set(ASSIMP_BUILD_X3D_IMPORTER ON) # Doesn't compile if not defined
+
+    add_subdirectory(lib/static/assimp)
+    target_compile_options(assimp PRIVATE -w)
+    target_link_libraries(${MAIN_EXEC_NAME} assimp)
+endif()
 
 # Link Lua 5.3.5
 target_link_libraries(${MAIN_EXEC_NAME} ${LUA_LIB})
