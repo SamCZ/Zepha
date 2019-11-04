@@ -33,7 +33,7 @@ find_library(PTHREAD_LIB pthread)
 endif()
 
 if (WIN32)
-set(SOL_HEADERS lib/header/sol2/include_win)
+set(SOL_HEADERS lib/header/sol2/include)
 else()
 set(SOL_HEADERS lib/header/sol2/include_linux)
 endif()
