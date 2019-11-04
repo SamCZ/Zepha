@@ -51,8 +51,8 @@ public:
 
     void setActiveBlock(const std::string& block);
 
-    GameGui& getGui();
-    void setMenu(const std::string& state, sptr<GUIComponent> root);
+    void setMenu(const std::string& menu);
+    std::string getMenuState();
     void closeMenu();
     void setGuiVisible(bool hudVisible);
 

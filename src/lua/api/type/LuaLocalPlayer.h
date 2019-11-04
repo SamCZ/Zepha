@@ -8,9 +8,9 @@
 #include "../../../def/LocalDefs.h"
 #include "../../../game/scene/world/Player.h"
 
-class LuaPlayer {
+class LuaLocalPlayer {
 public:
-    LuaPlayer(Player& player) : player(player) {}
+    LuaLocalPlayer(Player& player) : player(player) {}
 
     Player& player;
 
@@ -28,5 +28,7 @@ public:
     float get_look_pitch();
 
     std::string get_menu_state();
+    void open_menu(std::string menu);
+
     void set_selected_block(std::string block);
 };

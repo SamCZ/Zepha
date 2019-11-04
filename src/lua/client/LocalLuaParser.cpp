@@ -8,11 +8,11 @@
 #include "LocalRegisterKeybinds.h"
 
 #include "../../def/LocalDefs.h"
-#include "../api/type/LuaPlayer.h"
+#include "../api/type/LuaLocalPlayer.h"
 #include "../../game/scene/world/Player.h"
 
 #include "../api/type/cLuaEntity.h"
-#include "../api/type/cLuaPlayer.h"
+#include "../api/type/cLuaLocalPlayer.h"
 
 #include "../api/modules/cDump.h"
 #include "../api/modules/cPrintE.h"
@@ -63,9 +63,9 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& pla
 
     //Load Types
     ClientApi::entity(lua, world);
-    ClientApi::player(lua, world);
+    ClientApi::local_player(lua, world);
 
-    core["player"] = LuaPlayer(player);
+    core["player"] = LuaLocalPlayer(player);
 
     //Load Modules
     ClientApi::dump(lua);
@@ -86,7 +86,7 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& pla
     ClientApi::add_entity(lua, core, defs, world);
     ClientApi::remove_entity(lua, core, defs, world);
 
-    ClientApi::show_menu(core, defs, player);
+//    ClientApi::show_menu(core, defs, player);
     ClientApi::close_menu(core, defs, player);
     ClientApi::register_keybind(lua, core);
 

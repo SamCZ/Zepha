@@ -52,6 +52,8 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
     core = lua.create_table();
     lua["zepha"] = core;
 
+    core["player"] = sol::nil;
+
     //Load Modules
     ServerApi::dump(lua);
     ServerApi::printe(lua);

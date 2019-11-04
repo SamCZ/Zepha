@@ -231,8 +231,8 @@ void Player::setActiveBlock(const std::string& block) {
     activeBlock = defs.defs().blockFromStr(block).index;
 }
 
-void Player::setMenu(const std::string& state, sptr<GUIComponent> root) {
-    gameGui.setMenu(state, root);
+void Player::setMenu(const std::string& menu) {
+    gameGui.setMenu(menu);
     renderer.getWindow().lockMouse(false);
 }
 
@@ -245,8 +245,8 @@ void Player::setGuiVisible(bool hudVisible) {
     gameGui.setVisible(hudVisible);
 }
 
-GameGui& Player::getGui() {
-    return gameGui;
+std::string Player::getMenuState() {
+    return gameGui.getMenuState();
 }
 
 /*

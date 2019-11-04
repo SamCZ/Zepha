@@ -39,22 +39,19 @@ set(SOL_HEADERS lib/header/sol2/include_linux)
 endif()
 
 include_directories(
-    # Include Header Only Libraries
-    lib/header/catch2/include      # Catch2 unit testing library.
-    lib/header/gzip/include        # GZip Compression header library.
-    ${GLM_HEADERS}                 # OpenGL Mathematics Library.
-    ${SOL_HEADERS}                 # Sol2 Lua Parser library.
-    lib/header/cute_files/include  # Cute file traversal header library.
-    lib/header/stb_image/include   # STB Image processor header library.
-    lib/header/json/include        # JSON header library.
-
-    # Include Static Library Headers
+    ${GLM_HEADERS}
+    ${SOL_HEADERS}
     ${GLEW_HEADERS}
     ${LUA_HEADERS}
     ${ASSIMP_HEADERS}
     ${ENET_HEADERS}
     ${NOISE_HEADERS}
     ${PTHREAD_HEADERS}
+    lib/header/catch2/include
+    lib/header/gzip/include
+    lib/header/cute_files/include
+    lib/header/stb_image/include
+    lib/header/json/include
 )
 
 

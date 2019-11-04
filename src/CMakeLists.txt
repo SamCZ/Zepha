@@ -20,7 +20,7 @@ set(ZEPHA_SRC
     def/item/MeshPart.cpp
     def/item/MeshPart.h
     def/item/ShaderMod.h
-        def/item/BlockModelVertex.h
+    def/item/BlockModelVertex.h
     game/scene/world/LocalWorld.cpp
     game/scene/world/LocalWorld.h
     world/chunk/BlockChunk.cpp
@@ -134,7 +134,7 @@ set(ZEPHA_SRC
     lua/LuaParser.h
     lua/server/ServerLuaParser.cpp
     lua/server/ServerLuaParser.h
-        util/Log.h
+    util/Log.h
     lua/Callback.h
     lua/api/modules/cRegisterBlock.h
     lua/api/modules/cDelay.h
@@ -202,7 +202,7 @@ set(ZEPHA_SRC
     game/entity/AnimationState.h
     game/entity/AnimationSegment.h
     util/Pointer.h
-        lua/api/type/cLuaEntity.h
+    lua/api/type/cLuaEntity.h
     StartGame.h
     game/graph/shader/SSAOShader.cpp
     game/graph/shader/SSAOShader.h
@@ -224,8 +224,8 @@ set(ZEPHA_SRC
     lua/server/ServerRegisterItems.cpp
     lua/server/ServerRegisterItems.h
     lua/api/modules/cAddEntity.h
-        lua/api/type/LuaEntity.cpp
-        lua/api/type/LuaEntity.h
+    lua/api/type/LuaEntity.cpp
+    lua/api/type/LuaEntity.h
     lua/api/modules/cRegisterEntity.h
     def/model/SerializedModel.h
     server/asset/AssetType.h
@@ -239,9 +239,20 @@ set(ZEPHA_SRC
     lua/api/modules/sRegisterKeybind.h
     lua/client/LuaInputManager.cpp
     lua/client/LuaInputManager.h
-    lua/api/type/cLuaPlayer.h
-    lua/api/type/LuaPlayer.cpp
-    lua/api/type/LuaPlayer.h
-        game/entity/Collidable.cpp game/entity/Collidable.h game/hud/components/compound/GUIInventoryList.cpp game/hud/components/compound/GUIInventoryList.h game/hud/components/basic/GUIInventoryItem.cpp game/hud/components/basic/GUIInventoryItem.h game/scene/world/InventoryList.cpp game/scene/world/InventoryList.h game/scene/world/ItemStack.cpp game/scene/world/ItemStack.h server/LocalServerInstance.cpp server/LocalServerInstance.h)
+        lua/api/type/cLuaLocalPlayer.h
+        lua/api/type/LuaLocalPlayer.cpp
+        lua/api/type/LuaLocalPlayer.h
+    game/entity/Collidable.cpp
+    game/entity/Collidable.h
+    game/hud/components/compound/GUIInventoryList.cpp
+    game/hud/components/compound/GUIInventoryList.h
+    game/hud/components/basic/GUIInventoryItem.cpp
+    game/hud/components/basic/GUIInventoryItem.h
+    game/scene/world/InventoryList.cpp
+    game/scene/world/InventoryList.h
+    game/scene/world/ItemStack.cpp
+    game/scene/world/ItemStack.h
+    server/LocalServerInstance.cpp
+    server/LocalServerInstance.h game/hud/SerializedGuiElem.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})
