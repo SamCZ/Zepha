@@ -167,8 +167,7 @@ set(ZEPHA_SRC
     game/hud/components/GUIComponent.h
     game/hud/components/basic/GUIContainer.cpp
     game/hud/components/basic/GUIContainer.h
-    lua/api/modules/cShowMenu.h
-    lua/LuaModFile.h
+        lua/LuaModFile.h
     lua/LuaMod.h
     lua/LuaModConfig.h
     server/asset/ServerTexture.h

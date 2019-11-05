@@ -15,6 +15,7 @@ class GUIInventoryList : public GUIContainer {
 public:
     GUIInventoryList() = default;
     GUIInventoryList(const std::string& key);
+    ~GUIInventoryList() override;
 
     void create(glm::vec2 scale, glm::vec4 padding, glm::vec2 innerPadding, InventoryList& list, LocalDefs& defs);
 private:

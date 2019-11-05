@@ -15,6 +15,10 @@ void InventoryList::setUpdatedCallback(std::function<void()> cb) {
     this->cb = cb;
 }
 
+void InventoryList::clearUpdatedCallback() {
+    cb = nullptr;
+}
+
 ItemStack InventoryList::getStack(unsigned short i) {
     return itemstacks[i];
 }

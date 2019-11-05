@@ -51,6 +51,10 @@ void LuaLocalPlayer::open_menu(std::string menu) {
     player.setMenu(menu);
 }
 
+void LuaLocalPlayer::close_menu() {
+    player.closeMenu();
+}
+
 void LuaLocalPlayer::set_selected_block(std::string block) {
     player.setActiveBlock(block);
 }

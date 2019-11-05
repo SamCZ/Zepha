@@ -37,21 +37,27 @@ zepha.register_keybind("open_inventory", {
             body
                 rect[inv]
                     position: 50% 50%
-                    position_align: 50% 50%
+                    position_anchor: 50% 50%
                     size: 236px 118px
                     padding: 20px 10px 8px 10px
                     background: asset("inventory")
 
---                     inventory[list_main]
---                         list: "main"
+                    inventory[list_main]
+                        list: "main"
+                        position: 1px 1px
+                        slot_spacing: 2px 2px
+                    end
+
+--                     text[henlo_dog]
+--                         content: "There's something I could never say\nIt's too complicated and you don't need to know"
 --                     end
 
-                    rect[test]
-                        position: -16px -16px
-                        position_align: 1 1
-                        size: 16px 16px
-                        background: #fff
-                    end
+--                     rect[test]
+--                         position: -16px -16px
+--                         position_anchor: 50% 50%
+--                         size: 16px 16px
+--                         background: #fff
+--                     end
                 end
             end
             ]])

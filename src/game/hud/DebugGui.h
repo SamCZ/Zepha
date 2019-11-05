@@ -25,8 +25,6 @@ public:
     void changeVisibilityState(int state);
     void positionElements(glm::vec2 bufferSize);
 
-    void showInventory(InventoryList& list, LocalDefs& defs);
-
     void update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
 private:
     int displayMode;

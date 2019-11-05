@@ -30,6 +30,7 @@ namespace ClientApi {
 
              "menu_state", sol::property(&LuaLocalPlayer::get_menu_state),
              "open_menu", &LuaLocalPlayer::open_menu,
+             "close_menu", &LuaLocalPlayer::close_menu,
 
              "set_selected_block", &LuaLocalPlayer::set_selected_block
         );

@@ -26,10 +26,10 @@ void GUIInventoryList::drawContents() {
 
     for (unsigned short i = 0; i < list->getLength() / list->getWidth(); i++) {
         for (unsigned short j = 0; j < list->getWidth(); j++) {
-            auto bg = std::make_shared<GUIRect>("background_" + to_string(i) + "_" + to_string(j));
-            bg->create(scale * 16.f, {}, {.6, .6, .6, .3});
-            add(bg);
-            bg->setPos({padding.x + j * (16+innerPadding.x)*scale.x, padding.y + i * (16+innerPadding.y)*scale.y});
+//            auto bg = std::make_shared<GUIRect>("background_" + to_string(i) + "_" + to_string(j));
+//            bg->create(scale * 16.f, {}, {1, 0, 0, 1});
+//            add(bg);
+//            bg->setPos({padding.x + j * (16*scale.x+innerPadding.x/scale.x), padding.y + i * (16*scale.y+innerPadding.y/scale.y)});
 
             auto stack = list->getStack(j + i * list->getWidth());
             if (stack.id == 0) continue;
@@ -37,7 +37,11 @@ void GUIInventoryList::drawContents() {
             auto item = std::make_shared<GUIInventoryItem>("item_" + to_string(i) + "_" + to_string(j));
             item->create(scale, stack.count, defs->textures().getTextureRef(defs->defs().craftItemFromId(stack.id).textures[0]), f);
             add(item);
-            item->setPos({padding.x + j * (16+innerPadding.x)*scale.x, padding.y + i * (16+innerPadding.y)*scale.y});
+            item->setPos({padding.x + j * (16*scale.x+innerPadding.x/scale.x), padding.y + i * (16*scale.y+innerPadding.y/scale.y)});
         }
     }
+}
+
+GUIInventoryList::~GUIInventoryList() {
+    list->clearUpdatedCallback();
 }

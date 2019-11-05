@@ -11,10 +11,15 @@ Player::Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer) :
     defs(defs),
     renderer(renderer),
     wireframe({}, 0.01, {1, 1, 1}),
-    gameGui(renderer.getCamera().getBufferDimensions(), defs.textures()) {}
+    gameGui(renderer.getCamera().getBufferDimensions(), defs) {}
 
 void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
     if (activeBlock == -1) activeBlock = defs.defs().blockFromStr("zeus:default:stone").index;
+
+    if (renderer.getWindow().input.isKeyDown(GLFW_KEY_G)) {
+        gameGui.list.addStack({defs.defs().craftItemFromStr("zeus:materials:rock").index, 1});
+        gameGui.list.addStack({defs.defs().craftItemFromStr("zeus:materials:stick").index, 2});
+    }
 
     if (renderer.resized) {
         //Gamescene sets renderer.resized to false right after Player::update is called.
@@ -259,4 +264,8 @@ void Player::draw(Renderer &renderer) {
 
 void Player::drawGUI(Renderer &renderer) {
     gameGui.draw(renderer);
+}
+
+void Player::drawViginette(Renderer &renderer) {
+    gameGui.drawViginette(renderer);
 }

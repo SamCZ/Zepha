@@ -3,36 +3,37 @@
 //
 
 #include "GameGui.h"
-#include "../../util/Util.h"
+#include "components/compound/GUIInventoryList.h"
 
 const static float SCALE_MODIFIER = 3;
 
-GameGui::GameGui(glm::vec2 bufferSize, TextureAtlas& atlas) :
+GameGui::GameGui(glm::vec2 bufferSize, LocalDefs& defs) :
     bufferSize(bufferSize),
-    atlas(atlas) {
+    defs(defs),
+    list(60, 12) {
 
-    auto crosshair = std::make_shared<GUIRect>("__crosshair");
-    crosshair->create({22, 22}, {}, atlas.getTextureRef("crosshair"));
+    auto crosshair = std::make_shared<GUIRect>("crosshair");
+    crosshair->create({22, 22}, {}, defs.textures().getTextureRef("crosshair"));
     crosshair->setPos({bufferSize.x / 2 - 11, bufferSize.y / 2 - 9});
-    add(crosshair);
+    builtIn.add(crosshair);
 
-    auto viginette = std::make_shared<GUIRect>("__viginette");
-    viginette->create(bufferSize, {}, atlas.getTextureRef("viginette"));
-    add(viginette);
-
-    auto root = std::make_shared<GUIContainer>("__root");
-    add(root);
+    auto viginette = std::make_shared<GUIRect>("viginette");
+    viginette->create(bufferSize, {}, defs.textures().getTextureRef("viginette"));
+    builtIn.add(viginette);
 }
 
 void GameGui::bufferResized(glm::vec2 bufferSize) {
     this->bufferSize = bufferSize;
 
-    get<GUIRect>("__crosshair")->setPos({bufferSize.x / 2 - 11, bufferSize.y / 2 - 9});
-    get<GUIRect>("__viginette")->setScale({bufferSize.x, bufferSize.y});
+    builtIn.get<GUIRect>("crosshair")->setPos({bufferSize.x / 2 - 11, bufferSize.y / 2 - 9});
+    builtIn.get<GUIRect>("viginette")->setScale({bufferSize.x, bufferSize.y});
+
+    empty();
+    recursivelyCreate(components, std::shared_ptr<GUIComponent>(static_cast<GUIComponent*>(this), [](GUIComponent*){}));
 }
 
 void GameGui::setMenu(const std::string& menu) {
-    menuState = "aaa";
+    menuState = "menu"; //TODO: Implement the menu state properly
 
     std::vector<std::string> lines;
     {
@@ -54,10 +55,11 @@ void GameGui::setMenu(const std::string& menu) {
         }
     }
 
-    components.empty();
+    components.clear();
     std::vector<SerializedGuiElem*> stack {};
     unsigned int missingKey = 0;
     SerializedGuiElem* component = nullptr;
+
     for (const std::string& line : lines) {
         if (line.find(':') != std::string::npos) {
             //Token
@@ -122,70 +124,140 @@ void GameGui::setMenu(const std::string& menu) {
         }
     }
 
-    get<GUIContainer>("__root")->empty();
-    recursivelyCreate(components, get<GUIContainer>("__root"));
+    empty();
+    recursivelyCreate(components, std::shared_ptr<GUIComponent>(static_cast<GUIComponent*>(this), [](GUIComponent*){}));
 }
 
 void GameGui::recursivelyCreate(std::vector<SerializedGuiElem> components, std::shared_ptr<GUIComponent> parent) {
     for (auto& data : components) {
         std::shared_ptr<GUIComponent> component = createComponent(data);
         parent->add(component);
-
         recursivelyCreate(data.children, component);
     }
 }
 
 std::shared_ptr<GUIComponent> GameGui::createComponent(SerializedGuiElem& data) {
+    glm::vec2 pos {};
+
+    if (data.tokens.count("position")) {
+        auto tokens = splitValue(data.tokens["position"], 2);
+        pos = {stringToNum(tokens[0], PercentBehavior::BUFF_WIDTH),
+               stringToNum(tokens[1], PercentBehavior::BUFF_HEIGHT)};
+    }
+
+    glm::vec2 offset {};
+    if (data.tokens.count("position_anchor")) {
+        auto tokens = splitValue(data.tokens["position_anchor"], 2);
+        offset = {stringToNum(tokens[0], PercentBehavior::DECIMAL),
+               stringToNum(tokens[1], PercentBehavior::DECIMAL)};
+    }
+
+    glm::vec2 size {};
+    if (data.tokens.count("size")) {
+        auto tokens = splitValue(data.tokens["size"], 2);
+        size = {stringToNum(tokens[0], PercentBehavior::BUFF_WIDTH),
+                stringToNum(tokens[1], PercentBehavior::BUFF_HEIGHT)};
+    }
+
+    pos -= offset * size;
+
+    glm::vec4 padding {};
+    if (data.tokens.count("padding")) {
+        auto tokens = splitValue(data.tokens["padding"], 4);
+        padding = {stringToNum(tokens[0], PercentBehavior::BUFF_HEIGHT),
+                   stringToNum(tokens[1], PercentBehavior::BUFF_WIDTH),
+                   stringToNum(tokens[2], PercentBehavior::BUFF_HEIGHT),
+                   stringToNum(tokens[3], PercentBehavior::BUFF_WIDTH)};
+    }
+
     if (data.type == "body") {
         auto rect = std::make_shared<GUIRect>(data.key);
         rect->create(bufferSize, {}, {0, 0, 0, 0.2});
         return rect;
     }
+
     else if (data.type == "rect") {
-        auto rect = std::make_shared<GUIRect>(data.key);
-
-        glm::vec2 pos {};
-        if (data.tokens.count("position")) pos = deserialize2DVector(data.tokens["position"]) * SCALE_MODIFIER;
-        glm::vec2 size {};
-        if (data.tokens.count("size")) size = deserialize2DVector(data.tokens["size"]) * SCALE_MODIFIER;
-        glm::vec4 padding {};
-        if (data.tokens.count("padding")) padding = deserialize4DVector(data.tokens["padding"]) * SCALE_MODIFIER;
-        std::string background = "";
-        if (data.tokens.count("background")) background = data.tokens["background"];
-
         size.x -= padding.y + padding.w;
         size.y -= padding.x + padding.z;
 
+        std::string background = "";
+        if (data.tokens.count("background")) background = data.tokens["background"];
+
+        auto rect = std::make_shared<GUIRect>(data.key);
         if (background[0] == '#') rect->create(size, padding, Util::hexToColorVec(background));
-        else if (background.substr(0, 6) == "asset(") rect->create(size, padding, atlas.getTextureRef(background.substr(7, background.length() - 7 - 2)));
+        else if (background.substr(0, 6) == "asset(") rect->create(size, padding, defs.textures().getTextureRef(background.substr(7, background.length() - 7 - 2)));
         else rect->create(size, padding, glm::vec4 {});
 
         rect->setPos(pos);
         return rect;
     }
-//    else if (type == "text") {
-//        std::string posStr = element.get<std::string>("position");
-//        std::string sizeStr = element.get<std::string>("size");
-//        std::string padStr = element.get<std::string>("padding");
-//
-//        glm::vec2 pos = calc2dVec(posStr) * scale_modifier;
-//        glm::vec2 scale = glm::vec2(scale_modifier);
-//        glm::vec4 padding = calc4dVec(padStr) * scale_modifier;
-//        glm::vec4 bgcolor = Util::hexToColorVec(element.get_or<std::string>("background_color", "#0000"));
-//        glm::vec4 color = Util::hexToColorVec(element.get_or<std::string>("color", "#fff"));
-//        std::string contents = element.get<std::string>("contents");
-//
-//        std::shared_ptr<GUIText> text = std::make_shared<GUIText>(key);
-//        text->create(scale, padding, bgcolor, color, {defs.textures(), defs.textures().getTextureRef("font")});
-//        text->setText(contents);
-//        component = text;
-//        text->setPos(pos);
-//    }
+
+    else if (data.type == "inventory") {
+        glm::vec4 padding {};
+        if (data.tokens.count("padding")) {
+            auto tokens = splitValue(data.tokens["padding"], 4);
+            padding = {stringToNum(tokens[0], PercentBehavior::BUFF_HEIGHT),
+                       stringToNum(tokens[1], PercentBehavior::BUFF_WIDTH),
+                       stringToNum(tokens[2], PercentBehavior::BUFF_HEIGHT),
+                       stringToNum(tokens[3], PercentBehavior::BUFF_WIDTH)};
+        }
+
+        glm::vec2 innerPadding {};
+        if (data.tokens.count("slot_spacing")) {
+            auto tokens = splitValue(data.tokens["slot_spacing"], 2);
+            innerPadding = {stringToNum(tokens[0], PercentBehavior::BUFF_HEIGHT),
+                       stringToNum(tokens[1], PercentBehavior::BUFF_WIDTH)};
+        }
+
+        auto inv = std::make_shared<GUIInventoryList>(data.key);
+
+        inv->create(glm::vec2(SCALE_MODIFIER), padding * SCALE_MODIFIER, innerPadding * SCALE_MODIFIER, list, defs);
+        inv->setPos(pos);
+        return inv;
+    }
+
+    else if (data.type == "text") {
+        glm::vec2 scale = {1, 1};
+        if (data.tokens.count("scale")) {
+            auto tokens = splitValue(data.tokens["scale"], 2);
+            pos = {stringToNum(tokens[0], PercentBehavior::DECIMAL),
+                   stringToNum(tokens[1], PercentBehavior::DECIMAL)};
+        }
+
+        glm::vec4 padding {};
+        if (data.tokens.count("padding")) {
+            auto tokens = splitValue(data.tokens["padding"], 4);
+            padding = {stringToNum(tokens[0], PercentBehavior::BUFF_HEIGHT),
+                       stringToNum(tokens[1], PercentBehavior::BUFF_WIDTH),
+                       stringToNum(tokens[2], PercentBehavior::BUFF_HEIGHT),
+                       stringToNum(tokens[3], PercentBehavior::BUFF_WIDTH)};
+        }
+
+        glm::vec4 background_color = Util::hexToColorVec("#0000");
+        if (data.tokens.count("background")) background_color = Util::hexToColorVec(data.tokens["background"]);
+        glm::vec4 color = Util::hexToColorVec("#fff");
+        if (data.tokens.count("background")) color = Util::hexToColorVec(data.tokens["color"]);
+
+        std::string content = "Missing content string";
+        if (data.tokens.count("content")) content = data.tokens["content"].substr(1, data.tokens["content"].size() - 2);
+
+        std::string::size_type off = 0;
+        while ((off = content.find("\\n", off)) != std::string::npos) {
+            content.replace(off, 2, "\n");
+            off += 1;
+        }
+
+        auto text = std::make_shared<GUIText>(key);
+        text->create(scale * SCALE_MODIFIER, padding, background_color, color, {defs.textures(), defs.textures().getTextureRef("font")});
+        text->setText(content);
+        text->setPos(pos);
+        return text;
+    }
 }
 
 void GameGui::closeMenu() {
+    empty();
     menuState = "";
-    get<GUIContainer>("__root")->remove("__lua_root");
 }
 
 const std::string &GameGui::getMenuState() {
@@ -196,72 +268,52 @@ void GameGui::setVisible(bool visible) {
     GUIComponent::setVisible(visible);
 }
 
-float GameGui::deserializeNumber(const std::string& input, bool height = false) {
+float GameGui::stringToNum(const std::string& input, PercentBehavior behavior = PercentBehavior::BUFF_WIDTH) {
     if (input.find("px") != std::string::npos) {
-        return atof(input.substr(0, input.find("px")).c_str());
+        return atof(input.substr(0, input.find("px")).c_str()) * SCALE_MODIFIER;
     }
+
     if (input.find('%') != std::string::npos) {
-        return atof(input.substr(0, input.find('%')).c_str()) / 100 * (height ? bufferSize.y : bufferSize.x) / SCALE_MODIFIER;
+        float decimal = atof(input.substr(0, input.find('%')).c_str()) / 100;
+        switch (behavior) {
+            case PercentBehavior::DECIMAL:
+                return decimal;
+            case PercentBehavior::BUFF_WIDTH:
+                return round(decimal * bufferSize.x / SCALE_MODIFIER) * SCALE_MODIFIER;
+            case PercentBehavior::BUFF_HEIGHT:
+                return round(decimal * bufferSize.y / SCALE_MODIFIER) * SCALE_MODIFIER;
+        }
     }
+
     return 0;
 }
 
-glm::vec2 GameGui::deserialize2DVector(const std::string& input) {
-    glm::vec2 r;
-    size_t count = std::count(input.begin(), input.end(), ' ');
+std::vector<std::string> GameGui::splitValue(const std::string &value, unsigned int targetVals) {
+    std::vector<std::string> vec {};
 
-    if (count == 0) { //1 value
-        r.x = deserializeNumber(input);
-        r.y = deserializeNumber(input, true);
-        return r;
+    if (value == "") throw "No values for splitValue.";
+
+    size_t count = std::count(value.begin(), value.end(), ' ');
+    if (count + 1 > targetVals) throw "Too many values for splitValue.";
+
+    size_t begin = 0;
+    for (int i = 0; i < count; i++) {
+        size_t end = value.find(' ', begin);
+        vec.push_back(value.substr(begin, end - begin));
+        begin = end + 1;
+    }
+    vec.push_back(value.substr(begin));
+
+    while (vec.size() < targetVals) {
+        for (auto& v: vec) {
+            vec.push_back(v);
+            if (vec.size() >= targetVals) break;
+        }
     }
 
-    if (count == 1) { //2 values
-        size_t delim = input.find(' ');
-        std::string x = input.substr(0, delim);
-        std::string y = input.substr(delim + 1);
-
-        r.x = deserializeNumber(x);
-        r.y = deserializeNumber(y, true);
-        return r;
-    }
-
-    std::cout << Log::err << "Invalid dimension string " << input << Log::endl;
-    return r;
+    return std::move(vec);
 }
 
-glm::vec4 GameGui::deserialize4DVector(const std::string& input) {
-    glm::vec4 r;
-    size_t count = std::count(input.begin(), input.end(), ' ');
-
-    if (count == 0) { //1 value
-        r = glm::vec4(deserializeNumber(input));
-        return r;
-    }
-
-    if (count == 1) { //2 values
-        size_t delim = input.find(' ');
-        std::string x = input.substr(0, delim);
-        std::string y = input.substr(delim + 1);
-
-        r.x = deserializeNumber(x);
-        r.y = deserializeNumber(y);
-        r.z = r.x;
-        r.w = r.y;
-        return r;
-    }
-
-    if (count == 3) { //4 values
-        size_t begin = 0;
-        for (int i = 0; i < 3; i++) {
-            size_t end = input.find(' ', begin);
-            r[i] = deserializeNumber(input.substr(begin, end - begin));
-            begin = end + 1;
-        }
-        r[3] = deserializeNumber(input.substr(begin));
-        return r;
-    }
-
-    std::cout << Log::err << "Invalid dimension string " << input << Log::endl;
-    return r;
+void GameGui::drawViginette(Renderer &renderer) {
+    builtIn.draw(renderer);
 }

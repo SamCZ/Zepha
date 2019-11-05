@@ -4,15 +4,18 @@
 
 #pragma once
 
+#include "components/basic/GUIText.h"
 #include "components/basic/GUIRect.h"
 #include "components/basic/GUIContainer.h"
 #include "../graph/drawable/DrawableGroup.h"
 #include "../entity/Entity.h"
+#include "../../util/Util.h"
 #include "SerializedGuiElem.h"
+#include "../scene/world/InventoryList.h"
 
 class GameGui : public GUIContainer {
 public:
-    explicit GameGui(glm::vec2 bufferSize, TextureAtlas& atlas);
+    explicit GameGui(glm::vec2 bufferSize, LocalDefs& defs);
     void bufferResized(glm::vec2 bufferSize);
 
     void setVisible(bool visible) override;
@@ -21,17 +24,28 @@ public:
     void closeMenu();
     const std::string& getMenuState();
 
+    void drawViginette(Renderer& renderer);
+
+    InventoryList list;
 private:
     void recursivelyCreate(std::vector<SerializedGuiElem> components, std::shared_ptr<GUIComponent> parent);
     std::shared_ptr<GUIComponent> createComponent(SerializedGuiElem& component);
     std::vector<SerializedGuiElem> components {};
 
-    float deserializeNumber(const std::string& input, bool height);
-    glm::vec2 deserialize2DVector(const std::string& input);
-    glm::vec4 deserialize4DVector(const std::string& input);
+    enum PercentBehavior {
+       BUFF_WIDTH,
+       BUFF_HEIGHT,
+       DECIMAL
+    };
+
+
+    static std::vector<std::string> splitValue(const std::string& value, unsigned int targetVals = 0);
+    float stringToNum(const std::string& input, PercentBehavior behavior);
 
     glm::vec2 bufferSize {};
-    TextureAtlas& atlas;
+    LocalDefs& defs;
     std::string menuState = "";
+
+    GUIContainer builtIn = {};
 };
 

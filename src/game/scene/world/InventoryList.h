@@ -27,6 +27,7 @@ public:
     ItemStack removeStack(ItemStack request);
 
     void setUpdatedCallback(std::function<void()> cb);
+    void clearUpdatedCallback();
 
     const static unsigned short MAX_STACK = 64; //TODO: Don't hardcode this.
 private:

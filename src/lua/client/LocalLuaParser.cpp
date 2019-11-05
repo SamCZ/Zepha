@@ -32,8 +32,6 @@
 #include "../api/modules/cAddEntity.h"
 #include "../api/modules/cRemoveEntity.h"
 
-#include "../api/modules/cShowMenu.h"
-#include "../api/modules/cCloseMenu.h"
 #include "../api/modules/cRegisterKeybind.h"
 
 #include "../api/functions/cUpdateEntities.h"
@@ -86,8 +84,6 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& pla
     ClientApi::add_entity(lua, core, defs, world);
     ClientApi::remove_entity(lua, core, defs, world);
 
-//    ClientApi::show_menu(core, defs, player);
-    ClientApi::close_menu(core, defs, player);
     ClientApi::register_keybind(lua, core);
 
     ClientApi::update_entities(lua);

@@ -29,6 +29,7 @@ public:
 
     std::string get_menu_state();
     void open_menu(std::string menu);
+    void close_menu();
 
     void set_selected_block(std::string block);
 };

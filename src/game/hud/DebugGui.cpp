@@ -183,10 +183,3 @@ void DebugGui::changeVisibilityState(int state) {
     setVisible(displayMode == 0);
     get<GUILabelledGraph>("fpsGraph")->setVisible(displayMode != 1);
 }
-
-void DebugGui::showInventory(InventoryList &list, LocalDefs& defs) {
-    auto inventoryTemp = std::make_shared<GUIInventoryList>("inventory");
-    inventoryTemp->create({3, 3}, {}, {2, 2}, list, defs);
-    add(inventoryTemp);
-    inventoryTemp->setPos({300, 300});
-}
