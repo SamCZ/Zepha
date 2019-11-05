@@ -3,6 +3,8 @@
 //
 
 #include "LocalServerInstance.h"
+#include "../util/Log.h"
+#include <iostream>
 
 LocalServerInstance::LocalServerInstance(const std::string &path, unsigned short port) :
     port(port),
@@ -32,7 +34,9 @@ void LocalServerInstance::initServer() {
             (char*) nullptr
     };
 
-    execvp("xterm", arr);
+	#ifndef _WIN32
+		execvp("xterm", arr);
+	#endif
 }
 
 void LocalServerInstance::stop() {
