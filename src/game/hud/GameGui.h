@@ -4,14 +4,14 @@
 
 #pragma once
 
+#include "SerializedGuiElem.h"
 #include "components/basic/GUIText.h"
 #include "components/basic/GUIRect.h"
 #include "components/basic/GUIContainer.h"
 #include "../graph/drawable/DrawableGroup.h"
+#include "../scene/world/InventoryList.h"
 #include "../entity/Entity.h"
 #include "../../util/Util.h"
-#include "SerializedGuiElem.h"
-#include "../scene/world/InventoryList.h"
 
 class GameGui : public GUIContainer {
 public:
@@ -47,5 +47,6 @@ private:
     std::string menuState = "";
 
     GUIContainer builtIn = {};
+    std::shared_ptr<GUIContainer> menuRoot = {};
 };
 

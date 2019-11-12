@@ -32,9 +32,16 @@ end
 
 -- vector.subtract
 -- Subtract v2 from v1
-vector.negative = function(v1, v2)
+vector.subtract = function(v1, v2)
     if type(v1) ~= "table" or type(v2) ~= "table" then return nil end
     return vector.add(v1, vector.negative(v2))
+end
+
+-- vector.abs
+-- Return the absolute value of v
+vector.abs = function(v)
+    if type(v) ~= "table" then return nil end
+    return {x = math.abs(v.x), y = math.abs(v.y), z = math.abs(v.z)}
 end
 
 -- vector.round

@@ -15,7 +15,6 @@ local blockTypes = {
     "zeus:default:tallgrass_5"
 }
 
-
 for i, v in ipairs(blockTypes) do
     zepha.register_keybind("block_" .. i, {
         description = "Select Block " .. i,
@@ -43,7 +42,8 @@ zepha.register_keybind("open_inventory", {
                     background: asset("inventory")
 
                     inventory[list_main]
-                        list: "main"
+                        source: "local_player"
+                        list: "player"
                         position: 1px 1px
                         slot_spacing: 2px 2px
                     end

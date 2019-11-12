@@ -20,6 +20,9 @@ GameGui::GameGui(glm::vec2 bufferSize, LocalDefs& defs) :
     auto viginette = std::make_shared<GUIRect>("viginette");
     viginette->create(bufferSize, {}, defs.textures().getTextureRef("viginette"));
     builtIn.add(viginette);
+
+    menuRoot = std::make_shared<GUIContainer>("__lua_root");
+    add(menuRoot);
 }
 
 void GameGui::bufferResized(glm::vec2 bufferSize) {
@@ -28,8 +31,8 @@ void GameGui::bufferResized(glm::vec2 bufferSize) {
     builtIn.get<GUIRect>("crosshair")->setPos({bufferSize.x / 2 - 11, bufferSize.y / 2 - 9});
     builtIn.get<GUIRect>("viginette")->setScale({bufferSize.x, bufferSize.y});
 
-    empty();
-    recursivelyCreate(components, std::shared_ptr<GUIComponent>(static_cast<GUIComponent*>(this), [](GUIComponent*){}));
+    menuRoot->empty();
+    recursivelyCreate(components, menuRoot);
 }
 
 void GameGui::setMenu(const std::string& menu) {
@@ -42,15 +45,12 @@ void GameGui::setMenu(const std::string& menu) {
 
         while ((pos = menu.find('\n', prev)) != std::string::npos) {
             std::string sub = menu.substr(prev, pos - prev);
-            if (sub.substr(0, 2) != "--") {
-                std::string::size_type start = sub.find_first_not_of("\t\v\r ");
-                if (start == std::string::npos) start = 0;
-                std::string::size_type end = sub.find_last_not_of("\t\v\r ");
+            std::string::size_type start = sub.find_first_not_of("\t\v\r ");
+            if (start == std::string::npos) start = 0;
+            std::string::size_type end = sub.find_last_not_of("\t\v\r ");
 
-                sub = sub.substr(start, end - start + 1);
-
-                if (!sub.empty()) lines.push_back(sub);
-            }
+            sub = sub.substr(start, end - start + 1);
+            if (sub.substr(0, 2) != "--" && !sub.empty()) lines.push_back(sub);
             prev = pos + 1;
         }
     }
@@ -124,8 +124,8 @@ void GameGui::setMenu(const std::string& menu) {
         }
     }
 
-    empty();
-    recursivelyCreate(components, std::shared_ptr<GUIComponent>(static_cast<GUIComponent*>(this), [](GUIComponent*){}));
+    menuRoot->empty();
+    recursivelyCreate(components, menuRoot);
 }
 
 void GameGui::recursivelyCreate(std::vector<SerializedGuiElem> components, std::shared_ptr<GUIComponent> parent) {
@@ -220,8 +220,8 @@ std::shared_ptr<GUIComponent> GameGui::createComponent(SerializedGuiElem& data) 
         glm::vec2 scale = {1, 1};
         if (data.tokens.count("scale")) {
             auto tokens = splitValue(data.tokens["scale"], 2);
-            pos = {stringToNum(tokens[0], PercentBehavior::DECIMAL),
-                   stringToNum(tokens[1], PercentBehavior::DECIMAL)};
+            scale = {stringToNum(tokens[0], PercentBehavior::DECIMAL),
+                     stringToNum(tokens[1], PercentBehavior::DECIMAL)};
         }
 
         glm::vec4 padding {};
@@ -236,7 +236,7 @@ std::shared_ptr<GUIComponent> GameGui::createComponent(SerializedGuiElem& data) 
         glm::vec4 background_color = Util::hexToColorVec("#0000");
         if (data.tokens.count("background")) background_color = Util::hexToColorVec(data.tokens["background"]);
         glm::vec4 color = Util::hexToColorVec("#fff");
-        if (data.tokens.count("background")) color = Util::hexToColorVec(data.tokens["color"]);
+        if (data.tokens.count("color")) color = Util::hexToColorVec(data.tokens["color"]);
 
         std::string content = "Missing content string";
         if (data.tokens.count("content")) content = data.tokens["content"].substr(1, data.tokens["content"].size() - 2);
@@ -256,7 +256,7 @@ std::shared_ptr<GUIComponent> GameGui::createComponent(SerializedGuiElem& data) 
 }
 
 void GameGui::closeMenu() {
-    empty();
+    menuRoot->empty();
     menuState = "";
 }
 
@@ -266,6 +266,7 @@ const std::string &GameGui::getMenuState() {
 
 void GameGui::setVisible(bool visible) {
     GUIComponent::setVisible(visible);
+    builtIn.setVisible(visible);
 }
 
 float GameGui::stringToNum(const std::string& input, PercentBehavior behavior = PercentBehavior::BUFF_WIDTH) {
@@ -284,6 +285,8 @@ float GameGui::stringToNum(const std::string& input, PercentBehavior behavior = 
                 return round(decimal * bufferSize.y / SCALE_MODIFIER) * SCALE_MODIFIER;
         }
     }
+
+    return atof(input.c_str());
 
     return 0;
 }

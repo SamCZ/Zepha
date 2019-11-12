@@ -47,6 +47,9 @@ zepha.register_entity("zeus:default:dropped_item", {
         self.speed = static.speed or 20
         self.velocityY = static.velocityY or -2.5
         self.time = static.time or 0
+        self.tick = 0
+        self.scooping = false
+        self.delete = false
 
         self.object:set_scale(1)
         if not zepha.registered_blocks[static.object] then
@@ -59,29 +62,34 @@ zepha.register_entity("zeus:default:dropped_item", {
         self.object:int_yaw(self.object.yaw + self.speed)
         if self.speed > 4 then self.speed = self.speed * 0.92 end
 
-        if (not collides(self.object)) then
-            self.velocityY = math.min(self.velocityY + 0.5, 8)
+        if not self.scooping then
+            if (not collides(self.object)) then
+                self.velocityY = math.min(self.velocityY + 0.5, 8)
+            end
+
+            local v = 1
+            while (not collides(self.object) and v <= math.abs(self.velocityY)) do
+                local interval = 0
+                if self.velocityY < 0 then interval = 1/16 else interval = -1/16 end
+                self.object:int_pos({x = self.object.pos.x, y = self.object.pos.y + interval, z = self.object.pos.z})
+                v = v + 0.25
+            end
+            self.object:int_visual_offset({x = 0, y = math.sin(self.time * 2) / 8, z = 0})
+            if collides(self.object) then
+                self.velocityY = 0
+                self.time = self.time + delta
+            end
         end
 
-        local v = 1
-        while (not collides(self.object) and v <= math.abs(self.velocityY)) do
-            local interval = 0
-            if self.velocityY < 0 then interval = 1/16 else interval = -1/16 end
-            self.object:int_pos({x = self.object.pos.x, y = self.object.pos.y + interval, z = self.object.pos.z})
-            v = v + 0.25
-        end
-        self.object:int_visual_offset({x = 0, y = math.sin(self.time * 2) / 8, z = 0})
-        if collides(self.object) then
-            self.velocityY = 0
-            self.time = self.time + delta
-        end
-
-        if self.time > 5 * 60 then
+        if self.time > 5 * 60 or self.delete then
             zepha.remove_entity(self)
         end
-    end,
-    on_destroy = function(self)
-        printe("Dropped Item Despawned!")
+
+        self.tick = self.tick + delta
+        if self.tick > 0.15 then
+            self:check_collect()
+            self.tick = 0
+        end
     end,
     on_serialize = function(self)
         return {
@@ -89,5 +97,18 @@ zepha.register_entity("zeus:default:dropped_item", {
             time = self.time,
             speed = self.speed
         }
+    end,
+    check_collect = function(self)
+        local diff = vector.abs(vector.subtract(zepha.player.pos, self.object.pos))
+        local distance = math.sqrt(diff.x ^ 2 + diff.y ^ 2 + diff.z ^ 2)
+
+        if distance < 2 then
+            self.object:int_pos(vector.add(zepha.player.pos, v{0, 1.10, 0}))
+            self.object:int_scale(0.5)
+            self.scooping = true
+            zepha.delay(function()
+                self.delete = true
+            end, 2/20)
+        end
     end
 })

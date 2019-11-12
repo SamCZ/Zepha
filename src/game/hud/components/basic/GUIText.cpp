@@ -98,10 +98,10 @@ void GUIText::setText(std::string text) {
         auto charUVs = font.getCharUVs(c);
 
         for (unsigned int j = 0; j <= 1; j++) {
-            glm::vec3 color = {this->color.x, this->color.y, this->color.z};
+            glm::vec3 c = {this->color.x, this->color.y, this->color.z};
 
             if (j == 0) {
-                color *= glm::vec3 {0.4, 0.4, 0.45};
+                c *= glm::vec3 {0.4, 0.4, 0.45};
                 xOffset += 1;
                 yOffset += 1;
             }
@@ -110,10 +110,10 @@ void GUIText::setText(std::string text) {
                 yOffset -= 1;
             }
 
-            textVertices.emplace_back(glm::vec2 {xOffset,             yOffset    }, glm::vec4 {charUVs.x, charUVs.y, 0, 1}, color, 1.f);
-            textVertices.emplace_back(glm::vec2 {xOffset,             yOffset + h}, glm::vec4 {charUVs.x, charUVs.w, 0, 1}, color, 1.f);
-            textVertices.emplace_back(glm::vec2 {xOffset + charWidth, yOffset + h}, glm::vec4 {charUVs.z, charUVs.w, 0, 1}, color, 1.f);
-            textVertices.emplace_back(glm::vec2 {xOffset + charWidth, yOffset    }, glm::vec4 {charUVs.z, charUVs.y, 0, 1}, color, 1.f);
+            textVertices.emplace_back(glm::vec2 {xOffset,             yOffset    }, glm::vec4 {charUVs.x, charUVs.y, 0, color.w}, c, 1.f);
+            textVertices.emplace_back(glm::vec2 {xOffset,             yOffset + h}, glm::vec4 {charUVs.x, charUVs.w, 0, color.w}, c, 1.f);
+            textVertices.emplace_back(glm::vec2 {xOffset + charWidth, yOffset + h}, glm::vec4 {charUVs.z, charUVs.w, 0, color.w}, c, 1.f);
+            textVertices.emplace_back(glm::vec2 {xOffset + charWidth, yOffset    }, glm::vec4 {charUVs.z, charUVs.y, 0, color.w}, c, 1.f);
 
             textIndices.emplace_back(indOffset);
             textIndices.emplace_back(indOffset + 1);

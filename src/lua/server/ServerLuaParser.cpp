@@ -73,7 +73,7 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
     ServerApi::register_keybind(lua, core);
 
     //Sandbox the dofile function
-    lua["dofile"] = sol::nil;
+    lua["dofile"] = lua["loadfile"] = sol::nil;
     lua.set_function("runfile", &ServerLuaParser::DoFileSandboxed, this);
 }
 

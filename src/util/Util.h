@@ -90,7 +90,7 @@ namespace Util {
             a = (hex.length() == 8) ? hex.substr(6,2) : "ff";
         }
         else {
-            std::cout << Log::err << "Color string is of incorrect length!" << Log::endl;
+            std::cout << Log::err << "Color string \"" + hex + "\" is of incorrect length!" << Log::endl;
             return color;
         }
 

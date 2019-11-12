@@ -89,7 +89,7 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& pla
     ClientApi::update_entities(lua);
 
     //Sandbox the dofile function
-    lua["dofile"] = sol::nil;
+    lua["dofile"] = lua["loadfile"] = sol::nil;
     lua.set_function("runfile", &LocalLuaParser::DoFileSandboxed, this);
 }
 
