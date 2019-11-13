@@ -2,6 +2,7 @@
 -- Register base models
 runfile(_PATH .. "models/_index")
 
+runfile(_PATH .. "dump")
 runfile(_PATH .. "math")
 runfile(_PATH .. "vector")
 
