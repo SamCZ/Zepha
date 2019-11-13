@@ -252,6 +252,6 @@ set(ZEPHA_SRC
     game/scene/world/ItemStack.cpp
     game/scene/world/ItemStack.h
     server/LocalServerInstance.cpp
-    server/LocalServerInstance.h game/hud/SerializedGuiElem.h)
+    server/LocalServerInstance.h game/hud/SerializedGuiElem.h util/Voronoi3D.cpp util/Voronoi3D.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})
