@@ -14,7 +14,6 @@
 #include "../api/type/cLuaEntity.h"
 #include "../api/type/cLuaLocalPlayer.h"
 
-#include "../api/modules/cDump.h"
 #include "../api/modules/cPrintE.h"
 
 #include "../api/modules/cIsServer.h"
@@ -22,6 +21,7 @@
 
 #include "../api/modules/cRegisterBlock.h"
 #include "../api/modules/cRegisterBlockmodel.h"
+#include "../api/modules/cRegisterBiome.h"
 #include "../api/modules/cRegisterItem.h"
 #include "../api/modules/cRegisterEntity.h"
 
@@ -66,7 +66,6 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& pla
     core["player"] = LuaLocalPlayer(player);
 
     //Load Modules
-    ClientApi::dump(lua);
     ClientApi::printe(lua);
 
     ClientApi::is_server(core);
@@ -74,6 +73,7 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& pla
 
     ClientApi::register_block(lua, core);
     ClientApi::register_blockmodel(lua, core);
+    ClientApi::register_biome(lua, core);
     ClientApi::register_item(lua, core);
     ClientApi::register_entity(lua, core);
 

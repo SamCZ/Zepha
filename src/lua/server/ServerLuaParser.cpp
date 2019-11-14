@@ -7,13 +7,13 @@
 #include "ServerLuaParser.h"
 #include "ServerRegisterBlocks.h"
 #include "ServerRegisterItems.h"
+#include "ServerRegisterBiomes.h"
 
 
 #include "../../def/ServerDefs.h"
 
 
 
-#include "../api/modules/sDump.h"
 #include "../api/modules/sPrintE.h"
 
 #include "../api/modules/sIsServer.h"
@@ -21,6 +21,7 @@
 
 #include "../api/modules/sRegisterBlock.h"
 #include "../api/modules/sRegisterBlockmodel.h"
+#include "../api/modules/sRegisterBiome.h"
 #include "../api/modules/sRegisterItem.h"
 #include "../api/modules/sRegisterEntity.h"
 
@@ -55,7 +56,6 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
     core["player"] = sol::nil;
 
     //Load Modules
-    ServerApi::dump(lua);
     ServerApi::printe(lua);
 
     ServerApi::is_server(core);
@@ -63,6 +63,7 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
 
     ServerApi::register_block(lua, core);
     ServerApi::register_blockmodel(lua, core);
+    ServerApi::register_biome(lua, core);
     ServerApi::register_item(lua, core);
     ServerApi::register_entity(lua, core);
 
@@ -80,6 +81,7 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
 void ServerLuaParser::registerDefinitions(ServerDefs &defs) {
     ServerRegisterBlocks(core, defs);
     ServerRegisterItems(core, defs);
+    ServerRegisterBiomes(core, defs);
 }
 
 void ServerLuaParser::loadMods(ServerDefs& defs, const std::string& rootPath) {
@@ -189,7 +191,7 @@ std::vector<LuaMod> ServerLuaParser::createLuaMods(std::list<std::string> modDir
         auto& conf = mod.config;
 
         std::ifstream i(modDir + "/conf.json");
-        json j;
+        json j {};
         i >> j;
 
         auto depends = j["depends"];

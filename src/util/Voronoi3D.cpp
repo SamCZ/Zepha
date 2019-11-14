@@ -29,6 +29,7 @@ void Voronoi3D::setPoints(const std::vector<glm::vec3>& points) {
 
                 for (unsigned short p = 0; p < points.size(); p++) {
                     float thisPointDistance = glm::distance(points[p], {i, j, k});
+//                    float thisPointDistance = std::fabs(points[p].x - i) + std::fabs(points[p].y - j) + std::fabs(points[p].z - k);
                     if (thisPointDistance < pointDistance) {
                         pointDistance = thisPointDistance;
                         pIndex = p;

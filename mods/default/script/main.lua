@@ -2,6 +2,7 @@ print("Hello from default")
 
 runfile(_PATH .. "blocks/_index")
 runfile(_PATH .. "entity/_index")
+runfile(_PATH .. "biomes/_index")
 
 local blockTypes = {
     "zeus:default:stone",

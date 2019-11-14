@@ -17,6 +17,7 @@ public:
 
     ServerDefinitionAtlas& defs();
     ServerLuaParser& lua();
+//    BiomeStore& gen();
     
     AssetStorage& assets();
     void update(double delta);
