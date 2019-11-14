@@ -42,6 +42,10 @@ void Voronoi3D::setPoints(const std::vector<glm::vec3>& points) {
     }
 }
 
+unsigned short Voronoi3D::getPoint(unsigned short x, unsigned short y, unsigned short z) {
+    return data[x][y][z];
+}
+
 void Voronoi3D::setColorValues(const std::vector<glm::vec3>& values) {
     colorValues = values;
 }

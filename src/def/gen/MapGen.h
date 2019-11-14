@@ -7,36 +7,45 @@
 
 #include <glm/vec3.hpp>
 #include <vector>
+#include <noise/noise.h>
 
 #include "MapGenJob.h"
 #include "../LocalDefs.h"
+#include "BiomeStore.h"
 #include "../../world/chunk/BlockChunk.h"
-
-#include <noise/noise.h>
 
 using namespace noise;
 
 class MapGen {
 public:
     MapGen() = default;
-    MapGen(unsigned int seed, DefinitionAtlas& atlas);
+    MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeStore& biome);
     BlockChunk* generate(glm::vec3 pos);
 private:
     void getDensityMap(MapGenJob &job);
     void getElevation(MapGenJob &j);
     void fillChunk(MapGenJob &j);
-    void addTrees(MapGenJob &j);
+//    void addTrees(MapGenJob &j);
 
-    void addBlock(glm::vec3 lp, unsigned int block, MapGenJob &j);
+//    void addBlock(glm::vec3 lp, unsigned int block, MapGenJob &j);
 
     unsigned int seed = 0;
 
-    unsigned int AIR = 0;
-    unsigned int WATER = 0;
-    unsigned int GRASS_BLOCK = 0, DIRT_BLOCK = 0, STONE_BLOCK = 0;
-    unsigned int PLANT_STEM_BLOCK = 0, LEAVES_BLOCK = 0;
-    unsigned int TALLGRASSES[6] = {0, 0, 0, 0, 0, 0};
-    unsigned int FLOWERS[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    DefinitionAtlas& atlas;
+    BiomeStore& biomes;
+
+    module::Perlin temperatureBase;
+    module::ScaleBias temperature;
+
+    module::Perlin humidityBase;
+    module::ScaleBias humidity;
+
+    module::Perlin roughnessBase;
+    module::ScaleBias roughness;
+
+    //
+    //  OLD PARAMETERS
+    //
 
     //Smooth world noise factors
     module::Perlin worldElevationBase;

@@ -30,7 +30,7 @@ void NoiseSample::set(glm::vec3 pos, float value) {
     data[(int)pos.x][(int)pos.y][(int)pos.z] = value;
 }
 
-float NoiseSample::get(glm::vec3& pos) {
+float NoiseSample::get(const glm::vec3& pos) {
     auto xInt = static_cast<int>(pos.x);
     auto yInt = static_cast<int>(pos.y);
     auto zInt = static_cast<int>(pos.z);

@@ -34,9 +34,10 @@ public:
     };
 
     struct Thread {
-        explicit Thread(MapGen* gen);
+//        explicit Thread(MapGen* gen);
+        explicit Thread();
 
-        MapGen* gen;
+//        MapGen* gen;
 
         std::thread thread;
         bool keepAlive = true;
@@ -48,7 +49,7 @@ public:
 private:
     static void threadFunction(Thread* thread);
 
-    MapGen gen;
+//    MapGen gen;
     std::vector<Packet> queuedTasks;
 };
 

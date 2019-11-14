@@ -17,6 +17,7 @@ public:
     Voronoi3D(unsigned short size);
 
     void setPoints(const std::vector<glm::vec3>& points);
+    unsigned short getPoint(unsigned short x, unsigned short y, unsigned short z);
 
     void setColorValues(const std::vector<glm::vec3>& values);
     void generateImage(unsigned short depth);

@@ -4,8 +4,11 @@
 
 #include "BiomeDef.h"
 
-BiomeDef::BiomeDef(const std::string& identifier, float temperature, float humidity, float roughness, unsigned int topBlock, unsigned int soilBlock, unsigned int rockBlock) :
+BiomeDef::BiomeDef(const std::string& identifier, unsigned int index, float temperature, float humidity, float roughness,
+        unsigned int topBlock, unsigned int soilBlock, unsigned int rockBlock) :
+
         identifier(identifier),
+        index(index),
 
         temperature(temperature),
         humidity(humidity),

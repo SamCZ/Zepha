@@ -8,32 +8,34 @@
 #include "../../util/Timer.h"
 #include "NoiseSample.h"
 
-MapGen::MapGen(unsigned int seed, DefinitionAtlas& atlas) {
-    this->seed = seed;
+MapGen::MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeStore& biomes) :
+    seed(seed),
+    atlas(atlas),
+    biomes(biomes) {
 
-    //Get Block Indexes
-    AIR = atlas.fromStr("air").index;
+    temperatureBase.SetSeed(seed);
+    temperatureBase.SetFrequency(0.2);
+    temperatureBase.SetOctaveCount(2);
+    temperature.SetSourceModule(0, temperatureBase);
+    temperature.SetScale(1);
+    temperature.SetBias(0);
 
-    GRASS_BLOCK = atlas.fromStr("zeus:default:grass").index;
-    DIRT_BLOCK  = atlas.fromStr("zeus:default:dirt").index;
-    STONE_BLOCK = atlas.fromStr("zeus:default:stone").index;
-    WATER = atlas.fromStr("zeus:default:water").index;
+    humidityBase.SetSeed(seed + 5);
+    humidityBase.SetFrequency(0.2);
+    humidityBase.SetOctaveCount(2);
+    humidity.SetSourceModule(0, humidityBase);
+    humidity.SetScale(0.5);
+    humidity.SetBias(0.5);
 
-    PLANT_STEM_BLOCK = atlas.fromStr("zeus:default:bush_stem").index;
-    LEAVES_BLOCK     = atlas.fromStr("zeus:default:leaves").index;
+    roughnessBase.SetSeed(seed + 10);
+    roughnessBase.SetFrequency(0.2);
+    roughnessBase.SetOctaveCount(2);
+    roughness.SetSourceModule(0, roughnessBase);
+    roughness.SetScale(0.5);
+    roughness.SetBias(0.5);
 
-    for (int i = 1; i <= 5; i++) {
-        TALLGRASSES[i] = atlas.fromStr("zeus:default:tallgrass_" + to_string(i)).index;
-    }
 
-    FLOWERS[0] = atlas.fromStr("zeus:flowers:flower_yellow_dandelion").index;
-    FLOWERS[1] = atlas.fromStr("zeus:flowers:flower_viola").index;
-    FLOWERS[2] = atlas.fromStr("zeus:flowers:flower_geranium").index;
-    FLOWERS[3] = atlas.fromStr("zeus:flowers:flower_tulip").index;
-    FLOWERS[4] = atlas.fromStr("zeus:flowers:flower_white_dandelion").index;
-    FLOWERS[5] = atlas.fromStr("zeus:flowers:flower_rose").index;
-    FLOWERS[6] = atlas.fromStr("zeus:flowers:flower_red_mushroom").index;
-    FLOWERS[7] = atlas.fromStr("zeus:flowers:flower_brown_mushroom").index;
+
 
     //First stage smooth elevation
     worldElevationBase.SetSeed(seed);
@@ -103,10 +105,6 @@ MapGen::MapGen(unsigned int seed, DefinitionAtlas& atlas) {
     terrainFinal.SetSourceModule(0, worldSmoothElevation);
     terrainFinal.SetSourceModule(1, mountainMultiplied);
 
-
-
-
-
     grassNoise.SetFrequency(2);
     grassNoise.SetOctaveCount(3);
 
@@ -143,7 +141,7 @@ BlockChunk* MapGen::generate(glm::vec3 pos) {
     getElevation(job);
 
     fillChunk(job);
-    addTrees(job);
+//    addTrees(job);
 
     return new BlockChunk(job.blocks, pos);
 }
@@ -203,66 +201,69 @@ void MapGen::getDensityMap(MapGenJob &job) {
 }
 
 void MapGen::fillChunk(MapGenJob &job) {
-    auto terrain_2d_sample = NoiseSample::getSample(&terrainFinal, job.pos, 4, 1, true);
-    auto grass_sample = NoiseSample::getSample(&grassFinal, job.pos, 8, 0, true);
-    auto flora_type_sample = NoiseSample::getSample(&floraFinal, job.pos, 2, 0, true);
-    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 8, 0, true);
+    auto terrain_2d_sample      = NoiseSample::getSample(&terrainFinal, job.pos, 4, 1, true);
+    auto grass_sample           = NoiseSample::getSample(&grassFinal,   job.pos, 8, 0, true);
+    auto flora_type_sample      = NoiseSample::getSample(&floraFinal,   job.pos, 2, 0, true);
+    auto flora_density_sample   = NoiseSample::getSample(&floraDensity, job.pos, 8, 0, true);
 
-//    auto biome_sample = NoiseSample::getSample(&biomeTemp, job.pos, 1, 0, true);
-
-    glm::vec3 lp;
-
-    for (int m = 0; m < (int)pow(TransPos::CHUNK_SIZE, 3); m++) {
-        VecUtils::indAssignVec(m, lp);
-
-        if (job.pos.y == 0 && lp.y == 0) {
-            job.blocks[m] = WATER;
-            continue;
-        }
-
-        int d = job.depth[m];
-        int flora = AIR;
-
-        if (flora_density_sample.get(lp) >= 1) {
-            flora = FLOWERS[max(min((int) std::floor(flora_type_sample.get(lp)), 7), 0)];
-        }
-        else {
-            int grassType = min((int) std::floor(grass_sample.get(lp)), 5);
-            if (grassType > 0) flora = TALLGRASSES[grassType];
-        }
-
-        job.blocks[m] = d <= 0 ? AIR
-                      : d <= 1 ? flora
-                      : d <= 2 ? GRASS_BLOCK
-                      : d <= 3 ? DIRT_BLOCK
-                               : STONE_BLOCK;
-    }
-}
-
-void MapGen::addTrees(MapGenJob &job) {
-    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 8, 0, true);
+    auto temperature_sample = NoiseSample::getSample(&temperature, job.pos, 8, 8, false);
+    auto humidity_sample    = NoiseSample::getSample(&humidity,    job.pos, 8, 8, false);
+    auto roughness_sample   = NoiseSample::getSample(&roughness,   job.pos, 8, 8, false);
 
     glm::vec3 lp;
 
     for (int m = 0; m < (int)pow(TransPos::CHUNK_SIZE, 3); m++) {
         VecUtils::indAssignVec(m, lp);
+
+        auto biome = biomes.getBiomeAt(temperature_sample.get(lp), humidity_sample.get(lp), roughness_sample.get(lp));
+
+        float topBlock = biome.topBlock;
+        float soilBlock = biome.soilBlock;
+        float rockBlock = biome.rockBlock;
+
         int d = job.depth[m];
+//        int flora = DefinitionAtlas::AIR;
+//
+//        if (flora_density_sample.get(lp) >= 1) {
+//            flora = FLOWERS[max(min((int) std::floor(flora_type_sample.get(lp)), 7), 0)];
+//        }
+//        else {
+//            int grassType = min((int) std::floor(grass_sample.get(lp)), 5);
+//            if (grassType > 0) flora = TALLGRASSES[grassType];
+//        }
 
-        if (d == 1 && flora_density_sample.get(lp) <= -1) {
-            glm::vec3 p = lp;
-
-            addBlock(p, PLANT_STEM_BLOCK, job);
-            addBlock(p + glm::vec3{ 1, 0, 0}, LEAVES_BLOCK, job);
-            addBlock(p + glm::vec3{-1, 0, 0}, LEAVES_BLOCK, job);
-            addBlock(p + glm::vec3{ 0, 0, 1}, LEAVES_BLOCK, job);
-            addBlock(p + glm::vec3{ 0, 0,-1}, LEAVES_BLOCK, job);
-            addBlock(p + glm::vec3{ 0, 1, 0}, LEAVES_BLOCK, job);
-        }
+        job.blocks[m] = d <= 0 ? DefinitionAtlas::AIR
+//                      : d <= 1 ? flora
+                      : d <= 2 ? topBlock
+                      : d <= 3 ? soilBlock
+                               : rockBlock;
     }
 }
 
-void MapGen::addBlock(glm::vec3 lp, unsigned int block, MapGenJob &j) {
-    if (lp.x >= 0 && lp.x < TransPos::CHUNK_SIZE && lp.y >= 0 && lp.y < TransPos::CHUNK_SIZE && lp.z >= 0 && lp.z < TransPos::CHUNK_SIZE) {
-        j.blocks[VecUtils::vecToInd(lp)] = block;
-    }
-}
+//void MapGen::addTrees(MapGenJob &job) {
+//    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 8, 0, true);
+//
+//    glm::vec3 lp;
+//
+//    for (int m = 0; m < (int)pow(TransPos::CHUNK_SIZE, 3); m++) {
+//        VecUtils::indAssignVec(m, lp);
+//        int d = job.depth[m];
+//
+//        if (d == 1 && flora_density_sample.get(lp) <= -1) {
+//            glm::vec3 p = lp;
+//
+//            addBlock(p, PLANT_STEM_BLOCK, job);
+//            addBlock(p + glm::vec3{ 1, 0, 0}, LEAVES_BLOCK, job);
+//            addBlock(p + glm::vec3{-1, 0, 0}, LEAVES_BLOCK, job);
+//            addBlock(p + glm::vec3{ 0, 0, 1}, LEAVES_BLOCK, job);
+//            addBlock(p + glm::vec3{ 0, 0,-1}, LEAVES_BLOCK, job);
+//            addBlock(p + glm::vec3{ 0, 1, 0}, LEAVES_BLOCK, job);
+//        }
+//    }
+//}
+
+//void MapGen::addBlock(glm::vec3 lp, unsigned int block, MapGenJob &j) {
+//    if (lp.x >= 0 && lp.x < TransPos::CHUNK_SIZE && lp.y >= 0 && lp.y < TransPos::CHUNK_SIZE && lp.z >= 0 && lp.z < TransPos::CHUNK_SIZE) {
+//        j.blocks[VecUtils::vecToInd(lp)] = block;
+//    }
+//}

@@ -40,13 +40,16 @@ ServerRegisterBiomes::ServerRegisterBiomes(sol::table& core, ServerDefs &defs) {
         if (!rockBlock) throw identifier + "'s blocks property is missing a `rock` block.";
 
         BiomeDef* biomeDef = new BiomeDef(
-            identifier, temperature, humidity, roughness,
+            identifier, defs.gen().size(),
+            temperature, humidity, roughness,
             defs.defs().blockFromStr(*topBlock).index,
             defs.defs().blockFromStr(*soilBlock).index,
             defs.defs().blockFromStr(*rockBlock).index
         );
 
-        Add Biome Definition to the Gen
+        //Add Biome Definition to the Gen
         defs.gen().registerBiome(biomeDef);
     }
+
+    defs.gen().generateVoronoi();
 }

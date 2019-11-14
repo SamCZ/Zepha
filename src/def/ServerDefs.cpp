@@ -10,16 +10,20 @@ void ServerDefs::init(ServerWorld &world, const std::string& path) {
     luaApi.init(*this, world, folderPath);
 }
 
-ServerDefinitionAtlas &ServerDefs::defs() {
+ServerDefinitionAtlas& ServerDefs::defs() {
     return blockAtlas;
 }
 
-ServerLuaParser &ServerDefs::lua() {
+ServerLuaParser& ServerDefs::lua() {
     return luaApi;
 }
 
-AssetStorage &ServerDefs::assets() {
+AssetStorage& ServerDefs::assets() {
     return assetStorage;
+}
+
+BiomeStore& ServerDefs::gen() {
+    return biomes;
 }
 
 void ServerDefs::update(double delta) {

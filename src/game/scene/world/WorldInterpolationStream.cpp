@@ -4,12 +4,14 @@
 
 #include "WorldInterpolationStream.h"
 
-WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, LocalDefs& defs) : gen(seed, defs.defs()) {
+WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, LocalDefs& defs) {
+//    gen(seed, defs.defs()) {
     queuedTasks.reserve(1024);
 
     threads.reserve(THREADS);
     for (int i = 0; i < THREADS; i++) {
-        threads.emplace_back(&gen);
+//        threads.emplace_back(&gen);
+        threads.emplace_back();
     }
 }
 
@@ -45,7 +47,8 @@ std::vector<std::shared_ptr<BlockChunk>> WorldInterpolationStream::update() {
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-WorldInterpolationStream::Thread::Thread(MapGen *gen) : gen(gen) {
+WorldInterpolationStream::Thread::Thread() {
+//WorldInterpolationStream::Thread::Thread(MapGen *gen) : gen(gen) {
     thread = std::thread(WorldInterpolationStream::threadFunction, this);
 }
 #pragma clang diagnostic pop

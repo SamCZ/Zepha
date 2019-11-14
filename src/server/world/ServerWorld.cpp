@@ -34,7 +34,7 @@ ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& cli
 
 void ServerWorld::init() {
     delete genStream;
-    genStream = new WorldGenStream(seed, defs.defs());
+    genStream = new WorldGenStream(seed, defs);
 }
 
 void ServerWorld::changedChunks(ServerClient& client) {
