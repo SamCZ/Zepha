@@ -5,8 +5,7 @@
 #pragma once
 
 #include <vector>
-#include <glm/vec4.hpp>
-#include <glm/geometric.hpp>
+#include <glm/glm.hpp>
 #include <string>
 
 #include "stb_image/stb_image_write.h"
