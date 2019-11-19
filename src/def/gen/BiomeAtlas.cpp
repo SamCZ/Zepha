@@ -31,7 +31,7 @@ void BiomeAtlas::generateVoronoi() {
 
 BiomeDef& BiomeAtlas::getBiomeAt(float temperature, float humidity, float roughness) {
     return biomeFromId(voronoi.getPoint(
-            static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, temperature + 1 / 2 * voronoiSize))),
+            static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, (temperature + 1) / 2 * voronoiSize))),
             static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, humidity * voronoiSize))),
             static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, roughness * voronoiSize)))
     ));

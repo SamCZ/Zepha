@@ -13,7 +13,7 @@ LocalBiomeAtlas::LocalBiomeAtlas() {
 
 void LocalBiomeAtlas::setIdentifiers(std::vector<std::string> &identifiers) {
     for (unsigned int i = 0; i < identifiers.size(); i++) {
-        if (i >= 2) defs.emplace_back(); //Don't emplace invalid
+        if (i >= 1) defs.emplace_back(); //Don't emplace invalid
         defTable.insert({identifiers[i], i});
     }
 }

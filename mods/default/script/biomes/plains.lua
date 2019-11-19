@@ -27,7 +27,7 @@ zepha.register_biome("zeus:default:dry_plains", {
     humidity = 40/100,
     roughness = 20/100,
     blocks = {
-        top = "zeus:default:wood",
+        top = "zeus:default:grass",
         soil = "zeus:default:dirt",
         rock = "zeus:default:stone"
     },

@@ -17,8 +17,8 @@ MapGen::MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeAtlas& biomes) :
     temperatureBase.SetFrequency(0.2);
     temperatureBase.SetOctaveCount(4);
     temperature.SetSourceModule(0, temperatureBase);
-    temperature.SetScale(1);
-    temperature.SetBias(0);
+    temperature.SetScale(0.35);
+    temperature.SetBias(0.25);
 
     humidityBase.SetSeed(seed + 5);
     humidityBase.SetFrequency(0.2);
@@ -204,9 +204,9 @@ void MapGen::fillChunk(MapGenJob &job) {
     auto flora_type_sample      = NoiseSample::getSample(&floraFinal,   job.pos, 2, 0, true);
     auto flora_density_sample   = NoiseSample::getSample(&floraDensity, job.pos, 8, 0, true);
 
-    auto temperature_sample = NoiseSample::getSample(&temperature, job.pos, 8, 8, false);
-    auto humidity_sample    = NoiseSample::getSample(&humidity,    job.pos, 8, 8, false);
-    auto roughness_sample   = NoiseSample::getSample(&roughness,   job.pos, 8, 8, false);
+    auto temperature_sample = NoiseSample::getSample(&temperature, job.pos, 4, 4, false);
+    auto humidity_sample    = NoiseSample::getSample(&humidity,    job.pos, 4, 4, false);
+    auto roughness_sample   = NoiseSample::getSample(&roughness,   job.pos, 4, 4, false);
 
     glm::vec3 lp;
 

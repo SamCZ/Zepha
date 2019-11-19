@@ -53,6 +53,7 @@ ServerRegisterBiomes::ServerRegisterBiomes(sol::table& core, ServerDefs &defs) {
 
         //Add Biome Definition to the Gen
         defs.gen().registerBiome(biomeDef);
+        std::cout << "Registering " << biomeDef->index << ": " << biomeDef->identifier << std::endl;
     }
 
     defs.gen().generateVoronoi();
