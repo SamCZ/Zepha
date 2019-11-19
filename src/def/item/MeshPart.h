@@ -18,7 +18,7 @@
 #include "BlockModelVertex.h"
 
 struct MeshPart {
-    MeshPart(const std::vector<BlockModelVertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<AtlasRef> texture);
+    MeshPart(const std::vector<BlockModelVertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<AtlasRef> texture, bool biomeTint);
 
     std::vector<BlockModelVertex> vertices;
     std::vector<unsigned int> indices;
@@ -27,6 +27,8 @@ struct MeshPart {
 
     ShaderMod shaderMod = ShaderMod::NONE;
     float modValue = 0;
+
+    bool biomeTint = false;
 };
 
 

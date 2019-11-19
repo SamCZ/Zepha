@@ -46,9 +46,9 @@ public:
     };
 
     struct Thread {
-        explicit Thread(LocalDefinitionAtlas &atlas, std::array<NoiseSample, 3>& offsetSampler);
+        explicit Thread(LocalDefs &defs, std::array<NoiseSample, 3>& offsetSampler);
 
-        LocalDefinitionAtlas &atlas;
+        LocalDefs &defs;
         std::array<NoiseSample, 3>& offsetSamplers;
 
         std::thread thread {};

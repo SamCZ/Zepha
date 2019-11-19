@@ -5,11 +5,12 @@
 #include <thread>
 #include "MeshGenerator.h"
 
-MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefinitionAtlas& atlas,
-                             std::shared_ptr<BlockChunk> chunk, std::array<std::shared_ptr<BlockChunk>, 6> adjacent,
+MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::shared_ptr<BlockChunk> chunk,
+                             std::array<std::shared_ptr<BlockChunk>, 6> adjacent,
                              std::array<NoiseSample, 3>& blockOffsets) :
     meshDetails(meshDetails),
-    atlas(atlas),
+    defs(defs),
+    atlas(defs.defs()),
     chunk(chunk),
     adjacent(adjacent) {
 
@@ -22,9 +23,9 @@ MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefinitionAtlas& atl
     glm::vec3 vis;
     glm::vec3 check;
 
-    auto end = (int)pow(TransPos::CHUNK_SIZE, 3);
-    for (unsigned int i = 0; i < end; i++) {
+    for (unsigned int i = 0; i < 4096; i++) {
         BlockModel& model = atlas.blockFromId(chunk->getBlock(i)).model;
+        glm::vec3 biomeTint = defs.gen().biomeFromId(chunk->getBiome(i)).biomeTint;
 
         if (model.visible) {
             VecUtils::indAssignVec(i, off);
@@ -52,19 +53,19 @@ MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefinitionAtlas& atl
 
             if (model.visible) {
                 check = off; check.x -= 1;
-                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::XNEG)]);
+                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::XNEG)], biomeTint);
                 check = off; check.x += 1;
-                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::XPOS)]);
+                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::XPOS)], biomeTint);
                 check = off; check.y -= 1;
-                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::YNEG)]);
+                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::YNEG)], biomeTint);
                 check = off; check.y += 1;
-                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::YPOS)]);
+                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::YPOS)], biomeTint);
                 check = off; check.z -= 1;
-                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::ZNEG)]);
+                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::ZNEG)], biomeTint);
                 check = off; check.z += 1;
-                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::ZPOS)]);
+                if (!getBlockAt(check).culls) addFaces(vis, model.parts[static_cast<int>(Dir::ZPOS)], biomeTint);
 
-                addFaces(vis, model.parts[static_cast<int>(Dir::NO_CULL)]);
+                addFaces(vis, model.parts[static_cast<int>(Dir::NO_CULL)], biomeTint);
             }
         }
     }
@@ -89,8 +90,9 @@ BlockDef& MeshGenerator::getBlockAt(const glm::vec3 &pos) {
     return atlas.blockFromId(chunk->getBlock(pos));
 }
 
-void MeshGenerator::addFaces(const glm::vec3 &offset, const vector<MeshPart> &meshParts) {
+void MeshGenerator::addFaces(const glm::vec3 &offset, const vector<MeshPart> &meshParts, const glm::vec3& tint) {
     for (const MeshPart& mp : meshParts) {
+
 
         glm::vec3 modData = {};
 
@@ -111,6 +113,7 @@ void MeshGenerator::addFaces(const glm::vec3 &offset, const vector<MeshPart> &me
             meshDetails->vertices.push_back({
                    vertex.pos + offset,
                    vertex.tex,
+                   ((mp.biomeTint) ? tint : glm::vec3{1, 1, 1}),
                    Util::packFloat(vertex.nml),
                    static_cast<float>(mp.shaderMod),
                    modData

@@ -51,13 +51,12 @@ void ConnectScene::update() {
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
 
-                if (p.type == PacketType::IDENTIFIER_LIST) {
+                if (p.type == PacketType::BLOCK_IDENTIFIER_LIST) {
                     auto statusText = components.get<GUIText>("statusText");
-                    statusText->setText(
-                            statusText->getText() + "Received block index-identifier table.\nDownloading mods...\n");
+                    statusText->setText(statusText->getText() + "Received block index-identifier table.\n");
 
                     std::vector<std::string> indexIdentifierTable{};
-                    indexIdentifierTable.reserve(static_cast<unsigned long>(Serializer::decodeInt(&p.data[0])));
+                    indexIdentifierTable.reserve(static_cast<unsigned long>(Serializer::decodeUInt(&p.data[0])));
 
                     unsigned int ind = 4;
                     while (true) {
@@ -68,6 +67,26 @@ void ConnectScene::update() {
                     }
 
                     state.defs.defs().setIdentifiers(indexIdentifierTable);
+
+                    Packet resp(PacketType::BIOME_IDENTIFIER_LIST);
+                    resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
+                }
+                else if (p.type == PacketType::BIOME_IDENTIFIER_LIST) {
+                    auto statusText = components.get<GUIText>("statusText");
+                    statusText->setText(statusText->getText() + "Received biome index-identifier table.\nDownloading mods...\n");
+
+                    std::vector<std::string> indexIdentifierTable{};
+                    indexIdentifierTable.reserve(static_cast<unsigned long>(Serializer::decodeUInt(&p.data[0])));
+
+                    unsigned int ind = 4;
+                    while (true) {
+                        auto len = Serializer::decodeInt(&p.data[ind]);
+                        indexIdentifierTable.emplace_back(&p.data[ind + 4], &p.data[ind + 4 + len]);
+                        ind += 4 + len;
+                        if (ind >= p.data.length() - 4) break;
+                    }
+
+                    state.defs.gen().setIdentifiers(indexIdentifierTable);
 
                     connectState = State::MODS;
                     Packet resp(PacketType::MODS);
@@ -173,7 +192,7 @@ void ConnectScene::update() {
 }
 
 void ConnectScene::handleConnecting() {
-    Packet resp(PacketType::IDENTIFIER_LIST);
+    Packet resp(PacketType::BLOCK_IDENTIFIER_LIST);
     auto statusText = components.get<GUIText>("statusText");
 
     switch (connection.getConnectionStatus()) {

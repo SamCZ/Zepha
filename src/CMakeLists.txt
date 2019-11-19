@@ -251,6 +251,6 @@ set(ZEPHA_SRC
     game/scene/world/ItemStack.cpp
     game/scene/world/ItemStack.h
     server/LocalServerInstance.cpp
-    server/LocalServerInstance.h game/hud/SerializedGuiElem.h util/Voronoi3D.cpp util/Voronoi3D.h lua/api/modules/sRegisterBiome.h lua/api/modules/cRegisterBiome.h lua/server/ServerRegisterBiomes.cpp lua/server/ServerRegisterBiomes.h def/gen/BiomeDef.cpp def/gen/BiomeDef.h def/gen/BiomeStore.cpp def/gen/BiomeStore.h)
+    server/LocalServerInstance.h game/hud/SerializedGuiElem.h util/Voronoi3D.cpp util/Voronoi3D.h lua/api/modules/sRegisterBiome.h lua/api/modules/cRegisterBiome.h lua/server/ServerRegisterBiomes.cpp lua/server/ServerRegisterBiomes.h def/gen/BiomeDef.cpp def/gen/BiomeDef.h def/gen/BiomeAtlas.cpp def/gen/BiomeAtlas.h def/gen/ServerBiomeAtlas.cpp def/gen/ServerBiomeAtlas.h def/gen/LocalBiomeAtlas.cpp def/gen/LocalBiomeAtlas.h lua/client/LocalRegisterBiomes.cpp lua/client/LocalRegisterBiomes.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

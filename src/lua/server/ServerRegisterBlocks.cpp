@@ -136,8 +136,8 @@ ServerRegisterBlocks::ServerRegisterBlocks(sol::table& core, ServerDefs &defs) {
                 ind += 4;
             }
 
-            //Create a LocalMeshPart object
-            MeshPart meshPart(std::move(vertices), std::move(indices), nullptr);
+            //Create a MeshPart object
+            MeshPart meshPart(std::move(vertices), std::move(indices), nullptr, false);
 
             //Add ShaderMod
             sol::optional<sol::table> shaderModTable = meshPartTable.get<sol::optional<sol::table>>("shader_mod");
@@ -191,7 +191,6 @@ ServerRegisterBlocks::ServerRegisterBlocks(sol::table& core, ServerDefs &defs) {
         lowdefBlockModel.culls = ldRender;
         lowdefBlockModel.visible = ldRender;
 
-        //TODO: Update the selection boxes thingy
         BlockDef* blockDef = new BlockDef(identifier, defs.defs().size(), *nameOpt, lowdefBlockModel, solid, std::move(sBoxes));
 
         //Bind Callbacks

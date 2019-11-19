@@ -48,6 +48,7 @@ public:
     int getMeshChunkCount();
 
     unsigned int getBlock(glm::vec3 pos);
+    unsigned short getBiome(glm::vec3 pos);
 
     //Called by the Client
     void localSetBlock(glm::vec3 pos, unsigned int block);

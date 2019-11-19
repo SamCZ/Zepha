@@ -18,6 +18,7 @@ void ChunkMesh::create(const std::vector<ChunkVertex>& vertices, const std::vect
     unsigned int idx = 0;
     createVertexAttrib(idx++, 3, GL_FLOAT, STRIDE_OFFSET_CHUNK(position));
     createVertexAttrib(idx++, 2, GL_FLOAT, STRIDE_OFFSET_CHUNK(texCoords));
+    createVertexAttrib(idx++, 3, GL_FLOAT, STRIDE_OFFSET_CHUNK(blendColor));
     createVertexAttrib(idx++, 1, GL_FLOAT, STRIDE_OFFSET_CHUNK(normal));
     createVertexAttrib(idx++, 1, GL_FLOAT, STRIDE_OFFSET_CHUNK(shaderMod));
     createVertexAttrib(idx  , 3, GL_FLOAT, STRIDE_OFFSET_CHUNK(modValues));

@@ -4,12 +4,13 @@
 
 #include "MeshPart.h"
 
-MeshPart::MeshPart(const std::vector<BlockModelVertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<AtlasRef> texture) :
+MeshPart::MeshPart(const std::vector<BlockModelVertex>& vertices, const std::vector<unsigned int>& indices, std::shared_ptr<AtlasRef> texture, bool biomeTint) :
     vertices(vertices),
     indices(indices),
-    texture(texture) {
+    texture(texture),
+    biomeTint(biomeTint) {
 
-    //These vertex structs do (should) not have normals, so we will generate them here from the triangle information
+    //We assume these vertex structs do not have normals, and generate them here from the triangle information.
     //To do this, we have to assume that each group of 3 indices is a triangle (which it would be hard for it to not be)
     //and that no vertexes are shared on corners or places where vectors should be interpolated.
 

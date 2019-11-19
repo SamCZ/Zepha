@@ -10,7 +10,8 @@ enum class PacketType {
     AUTH,
 
     //Information Request Types
-    IDENTIFIER_LIST,
+    BLOCK_IDENTIFIER_LIST,
+    BIOME_IDENTIFIER_LIST,
     MODS,
     MOD_ORDER,
     MEDIA,

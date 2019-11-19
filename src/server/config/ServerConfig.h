@@ -18,5 +18,6 @@ public:
     bool handlePacket(ServerClient &client, Packet& p);
 private:
     ServerDefs& defs;
-    std::vector<std::string> identifierList {};
+    std::vector<std::string> blockIdentifierList {};
+    std::vector<std::string> biomeIdentifierList {};
 };

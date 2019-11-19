@@ -2,13 +2,11 @@ zepha.register_block("zeus:default:grass", {
     name = "Grass",
     model = "base:block_foliage",
     textures = {
-        "zeus:default:grass_top",
+        "biometint(zeus:default:grass_top)",
         "zeus:default:dirt",
-        "zeus:default:grass_side",
-        "zeus:default:grass_side",
-        "zeus:default:grass_side",
-        "zeus:default:grass_side",
-        "zeus:default:grass_floating",
+        "zeus:default:grass_side_under",
+        "biometint(zeus:default:grass_side)",
+        "biometint(zeus:default:grass_floating)",
     },
     lowdef_textures = {
         "zeus:default:grass_top",

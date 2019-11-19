@@ -6,6 +6,7 @@
 #include "LocalRegisterBlocks.h"
 #include "LocalRegisterItems.h"
 #include "LocalRegisterKeybinds.h"
+#include "LocalRegisterBiomes.h"
 
 #include "../../def/LocalDefs.h"
 #include "../api/type/LuaLocalPlayer.h"
@@ -113,6 +114,7 @@ void LocalLuaParser::registerDefinitions(LocalDefs &defs) {
     LocalRegisterBlocks(core, defs);
     LocalRegisterItems(core, defs);
     LocalRegisterKeybinds(core, defs, manager);
+    LocalRegisterBiomes(core, defs);
 }
 
 void LocalLuaParser::update(double delta, bool* keys) {

@@ -10,10 +10,10 @@
 #include "BiomeDef.h"
 #include "../../util/Voronoi3D.h"
 
-class BiomeStore {
+class BiomeAtlas {
 public:
-    BiomeStore() = default;
-    void registerBiome(BiomeDef* def);
+    BiomeAtlas() = default;
+    virtual void registerBiome(BiomeDef* def) = 0;
     void generateVoronoi();
 
     BiomeDef& getBiomeAt(float temperature, float humidity, float roughness);
@@ -22,10 +22,12 @@ public:
     BiomeDef& biomeFromStr(const std::string& identifier);
 
     unsigned int size();
+
+    const static unsigned int INVALID = 0;
+protected:
+    std::vector<BiomeDef*> defs;
+    std::unordered_map<std::string, unsigned int> defTable;
 private:
     constexpr const static unsigned short voronoiSize = 64;
     Voronoi3D voronoi {voronoiSize};
-
-    std::vector<BiomeDef*> defs;
-    std::unordered_map<std::string, unsigned int> defTable;
 };

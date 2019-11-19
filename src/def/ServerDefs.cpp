@@ -22,7 +22,7 @@ AssetStorage& ServerDefs::assets() {
     return assetStorage;
 }
 
-BiomeStore& ServerDefs::gen() {
+ServerBiomeAtlas& ServerDefs::gen() {
     return biomes;
 }
 

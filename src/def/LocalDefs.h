@@ -8,6 +8,7 @@
 #include "LocalDefinitionAtlas.h"
 #include "../lua/client/LocalLuaParser.h"
 #include "model/ModelStore.h"
+#include "gen/LocalBiomeAtlas.h"
 
 class LocalDefs {
 public:
@@ -18,6 +19,7 @@ public:
     ModelStore& models();
     TextureAtlas& textures();
     LocalLuaParser& lua();
+    LocalBiomeAtlas& gen();
 
     void initLuaApi(LocalWorld &world, Player& player);
     void update(double delta, bool* keys);
@@ -30,5 +32,6 @@ private:
     ModelStore modelStore;
     LocalDefinitionAtlas blockAtlas;
     LocalLuaParser luaApi;
+    LocalBiomeAtlas biomes;
 };
 

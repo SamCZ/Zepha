@@ -31,12 +31,12 @@ MeshGenStream::MeshGenStream(LocalDefs &defs, LocalDimension &dimension) :
 
     threads.reserve(THREADS);
     for (int i = 0; i < THREADS; i++) {
-        threads.emplace_back(defs.defs(), noiseSampler);
+        threads.emplace_back(defs, noiseSampler);
     }
 }
 
-MeshGenStream::Thread::Thread(LocalDefinitionAtlas &atlas, std::array<NoiseSample, 3>& offsetSamplers) :
-    atlas(atlas), offsetSamplers(offsetSamplers) {
+MeshGenStream::Thread::Thread(LocalDefs &defs, std::array<NoiseSample, 3>& offsetSamplers) :
+    defs(defs), offsetSamplers(offsetSamplers) {
     thread = std::thread(MeshGenStream::threadFunction, this);
 }
 
@@ -88,7 +88,7 @@ void MeshGenStream::threadFunction(MeshGenStream::Thread *thread) {
         for (Unit& u : thread->tasks) {
             if (!u.busy) continue;
 
-            MeshGenerator m(u.meshDetails, thread->atlas, u.thisChunk, u.adjacentChunks, thread->offsetSamplers);
+            MeshGenerator m(u.meshDetails, thread->defs, u.thisChunk, u.adjacentChunks, thread->offsetSamplers);
             hasNoTasks = false;
             u.busy = false;
         }

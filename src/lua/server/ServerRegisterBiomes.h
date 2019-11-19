@@ -6,9 +6,9 @@
 
 #include <sol2/sol.hpp>
 #include "../../def/ServerDefs.h"
+#include "../../def/gen/BiomeDef.h"
 
 class ServerRegisterBiomes {
 public:
     ServerRegisterBiomes(sol::table& core, ServerDefs& defs);
-
 };

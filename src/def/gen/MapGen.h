@@ -11,15 +11,14 @@
 
 #include "MapGenJob.h"
 #include "../LocalDefs.h"
-#include "BiomeStore.h"
+#include "BiomeAtlas.h"
 #include "../../world/chunk/BlockChunk.h"
 
 using namespace noise;
 
 class MapGen {
 public:
-    MapGen() = default;
-    MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeStore& biome);
+    MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeAtlas& biome);
     BlockChunk* generate(glm::vec3 pos);
 private:
     void getDensityMap(MapGenJob &job);
@@ -32,7 +31,7 @@ private:
     unsigned int seed = 0;
 
     DefinitionAtlas& atlas;
-    BiomeStore& biomes;
+    BiomeAtlas& biomes;
 
     module::Perlin temperatureBase;
     module::ScaleBias temperature;

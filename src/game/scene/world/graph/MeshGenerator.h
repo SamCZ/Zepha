@@ -14,26 +14,27 @@
 #include <cstdio>
 
 #include "../../../../def/item/MeshPart.h"
-#include "../MeshDetails.h"
 #include "../../../../def/item/BlockModelVertex.h"
 #include "../../../../world/chunk/BlockChunk.h"
-#include "../../../../def/LocalDefinitionAtlas.h"
+#include "../../../../def/LocalDefs.h"
 #include "../../../../def/item/BlockDef.h"
 #include "../../../../def/gen/NoiseSample.h"
 #include "../../../../util/Vec.h"
 #include "../../../../util/Timer.h"
+#include "../MeshDetails.h"
 
 class MeshGenerator {
 public:
-    MeshGenerator(MeshDetails* meshDetails, LocalDefinitionAtlas& atlas,
+    MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs,
                   std::shared_ptr<BlockChunk> chunk, std::array<std::shared_ptr<BlockChunk>, 6> adjacent,
                   std::array<NoiseSample, 3>& blockOffsets);
 private:
     BlockDef& getBlockAt(const glm::vec3 &pos);
-    void addFaces(const glm::vec3 &offset, const std::vector<MeshPart> &meshParts);
+    void addFaces(const glm::vec3 &offset, const std::vector<MeshPart> &meshParts, const glm::vec3& tint);
 
     unsigned int indOffset = 0;
 
+    LocalDefs& defs;
     LocalDefinitionAtlas& atlas;
     MeshDetails* meshDetails;
 

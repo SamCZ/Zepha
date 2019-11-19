@@ -19,28 +19,28 @@ typedef unsigned int uint;
 class BlockChunk {
 public:
     BlockChunk() = default;
-    explicit BlockChunk(const std::array<uint, 4096>& blocks);
-    BlockChunk(const std::array<uint, 4096>& blocks, glm::vec3 pos);
+    explicit BlockChunk(const std::array<unsigned int, 4096>& blocks, const std::array<unsigned short, 4096>& biomes);
+    BlockChunk(const std::array<unsigned int, 4096>& blocks, const std::array<unsigned short, 4096>& biomes, glm::vec3 pos);
 
     bool shouldRender();
 
     unsigned int getBlock(unsigned int ind) const;
     unsigned int getBlock(const glm::vec3& pos) const;
+    unsigned short getBiome(unsigned int ind) const;
+    unsigned short getBiome(const glm::vec3& pos) const;
 
     bool setBlock(const glm::vec3& pos, unsigned int ind);
 
-    std::vector<unsigned int> rleEncode();
-    void rleDecode(std::vector<unsigned int>& blocksRle, std::array<uint, 4096>& buffer);
-
     std::string serialize();
-    bool deserialize(std::string gzip);
+    void deserialize(std::string& packet);
 
     glm::vec3 pos;
 
     bool renderedEmpty = true;
     bool dirty = true;
 private:
-    std::array<uint, 4096> blocks {};
+    std::array<unsigned int, 4096> blocks {};
+    std::array<unsigned short, 4096> biomes {};
     unsigned short fullBlocks = 0;
 
     bool empty = true;

@@ -9,6 +9,7 @@ LocalDefs::LocalDefs(const LocalDefs &copy) : LocalDefs(copy.tex_path) {}
 
 LocalDefs::LocalDefs(const std::string& path) :
     luaApi(),
+    biomes(),
     tex_path(path),
     textureAtlas(2048) {
 
@@ -33,6 +34,10 @@ ModelStore &LocalDefs::models() {
 
 LocalLuaParser &LocalDefs::lua() {
     return luaApi;
+}
+
+LocalBiomeAtlas &LocalDefs::gen() {
+    return biomes;
 }
 
 void LocalDefs::update(double delta, bool* keys) {

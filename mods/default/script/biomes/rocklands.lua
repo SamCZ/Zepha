@@ -6,5 +6,6 @@ zepha.register_biome("zeus:default:rocklands", {
         top = "zeus:default:cobblestone",
         soil = "zeus:default:stone",
         rock = "zeus:default:stone"
-    }
+    },
+    biome_tint = "#e6fa61"
 })

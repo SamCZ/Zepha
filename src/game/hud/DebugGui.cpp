@@ -102,6 +102,9 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         unsigned int blockID = world.getBlock(footPos);
         std::string on = defs.defs().fromId(blockID).identifier;
 
+        unsigned int biomeID = world.getBiome(TransPos::roundPos(player.getPos()));
+        std::string biome = defs.gen().biomeFromId(biomeID).identifier;
+
         glm::vec3 playerPos = TransPos::roundPos(player.getPos());
         glm::vec3 chunkPos = TransPos::chunkFromVec(playerPos);
 
@@ -133,7 +136,8 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         str << "Yaw: " << floatToString(player.getYaw()) << ", ";
         str << "Pitch: " << floatToString(player.getPitch()) << std::endl << std::endl;
 
-        str << "Standing On: " << on << std::endl << std::endl;
+        str << "Standing On: " << on << std::endl;
+        str << "Biome: " << biome << std::endl << std::endl;
 
         PointedThing thing = player.getPointedThing();
         if (thing.thing == PointedThing::Thing::BLOCK) {

@@ -6,5 +6,6 @@ zepha.register_biome("zeus:default:desert", {
         top = "zeus:default:sand",
         soil = "zeus:default:sand",
         rock = "zeus:default:sandstone"
-    }
+    },
+    biome_tint = "#e6fa61"
 })

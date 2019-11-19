@@ -8,28 +8,28 @@
 #include "../../util/Timer.h"
 #include "NoiseSample.h"
 
-MapGen::MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeStore& biomes) :
+MapGen::MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeAtlas& biomes) :
     seed(seed),
     atlas(atlas),
     biomes(biomes) {
 
     temperatureBase.SetSeed(seed);
     temperatureBase.SetFrequency(0.2);
-    temperatureBase.SetOctaveCount(2);
+    temperatureBase.SetOctaveCount(4);
     temperature.SetSourceModule(0, temperatureBase);
     temperature.SetScale(1);
     temperature.SetBias(0);
 
     humidityBase.SetSeed(seed + 5);
     humidityBase.SetFrequency(0.2);
-    humidityBase.SetOctaveCount(2);
+    humidityBase.SetOctaveCount(4);
     humidity.SetSourceModule(0, humidityBase);
     humidity.SetScale(0.5);
     humidity.SetBias(0.5);
 
     roughnessBase.SetSeed(seed + 10);
     roughnessBase.SetFrequency(0.2);
-    roughnessBase.SetOctaveCount(2);
+    roughnessBase.SetOctaveCount(4);
     roughness.SetSourceModule(0, roughnessBase);
     roughness.SetScale(0.5);
     roughness.SetBias(0.5);
@@ -143,7 +143,7 @@ BlockChunk* MapGen::generate(glm::vec3 pos) {
     fillChunk(job);
 //    addTrees(job);
 
-    return new BlockChunk(job.blocks, pos);
+    return new BlockChunk(job.blocks, job.biomes, pos);
 }
 
 void MapGen::getElevation(MapGenJob &job) {
@@ -180,9 +180,7 @@ void MapGen::getElevation(MapGenJob &job) {
                 knownDepth = min(knownDepth + 1, 16);
             }
             else knownDepth = 0;
-
-            job.depth[ind] = knownDepth;
-            job.depthFloat[ind] = knownDepth + (job.density[ind] - (int)job.density[ind]);
+            job.depth[ind] = knownDepth + (job.density[ind] - (int)job.density[ind]);
         }
     }
 
@@ -212,16 +210,18 @@ void MapGen::fillChunk(MapGenJob &job) {
 
     glm::vec3 lp;
 
-    for (int m = 0; m < (int)pow(TransPos::CHUNK_SIZE, 3); m++) {
+    for (int m = 0; m < 4096; m++) {
         VecUtils::indAssignVec(m, lp);
 
         auto biome = biomes.getBiomeAt(temperature_sample.get(lp), humidity_sample.get(lp), roughness_sample.get(lp));
 
-        float topBlock = biome.topBlock;
-        float soilBlock = biome.soilBlock;
-        float rockBlock = biome.rockBlock;
+        job.biomes[m] = biome.index;
 
-        int d = job.depth[m];
+        unsigned int topBlock  = biome.topBlock;
+        unsigned int soilBlock = biome.soilBlock;
+        unsigned int rockBlock = biome.rockBlock;
+
+        int d = std::floor(job.depth[m]);
 //        int flora = DefinitionAtlas::AIR;
 //
 //        if (flora_density_sample.get(lp) >= 1) {
@@ -232,10 +232,10 @@ void MapGen::fillChunk(MapGenJob &job) {
 //            if (grassType > 0) flora = TALLGRASSES[grassType];
 //        }
 
-        job.blocks[m] = d <= 0 ? DefinitionAtlas::AIR
+        job.blocks[m] = d <= 1 ? DefinitionAtlas::AIR
 //                      : d <= 1 ? flora
                       : d <= 2 ? topBlock
-                      : d <= 3 ? soilBlock
+                      : d <= 4 ? soilBlock
                                : rockBlock;
     }
 }

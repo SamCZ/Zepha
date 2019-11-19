@@ -9,9 +9,14 @@
 ServerConfig::ServerConfig(ServerDefs &defs) : defs(defs) {}
 
 void ServerConfig::init() {
-    identifierList.reserve(static_cast<unsigned long>(defs.defs().size()));
+    blockIdentifierList.reserve(static_cast<unsigned long>(defs.defs().size()));
     for (unsigned int i = 0; i < defs.defs().size(); i++) {
-        identifierList.push_back(defs.defs().fromId(i).identifier);
+        blockIdentifierList.push_back(defs.defs().fromId(i).identifier);
+    }
+
+    biomeIdentifierList.reserve(static_cast<unsigned long>(defs.gen().size()));
+    for (unsigned int i = 0; i < defs.gen().size(); i++) {
+        biomeIdentifierList.push_back(defs.gen().biomeFromId(i).identifier);
     }
 }
 
@@ -21,11 +26,20 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
         case PacketType::CONNECT_DATA_RECVD: {
             return true;
         }
-        case PacketType::IDENTIFIER_LIST: {
-            Packet p(PacketType::IDENTIFIER_LIST);
+        case PacketType::BLOCK_IDENTIFIER_LIST: {
+            Packet p(PacketType::BLOCK_IDENTIFIER_LIST);
 
-            Serializer::encodeInt(p.data, static_cast<int>(identifierList.size()));
-            for (auto& str : identifierList) Serializer::encodeString(p.data, str);
+            Serializer::encodeUInt(p.data, static_cast<int>(blockIdentifierList.size()));
+            for (auto& str : blockIdentifierList) Serializer::encodeString(p.data, str);
+
+            p.sendTo(client.getPeer(), PacketChannel::CONNECT);
+            break;
+        }
+        case PacketType::BIOME_IDENTIFIER_LIST: {
+            Packet p(PacketType::BIOME_IDENTIFIER_LIST);
+
+            Serializer::encodeUInt(p.data, static_cast<int>(biomeIdentifierList.size()));
+            for (auto& str : biomeIdentifierList) Serializer::encodeString(p.data, str);
 
             p.sendTo(client.getPeer(), PacketChannel::CONNECT);
             break;

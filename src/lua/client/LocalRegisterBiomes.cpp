@@ -1,10 +1,10 @@
 //
-// Created by aurailus on 2019-11-12.
+// Created by aurailus on 2019-11-18.
 //
 
-#include "ServerRegisterBiomes.h"
+#include "LocalRegisterBiomes.h"
 
-ServerRegisterBiomes::ServerRegisterBiomes(sol::table& core, ServerDefs &defs) {
+LocalRegisterBiomes::LocalRegisterBiomes(sol::table& core, LocalDefs &defs) {
     //Register all of the biomes in the zepha.registered_biomes table.
     for (auto biomeRef : core.get<sol::table>("registered_biomes")) {
         //Get the unique identifier of the biome
@@ -43,12 +43,12 @@ ServerRegisterBiomes::ServerRegisterBiomes(sol::table& core, ServerDefs &defs) {
         if (!biomeTint) throw identifier + "'s blocks property is missing a `biome_tint`.";
 
         BiomeDef* biomeDef = new BiomeDef(
-            identifier, defs.gen().size(),
-            temperature, humidity, roughness,
-            defs.defs().blockFromStr(*topBlock).index,
-            defs.defs().blockFromStr(*soilBlock).index,
-            defs.defs().blockFromStr(*rockBlock).index,
-            glm::vec3(Util::hexToColorVec((*biomeTint)))
+                identifier, defs.gen().size(),
+                temperature, humidity, roughness,
+                defs.defs().blockFromStr(*topBlock).index,
+                defs.defs().blockFromStr(*soilBlock).index,
+                defs.defs().blockFromStr(*rockBlock).index,
+                glm::vec3(Util::hexToColorVec((*biomeTint)))
         );
 
         //Add Biome Definition to the Gen

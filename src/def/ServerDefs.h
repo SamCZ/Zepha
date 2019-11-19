@@ -8,7 +8,7 @@
 #include "ServerDefinitionAtlas.h"
 #include "../lua/server/ServerLuaParser.h"
 #include "../server/asset/AssetStorage.h"
-#include "gen/BiomeStore.h"
+#include "gen/ServerBiomeAtlas.h"
 
 class ServerWorld;
 
@@ -18,7 +18,7 @@ public:
 
     ServerDefinitionAtlas& defs();
     ServerLuaParser& lua();
-    BiomeStore& gen();
+    ServerBiomeAtlas& gen();
     
     AssetStorage& assets();
     void update(double delta);
@@ -30,6 +30,6 @@ private:
     AssetStorage assetStorage;
     ServerDefinitionAtlas blockAtlas;
     ServerLuaParser luaApi;
-    BiomeStore biomes;
+    ServerBiomeAtlas biomes;
 };
 

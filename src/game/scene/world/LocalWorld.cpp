@@ -141,6 +141,15 @@ unsigned int LocalWorld::getBlock(glm::vec3 pos) {
     return DefinitionAtlas::INVALID;
 }
 
+unsigned short LocalWorld::getBiome(glm::vec3 pos) {
+    auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
+    auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
+
+    auto chunk = getChunk(chunkPos);
+    if (chunk != nullptr) return chunk->getBiome(local);
+    return BiomeAtlas::INVALID;
+}
+
 void LocalWorld::localSetBlock(glm::vec3 pos, unsigned int block) {
     if (block == LocalDefinitionAtlas::AIR) {
         auto def = defs.defs().blockFromId(getBlock(pos));

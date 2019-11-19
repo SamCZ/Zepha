@@ -139,13 +139,21 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& core, LocalDefs &defs) {
             //Get the texture for the part
             int tex = std::max((int)meshPartTable.get_or<float>("tex", 1), 1);
             auto texture = textures[std::min(tex - 1, (int)textures.size() - 1)];
+
+            //TODO: More robust solution needed.
+            bool biometint = false;
+            if (strncmp(texture.data(), "biometint(", 10) == 0) {
+                biometint = true;
+                texture = texture.substr(10, texture.length() - 11);
+            }
+
             auto textureRef = defs.textures().getTextureRef(texture);
 
             //Add a reference to the texture to the blockModel's list of required textures to keep it in memory.
             blockModel.textureRefs.insert(textureRef);
 
             //Create a LocalMeshPart object
-            MeshPart meshPart(std::move(vertices), std::move(indices), textureRef);
+            MeshPart meshPart(std::move(vertices), std::move(indices), textureRef, biometint);
 
             //Add ShaderMod
             sol::optional<sol::table> shaderModTable = meshPartTable.get<sol::optional<sol::table>>("shader_mod");
@@ -199,11 +207,11 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& core, LocalDefs &defs) {
         for (auto i = 0; i < lowdef_textures.size(); i++) {
             refs.push_back(defs.textures().getTextureRef(lowdef_textures[i]));
         }
+
         BlockModel lowdefBlockModel = BlockModel::createCube(refs);
         lowdefBlockModel.culls = ldRender;
         lowdefBlockModel.visible = ldRender;
 
-        //TODO: Update the selection boxes thingy
         BlockDef* blockDef = new BlockDef(identifier, defs.defs().size(), *nameOpt, blockModel, solid, std::move(sBoxes));
         blockDef->createModel();
 
