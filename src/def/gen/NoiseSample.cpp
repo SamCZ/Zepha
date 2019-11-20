@@ -3,6 +3,7 @@
 //
 
 #include <cmath>
+#include <glm/vec4.hpp>
 #include "NoiseSample.h"
 #include "../../util/Interp.h"
 #include "../../util/TransPos.h"
@@ -31,61 +32,45 @@ void NoiseSample::set(glm::vec3 pos, float value) {
 }
 
 float NoiseSample::get(const glm::vec3& pos) {
-    auto xInt = static_cast<int>(pos.x);
-    auto yInt = static_cast<int>(pos.y);
-    auto zInt = static_cast<int>(pos.z);
+    const glm::ivec3 iPos {pos};
 
-    int offsetH = static_cast<int>(static_cast<float>(TransPos::CHUNK_SIZE) / hPrecision);
-    int offsetV = static_cast<int>(static_cast<float>(TransPos::CHUNK_SIZE) / vPrecision);
+    const glm::ivec3 base {
+        iPos.x / (16 / hPrecision),
+        iPos.y / (16 / vPrecision),
+        iPos.z / (16 / hPrecision) };
 
-    auto xBase = xInt / offsetH;
-    auto yBase = yInt / offsetV;
-    auto zBase = zInt / offsetH;
+    const glm::vec3 factor {
+        iPos.x % (16 / hPrecision) / 16.f * hPrecision,
+        iPos.y % (16 / vPrecision) / 16.f * vPrecision,
+        iPos.z % (16 / hPrecision) / 16.f * hPrecision };
 
-    float xFac = (xInt % offsetH) / ((float)TransPos::CHUNK_SIZE / hPrecision);
-    float yFac = (yInt % offsetV) / ((float)TransPos::CHUNK_SIZE / vPrecision);
-    float zFac = (zInt % offsetH) / ((float)TransPos::CHUNK_SIZE / hPrecision);
+    const auto& x0y0 = data[base.x][base.y];
+    const auto& x1y0 = data[base.x + 1][base.y];
 
-    auto p000 = data[xBase][yBase][zBase];
-    auto p100 = data[xBase + 1][yBase][zBase];
-    auto p001 = data[xBase][yBase][zBase + 1];
-    auto p101 = data[xBase + 1][yBase][zBase + 1];
+    //No Vertical Interpolation
+    if (vPrecision <= 1)
+        return Interp::bilerp(x0y0[base.z], x1y0[base.z], x0y0[base.z + 1], x1y0[base.z + 1], factor.x, factor.z);
 
-    if (vPrecision > 1) {
-        auto p010 = data[xBase][yBase + 1][zBase];
-        auto p110 = data[xBase + 1][yBase + 1][zBase];
-        auto p011 = data[xBase][yBase + 1][zBase + 1];
-        auto p111 = data[xBase + 1][yBase + 1][zBase + 1];
+    const auto& x0y1 = data[base.x][base.y + 1];
+    const auto& x1y1 = data[base.x + 1][base.y + 1];
 
-        return Interp::trilerp(
-                p000, p100, p001, p101,
-                p010, p110, p011, p111,
-                xFac, zFac, yFac
-        );
-    }
-    else {
-        return Interp::bilerp(
-                p000, p100, p001, p101, xFac, zFac
-        );
-    }
+    return Interp::trilerp(x0y0[base.z], x1y0[base.z], x0y0[base.z + 1], x1y0[base.z + 1],
+            x0y1[base.z], x1y1[base.z], x0y1[base.z + 1], x1y1[base.z + 1], factor.x, factor.z, factor.y);
 }
 
 NoiseSample NoiseSample::getSample(noise::module::Module *module, glm::vec3 chunkPos, int hPrecision, int vPrecision, bool flat) {
     NoiseSample s(hPrecision, vPrecision);
 
-    float offsetH = (float)TransPos::CHUNK_SIZE / hPrecision;
-    float offsetV = (float)TransPos::CHUNK_SIZE / vPrecision;
+    float offsetH = 16.f / hPrecision;
+    float offsetV = 16.f / vPrecision;
 
     for (int i = 0; i <= hPrecision; i++) {
+        float xPos = (chunkPos.x * 16 + offsetH * i) / 16.f;
         for (int j = 0; j <= vPrecision; j++) {
+            float yPos = flat ? 0 : (chunkPos.y * 16 + offsetV * j) / 16.f;
             for (int k = 0; k <= hPrecision; k++) {
-
-                //16s here are constant factor scaling, not to be based on the Chunk size.
-                double xCoord = (chunkPos.x * TransPos::CHUNK_SIZE + offsetH * i) / 16;
-                double yCoord = (flat) ? 0 : (chunkPos.y * TransPos::CHUNK_SIZE + offsetV * j) / 16;
-                double zCoord = (chunkPos.z * TransPos::CHUNK_SIZE + offsetH * k) / 16;
-
-                s.set(glm::vec3(i, j, k), (float)module->GetValue(xCoord, yCoord, zCoord));
+                float zPos = (chunkPos.z * 16 + offsetH * k) / 16.f;
+                s.set({i, j, k}, static_cast<float>(module->GetValue(xPos, yPos, zPos)));
             }
         }
     }

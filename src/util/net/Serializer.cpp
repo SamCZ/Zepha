@@ -76,8 +76,8 @@ void Serializer::encodeUIntVec(string &target, vector<unsigned int> &vec) {
 
 void Serializer::encodeUShortVec(string &target, vector<unsigned short> &vec) {
     //Used a reinterpret cast to speed things up
-    target.reserve(target.length() + vec.size() * 4);
-    target += string(reinterpret_cast<const char*>(&vec[0]), vec.size()*4);
+    target.reserve(target.length() + vec.size() * 2);
+    target += string(reinterpret_cast<const char*>(&vec[0]), vec.size()*2);
 }
 
 void Serializer::encodeFloatVec(string &target, vector<float> &vec){
