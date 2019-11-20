@@ -9,9 +9,9 @@
 #include "NoiseSample.h"
 
 MapGen::MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeAtlas& biomes) :
-    seed(seed),
-    atlas(atlas),
-    biomes(biomes) {
+        seed(seed),
+        atlas(atlas),
+        biomes(biomes) {
 
     temperatureBase.SetSeed(seed);
     temperatureBase.SetFrequency(0.02);
@@ -134,131 +134,118 @@ MapGen::MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeAtlas& biomes) :
     biomeTemp.SetPersistence(0.40);
 }
 
-BlockChunk* MapGen::generate(glm::vec3 pos) {
-    MapGenJob job(pos);
+std::vector<BlockChunk*> MapGen::generateMapBlock(glm::vec3 mbPos) {
+    std::array<std::pair<MapGenJob, BlockChunk*>, 64> chunks {};
 
-    getDensityMap(job);
-    getElevation(job);
-    fillChunk(job);
+    // Go top down
+    for (short i = 3; i >= 0; i--) {
+        for (short j = 0; j < 4; j++) {
+            for (short k = 0; k < 4; k++) {
+                glm::vec3 pos {j, i, k};
+                generateChunk(chunks, pos, pos + mbPos * 4);
+            }
+        }
+    }
 
-//    addTrees(job);
+    std::vector<BlockChunk*> returns {};
+    returns.reserve(64);
+    for (auto& pair : chunks) {
+        returns.push_back(pair.second);
+    }
 
-    return new BlockChunk(job.blocks, job.biomes, pos);
+    return returns;
 }
 
-void MapGen::getElevation(MapGenJob &job) {
+void MapGen::generateChunk(std::array<std::pair<MapGenJob, BlockChunk*>, 64>& chunks, glm::vec3 localPos, glm::vec3 worldPos) {
+    unsigned short index = localPos.x + 4 * (localPos.y + 4 * localPos.z);
+    auto& chunk = chunks[index];
+    chunk.second = new BlockChunk();
+    chunk.second->pos = worldPos;
 
-    //TODO: When generating mapblocks @ a time, don't do this unless necessary. Refer to already generated chunks. uwu
-    MapGenJob* otherJob = nullptr;
+    buildDensityMap(chunk.first, worldPos);
+    buildElevationMap(chunks, chunk, localPos, worldPos);
+
+    populateChunk(chunk, worldPos);
+}
+
+void MapGen::buildDensityMap(MapGenJob &job, const glm::vec3& worldPos) {
+    auto sTerrainFinal = NoiseSample(terrainFinal, worldPos, {4, 1}, true);
+
+    glm::vec3 lp;
+    for (int m = 0; m < 4096; m++) {
+        VecUtils::indAssignVec(m, lp);
+        job.density[m] = sTerrainFinal.get(lp) - (lp.y + worldPos.y * 16);
+    }
+}
+
+void MapGen::buildElevationMap(std::array<std::pair<MapGenJob, BlockChunk *>, 64>& chunks,
+                               pair<MapGenJob, BlockChunk *> &chunk, const glm::vec3 &localPos, const glm::vec3 &worldPos) {
+
+    MapGenJob* upperChunk = nullptr;
 
     for (int i = 0; i < 256; i++) {
-        int x = i % 16;
-        int z = i / 16;
+        const int x = i % 16;
+        const int z = i / 16;
 
-        int knownDepth = 16;
+        short depth = 16;
 
-        if (job.density[VecUtils::vecToInd(x, 15, z)] > 0) {
-            if (otherJob == nullptr) {
-                otherJob = new MapGenJob(glm::vec3(job.pos.x, job.pos.y + 1, job.pos.z));
-                getDensityMap(*otherJob);
+        if (chunk.first.density[VecUtils::vecToInd(x, 15, z)] > 0) {
+            if (localPos.y < 3) {
+                unsigned short index = localPos.x + 4 * (localPos.y + 1 + 4 * localPos.z);
+                upperChunk = &chunks[index].first;
+            }
+            if (upperChunk == nullptr) {
+                upperChunk = new MapGenJob();
+                buildDensityMap(*upperChunk, worldPos + glm::vec3 {0, 1, 0});
             }
 
             for (int j = 0; j < 16; j++) {
-                int otherInd = VecUtils::vecToInd(x, j, z);
+                int ind = VecUtils::vecToInd(x, j, z);
 
-                if (otherJob->density[otherInd] <= 0) {
-                    knownDepth = j;
+                if (upperChunk->density[ind] <= 0) {
+                    depth = j;
                     break;
                 }
             }
         }
-        else knownDepth = 0;
+        else depth = 0;
 
         for (int y = 15; y >= 0; y--) {
             int ind = VecUtils::vecToInd(x, y, z);
 
-            if (job.density[ind] > 0) {
-                knownDepth = min(knownDepth + 1, 16);
+            if (chunk.first.density[ind] > 0) {
+                depth = std::min(depth + 1, 16);
             }
-            else knownDepth = 0;
-            job.depth[ind] = knownDepth + (job.density[ind] - (int)job.density[ind]);
+            else depth = 0;
+
+            chunk.first.depth[ind] = depth + (chunk.first.density[ind] - static_cast<int>(chunk.first.density[ind]));
         }
     }
 
-    delete otherJob;
+    if (localPos.y >= 3) delete upperChunk;
 }
 
-void MapGen::getDensityMap(MapGenJob &job) {
-    auto terrain_2d_sample = NoiseSample::getSample(&terrainFinal, job.pos, 4, 1, true);
-
-    glm::vec3 lp;
-
-    for (int m = 0; m < 4096; m++) {
-        VecUtils::indAssignVec(m, lp);
-        job.density[m] = terrain_2d_sample.get(lp) - (lp.y + job.pos.y * TransPos::CHUNK_SIZE);
-    }
-}
-
-void MapGen::fillChunk(MapGenJob &job) {
-//    auto grass_sample           = NoiseSample::getSample(&grassFinal,   job.pos, 8, 0, true);
-//    auto flora_type_sample      = NoiseSample::getSample(&floraFinal,   job.pos, 2, 0, true);
-//    auto flora_density_sample   = NoiseSample::getSample(&floraDensity, job.pos, 8, 0, true);
-
-    auto temperature_sample = NoiseSample::getSample(&temperature, job.pos, 4, 4, false);
-    auto humidity_sample    = NoiseSample::getSample(&humidity,    job.pos, 4, 4, false);
-    auto roughness_sample   = NoiseSample::getSample(&roughness,   job.pos, 4, 4, false);
+void MapGen::populateChunk(std::pair<MapGenJob, BlockChunk*>& chunk, const glm::vec3& worldPos) {
+    auto sTemperature = NoiseSample(temperature, worldPos, {4, 4}, false);
+    auto sHumidity    = NoiseSample(humidity,    worldPos, {4, 4}, false);
+    auto sRoughness   = NoiseSample(roughness,   worldPos, {4, 4}, false);
 
     glm::vec3 lp;
 
     for (int m = 0; m < 4096; m++) {
         VecUtils::indAssignVec(m, lp);
 
-        auto biome = biomes.getBiomeAt(temperature_sample.get(lp), humidity_sample.get(lp), roughness_sample.get(lp));
-        job.biomes[m] = biome.index;
+        auto biome = biomes.getBiomeAt(sTemperature.get(lp), sHumidity.get(lp), sRoughness.get(lp));
+        chunk.second->biomes[m] = biome.index;
 
-        int d = std::floor(job.depth[m]);
-//        int flora = DefinitionAtlas::AIR;
-//
-//        if (flora_density_sample.get(lp) >= 1) {
-//            flora = FLOWERS[max(min((int) std::floor(flora_type_sample.get(lp)), 7), 0)];
-//        }
-//        else {
-//            int grassType = min((int) std::floor(grass_sample.get(lp)), 5);
-//            if (grassType > 0) flora = TALLGRASSES[grassType];
-//        }
+        int d = std::floor(chunk.first.depth[m]);
 
-        job.blocks[m] = d <= 1 ? DefinitionAtlas::AIR
-//                      : d <= 1 ? flora
-                      : d <= 2 ? biome.topBlock
-                      : d <= 4 ? biome.soilBlock
-                               : biome.rockBlock;
+        chunk.second->blocks[m] =
+                d <= 1 ? DefinitionAtlas::AIR
+              : d <= 2 ? biome.topBlock
+              : d <= 4 ? biome.soilBlock
+              : biome.rockBlock;
     }
+
+    chunk.second->mgRegenEmpty();
 }
-
-//void MapGen::addTrees(MapGenJob &job) {
-//    auto flora_density_sample = NoiseSample::getSample(&floraDensity, job.pos, 8, 0, true);
-//
-//    glm::vec3 lp;
-//
-//    for (int m = 0; m < (int)pow(TransPos::CHUNK_SIZE, 3); m++) {
-//        VecUtils::indAssignVec(m, lp);
-//        int d = job.depth[m];
-//
-//        if (d == 1 && flora_density_sample.get(lp) <= -1) {
-//            glm::vec3 p = lp;
-//
-//            addBlock(p, PLANT_STEM_BLOCK, job);
-//            addBlock(p + glm::vec3{ 1, 0, 0}, LEAVES_BLOCK, job);
-//            addBlock(p + glm::vec3{-1, 0, 0}, LEAVES_BLOCK, job);
-//            addBlock(p + glm::vec3{ 0, 0, 1}, LEAVES_BLOCK, job);
-//            addBlock(p + glm::vec3{ 0, 0,-1}, LEAVES_BLOCK, job);
-//            addBlock(p + glm::vec3{ 0, 1, 0}, LEAVES_BLOCK, job);
-//        }
-//    }
-//}
-
-//void MapGen::addBlock(glm::vec3 lp, unsigned int block, MapGenJob &j) {
-//    if (lp.x >= 0 && lp.x < TransPos::CHUNK_SIZE && lp.y >= 0 && lp.y < TransPos::CHUNK_SIZE && lp.z >= 0 && lp.z < TransPos::CHUNK_SIZE) {
-//        j.blocks[VecUtils::vecToInd(lp)] = block;
-//    }
-//}

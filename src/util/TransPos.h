@@ -62,6 +62,10 @@ namespace TransPos {
         return sectionFromGlobal(vec, CHUNK_BLOCK_LENGTH);
     }
 
+    static inline glm::vec3 mapBlockFromVec(glm::vec3 vec) {
+        return sectionFromGlobal(vec, MAPBLOCK_BLOCK_LENGTH);
+    }
+
     namespace Dimension {
         //Used to get the chunk position from a global coordinate in LocalDimension
 

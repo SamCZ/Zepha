@@ -12,32 +12,29 @@
 #include "../game/scene/world/MeshGenStream.h"
 #include "../lua/api/type/LuaEntity.h"
 #include "../game/entity/world/PlayerEntity.h"
+#include "Dimension.h"
 
-class LocalDimension {
+class LocalDimension : public Dimension {
 public:
     explicit LocalDimension(LocalDefs& defs);
     void update(double delta, glm::vec3 playerPos);
 
-    void setChunk(std::shared_ptr<BlockChunk> chunk);
+    void setChunk(std::shared_ptr<BlockChunk> chunk) override;
+    bool setBlock(glm::vec3 pos, unsigned int block) override;
+
     void setMeshChunk(std::shared_ptr<MeshChunk> chunk);
     void removeMeshChunk(const glm::vec3& pos);
 
     void addLuaEntity(sptr<LuaEntity>& entity);
     void removeLuaEntity(sptr<LuaEntity>& entity);
 
-    void setBlock(glm::vec3 pos, unsigned int block);
-    unsigned int getBlock(glm::vec3 pos);
-
     int renderChunks(Renderer &renderer);
     void renderEntities(Renderer &renderer);
     int getMeshChunkCount();
 
-    std::shared_ptr<BlockChunk> getChunk(glm::vec3 pos);
-
     int lastMeshUpdates = 0;
     std::vector<PlayerEntity> playerEntities;
 private:
-    typedef std::unordered_map<glm::vec3, std::shared_ptr<BlockChunk>, VecUtils::compareFunc> block_chunk_map;
     typedef std::list<sptr<ChunkRenderElem>>::iterator chunk_ref;
     typedef std::list<sptr<LuaEntity>>::iterator luaent_ref;
 
@@ -55,7 +52,5 @@ private:
 
     std::unordered_map<glm::vec3, chunk_ref, VecUtils::compareFunc> renderRefs {};
     std::list<std::shared_ptr<ChunkRenderElem>> renderElems {};
-
-    block_chunk_map blockChunks;
 };
 

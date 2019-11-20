@@ -8,8 +8,7 @@
 
 MeshGenStream::MeshGenStream(LocalDefs &defs, LocalDimension &dimension) :
     defs(defs),
-    dimension(dimension),
-    noiseSampler({NoiseSample(1, 1), NoiseSample(1, 1), NoiseSample(1, 1)}) {
+    dimension(dimension) {
 
     queuedTasks.reserve(static_cast<unsigned long>(TOTAL_QUEUE_SIZE));
 
@@ -24,9 +23,9 @@ MeshGenStream::MeshGenStream(LocalDefs &defs, LocalDimension &dimension) :
 
     //8 is just a random value to offset results
     noiseSampler = {
-        NoiseSample::getSample(&offsetTurbulence, {0, 0, 8}, 16, 16),
-        NoiseSample::getSample(&offsetTurbulence, {0, 8, 0}, 16, 16),
-        NoiseSample::getSample(&offsetTurbulence, {8, 0, 0}, 16, 16)
+        NoiseSample {offsetTurbulence, {0, 0, 8}, {16, 16}},
+        NoiseSample {offsetTurbulence, {0, 8, 0}, {16, 16}},
+        NoiseSample {offsetTurbulence, {8, 0, 0}, {16, 16}}
     };
 
     threads.reserve(THREADS);

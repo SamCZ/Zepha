@@ -187,3 +187,17 @@ void BlockChunk::deserialize(std::string& packet) {
         stop2: {};
     }
 }
+
+void BlockChunk::mgRegenEmpty() {
+    fullBlocks = 0;
+    empty = true;
+
+    for (unsigned int block : this->blocks) {
+        if (block > DefinitionAtlas::AIR) {
+            empty = false;
+            fullBlocks++;
+        }
+    }
+
+    renderedEmpty = empty;
+}

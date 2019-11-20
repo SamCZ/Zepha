@@ -213,8 +213,8 @@ set(ZEPHA_SRC
     game/graph/shader/EntityGeometryShader.cpp
     game/graph/shader/EntityGeometryShader.h
     game/scene/world/graph/ChunkRenderElem.h
-    server/world/ServerDimension.cpp
-    server/world/ServerDimension.h
+        world/ServerDimension.cpp
+        world/ServerDimension.h
     lua/client/LocalRegisterItems.cpp
     lua/client/LocalRegisterItems.h
     def/item/CraftItemDef.cpp
@@ -251,6 +251,6 @@ set(ZEPHA_SRC
     game/scene/world/ItemStack.cpp
     game/scene/world/ItemStack.h
     server/LocalServerInstance.cpp
-    server/LocalServerInstance.h game/hud/SerializedGuiElem.h util/Voronoi3D.cpp util/Voronoi3D.h lua/api/modules/sRegisterBiome.h lua/api/modules/cRegisterBiome.h lua/server/ServerRegisterBiomes.cpp lua/server/ServerRegisterBiomes.h def/gen/BiomeDef.cpp def/gen/BiomeDef.h def/gen/BiomeAtlas.cpp def/gen/BiomeAtlas.h def/gen/ServerBiomeAtlas.cpp def/gen/ServerBiomeAtlas.h def/gen/LocalBiomeAtlas.cpp def/gen/LocalBiomeAtlas.h lua/client/LocalRegisterBiomes.cpp lua/client/LocalRegisterBiomes.h)
+    server/LocalServerInstance.h game/hud/SerializedGuiElem.h util/Voronoi3D.cpp util/Voronoi3D.h lua/api/modules/sRegisterBiome.h lua/api/modules/cRegisterBiome.h lua/server/ServerRegisterBiomes.cpp lua/server/ServerRegisterBiomes.h def/gen/BiomeDef.cpp def/gen/BiomeDef.h def/gen/BiomeAtlas.cpp def/gen/BiomeAtlas.h def/gen/ServerBiomeAtlas.cpp def/gen/ServerBiomeAtlas.h def/gen/LocalBiomeAtlas.cpp def/gen/LocalBiomeAtlas.h lua/client/LocalRegisterBiomes.cpp lua/client/LocalRegisterBiomes.h world/Dimension.cpp world/Dimension.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

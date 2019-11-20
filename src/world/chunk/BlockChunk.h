@@ -44,4 +44,8 @@ private:
     unsigned short fullBlocks = 0;
 
     bool empty = true;
+
+    //Exclusive Access for MapGen to speed up chunk creation
+    void mgRegenEmpty();
+    friend class MapGen;
 };

@@ -94,13 +94,8 @@ void LocalDimension::renderEntities(Renderer &renderer) {
 }
 
 void LocalDimension::setChunk(sptr<BlockChunk> chunk) {
-    blockChunks.insert({chunk->pos, chunk});
+    Dimension::setChunk(chunk);
     attemptMeshChunk(chunk);
-}
-
-std::shared_ptr<BlockChunk> LocalDimension::getChunk(glm::vec3 pos) {
-    if (blockChunks.count(pos)) return blockChunks.at(pos);
-    return nullptr;
 }
 
 void LocalDimension::setMeshChunk(std::shared_ptr<MeshChunk> meshChunk) {
@@ -136,25 +131,16 @@ int LocalDimension::getMeshChunkCount() {
     return static_cast<int>(renderElems.size());
 }
 
-void LocalDimension::setBlock(glm::vec3 pos, unsigned int block) {
+bool LocalDimension::setBlock(glm::vec3 pos, unsigned int block) {
+    bool exists = Dimension::setBlock(pos, block);
+    if (!exists) return false;
+
     auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
-    auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
-
     auto chunk = getChunk(chunkPos);
-    if (chunk == nullptr) return;
 
-    chunk->setBlock(local, block);
     chunk->dirty = true;
     attemptMeshChunk(chunk);
-}
-
-unsigned int LocalDimension::getBlock(glm::vec3 pos) {
-    auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
-    auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
-
-    auto chunk = getChunk(chunkPos);
-    if (chunk != nullptr) return chunk->getBlock(local);
-    return 0;
+    return true;
 }
 
 void LocalDimension::attemptMeshChunk(const sptr<BlockChunk>& chunk, bool updateAdjacents) {

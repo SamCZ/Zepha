@@ -13,7 +13,7 @@
 #include "../../util/Vec.h"
 #include "../../def/ServerDefs.h"
 #include "../conn/ServerClients.h"
-#include "ServerDimension.h"
+#include "../../world/ServerDimension.h"
 
 class ServerWorld {
 public:
@@ -28,7 +28,7 @@ public:
     ~ServerWorld();
 private:
     void changedChunks(ServerClient& client);
-    void generate(glm::vec3 pos);
+    void generateMapBlock(glm::vec3 pos);
     void sendChunk(glm::vec3 pos, ServerClient& client);
 
     bool isInBounds(glm::vec3 pos, std::pair<glm::vec3, glm::vec3>& bounds);
