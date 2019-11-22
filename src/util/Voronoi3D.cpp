@@ -3,6 +3,7 @@
 //
 
 #include "Voronoi3D.h"
+#include <glm/glm.hpp>
 
 Voronoi3D::Voronoi3D(unsigned short size) :
     size(size) {
