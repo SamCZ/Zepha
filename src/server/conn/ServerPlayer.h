@@ -9,7 +9,7 @@
 
 class ServerPlayer {
 public:
-    const static int CHUNK_SEND_RANGE = 12;
+    const static int CHUNK_SEND_RANGE = 32;
 
     explicit ServerPlayer(glm::vec3 pos, unsigned int connectID, const std::string& username);
 

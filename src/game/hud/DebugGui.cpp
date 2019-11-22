@@ -109,7 +109,6 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         glm::vec3 chunkPos = Space::Chunk::world::fromBlock(playerPos);
 
         //Block Coordinates offset from respective container
-        //TODO: Reimplement these functions
         glm::vec3 posOffsetFromChunk  = Space::Block::relative::toChunk(playerPos);
         glm::vec3 posOffsetFromBlock  = Space::Block::relative::toMapBlock(playerPos);
         glm::vec3 posOffsetFromRegion = Space::Block::relative::toRegion(playerPos);

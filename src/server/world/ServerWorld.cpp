@@ -48,27 +48,33 @@ void ServerWorld::changedChunks(ServerClient& client) {
             {lastMapBlock.x - MB_GEN_H, lastMapBlock.y - MB_GEN_V, lastMapBlock.z - MB_GEN_H},
             {lastMapBlock.x + MB_GEN_H, lastMapBlock.y + MB_GEN_V, lastMapBlock.z + MB_GEN_H}};
 
-    std::cout << "Attempting to generate" << std::endl;
+    unsigned int mapBlocksExisting = 0;
+    unsigned int mapBlocksGenerating = 0;
+
     for (const auto &c : generateOrder) {
         glm::vec3 mapBlockPos = mapBlock + c;
         if (!isInBounds(mapBlockPos, oldBounds)) {
-            //TODO: This
-//            if (dimension.getMapBlock(mapBlockPos) != nullptr) {
-//                sendChunk(chunkPos, client);
-//            }
-//            else {
-                generateMapBlock(c + mapBlock);
-//            }
+            if (dimension.getMapBlock(mapBlockPos) != nullptr) {
+                mapBlocksExisting++;
+                sendMapBlock(mapBlockPos, client);
+            }
+            else {
+                mapBlocksGenerating += generateMapBlock(mapBlockPos);
+            }
         }
     }
+
+    std::cout << "Generating " << mapBlocksGenerating << " blocks, sending " << mapBlocksExisting << " existing blocks." << std::endl;
     client.getPlayer().changedMapBlocks = false;
 }
 
-void ServerWorld::generateMapBlock(glm::vec3 pos) {
-    if(!generateQueueMap.count(pos) && !dimension.getChunk(pos)) {
+bool ServerWorld::generateMapBlock(glm::vec3 pos) {
+    if(!generateQueueMap.count(pos) && !dimension.getMapBlock(pos)) {
         generateQueueMap.insert(pos);
         generateQueueList.push_back(pos);
+        return true;
     }
+    return false;
 }
 
 void ServerWorld::update() {
@@ -116,17 +122,29 @@ void ServerWorld::update() {
     }
 }
 
-void ServerWorld::sendChunk(glm::vec3 pos, ServerClient &peer) {
-    auto chunk = dimension.getChunk(pos);
+void ServerWorld::sendChunk(const std::shared_ptr<BlockChunk>& chunk, ServerClient &peer) {
     assert(chunk != nullptr);
-    auto serialized = chunk->serialize();
 
     Packet r(PacketType::CHUNK);
+    auto serialized = chunk->serialize();
 
-    Serializer::encodeIntVec3(r.data, pos);
+    Serializer::encodeIntVec3(r.data, chunk->pos);
     Serializer::encodeString(r.data, serialized);
 
     r.sendTo(peer.getPeer(), PacketChannel::CHUNK);
+}
+
+void ServerWorld::sendChunk(const glm::vec3& pos, ServerClient &peer) {
+    sendChunk(dimension.getChunk(pos), peer);
+}
+
+void ServerWorld::sendMapBlock(const glm::vec3& pos, ServerClient &peer) {
+    auto mapBlock = dimension.getMapBlock(pos);
+    assert(mapBlock != nullptr);
+
+    for (unsigned short i = 0; i < 63; i++) {
+        sendChunk((*mapBlock)[i], peer);
+    }
 }
 
 void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {

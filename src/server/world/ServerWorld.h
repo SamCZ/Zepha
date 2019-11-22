@@ -28,8 +28,11 @@ public:
     ~ServerWorld();
 private:
     void changedChunks(ServerClient& client);
-    void generateMapBlock(glm::vec3 pos);
-    void sendChunk(glm::vec3 pos, ServerClient& client);
+    bool generateMapBlock(glm::vec3 pos);
+
+    void sendChunk(const glm::vec3& pos, ServerClient& client);
+    void sendChunk(const std::shared_ptr<BlockChunk>& chunk, ServerClient& client);
+    void sendMapBlock(const glm::vec3& pos, ServerClient& client);
 
     bool isInBounds(glm::vec3 pos, std::pair<glm::vec3, glm::vec3>& bounds);
 

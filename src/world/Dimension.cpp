@@ -4,8 +4,6 @@
 
 #include "Dimension.h"
 
-//TODO: Inline all instances of `index` when done debugging
-
 std::shared_ptr<Region> Dimension::getRegion(glm::vec3 regionPosition) {
     return regions[regionPosition];
 }
@@ -19,14 +17,12 @@ std::shared_ptr<MapBlock> Dimension::getMapBlock(glm::vec3 mapBlockPosition) {
 std::shared_ptr<BlockChunk> Dimension::getChunk(glm::vec3 chunkPosition) {
     auto mapBlock = getMapBlock(Space::MapBlock::world::fromChunk(chunkPosition));
     if (mapBlock == nullptr) return nullptr;
-    unsigned int index = Space::Chunk::index(chunkPosition);
-    return (*mapBlock)[index];
+    return (*mapBlock)[Space::Chunk::index(chunkPosition)];
 }
 
 void Dimension::setChunk(std::shared_ptr<BlockChunk> chunk) {
     auto mapBlock = getOrCreateMapBlock(Space::MapBlock::world::fromChunk(chunk->pos));
-    unsigned int index = Space::Chunk::index(chunk->pos);
-    (*mapBlock).set(index, chunk);
+    (*mapBlock).set(Space::Chunk::index(chunk->pos), chunk);
 }
 
 unsigned int Dimension::getBlock(glm::vec3 pos) {
