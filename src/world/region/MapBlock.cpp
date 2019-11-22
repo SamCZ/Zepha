@@ -4,9 +4,8 @@
 
 #include "MapBlock.h"
 
-MapBlock::MapBlock(glm::vec3 pos, glm::vec3 rawPos) :
-    pos(pos),
-    rawPos(rawPos) {
+MapBlock::MapBlock(glm::vec3 pos) :
+    pos(pos) {
 
     for (int i = 0; i < arrayLength; i++) {
         blockChunks[i] = nullptr;
@@ -18,5 +17,5 @@ std::shared_ptr<BlockChunk> MapBlock::operator[](int index) {
 }
 
 void MapBlock::set(int index, std::shared_ptr<BlockChunk> chunk) {
-    blockChunks[index] = std::move(chunk);
+    blockChunks[index] = chunk;
 }

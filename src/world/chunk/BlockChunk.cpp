@@ -30,7 +30,7 @@ BlockChunk::BlockChunk(const std::array<unsigned int, 4096>& blocks, const std::
 }
 
 unsigned int BlockChunk::getBlock(const glm::vec3& pos) const {
-    unsigned int ind = VecUtils::vecToInd(pos);
+    unsigned int ind = Space::Block::index(pos);
     if (ind >= 4096) return DefinitionAtlas::INVALID;
     return blocks[ind];
 }
@@ -41,7 +41,7 @@ unsigned int BlockChunk::getBlock(unsigned int ind) const {
 }
 
 unsigned short BlockChunk::getBiome(const glm::vec3& pos) const {
-    unsigned int ind = VecUtils::vecToInd(pos);
+    unsigned int ind = Space::Block::index(pos);
     if (ind >= 4096) return BiomeAtlas::INVALID;
     return biomes[ind];
 }
@@ -52,8 +52,8 @@ unsigned short BlockChunk::getBiome(unsigned int ind) const {
 }
 
 bool BlockChunk::setBlock(const glm::vec3& pos, unsigned int block) {
-    unsigned int ind = VecUtils::vecToInd(pos);
-    if (ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return false;
+    unsigned int ind = Space::Block::index(pos);
+    if (ind >= (int)pow(16, 3)) return false;
 
     if (blocks[ind] != block) {
         if (block == 0) {

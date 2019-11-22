@@ -13,29 +13,22 @@ void LocalDimension::update(double delta, glm::vec3 playerPos) {
     for (auto& entities : luaEntities) entities->entity->update(delta);
     for (auto& playerEnt : playerEntities) playerEnt.update(delta);
 
-    auto chunkPosOfPlayer = TransPos::chunkFromVec(playerPos);
+    auto chunkPosOfPlayer = Space::Chunk::world::fromBlock(playerPos);
 
-    //TODO: Figure out why there are NULL CHUNKS in the map
-    for (auto it = blockChunks.begin(); it != blockChunks.end();) {
-        auto pos = it->first;
-
-        if (it->second != nullptr) {
-            auto diffVec = pos - chunkPosOfPlayer;
-            float distance = max(abs(diffVec.x), max(abs(diffVec.y), abs(diffVec.z)));
-
-            //TODO: Don't hard code this number
-            if (distance >= 24) {
-                removeMeshChunk(pos);
-                it = blockChunks.erase(it);
-            } else {
-                it++;
-            }
-        }
-        else {
-            std::cout << Log::err << "Deleted Null Chunk in LocalDimension." << Log::endl;
-            it = blockChunks.erase(it);
-        }
-    }
+//    for (auto it = blockChunks.begin(); it != blockChunks.end();) {
+//        auto pos = it->first;
+//
+//        auto diffVec = pos - chunkPosOfPlayer;
+//        float distance = max(abs(diffVec.x), max(abs(diffVec.y), abs(diffVec.z)));
+//
+//        //TODO: Don't hard code this number
+//        if (distance >= 24) {
+//            removeMeshChunk(pos);
+//            it = blockChunks.erase(it);
+//        } else {
+//            it++;
+//        }
+//    }
 }
 
 void LocalDimension::finishMeshes() {
@@ -79,7 +72,7 @@ void LocalDimension::queueMeshes() {
 int LocalDimension::renderChunks(Renderer &renderer) {
     int count = 0;
     for (auto &renderElement : renderElems) {
-        FrustumAABB bbox(renderElement->getPos() * glm::vec3(TransPos::CHUNK_SIZE), glm::vec3(TransPos::CHUNK_SIZE));
+        FrustumAABB bbox(renderElement->getPos() * glm::vec3(16), glm::vec3(16));
         if (renderer.getCamera().inFrustum(bbox) != Frustum::OUTSIDE) {
             renderElement->draw(renderer);
             count++;
@@ -135,7 +128,7 @@ bool LocalDimension::setBlock(glm::vec3 pos, unsigned int block) {
     bool exists = Dimension::setBlock(pos, block);
     if (!exists) return false;
 
-    auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
+    auto chunkPos = Space::Chunk::world::fromBlock(pos);
     auto chunk = getChunk(chunkPos);
 
     chunk->dirty = true;
@@ -146,7 +139,7 @@ bool LocalDimension::setBlock(glm::vec3 pos, unsigned int block) {
 void LocalDimension::attemptMeshChunk(const sptr<BlockChunk>& chunk, bool updateAdjacents) {
 //    if (!chunk->dirty) return; //TODO
 
-    auto dirs = VecUtils::getCardinalVectors();
+    auto dirs = Vec::cardinalVectors;
     bool allExists = true;
     for (auto dir : dirs) {
         if (!getAdjacentExists(chunk->pos + dir, updateAdjacents)) {

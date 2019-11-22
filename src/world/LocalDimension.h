@@ -50,7 +50,7 @@ private:
     std::unordered_map<uint, luaent_ref> luaEntityRefs {};
     std::list<std::shared_ptr<LuaEntity>> luaEntities {};
 
-    std::unordered_map<glm::vec3, chunk_ref, VecUtils::compareFunc> renderRefs {};
+    std::unordered_map<glm::vec3, chunk_ref, Vec::compareFunc> renderRefs {};
     std::list<std::shared_ptr<ChunkRenderElem>> renderElems {};
 };
 
