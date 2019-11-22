@@ -64,7 +64,7 @@ std::vector<MeshDetails*> MeshGenStream::update() {
                 u.thisChunk = shared_ptr<BlockChunk>(chunk);
 
                 int ind = 0;
-                for (glm::vec3 dir : VecUtils::getCardinalVectors()) {
+                for (glm::vec3 dir : Vec::cardinalVectors) {
                     std::shared_ptr<BlockChunk> adjacent = dimension.getChunk(pos + dir);
                     u.adjacentChunks[ind++] = shared_ptr<BlockChunk>(adjacent);
                     if (adjacent == nullptr) goto breakAddTask;

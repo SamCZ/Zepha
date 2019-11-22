@@ -9,8 +9,8 @@
 #include "../../util/Timer.h"
 #include "../../util/Util.h"
 
-const static int MB_GEN_H = 2;
-const static int MB_GEN_V = 2;
+const static int MB_GEN_H = 3;
+const static int MB_GEN_V = 3;
 
 ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& clients) :
     seed(seed),
@@ -97,7 +97,7 @@ void ServerWorld::update() {
                         {mapBlock.x - MB_GEN_H, mapBlock.y - MB_GEN_V, mapBlock.z - MB_GEN_H},
                         {mapBlock.x + MB_GEN_H, mapBlock.y + MB_GEN_V, mapBlock.z + MB_GEN_H}};
 
-                if (isInBounds(TransPos::mapBlockFromVec(chunk->pos * 16), bounds)) {
+                if (isInBounds(Space::MapBlock::world::fromChunk(chunk->pos), bounds)) {
                     sendChunk(chunk->pos, *client);
                 }
             }
@@ -118,6 +118,7 @@ void ServerWorld::update() {
 
 void ServerWorld::sendChunk(glm::vec3 pos, ServerClient &peer) {
     auto chunk = dimension.getChunk(pos);
+    assert(chunk != nullptr);
     auto serialized = chunk->serialize();
 
     Packet r(PacketType::CHUNK);
@@ -150,7 +151,7 @@ void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {
     Serializer::encodeIntVec3(b.data, pos);
     Serializer::encodeInt(b.data, block);
 
-    auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
+    auto chunkPos = Space::Chunk::world::fromBlock(pos);
 
     for (auto &client : clientList.clients) {
         if (client->hasPlayer()) {
@@ -160,7 +161,7 @@ void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {
                     {mapBlock.x - MB_GEN_H, mapBlock.y - MB_GEN_V, mapBlock.z - MB_GEN_H},
                     {mapBlock.x + MB_GEN_H, mapBlock.y + MB_GEN_V, mapBlock.z + MB_GEN_H}};
 
-            if (isInBounds(TransPos::mapBlockFromVec(chunkPos * 16), bounds)) {
+            if (isInBounds(Space::MapBlock::world::fromChunk(chunkPos), bounds)) {
                 b.sendTo(client->getPeer(), PacketChannel::BLOCK);
             }
         }

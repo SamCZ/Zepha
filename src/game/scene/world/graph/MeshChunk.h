@@ -10,7 +10,7 @@
 #include <list>
 #include "ChunkRenderElem.h"
 #include "../../../entity/Entity.h"
-#include "../../../../util/TransPos.h"
+#include "../../../../util/Space.h"
 
 class MeshChunk : public ChunkRenderElem, Drawable {
 public:

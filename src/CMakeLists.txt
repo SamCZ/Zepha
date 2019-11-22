@@ -91,7 +91,7 @@ set(ZEPHA_SRC
     server/world/WorldGenStream.h
     game/scene/world/WorldInterpolationStream.cpp
     game/scene/world/WorldInterpolationStream.h
-    util/TransPos.h
+        util/Space.h
     game/scene/world/MeshGenStream.cpp
     game/scene/world/MeshGenStream.h
     util/Vec.h

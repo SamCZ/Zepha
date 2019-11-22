@@ -173,7 +173,7 @@ void MapGen::buildDensityMap(MapGenJob &job, const glm::vec3& worldPos) {
 
     glm::vec3 lp;
     for (int m = 0; m < 4096; m++) {
-        VecUtils::indAssignVec(m, lp);
+        Vec::indAssignVec(m, lp);
         job.density[m] = sTerrainFinal.get(lp) - (lp.y + worldPos.y * 16);
     }
 }
@@ -189,7 +189,7 @@ void MapGen::buildElevationMap(std::array<std::pair<MapGenJob, BlockChunk *>, 64
 
         short depth = 16;
 
-        if (chunk.first.density[VecUtils::vecToInd(x, 15, z)] > 0) {
+        if (chunk.first.density[Space::Block::index({x, 15, z})] > 0) {
             if (localPos.y < 3) {
                 unsigned short index = localPos.x + 4 * (localPos.y + 1 + 4 * localPos.z);
                 upperChunk = &chunks[index].first;
@@ -200,7 +200,7 @@ void MapGen::buildElevationMap(std::array<std::pair<MapGenJob, BlockChunk *>, 64
             }
 
             for (int j = 0; j < 16; j++) {
-                int ind = VecUtils::vecToInd(x, j, z);
+                int ind = Space::Block::index({x, j, z});
 
                 if (upperChunk->density[ind] <= 0) {
                     depth = j;
@@ -211,7 +211,7 @@ void MapGen::buildElevationMap(std::array<std::pair<MapGenJob, BlockChunk *>, 64
         else depth = 0;
 
         for (int y = 15; y >= 0; y--) {
-            int ind = VecUtils::vecToInd(x, y, z);
+            int ind = Space::Block::index({x, y, z});
 
             if (chunk.first.density[ind] > 0) {
                 depth = std::min(depth + 1, 16);
@@ -233,7 +233,7 @@ void MapGen::populateChunk(std::pair<MapGenJob, BlockChunk*>& chunk, const glm::
     glm::vec3 lp;
 
     for (int m = 0; m < 4096; m++) {
-        VecUtils::indAssignVec(m, lp);
+        Vec::indAssignVec(m, lp);
 
         auto biome = biomes.getBiomeAt(sTemperature.get(lp), sHumidity.get(lp), sRoughness.get(lp));
         chunk.second->biomes[m] = biome.index;

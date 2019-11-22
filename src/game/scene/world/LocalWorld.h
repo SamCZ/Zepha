@@ -15,7 +15,7 @@
 #include "../../../def/LocalDefinitionAtlas.h"
 #include "../../../world/chunk/BlockChunk.h"
 #include "../../../def/gen/MapGen.h"
-#include "../../../util/TransPos.h"
+#include "../../../util/Space.h"
 #include "../../../util/Vec.h"
 #include "../../../world/LocalDimension.h"
 #include "../../../def/LocalDefs.h"

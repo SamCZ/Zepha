@@ -14,7 +14,7 @@ sol::table LuaLocalPlayer::get_pos(sol::this_state s) {
 }
 
 sol::table LuaLocalPlayer::get_block_pos(sol::this_state s) {
-    glm::vec3 pos = TransPos::roundPos(player.getPos());
+    glm::vec3 pos = glm::floor(player.getPos());
     return sol::state_view(s).create_table_with("x", pos.x, "y", pos.y, "z", pos.z);
 }
 

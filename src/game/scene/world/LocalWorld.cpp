@@ -133,8 +133,8 @@ int LocalWorld::getMeshChunkCount() {
 }
 
 unsigned int LocalWorld::getBlock(glm::vec3 pos) {
-    auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
-    auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
+    auto chunkPos = Space::Chunk::world::fromBlock(pos);
+    auto local = Space::Block::relative::toChunk(pos);
 
     auto chunk = getChunk(chunkPos);
     if (chunk != nullptr) return chunk->getBlock(local);
@@ -142,8 +142,8 @@ unsigned int LocalWorld::getBlock(glm::vec3 pos) {
 }
 
 unsigned short LocalWorld::getBiome(glm::vec3 pos) {
-    auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
-    auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
+    auto chunkPos = Space::Chunk::world::fromBlock(pos);
+    auto local = Space::Block::relative::toChunk(pos);
 
     auto chunk = getChunk(chunkPos);
     if (chunk != nullptr) return chunk->getBiome(local);

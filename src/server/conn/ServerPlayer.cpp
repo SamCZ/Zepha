@@ -10,14 +10,14 @@ ServerPlayer::ServerPlayer(glm::vec3 pos, unsigned int connectID, const std::str
     connectID(connectID),
     username(username) {
 
-    mapBlock = TransPos::mapBlockFromVec(pos);
+    mapBlock = Space::MapBlock::world::fromBlock(pos);
     lastMapBlock = mapBlock - glm::vec3(200); //Force resending of all chunks around getPlayer.
     changedMapBlocks = true;
 }
 
 void ServerPlayer::setPos(glm::vec3 pos) {
     this->pos = pos;
-    glm::vec3 newMapBlock = TransPos::mapBlockFromVec(pos);
+    glm::vec3 newMapBlock = Space::MapBlock::world::fromBlock(pos);
 
     if (newMapBlock != mapBlock) {
         if (!changedMapBlocks) {
@@ -41,5 +41,5 @@ float ServerPlayer::getAngle() {
 }
 
 glm::vec3 ServerPlayer::getChunkPos() {
-    return TransPos::chunkFromVec(pos);
+    return Space::Chunk::world::fromBlock(pos);
 }

@@ -36,7 +36,7 @@ private:
     WorldGenStream* genStream = nullptr;
     ServerDimension dimension;
 
-    std::unordered_set<glm::vec3, VecUtils::compareFunc> generateQueueMap;
+    std::unordered_set<glm::vec3, Vec::compareFunc> generateQueueMap;
     std::vector<glm::vec3> generateQueueList;
 
     unsigned int seed;

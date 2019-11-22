@@ -115,9 +115,9 @@ void Player::findPointedThing(InputManager &input) {
 
     for (Ray ray(this); ray.getLength() < LOOK_DISTANCE; ray.step(LOOK_PRECISION)) {
         glm::vec3 rayEnd = ray.getEnd();
-        glm::vec3 roundedPos = TransPos::roundPos(rayEnd);
+        glm::vec3 roundedPos = glm::floor(rayEnd);
 
-        auto currChunkPos = TransPos::chunkFromVec(roundedPos);
+        auto currChunkPos = Space::Chunk::world::fromBlock(roundedPos);
         if (currChunkPos != chunkPos || blockChunk == nullptr) {
             chunkPos = currChunkPos;
             blockChunk = world.getChunk(chunkPos);
@@ -125,7 +125,7 @@ void Player::findPointedThing(InputManager &input) {
 
         unsigned int blockID = 0;
         if (blockChunk != nullptr) {
-            blockID = blockChunk->getBlock(TransPos::chunkLocalFromVec(roundedPos));
+            blockID = blockChunk->getBlock(Space::Block::relative::toChunk(roundedPos));
         }
 
         auto& boxes = defs.defs().blockFromId(blockID).sBoxes;

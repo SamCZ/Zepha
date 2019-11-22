@@ -66,6 +66,6 @@ private:
 
     std::array<NoiseSample, 3> noiseSampler;
     std::vector<glm::vec3> queuedTasks;
-    std::unordered_set<glm::vec3, VecUtils::compareFunc> queuedMap;
+    std::unordered_set<glm::vec3, Vec::compareFunc> queuedMap;
 };
 

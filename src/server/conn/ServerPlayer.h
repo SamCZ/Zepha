@@ -5,7 +5,7 @@
 #pragma once
 
 #include <glm/vec3.hpp>
-#include "../../util/TransPos.h"
+#include "../../util/Space.h"
 
 class ServerPlayer {
 public:

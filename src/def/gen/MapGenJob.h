@@ -7,7 +7,7 @@
 #include <array>
 #include <vector>
 #include <glm/vec3.hpp>
-#include "../../util/TransPos.h"
+#include "../../util/Space.h"
 
 struct MapGenJob {
     std::array<float, 4096> density {};
