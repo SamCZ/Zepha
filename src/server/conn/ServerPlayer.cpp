@@ -43,3 +43,12 @@ float ServerPlayer::getAngle() {
 glm::vec3 ServerPlayer::getChunkPos() {
     return Space::Chunk::world::fromBlock(pos);
 }
+
+void ServerPlayer::setMapBlockIntegrity(glm::vec3 pos, unsigned long long integrity) {
+    mapBlockIntegrity[pos] = integrity;
+}
+
+unsigned long long ServerPlayer::getMapBlockIntegrity(glm::vec3 pos) {
+    if (mapBlockIntegrity.count(pos)) return mapBlockIntegrity[pos];
+    return 0;
+}

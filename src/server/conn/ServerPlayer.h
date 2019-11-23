@@ -5,6 +5,8 @@
 #pragma once
 
 #include <glm/vec3.hpp>
+#include <unordered_map>
+#include "../../util/Vec.h"
 #include "../../util/Space.h"
 
 class ServerPlayer {
@@ -23,11 +25,16 @@ public:
     glm::vec3 mapBlock;
     glm::vec3 lastMapBlock;
     bool changedMapBlocks = true;
+
+    void setMapBlockIntegrity(glm::vec3 pos, unsigned long long integrity);
+    unsigned long long getMapBlockIntegrity(glm::vec3 pos);
 private:
     std::string username;
     unsigned int connectID;
 
     glm::vec3 pos {};
     float angle = 0;
+
+    std::unordered_map<glm::vec3, unsigned long long, Vec::compareFunc> mapBlockIntegrity {};
 };
 

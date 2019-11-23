@@ -90,21 +90,27 @@ void ServerWorld::update() {
     }
 
     auto finished = genStream->update();
-    generatedChunks = (int)finished.size();
+    generatedChunks = static_cast<int>(finished.size());
 
+    //TODO: Make this finish MapBlocks @ a time
     for (const auto& chunk : finished) {
         dimension.setChunk(chunk);
 
+        // TODO: Make this only happen once per mapblock, not for every chunk
+        glm::vec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunk->pos);
+        unsigned long long mapBlockIntegrity = dimension.getMapBlockIntegrity(mapBlockPos);
+
         for (auto& client : clientList.clients) {
             if (client->hasPlayer()) {
-                auto mapBlock = client->getPlayer().mapBlock;
+                auto playerMapBlock = client->getPlayer().mapBlock;
 
                 std::pair<glm::vec3, glm::vec3> bounds = {
-                        {mapBlock.x - MB_GEN_H, mapBlock.y - MB_GEN_V, mapBlock.z - MB_GEN_H},
-                        {mapBlock.x + MB_GEN_H, mapBlock.y + MB_GEN_V, mapBlock.z + MB_GEN_H}};
+                        {playerMapBlock.x - MB_GEN_H, playerMapBlock.y - MB_GEN_V, playerMapBlock.z - MB_GEN_H},
+                        {playerMapBlock.x + MB_GEN_H, playerMapBlock.y + MB_GEN_V, playerMapBlock.z + MB_GEN_H}};
 
-                if (isInBounds(Space::MapBlock::world::fromChunk(chunk->pos), bounds)) {
+                if (isInBounds(mapBlockPos, bounds) && client->getPlayer().getMapBlockIntegrity(mapBlockPos) < mapBlockIntegrity) {
                     sendChunk(chunk->pos, *client);
+                    client->getPlayer().setMapBlockIntegrity(mapBlockPos, mapBlockIntegrity);
                 }
             }
         }
@@ -139,11 +145,15 @@ void ServerWorld::sendChunk(const glm::vec3& pos, ServerClient &peer) {
 }
 
 void ServerWorld::sendMapBlock(const glm::vec3& pos, ServerClient &peer) {
-    auto mapBlock = dimension.getMapBlock(pos);
-    assert(mapBlock != nullptr);
+    //TODO: Make this a real function that sends an entire mapblock packet
+    unsigned long long mapBlockIntegrity = dimension.getMapBlockIntegrity(pos);
+    if (peer.getPlayer().getMapBlockIntegrity(pos) < mapBlockIntegrity) {
+        auto mapBlock = dimension.getMapBlock(pos);
+        assert(mapBlock != nullptr);
 
-    for (unsigned short i = 0; i < 63; i++) {
-        sendChunk((*mapBlock)[i], peer);
+        for (unsigned short i = 0; i < 63; i++) {
+            sendChunk((*mapBlock)[i], peer);
+        }
     }
 }
 
