@@ -30,21 +30,21 @@ void ClientNetworkInterpreter::update(Player &player) {
                 break;
             }
             case ENET_EVENT_TYPE_RECEIVE: {
-                Packet p(event.packet);
+                std::unique_ptr<Packet> p = std::make_unique<Packet>(event.packet);
 
-                switch (p.type) {
+                switch (p->type) {
                     case PacketType::PLAYER: {
-                        id = Serializer::decodeInt(&p.data[0]);
-                        auto playerPos = Serializer::decodeFloatVec3(&p.data[4]);
+                        id = Serializer::decodeInt(&p->data[0]);
+                        auto playerPos = Serializer::decodeFloatVec3(&p->data[4]);
                         player.setPos(playerPos);
                         break;
                     }
                     case PacketType::ENTITY_INFO: {
-                        int peer_id = Serializer::decodeInt(&p.data[0]);
+                        int peer_id = Serializer::decodeInt(&p->data[0]);
                         if (peer_id == id) break;
 
-                        auto playerPos = Serializer::decodeFloatVec3(&p.data[4]);
-                        auto playerAngle = Serializer::decodeFloat(&p.data[16]);
+                        auto playerPos = Serializer::decodeFloatVec3(&p->data[4]);
+                        auto playerAngle = Serializer::decodeFloat(&p->data[16]);
 
                         bool found = false;
                         for (auto& ent : world->dimension.playerEntities) {
@@ -59,8 +59,8 @@ void ClientNetworkInterpreter::update(Player &player) {
                         break;
                     }
                     case PacketType::BLOCK_SET: {
-                        auto pos = Serializer::decodeIntVec3(&p.data[0]);
-                        uint block = static_cast<uint>(Serializer::decodeInt(&p.data[12]));
+                        auto pos = Serializer::decodeIntVec3(&p->data[0]);
+                        uint block = static_cast<uint>(Serializer::decodeInt(&p->data[12]));
                         world->setBlock(pos, block);
                         break;
                     }
@@ -69,7 +69,7 @@ void ClientNetworkInterpreter::update(Player &player) {
                         break;
                     }
                     case PacketType::SERVER_INFO: {
-                        serverSideChunkGens = Serializer::decodeInt(&p.data[0]);
+                        serverSideChunkGens = Serializer::decodeInt(&p->data[0]);
                         break;
                     }
                     default:

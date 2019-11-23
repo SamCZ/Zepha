@@ -41,7 +41,7 @@ void GameScene::update() {
         state.renderer.resized = false;
     }
 
-    for (auto &chunkPacket : server.chunkPackets) world.loadChunkPacket(chunkPacket);
+    for (auto &chunkPacket : server.chunkPackets) world.loadChunkPacket(std::move(chunkPacket));
     server.chunkPackets.clear();
 
     debugGui.update(player, world, defs, state.fps, world.getMeshChunkCount(), drawCalls, server.serverSideChunkGens, server.recvPackets);

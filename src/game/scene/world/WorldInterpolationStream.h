@@ -13,21 +13,21 @@
 
 class WorldInterpolationStream {
 public:
-    static const int THREAD_QUEUE_SIZE = 32;
+    static const int THREAD_QUEUE_SIZE = 128;
     static const int THREADS = 2;
 
     WorldInterpolationStream(unsigned int seed,  LocalDefs& defs);
     ~WorldInterpolationStream();
 
     //Add `p` to the pre-thread queue.
-    bool pushBack(Packet p);
+    bool pushBack(std::unique_ptr<Packet> p);
 
     //Will return a vector of BlockChunk pointers containing finished chunks.
     //Frees up the threads and starts new tasks.
     std::vector<std::shared_ptr<BlockChunk>> update();
 
     struct Unit {
-        Packet packet;
+        std::unique_ptr<Packet> packet;
         BlockChunk* chunk = nullptr;
 
         bool unlocked = true;
@@ -50,6 +50,6 @@ private:
     static void threadFunction(Thread* thread);
 
 //    MapGen gen;
-    std::vector<Packet> queuedTasks;
+    std::vector<std::unique_ptr<Packet>> queuedTasks;
 };
 

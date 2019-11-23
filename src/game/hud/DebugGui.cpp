@@ -24,7 +24,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize, LocalDefs& defs) :
     add(dataText);
 
     auto interpGraph = std::make_shared<GUILabelledGraph>("interpGraph");
-    interpGraph->create({244, 64}, {}, "Interp", 120, 128, genericHistogramRef, f);
+    interpGraph->create({244, 64}, {}, "Interp", 120, 256, genericHistogramRef, f);
     add(interpGraph);
 
     auto meshGraph = std::make_shared<GUILabelledGraph>("meshGraph");

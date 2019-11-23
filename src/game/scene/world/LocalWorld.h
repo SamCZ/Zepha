@@ -37,7 +37,7 @@ public:
     void init();
     void update(double delta);
 
-    void loadChunkPacket(Packet p);
+    void loadChunkPacket(std::unique_ptr<Packet> p);
     std::shared_ptr<BlockChunk> getChunk(glm::vec3 chunkPos);
     void commitChunk(glm::vec3 pos, std::shared_ptr<BlockChunk>);
 

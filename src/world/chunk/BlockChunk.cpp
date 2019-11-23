@@ -137,13 +137,13 @@ std::string BlockChunk::serialize() {
     return data;
 }
 
-void BlockChunk::deserialize(std::string& packet) {
+void BlockChunk::deserialize(const char* packet) {
     size_t biomeOffset;
 
     {
         std::string str;
 
-        std::string blocksGzip = Serializer::decodeString(&packet[0]);
+        std::string blocksGzip = Serializer::decodeString(packet);
         biomeOffset = blocksGzip.length() + 4;
 
         if (!gzip::is_compressed(blocksGzip.data(), blocksGzip.length())) throw "Invalid Blocks GZip Data.";

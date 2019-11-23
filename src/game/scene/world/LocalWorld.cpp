@@ -105,8 +105,8 @@ void LocalWorld::updateBlockDamages(double delta) {
     }
 }
 
-void LocalWorld::loadChunkPacket(Packet p) {
-    worldGenStream->pushBack(p);
+void LocalWorld::loadChunkPacket(std::unique_ptr<Packet> p) {
+    worldGenStream->pushBack(std::move(p));
 }
 
 std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::vec3 chunkPos) {

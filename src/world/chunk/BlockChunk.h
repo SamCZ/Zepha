@@ -32,7 +32,7 @@ public:
     bool setBlock(const glm::vec3& pos, unsigned int ind);
 
     std::string serialize();
-    void deserialize(std::string& packet);
+    void deserialize(const char* packet);
 
     glm::vec3 pos;
 

@@ -27,12 +27,12 @@ public:
     static void encodeUShortVec (string &target, vector<unsigned short>& vec);
     static void encodeFloatVec  (string &target, vector<float>& vec);
 
-    static int            decodeInt       (char* intStart);
-    static unsigned int   decodeUInt      (char* uIntStart);
-    static short          decodeShort     (char* shortStart);
-    static unsigned short decodeUShort    (char* uShortStart);
-    static float          decodeFloat     (char* floatStart);
-    static string         decodeString    (char* stringStart);
+    static int            decodeInt       (const char* intStart);
+    static unsigned int   decodeUInt      (const char* uIntStart);
+    static short          decodeShort     (const char* shortStart);
+    static unsigned short decodeUShort    (const char* uShortStart);
+    static float          decodeFloat     (const char* floatStart);
+    static string         decodeString    (const char* stringStart);
 
     static glm::vec3      decodeFloatVec3 (char* vecStart);
     static glm::vec3      decodeIntVec3   (char* vecStart);
