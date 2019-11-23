@@ -64,7 +64,6 @@ namespace Util {
         return x;
     }
 
-
     static glm::vec4 hexToColorVec(std::string hex) {
         glm::vec4 color {};
 

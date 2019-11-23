@@ -7,7 +7,7 @@
 #include <sstream>
 #include "../graph/window/Window.h"
 #include "../graph/drawable/DrawableGroup.h"
-#include "../../util/TransPos.h"
+#include "../../util/Space.h"
 #include "../../util/Util.h"
 #include "../../util/Ray.h"
 #include "components/compound/GUILabelledGraph.h"

@@ -7,20 +7,18 @@
 #include <glm/vec3.hpp>
 #include <array>
 #include <memory>
-#include "../../util/TransPos.h"
+#include "../../util/Space.h"
 #include "../chunk/BlockChunk.h"
 
 class MapBlock {
 public:
-    MapBlock(glm::vec3 pos, glm::vec3 rawPos);
+    MapBlock(glm::vec3 pos);
 
     std::shared_ptr<BlockChunk> operator[](int index);
     void set(int index, std::shared_ptr<BlockChunk> chunk);
-
-    ~MapBlock() = default;
 private:
-    glm::vec3 pos {}, rawPos {};
+    glm::vec3 pos {};
 
-    const static int arrayLength = TransPos::MAPBLOCK_SIZE * TransPos::MAPBLOCK_SIZE * TransPos::MAPBLOCK_SIZE;
+    const static int arrayLength = std::pow(Space::MAPBLOCK_SIZE, 3);
     std::array<std::shared_ptr<BlockChunk>, arrayLength> blockChunks;
 };

@@ -5,12 +5,13 @@
 #pragma once
 
 #include <glm/vec3.hpp>
-#include "../../util/TransPos.h"
+#include <unordered_map>
+#include "../../util/Vec.h"
+#include "../../util/Space.h"
 
 class ServerPlayer {
 public:
-    const static int ACTIVE_RANGE_H = 12;
-    const static int ACTIVE_RANGE_V = 12;
+    const static int CHUNK_SEND_RANGE = 32;
 
     explicit ServerPlayer(glm::vec3 pos, unsigned int connectID, const std::string& username);
 
@@ -18,24 +19,22 @@ public:
     void setAngle(float angle);
 
     glm::vec3 getPos();
+    glm::vec3 getChunkPos();
     float getAngle();
 
-    glm::vec3 getChunkPos();
-    glm::vec3 getLastChunkPos();
+    glm::vec3 mapBlock;
+    glm::vec3 lastMapBlock;
+    bool changedMapBlocks = true;
 
-    std::pair<glm::vec3, glm::vec3> getChunkBounds();
-    std::pair<glm::vec3, glm::vec3> getLastChunkBounds();
-
-    bool changedChunks = true;
+    void setMapBlockIntegrity(glm::vec3 pos, unsigned long long integrity);
+    unsigned long long getMapBlockIntegrity(glm::vec3 pos);
 private:
     std::string username;
-
     unsigned int connectID;
 
-    glm::vec3 chunkPos {};
-    glm::vec3 lastChunkPos {};
     glm::vec3 pos {};
-
     float angle = 0;
+
+    std::unordered_map<glm::vec3, unsigned long long, Vec::compareFunc> mapBlockIntegrity {};
 };
 

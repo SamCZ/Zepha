@@ -6,22 +6,22 @@
 
 #include <vector>
 #include <iostream>
-#include <glm/vec3.hpp>
 #include <noise/noise.h>
+#include <glm/glm.hpp>
+#include <glm/common.hpp>
+#include "../../util/Interp.h"
 
 class NoiseSample {
 public:
-    static NoiseSample getSample(noise::module::Module *module, glm::vec3 chunkPos, int hPrecision = 8, int vPrecision = 8, bool flat = false);
+    NoiseSample() = default;
+    explicit NoiseSample(glm::ivec2 precision);
+    NoiseSample(noise::module::Module& module, glm::vec3 pos, glm::ivec2 precision, bool flat = false);
 
-    NoiseSample(int hPrecision, int vPrecision);
-
-    void  set(glm::vec3 pos, float value);
+    void set(glm::vec3 pos, float value);
     float get(const glm::vec3& pos);
 
 private:
-    std::vector<std::vector<std::vector<float>>> data;
-
-    int hPrecision;
-    int vPrecision;
+    glm::ivec2 prec {};
+    std::vector<std::vector<std::vector<float>>> data {};
 };
 

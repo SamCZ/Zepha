@@ -11,7 +11,7 @@ void MeshChunk::create(std::vector<ChunkVertex> &vertices, std::vector<unsigned 
 
 void MeshChunk::draw(Renderer& renderer) {
     glm::mat4 model = glm::mat4(1.0);
-    model = glm::translate(model, pos * static_cast<float>(TransPos::CHUNK_SIZE));
+    model = glm::translate(model, pos * static_cast<float>(16));
     renderer.setModelMatrix(model);
     mesh->draw();
 }

@@ -37,7 +37,7 @@ void GUIText::setText(std::string text) {
     //Draw background & Measure Line Width
     int lineWidth = 0;
     int xOffset = 0, yOffset = 0;
-    int h = Font::CHAR_HEIGHT;
+    int h = Font::charHeight;
 
     for (unsigned int i = 0; i < this->text.length() + 1; i++) {
         char c = this->text[i];
@@ -82,7 +82,7 @@ void GUIText::setText(std::string text) {
 
     for (unsigned int i = 0; i < this->text.length() + 1; i++) {
         char c = this->text[i];
-        unsigned int h = Font::CHAR_HEIGHT;
+        unsigned int h = Font::charHeight;
 
         if (c == '\n' || i == this->text.length()) {
             yOffset += (emptyLine) ? h / 2 : h + 2;

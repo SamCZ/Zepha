@@ -31,7 +31,6 @@ zepha.register_keybind("open_inventory", {
     description = "Open Inventory",
     default = zepha.keys.e,
     on_press = function()
-        --TODO: Replace menu_state with a better system
         if zepha.player.menu_state == "" then
             zepha.player:open_menu([[
             body

@@ -34,9 +34,11 @@ std::vector<std::shared_ptr<BlockChunk>> WorldGenStream::update() {
         for (auto& u : t.tasks) {
             if (!u.unlocked) continue;
 
-            if (u.chunk != nullptr) {
-                finishedChunks.push_back(std::shared_ptr<BlockChunk>(u.chunk));
-                u.chunk = nullptr;
+            if (!u.chunks.empty()) {
+                for (auto chunk : u.chunks) {
+                    finishedChunks.push_back(std::shared_ptr<BlockChunk>(chunk));
+                }
+                u.chunks.clear();
             }
 
             if (!queuedTasks.empty()) {
@@ -70,7 +72,7 @@ void WorldGenStream::threadFunction(WorldGenStream::Thread *thread) {
             if (!u.unlocked) {
 
                 empty = false;
-                u.chunk = thread->gen->generate(u.pos);
+                u.chunks = thread->gen->generateMapBlock(u.pos);
                 u.unlocked = true;
                 break;
 

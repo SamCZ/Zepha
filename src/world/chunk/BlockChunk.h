@@ -32,7 +32,7 @@ public:
     bool setBlock(const glm::vec3& pos, unsigned int ind);
 
     std::string serialize();
-    void deserialize(std::string& packet);
+    void deserialize(const char* packet);
 
     glm::vec3 pos;
 
@@ -44,4 +44,8 @@ private:
     unsigned short fullBlocks = 0;
 
     bool empty = true;
+
+    //Exclusive Access for MapGen to speed up chunk creation
+    void mgRegenEmpty();
+    friend class MapGen;
 };

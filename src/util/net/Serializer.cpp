@@ -77,7 +77,7 @@ void Serializer::encodeUIntVec(string &target, vector<unsigned int> &vec) {
 void Serializer::encodeUShortVec(string &target, vector<unsigned short> &vec) {
     //Used a reinterpret cast to speed things up
     target.reserve(target.length() + vec.size() * 2);
-    target += string(reinterpret_cast<const char*>(&vec[0]), vec.size() * 2);
+    target += string(reinterpret_cast<const char*>(&vec[0]), vec.size()*2);
 }
 
 void Serializer::encodeFloatVec(string &target, vector<float> &vec){
@@ -86,7 +86,7 @@ void Serializer::encodeFloatVec(string &target, vector<float> &vec){
     target += string(reinterpret_cast<const char*>(&vec[0]), vec.size()*4);
 }
 
-int Serializer::decodeInt(char *in) {
+int Serializer::decodeInt(const char *in) {
     int_union cv;
     cv.bytes[0] = *(in);
     cv.bytes[1] = *(in+1);
@@ -96,7 +96,7 @@ int Serializer::decodeInt(char *in) {
     return cv.in;
 }
 
-unsigned int Serializer::decodeUInt(char *in) {
+unsigned int Serializer::decodeUInt(const char *in) {
     uint_union cv;
     cv.bytes[0] = *(in);
     cv.bytes[1] = *(in+1);
@@ -106,7 +106,7 @@ unsigned int Serializer::decodeUInt(char *in) {
     return cv.in;
 }
 
-short Serializer::decodeShort(char *in) {
+short Serializer::decodeShort(const char *in) {
     short_union cv;
     cv.bytes[0] = *(in);
     cv.bytes[1] = *(in+1);
@@ -114,7 +114,7 @@ short Serializer::decodeShort(char *in) {
     return cv.sh;
 }
 
-unsigned short Serializer::decodeUShort(char *in) {
+unsigned short Serializer::decodeUShort(const char *in) {
     short_union cv;
     cv.bytes[0] = *(in);
     cv.bytes[1] = *(in+1);
@@ -122,7 +122,7 @@ unsigned short Serializer::decodeUShort(char *in) {
     return cv.sh;
 }
 
-float Serializer::decodeFloat(char *in) {
+float Serializer::decodeFloat(const char *in) {
     float_union cv;
     cv.bytes[0] = *(in);
     cv.bytes[1] = *(in+1);
@@ -132,7 +132,7 @@ float Serializer::decodeFloat(char *in) {
     return cv.fl;
 }
 
-string Serializer::decodeString(char *stringStart) {
+string Serializer::decodeString(const char *stringStart) {
     int len = decodeInt(stringStart);
 
     return string(stringStart + 4, stringStart + 4 + len);

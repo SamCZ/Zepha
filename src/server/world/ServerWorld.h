@@ -13,7 +13,7 @@
 #include "../../util/Vec.h"
 #include "../../def/ServerDefs.h"
 #include "../conn/ServerClients.h"
-#include "ServerDimension.h"
+#include "../../world/ServerDimension.h"
 
 class ServerWorld {
 public:
@@ -28,15 +28,18 @@ public:
     ~ServerWorld();
 private:
     void changedChunks(ServerClient& client);
-    void generate(glm::vec3 pos);
-    void sendChunk(glm::vec3 pos, ServerClient& client);
+    bool generateMapBlock(glm::vec3 pos);
+
+    void sendChunk(const glm::vec3& pos, ServerClient& client);
+    void sendChunk(const std::shared_ptr<BlockChunk>& chunk, ServerClient& client);
+    void sendMapBlock(const glm::vec3& pos, ServerClient& client);
 
     bool isInBounds(glm::vec3 pos, std::pair<glm::vec3, glm::vec3>& bounds);
 
     WorldGenStream* genStream = nullptr;
     ServerDimension dimension;
 
-    std::unordered_set<glm::vec3, VecUtils::compareFunc> generateQueueMap;
+    std::unordered_set<glm::vec3, Vec::compareFunc> generateQueueMap;
     std::vector<glm::vec3> generateQueueList;
 
     unsigned int seed;

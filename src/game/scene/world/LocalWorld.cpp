@@ -105,8 +105,8 @@ void LocalWorld::updateBlockDamages(double delta) {
     }
 }
 
-void LocalWorld::loadChunkPacket(Packet p) {
-    worldGenStream->pushBack(p);
+void LocalWorld::loadChunkPacket(std::unique_ptr<Packet> p) {
+    worldGenStream->pushBack(std::move(p));
 }
 
 std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::vec3 chunkPos) {
@@ -133,8 +133,8 @@ int LocalWorld::getMeshChunkCount() {
 }
 
 unsigned int LocalWorld::getBlock(glm::vec3 pos) {
-    auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
-    auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
+    auto chunkPos = Space::Chunk::world::fromBlock(pos);
+    auto local = Space::Block::relative::toChunk(pos);
 
     auto chunk = getChunk(chunkPos);
     if (chunk != nullptr) return chunk->getBlock(local);
@@ -142,8 +142,8 @@ unsigned int LocalWorld::getBlock(glm::vec3 pos) {
 }
 
 unsigned short LocalWorld::getBiome(glm::vec3 pos) {
-    auto chunkPos = TransPos::chunkFromVec(TransPos::roundPos(pos));
-    auto local = TransPos::chunkLocalFromVec(TransPos::roundPos(pos));
+    auto chunkPos = Space::Chunk::world::fromBlock(pos);
+    auto local = Space::Block::relative::toChunk(pos);
 
     auto chunk = getChunk(chunkPos);
     if (chunk != nullptr) return chunk->getBiome(local);

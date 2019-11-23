@@ -17,7 +17,7 @@
 
 class WorldGenStream {
 public:
-    static const int THREAD_QUEUE_SIZE = 64;
+    static const int THREAD_QUEUE_SIZE = 16;
     static const int THREADS = 4;
     static const int TOTAL_QUEUE_SIZE = THREADS * THREAD_QUEUE_SIZE;
 
@@ -33,8 +33,8 @@ public:
     std::vector<std::shared_ptr<BlockChunk>> update();
 
     struct Unit {
-        glm::vec3 pos {0, 0, 0};
-        BlockChunk* chunk = nullptr;
+        glm::vec3 pos {};
+        std::vector<BlockChunk*> chunks {};
 
         bool unlocked = true;
     };
@@ -56,7 +56,7 @@ private:
 
     MapGen gen;
     std::vector<glm::vec3> queuedTasks;
-    std::unordered_set<glm::vec3, VecUtils::compareFunc> queuedMap;
+    std::unordered_set<glm::vec3, Vec::compareFunc> queuedMap;
 };
 
 #pragma clang diagnostic pop

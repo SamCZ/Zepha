@@ -15,9 +15,9 @@ public:
     uint getCharWidth(char c);
     glm::vec4 getCharUVs(char c);
 
-    const static unsigned int AMOUNT_CHARS = 95;
-    const static unsigned int CHAR_WIDTH = 7;
-    const static unsigned int CHAR_HEIGHT = 9;
+    const static unsigned int amountOfChars = 95;
+    const static unsigned int charWidth = 7;
+    const static unsigned int charHeight = 9;
 private:
     void getCharWidths(TextureAtlas& atlas);
 

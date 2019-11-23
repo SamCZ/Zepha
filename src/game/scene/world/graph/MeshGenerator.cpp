@@ -28,7 +28,7 @@ MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::sha
         glm::vec3 biomeTint = defs.gen().biomeFromId(chunk->getBiome(i)).biomeTint;
 
         if (model.visible) {
-            VecUtils::indAssignVec(i, off);
+            Vec::indAssignVec(i, off);
 
             vis = off;
 
@@ -75,16 +75,16 @@ MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::sha
 }
 
 BlockDef& MeshGenerator::getBlockAt(const glm::vec3 &pos) {
-    if (pos.x < 0 || pos.x >= TransPos::CHUNK_SIZE || pos.y < 0 || pos.y >= TransPos::CHUNK_SIZE || pos.z < 0 || pos.z >= TransPos::CHUNK_SIZE) {
+    if (pos.x < 0 || pos.x >= 16 || pos.y < 0 || pos.y >= 16 || pos.z < 0 || pos.z >= 16) {
 
-        if (pos.x == TransPos::CHUNK_SIZE) return atlas.blockFromId(adjacent[0]->getBlock(pos - glm::vec3(TransPos::CHUNK_SIZE, 0, 0)));
-        if (pos.x == -1) return atlas.blockFromId(adjacent[1]->getBlock(pos + glm::vec3(TransPos::CHUNK_SIZE, 0, 0)));
+        if (pos.x == 16) return atlas.blockFromId(adjacent[0]->getBlock(pos - glm::vec3(16, 0, 0)));
+        if (pos.x == -1) return atlas.blockFromId(adjacent[1]->getBlock(pos + glm::vec3(16, 0, 0)));
 
-        if (pos.y == TransPos::CHUNK_SIZE) return atlas.blockFromId(adjacent[2]->getBlock(pos - glm::vec3(0, TransPos::CHUNK_SIZE, 0)));
-        if (pos.y == -1) return atlas.blockFromId(adjacent[3]->getBlock(pos + glm::vec3(0, TransPos::CHUNK_SIZE, 0)));
+        if (pos.y == 16) return atlas.blockFromId(adjacent[2]->getBlock(pos - glm::vec3(0, 16, 0)));
+        if (pos.y == -1) return atlas.blockFromId(adjacent[3]->getBlock(pos + glm::vec3(0, 16, 0)));
 
-        if (pos.z == TransPos::CHUNK_SIZE) return atlas.blockFromId(adjacent[4]->getBlock(pos - glm::vec3(0, 0, TransPos::CHUNK_SIZE)));
-        if (pos.z == -1) return atlas.blockFromId(adjacent[5]->getBlock(pos + glm::vec3(0, 0, TransPos::CHUNK_SIZE)));
+        if (pos.z == 16) return atlas.blockFromId(adjacent[4]->getBlock(pos - glm::vec3(0, 0, 16)));
+        if (pos.z == -1) return atlas.blockFromId(adjacent[5]->getBlock(pos + glm::vec3(0, 0, 16)));
     }
 
     return atlas.blockFromId(chunk->getBlock(pos));

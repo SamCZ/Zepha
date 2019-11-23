@@ -1,9 +1,4 @@
-set(ZEUS_TEST_FILES
-        tests/BlockChunk.cpp
-        tests/NetHandler.cpp
-        tests/Serializer.cpp
-        tests/LibNoise.cpp
-        tests/Dimension.cpp
-        tests/List.cpp tests/Intersects.cpp)
+set(ZEPHA_TEST
+        Main.cpp tests/TestSpace.cpp)
 
-add_library (zeusTest ${ZEUS_TEST_FILES})
+add_library (Zepha_Test ${ZEPHA_TEST})

@@ -72,8 +72,8 @@ endif()
 target_compile_definitions(${MAIN_EXEC_NAME} PUBLIC SOL_ALL_SAFETIES_ON)
 
 # Test Build
-#add_subdirectory(test)
-#add_executable(${TEST_EXEC_NAME} test/Main.cpp)
-#
-#target_link_libraries(${TEST_EXEC_NAME} Zepha_Core)
-#target_link_libraries(${TEST_EXEC_NAME} zeusTest)
+add_subdirectory(test)
+add_executable(${TEST_EXEC_NAME} test/Main.cpp)
+
+target_link_libraries(${TEST_EXEC_NAME} Zepha_Core)
+target_link_libraries(${TEST_EXEC_NAME} Zepha_Test)

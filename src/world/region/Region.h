@@ -4,25 +4,20 @@
 
 #pragma once
 
-
 #include <glm/vec3.hpp>
 #include <array>
 #include "MapBlock.h"
-#include "../../util/TransPos.h"
+#include "../../util/Space.h"
 
 class Region {
 public:
-    Region(glm::vec3 pos, glm::vec3 rawPos);
+    Region(glm::vec3 pos);
 
-    MapBlock* operator[](int index);
-    void set(int index, MapBlock* block);
-
-    glm::vec3 getRawPos();
-
-    ~Region();
+    std::shared_ptr<MapBlock> operator[](int index);
+    void set(int index, std::shared_ptr<MapBlock> block);
 private:
-    glm::vec3 pos {}, rawPos {};
+    glm::vec3 pos {};
 
-    const static int arrayLength = TransPos::REGION_SIZE * TransPos::REGION_SIZE * TransPos::REGION_SIZE;
-    std::array<MapBlock*, arrayLength> mapBlocks {};
+    const static int arrayLength = std::pow(Space::REGION_SIZE, 3);
+    std::array<std::shared_ptr<MapBlock>, arrayLength> mapBlocks {};
 };

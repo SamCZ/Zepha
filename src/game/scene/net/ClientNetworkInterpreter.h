@@ -31,7 +31,7 @@ public:
 
     ~ClientNetworkInterpreter();
 
-    std::vector<Packet> chunkPackets;
+    std::vector<std::unique_ptr<Packet>> chunkPackets;
     int serverSideChunkGens = 0;
     int recvPackets = 0;
 private:

@@ -19,14 +19,15 @@ using namespace noise;
 class MapGen {
 public:
     MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeAtlas& biome);
-    BlockChunk* generate(glm::vec3 pos);
+    std::vector<BlockChunk*> generateMapBlock(glm::vec3 mbPos);
 private:
-    void getDensityMap(MapGenJob &job);
-    void getElevation(MapGenJob &j);
-    void fillChunk(MapGenJob &j);
-//    void addTrees(MapGenJob &j);
+    void generateChunk(std::array<std::pair<MapGenJob, BlockChunk*>, 64>& chunks, glm::vec3 localPos, glm::vec3 worldPos);
 
-//    void addBlock(glm::vec3 lp, unsigned int block, MapGenJob &j);
+    void buildDensityMap(MapGenJob &job, const glm::vec3& worldPos);
+    void buildElevationMap(std::array<std::pair<MapGenJob, BlockChunk*>, 64>& chunks,
+                           std::pair<MapGenJob, BlockChunk*>& chunk, const glm::vec3& localPos, const glm::vec3& worldPos);
+
+    void populateChunk(std::pair<MapGenJob, BlockChunk*>& chunk, const glm::vec3& worldPos);
 
     unsigned int seed = 0;
 

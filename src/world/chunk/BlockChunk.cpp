@@ -30,7 +30,7 @@ BlockChunk::BlockChunk(const std::array<unsigned int, 4096>& blocks, const std::
 }
 
 unsigned int BlockChunk::getBlock(const glm::vec3& pos) const {
-    unsigned int ind = VecUtils::vecToInd(pos);
+    unsigned int ind = Space::Block::index(pos);
     if (ind >= 4096) return DefinitionAtlas::INVALID;
     return blocks[ind];
 }
@@ -41,7 +41,7 @@ unsigned int BlockChunk::getBlock(unsigned int ind) const {
 }
 
 unsigned short BlockChunk::getBiome(const glm::vec3& pos) const {
-    unsigned int ind = VecUtils::vecToInd(pos);
+    unsigned int ind = Space::Block::index(pos);
     if (ind >= 4096) return BiomeAtlas::INVALID;
     return biomes[ind];
 }
@@ -52,8 +52,8 @@ unsigned short BlockChunk::getBiome(unsigned int ind) const {
 }
 
 bool BlockChunk::setBlock(const glm::vec3& pos, unsigned int block) {
-    unsigned int ind = VecUtils::vecToInd(pos);
-    if (ind >= (int)pow(TransPos::CHUNK_SIZE, 3)) return false;
+    unsigned int ind = Space::Block::index(pos);
+    if (ind >= (int)pow(16, 3)) return false;
 
     if (blocks[ind] != block) {
         if (block == 0) {
@@ -137,13 +137,13 @@ std::string BlockChunk::serialize() {
     return data;
 }
 
-void BlockChunk::deserialize(std::string& packet) {
+void BlockChunk::deserialize(const char* packet) {
     size_t biomeOffset;
 
     {
         std::string str;
 
-        std::string blocksGzip = Serializer::decodeString(&packet[0]);
+        std::string blocksGzip = Serializer::decodeString(packet);
         biomeOffset = blocksGzip.length() + 4;
 
         if (!gzip::is_compressed(blocksGzip.data(), blocksGzip.length())) throw "Invalid Blocks GZip Data.";
@@ -186,4 +186,18 @@ void BlockChunk::deserialize(std::string& packet) {
         }
         stop2: {};
     }
+}
+
+void BlockChunk::mgRegenEmpty() {
+    fullBlocks = 0;
+    empty = true;
+
+    for (unsigned int block : this->blocks) {
+        if (block > DefinitionAtlas::AIR) {
+            empty = false;
+            fullBlocks++;
+        }
+    }
+
+    renderedEmpty = empty;
 }

@@ -1,28 +1,45 @@
 //
 // Created by aurailus on 15/02/19.
 //
-
-#include <cmath>
 #include "NoiseSample.h"
-#include "../../util/Interp.h"
-#include "../../util/TransPos.h"
 
-NoiseSample::NoiseSample(int hPrecision, int vPrecision) :
-    hPrecision(hPrecision),
-    vPrecision(vPrecision),
-    data(std::vector<std::vector<std::vector<float>>> {}) {
+NoiseSample::NoiseSample(glm::ivec2 precision) :
+    prec(precision) {
 
-    data.reserve((unsigned int)hPrecision + 1);
-
-    for (int i = 0; i <= hPrecision; i++) {
+    data.reserve(prec.x + 1);
+    for (unsigned int i = 0; i <= prec.x; i++) {
         std::vector<std::vector<float>> subdata;
-        subdata.reserve((unsigned int)vPrecision + 1);
-
-        for (int j = 0; j <= vPrecision; j++) {
-            subdata.emplace_back((unsigned int)hPrecision + 1);
-        }
-
+        subdata.reserve(prec.y + 1);
+        for (int j = 0; j <= prec.y; j++)
+            subdata.emplace_back(prec.x + 1);
         data.push_back(subdata);
+    }
+}
+
+NoiseSample::NoiseSample(noise::module::Module &module, glm::vec3 pos, glm::ivec2 precision, bool flat) :
+    prec(precision) {
+
+    data.reserve(precision.x + 1);
+    for (unsigned int i = 0; i <= precision.x; i++) {
+        std::vector<std::vector<float>> subdata;
+        subdata.reserve(precision.y + 1);
+        for (int j = 0; j <= precision.y; j++)
+            subdata.emplace_back(precision.x + 1);
+        data.push_back(subdata);
+    }
+
+    float offsetH = 16.f / prec.x;
+    float offsetV = 16.f / prec.y;
+
+    for (int i = 0; i <= prec.x; i++) {
+        float xPos = (pos.x * 16 + offsetH * i) / 16.f;
+        for (int j = 0; j <= prec.y; j++) {
+            float yPos = flat ? 0 : (pos.y * 16 + offsetV * j) / 16.f;
+            for (int k = 0; k <= prec.x; k++) {
+                float zPos = (pos.z * 16 + offsetH * k) / 16.f;
+                set({i, j, k}, static_cast<float>(module.GetValue(xPos, yPos, zPos)));
+            }
+        }
     }
 }
 
@@ -31,64 +48,23 @@ void NoiseSample::set(glm::vec3 pos, float value) {
 }
 
 float NoiseSample::get(const glm::vec3& pos) {
-    auto xInt = static_cast<int>(pos.x);
-    auto yInt = static_cast<int>(pos.y);
-    auto zInt = static_cast<int>(pos.z);
+    const glm::ivec3 iPos {pos};
 
-    int offsetH = static_cast<int>(static_cast<float>(TransPos::CHUNK_SIZE) / hPrecision);
-    int offsetV = static_cast<int>(static_cast<float>(TransPos::CHUNK_SIZE) / vPrecision);
+    glm::vec3 prec3 {prec.x, prec.y, prec.x};
 
-    auto xBase = xInt / offsetH;
-    auto yBase = yInt / offsetV;
-    auto zBase = zInt / offsetH;
+    const glm::ivec3 base = iPos / (glm::ivec3(16) / glm::ivec3{prec.x, prec.y, prec.x});
+    const glm::vec3 factor = glm::floor(glm::mod(glm::vec3(iPos), (glm::vec3(16.f) / prec3))) / 16.f * prec3;
 
-    float xFac = (xInt % offsetH) / ((float)TransPos::CHUNK_SIZE / hPrecision);
-    float yFac = (yInt % offsetV) / ((float)TransPos::CHUNK_SIZE / vPrecision);
-    float zFac = (zInt % offsetH) / ((float)TransPos::CHUNK_SIZE / hPrecision);
+    const auto& x0y0 = data[base.x][base.y];
+    const auto& x1y0 = data[base.x + 1][base.y];
 
-    auto p000 = data[xBase][yBase][zBase];
-    auto p100 = data[xBase + 1][yBase][zBase];
-    auto p001 = data[xBase][yBase][zBase + 1];
-    auto p101 = data[xBase + 1][yBase][zBase + 1];
+    //No Vertical Interpolation
+    if (prec.y <= 1)
+        return Interp::bilerp(x0y0[base.z], x1y0[base.z], x0y0[base.z + 1], x1y0[base.z + 1], factor.x, factor.z);
 
-    if (vPrecision > 1) {
-        auto p010 = data[xBase][yBase + 1][zBase];
-        auto p110 = data[xBase + 1][yBase + 1][zBase];
-        auto p011 = data[xBase][yBase + 1][zBase + 1];
-        auto p111 = data[xBase + 1][yBase + 1][zBase + 1];
+    const auto& x0y1 = data[base.x][base.y + 1];
+    const auto& x1y1 = data[base.x + 1][base.y + 1];
 
-        return Interp::trilerp(
-                p000, p100, p001, p101,
-                p010, p110, p011, p111,
-                xFac, zFac, yFac
-        );
-    }
-    else {
-        return Interp::bilerp(
-                p000, p100, p001, p101, xFac, zFac
-        );
-    }
-}
-
-NoiseSample NoiseSample::getSample(noise::module::Module *module, glm::vec3 chunkPos, int hPrecision, int vPrecision, bool flat) {
-    NoiseSample s(hPrecision, vPrecision);
-
-    float offsetH = (float)TransPos::CHUNK_SIZE / hPrecision;
-    float offsetV = (float)TransPos::CHUNK_SIZE / vPrecision;
-
-    for (int i = 0; i <= hPrecision; i++) {
-        for (int j = 0; j <= vPrecision; j++) {
-            for (int k = 0; k <= hPrecision; k++) {
-
-                //16s here are constant factor scaling, not to be based on the Chunk size.
-                double xCoord = (chunkPos.x * TransPos::CHUNK_SIZE + offsetH * i) / 16;
-                double yCoord = (flat) ? 0 : (chunkPos.y * TransPos::CHUNK_SIZE + offsetV * j) / 16;
-                double zCoord = (chunkPos.z * TransPos::CHUNK_SIZE + offsetH * k) / 16;
-
-                s.set(glm::vec3(i, j, k), (float)module->GetValue(xCoord, yCoord, zCoord));
-            }
-        }
-    }
-
-    return std::move(s);
+    return Interp::trilerp(x0y0[base.z], x1y0[base.z], x0y0[base.z + 1], x1y0[base.z + 1],
+            x0y1[base.z], x1y1[base.z], x0y1[base.z + 1], x1y1[base.z + 1], factor.x, factor.z, factor.y);
 }

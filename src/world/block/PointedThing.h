@@ -34,20 +34,6 @@ public:
     PointedThing() = default;
     PointedThing(const PointedThing &o) = default;
 
-//    PointedThing& operator=(const PointedThing &o) {
-//        this->blockDef = o.blockDef;
-//        this->blockID = o.blockID;
-//        this->pos = o.pos;
-//    }
-//
-//    bool operator==(const PointedThing &o) {
-//        return (blockID == o.blockID && pos == o.pos);
-//    }
-//
-//    bool operator!=(const PointedThing &o) {
-//        return (blockID != o.blockID || pos != o.pos);
-//    }
-
     Thing thing = PointedThing::Thing::NOTHING;
     PointedThingTarget target = PointedThingTarget{0};
 };

@@ -13,7 +13,7 @@ Font::Font(TextureAtlas& atlas, std::shared_ptr<AtlasRef> tex) :
 
 uint Font::getCharWidth(char c) {
     uint index = static_cast<uint>(c) - 32;
-    if (index >= AMOUNT_CHARS) {
+    if (index >= amountOfChars) {
         std::cout << Log::err << "Invalid char index!" << std::endl;
         return 0;
     }
@@ -25,17 +25,17 @@ void Font::getCharWidths(TextureAtlas &atlas) {
 
     charWidths[0] = 2;
 
-    for (unsigned int i = 1; i < AMOUNT_CHARS; i++) {
-        glm::vec2 charPos = {i % 18 * CHAR_WIDTH, std::floor(i / 18) * CHAR_HEIGHT};
+    for (unsigned int i = 1; i < amountOfChars; i++) {
+        glm::vec2 charPos = {i % 18 * charWidth, std::floor(i / 18) * charHeight};
 
         uint xBase = static_cast<uint>(fontTex->pos.x) + static_cast<uint>(charPos.x);
         uint yBase = static_cast<uint>(fontTex->pos.y) + static_cast<uint>(charPos.y);
 
         unsigned short width = 0;
 
-        for (uint j = 0; j < CHAR_WIDTH; j++) {
+        for (uint j = 0; j < charWidth; j++) {
             bool empty = true;
-            for (uint k = 0; k < CHAR_HEIGHT; k++) {
+            for (uint k = 0; k < charHeight; k++) {
                 uint xx = xBase + j;
                 uint yy = yBase + k;
 
@@ -55,20 +55,20 @@ void Font::getCharWidths(TextureAtlas &atlas) {
 
 glm::vec4 Font::getCharUVs(char c) {
     uint index = static_cast<uint>(c) - 32;
-    if (index >= AMOUNT_CHARS) {
+    if (index >= amountOfChars) {
         std::cout << Log::err << "Invalid char index!" << std::endl;
         return {};
     }
 
     glm::vec4 uv;
 
-    glm::vec2 charPos = {((index % 18) * CHAR_WIDTH),
-                         (std::floor(index / 18) * CHAR_HEIGHT)};
+    glm::vec2 charPos = {((index % 18) * charWidth),
+                         (std::floor(index / 18) * charHeight)};
 
     uv.x = fontTex->uv.x + (charPos.x) / atlasSize.x;
     uv.y = fontTex->uv.y + (charPos.y) / atlasSize.y;
     uv.z = fontTex->uv.x + (charPos.x + getCharWidth(c) + 1) / atlasSize.x;
-    uv.w = fontTex->uv.y + (charPos.y + CHAR_HEIGHT) / atlasSize.y;
+    uv.w = fontTex->uv.y + (charPos.y + charHeight) / atlasSize.y;
 
     return uv;
 }

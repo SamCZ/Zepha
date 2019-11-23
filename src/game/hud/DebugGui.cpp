@@ -24,7 +24,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize, LocalDefs& defs) :
     add(dataText);
 
     auto interpGraph = std::make_shared<GUILabelledGraph>("interpGraph");
-    interpGraph->create({244, 64}, {}, "Interp", 120, 128, genericHistogramRef, f);
+    interpGraph->create({244, 64}, {}, "Interp", 120, 256, genericHistogramRef, f);
     add(interpGraph);
 
     auto meshGraph = std::make_shared<GUILabelledGraph>("meshGraph");
@@ -97,25 +97,25 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
     }
 
     { //Top-left Data
-        glm::vec3 footPos = TransPos::roundPos(player.getPos()) - glm::vec3(0, 0.02, 0);
+        glm::vec3 footPos = glm::floor(player.getPos()) - glm::vec3(0, 0.02, 0);
 
         unsigned int blockID = world.getBlock(footPos);
         std::string on = defs.defs().fromId(blockID).identifier;
 
-        unsigned int biomeID = world.getBiome(TransPos::roundPos(player.getPos()));
+        unsigned int biomeID = world.getBiome(glm::floor(player.getPos()));
         std::string biome = defs.gen().biomeFromId(biomeID).identifier;
 
-        glm::vec3 playerPos = TransPos::roundPos(player.getPos());
-        glm::vec3 chunkPos = TransPos::chunkFromVec(playerPos);
+        glm::vec3 playerPos = glm::floor(player.getPos());
+        glm::vec3 chunkPos = Space::Chunk::world::fromBlock(playerPos);
 
         //Block Coordinates offset from respective container
-        glm::vec3 posOffsetFromChunk = TransPos::chunkLocalFromVec(playerPos);
-        glm::vec3 posOffsetFromBlock = TransPos::mapBlockLocalFromVec(playerPos);
-        glm::vec3 posOffsetFromRegion = TransPos::regionLocalFromVec(playerPos);
+        glm::vec3 posOffsetFromChunk  = Space::Block::relative::toChunk(playerPos);
+        glm::vec3 posOffsetFromBlock  = Space::Block::relative::toMapBlock(playerPos);
+        glm::vec3 posOffsetFromRegion = Space::Block::relative::toRegion(playerPos);
 
-        glm::vec3 chunkCoordinate = TransPos::Dimension::chunkOffsetFromMapBlock(chunkPos);
-        glm::vec3 mapBlockCoordinate = TransPos::Dimension::mapBlockOffsetFromRegion(chunkPos);
-        glm::vec3 regionCoordinate = TransPos::Dimension::regionFromVec(chunkPos);
+        glm::vec3 chunkCoordinate = chunkPos;
+        glm::vec3 mapBlockCoordinate = Space::MapBlock::world::fromChunk(chunkPos);
+        glm::vec3 regionCoordinate = Space::Region::world::fromChunk(chunkPos);
 
         std::ostringstream str;
 
@@ -141,18 +141,15 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
 
         PointedThing thing = player.getPointedThing();
         if (thing.thing == PointedThing::Thing::BLOCK) {
-            std::string face = "NONE";
-            if (thing.thing == PointedThing::Thing::BLOCK) {
-                Dir faceDir = thing.target.block.face;
-                std::string face =
-                        (faceDir == Dir::TOP) ? "TOP" :
-                        (faceDir == Dir::BOTTOM) ? "BOTTOM" :
-                        (faceDir == Dir::LEFT) ? "LEFT" :
-                        (faceDir == Dir::RIGHT) ? "RIGHT" :
-                        (faceDir == Dir::FRONT) ? "FRONT" :
-                        (faceDir == Dir::BACK) ? "BACK" :
-                        "NONE";
-            }
+            Dir faceDir = thing.target.block.face;
+            std::string face =
+                    (faceDir == Dir::TOP) ? "TOP" :
+                    (faceDir == Dir::BOTTOM) ? "BOTTOM" :
+                    (faceDir == Dir::LEFT) ? "LEFT" :
+                    (faceDir == Dir::RIGHT) ? "RIGHT" :
+                    (faceDir == Dir::FRONT) ? "FRONT" :
+                    (faceDir == Dir::BACK) ? "BACK" :
+                    "NONE";
             str << "Pointing At: " << defs.defs().blockFromId(thing.target.block.blockId).identifier << std::endl;
             str << "Pointed Position: " << vecToString(thing.target.block.pos) << std::endl;
             str << "Pointed Face: " << face << std::endl;
