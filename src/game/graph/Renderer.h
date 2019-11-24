@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <glm/ext.hpp>
+#include <glm/gtx/transform.hpp>
 #include <noise/noise.h>
 #include "Camera.h"
 #include "Texture.h"
