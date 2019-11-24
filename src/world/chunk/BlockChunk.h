@@ -10,7 +10,6 @@
 #include <list>
 #include "../../util/Vec.h"
 #include "../../util/net/Packet.h"
-#include "../../util/Vec.h"
 #include "../../game/scene/world/graph/MeshChunk.h"
 #include "../../util/Log.h"
 

@@ -18,7 +18,5 @@ public:
     void set(int index, std::shared_ptr<BlockChunk> chunk);
 private:
     glm::vec3 pos {};
-
-    const static int arrayLength = std::pow(Space::MAPBLOCK_SIZE, 3);
-    std::array<std::shared_ptr<BlockChunk>, arrayLength> blockChunks;
+    std::array<std::shared_ptr<BlockChunk>, 64> blockChunks;
 };

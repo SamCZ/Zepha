@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <glm/vec3.hpp>
 #include <list>
 #include "ChunkRenderElem.h"
 #include "../../../entity/Entity.h"

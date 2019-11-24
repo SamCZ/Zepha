@@ -12,7 +12,7 @@
 #include <assimp/postprocess.h>
 
 #include <glm/glm.hpp>
-#include <glm/ext.hpp>
+#include <glm/gtx/transform.hpp>
 #include "ModelBone.h"
 #include "ModelAnimation.h"
 #include "../graph/meshtypes/EntityMesh.h"
