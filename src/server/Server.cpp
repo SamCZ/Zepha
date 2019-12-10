@@ -16,6 +16,8 @@ Server::Server(const std::string& path, unsigned short port, const std::string& 
     world.init();
     config.init();
 
+    std::cout << Log::info << "Server started successfully." << Log::endl;
+    std::cout << Log::info << "Listening for clients." << Log::endl;
     while (alive) update();
 }
 

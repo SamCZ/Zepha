@@ -37,7 +37,7 @@ void NetHandler::initServer(unsigned short port, short max_clients) {
         return;
     }
 
-    std::cout << Log::info << "Server Started. Listening for clients." << Log::endl;
+    std::cout << Log::info << "Starting Zepha Server." << Log::endl;
 }
 
 void NetHandler::initClient(Address hostAddress, int attempts, int timeout) {

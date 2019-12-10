@@ -28,13 +28,13 @@ std::map<std::string, std::string> parseArgs(int argc, char* argv[]) {
         std::string first = (equals == -1) ? arg : arg.substr(0, equals);
 
         if (args.count(first)) {
-            std::cout << Log::err << "Duplicate argument " << first << "." << Log::endl;
+            std::cerr << "Duplicate argument '" << first << "'" << std::endl;
             exit(1);
         }
         if (equals == -1) args.emplace(first, "");
         else {
             if (equals == arg.length() - 1) {
-                std::cout << Log::err << "Empty equals-assignment " << first << "." << Log::endl;
+                std::cerr << "Empty argument '" << first << "'" << std::endl;
                 exit(1);
             }
             args.emplace(first, arg.substr(equals + 1, arg.length()));
@@ -75,6 +75,18 @@ int StartGame(int argc, char* argv[]) {
             }
         }
     }
+
+    // Obligatory ASCII Art is obligatory.
+    Log::clear();
+    std::cout << "\n"
+                 "\t\t▒███████▒▓█████  ██▓███   ██░ ██  ▄▄▄      \n"
+                 "\t\t▒ ▒ ▒ ▄▀░▓█   ▀ ▓██░  ██▒▓██░ ██▒▒████▄    \n"
+                 "\t\t░ ▒ ▄▀▒░ ▒███   ▓██░ ██▓▒▒██▀▀██░▒██  ▀█▄  \n"
+                 "\t\t  ▄▀▒   ░▒▓█  ▄ ▒██▄█▓▒ ▒░▓█ ░██ ░██▄▄▄▄██ \n"
+                 "\t\t▒███████▒░▒████▒▒██▒ ░  ░░▓█▒░██▓ ▓█   ▓██▒\n"
+                 "\t\t░▒▒ ▓░▒░▒░░ ▒░ ░▒▓▒░ ░  ░ ▒ ░░▒░▒ ▒▒   ▓▒█░\n"
+                 "\t\t░ ▒ ▒ ░ ▒ ░ ░  ░░▒ ░      ▒ ░▒░ ░  ▒   ▒▒ ░\n"
+                 "\t\t  ░ ░   ░   ░   ░░        ░  ░     ░   ▒   \n" << std::endl;
 
     //Start the game
     switch (mode) {

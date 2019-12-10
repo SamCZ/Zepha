@@ -20,7 +20,9 @@ Client::Client(uptr<LocalServerInstance> localServer, glm::vec2 dimensions) :
 }
 
 void Client::init() {
-    if (localServer != nullptr) localServer->start();
+    std::cout << Log::info << "Starting Zepha Client." << Log::endl;
+
+//    if (localServer != nullptr) localServer->start();
 
     std::unique_ptr<Scene> scene = std::make_unique<MainMenuScene>(state);
     sceneManager.setScene(std::move(scene));
