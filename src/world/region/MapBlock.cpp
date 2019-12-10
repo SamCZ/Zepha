@@ -7,7 +7,7 @@
 MapBlock::MapBlock(glm::vec3 pos) :
     pos(pos) {
 
-    for (int i = 0; i < arrayLength; i++) {
+    for (int i = 0; i < 64; i++) {
         blockChunks[i] = nullptr;
     }
 }

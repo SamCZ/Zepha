@@ -17,7 +17,5 @@ public:
     void set(int index, std::shared_ptr<MapBlock> block);
 private:
     glm::vec3 pos {};
-
-    const static int arrayLength = std::pow(Space::REGION_SIZE, 3);
-    std::array<std::shared_ptr<MapBlock>, arrayLength> mapBlocks {};
+    std::array<std::shared_ptr<MapBlock>, 64> mapBlocks {};
 };
