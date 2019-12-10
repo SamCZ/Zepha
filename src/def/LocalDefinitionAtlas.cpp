@@ -4,18 +4,16 @@
 
 #include "LocalDefinitionAtlas.h"
 
-LocalDefinitionAtlas::LocalDefinitionAtlas() {
-    BlockModel nullModel;
-    nullModel.visible = false,
-    nullModel.culls = false;
-
+LocalDefinitionAtlas::LocalDefinitionAtlas(TextureAtlas& atlas) {
     //Invalid Node
-    BlockDef* invalid = new BlockDef("invalid", 0, "Invalid (you broke the game!)", nullModel, true, {});
+    BlockModel invalidModel = BlockModel::createCube({atlas.getTextureRef("_missing")});
+    BlockDef* invalid = new BlockDef("invalid", 0, "Invalid (you broke the game!)", invalidModel, true, {{}}, {{}});
     defs.push_back(invalid);
     defTable.insert({"invalid", 0});
 
     //Air Node
-    BlockDef* air = new BlockDef("air", 0, "Air", nullModel, false, {});
+    BlockModel nullModel {};
+    BlockDef* air = new BlockDef("air", 0, "Air", nullModel, false, {}, {});
     defs.push_back(air);
     defTable.insert({"air", 1});
 }

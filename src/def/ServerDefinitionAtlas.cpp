@@ -5,16 +5,15 @@
 #include "ServerDefinitionAtlas.h"
 
 ServerDefinitionAtlas::ServerDefinitionAtlas() {
-    BlockModel nullModel;
-    nullModel.visible = false,
-    nullModel.culls = false;
 
     //Invalid Node
-    BlockDef* invalid = new BlockDef("invalid", INVALID, "Invalid (you broke the game!)", nullModel, true, {});
+    BlockModel invalidModel = BlockModel::createCube({});
+    BlockDef* invalid = new BlockDef("invalid", INVALID, "Invalid (you broke the game!)", invalidModel, true, {{}}, {{}});
     registerDef(invalid);
 
     //Air Node
-    BlockDef* air = new BlockDef("air", AIR, "Air", nullModel, false, {});
+    BlockModel nullModel {};
+    BlockDef* air = new BlockDef("air", AIR, "Air", nullModel, false, {}, {});
     registerDef(air);
 }
 

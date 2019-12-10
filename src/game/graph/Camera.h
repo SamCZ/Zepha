@@ -46,7 +46,7 @@ private:
     glm::mat4 orthographicMatrix;
 
     //Perspective Matrix Properties
-    float fov = 70.0f;
+    float fov = 80.0f;
     float ratio;
     float nearClip = 0.1f;
     float farClip = 1000.0f;

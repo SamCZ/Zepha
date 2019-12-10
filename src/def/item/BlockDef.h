@@ -15,8 +15,8 @@
 class BlockDef : public ItemDef {
 public:
     BlockDef() = default;
-    BlockDef(const std::string& identifier, const std::string& name, const BlockModel& model, bool solid, const std::vector<SelectionBox>& sBoxes);
-    BlockDef(const std::string& identifier, unsigned int index, const std::string& name, const BlockModel& model, bool solid, const std::vector<SelectionBox>& sBoxes);
+    BlockDef(const std::string& identifier, const std::string& name, const BlockModel& model, bool solid, const std::vector<SelectionBox>& sBoxes, const std::vector<SelectionBox>& cBoxes);
+    BlockDef(const std::string& identifier, unsigned int index, const std::string& name, const BlockModel& model, bool solid, const std::vector<SelectionBox>& sBoxes, const std::vector<SelectionBox>& cBoxes);
 
     void createModel();
 
@@ -25,6 +25,7 @@ public:
     bool solid = false;
 
     std::vector<SelectionBox> sBoxes;
+    std::vector<SelectionBox> cBoxes;
     sptr<Model> entityModel = std::make_shared<Model>();
 
     std::unordered_map<Callback, sol::function, Util::EnumClassHash> callbacks {};

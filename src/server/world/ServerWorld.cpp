@@ -5,12 +5,9 @@
 #include <algorithm>
 #include <glm/glm.hpp>
 #include "ServerWorld.h"
-#include "../../util/net/PacketChannel.h"
-#include "../../util/Timer.h"
-#include "../../util/Util.h"
 
-const static int MB_GEN_H = 3;
-const static int MB_GEN_V = 3;
+const static int MB_GEN_H = 2;
+const static int MB_GEN_V = 2;
 
 ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& clients) :
     seed(seed),
@@ -145,17 +142,36 @@ void ServerWorld::sendChunk(const glm::vec3& pos, ServerClient &peer) {
 }
 
 void ServerWorld::sendMapBlock(const glm::vec3& pos, ServerClient &peer) {
-    //TODO: Make this a real function that sends an entire mapblock packet
     unsigned long long mapBlockIntegrity = dimension.getMapBlockIntegrity(pos);
     if (peer.getPlayer().getMapBlockIntegrity(pos) < mapBlockIntegrity) {
         auto mapBlock = dimension.getMapBlock(pos);
         assert(mapBlock != nullptr);
 
-        for (unsigned short i = 0; i < 63; i++) {
+        for (unsigned short i = 0; i < 64; i++) {
             sendChunk((*mapBlock)[i], peer);
         }
     }
 }
+
+//void ServerWorld::sendMapBlock(const glm::vec3& pos, ServerClient &peer) {
+//    unsigned long long mapBlockIntegrity = dimension.getMapBlockIntegrity(pos);
+//    if (peer.getPlayer().getMapBlockIntegrity(pos) < mapBlockIntegrity) {
+//        Packet r(PacketType::MAPBLOCK);
+//
+//        auto mapBlock = dimension.getMapBlock(pos);
+//        assert(mapBlock != nullptr);
+//
+//        for (unsigned short i = 0; i < 64; i++) {
+//            auto chunk = (*mapBlock)[i];
+//            auto serialized = chunk->serialize();
+//
+//            Serializer::encodeIntVec3(r.data, chunk->pos);
+//            Serializer::encodeString(r.data, serialized);
+//        }
+//
+//        r.sendTo(peer.getPeer(), PacketChannel::CHUNK);
+//    }
+//}
 
 void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {
     auto oldBlock = getBlock(pos);

@@ -21,6 +21,7 @@ enum class PacketType {
     //Ingame Data Types
     PLAYER,
     CHUNK,
+    MAPBLOCK,
     ENTITY_INFO,
     SERVER_INFO,
     BLOCK_SET,

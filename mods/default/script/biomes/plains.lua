@@ -3,8 +3,8 @@ zepha.register_biome("zeus:default:plains", {
     humidity = 80/100,
     roughness = 20/100,
     blocks = {
-        top = "zeus:default:grass",
-        soil = "zeus:default:dirt",
+        top = "zeus:default:tallgrass_1",
+        soil = "zeus:default:grass",
         rock = "zeus:default:stone"
     },
     biome_tint = "#aaed45"

@@ -125,6 +125,7 @@ void LocalLuaParser::update(double delta, bool* keys) {
         manager.triggerKeybinds();
         this->delta -= 0.05f;
     }
+
     manager.update(keys);
 }
 

@@ -20,7 +20,7 @@ BlockChunk::BlockChunk(const std::array<unsigned int, 4096>& blocks, const std::
     pos(pos) {
 
     for (unsigned int block : this->blocks) {
-        if (block > DefinitionAtlas::AIR) {
+        if (block != DefinitionAtlas::AIR) {
             empty = false;
             fullBlocks++;
         }
@@ -193,7 +193,7 @@ void BlockChunk::mgRegenEmpty() {
     empty = true;
 
     for (unsigned int block : this->blocks) {
-        if (block > DefinitionAtlas::AIR) {
+        if (block != DefinitionAtlas::AIR) {
             empty = false;
             fullBlocks++;
         }

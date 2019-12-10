@@ -1,11 +1,13 @@
 cmake_minimum_required (VERSION 3.12 FATAL_ERROR)
-set (CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-set (PROJECT_NAME "Zepha")
-set (MAIN_EXEC_NAME "Zepha")
-set (TEST_EXEC_NAME "ZephaTest")
+set(PROJECT_NAME "Zepha")
+set(MAIN_EXEC_NAME "Zepha")
+set(TEST_EXEC_NAME "ZephaTest")
 
-project (${PROJECT_NAME})
+project(${PROJECT_NAME})
 
 find_path(GLEW_HEADERS GL/glew.h)
 find_path(GLFW_HEADERS GLFW/glfw3.h)
@@ -55,9 +57,9 @@ include_directories(
 )
 
 
-add_subdirectory (src)
-add_executable (${MAIN_EXEC_NAME} src/Main.cpp)
-target_link_libraries (${MAIN_EXEC_NAME} Zepha_Core)
+add_subdirectory(src)
+add_executable(${MAIN_EXEC_NAME} src/Main.cpp)
+target_link_libraries(${MAIN_EXEC_NAME} Zepha_Core)
 
 target_include_directories(${MAIN_EXEC_NAME} PRIVATE ${GLFW_HEADERS})
 # Load Libraries

@@ -6,7 +6,7 @@
 #include "../../../util/Ray.h"
 
 Player::Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer) :
-    Collidable(world, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
+    Collidable(world, defs, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
 
     defs(defs),
     renderer(renderer),
@@ -38,7 +38,7 @@ void Player::moveAndLook(InputManager &input, double delta, double deltaX, doubl
     //Position movement
     bool sprinting = input.isKeyDown(GLFW_KEY_LEFT_CONTROL);
 
-    double moveSpeed = BASE_MOVE_SPEED * delta * (sprinting ? 1.5 : 1);
+    double moveSpeed = BASE_MOVE_SPEED * delta * (sprinting ? 1.6 : 1);
     float friction = 0.3f;
 
     if (flying) {
@@ -66,7 +66,7 @@ void Player::moveAndLook(InputManager &input, double delta, double deltaX, doubl
         if (input.isKeyDown(GLFW_KEY_LEFT_SHIFT)) mod.y -= 1;
     }
     else {
-        if (!isOnGround()) vel.y = std::fmax(vel.y - 0.01, -3);
+        if (!isOnGround()) vel.y = std::fmax(vel.y - 0.0085, -3);
         else if (vel.y < 0) vel.y = 0;
     }
 
@@ -82,7 +82,7 @@ void Player::moveAndLook(InputManager &input, double delta, double deltaX, doubl
         vel.z = velFlat.z;
     }
     else {
-        //If flying factor in verticle mod values.
+        //If flying factor in vertical mod values.
         vel = vel * (1.0f-friction) + mod * friction;
     }
 
@@ -98,7 +98,7 @@ void Player::moveAndLook(InputManager &input, double delta, double deltaX, doubl
 
     pitch = std::fmin(std::fmax(pitch, -90), 90);
 
-    moveCollide();
+    moveCollide(isOnGround() ? 0.6 : vel.y <= 0 ? 0.1 : 0);
     updateCamera();
 }
 

@@ -8,16 +8,17 @@
 
 class Collidable {
 public:
-    Collidable(LocalWorld& world, const SelectionBox& collisionBox);
+    Collidable(LocalWorld& world, LocalDefs& defs, const SelectionBox& collisionBox);
 
-    void moveCollide();
+    void moveCollide(float stepUpAmount = 0);
     bool isOnGround();
 
     glm::vec3 pos {};
     glm::vec3 vel {};
 protected:
     LocalWorld& world;
+    LocalDefs& defs;
     SelectionBox collisionBox {};
 private:
-    bool collidesAt(const glm::vec3& pos);
+    bool collidesAt(glm::vec3& pos, float stepUpMax = 0);
 };

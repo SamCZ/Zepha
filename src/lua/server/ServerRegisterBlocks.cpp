@@ -191,7 +191,7 @@ ServerRegisterBlocks::ServerRegisterBlocks(sol::table& core, ServerDefs &defs) {
         lowdefBlockModel.culls = ldRender;
         lowdefBlockModel.visible = ldRender;
 
-        BlockDef* blockDef = new BlockDef(identifier, defs.defs().size(), *nameOpt, lowdefBlockModel, solid, std::move(sBoxes));
+        BlockDef* blockDef = new BlockDef(identifier, defs.defs().size(), *nameOpt, lowdefBlockModel, solid, std::move(sBoxes), {});
 
         //Bind Callbacks
         auto on_place = blockTable.get<sol::optional<sol::function>>("on_place");

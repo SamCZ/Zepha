@@ -11,7 +11,7 @@
 
 class LocalDefinitionAtlas : public DefinitionAtlas {
 public:
-    LocalDefinitionAtlas();
+    LocalDefinitionAtlas(TextureAtlas& atlas);
     void registerDef(ItemDef* def) override;
 
     void setIdentifiers(std::vector<std::string>& identifiers);

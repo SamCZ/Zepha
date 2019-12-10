@@ -20,6 +20,7 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& core, LocalDefs &defs) {
         auto modelStrOpt  = blockTable.get<sol::optional<std::string>>("model");
         auto texturesOpt  = blockTable.get<sol::optional<sol::table>> ("textures");
         auto selectionOpt = blockTable.get<sol::optional<sol::table>> ("selection_box");
+        auto collisionOpt = blockTable.get<sol::optional<sol::table>> ("collision_box");
         auto ldTexturesOpt= blockTable.get<sol::optional<sol::table>> ("lowdef_textures");
 
         if (!nameOpt) throw identifier + " is missing name property!";
@@ -42,9 +43,19 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& core, LocalDefs &defs) {
                 sol::table s = pair.second;
                 sBoxes.push_back({{s[1], s[2], s[3]}, {s[4], s[5], s[6]}});
             }
-        } else {
-            sBoxes.push_back({{0, 0, 0}, {1, 1, 1}});
         }
+        else sBoxes.push_back({{0, 0, 0}, {1, 1, 1}});
+
+        //Create a vector of collision boxes
+        std::vector<SelectionBox> cBoxes;
+
+        if (collisionOpt) {
+            for (auto pair : *collisionOpt) {
+                sol::table s = pair.second;
+                cBoxes.push_back({{s[1], s[2], s[3]}, {s[4], s[5], s[6]}});
+            }
+        }
+        else cBoxes.push_back({{0, 0, 0}, {1, 1, 1}});
 
         //Create a block model from the above properties
         sol::table model = *modelOpt;
@@ -205,14 +216,21 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& core, LocalDefs &defs) {
 
         std::vector<std::shared_ptr<AtlasRef>> refs;
         for (auto i = 0; i < lowdef_textures.size(); i++) {
-            refs.push_back(defs.textures().getTextureRef(lowdef_textures[i]));
+            //TODO: More robust solution needed.
+            std::string texture = lowdef_textures[i];
+            bool biometint = false;
+            if (strncmp(texture.data(), "biometint(", 10) == 0) {
+                biometint = true;
+                texture = texture.substr(10, texture.length() - 11);
+            }
+            refs.push_back(defs.textures().getTextureRef(texture));
         }
 
         BlockModel lowdefBlockModel = BlockModel::createCube(refs);
         lowdefBlockModel.culls = ldRender;
         lowdefBlockModel.visible = ldRender;
 
-        BlockDef* blockDef = new BlockDef(identifier, defs.defs().size(), *nameOpt, blockModel, solid, std::move(sBoxes));
+        BlockDef* blockDef = new BlockDef(identifier, defs.defs().size(), *nameOpt, blockModel, solid, std::move(sBoxes), std::move(cBoxes));
         blockDef->createModel();
 
         //Bind Callbacks

@@ -11,7 +11,8 @@ LocalDefs::LocalDefs(const std::string& path) :
     luaApi(),
     biomes(),
     tex_path(path),
-    textureAtlas(2048) {
+    textureAtlas(2048),
+    blockAtlas(textureAtlas) {
 
     textureAtlas.loadDirectory(tex_path);
 }

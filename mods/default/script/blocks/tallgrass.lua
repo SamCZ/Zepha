@@ -5,7 +5,7 @@ for i=1,5,1 do
         name = "Tall Grass",
         model = "base:cross_plant",
         textures = {
-            "zeus:default:tallgrass_" .. i,
+            "biometint(zeus:default:tallgrass_"..i..")",
         },
         lowdef_render = false,
         selection_box = {

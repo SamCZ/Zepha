@@ -17,16 +17,16 @@ void BiomeAtlas::generateVoronoi() {
     }
     voronoi.setPoints(points);
 
-    voronoi.setColorValues({{0, 0, 0}, {0.5, 0.5, 0.5}, {1, 1, 1}, {0.7, 0.7, 0.7}, {0.3, 0.3, 0.3}, {0.15, 0.15, 0.15}});
-    voronoi.generateImage(0);
-    voronoi.generateImage(7);
-    voronoi.generateImage(15);
-    voronoi.generateImage(23);
-    voronoi.generateImage(31);
-    voronoi.generateImage(39);
-    voronoi.generateImage(47);
-    voronoi.generateImage(55);
-    voronoi.generateImage(63);
+//    voronoi.setColorValues({{0, 0, 0}, {0.5, 0.5, 0.5}, {1, 1, 1}, {0.7, 0.7, 0.7}, {0.3, 0.3, 0.3}, {0.15, 0.15, 0.15}});
+//    voronoi.generateImage(0);
+//    voronoi.generateImage(7);
+//    voronoi.generateImage(15);
+//    voronoi.generateImage(23);
+//    voronoi.generateImage(31);
+//    voronoi.generateImage(39);
+//    voronoi.generateImage(47);
+//    voronoi.generateImage(55);
+//    voronoi.generateImage(63);
 }
 
 BiomeDef& BiomeAtlas::getBiomeAt(float temperature, float humidity, float roughness) {
