@@ -47,8 +47,8 @@ set(ZEPHA_SRC
     game/graph/scene/SceneManager.h
     game/graph/scene/Scene.h
     game/ClientState.h
-    game/scene/MenuScene.cpp
-    game/scene/MenuScene.h
+        game/scene/MainMenuScene.cpp
+        game/scene/MainMenuScene.h
     server/Server.cpp
     server/Server.h
     util/net/Packet.cpp

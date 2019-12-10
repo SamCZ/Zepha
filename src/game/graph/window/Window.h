@@ -22,9 +22,10 @@ public:
     glm::vec2 getSize();
     bool resized;
 
-    void lockMouse(bool lock);
     bool shouldClose();
 
+    glm::ivec2 getMousePos();
+    void lockMouse(bool lock);
     double getDeltaX();
     double getDeltaY();
 

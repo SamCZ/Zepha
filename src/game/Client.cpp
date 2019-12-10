@@ -22,7 +22,7 @@ Client::Client(uptr<LocalServerInstance> localServer, glm::vec2 dimensions) :
 void Client::init() {
     if (localServer != nullptr) localServer->start();
 
-    std::unique_ptr<Scene> scene = std::make_unique<MenuScene>(state);
+    std::unique_ptr<Scene> scene = std::make_unique<MainMenuScene>(state);
     sceneManager.setScene(std::move(scene));
 
     while (!renderer.getWindow().shouldClose()) loop();
@@ -31,10 +31,10 @@ void Client::init() {
 void Client::loop() {
     Timer t("Client Loop");
 
-    if (!startedGame && timeElapsed > 2.5) {
+    if (state.desiredState == "connect") {
+        state.desiredState = "this";
         std::unique_ptr<Scene> scene = std::make_unique<ConnectScene>(state, addr);
         sceneManager.setScene(std::move(scene));
-        startedGame = true;
     }
 
     if (state.desiredState == "game") {

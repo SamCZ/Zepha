@@ -25,7 +25,7 @@ glm::vec4 GUIComponent::getPadding() {
     return padding;
 }
 
-void GUIComponent::setPos(glm::vec2 pos) {
+void GUIComponent::setPos(glm::ivec2 pos) {
     this->pos = pos;
     if (parent != nullptr) {
         glm::vec2 parentPos = parent->entity.getPos();
@@ -38,7 +38,7 @@ void GUIComponent::setPos(glm::vec2 pos) {
     }
 }
 
-glm::vec2 GUIComponent::getPos() {
+glm::ivec2 GUIComponent::getPos() {
     return pos;
 }
 
@@ -48,7 +48,13 @@ void GUIComponent::add(std::shared_ptr<GUIComponent> component) {
     children.push_back(std::move(component));
 }
 
-void GUIComponent::remove(std::string key) {
+void GUIComponent::insert(unsigned int index, std::shared_ptr<GUIComponent> component) {
+    component->parent = this;
+    component->updatePos();
+    children.insert(std::next(children.begin(), index), std::move(component));
+}
+
+void GUIComponent::remove(const std::string& key) {
     for (auto it = children.cbegin(); it != children.cend(); it++) {
         if (it->get()->key == key) {
             children.erase(it);
@@ -89,4 +95,34 @@ void GUIComponent::updatePos() {
     for (const auto& child : children) {
         child->updatePos();
     }
+}
+
+bool GUIComponent::mouseActivity(glm::ivec2 pos) {
+    for (auto child = children.rbegin(); child != children.rend(); ++child) {
+        if ((*child)->mouseActivity(pos - (*child)->getPos())) return true;
+    }
+    if (pos.x >= 0 && pos.y >= 0 && pos.x <= scale.x && pos.y <= scale.y) {
+//        std::cout << key << std::endl; //TODO: Hover states
+        return true;
+    }
+    return false;
+}
+
+bool GUIComponent::triggerClick(glm::ivec2 pos) {
+    for (auto child = children.rbegin(); child != children.rend(); ++child) {
+        if ((*child)->triggerClick(pos - (*child)->getPos())) return true;
+    }
+    if (pos.x >= 0 && pos.y >= 0 && pos.x <= scale.x && pos.y <= scale.y && cb != nullptr) {
+        cb();
+        return true;
+    }
+    return false;
+}
+
+void GUIComponent::setClickCallback(std::function<void()> cb) {
+    this->cb = cb;
+}
+
+const std::string &GUIComponent::getKey() {
+    return key;
 }

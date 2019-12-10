@@ -20,10 +20,15 @@ public:
     virtual void setPadding(glm::vec4 padding);
     virtual glm::vec4 getPadding();
 
-    virtual void setPos(glm::vec2 pos);
-    virtual glm::vec2 getPos();
+    virtual void setPos(glm::ivec2 pos);
+    virtual glm::ivec2 getPos();
+
+    bool mouseActivity(glm::ivec2 pos);
+    bool triggerClick(glm::ivec2 pos);
+    void setClickCallback(std::function<void()> cb);
 
     void add(std::shared_ptr<GUIComponent> component);
+    void insert(unsigned int index, std::shared_ptr<GUIComponent> component);
     template<class T> std::shared_ptr<T> get(const std::string &key) {
         for (auto &it : children) {
             if (it.get()->key == key) {
@@ -31,8 +36,10 @@ public:
             }
         }
     };
-    void remove(std::string key);
+    void remove(const std::string& key);
     void empty();
+
+    const std::string& getKey();
 
     void setVisible(bool visible) override;
     void draw(Renderer& renderer) override;
@@ -41,10 +48,12 @@ protected:
     GUIComponent* parent = nullptr;
     std::list<std::shared_ptr<GUIComponent>> children;
 
-    glm::vec2 pos {};
+    glm::ivec2 pos {};
     glm::vec2 scale {};
     glm::vec4 padding {};
     bool visible = true;
+
+    std::function<void()> cb = nullptr;
 
     GuiEntity entity;
 private:

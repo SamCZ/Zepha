@@ -9,7 +9,7 @@
 #include "graph/scene/SceneManager.h"
 #include "../util/Timer.h"
 #include "scene/GameScene.h"
-#include "scene/MenuScene.h"
+#include "scene/MainMenuScene.h"
 #include "scene/ConnectScene.h"
 #include "../server/LocalServerInstance.h"
 
@@ -32,6 +32,5 @@ private:
     SceneManager sceneManager;
 
     double timeElapsed = 0.0f;
-    bool startedGame = false;
 };
 

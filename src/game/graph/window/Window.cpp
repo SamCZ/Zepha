@@ -167,3 +167,9 @@ void Window::lockMouse(bool lock) {
     deltaX = 0;
     deltaY = 0;
 }
+
+glm::ivec2 Window::getMousePos() {
+    double xPos, yPos;
+    glfwGetCursorPos(mainWindow, &xPos, &yPos);
+    return glm::ivec2 {static_cast<int>(xPos), static_cast<int>(yPos)};
+}

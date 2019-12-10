@@ -9,9 +9,9 @@
 #include "../hud/components/basic/GUIText.h"
 #include "../hud/components/basic/GUIContainer.h"
 
-class MenuScene : public Scene {
+class MainMenuScene : public Scene {
 public:
-    explicit MenuScene(ClientState& state);
+    explicit MainMenuScene(ClientState& state);
 
     void update() override;
     void draw() override;
@@ -19,6 +19,10 @@ public:
     void cleanup() override {};
 
 private:
+    const int GS = 4;
     GUIContainer components;
+
+    bool showingSubgame = true;
+    std::shared_ptr<GUIRect> subgame;
 };
 
