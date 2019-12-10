@@ -4,15 +4,15 @@
 
 #include "Server.h"
 
-Server::Server(const std::string& path, unsigned short port) :
-    defs(),
+Server::Server(const std::string& path, unsigned short port, const std::string& subgame) :
+    defs(subgame, path),
     clientList(),
     world(10, defs, clientList),
     port(port),
     handler(port, 32),
     config(defs) {
 
-    defs.init(world, path);
+    defs.init(world);
     world.init();
     config.init();
 

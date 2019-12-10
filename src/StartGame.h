@@ -8,21 +8,17 @@
 #include "server/Server.h"
 #include "util/Log.h"
 
+enum class Mode { INVALID, CLIENT, SERVER };
+
 uint64_t constexpr mix(char m, uint64_t s) {
     return ((s<<7) + ~(s>>3)) + ~m;
 }
+
 uint64_t constexpr hashStr(const char * m) {
     return (*m) ? mix(*m, hashStr(m+1)) : 0;
 }
 
-int StartGame(int argc, char* argv[]) {
-    Address addr {"127.0.0.1", 32000};
-    std::string path = argv[0];
-
-    enum class Mode {
-            NONE, CLIENT, SERVER, LOCAL_SERVER
-    };
-
+std::map<std::string, std::string> parseArgs(int argc, char* argv[]) {
     //Collect arguments into `args` map
     std::map<std::string, std::string> args;
     for (int i = 1; i < argc; i++) {
@@ -33,22 +29,30 @@ int StartGame(int argc, char* argv[]) {
 
         if (args.count(first)) {
             std::cout << Log::err << "Duplicate argument " << first << "." << Log::endl;
-            return -1;
+            exit(1);
         }
         if (equals == -1) args.emplace(first, "");
         else {
             if (equals == arg.length() - 1) {
                 std::cout << Log::err << "Empty equals-assignment " << first << "." << Log::endl;
-                return -1;
+                exit(1);
             }
             args.emplace(first, arg.substr(equals + 1, arg.length()));
         }
     }
 
+    return args;
+}
+
+int StartGame(int argc, char* argv[]) {
+    std::string path = argv[0];
+
+    Address addr {"127.0.0.1", 32000};
     Mode mode = Mode::CLIENT;
+    std::string subgame = "";
 
     //Parse the arguments map
-    for (auto arg : args) {
+    for (auto arg : parseArgs(argc, argv)) {
         switch (hashStr(arg.first.c_str())) {
             default: {
                 std::cout << Log::err << "Invalid argument " << arg.first << "." << Log::endl;
@@ -57,7 +61,6 @@ int StartGame(int argc, char* argv[]) {
             case hashStr("--mode"): {
                 if      (arg.second == "client") mode = Mode::CLIENT;
                 else if (arg.second == "server") mode = Mode::SERVER;
-                else if (arg.second == "local" ) mode = Mode::LOCAL_SERVER;
                 else std::cout << Log::err << "Invalid mode argument." << Log::endl;
                 break;
             }
@@ -66,6 +69,9 @@ int StartGame(int argc, char* argv[]) {
             }
             case hashStr("--address"): {
                 addr.host = arg.second;
+            }
+            case hashStr("--subgame"): {
+                subgame = arg.second;
             }
         }
     }
@@ -80,13 +86,13 @@ int StartGame(int argc, char* argv[]) {
             Client c(addr, {1366, 768});
             break;
         }
-        case Mode::LOCAL_SERVER: {
-            auto localServer = std::make_unique<LocalServerInstance>(path, addr.port);
-            Client c(std::move(localServer), {1366, 768});
-            break;
-        }
+//        case Mode::LOCAL_SERVER: {
+//            auto localServer = std::make_unique<LocalServerInstance>(path, addr.port);
+//            Client c(std::move(localServer), {1366, 768});
+//            break;
+//        }
         case Mode::SERVER: {
-            Server s(path, addr.port);
+            Server s(path, addr.port, subgame);
             break;
         }
     }

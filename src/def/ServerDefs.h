@@ -14,7 +14,8 @@ class ServerWorld;
 
 class ServerDefs {
 public:
-    void init(ServerWorld& world, const std::string& path);
+    ServerDefs(const std::string& subgame, const std::string& execPath);
+    void init(ServerWorld& world);
 
     ServerDefinitionAtlas& defs();
     ServerLuaParser& lua();
@@ -26,6 +27,7 @@ public:
     ~ServerDefs() = default;
 private:
     double delta = 0;
+    std::string subgamePath = "";
 
     AssetStorage assetStorage;
     ServerDefinitionAtlas blockAtlas;

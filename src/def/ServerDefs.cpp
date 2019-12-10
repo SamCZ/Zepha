@@ -4,10 +4,23 @@
 
 #include "ServerDefs.h"
 
-void ServerDefs::init(ServerWorld &world, const std::string& path) {
-    size_t exec = path.find_last_of('/');
-    std::string folderPath = path.substr(0, exec + 1);
-    luaApi.init(*this, world, folderPath);
+ServerDefs::ServerDefs(const std::string& subgame, const std::string& execPath) {
+    size_t exec = execPath.find_last_of('/');
+    std::string gamePath = execPath.substr(0, exec + 1);
+    subgamePath += "subgames/" + subgame + "/";
+
+    if (subgame.empty()) {
+        std::cout << Log::err << "No subgame specified." << Log::endl;
+        exit(1);
+    }
+    else if (!cf_file_exists(subgamePath.data())) {
+        std::cout << Log::err << "Subgame '" << subgame << "' does not exist." << Log::endl;
+        exit(1);
+    }
+}
+
+void ServerDefs::init(ServerWorld &world) {
+    luaApi.init(*this, world, subgamePath);
 }
 
 ServerDefinitionAtlas& ServerDefs::defs() {

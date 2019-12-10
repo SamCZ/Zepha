@@ -20,7 +20,7 @@
 
 class Server {
 public:
-    explicit Server(const std::string& path, unsigned short port);
+    explicit Server(const std::string& path, unsigned short port, const std::string& subgame);
 
     void update();
     void handlePlayerPacket(ServerClient& client, Packet& p);
