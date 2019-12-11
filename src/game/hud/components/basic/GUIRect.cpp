@@ -42,7 +42,7 @@ void GUIRect::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 tl, glm::vec4
 void GUIRect::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<AtlasRef> texture) {
     this->scale = scale;
     this->padding = padding;
-    this->texture = std::move(texture);
+    this->texture = texture;
 
     auto mesh = new GuiMesh();
     mesh->create({

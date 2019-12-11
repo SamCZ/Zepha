@@ -65,7 +65,7 @@ void GameScene::draw() {
     Camera& camera = renderer.getCamera();
 
     renderer.beginChunkDeferredCalls();
-    renderer.enableTexture(&defs.textures.getAtlasTexture());
+    renderer.enableTexture(&defs.textures.atlasTexture);
 
     drawCalls = world.renderChunks(renderer);
 
@@ -77,7 +77,7 @@ void GameScene::draw() {
 
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
-    renderer.enableTexture(&defs.textures.getAtlasTexture());
+    renderer.enableTexture(&defs.textures.atlasTexture);
 
     player.drawViginette(renderer);
     debugGui.draw(renderer);

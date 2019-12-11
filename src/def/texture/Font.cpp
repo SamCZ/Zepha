@@ -6,7 +6,7 @@
 
 Font::Font(TextureAtlas& atlas, std::shared_ptr<AtlasRef> tex) :
     fontTex(std::move(tex)),
-    atlasSize(atlas.getAtlasSize()) {
+    atlasSize(atlas.pixelSize) {
 
     getCharWidths(atlas);
 }
@@ -21,7 +21,7 @@ uint Font::getCharWidth(char c) {
 }
 
 void Font::getCharWidths(TextureAtlas &atlas) {
-    const unsigned char* data = atlas.getAtlasData();
+    const unsigned char* data = atlas.atlasData;
 
     charWidths[0] = 2;
 

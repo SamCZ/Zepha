@@ -5,47 +5,47 @@
 #pragma once
 
 #include <map>
+#include <cmath>
 #include <memory>
 #include <vector>
-#include <ctgmath>
-#include <glm/vec2.hpp>
+#include <algorithm>
 #include <GL/glew.h>
+#include <glm/vec2.hpp>
 #include <cute_files/cute_files.h>
-#include "../../util/Log.h"
-#include "../../game/graph/Texture.h"
+
 #include "AtlasRef.h"
+#include "RawTexData.h"
+#include "../../util/Log.h"
 #include "../../util/Pointer.h"
+#include "../../game/graph/Texture.h"
 
 class TextureAtlas {
 public:
     TextureAtlas() = default;
     explicit TextureAtlas(unsigned int width, unsigned int height = 0);
+    void loadDirectory(const std::string& dirStr);
 
-    void loadDirectory(std::string dirStr);
     void update();
-
-    Texture& getAtlasTexture();
-    const unsigned char* getAtlasData();
-    glm::vec2 getAtlasSize();
 
     glm::vec4 sampleTexturePixel(const sptr<AtlasRef>& atlasRef, glm::vec2 pixel);
 
-    std::shared_ptr<AtlasRef> addImage(unsigned char *data, std::string name, bool base, int texWidth, int texHeight);
-    std::shared_ptr<AtlasRef> generateCrackImage(std::string &name, unsigned short crackLevel);
+    std::shared_ptr<AtlasRef> addImage(unsigned char *data, const std::string& name, bool base, int texWidth, int texHeight);
+    std::shared_ptr<AtlasRef> generateCrackImage(const std::string &name, unsigned short crackLevel);
 
-    std::shared_ptr<AtlasRef> getTextureRef(const std::string &name);
     std::shared_ptr<AtlasRef> operator[](const std::string& name);
 
     ~TextureAtlas();
+
+    glm::ivec2 pixelSize {};
+    glm::ivec2 tileSize {};
+
+    Texture atlasTexture {};
+    unsigned char* atlasData = nullptr;
 private:
-    struct RawTexData {
-        unsigned char* data;
-        int width;
-        int height;
-    };
+    std::shared_ptr<AtlasRef> generateTexture(std::string req);
 
-    RawTexData getSubImageBytes(std::string &name);
-
+    RawTexData getBytesOfTex(const std::string& name);
+    RawTexData getBytesAtPos(glm::ivec2 pos, glm::ivec2 dims);
     glm::vec2 findImageSpace(int w, int h);
 
     void createMissingImage();
@@ -53,15 +53,7 @@ private:
 
     void deleteImage(std::shared_ptr<AtlasRef> ref);
 
-    unsigned int pageWidth = 0;
-    unsigned int pageHeight = 0;
-    unsigned int pageTileWidth = 0;
-    unsigned int pageTileHeight = 0;
-
-    Texture t;
-    unsigned char* atlasData = nullptr;
-
-    std::vector<bool> empty;
     std::map<std::string, std::shared_ptr<AtlasRef>> textures;
+    std::vector<bool> empty;
 };
 

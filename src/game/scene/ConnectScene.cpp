@@ -235,7 +235,7 @@ void ConnectScene::draw() {
     renderer.beginChunkDeferredCalls();
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
-    renderer.enableTexture(&state.defs.textures.getAtlasTexture());
+    renderer.enableTexture(&state.defs.textures.atlasTexture);
 
     components.draw(renderer);
 

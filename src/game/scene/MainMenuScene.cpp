@@ -80,7 +80,7 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     // Subgame Buttons
 
     auto zeusButton = std::make_shared<GUIRect>("zeusButton");
-    zeusButton->create({16*GS, 16*GS}, {}, state.defs.textures["menu_flag_zeus"]);
+    zeusButton->create({16*GS, 16*GS}, {}, state.defs.textures["crop(0, 0, 16, 16, menu_flag_zeus)"]);
     zeusButton->setPos({GS, GS});
     zeusButton->setClickCallback([&](){
         if (!showingSubgame) {
@@ -91,7 +91,7 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     bottomBarElems->add(zeusButton);
 
     auto serversButton = std::make_shared<GUIRect>("serversButton");
-    serversButton->create({16*GS, 16*GS}, {}, state.defs.textures["menu_flag_multiplayer"]);
+    serversButton->create({16*GS, 16*GS}, {}, state.defs.textures["crop(0, 0, 16, 16, menu_flag_multiplayer)"]);
     serversButton->setPos({16*GS + GS*3, GS});
     serversButton->setClickCallback([&](){
         if (showingSubgame) {
@@ -102,7 +102,7 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     bottomBarElems->add(serversButton);
 
     auto contentButton = std::make_shared<GUIRect>("contentButton");
-    contentButton->create({16*GS, 16*GS}, {}, state.defs.textures["menu_flag_content"]);
+    contentButton->create({16*GS, 16*GS}, {}, state.defs.textures["crop(0, 0, 16, 16, menu_flag_content)"]);
     contentButton->setPos({16*GS*2 + GS*5, GS});
     contentButton->setClickCallback([&](){
         if (showingSubgame) {
@@ -115,7 +115,7 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     // Meta buttons
 
     auto settingsButton = std::make_shared<GUIRect>("settingsButton");
-    settingsButton->create({16*GS, 16*GS}, {}, state.defs.textures["menu_flag_settings"]);
+    settingsButton->create({16*GS, 16*GS}, {}, state.defs.textures["crop(0, 0, 16, 16, menu_flag_settings)"]);
     settingsButton->setPos({size.x - 16*GS*2 - GS*3, GS});
     settingsButton->setClickCallback([](){
         std::cout << "Settings" << std::endl;
@@ -123,7 +123,7 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     bottomBarElems->add(settingsButton);
 
     auto closeButton = std::make_shared<GUIRect>("closeButton");
-    closeButton->create({16*GS, 16*GS}, {}, state.defs.textures["menu_flag_quit"]);
+    closeButton->create({16*GS, 16*GS}, {}, state.defs.textures["crop(0, 0, 16, 16, menu_flag_quit)"]);
     closeButton->setPos({size.x - 16*GS - GS, GS});
     closeButton->setClickCallback([](){ exit(0); });
     bottomBarElems->add(closeButton);
@@ -184,7 +184,7 @@ void MainMenuScene::draw() {
     renderer.beginChunkDeferredCalls();
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
-    renderer.enableTexture(&state.defs.textures.getAtlasTexture());
+    renderer.enableTexture(&state.defs.textures.atlasTexture);
 
     components.draw(renderer);
 

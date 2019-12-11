@@ -47,8 +47,8 @@ set(ZEPHA_SRC
     game/graph/scene/SceneManager.h
     game/graph/scene/Scene.h
     game/ClientState.h
-        game/scene/MainMenuScene.cpp
-        game/scene/MainMenuScene.h
+    game/scene/MainMenuScene.cpp
+    game/scene/MainMenuScene.h
     server/Server.cpp
     server/Server.h
     util/net/Packet.cpp
@@ -91,7 +91,7 @@ set(ZEPHA_SRC
     server/world/WorldGenStream.h
     game/scene/world/WorldInterpolationStream.cpp
     game/scene/world/WorldInterpolationStream.h
-        util/Space.h
+    util/Space.h
     game/scene/world/MeshGenStream.cpp
     game/scene/world/MeshGenStream.h
     util/Vec.h
@@ -145,7 +145,7 @@ set(ZEPHA_SRC
     lua/api/modules/cSetBlock.h
     lua/api/modules/cGetBlock.h
     lua/api/modules/cRemoveBlock.h
-        lua/api/modules/cIsServer.h
+    lua/api/modules/cIsServer.h
     lua/api/modules/cPrintE.h
     lua/client/LocalRegisterBlocks.cpp
     lua/client/LocalRegisterBlocks.h
@@ -166,7 +166,7 @@ set(ZEPHA_SRC
     game/hud/components/GUIComponent.h
     game/hud/components/basic/GUIContainer.cpp
     game/hud/components/basic/GUIContainer.h
-        lua/LuaModFile.h
+    lua/LuaModFile.h
     lua/LuaMod.h
     lua/LuaModConfig.h
     server/asset/ServerTexture.h
@@ -213,8 +213,8 @@ set(ZEPHA_SRC
     game/graph/shader/EntityGeometryShader.cpp
     game/graph/shader/EntityGeometryShader.h
     game/scene/world/graph/ChunkRenderElem.h
-        world/ServerDimension.cpp
-        world/ServerDimension.h
+    world/ServerDimension.cpp
+    world/ServerDimension.h
     lua/client/LocalRegisterItems.cpp
     lua/client/LocalRegisterItems.h
     def/item/CraftItemDef.cpp
@@ -237,9 +237,9 @@ set(ZEPHA_SRC
     lua/api/modules/sRegisterKeybind.h
     lua/client/LuaInputManager.cpp
     lua/client/LuaInputManager.h
-        lua/api/type/cLuaLocalPlayer.h
-        lua/api/type/LuaLocalPlayer.cpp
-        lua/api/type/LuaLocalPlayer.h
+    lua/api/type/cLuaLocalPlayer.h
+    lua/api/type/LuaLocalPlayer.cpp
+    lua/api/type/LuaLocalPlayer.h
     game/entity/Collidable.cpp
     game/entity/Collidable.h
     game/hud/components/compound/GUIInventoryList.cpp
@@ -251,6 +251,25 @@ set(ZEPHA_SRC
     game/scene/world/ItemStack.cpp
     game/scene/world/ItemStack.h
     server/LocalServerInstance.cpp
-    server/LocalServerInstance.h game/hud/SerializedGuiElem.h util/Voronoi3D.cpp util/Voronoi3D.h lua/api/modules/sRegisterBiome.h lua/api/modules/cRegisterBiome.h lua/server/ServerRegisterBiomes.cpp lua/server/ServerRegisterBiomes.h def/gen/BiomeDef.cpp def/gen/BiomeDef.h def/gen/BiomeAtlas.cpp def/gen/BiomeAtlas.h def/gen/ServerBiomeAtlas.cpp def/gen/ServerBiomeAtlas.h def/gen/LocalBiomeAtlas.cpp def/gen/LocalBiomeAtlas.h lua/client/LocalRegisterBiomes.cpp lua/client/LocalRegisterBiomes.h world/Dimension.cpp world/Dimension.h)
+    server/LocalServerInstance.h
+    game/hud/SerializedGuiElem.h
+    util/Voronoi3D.cpp
+    util/Voronoi3D.h
+    lua/api/modules/sRegisterBiome.h
+    lua/api/modules/cRegisterBiome.h
+    lua/server/ServerRegisterBiomes.cpp
+    lua/server/ServerRegisterBiomes.h
+    def/gen/BiomeDef.cpp
+    def/gen/BiomeDef.h
+    def/gen/BiomeAtlas.cpp
+    def/gen/BiomeAtlas.h
+    def/gen/ServerBiomeAtlas.cpp
+    def/gen/ServerBiomeAtlas.h
+    def/gen/LocalBiomeAtlas.cpp
+    def/gen/LocalBiomeAtlas.h
+    lua/client/LocalRegisterBiomes.cpp
+    lua/client/LocalRegisterBiomes.h
+    world/Dimension.cpp
+    world/Dimension.h def/texture/RawTexData.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})
