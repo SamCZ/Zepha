@@ -43,17 +43,17 @@ LocalRegisterBiomes::LocalRegisterBiomes(sol::table& core, LocalDefs &defs) {
         if (!biomeTint) throw identifier + "'s blocks property is missing a `biome_tint`.";
 
         BiomeDef* biomeDef = new BiomeDef(
-                identifier, defs.gen().size(),
+                identifier, defs.biomes.size(),
                 temperature, humidity, roughness,
-                defs.defs().blockFromStr(*topBlock).index,
-                defs.defs().blockFromStr(*soilBlock).index,
-                defs.defs().blockFromStr(*rockBlock).index,
+                defs.defs.blockFromStr(*topBlock).index,
+                defs.defs.blockFromStr(*soilBlock).index,
+                defs.defs.blockFromStr(*rockBlock).index,
                 glm::vec3(Util::hexToColorVec((*biomeTint)))
         );
 
         //Add Biome Definition to the Gen
-        defs.gen().registerBiome(biomeDef);
+        defs.biomes.registerBiome(biomeDef);
     }
 
-    defs.gen().generateVoronoi();
+    defs.biomes.generateVoronoi();
 }

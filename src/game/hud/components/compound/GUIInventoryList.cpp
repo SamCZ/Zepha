@@ -21,8 +21,8 @@ void GUIInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::vec2 inne
 void GUIInventoryList::drawContents() {
     empty();
 
-    auto fontRef = defs->textures().getTextureRef("font");
-    Font f(defs->textures(), fontRef);
+    auto fontRef = defs->textures["font"];
+    Font f(defs->textures, fontRef);
 
     for (unsigned short i = 0; i < list->getLength() / list->getWidth(); i++) {
         for (unsigned short j = 0; j < list->getWidth(); j++) {
@@ -35,7 +35,7 @@ void GUIInventoryList::drawContents() {
             if (stack.id == 0) continue;
 
             auto item = std::make_shared<GUIInventoryItem>("item_" + to_string(i) + "_" + to_string(j));
-            item->create(scale, stack.count, defs->textures().getTextureRef(defs->defs().craftItemFromId(stack.id).textures[0]), f);
+            item->create(scale, stack.count, defs->textures[defs->defs.craftItemFromId(stack.id).textures[0]], f);
             add(item);
             item->setPos({padding.x + j * (16*scale.x+innerPadding.x/scale.x), padding.y + i * (16*scale.y+innerPadding.y/scale.y)});
         }

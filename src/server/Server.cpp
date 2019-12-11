@@ -111,14 +111,14 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
             world.setBlock(pos, block);
 
             if (block == 0) {
-                auto def = defs.defs().blockFromId(world.getBlock(pos));
+                auto def = defs.defs.blockFromId(world.getBlock(pos));
                 if (def.callbacks.count(Callback::BREAK)) {
-                    def.callbacks[Callback::BREAK](defs.lua().vecToTable(pos));
+                    def.callbacks[Callback::BREAK](defs.luaApi.vecToTable(pos));
                 }
             } else {
-                auto def = defs.defs().blockFromId(block);
+                auto def = defs.defs.blockFromId(block);
                 if (def.callbacks.count(Callback::PLACE)) {
-                    def.callbacks[Callback::PLACE](defs.lua().vecToTable(pos));
+                    def.callbacks[Callback::PLACE](defs.luaApi.vecToTable(pos));
                 }
             }
 

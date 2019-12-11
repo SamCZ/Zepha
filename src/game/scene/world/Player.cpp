@@ -14,11 +14,11 @@ Player::Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer) :
     gameGui(renderer.getCamera().getBufferDimensions(), defs) {}
 
 void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
-    if (activeBlock == -1) activeBlock = defs.defs().blockFromStr("zeus:default:stone").index;
+    if (activeBlock == -1) activeBlock = defs.defs.blockFromStr("zeus:default:stone").index;
 
     if (renderer.getWindow().input.isKeyDown(GLFW_KEY_G)) {
-        gameGui.list.addStack({defs.defs().craftItemFromStr("zeus:materials:rock").index, 1});
-        gameGui.list.addStack({defs.defs().craftItemFromStr("zeus:materials:stick").index, 2});
+        gameGui.list.addStack({defs.defs.craftItemFromStr("zeus:materials:rock").index, 1});
+        gameGui.list.addStack({defs.defs.craftItemFromStr("zeus:materials:stick").index, 2});
     }
 
     if (renderer.resized) {
@@ -128,7 +128,7 @@ void Player::findPointedThing(InputManager &input) {
             blockID = blockChunk->getBlock(Space::Block::relative::toChunk(roundedPos));
         }
 
-        auto& boxes = defs.defs().blockFromId(blockID).sBoxes;
+        auto& boxes = defs.defs.blockFromId(blockID).sBoxes;
 
         for (auto& sBox : boxes) {
             auto face = sBox.intersects(rayEnd, roundedPos);
@@ -150,7 +150,7 @@ void Player::updateWireframe() {
         wireframe.setVisible(false);
     }
     else if (pointedThing.thing == PointedThing::Thing::BLOCK) {
-        auto& boxes = defs.defs().blockFromId(pointedThing.target.block.blockId).sBoxes;
+        auto& boxes = defs.defs.blockFromId(pointedThing.target.block.blockId).sBoxes;
         float distance = glm::distance(pos, pointedThing.target.block.pos + glm::vec3(0.5));
 
         wireframe.updateMesh(boxes, 0.002f + distance * 0.0014f);
@@ -233,7 +233,7 @@ PointedThing& Player::getPointedThing() {
  */
 
 void Player::setActiveBlock(const std::string& block) {
-    activeBlock = defs.defs().blockFromStr(block).index;
+    activeBlock = defs.defs.blockFromStr(block).index;
 }
 
 void Player::setMenu(const std::string& menu) {

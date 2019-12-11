@@ -50,6 +50,7 @@ int StartGame(int argc, char* argv[]) {
     Address addr {"127.0.0.1", 32000};
     Mode mode = Mode::CLIENT;
     std::string subgame = "";
+    bool ascii = true;
 
     //Parse the arguments map
     for (auto arg : parseArgs(argc, argv)) {
@@ -66,27 +67,36 @@ int StartGame(int argc, char* argv[]) {
             }
             case hashStr("--port"): {
                 addr.port = static_cast<unsigned short>(stoi(arg.second));
+                break;
             }
             case hashStr("--address"): {
                 addr.host = arg.second;
+                break;
             }
             case hashStr("--subgame"): {
                 subgame = arg.second;
+                break;
+            }
+            case hashStr("--noascii"): {
+                ascii = false;
+                break;
             }
         }
     }
 
     // Obligatory ASCII Art is obligatory.
-    Log::clear();
-    std::cout << "\n"
-                 "\t\t▒███████▒▓█████  ██▓███   ██░ ██  ▄▄▄      \n"
-                 "\t\t▒ ▒ ▒ ▄▀░▓█   ▀ ▓██░  ██▒▓██░ ██▒▒████▄    \n"
-                 "\t\t░ ▒ ▄▀▒░ ▒███   ▓██░ ██▓▒▒██▀▀██░▒██  ▀█▄  \n"
-                 "\t\t  ▄▀▒   ░▒▓█  ▄ ▒██▄█▓▒ ▒░▓█ ░██ ░██▄▄▄▄██ \n"
-                 "\t\t▒███████▒░▒████▒▒██▒ ░  ░░▓█▒░██▓ ▓█   ▓██▒\n"
-                 "\t\t░▒▒ ▓░▒░▒░░ ▒░ ░▒▓▒░ ░  ░ ▒ ░░▒░▒ ▒▒   ▓▒█░\n"
-                 "\t\t░ ▒ ▒ ░ ▒ ░ ░  ░░▒ ░      ▒ ░▒░ ░  ▒   ▒▒ ░\n"
-                 "\t\t  ░ ░   ░   ░   ░░        ░  ░     ░   ▒   \n" << std::endl;
+    if (ascii) {
+        Log::clear();
+        std::cout << "\n"
+                     "\t\t▒███████▒▓█████  ██▓███   ██░ ██  ▄▄▄      \n"
+                     "\t\t▒ ▒ ▒ ▄▀░▓█   ▀ ▓██░  ██▒▓██░ ██▒▒████▄    \n"
+                     "\t\t░ ▒ ▄▀▒░ ▒███   ▓██░ ██▓▒▒██▀▀██░▒██  ▀█▄  \n"
+                     "\t\t  ▄▀▒   ░▒▓█  ▄ ▒██▄█▓▒ ▒░▓█ ░██ ░██▄▄▄▄██ \n"
+                     "\t\t▒███████▒░▒████▒▒██▒ ░  ░░▓█▒░██▓ ▓█   ▓██▒\n"
+                     "\t\t░▒▒ ▓░▒░▒░░ ▒░ ░▒▓▒░ ░  ░ ▒ ░░▒░▒ ▒▒   ▓▒█░\n"
+                     "\t\t░ ▒ ▒ ░ ▒ ░ ░  ░░▒ ░      ▒ ░▒░ ░  ▒   ▒▒ ░\n"
+                     "\t\t  ░ ░   ░   ░   ░░        ░  ░     ░   ▒   \n" << std::endl;
+    }
 
     //Start the game
     switch (mode) {

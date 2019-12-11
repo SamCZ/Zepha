@@ -27,17 +27,17 @@ LocalRegisterItems::LocalRegisterItems(sol::table& core, LocalDefs &defs) {
         for (auto pair : *texturesOpt) {
             if (!pair.second.is<std::string>()) throw "Textures table has non-string value!";
             textures.push_back(pair.second.as<std::string>());
-            textureRefs.push_back(defs.textures().getTextureRef(pair.second.as<std::string>()));
+            textureRefs.push_back(defs.textures[pair.second.as<std::string>()]);
         }
         if (textures.size() == 0) {
             textures.push_back("_missing");
-            textureRefs.push_back(defs.textures().getTextureRef("_missing"));
+            textureRefs.push_back(defs.textures["_missing"]);
         }
 
-        CraftItemDef* itemDef = new CraftItemDef(identifier, defs.defs().size(), *nameOpt, textures, textureRefs);
-        itemDef->createModel(defs.textures());
+        CraftItemDef* itemDef = new CraftItemDef(identifier, defs.defs.size(), *nameOpt, textures, textureRefs);
+        itemDef->createModel(defs.textures);
 
         //Add Block Definition to the Atlas
-        defs.defs().registerDef(itemDef);
+        defs.defs.registerDef(itemDef);
     }
 }

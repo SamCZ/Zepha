@@ -17,21 +17,15 @@ public:
     ServerDefs(const std::string& subgame, const std::string& execPath);
     void init(ServerWorld& world);
 
-    ServerDefinitionAtlas& defs();
-    ServerLuaParser& lua();
-    ServerBiomeAtlas& gen();
-    
-    AssetStorage& assets();
     void update(double delta);
 
     ~ServerDefs() = default;
-private:
     double delta = 0;
     std::string subgamePath = "";
 
-    AssetStorage assetStorage;
-    ServerDefinitionAtlas blockAtlas;
+    ServerDefinitionAtlas defs;
     ServerLuaParser luaApi;
     ServerBiomeAtlas biomes;
+    AssetStorage assets;
 };
 

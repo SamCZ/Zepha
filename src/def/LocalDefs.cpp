@@ -8,37 +8,18 @@
 LocalDefs::LocalDefs(const LocalDefs &copy) : LocalDefs(copy.tex_path) {}
 
 LocalDefs::LocalDefs(const std::string& path) :
+    tex_path(path),
+
     luaApi(),
     biomes(),
-    tex_path(path),
-    textureAtlas(2048),
-    blockAtlas(textureAtlas) {
+    textures(2048),
+    defs(textures) {
 
-    textureAtlas.loadDirectory(tex_path);
+    textures.loadDirectory(tex_path);
 }
 
-void LocalDefs::initLuaApi(LocalWorld &world, Player& player) {
+void LocalDefs::init(LocalWorld &world, Player& player) {
     luaApi.init(*this, world, player);
-}
-
-LocalDefinitionAtlas &LocalDefs::defs() {
-    return blockAtlas;
-}
-
-TextureAtlas &LocalDefs::textures() {
-    return textureAtlas;
-}
-
-ModelStore &LocalDefs::models() {
-    return modelStore;
-}
-
-LocalLuaParser &LocalDefs::lua() {
-    return luaApi;
-}
-
-LocalBiomeAtlas &LocalDefs::gen() {
-    return biomes;
 }
 
 void LocalDefs::update(double delta, bool* keys) {

@@ -23,22 +23,6 @@ void ServerDefs::init(ServerWorld &world) {
     luaApi.init(*this, world, subgamePath);
 }
 
-ServerDefinitionAtlas& ServerDefs::defs() {
-    return blockAtlas;
-}
-
-ServerLuaParser& ServerDefs::lua() {
-    return luaApi;
-}
-
-AssetStorage& ServerDefs::assets() {
-    return assetStorage;
-}
-
-ServerBiomeAtlas& ServerDefs::gen() {
-    return biomes;
-}
-
 void ServerDefs::update(double delta) {
     this->delta += delta;
     while (this->delta > 0.05f) {

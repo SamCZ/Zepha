@@ -29,9 +29,9 @@ ServerRegisterItems::ServerRegisterItems(sol::table& core, ServerDefs &defs) {
         }
         if (textures.size() == 0) textures.push_back("_missing");
 
-        CraftItemDef* itemDef = new CraftItemDef(identifier, defs.defs().size(), *nameOpt, textures, {});
+        CraftItemDef* itemDef = new CraftItemDef(identifier, defs.defs.size(), *nameOpt, textures, {});
 
         //Add Block Definition to the Atlas
-        defs.defs().registerDef(itemDef);
+        defs.defs.registerDef(itemDef);
     }
 }

@@ -8,11 +8,11 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     state.renderer.setClearColor(22, 22, 22);
     state.renderer.getWindow().lockMouse(false);
 
-    Font f(state.defs.textures(), state.defs.textures().getTextureRef("font"));
+    Font f(state.defs.textures, state.defs.textures["font"]);
     glm::vec2 size = state.renderer.getWindow().getSize();
 
     subgame = std::make_shared<GUIRect>("subgameContainer");
-    subgame->create(size, {}, state.defs.textures().getTextureRef("zeus_background"));
+    subgame->create(size, {}, state.defs.textures["zeus_background"]);
     components.add(subgame);
 
     auto menubar = std::make_shared<GUIRect>("menubar");
@@ -20,12 +20,12 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     subgame->add(menubar);
 
     auto zeusLogo = std::make_shared<GUIRect>("zeusLogo");
-    zeusLogo->create({GS*86, GS*30}, {}, state.defs.textures().getTextureRef("zeus_logo"));
+    zeusLogo->create({GS*86, GS*30}, {}, state.defs.textures["zeus_logo"]);
     zeusLogo->setPos({2*GS, 3*GS});
     menubar->add(zeusLogo);
 
     auto zeusPlayButton = std::make_shared<GUIRect>("zeusPlayButton");
-    zeusPlayButton->create({GS*82, GS*13}, {}, state.defs.textures().getTextureRef("zeus_button"));
+    zeusPlayButton->create({GS*82, GS*13}, {}, state.defs.textures["zeus_button"]);
     zeusPlayButton->setPos({3*GS, 48*GS});
     zeusPlayButton->setClickCallback([&]() {
         state.desiredState = "connect"; //TODO: stop with this gross string thing
@@ -39,7 +39,7 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     zeusPlayButton->add(zeusPlayButtonText);
 
     auto zeusServersButton = std::make_shared<GUIRect>("zeusPlayButton");
-    zeusServersButton->create({GS*82, GS*13}, {}, state.defs.textures().getTextureRef("zeus_button"));
+    zeusServersButton->create({GS*82, GS*13}, {}, state.defs.textures["zeus_button"]);
     zeusServersButton->setPos({3*GS, 64*GS});
     zeusServersButton->setClickCallback([&]() {
         if (showingSubgame) {
@@ -80,7 +80,7 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     // Subgame Buttons
 
     auto zeusButton = std::make_shared<GUIRect>("zeusButton");
-    zeusButton->create({16*GS, 16*GS}, {}, state.defs.textures().getTextureRef("menu_flag_zeus"));
+    zeusButton->create({16*GS, 16*GS}, {}, state.defs.textures["menu_flag_zeus"]);
     zeusButton->setPos({GS, GS});
     zeusButton->setClickCallback([&](){
         if (!showingSubgame) {
@@ -91,7 +91,7 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     bottomBarElems->add(zeusButton);
 
     auto serversButton = std::make_shared<GUIRect>("serversButton");
-    serversButton->create({16*GS, 16*GS}, {}, state.defs.textures().getTextureRef("menu_flag_multiplayer"));
+    serversButton->create({16*GS, 16*GS}, {}, state.defs.textures["menu_flag_multiplayer"]);
     serversButton->setPos({16*GS + GS*3, GS});
     serversButton->setClickCallback([&](){
         if (showingSubgame) {
@@ -101,10 +101,21 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     });
     bottomBarElems->add(serversButton);
 
+    auto contentButton = std::make_shared<GUIRect>("contentButton");
+    contentButton->create({16*GS, 16*GS}, {}, state.defs.textures["menu_flag_content"]);
+    contentButton->setPos({16*GS*2 + GS*5, GS});
+    contentButton->setClickCallback([&](){
+        if (showingSubgame) {
+            components.remove(subgame->getKey());
+            showingSubgame = false;
+        }
+    });
+    bottomBarElems->add(contentButton);
+
     // Meta buttons
 
     auto settingsButton = std::make_shared<GUIRect>("settingsButton");
-    settingsButton->create({16*GS, 16*GS}, {}, state.defs.textures().getTextureRef("menu_flag_settings"));
+    settingsButton->create({16*GS, 16*GS}, {}, state.defs.textures["menu_flag_settings"]);
     settingsButton->setPos({size.x - 16*GS*2 - GS*3, GS});
     settingsButton->setClickCallback([](){
         std::cout << "Settings" << std::endl;
@@ -112,14 +123,14 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     bottomBarElems->add(settingsButton);
 
     auto closeButton = std::make_shared<GUIRect>("closeButton");
-    closeButton->create({16*GS, 16*GS}, {}, state.defs.textures().getTextureRef("menu_flag_quit"));
+    closeButton->create({16*GS, 16*GS}, {}, state.defs.textures["menu_flag_quit"]);
     closeButton->setPos({size.x - 16*GS - GS, GS});
     closeButton->setClickCallback([](){ exit(0); });
     bottomBarElems->add(closeButton);
 
     for (unsigned int i = 0; i < size.x/64/GS; i++) {
         auto bottomBarSegment = std::make_shared<GUIRect>("bottomBarSegment" + to_string(i));
-        bottomBarSegment->create({64*GS, 18*GS}, {}, state.defs.textures().getTextureRef("menu_bar_bg"));
+        bottomBarSegment->create({64*GS, 18*GS}, {}, state.defs.textures["menu_bar_bg"]);
         bottomBarSegment->setPos({i*64*GS, 0});
         bottomBarBg->add(bottomBarSegment);
     }
@@ -153,7 +164,7 @@ void MainMenuScene::update() {
         bottomBarBg->empty();
         for (unsigned int i = 0; i < size.x/64/GS; i++) {
             auto bottomBarSegment = std::make_shared<GUIRect>("bottomBarSegment" + to_string(i));
-            bottomBarSegment->create({64*GS, 18*GS}, {}, state.defs.textures().getTextureRef("menu_bar_bg"));
+            bottomBarSegment->create({64*GS, 18*GS}, {}, state.defs.textures["menu_bar_bg"]);
             bottomBarSegment->setPos({i*64*GS, 0});
             bottomBarBg->add(bottomBarSegment);
         }
@@ -173,7 +184,7 @@ void MainMenuScene::draw() {
     renderer.beginChunkDeferredCalls();
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
-    renderer.enableTexture(&state.defs.textures().getAtlasTexture());
+    renderer.enableTexture(&state.defs.textures.getAtlasTexture());
 
     components.draw(renderer);
 

@@ -10,7 +10,7 @@ MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::sha
                              std::array<NoiseSample, 3>& blockOffsets) :
     meshDetails(meshDetails),
     defs(defs),
-    atlas(defs.defs()),
+    atlas(defs.defs),
     chunk(chunk),
     adjacent(adjacent) {
 
@@ -25,7 +25,7 @@ MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::sha
 
     for (unsigned int i = 0; i < 4096; i++) {
         BlockModel& model = atlas.blockFromId(chunk->getBlock(i)).model;
-        glm::vec3 biomeTint = defs.gen().biomeFromId(chunk->getBiome(i)).biomeTint;
+        glm::vec3 biomeTint = defs.biomes.biomeFromId(chunk->getBiome(i)).biomeTint;
 
         if (model.visible) {
             Vec::indAssignVec(i, off);

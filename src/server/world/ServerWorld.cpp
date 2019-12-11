@@ -177,15 +177,15 @@ void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {
     auto oldBlock = getBlock(pos);
 
     if (block == DefinitionAtlas::AIR) {
-        auto def = defs.defs().blockFromId(oldBlock);
+        auto def = defs.defs.blockFromId(oldBlock);
         if (def.callbacks.count(Callback::DESTRUCT)) {
-            def.callbacks[Callback::DESTRUCT](defs.lua().vecToTable(pos));
+            def.callbacks[Callback::DESTRUCT](defs.luaApi.vecToTable(pos));
         }
     }
     else {
-        auto def = defs.defs().blockFromId(block);
+        auto def = defs.defs.blockFromId(block);
         if (def.callbacks.count(Callback::CONSTRUCT)) {
-            def.callbacks[Callback::CONSTRUCT](defs.lua().vecToTable(pos));
+            def.callbacks[Callback::CONSTRUCT](defs.luaApi.vecToTable(pos));
         }
     }
 
@@ -212,15 +212,15 @@ void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {
     }
 
     if (block == DefinitionAtlas::AIR) {
-        auto def = defs.defs().blockFromId(oldBlock);
+        auto def = defs.defs.blockFromId(oldBlock);
         if (def.callbacks.count(Callback::AFTER_DESTRUCT)) {
-            def.callbacks[Callback::AFTER_DESTRUCT](defs.lua().vecToTable(pos));
+            def.callbacks[Callback::AFTER_DESTRUCT](defs.luaApi.vecToTable(pos));
         }
     }
     else {
-        auto def = defs.defs().blockFromId(block);
+        auto def = defs.defs.blockFromId(block);
         if (def.callbacks.count(Callback::AFTER_CONSTRUCT)) {
-            def.callbacks[Callback::AFTER_CONSTRUCT](defs.lua().vecToTable(pos));
+            def.callbacks[Callback::AFTER_CONSTRUCT](defs.luaApi.vecToTable(pos));
         }
     }
 }

@@ -9,14 +9,14 @@
 ServerConfig::ServerConfig(ServerDefs &defs) : defs(defs) {}
 
 void ServerConfig::init() {
-    blockIdentifierList.reserve(static_cast<unsigned long>(defs.defs().size()));
-    for (unsigned int i = 0; i < defs.defs().size(); i++) {
-        blockIdentifierList.push_back(defs.defs().fromId(i).identifier);
+    blockIdentifierList.reserve(static_cast<unsigned long>(defs.defs.size()));
+    for (unsigned int i = 0; i < defs.defs.size(); i++) {
+        blockIdentifierList.push_back(defs.defs.fromId(i).identifier);
     }
 
-    biomeIdentifierList.reserve(static_cast<unsigned long>(defs.gen().size()));
-    for (unsigned int i = 0; i < defs.gen().size(); i++) {
-        biomeIdentifierList.push_back(defs.gen().biomeFromId(i).identifier);
+    biomeIdentifierList.reserve(static_cast<unsigned long>(defs.biomes.size()));
+    for (unsigned int i = 0; i < defs.biomes.size(); i++) {
+        biomeIdentifierList.push_back(defs.biomes.biomeFromId(i).identifier);
     }
 }
 
@@ -45,7 +45,7 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
             break;
         }
         case PacketType::MODS: {
-            for (LuaMod& mod : defs.lua().mods) {
+            for (LuaMod& mod : defs.luaApi.mods) {
                 Packet p(PacketType::MODS);
                 Serializer::encodeString(p.data, mod.serialized);
                 p.sendTo(client.getPeer(), PacketChannel::CONNECT);
@@ -54,7 +54,7 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
             Packet p(PacketType::MOD_ORDER);
             std::string depends;
             bool delimiter = false;
-            for (LuaMod& mod : defs.lua().mods) {
+            for (LuaMod& mod : defs.luaApi.mods) {
                 if (delimiter) depends.append(",");
                 else delimiter = true;
                 depends.append(mod.config.name);
@@ -69,7 +69,7 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
 
             Packet p(PacketType::MEDIA);
 
-            for (ServerTexture& texture : defs.assets().textures) {
+            for (ServerTexture& texture : defs.assets.textures) {
                 if (packetSize + 20 + texture.data.length() > MAX_PACKET_SIZE && packetSize != 0) {
                     Serializer::encodeInt(p.data, static_cast<int>(AssetType::END));
                     p.sendTo(client.getPeer(), PacketChannel::CONNECT);
@@ -85,7 +85,7 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
                 packetSize += texture.data.length() + 20;
             }
 
-            for (SerializedModel& model : defs.assets().models) {
+            for (SerializedModel& model : defs.assets.models) {
                 if (packetSize + 16 + model.data.length() > MAX_PACKET_SIZE && packetSize != 0) {
                     Serializer::encodeInt(p.data, static_cast<int>(AssetType::END));
                     p.sendTo(client.getPeer(), PacketChannel::CONNECT);

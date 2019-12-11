@@ -23,7 +23,7 @@ void BlockCrackEntity::update() {
     if (crackLevel != this->crackLevel) {
         this->crackLevel = crackLevel;
 
-        auto model = defs.defs().blockFromId(blockID).model;
+        auto model = defs.defs.blockFromId(blockID).model;
 
         std::vector<EntityVertex> vertices;
         std::vector<unsigned int> indices;
@@ -49,10 +49,9 @@ void BlockCrackEntity::setNewDamage(float damage) {
 void BlockCrackEntity::addFaces(unsigned int &indOffset, std::vector<EntityVertex> &vertices, std::vector<unsigned int> &indices, std::vector<MeshPart> &meshParts) {
     for (const MeshPart& mp : meshParts) {
         glm::vec4 uv;
-        auto ref = defs.textures().generateCrackImage(mp.texture->name, static_cast<unsigned short>(crackLevel));
+        auto ref = defs.textures.generateCrackImage(mp.texture->name, static_cast<unsigned short>(crackLevel));
         if (ref == nullptr) {
-            std::string missing("_missing");
-            uv = defs.textures().getTextureRef(missing)->uv;
+            uv = defs.textures["_missing"]->uv;
         }
         else uv = ref->uv;
 

@@ -9,11 +9,11 @@
 DebugGui::DebugGui(glm::vec2 bufferSize, LocalDefs& defs) :
     displayMode(0) {
 
-    auto fpsHistogramRef = defs.textures().getTextureRef("histogram");
-    auto genericHistogramRef = defs.textures().getTextureRef("histogram_white");
-    auto fontRef = defs.textures().getTextureRef("font");
+    auto fpsHistogramRef = defs.textures["histogram"];
+    auto genericHistogramRef = defs.textures["histogram_white"];
+    auto fontRef = defs.textures["font"];
 
-    Font f(defs.textures(), fontRef);
+    Font f(defs.textures, fontRef);
 
     auto crosshairText = std::make_shared<GUIText>("crosshairText");
     crosshairText->create({2, 2}, {}, {0.2, 0.2, 0.2, 0.5}, {1, 1, 1, 1}, f);
@@ -100,10 +100,10 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         glm::vec3 footPos = glm::floor(player.getPos()) - glm::vec3(0, 0.02, 0);
 
         unsigned int blockID = world.getBlock(footPos);
-        std::string on = defs.defs().fromId(blockID).identifier;
+        std::string on = defs.defs.fromId(blockID).identifier;
 
         unsigned int biomeID = world.getBiome(glm::floor(player.getPos()));
-        std::string biome = defs.gen().biomeFromId(biomeID).identifier;
+        std::string biome = defs.biomes.biomeFromId(biomeID).identifier;
 
         glm::vec3 playerPos = glm::floor(player.getPos());
         glm::vec3 chunkPos = Space::Chunk::world::fromBlock(playerPos);
@@ -150,7 +150,7 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
                     (faceDir == Dir::FRONT) ? "FRONT" :
                     (faceDir == Dir::BACK) ? "BACK" :
                     "NONE";
-            str << "Pointing At: " << defs.defs().blockFromId(thing.target.block.blockId).identifier << std::endl;
+            str << "Pointing At: " << defs.defs.blockFromId(thing.target.block.blockId).identifier << std::endl;
             str << "Pointed Position: " << vecToString(thing.target.block.pos) << std::endl;
             str << "Pointed Face: " << face << std::endl;
         }
@@ -166,8 +166,8 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
 
         std::ostringstream crossText;
         if (thing.thing == PointedThing::Thing::BLOCK) {
-            crossText << defs.defs().blockFromId(thing.target.block.blockId).name
-                      << " (" << defs.defs().blockFromId(thing.target.block.blockId).identifier << ")" << std::endl;
+            crossText << defs.defs.blockFromId(thing.target.block.blockId).name
+                      << " (" << defs.defs.blockFromId(thing.target.block.blockId).identifier << ")" << std::endl;
         }
         get<GUIText>("crosshairText")->setText(crossText.str());
     }

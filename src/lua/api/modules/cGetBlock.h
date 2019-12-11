@@ -15,7 +15,7 @@ namespace ClientApi {
                 std::cout << Log::err << "get_block vector is ill formed." << Log::endl;
                 return "";
             }
-            return defs.defs().blockFromId(world.getBlock({pos["x"], pos["y"], pos["z"]})).identifier;
+            return defs.defs.blockFromId(world.getBlock({pos["x"], pos["y"], pos["z"]})).identifier;
         });
     }
 }

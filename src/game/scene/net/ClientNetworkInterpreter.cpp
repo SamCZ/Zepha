@@ -8,7 +8,7 @@ ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection,
     connection(connection),
     world(nullptr),
     playerModel(std::make_shared<Model>()){
-    playerModel->fromSerialized(defs.models().models["zeus:default:player"], {defs.textures().getTextureRef("zeus:default:player")});
+    playerModel->fromSerialized(defs.models.models["zeus:default:player"], {defs.textures["zeus:default:player"]});
 }
 
 void ClientNetworkInterpreter::init(LocalWorld *world) {

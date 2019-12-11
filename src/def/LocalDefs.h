@@ -15,23 +15,17 @@ public:
     explicit LocalDefs(const std::string& tex_path);
     LocalDefs(const LocalDefs& copy);
 
-    LocalDefinitionAtlas& defs();
-    ModelStore& models();
-    TextureAtlas& textures();
-    LocalLuaParser& lua();
-    LocalBiomeAtlas& gen();
-
-    void initLuaApi(LocalWorld &world, Player& player);
+    void init(LocalWorld &world, Player& player);
     void update(double delta, bool* keys);
 
     ~LocalDefs() = default;
-private:
+
     std::string tex_path;
 
-    TextureAtlas textureAtlas;
-    ModelStore modelStore;
-    LocalDefinitionAtlas blockAtlas;
-    LocalLuaParser luaApi;
-    LocalBiomeAtlas biomes;
+    TextureAtlas         textures;
+    LocalLuaParser       luaApi;
+    LocalDefinitionAtlas defs;
+    LocalBiomeAtlas      biomes;
+    ModelStore           models;
 };
 

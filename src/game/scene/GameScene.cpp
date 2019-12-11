@@ -15,7 +15,7 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     state.renderer.setClearColor(148, 194, 240);
     state.renderer.getWindow().lockMouse(true);
 
-    defs.initLuaApi(world, player);
+    defs.init(world, player);
     world.init();
     server.init(&world);
 
@@ -25,7 +25,7 @@ GameScene::GameScene(ClientState& state) : Scene(state),
 
 void GameScene::update() {
     defs.update(state.deltaTime, state.renderer.getWindow().keys);
-    defs.textures().update();
+    defs.textures.update();
     server.update(player);
 
     Window& window = state.renderer.getWindow();
@@ -65,7 +65,7 @@ void GameScene::draw() {
     Camera& camera = renderer.getCamera();
 
     renderer.beginChunkDeferredCalls();
-    renderer.enableTexture(&defs.textures().getAtlasTexture());
+    renderer.enableTexture(&defs.textures.getAtlasTexture());
 
     drawCalls = world.renderChunks(renderer);
 
@@ -77,7 +77,7 @@ void GameScene::draw() {
 
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
-    renderer.enableTexture(&defs.textures().getAtlasTexture());
+    renderer.enableTexture(&defs.textures.getAtlasTexture());
 
     player.drawViginette(renderer);
     debugGui.draw(renderer);

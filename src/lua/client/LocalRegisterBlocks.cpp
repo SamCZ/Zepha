@@ -158,7 +158,7 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& core, LocalDefs &defs) {
                 texture = texture.substr(10, texture.length() - 11);
             }
 
-            auto textureRef = defs.textures().getTextureRef(texture);
+            auto textureRef = defs.textures[texture];
 
             //Add a reference to the texture to the blockModel's list of required textures to keep it in memory.
             blockModel.textureRefs.insert(textureRef);
@@ -223,14 +223,14 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& core, LocalDefs &defs) {
                 biometint = true;
                 texture = texture.substr(10, texture.length() - 11);
             }
-            refs.push_back(defs.textures().getTextureRef(texture));
+            refs.push_back(defs.textures[texture]);
         }
 
         BlockModel lowdefBlockModel = BlockModel::createCube(refs);
         lowdefBlockModel.culls = ldRender;
         lowdefBlockModel.visible = ldRender;
 
-        BlockDef* blockDef = new BlockDef(identifier, defs.defs().size(), *nameOpt, blockModel, solid, std::move(sBoxes), std::move(cBoxes));
+        BlockDef* blockDef = new BlockDef(identifier, defs.defs.size(), *nameOpt, blockModel, solid, std::move(sBoxes), std::move(cBoxes));
         blockDef->createModel();
 
         //Bind Callbacks
@@ -241,6 +241,6 @@ LocalRegisterBlocks::LocalRegisterBlocks(sol::table& core, LocalDefs &defs) {
         if (on_break_client) blockDef->callbacks.insert({Callback::BREAK_CLIENT, *on_break_client});
 
         //Add Block Definition to the Atlas
-        defs.defs().registerDef(blockDef);
+        defs.defs.registerDef(blockDef);
     }
 }

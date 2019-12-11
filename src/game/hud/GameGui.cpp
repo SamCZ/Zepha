@@ -13,12 +13,12 @@ GameGui::GameGui(glm::vec2 bufferSize, LocalDefs& defs) :
     list(60, 12) {
 
     auto crosshair = std::make_shared<GUIRect>("crosshair");
-    crosshair->create({22, 22}, {}, defs.textures().getTextureRef("crosshair"));
+    crosshair->create({22, 22}, {}, defs.textures["crosshair"]);
     crosshair->setPos({bufferSize.x / 2 - 11, bufferSize.y / 2 - 9});
     builtIn.add(crosshair);
 
     auto viginette = std::make_shared<GUIRect>("viginette");
-    viginette->create(bufferSize, {}, defs.textures().getTextureRef("viginette"));
+    viginette->create(bufferSize, {}, defs.textures["viginette"]);
     builtIn.add(viginette);
 
     menuRoot = std::make_shared<GUIContainer>("__lua_root");
@@ -185,7 +185,7 @@ std::shared_ptr<GUIComponent> GameGui::createComponent(SerializedGuiElem& data) 
 
         auto rect = std::make_shared<GUIRect>(data.key);
         if (background[0] == '#') rect->create(size, padding, Util::hexToColorVec(background));
-        else if (background.substr(0, 6) == "asset(") rect->create(size, padding, defs.textures().getTextureRef(background.substr(7, background.length() - 7 - 2)));
+        else if (background.substr(0, 6) == "asset(") rect->create(size, padding, defs.textures[background.substr(7, background.length() - 7 - 2)]);
         else rect->create(size, padding, glm::vec4 {});
 
         rect->setPos(pos);
@@ -248,7 +248,7 @@ std::shared_ptr<GUIComponent> GameGui::createComponent(SerializedGuiElem& data) 
         }
 
         auto text = std::make_shared<GUIText>(key);
-        text->create(scale * SCALE_MODIFIER, padding, background_color, color, {defs.textures(), defs.textures().getTextureRef("font")});
+        text->create(scale * SCALE_MODIFIER, padding, background_color, color, {defs.textures, defs.textures["font"]});
         text->setText(content);
         text->setPos(pos);
         return text;

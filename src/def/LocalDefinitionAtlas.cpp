@@ -6,7 +6,7 @@
 
 LocalDefinitionAtlas::LocalDefinitionAtlas(TextureAtlas& atlas) {
     //Invalid Node
-    BlockModel invalidModel = BlockModel::createCube({atlas.getTextureRef("_missing")});
+    BlockModel invalidModel = BlockModel::createCube({atlas["_missing"]});
     BlockDef* invalid = new BlockDef("invalid", 0, "Invalid (you broke the game!)", invalidModel, true, {{}}, {{}});
     defs.push_back(invalid);
     defTable.insert({"invalid", 0});

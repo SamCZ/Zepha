@@ -9,7 +9,7 @@ zepha.register_block('zeus:kinetic:axle_0', {
     collision_box = {
         {0, 6/16, 6/16, 1, 10/16, 10/16}
     },
-    drop = "kinetic:axle_0",
+    drop = "zeus:kinetic:axle_0",
     on_place = function(pos)
         for i = 0, 9 do
             pos.x = pos.x + 1

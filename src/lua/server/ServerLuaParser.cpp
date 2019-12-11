@@ -265,7 +265,7 @@ void ServerLuaParser::createTextures(ServerDefs &defs) {
                             std::string comp = gzip::compress(str.data(), str.length());
                             free(data);
 
-                            defs.assets().textures.push_back({std::move(name), comp, width, height});
+                            defs.assets.textures.push_back({std::move(name), comp, width, height});
                         }
                     }
                 }
@@ -310,7 +310,7 @@ void ServerLuaParser::createModels(ServerDefs &defs) {
                             std::stringstream buffer;
                             buffer << t.rdbuf();
 
-                            defs.assets().models.push_back({std::move(name), buffer.str(), "b3d"});
+                            defs.assets.models.push_back({std::move(name), buffer.str(), "b3d"});
                         }
                     }
                 }
