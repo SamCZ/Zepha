@@ -270,6 +270,6 @@ set(ZEPHA_SRC
     lua/client/LocalRegisterBiomes.cpp
     lua/client/LocalRegisterBiomes.h
     world/Dimension.cpp
-    world/Dimension.h def/texture/RawTexData.h)
+    world/Dimension.h def/texture/RawTexData.h game/hud/components/compound/GUIImageButton.cpp game/hud/components/compound/GUIImageButton.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

@@ -3,6 +3,7 @@
 //
 
 #include "MainMenuScene.h"
+#include "../hud/components/compound/GUIImageButton.h"
 
 MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     state.renderer.setClearColor(22, 22, 22);
@@ -24,8 +25,9 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     zeusLogo->setPos({2*GS, 3*GS});
     menubar->add(zeusLogo);
 
-    auto zeusPlayButton = std::make_shared<GUIRect>("zeusPlayButton");
-    zeusPlayButton->create({GS*82, GS*13}, {}, state.defs.textures["zeus_button"]);
+    auto zeusPlayButton = std::make_shared<GUIImageButton>("zeusPlayButton");
+    zeusPlayButton->create({GS*82, GS*13}, {}, state.defs.textures["crop(0, 0, 82, 13, zeus_button)"],
+            state.defs.textures["crop(0, 13, 82, 13, zeus_button)"]);
     zeusPlayButton->setPos({3*GS, 48*GS});
     zeusPlayButton->setClickCallback([&]() {
         state.desiredState = "connect"; //TODO: stop with this gross string thing
@@ -38,8 +40,9 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     zeusPlayButtonText->setPos({31*GS,2*GS});
     zeusPlayButton->add(zeusPlayButtonText);
 
-    auto zeusServersButton = std::make_shared<GUIRect>("zeusPlayButton");
-    zeusServersButton->create({GS*82, GS*13}, {}, state.defs.textures["zeus_button"]);
+    auto zeusServersButton = std::make_shared<GUIImageButton>("zeusServersButton");
+    zeusServersButton->create({GS*82, GS*13}, {}, state.defs.textures["crop(0, 0, 82, 13, zeus_button)"],
+                              state.defs.textures["crop(0, 13, 82, 13, zeus_button)"]);
     zeusServersButton->setPos({3*GS, 64*GS});
     zeusServersButton->setClickCallback([&]() {
         if (showingSubgame) {
@@ -79,8 +82,9 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
 
     // Subgame Buttons
 
-    auto zeusButton = std::make_shared<GUIRect>("zeusButton");
-    zeusButton->create({16*GS, 16*GS}, {}, state.defs.textures["crop(0, 0, 16, 16, menu_flag_zeus)"]);
+    auto zeusButton = std::make_shared<GUIImageButton>("zeusButton");
+    zeusButton->create({16*GS, 16*GS}, {}, state.defs.textures["crop(0, 0, 16, 16, menu_flag_zeus)"],
+            state.defs.textures["crop(16, 0, 16, 16, menu_flag_zeus)"]);
     zeusButton->setPos({GS, GS});
     zeusButton->setClickCallback([&](){
         if (!showingSubgame) {
@@ -90,8 +94,9 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     });
     bottomBarElems->add(zeusButton);
 
-    auto serversButton = std::make_shared<GUIRect>("serversButton");
-    serversButton->create({16*GS, 16*GS}, {}, state.defs.textures["crop(0, 0, 16, 16, menu_flag_multiplayer)"]);
+    auto serversButton = std::make_shared<GUIImageButton>("serversButton");
+    serversButton->create({16*GS, 16*GS}, {}, state.defs.textures["crop(0, 0, 16, 16, menu_flag_multiplayer)"],
+            state.defs.textures["crop(16, 0, 16, 16, menu_flag_multiplayer)"]);
     serversButton->setPos({16*GS + GS*3, GS});
     serversButton->setClickCallback([&](){
         if (showingSubgame) {
@@ -101,8 +106,9 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
     });
     bottomBarElems->add(serversButton);
 
-    auto contentButton = std::make_shared<GUIRect>("contentButton");
-    contentButton->create({16*GS, 16*GS}, {}, state.defs.textures["crop(0, 0, 16, 16, menu_flag_content)"]);
+    auto contentButton = std::make_shared<GUIImageButton>("contentButton");
+    contentButton->create({16*GS, 16*GS}, {}, state.defs.textures["crop(0, 0, 16, 16, menu_flag_content)"],
+            state.defs.textures["crop(16, 0, 16, 16, menu_flag_content)"]);
     contentButton->setPos({16*GS*2 + GS*5, GS});
     contentButton->setClickCallback([&](){
         if (showingSubgame) {
@@ -114,16 +120,18 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
 
     // Meta buttons
 
-    auto settingsButton = std::make_shared<GUIRect>("settingsButton");
-    settingsButton->create({16*GS, 16*GS}, {}, state.defs.textures["crop(0, 0, 16, 16, menu_flag_settings)"]);
+    auto settingsButton = std::make_shared<GUIImageButton>("settingsButton");
+    settingsButton->create({16*GS, 16*GS}, {}, state.defs.textures["crop(0, 0, 16, 16, menu_flag_settings)"],
+            state.defs.textures["crop(16, 0, 16, 16, menu_flag_settings)"]);
     settingsButton->setPos({size.x - 16*GS*2 - GS*3, GS});
     settingsButton->setClickCallback([](){
         std::cout << "Settings" << std::endl;
     });
     bottomBarElems->add(settingsButton);
 
-    auto closeButton = std::make_shared<GUIRect>("closeButton");
-    closeButton->create({16*GS, 16*GS}, {}, state.defs.textures["crop(0, 0, 16, 16, menu_flag_quit)"]);
+    auto closeButton = std::make_shared<GUIImageButton>("closeButton");
+    closeButton->create({16*GS, 16*GS}, {}, state.defs.textures["crop(0, 0, 16, 16, menu_flag_quit)"],
+            state.defs.textures["crop(16, 0, 16, 16, menu_flag_quit)"]);
     closeButton->setPos({size.x - 16*GS - GS, GS});
     closeButton->setClickCallback([](){ exit(0); });
     bottomBarElems->add(closeButton);

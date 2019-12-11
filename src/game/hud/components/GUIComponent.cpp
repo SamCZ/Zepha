@@ -102,8 +102,17 @@ bool GUIComponent::mouseActivity(glm::ivec2 pos) {
         if ((*child)->mouseActivity(pos - (*child)->getPos())) return true;
     }
     if (pos.x >= 0 && pos.y >= 0 && pos.x <= scale.x && pos.y <= scale.y) {
-//        std::cout << key << std::endl; //TODO: Hover states
-        return true;
+        if (!hovered && hoverCallback) {
+            hoverCallback(true);
+            hovered = true;
+        }
+        return false; //TODO: Question this
+    }
+    else {
+        if (hovered && hoverCallback) {
+            hoverCallback(false);
+            hovered = false;
+        }
     }
     return false;
 }
@@ -112,15 +121,19 @@ bool GUIComponent::triggerClick(glm::ivec2 pos) {
     for (auto child = children.rbegin(); child != children.rend(); ++child) {
         if ((*child)->triggerClick(pos - (*child)->getPos())) return true;
     }
-    if (pos.x >= 0 && pos.y >= 0 && pos.x <= scale.x && pos.y <= scale.y && cb != nullptr) {
-        cb();
+    if (pos.x >= 0 && pos.y >= 0 && pos.x <= scale.x && pos.y <= scale.y && clickCallback != nullptr) {
+        clickCallback();
         return true;
     }
     return false;
 }
 
-void GUIComponent::setClickCallback(std::function<void()> cb) {
-    this->cb = cb;
+void GUIComponent::setHoverCallback(std::function<void(bool)> hoverCallback) {
+    this->hoverCallback = hoverCallback;
+}
+
+void GUIComponent::setClickCallback(std::function<void()> clickCallback) {
+    this->clickCallback = clickCallback;
 }
 
 const std::string &GUIComponent::getKey() {
