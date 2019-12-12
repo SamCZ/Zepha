@@ -28,20 +28,6 @@ public:
 
     InventoryList list;
 private:
-    void recursivelyCreate(std::vector<SerializedGuiElem> components, std::shared_ptr<GUIComponent> parent);
-    std::shared_ptr<GUIComponent> createComponent(SerializedGuiElem& component);
-    std::vector<SerializedGuiElem> components {};
-
-    enum PercentBehavior {
-       BUFF_WIDTH,
-       BUFF_HEIGHT,
-       DECIMAL
-    };
-
-
-    static std::vector<std::string> splitValue(const std::string& value, unsigned int targetVals = 0);
-    float stringToNum(const std::string& input, PercentBehavior behavior);
-
     glm::vec2 bufferSize {};
     LocalDefs& defs;
     std::string menuState = "";

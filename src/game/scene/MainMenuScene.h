@@ -11,6 +11,7 @@
 #include "../hud/components/basic/GUIContainer.h"
 #include "../hud/components/compound/GUIImageButton.h"
 #include "menu/Subgame.h"
+#include "menu/MenuSandbox.h"
 
 using nlohmann::json;
 
@@ -24,16 +25,22 @@ public:
     void cleanup() override {};
 
 private:
-    void positionElements(glm::ivec2 win);
+    void positionElements();
     void findSubgames();
 
-    std::vector<Subgame> subgames;
-
     const float GS = 4;
-    GUIContainer components;
 
-    bool showingSubgame = true;
-    std::shared_ptr<GUIRect> subgame;
+    GUIContainer components;
+    std::shared_ptr<GUIContainer> sandboxContainer = std::make_shared<GUIContainer>("_sandbox");
+
+    glm::ivec2 win {};
+    glm::ivec2 sandboxArea {};
+    MenuSandbox sandbox;
+    std::vector<Subgame> subgames;
+    Subgame* selectedSubgame = nullptr;
+
+//    bool showingSubgame = true;
+//    std::shared_ptr<GUIRect> subgame;
 
     std::shared_ptr<GUIContainer> branding = nullptr;
     std::shared_ptr<GUIContainer> navigationBar = nullptr;

@@ -4,62 +4,18 @@
 
 #include "MainMenuScene.h"
 
-MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
+MainMenuScene::MainMenuScene(ClientState& state) :
+    Scene(state),
+    sandbox(sandboxArea, state.defs, sandboxContainer) {
+
     state.renderer.setClearColor(0, 0, 0);
     state.renderer.getWindow().lockMouse(false);
 
     Font f(state.defs.textures, state.defs.textures["font"]);
-    glm::vec2 win = state.renderer.getWindow().getSize();
+    win = state.renderer.getWindow().getSize();
+    sandboxArea = win - glm::ivec2(0, 18 * GS);
 
-    /* Temp */
-
-    subgame = std::make_shared<GUIRect>("subgameContainer");
-    subgame->create(win, {}, state.defs.textures["zeus_background"]);
-    components.add(subgame);
-
-    auto menubar = std::make_shared<GUIRect>("menubar");
-    menubar->create({90*GS, win.y}, {}, {0.1, 0.15, 0.2, 0.3}, {0.1, 0.15, 0.2, 0.3}, {0.1, 0.15, 0.2, 0.7}, {0.1, 0.15, 0.2, 0.7});
-    subgame->add(menubar);
-
-    auto zeusLogo = std::make_shared<GUIRect>("zeusLogo");
-    zeusLogo->create({GS*86, GS*30}, {}, state.defs.textures["zeus_logo"]);
-    zeusLogo->setPos({2*GS, 3*GS});
-    menubar->add(zeusLogo);
-
-    auto zeusPlayButton = std::make_shared<GUIImageButton>("zeusPlayButton");
-    zeusPlayButton->create({GS*82, GS*13}, {}, state.defs.textures["crop(0, 0, 82, 13, zeus_button)"],
-            state.defs.textures["crop(0, 13, 82, 13, zeus_button)"]);
-    zeusPlayButton->setPos({3*GS, 48*GS});
-    zeusPlayButton->setClickCallback([&]() {
-        state.desiredState = "connect"; //TODO: stop with this gross string thing
-    });
-    menubar->add(zeusPlayButton);
-
-    auto zeusPlayButtonText = std::make_shared<GUIText>("text");
-    zeusPlayButtonText->create({GS, GS}, {}, {}, {1, 0.95, 0.5, 1}, f);
-    zeusPlayButtonText->setText("Play~");
-    zeusPlayButtonText->setPos({31*GS,2*GS});
-    zeusPlayButton->add(zeusPlayButtonText);
-
-    auto zeusServersButton = std::make_shared<GUIImageButton>("zeusServersButton");
-    zeusServersButton->create({GS*82, GS*13}, {}, state.defs.textures["crop(0, 0, 82, 13, zeus_button)"],
-                              state.defs.textures["crop(0, 13, 82, 13, zeus_button)"]);
-    zeusServersButton->setPos({3*GS, 64*GS});
-    zeusServersButton->setClickCallback([&]() {
-        if (showingSubgame) {
-            components.remove(subgame->getKey());
-            showingSubgame = false;
-        }
-    });
-    menubar->add(zeusServersButton);
-
-    auto zeusServersButtonText = std::make_shared<GUIText>("text");
-    zeusServersButtonText->create({GS, GS}, {}, {}, {1, 0.95, 0.5, 1}, f);
-    zeusServersButtonText->setText("Servers");
-    zeusServersButtonText->setPos({26*GS,2*GS});
-    zeusServersButton->add(zeusServersButtonText);
-
-    /* End temp */
+    components.add(sandboxContainer);
 
     branding = std::make_shared<GUIContainer>("zephaBranding");
     components.add(branding);
@@ -125,11 +81,20 @@ MainMenuScene::MainMenuScene(ClientState& state) : Scene(state) {
                            state.defs.textures["crop(0, 0, 16, 16, " + subgame.iconRef->name + ")"],
                            state.defs.textures["crop(16, 0, 16, 16, " + subgame.iconRef->name + ")"]);
             button->setPos({GS * 7 + GS * 18 * (i + 2), GS});
+            button->setClickCallback([&, i]() {
+                selectedSubgame = &subgame;
+                sandbox.load(selectedSubgame->subgamePath);
+            });
             navigationBarIcons->add(button);
         }
     }
 
-    positionElements(win);
+    if (subgames.size() > 0) {
+        selectedSubgame = &subgames[0];
+        sandbox.load(selectedSubgame->subgamePath);
+    }
+
+    positionElements();
 }
 
 void MainMenuScene::findSubgames() {
@@ -182,7 +147,9 @@ void MainMenuScene::findSubgames() {
     });
 }
 
-void MainMenuScene::positionElements(glm::ivec2 win) {
+void MainMenuScene::positionElements() {
+    sandbox.windowResized();
+
     branding->setPos({win.x - 55*GS, win.y - 30*GS});
 
     navigationBar->setPos({0, win.y - 18*GS});
@@ -202,9 +169,12 @@ void MainMenuScene::positionElements(glm::ivec2 win) {
 
 void MainMenuScene::update() {
     state.defs.textures.update();
+    sandbox.update(state.deltaTime);
 
     if (state.renderer.resized) {
-        positionElements(state.renderer.getWindow().getSize());
+        win = state.renderer.getWindow().getSize();
+        sandboxArea = win - glm::ivec2(0, 18 * GS);
+        positionElements();
         state.renderer.resized = false;
     }
 
