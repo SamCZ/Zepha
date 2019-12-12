@@ -9,13 +9,17 @@
 #include "../def/LocalDefs.h"
 #include "scene/net/ServerConnection.h"
 
-struct ClientState {
+class ClientState {
+public:
+    ClientState(const std::string& path, Renderer& renderer);
+
+    std::string path;
+
     Renderer& renderer;
-    ServerConnection connection;
+    ServerConnection connection {};
     LocalDefs defs;
 
-    //TODO: Not this
-    std::string desiredState;
+    std::string desiredState = "this";
 
     double fps = 0;
     double deltaTime = 0;

@@ -24,6 +24,7 @@ public:
     TextureAtlas() = default;
     explicit TextureAtlas(unsigned int width, unsigned int height = 0);
     void loadDirectory(const std::string& dirStr);
+    std::shared_ptr<AtlasRef> loadImage(const std::string& path, const std::string& name, bool base = false);
 
     void update();
 

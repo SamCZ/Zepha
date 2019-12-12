@@ -15,20 +15,15 @@
 
 class Client {
 public:
-    Client(const Address& addr, glm::vec2 dimensions);
-    Client(uptr<LocalServerInstance> localServer, glm::vec2 dimensions);
+    Client(const std::string& path, const Address& addr, glm::vec2 dims);
     ~Client();
 
 private:
-    void init();
     void loop();
 
-    uptr<LocalServerInstance> localServer = nullptr;
     Address addr {};
-
     Renderer renderer;
     ClientState state;
-
     SceneManager sceneManager;
 
     double timeElapsed = 0.0f;

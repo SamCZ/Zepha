@@ -35,16 +35,20 @@ void TextureAtlas::loadDirectory(const std::string& dirStr) {
         cf_file_t file;
         cf_read_file(&dir, &file);
 
-        if (!file.is_dir && strcmp(file.ext, ".png") == 0) {
-            int width, height;
-            unsigned char* data = stbi_load(file.path, &width, &height, nullptr, 4);
-            addImage(data, std::string(file.name).substr(0, std::string(file.name).size() - 4), true, width, height);
-            free(data);
-        }
+        if (!file.is_dir && strcmp(file.ext, ".png") == 0)
+            loadImage(file.path, std::string(file.name).substr(0, std::string(file.name).size() - 4), true);
 
         cf_dir_next(&dir);
     }
     cf_dir_close(&dir);
+}
+
+std::shared_ptr<AtlasRef> TextureAtlas::loadImage(const std::string &path, const std::string &name, bool base) {
+    int width, height;
+    unsigned char* data = stbi_load(path.data(), &width, &height, nullptr, 4);
+    auto ref = addImage(data, name, base, width, height);
+    free(data);
+    return ref;
 }
 
 void TextureAtlas::update() {

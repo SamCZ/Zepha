@@ -28,6 +28,7 @@ ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
 }
 
 void ConnectScene::update() {
+    state.defs.textures.update();
     if (state.renderer.getWindow().resized) {
         components.get<GUIRect>("loadBar")->setPos({0, state.renderer.getWindow().getSize().y - 32});
         state.renderer.getWindow().resized = false;

@@ -105,7 +105,7 @@ int StartGame(int argc, char* argv[]) {
             return -1;
         }
         case Mode::CLIENT: {
-            Client c(addr, {1366, 768});
+            Client c(path, addr, {1366, 768});
             break;
         }
 //        case Mode::LOCAL_SERVER: {

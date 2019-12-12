@@ -4,25 +4,12 @@
 
 #include "Client.h"
 
-Client::Client(const Address &addr, glm::vec2 dimensions) :
-    addr(addr),
-    renderer(dimensions.x, dimensions.y),
-    state {renderer, {}, LocalDefs("./assets/textures"), "this", 0, 0} {
-    init();
-}
+Client::Client(const std::string& path, const Address &addr, glm::vec2 dims) :
+    state(path.substr(0, path.find_last_of('/') + 1), renderer),
+    renderer(dims.x, dims.y),
+    addr(addr) {
 
-Client::Client(uptr<LocalServerInstance> localServer, glm::vec2 dimensions) :
-    localServer(std::move(localServer)),
-    addr(Address {"127.0.0.1", this->localServer->port}),
-    renderer(dimensions.x, dimensions.y),
-    state {renderer, {}, LocalDefs("./assets/textures"), "this", 0, 0} {
-    init();
-}
-
-void Client::init() {
     std::cout << Log::info << "Starting Zepha Client." << Log::endl;
-
-//    if (localServer != nullptr) localServer->start();
 
     std::unique_ptr<Scene> scene = std::make_unique<MainMenuScene>(state);
     sceneManager.setScene(std::move(scene));
@@ -58,6 +45,5 @@ void Client::loop() {
 }
 
 Client::~Client() {
-    if (localServer != nullptr) localServer->stop();
     sceneManager.cleanupScene();
 }
