@@ -27,6 +27,7 @@ protected:
         DECIMAL
     };
 
+    void deserialize();
     void recursivelyCreate(std::vector<SerializedGuiElem> components, std::shared_ptr<GUIComponent> parent);
     virtual std::shared_ptr<GUIComponent> createComponent(SerializedGuiElem& component);
 

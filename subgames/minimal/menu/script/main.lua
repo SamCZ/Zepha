@@ -1,6 +1,9 @@
-print("Minimal menu script loaded!")
+zepha.set_gui([[
+    body
+        background: #214a21
 
-zepha.delay(function()
-    print("Minimal")
-    return true
-end, 1)
+        text[name]
+            position: 4px 4px
+            content: "Minimal Subgame Base"
+    end
+]])

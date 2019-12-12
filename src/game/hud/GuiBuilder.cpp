@@ -9,11 +9,10 @@ GuiBuilder::GuiBuilder(LocalDefs& defs, std::shared_ptr<GUIContainer> root) :
 
 void GuiBuilder::setGui(const std::string& menu) {
     this->menu = menu;
+    deserialize();
 }
 
-void GuiBuilder::build(glm::ivec2 win) {
-    this->win = win;
-
+void GuiBuilder::deserialize() {
     std::vector<std::string> lines;
     {
         std::string::size_type pos = 0;
@@ -99,6 +98,10 @@ void GuiBuilder::build(glm::ivec2 win) {
             }
         }
     }
+}
+
+void GuiBuilder::build(glm::ivec2 win) {
+    this->win = win;
 
     root->empty();
     recursivelyCreate(components, root);

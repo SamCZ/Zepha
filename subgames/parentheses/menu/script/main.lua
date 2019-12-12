@@ -1,6 +1,9 @@
-print("Parentheses menu script loaded!")
+zepha.set_gui([[
+    body
+        background: #124778
 
-zepha.delay(function()
-    print("Parentheses")
-    return true
-end, 1)
+        text[name]
+            position: 4px 4px
+            content: "Parentheses"
+    end
+]])

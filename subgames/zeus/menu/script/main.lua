@@ -3,6 +3,7 @@ zepha.set_gui([[
         background: asset(zeus_background)
 
         text[name]
+            position: 4px 4px
             content: "Zeus Subgame v0.0.1"
 
         rect[inv]

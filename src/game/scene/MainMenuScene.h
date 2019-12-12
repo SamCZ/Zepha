@@ -23,26 +23,23 @@ public:
     void draw() override;
 
     void cleanup() override {};
-
 private:
     void positionElements();
     void findSubgames();
 
     const float GS = 4;
 
-    GUIContainer components;
-    std::shared_ptr<GUIContainer> sandboxContainer = std::make_shared<GUIContainer>("_sandbox");
-
     glm::ivec2 win {};
     glm::ivec2 sandboxArea {};
-    MenuSandbox sandbox;
-    std::vector<Subgame> subgames;
-    Subgame* selectedSubgame = nullptr;
 
-//    bool showingSubgame = true;
-//    std::shared_ptr<GUIRect> subgame;
-
+    GUIContainer components;
     std::shared_ptr<GUIContainer> branding = nullptr;
     std::shared_ptr<GUIContainer> navigationBar = nullptr;
+    std::shared_ptr<GUIContainer> sandboxContainer = std::make_shared<GUIContainer>("_sandbox");
+
+    MenuSandbox sandbox;
+
+    std::vector<Subgame> subgames;
+    Subgame* selectedSubgame = nullptr;
 };
 
