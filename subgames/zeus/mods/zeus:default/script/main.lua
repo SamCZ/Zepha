@@ -36,12 +36,14 @@ zepha.register_keybind("open_inventory", {
         if zepha.player.menu_state == "" then
             zepha.player:open_menu([[
             body
+                background: #0003
+
                 rect[inv]
                     position: 50% 50%
                     position_anchor: 50% 50%
                     size: 236px 118px
                     padding: 20px 10px 8px 10px
-                    background: asset("inventory")
+                    background: asset(inventory)
 
                     inventory[list_main]
                         source: "local_player"

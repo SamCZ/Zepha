@@ -84,7 +84,7 @@ MainMenuScene::MainMenuScene(ClientState& state) :
             button->setPos({GS * 7 + GS * 18 * (i + 2), GS});
             button->setClickCallback([&, i]() {
                 selectedSubgame = &subgame;
-                sandbox.load(selectedSubgame->subgamePath);
+                sandbox.load(*selectedSubgame);
             });
             navigationBarIcons->add(button);
         }
@@ -92,7 +92,7 @@ MainMenuScene::MainMenuScene(ClientState& state) :
 
     if (subgames.size() > 0) {
         selectedSubgame = &subgames[0];
-        sandbox.load(selectedSubgame->subgamePath);
+        sandbox.load(*selectedSubgame);
     }
 
     positionElements();
@@ -106,38 +106,54 @@ void MainMenuScene::findSubgames() {
     while (subgamesDir.has_next) {
         cf_file_t subgameFolder;
         cf_read_file(&subgamesDir, &subgameFolder);
-        if (!subgameFolder.is_dir) { cf_dir_next(&subgamesDir); continue; }
+        if (!subgameFolder.is_dir || strncmp(subgameFolder.name, ".", 1) == 0) { cf_dir_next(&subgamesDir); continue; }
 
-        bool hasConf = false;
-        bool hasIcon = false;
+        try {
+            bool hasConf = false, hasIcon = false, hasMods = false;
 
-        cf_dir_t subgame;
-        cf_dir_open(&subgame, subgameFolder.path);
-        while (subgame.has_next) {
-            cf_file_t file;
-            cf_read_file(&subgame, &file);
+            cf_dir_t subgame;
+            cf_dir_open(&subgame, subgameFolder.path);
+            while (subgame.has_next) {
+                cf_file_t file;
+                cf_read_file(&subgame, &file);
 
-            if (!file.is_dir && strncmp(file.name, "icon.png", 8) == 0) hasIcon = true;
-            if (!file.is_dir && strncmp(file.name, "conf.json", 9) == 0) hasConf = true;
+                if (!file.is_dir && strncmp(file.name, "icon.png\0", 9) == 0)   hasIcon = true;
+                if (!file.is_dir && strncmp(file.name, "conf.json\0", 10) == 0) hasConf = true;
+                if ( file.is_dir && strncmp(file.name, "mods\0", 5) == 0)       hasMods = true;
 
-            cf_dir_next(&subgame);
+                cf_dir_next(&subgame);
+            }
+            cf_dir_close(&subgame);
+
+            if (!hasConf)
+                throw std::string("Subgame ") + std::string(subgameFolder.name) + " is missing a conf.json.";
+            if (!hasMods)
+                throw std::string("Subgame ") + std::string(subgameFolder.name) + " is missing a 'mods' directory.";
+
+            json j{};
+            try {
+                std::ifstream(std::string(subgameFolder.path) + "/conf.json") >> j;
+            } catch (...) { throw std::string(subgameFolder.name) + "/conf.json is not a valid JSON object."; }
+
+            if (!j.is_object())
+                throw std::string(subgameFolder.name) + "/conf.json is not a valid JSON object.";
+            if (!j["name"].is_string() || j["name"] == "")
+                throw "The 'name' property in " + std::string(subgameFolder.name) + "/conf.json is missing or invalid.";
+            if (!j["version"].is_string() || j["version"] == "")
+                throw "The 'version' property in " + std::string(subgameFolder.name) + "/conf.json is missing or invalid.";
+
+            std::string name = j["name"];
+            std::string description = (j["description"].is_string() ? j["description"] : "");
+            std::string version = j["version"];
+
+            std::shared_ptr<AtlasRef> icon = state.defs.textures["menu_flag_missing"];
+            if (hasIcon) icon = state.defs.textures.loadImage(std::string(subgameFolder.path) + "/icon.png", name);
+
+            subgames.push_back({icon, {name, description, version}, subgameFolder.path});
         }
-        cf_dir_close(&subgame);
-
-        if (!hasConf || !hasIcon) { cf_dir_next(&subgamesDir); continue; }
-
-        json j {};
-        std::ifstream i(std::string(subgameFolder.path) + "/conf.json");
-        i >> j;
-
-        std::string name = j["name"];
-        std::string description = j["description"];
-        std::string version = j["version"];
-
-        subgames.push_back({
-           state.defs.textures.loadImage(std::string(subgameFolder.path) + "/icon.png", name),
-           {name, description, version}, subgameFolder.path
-        });
+        catch(const std::string& e) {
+            std::cout << Log::err << "Encountered an error while loading subgames:\n\t" << e << Log::endl;
+        }
 
         cf_dir_next(&subgamesDir);
     }

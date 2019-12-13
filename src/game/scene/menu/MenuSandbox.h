@@ -6,17 +6,18 @@
 
 #include <fstream>
 #include <cute_files/cute_files.h>
+#include "Subgame.h"
 #include "../../ClientState.h"
-#include "../../../lua/LuaParser.h"
-#include "../../../lua/LuaMod.h"
-#include "../../hud/components/basic/GUIContainer.h"
 #include "../../hud/GuiBuilder.h"
+#include "../../hud/components/basic/GUIContainer.h"
+#include "../../../lua/LuaMod.h"
+#include "../../../lua/LuaParser.h"
 
 
 class MenuSandbox : LuaParser {
 public:
     MenuSandbox(glm::ivec2& win, ClientState& state, std::shared_ptr<GUIContainer> container);
-    void load(const std::string& subgamePath);
+    void load(const Subgame& subgame);
 
     void windowResized();
 
@@ -27,6 +28,7 @@ private:
 
     sol::protected_function_result DoFileSandboxed(std::string file);
     LuaMod mod {};
+    std::vector<std::shared_ptr<AtlasRef>> modAssets {};
 
     std::shared_ptr<GUIContainer> container = nullptr;
     ClientState& state;

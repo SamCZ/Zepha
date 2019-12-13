@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "GameGuiBuilder.h"
 #include "SerializedGuiElem.h"
 #include "components/basic/GUIText.h"
 #include "components/basic/GUIRect.h"
@@ -16,7 +17,7 @@
 class GameGui : public GUIContainer {
 public:
     explicit GameGui(glm::vec2 bufferSize, LocalDefs& defs);
-    void bufferResized(glm::vec2 bufferSize);
+    void winResized(glm::ivec2 win);
 
     void setVisible(bool visible) override;
 
@@ -28,11 +29,12 @@ public:
 
     InventoryList list;
 private:
-    glm::vec2 bufferSize {};
+    glm::ivec2 win {};
     LocalDefs& defs;
     std::string menuState = "";
 
     GUIContainer builtIn = {};
     std::shared_ptr<GUIContainer> menuRoot = {};
+    GameGuiBuilder builder;
 };
 

@@ -23,7 +23,7 @@ void Player::update(InputManager &input, double delta, double mouseX, double mou
 
     if (renderer.resized) {
         //Gamescene sets renderer.resized to false right after Player::update is called.
-        gameGui.bufferResized(renderer.getCamera().getBufferDimensions());
+        gameGui.winResized(renderer.getCamera().getBufferDimensions());
     }
 
     if (input.isKeyPressed(GLFW_KEY_F)) flying = !flying; //TODO: Move to Lua Bind

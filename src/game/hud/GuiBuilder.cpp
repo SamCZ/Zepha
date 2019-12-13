@@ -266,6 +266,8 @@ std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerializedGuiElem& dat
         text->setClickCallback(callback);
         return text;
     }
+
+    return nullptr;
 }
 float GuiBuilder::stringToNum(const std::string& input, PercentBehavior behavior = PercentBehavior::BUFF_WIDTH) {
     if (input.find("px") != std::string::npos) {

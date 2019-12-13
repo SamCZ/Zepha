@@ -27,20 +27,30 @@ TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) :
     createMissingImage();
 }
 
-void TextureAtlas::loadDirectory(const std::string& dirStr) {
+std::vector<std::shared_ptr<AtlasRef>> TextureAtlas::loadDirectory(const std::string& path, bool base, bool recursive) {
+    std::vector<std::shared_ptr<AtlasRef>> refs {};
+
     cf_dir_t dir;
-    cf_dir_open(&dir, (dirStr).c_str());
+    cf_dir_open(&dir, (path).c_str());
 
     while (dir.has_next) {
         cf_file_t file;
         cf_read_file(&dir, &file);
 
-        if (!file.is_dir && strcmp(file.ext, ".png") == 0)
-            loadImage(file.path, std::string(file.name).substr(0, std::string(file.name).size() - 4), true);
+        if (!file.is_dir && strcmp(file.ext, ".png") == 0) {
+            refs.push_back(loadImage(file.path, std::string(file.name).substr(0, std::string(file.name).size() - 4), base));
+        }
+
+        if (recursive && file.is_dir && strncmp(file.name, ".", 1) != 0) {
+            auto vec = loadDirectory(file.path, base, recursive);
+            refs.insert(refs.end(), vec.begin(), vec.end());
+        }
 
         cf_dir_next(&dir);
     }
     cf_dir_close(&dir);
+
+    return refs;
 }
 
 std::shared_ptr<AtlasRef> TextureAtlas::loadImage(const std::string &path, const std::string &name, bool base) {
