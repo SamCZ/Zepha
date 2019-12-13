@@ -35,36 +35,45 @@ zepha.register_keybind("open_inventory", {
     on_press = function()
         if zepha.player.menu_state == "" then
             zepha.player:open_menu([[
-            body
-                background: #0003
+                body
+                    background: #0003
 
-                rect[inv]
-                    position: 50% 50%
-                    position_anchor: 50% 50%
-                    size: 236px 118px
-                    padding: 20px 10px 8px 10px
-                    background: asset(inventory)
-
-                    inventory[list_main]
-                        source: "local_player"
-                        list: "player"
-                        position: 1px 1px
-                        slot_spacing: 2px 2px
+                    rect[click]
+                        size: 50px 50px
+                        background: #fff
                     end
 
---                     text[henlo_dog]
---                         content: "There's something I could never say\nIt's too complicated and you don't need to know"
---                     end
+                    rect[inv]
+                        position: 50% 50%
+                        position_anchor: 50% 50%
+                        size: 236px 118px
+                        padding: 20px 10px 8px 10px
+                        background: asset(inventory)
 
---                     rect[test]
---                         position: -16px -16px
---                         position_anchor: 50% 50%
---                         size: 16px 16px
---                         background: #fff
---                     end
+                        inventory[list_main]
+                            source: "local_player"
+                            list: "player"
+                            position: 1px 1px
+                            slot_spacing: 2px 2px
+                        end
+
+    --                     text[henlo_dog]
+    --                         content: "There's something I could never say\nIt's too complicated and you don't need to know"
+    --                     end
+
+    --                     rect[test]
+    --                         position: -16px -16px
+    --                         position_anchor: 50% 50%
+    --                         size: 16px 16px
+    --                         background: #fff
+    --                     end
+                    end
                 end
-            end
-            ]])
+            ]], {
+                click = function()
+                    print("INV CLICKED WHEE");
+                end
+            })
         else zepha.player:close_menu() end
     end
 })

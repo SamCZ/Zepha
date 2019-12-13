@@ -16,12 +16,13 @@
 
 class GameGui : public GUIContainer {
 public:
-    explicit GameGui(glm::vec2 bufferSize, LocalDefs& defs);
+    explicit GameGui(glm::vec2 bufferSize, LocalDefs& defs, Renderer& renderer);
     void winResized(glm::ivec2 win);
 
+    void update(double delta) override;
     void setVisible(bool visible) override;
 
-    void setMenu(const std::string& menu);
+    void setMenu(const std::string& menu, const std::map<std::string, std::function<void()>>& callbacks);
     void closeMenu();
     const std::string& getMenuState();
 
@@ -29,8 +30,10 @@ public:
 
     InventoryList list;
 private:
-    glm::ivec2 win {};
     LocalDefs& defs;
+    Renderer& renderer;
+
+    glm::ivec2 win {};
     std::string menuState = "";
 
     GUIContainer builtIn = {};

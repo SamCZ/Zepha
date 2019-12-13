@@ -5,9 +5,10 @@
 #include "GameGui.h"
 #include "components/compound/GUIInventoryList.h"
 
-GameGui::GameGui(glm::vec2 bufferSize, LocalDefs& defs) :
+GameGui::GameGui(glm::vec2 bufferSize, LocalDefs& defs, Renderer& renderer) :
     menuRoot(std::make_shared<GUIContainer>("__luaroot")),
     builder(list, defs, menuRoot),
+    renderer(renderer),
     win(bufferSize),
     list(60, 12),
     defs(defs) {
@@ -24,6 +25,14 @@ GameGui::GameGui(glm::vec2 bufferSize, LocalDefs& defs) :
     add(menuRoot);
 }
 
+void GameGui::update(double delta) {
+    Drawable::update(delta);
+
+    renderer.window.setCursorHand(mouseActivity(renderer.window.getMousePos()));
+    if (renderer.window.input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT))
+        triggerClick(renderer.window.getMousePos());
+}
+
 void GameGui::winResized(glm::ivec2 win) {
     this->win = win;
 
@@ -34,9 +43,9 @@ void GameGui::winResized(glm::ivec2 win) {
     builder.build(win);
 }
 
-void GameGui::setMenu(const std::string& menu) {
+void GameGui::setMenu(const std::string& menu, const std::map<std::string, std::function<void()>>& callbacks) {
     menuState = "menu"; //TODO: Implement the menu state properly
-    builder.setGui(menu, {}); //TODO: Callbacks
+    builder.setGui(menu, callbacks);
     builder.build(win);
 }
 

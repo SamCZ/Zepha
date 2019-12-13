@@ -195,10 +195,8 @@ void MainMenuScene::update() {
     sandbox.update(state.deltaTime);
 
     state.renderer.window.setCursorHand(components.mouseActivity(state.renderer.window.getMousePos()));
-
-    if (state.renderer.window.input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
+    if (state.renderer.window.input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT))
         components.triggerClick(state.renderer.window.getMousePos());
-    }
 }
 
 void MainMenuScene::draw() {

@@ -28,7 +28,7 @@ public:
     float get_look_pitch();
 
     std::string get_menu_state();
-    void open_menu(std::string menu);
+    void open_menu(std::string menu, sol::optional<sol::table> callbacks);
     void close_menu();
 
     void set_selected_block(std::string block);

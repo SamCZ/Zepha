@@ -11,7 +11,7 @@ Player::Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer) :
     defs(defs),
     renderer(renderer),
     wireframe({}, 0.01, {1, 1, 1}),
-    gameGui(renderer.window.getSize(), defs) {}
+    gameGui(renderer.window.getSize(), defs, renderer) {}
 
 void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {
     if (activeBlock == -1) activeBlock = defs.defs.blockFromStr("zeus:default:stone").index;
@@ -20,6 +20,7 @@ void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {
         gameGui.list.addStack({defs.defs.craftItemFromStr("zeus:materials:rock").index, 1});
         gameGui.list.addStack({defs.defs.craftItemFromStr("zeus:materials:stick").index, 2});
     }
+    gameGui.update(delta);
 
     renderer.window.addResizeCallback("player", [&](glm::ivec2 win) {
         gameGui.winResized(win);
@@ -234,8 +235,8 @@ void Player::setActiveBlock(const std::string& block) {
     activeBlock = defs.defs.blockFromStr(block).index;
 }
 
-void Player::setMenu(const std::string& menu) {
-    gameGui.setMenu(menu);
+void Player::setMenu(const std::string& menu, const std::map<std::string, std::function<void()>>& callbacks) {
+    gameGui.setMenu(menu, callbacks);
     renderer.window.lockMouse(false);
 }
 
