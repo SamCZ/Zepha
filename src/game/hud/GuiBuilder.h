@@ -15,8 +15,11 @@
 class GuiBuilder {
 public:
     GuiBuilder(LocalDefs& defs, std::shared_ptr<GUIContainer> root);
-    void setGui(const std::string& menu);
+    void setGui(const std::string& menu, const std::map<std::string, std::function<void()>>& callbacks = {});
     void build(glm::ivec2 win);
+    void clear();
+
+    ~GuiBuilder();
 
 protected:
     const float SCALE_MODIFIER = 3;
@@ -37,6 +40,8 @@ protected:
     glm::ivec2 win;
 
     std::string menu;
+    std::map<std::string, std::function<void()>> callbacks;
+
     std::shared_ptr<GUIContainer> root;
     std::vector<SerializedGuiElem> components {};
     LocalDefs& defs;

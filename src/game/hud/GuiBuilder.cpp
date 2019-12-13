@@ -3,12 +3,15 @@
 //
 
 #include "GuiBuilder.h"
+#include "components/compound/GUIImageButton.h"
 
 GuiBuilder::GuiBuilder(LocalDefs& defs, std::shared_ptr<GUIContainer> root) :
     defs(defs), root(root) {}
 
-void GuiBuilder::setGui(const std::string& menu) {
+void GuiBuilder::setGui(const std::string& menu, const std::map<std::string, std::function<void()>>& callbacks) {
     this->menu = menu;
+    this->callbacks = callbacks;
+
     deserialize();
 }
 
@@ -103,8 +106,12 @@ void GuiBuilder::deserialize() {
 void GuiBuilder::build(glm::ivec2 win) {
     this->win = win;
 
-    root->empty();
+    clear();
     recursivelyCreate(components, root);
+}
+
+void GuiBuilder::clear() {
+    root->empty();
 }
 
 void GuiBuilder::recursivelyCreate(std::vector<SerializedGuiElem> components, std::shared_ptr<GUIComponent> parent) {
@@ -117,6 +124,11 @@ void GuiBuilder::recursivelyCreate(std::vector<SerializedGuiElem> components, st
 
 std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerializedGuiElem& data) {
     glm::vec2 pos {};
+
+    std::function<void()> callback = nullptr;
+    if (callbacks.count(data.key)) {
+        callback = callbacks[data.key];
+    }
 
     if (data.tokens.count("position")) {
         auto tokens = splitValue(data.tokens["position"], 2);
@@ -159,6 +171,7 @@ std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerializedGuiElem& dat
         else if (background.substr(0, 6) == "asset(") rect->create(win, {}, defs.textures[background.substr(6, background.length() - 7)]);
         else rect->create(win, {}, glm::vec4 {});
 
+        rect->setClickCallback(callback);
         return rect;
     }
 
@@ -175,7 +188,43 @@ std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerializedGuiElem& dat
         else rect->create(size, padding, glm::vec4 {});
 
         rect->setPos(pos);
+        rect->setClickCallback(callback);
         return rect;
+    }
+
+    else if (data.type == "button") {
+        size.x -= padding.y + padding.w;
+        size.y -= padding.x + padding.z;
+
+        std::string background = "";
+        if (data.tokens.count("background")) background = data.tokens["background"];
+        std::string background_hover = background;
+        if (data.tokens.count("background_hover")) background_hover = data.tokens["background_hover"];
+
+        auto button = std::make_shared<GUIImageButton>(data.key);
+        button->create(size, padding, defs.textures[background.substr(6, background.length() - 7)], defs.textures[background_hover.substr(6, background_hover.length() - 7)]);
+
+        std::string content = "";
+        if (data.tokens.count("content")) content = data.tokens["content"].substr(1, data.tokens["content"].size() - 2);
+
+        if (content != "") {
+            std::string::size_type off = 0;
+            while ((off = content.find("\\n", off)) != std::string::npos) {
+                content.replace(off, 2, "\n");
+                off += 1;
+            }
+
+            auto text = std::make_shared<GUIText>(data.key + "__TEXT");
+            text->create(glm::vec2(SCALE_MODIFIER), padding, {}, {1, 1, 1, 1},
+                         {defs.textures, defs.textures["font"]});
+            text->setText(content);
+            text->setPos({6*SCALE_MODIFIER, size.y / 2 - 4.5*SCALE_MODIFIER});
+            button->add(text);
+        }
+
+        button->setPos(pos);
+        button->setClickCallback(callback);
+        return button;
     }
 
     else if (data.type == "text") {
@@ -213,6 +262,7 @@ std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerializedGuiElem& dat
         text->create(scale * SCALE_MODIFIER, padding, background_color, color, {defs.textures, defs.textures["font"]});
         text->setText(content);
         text->setPos(pos);
+        text->setClickCallback(callback);
         return text;
     }
 }
@@ -262,4 +312,8 @@ std::vector<std::string> GuiBuilder::splitValue(const std::string &value, unsign
     }
 
     return std::move(vec);
+}
+
+GuiBuilder::~GuiBuilder() {
+    clear();
 }

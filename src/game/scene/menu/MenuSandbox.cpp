@@ -7,11 +7,13 @@
 #include "../../../lua/api/modules/mDelay.h"
 #include "../../../lua/api/modules/mPrintE.h"
 #include "../../../lua/api/modules/mSetGui.h"
+#include "../../../lua/api/modules/mStartGame.h"
 
-MenuSandbox::MenuSandbox(glm::ivec2 &win, LocalDefs& defs, std::shared_ptr<GUIContainer> container) :
+MenuSandbox::MenuSandbox(glm::ivec2 &win, ClientState& state, std::shared_ptr<GUIContainer> container) :
         win(win),
+        state(state),
         container(container),
-        builder(defs, container) {}
+        builder(state.defs, container) {}
 
 void MenuSandbox::setup() {
     delayed_functions.clear();
@@ -31,6 +33,7 @@ void MenuSandbox::setup() {
     MenuApi::delay(core, delayed_functions);
     MenuApi::printe(lua);
     MenuApi::set_gui(builder, win, lua, core);
+    MenuApi::start_game(state, core);
 }
 
 void MenuSandbox::load(const std::string &subgamePath) {

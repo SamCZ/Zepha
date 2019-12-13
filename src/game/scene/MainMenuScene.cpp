@@ -6,7 +6,7 @@
 
 MainMenuScene::MainMenuScene(ClientState& state) :
     Scene(state),
-    sandbox(sandboxArea, state.defs, sandboxContainer) {
+    sandbox(sandboxArea, state, sandboxContainer) {
 
     state.renderer.setClearColor(0, 0, 0);
     state.renderer.getWindow().lockMouse(false);
@@ -65,6 +65,7 @@ MainMenuScene::MainMenuScene(ClientState& state) :
                               state.defs.textures["crop(0, 0, 16, 16, menu_flag_content)"],
                               state.defs.textures["crop(16, 0, 16, 16, menu_flag_content)"]);
         contentButton->setPos({GS + GS * 18, GS});
+        contentButton->setClickCallback([&](){ state.desiredState = "connect"; });
         navigationBarIcons->add(contentButton);
 
         auto divider = std::make_shared<GUIRect>("divider");

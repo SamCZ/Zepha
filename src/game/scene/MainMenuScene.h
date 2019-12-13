@@ -27,7 +27,7 @@ private:
     void positionElements();
     void findSubgames();
 
-    const float GS = 4;
+    const float GS = 3;
 
     glm::ivec2 win {};
     glm::ivec2 sandboxArea {};
