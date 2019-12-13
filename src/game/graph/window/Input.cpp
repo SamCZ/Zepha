@@ -3,9 +3,9 @@
 //
 
 #include <GLFW/glfw3.h>
-#include "InputManager.h"
+#include "Input.h"
 
-InputManager::InputManager() {
+Input::Input() {
     for (bool& key : keysDown) key = false;
     for (bool& key : keysPressed) key = false;
     for (bool& key : keysReleased) key = false;
@@ -18,7 +18,7 @@ InputManager::InputManager() {
     rightReleased = false;
 }
 
-void InputManager::update(bool* keys) {
+void Input::update(bool* keys) {
     for (bool &key : keysPressed) key = false;
     for (bool &key : keysReleased) key = false;
 
@@ -42,7 +42,7 @@ void InputManager::update(bool* keys) {
     rightReleased = false;
 }
 
-void InputManager::updateLeftMouse(bool down) {
+void Input::updateLeftMouse(bool down) {
     if (down) {
         if (!leftDown) leftPressed = true;
         leftDown = true;
@@ -53,7 +53,7 @@ void InputManager::updateLeftMouse(bool down) {
     }
 }
 
-void InputManager::updateRightMouse(bool down) {
+void Input::updateRightMouse(bool down) {
     if (down) {
         if (!rightDown) rightPressed = true;
         rightDown = true;
@@ -64,31 +64,31 @@ void InputManager::updateRightMouse(bool down) {
     }
 }
 
-bool InputManager::isKeyDown(int key) {
+bool Input::isKeyDown(int key) {
     return keysDown[key];
 }
 
-bool InputManager::isKeyPressed(int key) {
+bool Input::isKeyPressed(int key) {
     return keysPressed[key];
 }
 
-bool InputManager::isKeyReleased(int key) {
+bool Input::isKeyReleased(int key) {
     return keysReleased[key];
 }
 
-bool InputManager::isMouseDown(int button) {
+bool Input::isMouseDown(int button) {
     if      (button == GLFW_MOUSE_BUTTON_LEFT)  return leftDown;
     else if (button == GLFW_MOUSE_BUTTON_RIGHT) return rightDown;
     return false;
 }
 
-bool InputManager::isMousePressed(int button) {
+bool Input::isMousePressed(int button) {
     if      (button == GLFW_MOUSE_BUTTON_LEFT)  return leftPressed;
     else if (button == GLFW_MOUSE_BUTTON_RIGHT) return rightPressed;
     return false;
 }
 
-bool InputManager::isMouseReleased(int button) {
+bool Input::isMouseReleased(int button) {
     if      (button == GLFW_MOUSE_BUTTON_LEFT)  return leftReleased;
     else if (button == GLFW_MOUSE_BUTTON_RIGHT) return rightReleased;
     return false;

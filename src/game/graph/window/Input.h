@@ -4,9 +4,9 @@
 
 #pragma once
 
-class InputManager {
+class Input {
 public:
-    InputManager();
+    Input();
 
     void update(bool* keys);
     void updateLeftMouse(bool down);

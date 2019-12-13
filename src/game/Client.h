@@ -15,7 +15,7 @@
 
 class Client {
 public:
-    Client(const std::string& path, const Address& addr, glm::vec2 dims);
+    Client(const std::string& path, const Address& addr, glm::ivec2 dims);
     ~Client();
 
 private:

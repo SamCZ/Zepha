@@ -4,51 +4,55 @@
 
 #pragma once
 
+#include <map>
 #include <cstdio>
+#include <functional>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
-#include "InputManager.h"
+#include "Input.h"
 
 class Window {
 public:
     Window();
-    Window(GLint windowWidth, GLint windowHeight);
+    Window(glm::ivec2 win);
 
     int initialize();
 
     void update();
-
-    glm::vec2 getSize();
-    bool resized;
-
     bool shouldClose();
-
-    glm::ivec2 getMousePos();
-    void lockMouse(bool lock);
-    double getDeltaX();
-    double getDeltaY();
-
     void swapBuffers();
+
+    void addResizeCallback(const std::string& identifier, std::function<void(glm::ivec2)> cb);
+    void removeResizeCallback(const std::string& identifier);
+
+    glm::ivec2 getSize();
+    glm::ivec2 getMousePos();
+    glm::vec2  getDelta();
+
+    void lockMouse(bool lock);
+    void setCursorHand(bool hand);
 
     ~Window();
 
-    InputManager input;
+    Input input;
     bool keys[1024] {};
 private:
     GLFWwindow *mainWindow;
 
-    GLint width, height;
-    GLint centerX, centerY;
-    bool mouseIsLocked, forceMouseUnlocked;
+    glm::ivec2 win;
+    glm::ivec2 center;
+    glm::vec2  delta;
 
-    GLint bufferWidth, bufferHeight;
+    bool mouseIsLocked = false;
+    bool forceMouseUnlocked = false;
+
+    std::map<std::string, std::function<void(glm::ivec2)>> resizeCallbacks;
 
     //Static so that GLFW can run callback
     static void handleKeys(GLFWwindow* glfwWindow, int key, int code, int action, int mode);
     static void handleResize(GLFWwindow* glfwWindow, int width, int height);
 
-    double deltaX = 0;
-    double deltaY = 0;
+    GLFWcursor* handCursor = nullptr;
 };
 

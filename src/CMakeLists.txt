@@ -104,8 +104,8 @@ set(ZEPHA_SRC
     game/graph/drawable/Drawable.h
     game/graph/drawable/DrawableGroup.cpp
     game/graph/drawable/DrawableGroup.h
-    game/graph/window/InputManager.cpp
-    game/graph/window/InputManager.h
+        game/graph/window/Input.cpp
+        game/graph/window/Input.h
     game/entity/world/BlockCrackEntity.cpp
     game/entity/world/BlockCrackEntity.h
     def/texture/TextureAtlas.cpp

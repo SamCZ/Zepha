@@ -10,10 +10,10 @@
 
 class WorldGeometryShader : public Shader {
 public:
-    explicit WorldGeometryShader(glm::vec2 windowSize, float bufferScale);
+    explicit WorldGeometryShader(glm::ivec2 windowSize, float bufferScale);
     void postCreate() override;
 
-    void windowResized(glm::vec2 windowSize);
+    void windowResized(glm::ivec2 windowSize);
     void updateSwayMap(double delta);
 
     ~WorldGeometryShader();
@@ -35,6 +35,6 @@ public:
     noise::module::Perlin swayNoise;
     unsigned char* swayData = nullptr;
 
-    glm::vec2 windowSize {};
+    glm::ivec2 windowSize {};
     float bufferScale = 1;
 };

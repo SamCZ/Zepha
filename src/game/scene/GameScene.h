@@ -24,7 +24,7 @@ public:
     void update() override;
     void draw() override;
 
-    void cleanup() override {};
+    void cleanup() override;
 public:
     LocalDefs& defs;
 

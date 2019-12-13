@@ -2,21 +2,14 @@
 // Created by aurailus on 26/11/18.
 //
 
+#include <iostream>
 #include "Window.h"
 
-Window::Window() : Window(800, 600) {};
+Window::Window() : Window({800, 600}) {};
 
-Window::Window(GLint windowWidth, GLint windowHeight) {
-    width = windowWidth;
-    height = windowHeight;
-
-    centerX = width / 2;
-    centerY = height / 2;
-
-    forceMouseUnlocked = false;
-    mouseIsLocked = false;
-    resized = false;
-}
+Window::Window(glm::ivec2 win) :
+    win(win),
+    center(win.x / 2, win.y / 2) {}
 
 int Window::initialize() {
     //Initialize GLFW
@@ -35,7 +28,8 @@ int Window::initialize() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     //Create the window
-    mainWindow = glfwCreateWindow(width, height, "Zepha", nullptr, nullptr);
+    mainWindow = glfwCreateWindow(win.x, win.y, "Zepha", nullptr, nullptr);
+    handCursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
 
     if (!mainWindow) {
         printf("GLFW window failed\n");
@@ -43,7 +37,7 @@ int Window::initialize() {
         return 1;
     }
 
-    glfwGetFramebufferSize(mainWindow, &bufferWidth, &bufferHeight);
+    glfwGetFramebufferSize(mainWindow, &win.x, &win.y);
 
     //Set context for GLEW to our window
     glfwMakeContextCurrent(mainWindow);
@@ -64,7 +58,7 @@ int Window::initialize() {
     glEnable(GL_DEPTH_TEST);
 
     //Setup viewport (draw) size
-    glViewport(0, 0, bufferWidth, bufferHeight);
+    glViewport(0, 0, win.x, win.y);
 
     glfwSetWindowUserPointer(mainWindow, this);
     glfwSetKeyCallback(mainWindow, handleKeys);
@@ -80,8 +74,7 @@ void Window::update() {
     double mouseX, mouseY;
     if (glfwGetWindowAttrib(mainWindow, GLFW_FOCUSED) == GL_FALSE) {
         mouseIsLocked = false;
-        deltaX = 0;
-        deltaY = 0;
+        delta = {};
     }
     else {
         glfwGetCursorPos(mainWindow, &mouseX, &mouseY);
@@ -89,14 +82,13 @@ void Window::update() {
         if (!mouseIsLocked) {
             if (!forceMouseUnlocked && input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
                 glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-                glfwSetCursorPos(mainWindow, centerX, centerY);
+                glfwSetCursorPos(mainWindow, center.x, center.y);
                 mouseIsLocked = true;
             }
         }
         else {
-            deltaX = mouseX - centerX;
-            deltaY = centerY - mouseY;
-            glfwSetCursorPos(mainWindow, centerX, centerY);
+            delta = {mouseX - center.x, center.y - mouseY};
+            glfwSetCursorPos(mainWindow, center.x, center.y);
         }
     }
 
@@ -105,12 +97,51 @@ void Window::update() {
     input.updateRightMouse(glfwGetMouseButton(mainWindow, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS);
 }
 
-double Window::getDeltaX() {
-    return deltaX;
+bool Window::shouldClose() {
+    return static_cast<bool>(glfwWindowShouldClose(mainWindow));
 }
 
-double Window::getDeltaY() {
-    return deltaY;
+void Window::swapBuffers() {
+    glfwSwapBuffers(mainWindow);
+}
+
+void Window::addResizeCallback(const std::string &identifier, std::function<void(glm::ivec2)> cb) {
+    resizeCallbacks.emplace(identifier, cb);
+}
+
+void Window::removeResizeCallback(const std::string &identifier) {
+    resizeCallbacks.erase(identifier);
+}
+
+glm::ivec2 Window::getSize() {
+    return win;
+}
+
+glm::ivec2 Window::getMousePos() {
+    double xPos, yPos;
+    glfwGetCursorPos(mainWindow, &xPos, &yPos);
+    return glm::ivec2 {static_cast<int>(xPos), static_cast<int>(yPos)};
+}
+
+glm::vec2 Window::getDelta() {
+    return delta;
+}
+
+void Window::lockMouse(bool lock) {
+    forceMouseUnlocked = !lock;
+    mouseIsLocked = lock;
+    glfwSetCursorPos(mainWindow, center.x, center.y);
+    glfwSetInputMode(mainWindow, GLFW_CURSOR, (mouseIsLocked ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL));
+    delta = {};
+}
+
+void Window::setCursorHand(bool hand) {
+    glfwSetCursor(mainWindow, hand ? handCursor : nullptr);
+}
+
+Window::~Window() {
+    glfwDestroyWindow(mainWindow);
+    glfwTerminate();
 }
 
 void Window::handleKeys(GLFWwindow* glfwWindow, int key, int, int action, int) {
@@ -133,43 +164,11 @@ void Window::handleKeys(GLFWwindow* glfwWindow, int key, int, int action, int) {
 void Window::handleResize(GLFWwindow *glfwWindow, int, int) {
     auto window = static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
 
-    glfwGetFramebufferSize(glfwWindow, &window->bufferWidth, &window->bufferHeight);
-    glViewport(0, 0, window->bufferWidth, window->bufferHeight);
-    window->resized = true;
+    glfwGetFramebufferSize(glfwWindow, &window->win.x, &window->win.y);
+    glViewport(0, 0, window->win.x, window->win.y);
 
-    window->centerX = window->bufferWidth / 2;
-    window->centerY = window->bufferHeight / 2;
-}
+    window->center.x = window->win.x / 2;
+    window->center.y = window->win.y / 2;
 
-Window::~Window() {
-    glfwDestroyWindow(mainWindow);
-    glfwTerminate();
-}
-
-
-glm::vec2 Window::getSize() {
-    return {bufferWidth, bufferHeight};
-}
-
-bool Window::shouldClose() {
-    return static_cast<bool>(glfwWindowShouldClose(mainWindow));
-}
-
-void Window::swapBuffers() {
-    glfwSwapBuffers(mainWindow);
-}
-
-void Window::lockMouse(bool lock) {
-    forceMouseUnlocked = !lock;
-    mouseIsLocked = lock;
-    glfwSetCursorPos(mainWindow, centerX, centerY);
-    glfwSetInputMode(mainWindow, GLFW_CURSOR, (mouseIsLocked ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL));
-    deltaX = 0;
-    deltaY = 0;
-}
-
-glm::ivec2 Window::getMousePos() {
-    double xPos, yPos;
-    glfwGetCursorPos(mainWindow, &xPos, &yPos);
-    return glm::ivec2 {static_cast<int>(xPos), static_cast<int>(yPos)};
+    for (auto& cb : window->resizeCallbacks) cb.second(window->win);
 }

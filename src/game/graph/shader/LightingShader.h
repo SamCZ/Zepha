@@ -9,10 +9,10 @@ typedef unsigned int uint;
 
 class LightingShader : public Shader {
 public:
-    explicit LightingShader(glm::vec2 windowSize, float bufferScale);
+    explicit LightingShader(glm::ivec2 windowSize, float bufferScale);
     void postCreate() override;
 
-    void windowResized(glm::vec2 windowSize);
+    void windowResized(glm::ivec2 windowSize);
 
     struct Uniforms {
         GLint gPosition;
@@ -31,6 +31,6 @@ public:
     uint rDepth;
 
 private:
-    glm::vec2 windowSize {};
+    glm::ivec2 windowSize {};
     float bufferScale = 1;
 };

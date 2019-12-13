@@ -8,7 +8,7 @@
 
 class EntityGeometryShader : public Shader {
 public:
-    explicit EntityGeometryShader(glm::vec2 windowSize, float bufferScale);
+    explicit EntityGeometryShader(glm::ivec2 windowSize, float bufferScale);
     void postCreate() override;
 
     struct Uniforms {
@@ -22,6 +22,6 @@ public:
     Uniforms uniforms {};
 
 private:
-    glm::vec2 windowSize {};
+    glm::ivec2 windowSize {};
     float bufferScale = 1;
 };

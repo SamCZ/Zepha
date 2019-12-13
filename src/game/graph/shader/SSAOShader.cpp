@@ -5,7 +5,7 @@
 #include "SSAOShader.h"
 typedef unsigned int uint;
 
-SSAOShader::SSAOShader(glm::vec2 windowSize, float bufferScale, uint kernelCount) : Shader(),
+SSAOShader::SSAOShader(glm::ivec2 windowSize, float bufferScale, uint kernelCount) : Shader(),
     windowSize(windowSize),
     bufferScale(bufferScale),
     kernelCount(kernelCount) {}
@@ -68,7 +68,7 @@ void SSAOShader::postCreate() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void SSAOShader::windowResized(glm::vec2 windowSize) {
+void SSAOShader::windowResized(glm::ivec2 windowSize) {
     this->windowSize = windowSize;
 
     glBindTexture(GL_TEXTURE_2D, colorBuffer);

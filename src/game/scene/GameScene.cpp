@@ -10,10 +10,10 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     world(defs, &playerPos, &server),
 
     player(world, defs, state.renderer),
-    debugGui(state.renderer.getCamera().getBufferDimensions(), defs) {
+    debugGui(state.renderer.window.getSize(), defs) {
 
     state.renderer.setClearColor(148, 194, 240);
-    state.renderer.getWindow().lockMouse(true);
+    state.renderer.window.lockMouse(true);
 
     defs.init(world, player);
     world.init();
@@ -21,25 +21,24 @@ GameScene::GameScene(ClientState& state) : Scene(state),
 
     Packet r(PacketType::CONNECT_DATA_RECVD);
     r.sendTo(state.connection.getPeer(), PacketChannel::CONNECT);
+
+    state.renderer.window.addResizeCallback("gamescene", [&](glm::ivec2 win) {
+        debugGui.bufferResized(win);
+    });
 }
 
 void GameScene::update() {
-    defs.update(state.deltaTime, state.renderer.getWindow().keys);
+    defs.update(state.deltaTime, state.renderer.window.keys);
     defs.textures.update();
     server.update(player);
 
-    Window& window = state.renderer.getWindow();
+    Window& window = state.renderer.window;
 
     //Update Player
-    player.update(window.input, state.deltaTime, window.getDeltaX(), window.getDeltaY());
+    player.update(window.input, state.deltaTime, window.getDelta());
     playerPos = player.getPos();
 
     for (auto entity : entities) entity->update(state.deltaTime);
-
-    if (state.renderer.resized) {
-        debugGui.bufferResized(state.renderer.getCamera().getBufferDimensions());
-        state.renderer.resized = false;
-    }
 
     for (auto &chunkPacket : server.chunkPackets) world.loadChunkPacket(std::move(chunkPacket));
     server.chunkPackets.clear();
@@ -62,7 +61,7 @@ void GameScene::update() {
 
 void GameScene::draw() {
     Renderer& renderer = state.renderer;
-    Camera& camera = renderer.getCamera();
+    Camera& camera = renderer.camera;
 
     renderer.beginChunkDeferredCalls();
     renderer.enableTexture(&defs.textures.atlasTexture);
@@ -84,4 +83,8 @@ void GameScene::draw() {
     player.drawGUI(renderer);
 
     renderer.swapBuffers();
+}
+
+void GameScene::cleanup() {
+    state.renderer.window.removeResizeCallback("gamescene");
 }

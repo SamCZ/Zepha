@@ -98,15 +98,19 @@ void GUIComponent::updatePos() {
 }
 
 bool GUIComponent::mouseActivity(glm::ivec2 pos) {
+    bool isHovering = false;
     for (auto child = children.rbegin(); child != children.rend(); ++child) {
-        if ((*child)->mouseActivity(pos - (*child)->getPos())) return true;
+        if ((*child)->mouseActivity(pos - (*child)->getPos())) isHovering = true;
     }
     if (pos.x >= 0 && pos.y >= 0 && pos.x <= scale.x && pos.y <= scale.y) {
-        if (!hovered && hoverCallback) {
-            hoverCallback(true);
-            hovered = true;
+        if (hoverCallback) {
+            if (!hovered) {
+                hoverCallback(true);
+                hovered = true;
+            }
+            return true;
         }
-        return false; //TODO: Question this
+        return isHovering;
     }
     else {
         if (hovered && hoverCallback) {
@@ -114,7 +118,7 @@ bool GUIComponent::mouseActivity(glm::ivec2 pos) {
             hovered = false;
         }
     }
-    return false;
+    return isHovering;
 }
 
 bool GUIComponent::triggerClick(glm::ivec2 pos) {

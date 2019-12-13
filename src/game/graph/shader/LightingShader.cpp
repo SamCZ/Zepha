@@ -4,7 +4,7 @@
 
 #include "LightingShader.h"
 
-LightingShader::LightingShader(glm::vec2 windowSize, float bufferScale) : Shader(),
+LightingShader::LightingShader(glm::ivec2 windowSize, float bufferScale) : Shader(),
     windowSize(windowSize),
     bufferScale(bufferScale) {}
 
@@ -63,7 +63,7 @@ void LightingShader::postCreate() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void LightingShader::windowResized(glm::vec2 windowSize) {
+void LightingShader::windowResized(glm::ivec2 windowSize) {
     this->windowSize = windowSize;
 
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);

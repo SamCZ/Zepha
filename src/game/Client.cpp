@@ -4,9 +4,9 @@
 
 #include "Client.h"
 
-Client::Client(const std::string& path, const Address &addr, glm::vec2 dims) :
+Client::Client(const std::string& path, const Address &addr, glm::ivec2 dims) :
     state(path.substr(0, path.find_last_of('/') + 1), renderer),
-    renderer(dims.x, dims.y),
+    renderer(dims),
     addr(addr) {
 
     std::cout << Log::info << "Starting Zepha Client." << Log::endl;
@@ -14,7 +14,7 @@ Client::Client(const std::string& path, const Address &addr, glm::vec2 dims) :
     std::unique_ptr<Scene> scene = std::make_unique<MainMenuScene>(state);
     sceneManager.setScene(std::move(scene));
 
-    while (!renderer.getWindow().shouldClose()) loop();
+    while (!renderer.window.shouldClose()) loop();
 }
 
 void Client::loop() {

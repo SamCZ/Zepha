@@ -30,13 +30,13 @@ public:
 
     Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer);
 
-    void update(InputManager &input, double delta, double mouseX, double mouseY);
+    void update(Input &input, double delta, glm::vec2 mouseDelta);
 
-    void moveAndLook(InputManager &input, double delta, double deltaX, double deltaY);
+    void moveAndLook(Input &input, double delta, glm::vec2 mouseDelta);
     void updateCamera();
-    void findPointedThing(InputManager &input);
+    void findPointedThing(Input &input);
     void updateWireframe();
-    void breakBlock(InputManager& input, double delta);
+    void breakBlock(Input& input, double delta);
 
     void setPos(glm::vec3 pos);
     glm::vec3 getPos();
@@ -62,6 +62,7 @@ public:
 
     PointedThing& getPointedThing();
 
+    ~Player();
 private:
     Renderer& renderer;
     LocalDefs& defs;

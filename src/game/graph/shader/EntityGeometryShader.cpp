@@ -4,7 +4,7 @@
 
 #include "EntityGeometryShader.h"
 
-EntityGeometryShader::EntityGeometryShader(glm::vec2 windowSize, float bufferScale) : Shader(),
+EntityGeometryShader::EntityGeometryShader(glm::ivec2 windowSize, float bufferScale) : Shader(),
     windowSize(windowSize),
     bufferScale(bufferScale) {}
 

@@ -21,7 +21,7 @@
 class Renderer {
 public:
     Renderer();
-    Renderer(GLint winWidth, GLint winHeight);
+    Renderer(glm::ivec2 win);
 
     void update(double delta);
 
@@ -37,17 +37,12 @@ public:
     void setBones(std::vector<glm::mat4>& transforms);
     void enableTexture(Texture* texture);
 
-    Window& getWindow();
-    Camera& getCamera();
-
-    bool resized;
+    Window window;
+    Camera camera;
 private:
     void renderQuad();
 
     unsigned int quadVAO = 0, quadVBO;
-
-    Window window;
-    Camera camera;
 
     unsigned int sBuffer, sDepthMap;
 

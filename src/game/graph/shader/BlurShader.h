@@ -8,10 +8,10 @@
 
 class BlurShader : public Shader {
 public:
-    explicit BlurShader(glm::vec2 windowSize, float bufferScale);
+    explicit BlurShader(glm::ivec2 windowSize, float bufferScale);
     void postCreate() override;
 
-    void windowResized(glm::vec2 windowSize);
+    void windowResized(glm::ivec2 windowSize);
 
     struct Uniforms {
         GLint sampleScale;
@@ -23,6 +23,6 @@ public:
     unsigned int colorBuffer;
 
 private:
-    glm::vec2 windowSize;
+    glm::ivec2 windowSize;
     float bufferScale;
 };

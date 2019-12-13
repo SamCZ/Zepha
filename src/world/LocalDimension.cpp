@@ -73,7 +73,7 @@ int LocalDimension::renderChunks(Renderer &renderer) {
     int count = 0;
     for (auto &renderElement : renderElems) {
         FrustumAABB bbox(renderElement->getPos() * glm::vec3(16), glm::vec3(16));
-        if (renderer.getCamera().inFrustum(bbox) != Frustum::OUTSIDE) {
+        if (renderer.camera.inFrustum(bbox) != Frustum::OUTSIDE) {
             renderElement->draw(renderer);
             count++;
         }

@@ -4,7 +4,7 @@
 
 #include "WorldGeometryShader.h"
 
-WorldGeometryShader::WorldGeometryShader(glm::vec2 windowSize, float bufferScale) : Shader(),
+WorldGeometryShader::WorldGeometryShader(glm::ivec2 windowSize, float bufferScale) : Shader(),
     windowSize(windowSize),
     bufferScale(bufferScale),
     swayData(new unsigned char[16 * 4 * 16]) {
@@ -27,7 +27,7 @@ void WorldGeometryShader::postCreate() {
     set(uniforms.swaySampler, 1);
 }
 
-void WorldGeometryShader::windowResized(glm::vec2 windowSize) {
+void WorldGeometryShader::windowResized(glm::ivec2 windowSize) {
     this->windowSize = windowSize;
 }
 void WorldGeometryShader::updateSwayMap(double delta) {

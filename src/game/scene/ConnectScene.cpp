@@ -21,18 +21,19 @@ ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
 
     auto loadBar = std::make_shared<GUIRect>("loadBar");
     loadBar->create({1, 32}, {}, {0.17, 0.75, 0.93, 1});
-    loadBar->setPos({0, state.renderer.getWindow().getSize().y - 32});
+    loadBar->setPos({0, state.renderer.window.getSize().y - 32});
     components.add(loadBar);
 
     connection.attemptConnect(std::move(addr));
+
+    state.renderer.window.addResizeCallback("connect", [&](glm::ivec2 win) {
+        components.get<GUIRect>("loadBar")->setPos({0, win.y - 32});
+    });
 }
 
 void ConnectScene::update() {
     state.defs.textures.update();
-    if (state.renderer.getWindow().resized) {
-        components.get<GUIRect>("loadBar")->setPos({0, state.renderer.getWindow().getSize().y - 32});
-        state.renderer.getWindow().resized = false;
-    }
+
     switch (connectState) {
         default:
             std::cout << Log::err << "Invalid connectState" << Log::endl;
@@ -47,7 +48,7 @@ void ConnectScene::update() {
             break;
 
         case State::IDENTIFIER_LIST: {
-            components.get<GUIRect>("loadBar")->setScale({state.renderer.getWindow().getSize().x * 0.2, 32});
+            components.get<GUIRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.2, 32});
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
@@ -98,7 +99,7 @@ void ConnectScene::update() {
         }
 
         case State::MODS: {
-            components.get<GUIRect>("loadBar")->setScale({state.renderer.getWindow().getSize().x * 0.4, 32});
+            components.get<GUIRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.4, 32});
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
@@ -132,7 +133,7 @@ void ConnectScene::update() {
         }
 
         case State::MEDIA: {
-            components.get<GUIRect>("loadBar")->setScale({state.renderer.getWindow().getSize().x * 0.6, 32});
+            components.get<GUIRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.6, 32});
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
@@ -180,7 +181,7 @@ void ConnectScene::update() {
                     statusText->setText(statusText->getText() + "Received " + to_string(count) + "x media files.\n");
                 }
                 else if (p.type == PacketType::MEDIA_DONE) {
-                    components.get<GUIRect>("loadBar")->setScale({state.renderer.getWindow().getSize().x, 32});
+                    components.get<GUIRect>("loadBar")->setScale({state.renderer.window.getSize().x, 32});
                     statusText->setText(statusText->getText() + "Done downloading media.\nJoining world...\n");
 
                     connectState = State::DONE;
@@ -241,4 +242,8 @@ void ConnectScene::draw() {
     components.draw(renderer);
 
     renderer.swapBuffers();
+}
+
+void ConnectScene::cleanup() {
+    state.renderer.window.removeResizeCallback("connect");
 }

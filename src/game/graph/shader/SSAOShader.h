@@ -10,10 +10,10 @@ typedef unsigned int uint;
 
 class SSAOShader : public Shader {
 public:
-    explicit SSAOShader(glm::vec2 windowSize, float bufferScale, uint kernelCount);
+    explicit SSAOShader(glm::ivec2 windowSize, float bufferScale, uint kernelCount);
     void postCreate() override;
 
-    void windowResized(glm::vec2 windowSize);
+    void windowResized(glm::ivec2 windowSize);
 
     struct Uniforms {
         GLint proj;
@@ -35,6 +35,6 @@ public:
     unsigned int colorBuffer;
 
 private:
-    glm::vec2 windowSize {};
+    glm::ivec2 windowSize {};
     float bufferScale = 1;
 };

@@ -11,30 +11,29 @@ Player::Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer) :
     defs(defs),
     renderer(renderer),
     wireframe({}, 0.01, {1, 1, 1}),
-    gameGui(renderer.getCamera().getBufferDimensions(), defs) {}
+    gameGui(renderer.window.getSize(), defs) {}
 
-void Player::update(InputManager &input, double delta, double mouseX, double mouseY) {
+void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {
     if (activeBlock == -1) activeBlock = defs.defs.blockFromStr("zeus:default:stone").index;
 
-    if (renderer.getWindow().input.isKeyDown(GLFW_KEY_G)) {
+    if (renderer.window.input.isKeyDown(GLFW_KEY_G)) {
         gameGui.list.addStack({defs.defs.craftItemFromStr("zeus:materials:rock").index, 1});
         gameGui.list.addStack({defs.defs.craftItemFromStr("zeus:materials:stick").index, 2});
     }
 
-    if (renderer.resized) {
-        //Gamescene sets renderer.resized to false right after Player::update is called.
-        gameGui.winResized(renderer.getCamera().getBufferDimensions());
-    }
+    renderer.window.addResizeCallback("player", [&](glm::ivec2 win) {
+        gameGui.winResized(win);
+    });
 
     if (input.isKeyPressed(GLFW_KEY_F)) flying = !flying; //TODO: Move to Lua Bind
 
-    moveAndLook(input, delta, mouseX, mouseY);
+    moveAndLook(input, delta, mouseDelta);
     findPointedThing(input);
     updateWireframe();
     breakBlock(input, delta);
 }
 
-void Player::moveAndLook(InputManager &input, double delta, double deltaX, double deltaY) {
+void Player::moveAndLook(Input &input, double delta, glm::vec2 mouseDelta) {
     //Position movement
     bool sprinting = input.isKeyDown(GLFW_KEY_LEFT_CONTROL);
 
@@ -50,7 +49,7 @@ void Player::moveAndLook(InputManager &input, double delta, double deltaX, doubl
     }
 
     //Calculate movement vector from camera angle.
-    auto& camera = renderer.getCamera();
+    auto& camera = renderer.camera;
     glm::vec3 frontFlat = glm::normalize(glm::vec3(camera.getFront().x, 0, camera.getFront().z));
     glm::vec3 rightFlat = glm::normalize(glm::vec3(camera.getRight().x, 0, camera.getRight().z));
 
@@ -87,11 +86,11 @@ void Player::moveAndLook(InputManager &input, double delta, double deltaX, doubl
     }
 
     //View movement
-    deltaX *= MOUSE_SENSITIVITY;
-    deltaY *= MOUSE_SENSITIVITY;
+    mouseDelta.x *= MOUSE_SENSITIVITY;
+    mouseDelta.y *= MOUSE_SENSITIVITY;
 
-    yaw += deltaX;
-    pitch += deltaY;
+    yaw += mouseDelta.x;
+    pitch += mouseDelta.y;
 
     while (yaw > 360.f) yaw -= 360.f;
     while (yaw < 0.f)   yaw += 360.f;
@@ -103,13 +102,12 @@ void Player::moveAndLook(InputManager &input, double delta, double deltaX, doubl
 }
 
 void Player::updateCamera() {
-    auto& camera = renderer.getCamera();
-    camera.setYaw(yaw);
-    camera.setPitch(pitch);
-    camera.setPos({pos.x, pos.y + EYE_HEIGHT, pos.z});
+    renderer.camera.setYaw(yaw);
+    renderer.camera.setPitch(pitch);
+    renderer.camera.setPos({pos.x, pos.y + EYE_HEIGHT, pos.z});
 }
 
-void Player::findPointedThing(InputManager &input) {
+void Player::findPointedThing(Input &input) {
     glm::vec3 chunkPos = {};
     sptr<BlockChunk> blockChunk = nullptr;
 
@@ -162,7 +160,7 @@ void Player::updateWireframe() {
     }
 }
 
-void Player::breakBlock(InputManager& input, double delta) {
+void Player::breakBlock(Input& input, double delta) {
     if (pointedThing.thing == PointedThing::Thing::BLOCK) {
         if (input.isMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
             if (breakInterval == 0) {
@@ -189,7 +187,7 @@ void Player::breakBlock(InputManager& input, double delta) {
 
 void Player::setPos(glm::vec3 pos) {
     this->pos = pos;
-    this->renderer.getCamera().setPos({pos.x, pos.y + EYE_HEIGHT, pos.z});
+    this->renderer.camera.setPos({pos.x, pos.y + EYE_HEIGHT, pos.z});
 }
 
 glm::vec3 Player::getPos() {
@@ -238,12 +236,12 @@ void Player::setActiveBlock(const std::string& block) {
 
 void Player::setMenu(const std::string& menu) {
     gameGui.setMenu(menu);
-    renderer.getWindow().lockMouse(false);
+    renderer.window.lockMouse(false);
 }
 
 void Player::closeMenu() {
     gameGui.closeMenu();
-    renderer.getWindow().lockMouse(true);
+    renderer.window.lockMouse(true);
 }
 
 void Player::setGuiVisible(bool hudVisible) {
@@ -268,4 +266,8 @@ void Player::drawGUI(Renderer &renderer) {
 
 void Player::drawViginette(Renderer &renderer) {
     gameGui.drawViginette(renderer);
+}
+
+Player::~Player() {
+    renderer.window.removeResizeCallback("player");
 }

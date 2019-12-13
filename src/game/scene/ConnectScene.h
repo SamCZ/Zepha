@@ -32,7 +32,7 @@ public:
 
     void draw() override;
 
-    void cleanup() override {};
+    void cleanup() override;
 private:
     State connectState = State::CONNECTING;
     ServerConnection& connection;

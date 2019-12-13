@@ -4,7 +4,7 @@
 
 #include "BlurShader.h"
 
-BlurShader::BlurShader(glm::vec2 windowSize, float bufferScale) : Shader(),
+BlurShader::BlurShader(glm::ivec2 windowSize, float bufferScale) : Shader(),
    windowSize(windowSize),
    bufferScale(bufferScale) {}
 
@@ -26,7 +26,7 @@ void BlurShader::postCreate() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void BlurShader::windowResized(glm::vec2 windowSize) {
+void BlurShader::windowResized(glm::ivec2 windowSize) {
     this->windowSize = windowSize;
 
     glBindTexture(GL_TEXTURE_2D, colorBuffer);

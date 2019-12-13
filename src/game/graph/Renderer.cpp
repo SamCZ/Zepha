@@ -4,17 +4,17 @@
 
 #include "Renderer.h"
 
-Renderer::Renderer() : Renderer(1366, 768) {};
+Renderer::Renderer() : Renderer({1366, 768}) {};
 
-Renderer::Renderer(GLint winWidth, GLint winHeight) :
+Renderer::Renderer(glm::ivec2 win) :
     activeTexture(nullptr),
-    window(winWidth, winHeight),
+    window(win),
 
-    world({winWidth, winHeight}, 2),
-    entity({winWidth, winHeight}, 2),
-    ssao({winWidth, winHeight}, 1, 24),
-    blur({winWidth, winHeight}, 1),
-    lighting({winWidth, winHeight}, 2) {
+    world   (win, 2),
+    entity  (win, 2),
+    ssao    (win, 1, 24),
+    blur    (win, 1),
+    lighting(win, 2) {
 
     window.initialize();
     camera.create(window.getSize().x, window.getSize().y, glm::vec3(0, 1, 0));
@@ -34,6 +34,17 @@ Renderer::Renderer(GLint winWidth, GLint winHeight) :
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_CULL_FACE);
+
+    window.addResizeCallback("renderer", [&](glm::ivec2 win) {
+        ssao.windowResized(win);
+        blur.windowResized(win);
+        lighting.windowResized(win);
+        world.windowResized(win);
+
+        camera.changeWindowDimensions(win);
+
+        gu.matrix = camera.getOrthographicMatrix();
+    });
 }
 
     //Initialize Shading Shader for Shadowmapping
@@ -60,19 +71,6 @@ void Renderer::update(double delta) {
 
     window.update();
     world.updateSwayMap(delta);
-
-    if (window.resized) {
-        ssao.windowResized(window.getSize());
-        blur.windowResized(window.getSize());
-        lighting.windowResized(window.getSize());
-        world.windowResized(window.getSize());
-
-        resized = true;
-        window.resized = false;
-        camera.changeWindowDimensions(window.getSize());
-
-        gu.matrix = camera.getOrthographicMatrix();
-    }
 }
 
 void Renderer::beginChunkDeferredCalls() {
@@ -196,14 +194,6 @@ void Renderer::beginGUIDrawCalls() {
 void Renderer::swapBuffers() {
     Shader::clearShader();
     window.swapBuffers();
-}
-
-Window& Renderer::getWindow() {
-    return window;
-}
-
-Camera& Renderer::getCamera() {
-    return camera;
 }
 
 void Renderer::renderQuad() {

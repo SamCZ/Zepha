@@ -9,10 +9,10 @@ MainMenuScene::MainMenuScene(ClientState& state) :
     sandbox(sandboxArea, state, sandboxContainer) {
 
     state.renderer.setClearColor(0, 0, 0);
-    state.renderer.getWindow().lockMouse(false);
+    state.renderer.window.lockMouse(false);
 
     Font f(state.defs.textures, state.defs.textures["font"]);
-    win = state.renderer.getWindow().getSize();
+    win = state.renderer.window.getSize();
     sandboxArea = win - glm::ivec2(0, 18 * GS);
 
     components.add(sandboxContainer);
@@ -96,6 +96,12 @@ MainMenuScene::MainMenuScene(ClientState& state) :
     }
 
     positionElements();
+
+    state.renderer.window.addResizeCallback("mainmenu", [&](glm::ivec2 win) {
+        this->win = win;
+        sandboxArea = win - glm::ivec2(0, 18 * GS);
+        positionElements();
+    });
 }
 
 void MainMenuScene::findSubgames() {
@@ -188,16 +194,10 @@ void MainMenuScene::update() {
     state.defs.textures.update();
     sandbox.update(state.deltaTime);
 
-    if (state.renderer.resized) {
-        win = state.renderer.getWindow().getSize();
-        sandboxArea = win - glm::ivec2(0, 18 * GS);
-        positionElements();
-        state.renderer.resized = false;
-    }
+    state.renderer.window.setCursorHand(components.mouseActivity(state.renderer.window.getMousePos()));
 
-    components.mouseActivity(state.renderer.getWindow().getMousePos());
-    if (state.renderer.getWindow().input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
-        components.triggerClick(state.renderer.getWindow().getMousePos());
+    if (state.renderer.window.input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
+        components.triggerClick(state.renderer.window.getMousePos());
     }
 }
 
@@ -209,4 +209,9 @@ void MainMenuScene::draw() {
     state.renderer.enableTexture(&state.defs.textures.atlasTexture);
     components.draw(state.renderer);
     state.renderer.swapBuffers();
+}
+
+void MainMenuScene::cleanup() {
+    state.renderer.window.setCursorHand(false);
+    state.renderer.window.removeResizeCallback("mainmenu");
 }
