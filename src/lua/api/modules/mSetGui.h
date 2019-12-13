@@ -20,8 +20,7 @@ namespace MenuApi {
 
                 builder.setGui(gui, callbackMap);
             }
-            else
-                builder.setGui(gui);
+            else builder.setGui(gui);
             builder.build(win);
         });
     }

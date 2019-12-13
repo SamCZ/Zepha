@@ -17,7 +17,7 @@ public:
     GuiBuilder(LocalDefs& defs, std::shared_ptr<GUIContainer> root);
     void setGui(const std::string& menu, const std::map<std::string, std::function<void()>>& callbacks = {});
     void build(glm::ivec2 win);
-    void clear();
+    void clear(bool clrCallbacks = true);
 
     ~GuiBuilder();
 

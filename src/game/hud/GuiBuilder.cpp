@@ -106,11 +106,12 @@ void GuiBuilder::deserialize() {
 void GuiBuilder::build(glm::ivec2 win) {
     this->win = win;
 
-    clear();
+    clear(false);
     recursivelyCreate(components, root);
 }
 
-void GuiBuilder::clear() {
+void GuiBuilder::clear(bool clrCallbacks) {
+    if (clrCallbacks) callbacks.clear();
     root->empty();
 }
 
@@ -315,5 +316,5 @@ std::vector<std::string> GuiBuilder::splitValue(const std::string &value, unsign
 }
 
 GuiBuilder::~GuiBuilder() {
-    clear();
+    clear(true);
 }

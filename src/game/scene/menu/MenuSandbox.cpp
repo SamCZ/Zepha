@@ -37,7 +37,7 @@ void MenuSandbox::setup() {
 }
 
 void MenuSandbox::load(const std::string &subgamePath) {
-    container->empty();
+    builder.clear();
     setup();
     loadMod(subgamePath + "/menu");
     DoFileSandboxed("main");
