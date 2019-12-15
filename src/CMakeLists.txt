@@ -248,8 +248,7 @@ set(ZEPHA_SRC
     game/hud/components/basic/GUIInventoryItem.h
     game/scene/world/InventoryList.cpp
     game/scene/world/InventoryList.h
-    game/scene/world/ItemStack.cpp
-    game/scene/world/ItemStack.h
+        game/scene/world/ItemStack.h
     server/LocalServerInstance.cpp
     server/LocalServerInstance.h
     game/hud/SerializedGuiElem.h

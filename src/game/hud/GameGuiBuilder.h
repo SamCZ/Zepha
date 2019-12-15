@@ -9,9 +9,12 @@
 
 class GameGuiBuilder : public GuiBuilder {
 public:
-    GameGuiBuilder(InventoryList& list, LocalDefs& defs, std::shared_ptr<GUIContainer> root) : list(list), GuiBuilder(defs, root) {};
+    GameGuiBuilder(InventoryList& list, InventoryList& hand, LocalDefs& defs, std::shared_ptr<GUIContainer> root) :
+        list(list), hand(hand), GuiBuilder(defs, root) {};
+
     std::shared_ptr<GUIComponent> createComponent(SerializedGuiElem& data) override;
 
 private:
     InventoryList& list;
+    InventoryList& hand;
 };

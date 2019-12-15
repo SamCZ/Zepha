@@ -24,10 +24,10 @@ public:
     virtual glm::ivec2 getPos();
 
     bool mouseActivity(glm::ivec2 pos);
-    void setHoverCallback(std::function<void(bool)> hoverCallback);
+    virtual void setHoverCallback(std::function<void(bool, glm::ivec2)> hoverCallback);
 
     bool triggerClick(glm::ivec2 pos);
-    void setClickCallback(std::function<void()> clickCallback);
+    virtual void setClickCallback(std::function<void(glm::ivec2)> clickCallback);
 
     void add(std::shared_ptr<GUIComponent> component);
     void insert(unsigned int index, std::shared_ptr<GUIComponent> component);
@@ -45,6 +45,8 @@ public:
 
     void setVisible(bool visible) override;
     void draw(Renderer& renderer) override;
+
+    bool hovered = false;
 protected:
     std::string key = "";
     GUIComponent* parent = nullptr;
@@ -53,12 +55,12 @@ protected:
     glm::ivec2 pos {};
     glm::vec2 scale {};
     glm::vec4 padding {};
+    glm::ivec2 hitbox {};
 
     bool visible = true;
-    bool hovered = false;
 
-    std::function<void()> clickCallback = nullptr;
-    std::function<void(bool)> hoverCallback = nullptr;
+    std::function<void(glm::ivec2)> clickCallback = nullptr;
+    std::function<void(bool, glm::ivec2)> hoverCallback = nullptr;
 
     GuiEntity entity;
 private:

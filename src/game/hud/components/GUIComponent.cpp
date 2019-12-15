@@ -100,21 +100,19 @@ void GUIComponent::updatePos() {
 bool GUIComponent::mouseActivity(glm::ivec2 pos) {
     bool isHovering = false;
     for (auto child = children.rbegin(); child != children.rend(); ++child) {
-        if ((*child)->mouseActivity(pos - (*child)->getPos())) isHovering = true;
+        if ((*child)->mouseActivity(pos - (*child)->getPos() - glm::ivec2((*child)->getPadding().y, (*child)->getPadding().x))) isHovering = true;
     }
-    if (pos.x >= 0 && pos.y >= 0 && pos.x <= scale.x && pos.y <= scale.y) {
+    if (pos.x >= 0 && pos.y >= 0 && pos.x <= hitbox.x && pos.y <= hitbox.y) {
         if (hoverCallback) {
-            if (!hovered) {
-                hoverCallback(true);
-                hovered = true;
-            }
+            hoverCallback(true, pos);
+            hovered = true;
             return true;
         }
         return isHovering;
     }
     else {
-        if (hovered && hoverCallback) {
-            hoverCallback(false);
+        if (hoverCallback) {
+            hoverCallback(false, pos);
             hovered = false;
         }
     }
@@ -123,20 +121,20 @@ bool GUIComponent::mouseActivity(glm::ivec2 pos) {
 
 bool GUIComponent::triggerClick(glm::ivec2 pos) {
     for (auto child = children.rbegin(); child != children.rend(); ++child) {
-        if ((*child)->triggerClick(pos - (*child)->getPos())) return true;
+        if ((*child)->triggerClick(pos - (*child)->getPos() - glm::ivec2((*child)->getPadding().y, (*child)->getPadding().x))) return true;
     }
-    if (pos.x >= 0 && pos.y >= 0 && pos.x <= scale.x && pos.y <= scale.y && clickCallback != nullptr) {
-        clickCallback();
+    if (pos.x >= 0 && pos.y >= 0 && pos.x <= hitbox.x && pos.y <= hitbox.y && clickCallback != nullptr) {
+        clickCallback(pos);
         return true;
     }
     return false;
 }
 
-void GUIComponent::setHoverCallback(std::function<void(bool)> hoverCallback) {
+void GUIComponent::setHoverCallback(std::function<void(bool, glm::ivec2)> hoverCallback) {
     this->hoverCallback = hoverCallback;
 }
 
-void GUIComponent::setClickCallback(std::function<void()> clickCallback) {
+void GUIComponent::setClickCallback(std::function<void(glm::ivec2)> clickCallback) {
     this->clickCallback = clickCallback;
 }
 

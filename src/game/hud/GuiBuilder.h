@@ -15,7 +15,7 @@
 class GuiBuilder {
 public:
     GuiBuilder(LocalDefs& defs, std::shared_ptr<GUIContainer> root);
-    void setGui(const std::string& menu, const std::map<std::string, std::function<void()>>& callbacks = {});
+    void setGui(const std::string& menu, const std::map<std::string, std::function<void(glm::ivec2)>>& callbacks = {});
     void build(glm::ivec2 win);
     void clear(bool clrCallbacks = true);
 
@@ -40,7 +40,7 @@ protected:
     glm::ivec2 win;
 
     std::string menu;
-    std::map<std::string, std::function<void()>> callbacks;
+    std::map<std::string, std::function<void(glm::ivec2)>> callbacks;
 
     std::shared_ptr<GUIContainer> root;
     std::vector<SerializedGuiElem> components {};

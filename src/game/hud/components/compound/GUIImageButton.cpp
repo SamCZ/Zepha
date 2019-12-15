@@ -13,7 +13,7 @@ void GUIImageButton::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<
     this->hoverTexture = hoverTexture;
     GUIRect::create(scale, padding, texture);
 
-    setHoverCallback([&](bool hovered) { rebuild(hovered); });
+    setHoverCallback([&](bool nowHovered, glm::ivec2) { if(nowHovered != hovered) rebuild(nowHovered); });
 }
 
 void GUIImageButton::rebuild(bool hover) {

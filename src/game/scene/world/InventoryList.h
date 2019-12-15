@@ -17,7 +17,7 @@ public:
     unsigned short getWidth();
 
     ItemStack getStack(unsigned short i);
-    void setStack(unsigned short i, ItemStack& stack);
+    void setStack(unsigned short i, const ItemStack& stack);
 
     //Adds as much of `stack` to the inventory as possible, returns leftover.
     ItemStack addStack(ItemStack stack);

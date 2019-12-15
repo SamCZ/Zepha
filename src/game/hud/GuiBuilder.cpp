@@ -8,7 +8,7 @@
 GuiBuilder::GuiBuilder(LocalDefs& defs, std::shared_ptr<GUIContainer> root) :
     defs(defs), root(root) {}
 
-void GuiBuilder::setGui(const std::string& menu, const std::map<std::string, std::function<void()>>& callbacks) {
+void GuiBuilder::setGui(const std::string& menu, const std::map<std::string, std::function<void(glm::ivec2)>>& callbacks) {
     this->menu = menu;
     this->callbacks = callbacks;
 
@@ -126,7 +126,7 @@ void GuiBuilder::recursivelyCreate(std::vector<SerializedGuiElem> components, st
 std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerializedGuiElem& data) {
     glm::vec2 pos {};
 
-    std::function<void()> callback = nullptr;
+    std::function<void(glm::ivec2)> callback = nullptr;
     if (callbacks.count(data.key)) {
         callback = callbacks[data.key];
     }

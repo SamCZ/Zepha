@@ -13,7 +13,7 @@ std::shared_ptr<GUIComponent> GameGuiBuilder::createComponent(SerializedGuiElem 
 
     glm::vec2 pos {};
 
-    std::function<void()> callback = nullptr;
+    std::function<void(glm::ivec2)> callback = nullptr;
     if (callbacks.count(data.key)) {
         callback = callbacks[data.key];
     }
@@ -68,9 +68,10 @@ std::shared_ptr<GUIComponent> GameGuiBuilder::createComponent(SerializedGuiElem 
 
         auto inv = std::make_shared<GUIInventoryList>(data.key);
 
-        inv->create(glm::vec2(SCALE_MODIFIER), padding * SCALE_MODIFIER, innerPadding * SCALE_MODIFIER, list, defs);
+        inv->create(glm::vec2(SCALE_MODIFIER), padding * SCALE_MODIFIER, innerPadding * SCALE_MODIFIER, list, hand, defs);
         inv->setPos(pos);
         inv->setClickCallback(callback);
+
         return inv;
     }
 }

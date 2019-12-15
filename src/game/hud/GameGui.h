@@ -13,6 +13,7 @@
 #include "../scene/world/InventoryList.h"
 #include "../entity/Entity.h"
 #include "../../util/Util.h"
+#include "components/compound/GUIInventoryList.h"
 
 class GameGui : public GUIContainer {
 public:
@@ -22,13 +23,13 @@ public:
     void update(double delta) override;
     void setVisible(bool visible) override;
 
-    void setMenu(const std::string& menu, const std::map<std::string, std::function<void()>>& callbacks);
+    void setMenu(const std::string& menu, const std::map<std::string, std::function<void(glm::ivec2)>>& callbacks);
     void closeMenu();
     const std::string& getMenuState();
 
     void drawViginette(Renderer& renderer);
 
-    InventoryList list;
+    InventoryList list, hand;
 private:
     LocalDefs& defs;
     Renderer& renderer;
@@ -38,6 +39,7 @@ private:
 
     GUIContainer builtIn = {};
     std::shared_ptr<GUIContainer> menuRoot = {};
+    std::shared_ptr<GUIInventoryList> handList = {};
     GameGuiBuilder builder;
 };
 

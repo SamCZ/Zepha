@@ -43,6 +43,7 @@ void GUIRect::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<AtlasRe
     this->scale = scale;
     this->padding = padding;
     this->texture = texture;
+    this->hitbox = scale + glm::vec2{padding.y + padding.w, padding.x + padding.z};
 
     auto mesh = new GuiMesh();
     mesh->create({

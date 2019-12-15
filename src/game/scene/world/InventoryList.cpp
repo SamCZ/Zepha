@@ -23,7 +23,7 @@ ItemStack InventoryList::getStack(unsigned short i) {
     return itemstacks[i];
 }
 
-void InventoryList::setStack(unsigned short i, ItemStack &stack) {
+void InventoryList::setStack(unsigned short i, const ItemStack &stack) {
     itemstacks[i] = stack;
     triggerCallback();
 }

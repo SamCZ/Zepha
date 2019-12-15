@@ -47,17 +47,17 @@ std::string LuaLocalPlayer::get_menu_state() {
     return player.getMenuState();
 }
 
-void LuaLocalPlayer::open_menu(std::string menu, sol::optional<sol::table> callbacks) {
+void LuaLocalPlayer::open_menu(sol::this_state s, std::string menu, sol::optional<sol::table> callbacks) {
     if (callbacks) {
-        std::map<std::string, std::function<void()>> callbackMap;
+        std::map<std::string, std::function<void(glm::ivec2)>> callbackMap;
         for (auto &callback : *callbacks)  {
-            callbackMap.emplace(callback.first.as<std::string>(), [=]() {
-                callback.second.as<sol::function>()();
+            callbackMap.emplace(callback.first.as<std::string>(), [=](glm::ivec2 pos) {
+                callback.second.as<sol::function>()(sol::state_view(s).create_table_with("x", pos.x, "y", pos.y));
             });
         }
         player.setMenu(menu, callbackMap);
     }
-    player.setMenu(menu, {});
+    else player.setMenu(menu, {});
 }
 
 void LuaLocalPlayer::close_menu() {

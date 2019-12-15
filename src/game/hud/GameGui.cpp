@@ -7,10 +7,12 @@
 
 GameGui::GameGui(glm::vec2 bufferSize, LocalDefs& defs, Renderer& renderer) :
     menuRoot(std::make_shared<GUIContainer>("__luaroot")),
-    builder(list, defs, menuRoot),
+    handList(std::make_shared<GUIInventoryList>("hand")),
+    builder(list, hand, defs, menuRoot),
     renderer(renderer),
     win(bufferSize),
     list(60, 12),
+    hand(1, 1),
     defs(defs) {
 
     auto crosshair = std::make_shared<GUIRect>("crosshair");
@@ -23,27 +25,31 @@ GameGui::GameGui(glm::vec2 bufferSize, LocalDefs& defs, Renderer& renderer) :
     builtIn.add(viginette);
 
     add(menuRoot);
+
+    handList->create({3, 3}, {}, {}, hand, hand, defs);
+    add(handList);
 }
 
 void GameGui::update(double delta) {
     Drawable::update(delta);
 
-    renderer.window.setCursorHand(mouseActivity(renderer.window.getMousePos()));
+    handList->setPos((renderer.window.getMousePos() - glm::ivec2(24)) / 3 * 3);
+
+    renderer.window.setCursorHand(menuRoot->mouseActivity(renderer.window.getMousePos()));
     if (renderer.window.input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT))
-        triggerClick(renderer.window.getMousePos());
+        menuRoot->triggerClick(renderer.window.getMousePos());
 }
 
 void GameGui::winResized(glm::ivec2 win) {
     this->win = win;
 
     builtIn.get<GUIRect>("crosshair")->setPos({win.x / 2 - 11, win.y / 2 - 9});
-    builtIn.get<GUIRect>("viginette")->setScale({win.x, win.y});
+    builtIn.get<GUIRect>("viginette")->setScale(win);
 
-    menuRoot->empty();
     builder.build(win);
 }
 
-void GameGui::setMenu(const std::string& menu, const std::map<std::string, std::function<void()>>& callbacks) {
+void GameGui::setMenu(const std::string& menu, const std::map<std::string, std::function<void(glm::ivec2)>>& callbacks) {
     menuState = "menu"; //TODO: Implement the menu state properly
     builder.setGui(menu, callbacks);
     builder.build(win);
