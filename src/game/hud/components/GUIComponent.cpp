@@ -103,41 +103,61 @@ bool GUIComponent::mouseActivity(glm::ivec2 pos) {
         if ((*child)->mouseActivity(pos - (*child)->getPos() - glm::ivec2((*child)->getPadding().y, (*child)->getPadding().x))) isHovering = true;
     }
     if (pos.x >= 0 && pos.y >= 0 && pos.x <= hitbox.x && pos.y <= hitbox.y) {
-        if (hoverCallback) {
-            hoverCallback(true, pos);
+        if (cbHover) {
+            cbHover(true, pos);
             hovered = true;
             return true;
         }
         return isHovering;
     }
     else {
-        if (hoverCallback) {
-            hoverCallback(false, pos);
+        if (cbHover) {
+            cbHover(false, pos);
             hovered = false;
         }
     }
     return isHovering;
 }
 
-bool GUIComponent::triggerClick(glm::ivec2 pos) {
-    for (auto child = children.rbegin(); child != children.rend(); ++child) {
-        if ((*child)->triggerClick(pos - (*child)->getPos() - glm::ivec2((*child)->getPadding().y, (*child)->getPadding().x))) return true;
-    }
-    if (pos.x >= 0 && pos.y >= 0 && pos.x <= hitbox.x && pos.y <= hitbox.y && clickCallback != nullptr) {
-        clickCallback(pos);
-        return true;
-    }
-    return false;
+bool GUIComponent::leftClickEvent(bool state, glm::ivec2 pos) {
+    clickEvent(true, state, pos);
 }
 
-void GUIComponent::setHoverCallback(std::function<void(bool, glm::ivec2)> hoverCallback) {
-    this->hoverCallback = hoverCallback;
+bool GUIComponent::rightClickEvent(bool state, glm::ivec2 pos) {
+    clickEvent(false, state, pos);
 }
 
-void GUIComponent::setClickCallback(std::function<void(glm::ivec2)> clickCallback) {
-    this->clickCallback = clickCallback;
+void GUIComponent::setHoverCallback(const callback& hoverCallback) {
+    cbHover = hoverCallback;
 }
+
+void GUIComponent::setLeftClickCallback(const callback& leftClickCallback) {
+    cbLeftClick = leftClickCallback;
+}
+
+void GUIComponent::setRightClickCallback(const callback& rightClickCallback) {
+    cbRightClick = rightClickCallback;
+}
+
+void GUIComponent::setCallbacks(const callback &left, const callback &right, const callback &hover) {
+    setLeftClickCallback(left);
+    setRightClickCallback(right);
+    setHoverCallback(hover);
+}
+
 
 const std::string &GUIComponent::getKey() {
     return key;
+}
+
+bool GUIComponent::clickEvent(bool left, bool state, glm::ivec2 pos) {
+    for (auto child = children.rbegin(); child != children.rend(); ++child) {
+        glm::ivec2 cp = pos - (*child)->getPos() - glm::ivec2((*child)->getPadding().y, (*child)->getPadding().x);
+        if ((*child)->clickEvent(left, state, cp)) return true;
+    }
+    if (pos.x >= 0 && pos.y >= 0 && pos.x <= hitbox.x && pos.y <= hitbox.y && cbLeftClick != nullptr) {
+        (left ? cbLeftClick : cbRightClick)(state, pos);
+        return true;
+    }
+    return false;
 }

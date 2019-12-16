@@ -54,10 +54,14 @@ zepha.register_keybind("open_inventory", {
                     end
                 end
             ]], {
-                body = function()
-                    zepha.player:close_menu()
-                end,
-                inv_background = function() --[[ Prevent close menu from triggering. ]] end
+                body = {
+                    left = function()
+                        zepha.player:close_menu()
+                    end
+                },
+                inv_background = {
+                    left = function() --[[ Prevent close menu from triggering. ]] end
+                }
             })
         else zepha.player:close_menu() end
     end

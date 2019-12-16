@@ -37,7 +37,13 @@ void GameGui::update(double delta) {
 
     renderer.window.setCursorHand(menuRoot->mouseActivity(renderer.window.getMousePos()));
     if (renderer.window.input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT))
-        menuRoot->triggerClick(renderer.window.getMousePos());
+        menuRoot->leftClickEvent(true, renderer.window.getMousePos());
+    if (renderer.window.input.isMouseReleased(GLFW_MOUSE_BUTTON_LEFT))
+        menuRoot->leftClickEvent(false, renderer.window.getMousePos());
+    if (renderer.window.input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT))
+        menuRoot->rightClickEvent(true, renderer.window.getMousePos());
+    if (renderer.window.input.isMouseReleased(GLFW_MOUSE_BUTTON_RIGHT))
+        menuRoot->rightClickEvent(false, renderer.window.getMousePos());
 }
 
 void GameGui::winResized(glm::ivec2 win) {
@@ -49,7 +55,7 @@ void GameGui::winResized(glm::ivec2 win) {
     builder.build(win);
 }
 
-void GameGui::setMenu(const std::string& menu, const std::map<std::string, std::function<void(glm::ivec2)>>& callbacks) {
+void GameGui::setMenu(const std::string& menu, const std::map<std::string, GuiBuilder::ComponentCallbacks>& callbacks) {
     menuState = "menu"; //TODO: Implement the menu state properly
     builder.setGui(menu, callbacks);
     builder.build(win);

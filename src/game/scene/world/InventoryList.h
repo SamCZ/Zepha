@@ -19,6 +19,11 @@ public:
     ItemStack getStack(unsigned short i);
     void setStack(unsigned short i, const ItemStack& stack);
 
+    //Place the stack at i into the existing stack, returning overflow or other stack.
+    ItemStack placeStack(unsigned short i, const ItemStack& stack);
+    //Split the stack at i and return half of it, rounded up
+    ItemStack splitStack(unsigned short i);
+
     //Adds as much of `stack` to the inventory as possible, returns leftover.
     ItemStack addStack(ItemStack stack);
     //Returns how many of `stack`'s items fit, from 0 to stack.count.

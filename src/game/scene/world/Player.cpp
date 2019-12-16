@@ -235,7 +235,7 @@ void Player::setActiveBlock(const std::string& block) {
     activeBlock = defs.defs.blockFromStr(block).index;
 }
 
-void Player::setMenu(const std::string& menu, const std::map<std::string, std::function<void(glm::ivec2)>>& callbacks) {
+void Player::setMenu(const std::string& menu, const std::map<std::string, GuiBuilder::ComponentCallbacks>& callbacks) {
     gameGui.setMenu(menu, callbacks);
     renderer.window.lockMouse(false);
 }

@@ -8,7 +8,7 @@
 GuiBuilder::GuiBuilder(LocalDefs& defs, std::shared_ptr<GUIContainer> root) :
     defs(defs), root(root) {}
 
-void GuiBuilder::setGui(const std::string& menu, const std::map<std::string, std::function<void(glm::ivec2)>>& callbacks) {
+void GuiBuilder::setGui(const std::string& menu, const std::map<std::string, ComponentCallbacks>& callbacks) {
     this->menu = menu;
     this->callbacks = callbacks;
 
@@ -126,9 +126,11 @@ void GuiBuilder::recursivelyCreate(std::vector<SerializedGuiElem> components, st
 std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerializedGuiElem& data) {
     glm::vec2 pos {};
 
-    std::function<void(glm::ivec2)> callback = nullptr;
+    std::function<void(bool, glm::ivec2)> cbLeftClick = nullptr, cbRightClick = nullptr, cbHover = nullptr;
     if (callbacks.count(data.key)) {
-        callback = callbacks[data.key];
+        cbLeftClick = callbacks[data.key].left;
+        cbRightClick = callbacks[data.key].right;
+        cbHover = callbacks[data.key].hover;
     }
 
     if (data.tokens.count("position")) {
@@ -172,7 +174,7 @@ std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerializedGuiElem& dat
         else if (background.substr(0, 6) == "asset(") rect->create(win, {}, defs.textures[background.substr(6, background.length() - 7)]);
         else rect->create(win, {}, glm::vec4 {});
 
-        rect->setClickCallback(callback);
+        rect->setCallbacks(cbLeftClick, cbRightClick, cbHover);
         return rect;
     }
 
@@ -189,7 +191,7 @@ std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerializedGuiElem& dat
         else rect->create(size, padding, glm::vec4 {});
 
         rect->setPos(pos);
-        rect->setClickCallback(callback);
+        rect->setCallbacks(cbLeftClick, cbRightClick, cbHover);
         return rect;
     }
 
@@ -224,7 +226,7 @@ std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerializedGuiElem& dat
         }
 
         button->setPos(pos);
-        button->setClickCallback(callback);
+        button->setCallbacks(cbLeftClick, cbRightClick, cbHover);
         return button;
     }
 
@@ -263,7 +265,7 @@ std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerializedGuiElem& dat
         text->create(scale * SCALE_MODIFIER, padding, background_color, color, {defs.textures, defs.textures["font"]});
         text->setText(content);
         text->setPos(pos);
-        text->setClickCallback(callback);
+        text->setCallbacks(cbLeftClick, cbRightClick, cbHover);
         return text;
     }
 

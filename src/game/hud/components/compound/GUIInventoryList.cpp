@@ -24,21 +24,30 @@ void GUIInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 inn
 
     hoverRect->create({}, {}, {1, 1, 1, 0.1});
 
-    setHoverCallback([=](bool hovered, glm::ivec2 pos){this->hoverEvent(hovered, pos);});
-    setClickCallback([=](glm::ivec2 pos){this->clickEvent(pos);});
+    setCallbacks(
+            [=](bool down, glm::ivec2 pos) { this->leftClick(down, pos); },
+            nullptr,
+            [=](bool hovered, glm::ivec2 pos){this->hoverEvent(hovered, pos);});
 }
 
-void GUIInventoryList::setHoverCallback(std::function<void(bool, glm::ivec2)> hoverCallback) {
+void GUIInventoryList::setHoverCallback(const callback& hoverCallback) {
     GUIComponent::setHoverCallback([&, hoverCallback](bool hovered, glm::ivec2 pos) {
         if (hoverCallback) hoverCallback(hovered, pos);
         this->hoverEvent(hovered, pos);
     });
 }
 
-void GUIInventoryList::setClickCallback(std::function<void(glm::ivec2)> clickCallback) {
-    GUIComponent::setClickCallback([&, clickCallback](glm::ivec2 pos) {
-        if (clickCallback) clickCallback(pos);
-        this->clickEvent(pos);
+void GUIInventoryList::setLeftClickCallback(const callback& leftClickCallback) {
+    GUIComponent::setLeftClickCallback([&, leftClickCallback](bool down, glm::ivec2 pos) {
+        if (leftClickCallback) leftClickCallback(down, pos);
+        this->leftClick(down, pos);
+    });
+}
+
+void GUIInventoryList::setRightClickCallback(const callback& rightClickCallback) {
+    GUIComponent::setRightClickCallback([&, rightClickCallback](bool down, glm::ivec2 pos) {
+        if (rightClickCallback) rightClickCallback(down, pos);
+        this->rightClick(down, pos);
     });
 }
 
@@ -58,7 +67,7 @@ void GUIInventoryList::hoverEvent(bool hovered, glm::ivec2 pos) {
     else if (this->hovered) hoverRect->setScale({});
 }
 
-void GUIInventoryList::clickEvent(glm::ivec2 pos) {
+void GUIInventoryList::leftClick(bool down, glm::ivec2 pos) {
     pos += glm::ivec2(glm::vec2(this->padding.x, this->padding.y) * this->scale);
 
     glm::ivec2 slot = pos / (glm::ivec2(this->scale) * this->innerPadding);
@@ -67,9 +76,48 @@ void GUIInventoryList::clickEvent(glm::ivec2 pos) {
 
     unsigned short index = slot.x + slot.y * list->getWidth();
 
-    auto handStack = hand->getStack(0);
-    hand->setStack(0, list->getStack(index));
-    list->setStack(index, handStack);
+    if (index < 0 || index >= list->getLength()) return;
+
+    if (down) {
+        hand->setStack(0, list->placeStack(index, hand->getStack(0)));
+    }
+
+//    leftClickIndex = index;
+}
+
+void GUIInventoryList::rightClick(bool down, glm::ivec2 pos) {
+    pos += glm::ivec2(glm::vec2(this->padding.x, this->padding.y) * this->scale);
+
+    glm::ivec2 slot = pos / (glm::ivec2(this->scale) * this->innerPadding);
+    slot.x = min(slot.x, static_cast<int>(list->getWidth() - 1));
+    slot.y = min(slot.y, list->getLength() / list->getWidth() - 1);
+
+    unsigned short index = slot.x + slot.y * list->getWidth();
+
+    if (index < 0 || index >= list->getLength()) return;
+
+    if (down) {
+        auto handStack = hand->getStack(0);
+        if (handStack.count <= 0) {
+            hand->setStack(0, list->splitStack(index));
+        }
+        else {
+            auto handStack = hand->getStack(0);
+            auto listStack = list->getStack(index);
+            if (listStack.id == 0 || listStack.id == handStack.id) {
+                auto overflow = list->placeStack(index, {handStack.id, 1});
+                handStack.count -= 1;
+                if (handStack.count == 0) handStack.id = 0;
+                if (overflow.count != 0) handStack.count += overflow.count;
+                hand->setStack(0, handStack);
+            }
+            else {
+                hand->setStack(0, list->placeStack(index, hand->getStack(0)));
+            }
+        }
+    }
+
+//    leftClickIndex = index;
 }
 
 void GUIInventoryList::drawContents() {

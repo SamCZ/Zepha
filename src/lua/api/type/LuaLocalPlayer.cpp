@@ -49,12 +49,30 @@ std::string LuaLocalPlayer::get_menu_state() {
 
 void LuaLocalPlayer::open_menu(sol::this_state s, std::string menu, sol::optional<sol::table> callbacks) {
     if (callbacks) {
-        std::map<std::string, std::function<void(glm::ivec2)>> callbackMap;
-        for (auto &callback : *callbacks)  {
-            callbackMap.emplace(callback.first.as<std::string>(), [=](glm::ivec2 pos) {
-                callback.second.as<sol::function>()(sol::state_view(s).create_table_with("x", pos.x, "y", pos.y));
-            });
+        std::map<std::string, GuiBuilder::ComponentCallbacks> callbackMap;
+
+        for (auto& pair : *callbacks)  {
+            if (!pair.first.is<std::string>() || !pair.second.is<sol::table>()) continue;
+            std::string identifier = pair.first.as<std::string>();
+            sol::table callbacks = pair.second.as<sol::table>();
+            GuiBuilder::ComponentCallbacks componentCallbacks {};
+
+            auto left  = callbacks.get<sol::optional<sol::function>>("left");
+            auto right = callbacks.get<sol::optional<sol::function>>("right");
+            auto hover = callbacks.get<sol::optional<sol::function>>("hover");
+
+            if (left) componentCallbacks.left = [=](bool down, glm::ivec2 pos) {
+                    (*left)(down, sol::state_view(s).create_table_with("x", pos.x, "y", pos.y)); };
+
+            if (right) componentCallbacks.right = [=](bool down, glm::ivec2 pos) {
+                    (*right)(down, sol::state_view(s).create_table_with("x", pos.x, "y", pos.y)); };
+
+            if (hover) componentCallbacks.hover = [=](bool down, glm::ivec2 pos) {
+                    (*hover)(down, sol::state_view(s).create_table_with("x", pos.x, "y", pos.y)); };
+
+            callbackMap.emplace(identifier, componentCallbacks);
         }
+
         player.setMenu(menu, callbackMap);
     }
     else player.setMenu(menu, {});

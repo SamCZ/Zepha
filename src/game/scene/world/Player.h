@@ -51,7 +51,7 @@ public:
 
     void setActiveBlock(const std::string& block);
 
-    void setMenu(const std::string& menu, const std::map<std::string, std::function<void(glm::ivec2)>>& callbacks);
+    void setMenu(const std::string& menu, const std::map<std::string, GuiBuilder::ComponentCallbacks>& callbacks);
     std::string getMenuState();
     void closeMenu();
     void setGuiVisible(bool hudVisible);

@@ -19,15 +19,17 @@ public:
 
     void create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding, InventoryList& list, InventoryList& hand, LocalDefs& defs);
 
-    void setHoverCallback(std::function<void(bool, glm::ivec2)> hoverCallback) override;
-    void setClickCallback(std::function<void(glm::ivec2)> clickCallback) override;
+    void setHoverCallback(const callback& hoverCallback) override;
+    void setLeftClickCallback(const callback& leftClickCallback) override;
+    void setRightClickCallback(const callback& rightClickCallback) override;
 
     void hoverEvent(bool hovered, glm::ivec2 pos);
-    void clickEvent(glm::ivec2 pos);
+    void leftClick(bool down, glm::ivec2 pos);
+    void rightClick(bool down, glm::ivec2 pos);
     void drawContents();
 private:
-
     std::shared_ptr<GUIRect> hoverRect = std::make_shared<GUIRect>("hover_rect");
+    unsigned short leftClickIndex;
 
     InventoryList* list;
     InventoryList* hand;

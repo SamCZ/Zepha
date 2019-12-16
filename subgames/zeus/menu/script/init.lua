@@ -32,10 +32,14 @@ zepha.set_gui([[
         end
     end
 ]], {
-    buttonPlay = function()
-        zepha.start_game()
-    end,
-    buttonServers = function()
-        zepha.server_select()
-    end
+    buttonPlay = {
+        left = function()
+            zepha.start_game()
+        end
+    },
+    buttonServers = {
+        left = function()
+            zepha.server_select()
+        end
+    }
 })

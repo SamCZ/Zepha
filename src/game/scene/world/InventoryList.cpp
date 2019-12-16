@@ -28,6 +28,37 @@ void InventoryList::setStack(unsigned short i, const ItemStack &stack) {
     triggerCallback();
 }
 
+ItemStack InventoryList::placeStack(unsigned short i, const ItemStack &stack) {
+    auto otherStack = getStack(i);
+    if (otherStack.id != stack.id) {
+        setStack(i, stack);
+        return otherStack;
+    }
+    else {
+        unsigned short count = otherStack.count + stack.count;
+        if (count <= MAX_STACK) {
+            setStack(i, {stack.id, count});
+            return {0, 0};
+        }
+        else {
+            setStack(i, {stack.id, MAX_STACK});
+            return {stack.id, static_cast<unsigned short>(count - MAX_STACK)};
+        }
+    }
+}
+
+ItemStack InventoryList::splitStack(unsigned short i) {
+    auto stack = getStack(i);
+    unsigned short initialCount = stack.count;
+    stack.count = floor(stack.count / 2.f);
+
+    if (stack.count == 0) setStack(i, {});
+    else setStack(i, stack);
+
+    stack.count = ceil(initialCount / 2.f);
+    return stack;
+}
+
 ItemStack InventoryList::addStack(ItemStack stack) {
     unsigned short i = 0;
     while (i < itemstacks.size() && stack.count > 0) {

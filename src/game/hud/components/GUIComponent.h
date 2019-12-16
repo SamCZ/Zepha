@@ -11,6 +11,8 @@
 
 class GUIComponent : public Drawable {
 public:
+    typedef std::function<void(bool, glm::ivec2)> callback;
+
     GUIComponent() = default;
     explicit GUIComponent(const std::string& key);
 
@@ -24,10 +26,13 @@ public:
     virtual glm::ivec2 getPos();
 
     bool mouseActivity(glm::ivec2 pos);
-    virtual void setHoverCallback(std::function<void(bool, glm::ivec2)> hoverCallback);
+    bool leftClickEvent(bool state, glm::ivec2 pos);
+    bool rightClickEvent(bool state, glm::ivec2 pos);
 
-    bool triggerClick(glm::ivec2 pos);
-    virtual void setClickCallback(std::function<void(glm::ivec2)> clickCallback);
+    virtual void setHoverCallback(const callback& hoverCallback);
+    virtual void setLeftClickCallback(const callback& leftClickCallback);
+    virtual void setRightClickCallback(const callback& rightClickCallback);
+    void setCallbacks(const callback& left, const callback& right, const callback& hover);
 
     void add(std::shared_ptr<GUIComponent> component);
     void insert(unsigned int index, std::shared_ptr<GUIComponent> component);
@@ -48,19 +53,22 @@ public:
 
     bool hovered = false;
 protected:
+    bool clickEvent(bool left, bool state, glm::ivec2 pos);
+
     std::string key = "";
     GUIComponent* parent = nullptr;
     std::list<std::shared_ptr<GUIComponent>> children;
+
+    bool visible = true;
 
     glm::ivec2 pos {};
     glm::vec2 scale {};
     glm::vec4 padding {};
     glm::ivec2 hitbox {};
 
-    bool visible = true;
-
-    std::function<void(glm::ivec2)> clickCallback = nullptr;
-    std::function<void(bool, glm::ivec2)> hoverCallback = nullptr;
+    callback cbLeftClick = nullptr;
+    callback cbRightClick = nullptr;
+    callback cbHover = nullptr;
 
     GuiEntity entity;
 private:

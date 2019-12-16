@@ -23,7 +23,7 @@ public:
     void update(double delta) override;
     void setVisible(bool visible) override;
 
-    void setMenu(const std::string& menu, const std::map<std::string, std::function<void(glm::ivec2)>>& callbacks);
+    void setMenu(const std::string& menu, const std::map<std::string, GuiBuilder::ComponentCallbacks>& callbacks);
     void closeMenu();
     const std::string& getMenuState();
 
