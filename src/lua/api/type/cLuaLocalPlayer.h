@@ -11,7 +11,7 @@
 
 namespace ClientApi {
     void local_player(sol::state& lua, LocalWorld& world) {
-        lua.new_usertype<LuaLocalPlayer>("LuaLocalPlayer",
+        lua.new_usertype<LuaLocalPlayer>("LocalPlayer",
              "set_pos", &LuaLocalPlayer::set_pos,
              "get_pos", &LuaLocalPlayer::get_pos,
              "get_block_pos", &LuaLocalPlayer::get_block_pos,
@@ -32,6 +32,7 @@ namespace ClientApi {
              "open_menu", &LuaLocalPlayer::open_menu,
              "close_menu", &LuaLocalPlayer::close_menu,
 
+             "get_inventory", &LuaLocalPlayer::get_inventory,
              "set_selected_block", &LuaLocalPlayer::set_selected_block
         );
     }

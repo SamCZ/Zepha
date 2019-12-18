@@ -10,14 +10,14 @@
 
 #include "../../def/LocalDefs.h"
 #include "../api/type/LuaLocalPlayer.h"
-#include "../../game/scene/world/Player.h"
 
 #include "../api/type/cLuaEntity.h"
 #include "../api/type/cLuaLocalPlayer.h"
+#include "../api/type/cLuaInventory.h"
+#include "../api/type/cLuaItemStack.h"
 
 #include "../api/modules/cPrintE.h"
 
-#include "../api/modules/cIsServer.h"
 #include "../api/modules/cDelay.h"
 
 #include "../api/modules/cRegisterBlock.h"
@@ -63,13 +63,15 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& pla
     //Load Types
     ClientApi::entity(lua, world);
     ClientApi::local_player(lua, world);
+    ClientApi::inventory(lua);
+    ClientApi::item_stack(lua);
 
+    core["client"] = true;
     core["player"] = LuaLocalPlayer(player);
 
     //Load Modules
     ClientApi::printe(lua);
 
-    ClientApi::is_server(core);
     ClientApi::delay(core, delayed_functions);
 
     ClientApi::register_block(lua, core);
@@ -120,10 +122,10 @@ void LocalLuaParser::registerDefinitions(LocalDefs &defs) {
 void LocalLuaParser::update(double delta, bool* keys) {
     LuaParser::update(delta);
     this->delta += delta;
-    while (this->delta > 0.05f) {
+    while (this->delta > 1/60.f) {
         core["__builtin"]["update_entities"](this->delta);
         manager.triggerKeybinds();
-        this->delta -= 0.05f;
+        this->delta -= 1/60.f;
     }
 
     manager.update(keys);

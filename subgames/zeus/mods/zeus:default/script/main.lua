@@ -29,44 +29,6 @@ for i, v in ipairs(blockTypes) do
     });
 end
 
-zepha.register_keybind("open_inventory", {
-    description = "Open Inventory",
-    default = zepha.keys.e,
-    on_press = function()
-        if zepha.player.menu_state == "" then
-            zepha.player:open_menu([[
-                body[body]
-                    background: #0003
-
-                    rect[inv_background]
-                        position: 50% 50%
-                        position_anchor: 50% 50%
-                        size: 236px 118px
-                        padding: 20px 10px 8px 10px
-                        background: asset(inventory)
-
-                        inventory[list_main]
-                            source: "local_player"
-                            list: "player"
-                            position: 1px 1px
-                            slot_spacing: 2px 2px
-                        end
-                    end
-                end
-            ]], {
-                body = {
-                    left = function()
-                        zepha.player:close_menu()
-                    end
-                },
-                inv_background = {
-                    left = function() --[[ Prevent close menu from triggering. ]] end
-                }
-            })
-        else zepha.player:close_menu() end
-    end
-})
-
 local chat_down = false
 zepha.register_keybind("open_chat", {
     description = "Open Chat",

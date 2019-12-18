@@ -10,8 +10,7 @@
 
 class InventoryList {
 public:
-    InventoryList() = default;
-    InventoryList(unsigned short size, unsigned short width);
+    InventoryList(DefinitionAtlas& defs, unsigned short size, unsigned short width);
 
     unsigned short getLength();
     unsigned short getWidth();
@@ -27,14 +26,16 @@ public:
     //Adds as much of `stack` to the inventory as possible, returns leftover.
     ItemStack addStack(ItemStack stack);
     //Returns how many of `stack`'s items fit, from 0 to stack.count.
-    unsigned short stackFits(ItemStack& stack);
+    unsigned short stackFits(const ItemStack& stack);
     //Attempts to remove the type and amount of items specified by `stack`. Returns actual ItemStack of what was removed.
     ItemStack removeStack(ItemStack request);
 
     void setUpdatedCallback(std::function<void()> cb);
     void clearUpdatedCallback();
 
+    DefinitionAtlas& defs;
     const static unsigned short MAX_STACK = 64; //TODO: Don't hardcode this.
+
 private:
     std::vector<ItemStack> itemstacks {};
     unsigned short width = 0;

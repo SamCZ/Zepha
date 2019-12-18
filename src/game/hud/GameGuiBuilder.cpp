@@ -52,6 +52,22 @@ std::shared_ptr<GUIComponent> GameGuiBuilder::createComponent(SerializedGuiElem 
     }
 
     else if (data.type == "inventory") {
+
+        std::string source = (data.tokens.count("source") ? data.tokens["source"] : "");
+        std::string list = (data.tokens.count("list") ? data.tokens["list"] : "");
+
+        if (source != "current_player") {
+            std::cerr << "Invalid source specified, " << source << std::endl;
+            return nullptr;
+        }
+
+        if (!inventory[list]) {
+            std::cerr << "Invalid list specified, " << list << std::endl;
+            return nullptr;
+        }
+
+        auto invList = inventory[list];
+
         glm::vec4 padding {};
         if (data.tokens.count("padding")) {
             auto tokens = splitValue(data.tokens["padding"], 4);
@@ -70,7 +86,7 @@ std::shared_ptr<GUIComponent> GameGuiBuilder::createComponent(SerializedGuiElem 
 
         auto inv = std::make_shared<GUIInventoryList>(data.key);
 
-        inv->create(glm::vec2(SCALE_MODIFIER), padding * SCALE_MODIFIER, innerPadding * SCALE_MODIFIER, list, hand, defs);
+        inv->create(glm::vec2(SCALE_MODIFIER), padding * SCALE_MODIFIER, innerPadding * SCALE_MODIFIER, *invList, hand, defs);
         inv->setPos(pos);
         inv->setCallbacks(cbLeftClick, cbRightClick, cbHover);
 

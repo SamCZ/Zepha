@@ -82,6 +82,10 @@ void LuaLocalPlayer::close_menu() {
     player.closeMenu();
 }
 
+LuaInventory LuaLocalPlayer::get_inventory() {
+    return LuaInventory(player.getInventory());
+}
+
 void LuaLocalPlayer::set_selected_block(std::string block) {
     player.setActiveBlock(block);
 }

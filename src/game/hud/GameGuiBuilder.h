@@ -6,15 +6,16 @@
 
 #include "GuiBuilder.h"
 #include "../scene/world/InventoryList.h"
+#include "../scene/world/Inventory.h"
 
 class GameGuiBuilder : public GuiBuilder {
 public:
-    GameGuiBuilder(InventoryList& list, InventoryList& hand, LocalDefs& defs, std::shared_ptr<GUIContainer> root) :
-        list(list), hand(hand), GuiBuilder(defs, root) {};
+    GameGuiBuilder(Inventory& inventory, InventoryList& hand, LocalDefs& defs, std::shared_ptr<GUIContainer> root) :
+        inventory(inventory), hand(hand), GuiBuilder(defs, root) {};
 
     std::shared_ptr<GUIComponent> createComponent(SerializedGuiElem& data) override;
 
 private:
-    InventoryList& list;
+    Inventory& inventory;
     InventoryList& hand;
 };

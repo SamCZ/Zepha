@@ -13,14 +13,14 @@ class DefinitionAtlas {
 public:
     virtual void registerDef(ItemDef* def) = 0;
 
-    ItemDef& fromId(unsigned int index);
-    ItemDef& fromStr(const std::string& identifier);
+    ItemDef& fromId(unsigned int index) const;
+    ItemDef& fromStr(const std::string& identifier) const;
 
     //Specializations that throw an error upon an invalid type.
-    BlockDef& blockFromId(unsigned int index);
-    BlockDef& blockFromStr(const std::string& identifier);
-    CraftItemDef& craftItemFromId(unsigned int index);
-    CraftItemDef& craftItemFromStr(const std::string& identifier);
+    BlockDef& blockFromId(unsigned int index) const;
+    BlockDef& blockFromStr(const std::string& identifier) const;
+    CraftItemDef& craftItemFromId(unsigned int index) const;
+    CraftItemDef& craftItemFromStr(const std::string& identifier) const;
 
     unsigned int size();
 

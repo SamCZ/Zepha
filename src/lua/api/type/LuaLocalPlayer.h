@@ -7,6 +7,7 @@
 #include <sol2/sol.hpp>
 #include "../../../def/LocalDefs.h"
 #include "../../../game/scene/world/Player.h"
+#include "LuaInventory.h"
 
 class LuaLocalPlayer {
 public:
@@ -30,6 +31,8 @@ public:
     std::string get_menu_state();
     void open_menu(sol::this_state s, std::string menu, sol::optional<sol::table> callbacks);
     void close_menu();
+
+    LuaInventory get_inventory();
 
     void set_selected_block(std::string block);
 };

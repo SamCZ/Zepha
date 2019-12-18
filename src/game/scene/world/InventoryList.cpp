@@ -6,7 +6,8 @@
 #include <algorithm>
 #include "InventoryList.h"
 
-InventoryList::InventoryList(unsigned short size, unsigned short width) :
+InventoryList::InventoryList(DefinitionAtlas& defs, unsigned short size, unsigned short width) :
+    defs(defs),
     itemstacks(size),
     width(width) {}
 
@@ -70,8 +71,8 @@ ItemStack InventoryList::addStack(ItemStack stack) {
             }
             else {
                 itemstacks[i] = stack;
-                itemstacks[i].count = 64;
-                stack.count -= 64;
+                itemstacks[i].count = MAX_STACK;
+                stack.count -= MAX_STACK;
             }
         }
         else if (itemstacks[i].id == stack.id) {
@@ -93,13 +94,13 @@ ItemStack InventoryList::addStack(ItemStack stack) {
     return stack;
 }
 
-unsigned short InventoryList::stackFits(ItemStack &stack) {
+unsigned short InventoryList::stackFits(const ItemStack &stack) {
     unsigned short i = 0;
     unsigned short fits = 0;
 
     while (i < itemstacks.size() && fits < stack.count) {
         if (itemstacks[i].count == 0) {
-            fits += std::min(static_cast<unsigned short>(64), stack.count);
+            fits += std::min(static_cast<unsigned short>(MAX_STACK), stack.count);
         }
         else if (itemstacks[i].id == stack.id) {
             unsigned int canfit = MAX_STACK - itemstacks[i].count;

@@ -16,6 +16,7 @@
 #include "../../../world/block/PointedThing.h"
 #include "../../hud/GameGui.h"
 #include "../../entity/Collidable.h"
+#include "Inventory.h"
 
 class Player : Collidable, public Drawable {
 public:
@@ -60,12 +61,16 @@ public:
     void drawViginette(Renderer& renderer);
     void drawGUI(Renderer& renderer);
 
+    Inventory& getInventory();
     PointedThing& getPointedThing();
 
     ~Player();
 private:
     Renderer& renderer;
     LocalDefs& defs;
+
+    InventoryList hand;
+    Inventory inventory;
     GameGui gameGui;
 
     bool flying = false;

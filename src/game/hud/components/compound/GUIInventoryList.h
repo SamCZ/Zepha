@@ -29,7 +29,6 @@ public:
     void drawContents();
 private:
     std::shared_ptr<GUIRect> hoverRect = std::make_shared<GUIRect>("hover_rect");
-    unsigned short leftClickIndex;
 
     InventoryList* list;
     InventoryList* hand;

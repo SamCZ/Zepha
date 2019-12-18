@@ -14,7 +14,7 @@ void GUIInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 inn
     this->scale = scale;
     this->padding = padding;
     this->innerPadding = innerPadding;
-    this->hitbox = glm::ivec2{
+    this->hitbox = glm::ivec2 {
         padding.x + list.getWidth() * (innerPadding.x*scale.x),
         padding.y + (list.getLength() / list.getWidth()) * (innerPadding.y*scale.y)
     };
@@ -81,8 +81,6 @@ void GUIInventoryList::leftClick(bool down, glm::ivec2 pos) {
     if (down) {
         hand->setStack(0, list->placeStack(index, hand->getStack(0)));
     }
-
-//    leftClickIndex = index;
 }
 
 void GUIInventoryList::rightClick(bool down, glm::ivec2 pos) {
@@ -116,8 +114,6 @@ void GUIInventoryList::rightClick(bool down, glm::ivec2 pos) {
             }
         }
     }
-
-//    leftClickIndex = index;
 }
 
 void GUIInventoryList::drawContents() {

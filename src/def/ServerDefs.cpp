@@ -25,8 +25,8 @@ void ServerDefs::init(ServerWorld &world) {
 
 void ServerDefs::update(double delta) {
     this->delta += delta;
-    while (this->delta > 0.05f) {
+    while (this->delta > 1/60.f) {
         luaApi.update(this->delta);
-        this->delta -= 0.05f;
+        this->delta -= 1/60.f;
     }
 }

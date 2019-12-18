@@ -8,18 +8,20 @@
 Player::Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer) :
     Collidable(world, defs, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
 
-    defs(defs),
-    renderer(renderer),
+    hand(defs.defs, 1, 1),
+    inventory(defs.defs),
+    gameGui(inventory, hand, renderer.window.getSize(), defs, renderer),
     wireframe({}, 0.01, {1, 1, 1}),
-    gameGui(renderer.window.getSize(), defs, renderer) {}
+    renderer(renderer),
+    defs(defs) {
+
+    inventory.createList("main", 44, 11);
+    inventory.createList("craft", 4, 2);
+    inventory.createList("craft_result", 2, 2);
+}
 
 void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {
     if (activeBlock == -1) activeBlock = defs.defs.blockFromStr("zeus:default:stone").index;
-
-    if (renderer.window.input.isKeyDown(GLFW_KEY_G)) {
-        gameGui.list.addStack({defs.defs.craftItemFromStr("zeus:materials:rock").index, 1});
-        gameGui.list.addStack({defs.defs.craftItemFromStr("zeus:materials:stick").index, 2});
-    }
     gameGui.update(delta);
 
     renderer.window.addResizeCallback("player", [&](glm::ivec2 win) {
@@ -217,6 +219,11 @@ void Player::setPitch(float pitch) {
 
 float Player::getPitch() {
     return pitch;
+}
+
+
+Inventory &Player::getInventory() {
+    return inventory;
 }
 
 /*

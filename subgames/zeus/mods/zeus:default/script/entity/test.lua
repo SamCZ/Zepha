@@ -24,7 +24,7 @@ zepha.register_entity("zeus:default:test", {
     end
 })
 
-if not zepha.is_server() then
+if zepha.client then
 --     for i = 0, 500 do
         zepha.add_entity("zeus:default:test", {x = 10, y = 35, z = 0})
 --     end

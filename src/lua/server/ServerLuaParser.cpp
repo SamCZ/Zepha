@@ -9,14 +9,10 @@
 #include "ServerRegisterItems.h"
 #include "ServerRegisterBiomes.h"
 
-
 #include "../../def/ServerDefs.h"
-
-
 
 #include "../api/modules/sPrintE.h"
 
-#include "../api/modules/sIsServer.h"
 #include "../api/modules/sDelay.h"
 
 #include "../api/modules/sRegisterBlock.h"
@@ -53,12 +49,12 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
     core = lua.create_table();
     lua["zepha"] = core;
 
+    core["server"] = true;
     core["player"] = sol::nil;
 
     //Load Modules
     ServerApi::printe(lua);
 
-    ServerApi::is_server(core);
     ServerApi::delay(core, delayed_functions);
 
     ServerApi::register_block(lua, core);

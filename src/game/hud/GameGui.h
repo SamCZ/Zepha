@@ -14,10 +14,11 @@
 #include "../entity/Entity.h"
 #include "../../util/Util.h"
 #include "components/compound/GUIInventoryList.h"
+#include "../scene/world/Inventory.h"
 
 class GameGui : public GUIContainer {
 public:
-    explicit GameGui(glm::vec2 bufferSize, LocalDefs& defs, Renderer& renderer);
+    explicit GameGui(Inventory& inventory, InventoryList& hand, glm::vec2 bufferSize, LocalDefs& defs, Renderer& renderer);
     void winResized(glm::ivec2 win);
 
     void update(double delta) override;
@@ -28,8 +29,6 @@ public:
     const std::string& getMenuState();
 
     void drawViginette(Renderer& renderer);
-
-    InventoryList list, hand;
 private:
     LocalDefs& defs;
     Renderer& renderer;
@@ -37,9 +36,12 @@ private:
     glm::ivec2 win {};
     std::string menuState = "";
 
-    GUIContainer builtIn = {};
     std::shared_ptr<GUIContainer> menuRoot = {};
     std::shared_ptr<GUIInventoryList> handList = {};
+    GUIContainer builtIn = {};
     GameGuiBuilder builder;
+
+    InventoryList& hand;
+    Inventory& inventory;
 };
 
