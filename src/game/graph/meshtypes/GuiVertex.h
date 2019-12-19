@@ -9,13 +9,13 @@
 #include <glm/vec4.hpp>
 
 struct GuiVertex {
-    GuiVertex(glm::vec2 position, glm::vec4 colorData, glm::vec3 colorBlend, float useTexture) :
+    GuiVertex(glm::vec3 position, glm::vec4 colorData, glm::vec3 colorBlend, float useTexture) :
         position(position),
         colorData(colorData),
         colorBlend(colorBlend),
         useTexture(useTexture) {}
 
-    glm::vec2 position;
+    glm::vec3 position;
     glm::vec4 colorData;
     glm::vec3 colorBlend;
     float useTexture;

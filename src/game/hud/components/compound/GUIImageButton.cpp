@@ -26,12 +26,12 @@ void GUIImageButton::setHoverCallback(const callback& hoverCallback) {
 void GUIImageButton::rebuild(bool hover) {
     auto tex = (hover) ? (hoverTexture != nullptr) ? hoverTexture : texture : texture;
 
-    auto mesh = new GuiMesh();
+    auto mesh = std::make_shared<GuiMesh>();
     mesh->create({
-        {{0, 0}, {tex->uv.x, tex->uv.y, 0, 1}, {1, 1, 1}, true},
-        {{0, 1}, {tex->uv.x, tex->uv.w, 0, 1}, {1, 1, 1}, true},
-        {{1, 1}, {tex->uv.z, tex->uv.w, 0, 1}, {1, 1, 1}, true},
-        {{1, 0}, {tex->uv.z, tex->uv.y, 0, 1}, {1, 1, 1}, true}
+        {{0, 0, 0}, {tex->uv.x, tex->uv.y, 0, 1}, {1, 1, 1}, true},
+        {{0, 1, 0}, {tex->uv.x, tex->uv.w, 0, 1}, {1, 1, 1}, true},
+        {{1, 1, 0}, {tex->uv.z, tex->uv.w, 0, 1}, {1, 1, 1}, true},
+        {{1, 0, 0}, {tex->uv.z, tex->uv.y, 0, 1}, {1, 1, 1}, true}
     }, {0, 1, 2, 2, 3, 0});
 
     entity.setMesh(mesh);

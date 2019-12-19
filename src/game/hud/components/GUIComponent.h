@@ -25,6 +25,8 @@ public:
     virtual void setPos(glm::ivec2 pos);
     virtual glm::ivec2 getPos();
 
+    void setDepth(float depth);
+
     bool mouseActivity(glm::ivec2 pos);
     bool leftClickEvent(bool state, glm::ivec2 pos);
     bool rightClickEvent(bool state, glm::ivec2 pos);

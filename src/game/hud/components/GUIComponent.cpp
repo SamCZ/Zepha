@@ -145,7 +145,6 @@ void GUIComponent::setCallbacks(const callback &left, const callback &right, con
     setHoverCallback(hover);
 }
 
-
 const std::string &GUIComponent::getKey() {
     return key;
 }
@@ -155,9 +154,13 @@ bool GUIComponent::clickEvent(bool left, bool state, glm::ivec2 pos) {
         glm::ivec2 cp = pos - (*child)->getPos() - glm::ivec2((*child)->getPadding().y, (*child)->getPadding().x);
         if ((*child)->clickEvent(left, state, cp)) return true;
     }
-    if (pos.x >= 0 && pos.y >= 0 && pos.x <= hitbox.x && pos.y <= hitbox.y && cbLeftClick != nullptr) {
+    if (pos.x >= 0 && pos.y >= 0 && pos.x <= hitbox.x && pos.y <= hitbox.y && (left ? cbLeftClick : cbRightClick)) {
         (left ? cbLeftClick : cbRightClick)(state, pos);
         return true;
     }
     return false;
+}
+
+void GUIComponent::setDepth(float depth) {
+    entity.setDepth(depth);
 }

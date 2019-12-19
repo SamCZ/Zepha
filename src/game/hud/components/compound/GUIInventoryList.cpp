@@ -133,7 +133,7 @@ void GUIInventoryList::drawContents() {
             if (stack.id == 0) continue;
 
             auto item = std::make_shared<GUIInventoryItem>("item_" + to_string(i) + "_" + to_string(j));
-            item->create(scale, stack.count, defs->textures[defs->defs.craftItemFromId(stack.id).textures[0]], f);
+            item->create(scale, stack.count, defs->defs.fromId(stack.id), f);
             add(item);
             item->setPos({padding.x + j * (16*scale.x+innerPadding.x/scale.x), padding.y + i * (16*scale.y+innerPadding.y/scale.y)});
         }

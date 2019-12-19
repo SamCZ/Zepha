@@ -1,16 +1,39 @@
 print("Hello from inventory")
 
+local shit_adding = false
 zepha.register_keybind("add_shit", {
     description = "Add testing items to inventory",
     default = zepha.keys.p,
     on_press = function()
-        zepha.player:get_inventory():get_list("main"):add_stack({"zeus:materials:flint_pick_head", 1})
-        zepha.player:get_inventory():get_list("main"):add_stack({"zeus:materials:flint_axe_head", 1})
-        zepha.player:get_inventory():get_list("main"):add_stack({"zeus:materials:flint_shovel_head", 1})
-        zepha.player:get_inventory():get_list("main"):add_stack({"zeus:materials:flint_blade_head", 1})
-        print(zepha.player:get_inventory():get_list("main"):get_stack(3).count)
+        shit_adding = true
+    end,
+    on_release = function()
+        shit_adding = false
     end
 })
+
+zepha.delay(function()
+    if shit_adding then
+        local list = zepha.player:get_inventory():get_list("main")
+
+        list:add_stack({"zeus:default:cobblestone", 1})
+        list:add_stack({"zeus:default:tallgrass_5", 1})
+        list:add_stack({"zeus:default:leaves", 1})
+        list:add_stack({"zeus:kinetic:axle_0", 1})
+        list:add_stack({"zeus:default:wood", 1})
+
+--         list:add_stack({"zeus:materials:flint_pick_head", 1})
+--         list:add_stack({"zeus:materials:flint_axe_head", 1})
+--         list:add_stack({"zeus:materials:flint_shovel_head", 1})
+--         list:add_stack({"zeus:materials:flint_blade_head", 1})
+
+--         list:add_stack({"zeus:materials:plant_fibre", 1})
+--         list:add_stack({"zeus:materials:plant_twine", 1})
+--         list:add_stack({"zeus:materials:stick", 1})
+--         list:add_stack({"zeus:materials:flint", 1})
+    end
+    return true
+end, 0)
 
 zepha.register_keybind("open_inventory", {
     description = "Open Inventory",

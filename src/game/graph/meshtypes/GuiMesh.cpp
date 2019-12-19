@@ -18,7 +18,7 @@ void GuiMesh::create(const std::vector<GuiVertex>& vertices, const std::vector<u
               &vertices.front(), &indices.front());
 
     unsigned int idx = 0;
-    createVertexAttrib(idx++, 2, GL_FLOAT, STRIDE_OFFSET_GUI(position));
+    createVertexAttrib(idx++, 3, GL_FLOAT, STRIDE_OFFSET_GUI(position));
     createVertexAttrib(idx++, 4, GL_FLOAT, STRIDE_OFFSET_GUI(colorData));
     createVertexAttrib(idx++, 3, GL_FLOAT, STRIDE_OFFSET_GUI(colorBlend));
     createVertexAttrib(idx  , 1, GL_FLOAT, STRIDE_OFFSET_GUI(useTexture));

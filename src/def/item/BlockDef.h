@@ -11,6 +11,7 @@
 #include "../ItemDef.h"
 #include "../../lua/Callback.h"
 #include "../../game/entity/Model.h"
+#include "../../game/graph/meshtypes/GuiMesh.h"
 
 class BlockDef : public ItemDef {
 public:
@@ -27,6 +28,7 @@ public:
     std::vector<SelectionBox> sBoxes;
     std::vector<SelectionBox> cBoxes;
     sptr<Model> entityModel = std::make_shared<Model>();
+    sptr<GuiMesh> guiModel = std::make_shared<GuiMesh>();
 
     std::unordered_map<Callback, sol::function, Util::EnumClassHash> callbacks {};
 };

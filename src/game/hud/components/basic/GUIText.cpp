@@ -49,10 +49,10 @@ void GUIText::setText(std::string text) {
                 if (lineWidth > maxLineWidth) maxLineWidth = lineWidth;
 
                 if (bgcolor.w != 0) {
-                    textVertices.emplace_back(glm::vec2{-1,            yOffset - 1    }, bgcolor, glm::vec3{1, 1, 1}, 0.f);
-                    textVertices.emplace_back(glm::vec2{-1,            yOffset + h + 1}, bgcolor, glm::vec3{1, 1, 1}, 0.f);
-                    textVertices.emplace_back(glm::vec2{lineWidth + 1, yOffset + h + 1}, bgcolor, glm::vec3{1, 1, 1}, 0.f);
-                    textVertices.emplace_back(glm::vec2{lineWidth + 1, yOffset - 1    }, bgcolor, glm::vec3{1, 1, 1}, 0.f);
+                    textVertices.emplace_back(glm::vec3 {-1,            yOffset - 1,     0}, bgcolor, glm::vec3(1), 0.f);
+                    textVertices.emplace_back(glm::vec3 {-1,            yOffset + h + 1, 0}, bgcolor, glm::vec3(1), 0.f);
+                    textVertices.emplace_back(glm::vec3 {lineWidth + 1, yOffset + h + 1, 0}, bgcolor, glm::vec3(1), 0.f);
+                    textVertices.emplace_back(glm::vec3 {lineWidth + 1, yOffset - 1,     0}, bgcolor, glm::vec3(1), 0.f);
 
                     textIndices.emplace_back(indOffset);
                     textIndices.emplace_back(indOffset + 1);
@@ -110,10 +110,10 @@ void GUIText::setText(std::string text) {
                 yOffset -= 1;
             }
 
-            textVertices.emplace_back(glm::vec2 {xOffset,             yOffset    }, glm::vec4 {charUVs.x, charUVs.y, 0, color.w}, c, 1.f);
-            textVertices.emplace_back(glm::vec2 {xOffset,             yOffset + h}, glm::vec4 {charUVs.x, charUVs.w, 0, color.w}, c, 1.f);
-            textVertices.emplace_back(glm::vec2 {xOffset + charWidth, yOffset + h}, glm::vec4 {charUVs.z, charUVs.w, 0, color.w}, c, 1.f);
-            textVertices.emplace_back(glm::vec2 {xOffset + charWidth, yOffset    }, glm::vec4 {charUVs.z, charUVs.y, 0, color.w}, c, 1.f);
+            textVertices.emplace_back(glm::vec3 {xOffset,             yOffset,     0}, glm::vec4 {charUVs.x, charUVs.y, 0, color.w}, c, 1.f);
+            textVertices.emplace_back(glm::vec3 {xOffset,             yOffset + h, 0}, glm::vec4 {charUVs.x, charUVs.w, 0, color.w}, c, 1.f);
+            textVertices.emplace_back(glm::vec3 {xOffset + charWidth, yOffset + h, 0}, glm::vec4 {charUVs.z, charUVs.w, 0, color.w}, c, 1.f);
+            textVertices.emplace_back(glm::vec3 {xOffset + charWidth, yOffset,     0}, glm::vec4 {charUVs.z, charUVs.y, 0, color.w}, c, 1.f);
 
             textIndices.emplace_back(indOffset);
             textIndices.emplace_back(indOffset + 1);
@@ -128,7 +128,7 @@ void GUIText::setText(std::string text) {
         xOffset += charWidth;
     }
 
-    auto m = new GuiMesh();
+    auto m = std::make_shared<GuiMesh>();
     m->create(textVertices, textIndices);
     entity.setMesh(m);
 }

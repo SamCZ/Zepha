@@ -6,6 +6,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <memory>
 
 #include "../graph/meshtypes/GuiMesh.h"
 #include "../graph/drawable/Drawable.h"
@@ -13,32 +14,36 @@
 class GuiEntity : public Drawable {
 public:
     GuiEntity() = default;
-    explicit GuiEntity(GuiMesh* mesh);
-    void setMesh(GuiMesh* mesh);
+    explicit GuiEntity(std::shared_ptr<GuiMesh> mesh);
+    void setMesh(std::shared_ptr<GuiMesh> mesh);
 
     void draw(Renderer& renderer) override;
 
     void setPos(glm::vec2 position);
     glm::vec2 getPos();
 
-    void setAngle(float angle);
-    float getAngle();
+    void setDepth(float depth);
+    float getDepth();
+
+    void setRotation(glm::mat4 rotation);
+    glm::mat4 getRotation();
 
     void setScale(float scale);
     void setScale(glm::vec2 scale);
+    void setScale(glm::vec3 scale);
     glm::vec2 getScale();
+    glm::vec3 getScale3();
 
     glm::mat4 getModelMatrix();
 
     void cleanup();
-    ~GuiEntity() override;
-
+    ~GuiEntity() = default;
 protected:
-    glm::vec2 position {0, 0};
-    glm::vec2 scale {1, 1};
-    GLfloat angle = 0;
+    glm::vec3 position {};
+    glm::mat4 rotation {};
+    glm::vec3 scale {1, 1, 1};
 
 private:
-    GuiMesh* mesh = nullptr;
+    std::shared_ptr<GuiMesh> mesh = nullptr;
 };
 

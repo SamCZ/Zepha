@@ -33,7 +33,6 @@ Renderer::Renderer(glm::ivec2 win) :
     gu.model  = guiShader.get("model");
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_CULL_FACE);
 
     window.addResizeCallback("renderer", [&](glm::ivec2 win) {
         ssao.windowResized(win);
@@ -80,7 +79,9 @@ void Renderer::beginChunkDeferredCalls() {
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
     glDisable(GL_BLEND);
 
     glViewport(0, 0, static_cast<int>(world.windowSize.x * world.bufferScale), static_cast<int>(world.windowSize.y * world.bufferScale));
@@ -185,7 +186,9 @@ void Renderer::beginGUIDrawCalls() {
     currentModelUniform = gu.model;
 
     glClear(GL_DEPTH_BUFFER_BIT);
-    glDisable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
 
     guiShader.use();
     guiShader.set(gu.ortho, gu.matrix);

@@ -22,7 +22,7 @@ void GUIGraph::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr <Atlas
 
     history = std::vector<float>(static_cast<unsigned long>(length));
 
-    entity.setMesh(new GuiMesh());
+    entity.setMesh(std::make_shared<GuiMesh>());
 }
 
 void GUIGraph::pushValue(float value) {
@@ -73,10 +73,10 @@ void GUIGraph::buildHistogramMesh() {
         float sec = (float)std::round(9 - fmin(h, 1)*9) * 0.1f;
 
         auto columnVerts = std::vector<GuiVertex> {
-            {{xOffset,    -h}, {uv.x + age * uv.z,         uv.y + sec * uv.w,         0, 1}, {1, 1, 1}, true},
-            {{xOffset + 1,-h}, {uv.x + (age+0.01f) * uv.z, uv.y + sec * uv.w,         0, 1}, {1, 1, 1}, true},
-            {{xOffset + 1, 0}, {uv.x + (age+0.01f) * uv.z, uv.y + (sec+0.10f) * uv.w, 0, 1}, {1, 1, 1}, true},
-            {{xOffset,     0}, {uv.x + age * uv.z,         uv.y + (sec+0.10f) * uv.w, 0, 1}, {1, 1, 1}, true},
+            {{xOffset,    -h, 0}, {uv.x + age * uv.z,         uv.y + sec * uv.w,         0, 1}, {1, 1, 1}, true},
+            {{xOffset + 1,-h, 0}, {uv.x + (age+0.01f) * uv.z, uv.y + sec * uv.w,         0, 1}, {1, 1, 1}, true},
+            {{xOffset + 1, 0, 0}, {uv.x + (age+0.01f) * uv.z, uv.y + (sec+0.10f) * uv.w, 0, 1}, {1, 1, 1}, true},
+            {{xOffset,     0, 0}, {uv.x + age * uv.z,         uv.y + (sec+0.10f) * uv.w, 0, 1}, {1, 1, 1}, true},
         };
 
         vertices.insert(vertices.end(), columnVerts.begin(), columnVerts.end());
@@ -92,7 +92,7 @@ void GUIGraph::buildHistogramMesh() {
         indOffset += 4;
     }
 
-    auto m = new GuiMesh();
+    auto m = std::make_shared<GuiMesh>();
     m->create(vertices, indices);
     entity.setMesh(m);
 }

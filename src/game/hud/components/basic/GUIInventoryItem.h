@@ -13,5 +13,5 @@ public:
     GUIInventoryItem() = default;
     GUIInventoryItem(const std::string& key);
 
-    void create(glm::vec2 scale, unsigned short itemCount, std::shared_ptr<AtlasRef> texture, Font font);
+    void create(glm::vec2 scale, unsigned short itemCount, ItemDef& def, Font font);
 };

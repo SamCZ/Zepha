@@ -4,7 +4,6 @@
 
 #include "BlockDef.h"
 
-
 BlockDef::BlockDef(const std::string &identifier, const std::string& name, const BlockModel &model, bool solid, const std::vector<SelectionBox>& sBoxes, const std::vector<SelectionBox>& cBoxes) :
     BlockDef(identifier, 0, name, model, solid, sBoxes, cBoxes) {}
 
@@ -17,22 +16,30 @@ BlockDef::BlockDef(const std::string& identifier, unsigned int index, const std:
     cBoxes(cBoxes) {}
 
 void BlockDef::createModel() {
-    uptr<EntityMesh> mesh = std::make_unique<EntityMesh>();
+    uptr<EntityMesh> entity = std::make_unique<EntityMesh>();
     uint indOffset = 0;
 
-    std::vector<EntityVertex> vertices;
+    std::vector<EntityVertex> entityVertices;
+    std::vector<GuiVertex> guiVertices;
     std::vector<unsigned int> indices;
 
     for (std::vector<MeshPart>& pArray : model.parts) {
         for (MeshPart& p : pArray) {
             for (const BlockModelVertex &vertex : p.vertices) {
-                vertices.push_back(EntityVertex {
-                        vertex.pos - glm::vec3(0.5f),
-                        {vertex.tex.x, vertex.tex.y, 0, 0},
-                        {1, 1, 1},
-                        true,
-                        vertex.nml,
-                        {}, {}
+                entityVertices.push_back(EntityVertex {
+                    vertex.pos - glm::vec3(0.5f),
+                    {vertex.tex.x, vertex.tex.y, 0, 0},
+                    {1, 1, 1},
+                    true,
+                    vertex.nml,
+                    {}, {}
+                });
+                float brightness = 0.8 + (glm::abs(vertex.nml.z) * 0.2) + (vertex.nml.y * 0.4);
+                guiVertices.push_back(GuiVertex {
+                    vertex.pos - glm::vec3(0.5f),
+                    {vertex.tex.x, vertex.tex.y, 0, 1},
+                    glm::vec3(brightness),
+                    true
                 });
             }
 
@@ -44,6 +51,8 @@ void BlockDef::createModel() {
         }
     }
 
-    mesh->create(vertices, indices);
-    entityModel->fromMesh(std::move(mesh));
+    entity->create(entityVertices, indices);
+    entityModel->fromMesh(std::move(entity));
+
+    guiModel->create(guiVertices, indices);
 }
