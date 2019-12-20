@@ -4,12 +4,15 @@
 
 #pragma once
 
-#include <functional>
+#include <list>
 #include <vector>
+#include <functional>
 #include "ItemStack.h"
 
 class InventoryList {
 public:
+    enum class Callback { TAKE, PUT };
+
     InventoryList(DefinitionAtlas& defs, unsigned short size, unsigned short width);
 
     unsigned short getLength();
@@ -28,13 +31,15 @@ public:
     //Returns how many of `stack`'s items fit, from 0 to stack.count.
     unsigned short stackFits(const ItemStack& stack);
     //Attempts to remove the type and amount of items specified by `stack`. Returns actual ItemStack of what was removed.
-    ItemStack removeStack(ItemStack request);
+    ItemStack takeStack(ItemStack request);
 
-    void setUpdatedCallback(std::function<void()> cb);
-    void clearUpdatedCallback();
+    //Removes up to count items from ind, returns the items removed
+    ItemStack removeStack(unsigned short ind, unsigned short count);
+
+    void guiCallback(std::function<void()> cb);
+    void registerLuaCallback(sol::function cb);
 
     DefinitionAtlas& defs;
-    const static unsigned short MAX_STACK = 64; //TODO: Don't hardcode this.
 
 private:
     std::vector<ItemStack> itemstacks {};
@@ -42,4 +47,6 @@ private:
 
     std::function<void()> cb = nullptr;
     void triggerCallback();
+
+    std::list<sol::function> changeCallbacks {};
 };

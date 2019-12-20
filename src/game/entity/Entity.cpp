@@ -81,6 +81,14 @@ float Entity::getAngle() {
     return angle;
 }
 
+void Entity::setRotation(glm::mat4 rotation) {
+    this->rotation = rotation;
+}
+
+glm::mat4 Entity::getRotation() {
+    return rotation;
+}
+
 void Entity::setScale(float scale) {
     this->visualScale = scale;
     this->scale = scale;
@@ -98,7 +106,8 @@ glm::mat4 Entity::getModelMatrix() {
     glm::mat4 model = glm::mat4(1.0);
 
     model = glm::translate(model, visualPosition + visualVisualOffset);
-    model = glm::rotate(model, visualAngle * static_cast<float>(3.14159265 / 180), {0.0, 1.0, 0.0});
+//    model = glm::rotate(model, visualAngle * static_cast<float>(3.14159265 / 180), {0.0, 1.0, 0.0});
+    model = model * rotation;
     model = glm::scale(model, glm::vec3(visualScale));
 
     return model;

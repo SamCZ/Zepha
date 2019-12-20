@@ -18,6 +18,8 @@ public:
     std::string name = "";
     unsigned int index = 0;
 
+    unsigned short maxStackSize;
+
     Type type = Type::INVALID;
 };
 

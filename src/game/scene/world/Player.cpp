@@ -21,7 +21,11 @@ Player::Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer) :
 }
 
 void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {
-    if (activeBlock == -1) activeBlock = defs.defs.blockFromStr("zeus:default:stone").index;
+    if (activeBlock == -1) {
+        activeBlock = defs.defs.blockFromStr("zeus:default:stone").index;
+        handModel.setModel(defs.defs.blockFromId(activeBlock).entityModel);
+    }
+
     gameGui.update(delta);
 
     renderer.window.addResizeCallback("player", [&](glm::ivec2 win) {
@@ -107,7 +111,29 @@ void Player::moveAndLook(Input &input, double delta, glm::vec2 mouseDelta) {
 void Player::updateCamera() {
     renderer.camera.setYaw(yaw);
     renderer.camera.setPitch(pitch);
-    renderer.camera.setPos({pos.x, pos.y + EYE_HEIGHT, pos.z});
+
+    glm::vec3 eyesPos = {pos.x, pos.y + EYE_HEIGHT, pos.z};
+    renderer.camera.setPos(eyesPos);
+
+    float pitch = std::min(std::max(this->pitch, -89.9f), 89.9f);
+
+    glm::vec3 front = glm::normalize(glm::vec3 {
+        cos(glm::radians(yaw)) * cos(glm::radians(pitch)),
+        sin(glm::radians(pitch)),
+        sin(glm::radians(yaw)) * cos(glm::radians(pitch))});
+
+    glm::vec3 right = glm::normalize(glm::cross(front, {0, 1, 0}));
+    glm::vec3 up = glm::normalize(glm::cross(right, front));
+    glm::vec3 handPos = eyesPos + front * 0.25f + right * 0.25f + up * -0.2f;
+
+    glm::mat4 rotation;
+    rotation = glm::rotate(rotation, glm::radians(-yaw ), {0, 1, 0});
+    rotation = glm::rotate(rotation, glm::radians(pitch), {0, 0, 1});
+    rotation = glm::rotate(rotation, glm::radians(+2.f ), {1, 0, 0});
+
+    handModel.setPos(handPos + vel * 0.1f);
+    handModel.setRotation(rotation);
+    handModel.setScale(0.12f);
 }
 
 void Player::findPointedThing(Input &input) {
@@ -240,6 +266,7 @@ PointedThing& Player::getPointedThing() {
 
 void Player::setActiveBlock(const std::string& block) {
     activeBlock = defs.defs.blockFromStr(block).index;
+    handModel.setModel(defs.defs.blockFromStr(block).entityModel);
 }
 
 void Player::setMenu(const std::string& menu, const std::map<std::string, GuiBuilder::ComponentCallbacks>& callbacks) {
@@ -266,6 +293,7 @@ std::string Player::getMenuState() {
 
 void Player::draw(Renderer &renderer) {
     wireframe.draw(renderer);
+    handModel.draw(renderer);
 }
 
 void Player::drawGUI(Renderer &renderer) {

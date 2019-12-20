@@ -28,7 +28,11 @@ namespace ClientApi {
 
             "add_stack", sol::overload(&LuaInventoryList::add_stack, &LuaInventoryList::add_table),
             "stack_fits", sol::overload(&LuaInventoryList::stack_fits, &LuaInventoryList::table_fits),
-            "remove_stack", sol::overload(&LuaInventoryList::remove_stack, &LuaInventoryList::remove_table)
+            "take_stack", sol::overload(&LuaInventoryList::take_stack, &LuaInventoryList::take_table),
+
+            "remove_stack", &LuaInventoryList::remove_stack,
+
+            "register_on_change", &LuaInventoryList::register_on_change
         );
     }
 }

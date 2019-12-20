@@ -4,11 +4,15 @@
 
 #include "BlockDef.h"
 
-BlockDef::BlockDef(const std::string &identifier, const std::string& name, const BlockModel &model, bool solid, const std::vector<SelectionBox>& sBoxes, const std::vector<SelectionBox>& cBoxes) :
-    BlockDef(identifier, 0, name, model, solid, sBoxes, cBoxes) {}
+BlockDef::BlockDef(const std::string &identifier, const std::string& name, unsigned short maxStackSize,
+        const BlockModel &model, bool solid, const std::vector<SelectionBox>& sBoxes, const std::vector<SelectionBox>& cBoxes) :
+    BlockDef(identifier, 0, name, maxStackSize, model, solid, sBoxes, cBoxes) {}
 
-BlockDef::BlockDef(const std::string& identifier, unsigned int index, const std::string& name, const BlockModel& model, bool solid, const std::vector<SelectionBox>& sBoxes, const std::vector<SelectionBox>& cBoxes) :
-    ItemDef {identifier, name, index, ItemDef::Type::BLOCK},
+BlockDef::BlockDef(const std::string& identifier, unsigned int index, const std::string& name,
+        unsigned short maxStackSize, const BlockModel& model, bool solid,
+        const std::vector<SelectionBox>& sBoxes, const std::vector<SelectionBox>& cBoxes) :
+
+    ItemDef {identifier, name, index, maxStackSize, ItemDef::Type::BLOCK},
     model(model),
     culls(model.culls),
     solid(solid),

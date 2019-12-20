@@ -21,6 +21,8 @@ LocalRegisterItems::LocalRegisterItems(sol::table& core, LocalDefs &defs) {
         if (!nameOpt) throw identifier + " is missing name property!";
         if (!texturesOpt) throw identifier + " is missing textures property!";
 
+        auto maxStack = itemTable.get_or("stack", 64);
+
         //Convert Textures Table to Vector
         std::vector<std::string> textures;
         std::vector<sptr<AtlasRef>> textureRefs;
@@ -34,7 +36,7 @@ LocalRegisterItems::LocalRegisterItems(sol::table& core, LocalDefs &defs) {
             textureRefs.push_back(defs.textures["_missing"]);
         }
 
-        CraftItemDef* itemDef = new CraftItemDef(identifier, defs.defs.size(), *nameOpt, textures, textureRefs);
+        CraftItemDef* itemDef = new CraftItemDef(identifier, defs.defs.size(), *nameOpt, maxStack, textures, textureRefs);
         itemDef->createModel(defs.textures);
 
         //Add Block Definition to the Atlas

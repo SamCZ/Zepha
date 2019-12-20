@@ -81,6 +81,7 @@ private:
 
     PointedThing pointedThing;
     WireframeEntity wireframe;
+    Entity handModel;
     double breakInterval = 0;
 };
 

@@ -21,6 +21,8 @@ ServerRegisterItems::ServerRegisterItems(sol::table& core, ServerDefs &defs) {
         if (!nameOpt) throw identifier + " is missing name property!";
         if (!texturesOpt) throw identifier + " is missing textures property!";
 
+        auto maxStack = itemTable.get_or("stack", 64);
+
         //Convert Textures Table to Vector
         std::vector<std::string> textures;
         for (auto pair : *texturesOpt) {
@@ -29,7 +31,7 @@ ServerRegisterItems::ServerRegisterItems(sol::table& core, ServerDefs &defs) {
         }
         if (textures.size() == 0) textures.push_back("_missing");
 
-        CraftItemDef* itemDef = new CraftItemDef(identifier, defs.defs.size(), *nameOpt, textures, {});
+        CraftItemDef* itemDef = new CraftItemDef(identifier, defs.defs.size(), *nameOpt, maxStack, textures, {});
 
         //Add Block Definition to the Atlas
         defs.defs.registerDef(itemDef);

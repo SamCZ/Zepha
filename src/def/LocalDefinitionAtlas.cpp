@@ -7,13 +7,13 @@
 LocalDefinitionAtlas::LocalDefinitionAtlas(TextureAtlas& atlas) {
     //Invalid Node
     BlockModel invalidModel = BlockModel::createCube({atlas["_missing"]});
-    BlockDef* invalid = new BlockDef("invalid", 0, "Invalid (you broke the game!)", invalidModel, true, {{}}, {{}});
+    BlockDef* invalid = new BlockDef("invalid", 0, "Invalid (you broke the game!)", 1, invalidModel, true, {{}}, {{}});
     defs.push_back(invalid);
     defTable.insert({"invalid", 0});
 
     //Air Node
     BlockModel nullModel {};
-    BlockDef* air = new BlockDef("air", 0, "Air", nullModel, false, {}, {});
+    BlockDef* air = new BlockDef("", 0, "Air", 1, nullModel, false, {}, {});
     defs.push_back(air);
     defTable.insert({"air", 1});
 }

@@ -12,3 +12,11 @@ ItemStack::ItemStack(LuaItemStack &stack, const DefinitionAtlas &atlas) :
 ItemStack::ItemStack(unsigned int id, unsigned short count) :
     id(id),
     count(count) {}
+
+bool ItemStack::operator!=(const ItemStack &b) const {
+    return (b.count != this->count || b.id != this->id);
+}
+
+bool ItemStack::operator==(const ItemStack &b) const {
+    return (b.count == this->count && b.id == this->id);
+}

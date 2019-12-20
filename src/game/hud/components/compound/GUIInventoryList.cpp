@@ -20,7 +20,7 @@ void GUIInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 inn
     };
 
     drawContents();
-    list.setUpdatedCallback(std::bind(&GUIInventoryList::drawContents, this));
+    list.guiCallback(std::bind(&GUIInventoryList::drawContents, this));
 
     hoverRect->create({}, {}, {1, 1, 1, 0.1});
 
@@ -143,5 +143,5 @@ void GUIInventoryList::drawContents() {
 }
 
 GUIInventoryList::~GUIInventoryList() {
-    list->clearUpdatedCallback();
+    list->guiCallback(nullptr);
 }

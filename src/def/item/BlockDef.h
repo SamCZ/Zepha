@@ -16,8 +16,12 @@
 class BlockDef : public ItemDef {
 public:
     BlockDef() = default;
-    BlockDef(const std::string& identifier, const std::string& name, const BlockModel& model, bool solid, const std::vector<SelectionBox>& sBoxes, const std::vector<SelectionBox>& cBoxes);
-    BlockDef(const std::string& identifier, unsigned int index, const std::string& name, const BlockModel& model, bool solid, const std::vector<SelectionBox>& sBoxes, const std::vector<SelectionBox>& cBoxes);
+    BlockDef(const std::string& identifier, const std::string& name, unsigned short maxStackSize,
+            const BlockModel& model, bool solid, const std::vector<SelectionBox>& sBoxes, const std::vector<SelectionBox>& cBoxes);
+
+    BlockDef(const std::string& identifier, unsigned int index, const std::string& name,
+            unsigned short maxStackSize, const BlockModel& model, bool solid,
+            const std::vector<SelectionBox>& sBoxes, const std::vector<SelectionBox>& cBoxes);
 
     void createModel();
 

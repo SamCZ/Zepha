@@ -15,6 +15,9 @@ public:
     ItemStack(unsigned int id, unsigned short count);
     ItemStack(LuaItemStack& stack, const DefinitionAtlas& atlas);
 
+    bool operator!=(const ItemStack& b) const;
+    bool operator==(const ItemStack& b) const;
+
     unsigned int id = 0;
     unsigned short count = 0;
 };

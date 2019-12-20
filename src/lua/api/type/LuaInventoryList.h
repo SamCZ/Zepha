@@ -33,6 +33,10 @@ public:
     int stack_fits(LuaItemStack stack);
     int table_fits(sol::table stack);
 
-    LuaItemStack remove_stack(LuaItemStack request);
-    LuaItemStack remove_table(sol::table request);
+    LuaItemStack take_stack(LuaItemStack request);
+    LuaItemStack take_table(sol::table request);
+
+    LuaItemStack remove_stack(unsigned short ind, unsigned short count);
+
+    void register_on_change(sol::function cb);
 };

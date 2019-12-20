@@ -5,7 +5,7 @@
 #include "LuaItemStack.h"
 
 LuaItemStack::LuaItemStack(const ItemStack &stack, const DefinitionAtlas &defs) :
-    name(defs.fromId(stack.id).name),
+    name((stack.count == 0 ? "" : defs.fromId(stack.id).identifier)),
     count(stack.count) {}
 
 std::string LuaItemStack::get_name() {

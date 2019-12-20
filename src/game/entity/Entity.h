@@ -30,9 +30,13 @@ public:
     void setVisualOffset(glm::vec3 vs);
     glm::vec3 getVisualOffset();
 
+    //TODO: Remove these
     void interpAngle(float angle);
     void setAngle(float angle);
     float getAngle();
+
+    void setRotation(glm::mat4 rotation);
+    glm::mat4 getRotation();
 
     void interpScale(float scale);
     void setScale(float scale);
@@ -47,8 +51,9 @@ protected:
 
     glm::vec3 position {};
     glm::vec3 visualOffset {};
-    float scale = 1;
+    glm::mat4 rotation;
     float angle = 0;
+    float scale = 1;
 
     glm::vec3 visualPosition {};
     glm::vec3 visualVisualOffset {};
