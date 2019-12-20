@@ -2,5 +2,5 @@
 	"name": "zeus:default",
 	"description": "Default mod for the Zeus subgame.",
 	"version": "0.0.1",
-	"depends": ["zeus:materials", "aurailus:basictools"]
+	"depends": ["zeus:materials", "@aurailus:basictools", "@aurailus:crafting"]
 }

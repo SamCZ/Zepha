@@ -13,6 +13,7 @@ vector.new = function(x, y, z)
     elseif y == nil then return {x = x, y = x, z = x} end
     return {x = x, y = y, z = z}
 end
+
 -- vector.new shorthand
 _G["v"] = vector.new
 

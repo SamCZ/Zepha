@@ -1,36 +1,44 @@
 print("Hello from inventory")
 
+if zepha.server then return end -- Only run the following code on the client.
+
 local shit_adding = false
-zepha.register_keybind("add_shit", {
+local main = zepha.player:get_inventory():get_list("main")
+
+zepha.register_keybind("add_shit_b", {
     description = "Add testing items to inventory",
-    default = zepha.keys.p,
+    default = zepha.keys.b,
     on_press = function()
-        shit_adding = true
+        shit_adding = 1
     end,
     on_release = function()
-        shit_adding = false
+        shit_adding = 0
+    end
+})
+
+zepha.register_keybind("add_shit_i", {
+    description = "Add testing items to inventory",
+    default = zepha.keys.n,
+    on_press = function()
+        shit_adding = 2
+    end,
+    on_release = function()
+        shit_adding = 0
     end
 })
 
 zepha.delay(function()
-    if shit_adding then
-        local list = zepha.player:get_inventory():get_list("main")
-
-        list:add_stack({"zeus:default:cobblestone", 1})
-        list:add_stack({"zeus:default:tallgrass_5", 1})
-        list:add_stack({"zeus:default:leaves", 1})
-        list:add_stack({"zeus:kinetic:axle_0", 1})
-        list:add_stack({"zeus:default:wood", 1})
-
---         list:add_stack({"zeus:materials:flint_pick_head", 1})
---         list:add_stack({"zeus:materials:flint_axe_head", 1})
---         list:add_stack({"zeus:materials:flint_shovel_head", 1})
---         list:add_stack({"zeus:materials:flint_blade_head", 1})
-
---         list:add_stack({"zeus:materials:plant_fibre", 1})
---         list:add_stack({"zeus:materials:plant_twine", 1})
---         list:add_stack({"zeus:materials:stick", 1})
---         list:add_stack({"zeus:materials:flint", 1})
+    if shit_adding == 1 then
+        main:add_stack({"zeus:default:cobblestone", 1})
+        main:add_stack({"zeus:default:tallgrass_5", 1})
+        main:add_stack({"zeus:default:leaves", 1})
+        main:add_stack({"zeus:kinetic:axle_0", 1})
+        main:add_stack({"zeus:default:wood", 1})
+    elseif shit_adding == 2 then
+        main:add_stack({"zeus:materials:plant_fibre", 1})
+        main:add_stack({"zeus:materials:plant_twine", 1})
+        main:add_stack({"zeus:materials:stick", 1})
+        main:add_stack({"zeus:materials:flint", 1})
     end
     return true
 end, 0)
@@ -97,3 +105,8 @@ zepha.register_keybind("open_inventory", {
         else zepha.player:close_menu() end
     end
 })
+
+local craft_input = zepha.player:get_inventory():get_list("craft")
+local craft_output = zepha.player:get_inventory():get_list("craft_result")
+
+crafting.bind(craft_input, craft_output)

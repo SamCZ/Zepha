@@ -1,0 +1,6 @@
+{
+  "name": "@aurailus:crafting",
+  "description": "Basic grid-crafting system for Zepha.",
+  "version": "1.0.0",
+  "depends": []
+}

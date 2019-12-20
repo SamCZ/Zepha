@@ -7,3 +7,11 @@ zepha.register_item("zeus:materials:plant_twine", {
         "zeus:materials:plant_twine"
     }
 })
+
+crafting.register_recipe({
+    output = "zeus:materials:plant_twine",
+    recipe = {
+        {"zeus:materials:plant_fibre", "zeus:materials:plant_fibre"},
+        {"zeus:materials:plant_fibre", "zeus:materials:plant_fibre"},
+    }
+})

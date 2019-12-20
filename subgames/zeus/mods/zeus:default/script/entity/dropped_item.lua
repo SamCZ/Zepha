@@ -13,6 +13,7 @@ zepha.register_entity("zeus:default:dropped_item", {
         if static == nil then static = {} end
 
         if (static.object) then self.object:set_display_type("gameobject", static.object) end
+        self.item = static.object
 
         self.speed = static.speed or 20
         self.velocityY = static.velocityY or -2.5
@@ -75,10 +76,14 @@ zepha.register_entity("zeus:default:dropped_item", {
         if distance < 2 then
             self.object:int_pos(vector.add(zepha.player.pos, v{0, 1.10, 0}))
             self.object:int_scale(0.5)
-            self.scooping = true
-            zepha.delay(function()
-                self.delete = true
-            end, 2/20)
+
+            if not self.scooping then
+                zepha.delay(function()
+                    self.delete = true
+                    zepha.player:get_inventory():get_list("main"):add_stack({self.item, 1})
+                end, 2/20)
+                self.scooping = true
+            end
         end
     end
 })
