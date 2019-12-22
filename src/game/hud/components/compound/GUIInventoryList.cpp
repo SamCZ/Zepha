@@ -20,7 +20,7 @@ void GUIInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 inn
     };
 
     drawContents();
-    list.guiCallback(std::bind(&GUIInventoryList::drawContents, this));
+    list.setGuiCallback(std::bind(&GUIInventoryList::drawContents, this));
 
     hoverRect->create({}, {}, {1, 1, 1, 0.1});
 
@@ -68,6 +68,8 @@ void GUIInventoryList::hoverEvent(bool hovered, glm::ivec2 pos) {
 }
 
 void GUIInventoryList::leftClick(bool down, glm::ivec2 pos) {
+    if (!down) return;
+
     pos += glm::ivec2(glm::vec2(this->padding.x, this->padding.y) * this->scale);
 
     glm::ivec2 slot = pos / (glm::ivec2(this->scale) * this->innerPadding);
@@ -78,9 +80,7 @@ void GUIInventoryList::leftClick(bool down, glm::ivec2 pos) {
 
     if (index < 0 || index >= list->getLength()) return;
 
-    if (down) {
-        hand->setStack(0, list->placeStack(index, hand->getStack(0)));
-    }
+    hand->setStack(0, list->placeStack(index, hand->getStack(0), true));
 }
 
 void GUIInventoryList::rightClick(bool down, glm::ivec2 pos) {
@@ -97,20 +97,20 @@ void GUIInventoryList::rightClick(bool down, glm::ivec2 pos) {
     if (down) {
         auto handStack = hand->getStack(0);
         if (handStack.count <= 0) {
-            hand->setStack(0, list->splitStack(index));
+            hand->setStack(0, list->splitStack(index, true));
         }
         else {
             auto handStack = hand->getStack(0);
             auto listStack = list->getStack(index);
             if (listStack.id == 0 || listStack.id == handStack.id) {
-                auto overflow = list->placeStack(index, {handStack.id, 1});
+                auto overflow = list->placeStack(index, {handStack.id, 1}, true);
                 handStack.count -= 1;
                 if (handStack.count == 0) handStack.id = 0;
                 if (overflow.count != 0) handStack.count += overflow.count;
                 hand->setStack(0, handStack);
             }
             else {
-                hand->setStack(0, list->placeStack(index, hand->getStack(0)));
+                hand->setStack(0, list->placeStack(index, hand->getStack(0), true));
             }
         }
     }
@@ -143,5 +143,5 @@ void GUIInventoryList::drawContents() {
 }
 
 GUIInventoryList::~GUIInventoryList() {
-    list->guiCallback(nullptr);
+    list->setGuiCallback(nullptr);
 }

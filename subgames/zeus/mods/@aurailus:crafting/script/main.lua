@@ -10,7 +10,7 @@ crafting.bind = function(craft_input, craft_output)
     local width = craft_input.width
     local length = craft_input.length
 
-    craft_input:register_on_change(function()
+    local crafting_changed = function()
         local items = {}
 
         local matched_any = false
@@ -42,13 +42,19 @@ crafting.bind = function(craft_input, craft_output)
         if not matched_any then
             craft_output:set_stack(1, {"invalid", 0})
         end
-    end)
+    end
 
-    craft_output:register_on_change(function()
-        if craft_output:get_stack(1).count == 0 then
-            for i = 1, length do
-                craft_input:remove_stack(i, 1)
-            end
+    craft_input.on_put = crafting_changed
+    craft_input.on_take = crafting_changed
+
+    craft_output.allow_put = function()
+        return 0
+    end
+
+    craft_output.on_take = function()
+        for i = 1, length do
+            craft_input:remove_stack(i, 1)
         end
-    end)
+        crafting_changed()
+    end
 end

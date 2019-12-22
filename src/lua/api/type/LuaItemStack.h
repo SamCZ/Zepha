@@ -9,8 +9,10 @@
 
 class LuaItemStack {
 public:
-    LuaItemStack(const ItemStack& stack, const DefinitionAtlas& defs);
     LuaItemStack() = default;
+    LuaItemStack(const ItemStack& stack, const DefinitionAtlas& defs);
+    LuaItemStack(std::string name, unsigned short count);
+    LuaItemStack(sol::table tbl);
 
     std::string get_name();
     void set_name(std::string name);
@@ -19,7 +21,6 @@ public:
     void set_count(int count);
 
     bool is_empty();
-
 private:
     std::string name;
     unsigned short count;

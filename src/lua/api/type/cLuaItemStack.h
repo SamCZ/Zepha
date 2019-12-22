@@ -10,6 +10,8 @@
 namespace ClientApi {
     void item_stack(sol::state& lua) {
         lua.new_usertype<LuaItemStack>("ItemStack",
+            sol::constructors<LuaItemStack(sol::table), LuaItemStack(std::string, unsigned short)>(),
+
             "name", sol::property(&LuaItemStack::get_name, &LuaItemStack::set_name),
             "count", sol::property(&LuaItemStack::get_count, &LuaItemStack::set_count),
 

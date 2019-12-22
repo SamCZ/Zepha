@@ -5,6 +5,7 @@
 #include <iostream>
 #include <algorithm>
 #include "InventoryList.h"
+#include "../../../lua/api/type/LuaItemStack.h"
 
 InventoryList::InventoryList(DefinitionAtlas& defs, unsigned short size, unsigned short width) :
     defs(defs),
@@ -12,12 +13,16 @@ InventoryList::InventoryList(DefinitionAtlas& defs, unsigned short size, unsigne
     width(width) {}
 
 
-void InventoryList::guiCallback(std::function<void()> cb) {
-    this->cb = cb;
+void InventoryList::setGuiCallback(std::function<void()> cb) {
+    this->guiCallback = cb;
 }
 
-void InventoryList::registerLuaCallback(sol::function cb) {
-    changeCallbacks.push_back(cb);
+void InventoryList::setLuaCallback(InventoryList::Callback type, sol::function cb) {
+    luaCallbacks[static_cast<size_t>(type)] = cb;
+}
+
+sol::function InventoryList::getLuaCallback(InventoryList::Callback type) {
+    return luaCallbacks[static_cast<size_t>(type)];
 }
 
 ItemStack InventoryList::getStack(unsigned short i) {
@@ -31,40 +36,90 @@ void InventoryList::setStack(unsigned short i, const ItemStack &stack) {
     }
 }
 
-ItemStack InventoryList::placeStack(unsigned short i, const ItemStack &stack) {
-    unsigned short maxStack = defs.fromId(stack.id).maxStackSize;
-
+ItemStack InventoryList::placeStack(unsigned short i, const ItemStack &stack, bool playerInitiated) {
     auto otherStack = getStack(i);
-    if (otherStack.id != stack.id) {
-        setStack(i, stack);
-        return otherStack;
+
+    unsigned short allowedTake = otherStack.count;
+    if (playerInitiated) {
+        auto allowTake = luaCallbacks[static_cast<int>(Callback::ALLOW_TAKE)];
+        if (allowTake) allowedTake = std::min(static_cast<unsigned short>(allowTake(i+1, LuaItemStack(otherStack, defs))), allowedTake);
+    }
+    unsigned short allowedPut = stack.count;
+    if (playerInitiated) {
+        auto allowPut = luaCallbacks[static_cast<int>(Callback::ALLOW_PUT)];
+        if (allowPut) allowedPut = std::min(static_cast<unsigned short>(allowPut(i+1, LuaItemStack(stack, defs))), allowedPut);
+    }
+
+    sol::function on_put = luaCallbacks[static_cast<int>(Callback::ON_PUT)];
+    sol::function on_take = luaCallbacks[static_cast<int>(Callback::ON_TAKE)];
+
+    if (stack.count == 0) {
+        if (allowedTake == otherStack.count) setStack(i, {});
+        else setStack(i, {otherStack.id, static_cast<unsigned short>(otherStack.count - allowedTake)});
+        if (allowedTake > 0 && on_take) on_take(i+1, LuaItemStack(otherStack, defs));
+        return {otherStack.id, allowedTake};
     }
     else {
-        unsigned short count = otherStack.count + stack.count;
-        if (count <= maxStack) {
-            setStack(i, {stack.id, count});
-            return {0, 0};
+        if (otherStack.count) {
+            if (otherStack.id == stack.id) {
+                unsigned short maxStack = defs.fromId(stack.id).maxStackSize;
+                if (allowedPut >= stack.count && allowedPut + otherStack.count < maxStack) {
+                    setStack(i, {stack.id, static_cast<unsigned short>(otherStack.count + allowedPut)});
+                    if (on_put) on_put(i+1, LuaItemStack(otherStack, defs));
+                    return {};
+                }
+                else if (allowedPut > 0) {
+                    allowedPut = std::min(allowedPut, static_cast<unsigned short>(maxStack - otherStack.count));
+                    setStack(i, {stack.id, static_cast<unsigned short>(otherStack.count + allowedPut)});
+                    if (allowedPut > 0 && on_put) on_put(i+1, LuaItemStack(otherStack, defs));
+                    return {stack.id, static_cast<unsigned short>(stack.count - allowedPut)};
+                }
+                else {
+                    allowedTake = std::min(allowedTake, static_cast<unsigned short>(maxStack - stack.count));
+                    setStack(i, {stack.id, static_cast<unsigned short>(otherStack.count - allowedTake)});
+                    if (allowedTake > 0 && on_take) on_take(i+1, LuaItemStack(otherStack, defs));
+                    return {stack.id, static_cast<unsigned short>(stack.count + allowedTake)};
+                }
+            }
+            else {
+                if (stack.count <= allowedPut && otherStack.count <= allowedTake) {
+                    setStack(i, stack);
+                    if (allowedPut > 0 && on_put) on_put(i+1, LuaItemStack(otherStack, defs));
+                    if (on_take) on_take(i+1, LuaItemStack(otherStack, defs));
+                    return otherStack;
+                }
+                else {
+                    return stack;
+                }
+            }
         }
         else {
-            setStack(i, {stack.id, maxStack});
-            return {stack.id, static_cast<unsigned short>(count - maxStack)};
+            setStack(i, {stack.id, static_cast<unsigned short>(otherStack.count + allowedPut)});
+            if (allowedPut > 0 && on_put) on_put(i+1, LuaItemStack(otherStack, defs));
+            return {stack.id, static_cast<unsigned short>(stack.count - allowedPut)};
         }
     }
 }
 
-ItemStack InventoryList::splitStack(unsigned short i) {
+ItemStack InventoryList::splitStack(unsigned short i, bool playerInitiated) {
     auto stack = getStack(i);
+
+    unsigned short allowedTake = stack.count;
+    if (playerInitiated) {
+        auto allowTake = luaCallbacks[static_cast<int>(Callback::ALLOW_TAKE)];
+        if (allowTake) allowedTake = std::min(static_cast<unsigned short>(allowTake(i + 1, LuaItemStack(stack, defs))), allowedTake);
+    }
+
     unsigned short initialCount = stack.count;
-    stack.count = floor(stack.count / 2.f);
+    unsigned short takeCount = std::min(static_cast<unsigned short>(ceil(initialCount / 2.f)), allowedTake);
 
-    if (stack.count == 0) setStack(i, {});
-    else setStack(i, stack);
-
-    stack.count = ceil(initialCount / 2.f);
-    return stack;
+    setStack(i, {stack.id, static_cast<unsigned short>(initialCount - takeCount)});
+    sol::function on_take = luaCallbacks[static_cast<int>(Callback::ON_TAKE)];
+    if (on_take) on_take(i+1, stack);
+    return {stack.id, takeCount};
 }
 
-ItemStack InventoryList::addStack(ItemStack stack) {
+ItemStack InventoryList::addStack(ItemStack stack, bool playerInitiated) {
     unsigned short maxStack = defs.fromId(stack.id).maxStackSize;
 
     unsigned short i = 0;
@@ -125,7 +180,7 @@ unsigned short InventoryList::stackFits(const ItemStack &stack) {
     return fits;
 }
 
-ItemStack InventoryList::takeStack(ItemStack request) {
+ItemStack InventoryList::takeStack(ItemStack request, bool playerInitiated) {
     unsigned short i = 0;
     unsigned short to_remove = request.count;
 
@@ -165,10 +220,10 @@ ItemStack InventoryList::removeStack(unsigned short ind, unsigned short count) {
 }
 
 void InventoryList::triggerCallback() {
-    if (cb != nullptr) cb();
-    for (auto& cb : changeCallbacks) {
-        cb();
-    }
+    if (guiCallback != nullptr) guiCallback();
+//    for (auto& cb : changeCallbacks) {
+//        cb();
+//    }
 }
 
 unsigned short InventoryList::getLength() {
