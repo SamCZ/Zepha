@@ -18,6 +18,19 @@ void ServerDimension::setChunk(std::shared_ptr<BlockChunk> chunk) {
     mapBlockIntegrity[mb] = mapBlockIntegrity[mb] + 1;
 }
 
+void ServerDimension::addLuaEntity(std::shared_ptr<ServerLuaEntity> &entity) {
+    luaEntities.push_back(entity);
+    luaEntityRefs.emplace(entity->id, --luaEntities.end());
+}
+
+void ServerDimension::removeLuaEntity(std::shared_ptr<ServerLuaEntity> &entity) {
+    if (!luaEntityRefs.count(entity->id)) return;
+    auto refIter = luaEntityRefs.at(entity->id);
+
+    luaEntities.erase(refIter);
+    luaEntityRefs.erase(entity->id);
+}
+
 unsigned long long ServerDimension::getMapBlockIntegrity(glm::vec3 mapBlock) {
     if (mapBlockIntegrity.count(mapBlock)) return mapBlockIntegrity[mapBlock];
     return 0;

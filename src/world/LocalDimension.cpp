@@ -107,12 +107,12 @@ void LocalDimension::removeMeshChunk(const glm::vec3& pos) {
     }
 }
 
-void LocalDimension::addLuaEntity(sptr<LuaEntity> &entity) {
+void LocalDimension::addLuaEntity(std::shared_ptr<LocalLuaEntity> &entity) {
     luaEntities.push_back(entity);
     luaEntityRefs.emplace(entity->id, --luaEntities.end());
 }
 
-void LocalDimension::removeLuaEntity(sptr<LuaEntity> &entity) {
+void LocalDimension::removeLuaEntity(std::shared_ptr<LocalLuaEntity> &entity) {
     if (!luaEntityRefs.count(entity->id)) return;
     auto refIter = luaEntityRefs.at(entity->id);
 

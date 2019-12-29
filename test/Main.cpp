@@ -6,8 +6,9 @@
 
 #include <catch2/catch.hpp>
 
-#include "tests/TestSpace.cpp"
-
 TEST_CASE("Catch2 Library", "[core]") {
     REQUIRE(true);
 }
+
+#include "tests/TestSpace.cpp"
+#include "tests/TestBlockChunk.cpp"

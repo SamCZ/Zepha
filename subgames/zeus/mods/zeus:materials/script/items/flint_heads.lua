@@ -30,7 +30,7 @@ crafting.register_recipe({
     }
 })
 
-zepha.register_item("zeus:materials:flint_pick_head", {
+zepha.register_item("zeus:materials:flint_pickaxe_head", {
     name = "Flint Pick Head",
     stack = 1,
     textures = {
@@ -39,7 +39,7 @@ zepha.register_item("zeus:materials:flint_pick_head", {
 })
 
 crafting.register_recipe({
-    output = "zeus:materials:flint_pick_head",
+    output = "zeus:materials:flint_pickaxe_head",
     recipe = {
         {"zeus:materials:flint", "zeus:materials:flint"},
     }

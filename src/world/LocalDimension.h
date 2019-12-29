@@ -10,7 +10,7 @@
 #include "../util/Vec.h"
 #include "../game/scene/world/graph/MeshChunk.h"
 #include "../game/scene/world/MeshGenStream.h"
-#include "../lua/api/type/LuaEntity.h"
+#include "../lua/api/type/LocalLuaEntity.h"
 #include "../game/entity/world/PlayerEntity.h"
 #include "Dimension.h"
 
@@ -25,8 +25,8 @@ public:
     void setMeshChunk(std::shared_ptr<MeshChunk> chunk);
     void removeMeshChunk(const glm::vec3& pos);
 
-    void addLuaEntity(sptr<LuaEntity>& entity);
-    void removeLuaEntity(sptr<LuaEntity>& entity);
+    void addLuaEntity(std::shared_ptr<LocalLuaEntity>& entity);
+    void removeLuaEntity(std::shared_ptr<LocalLuaEntity>& entity);
 
     int renderChunks(Renderer &renderer);
     void renderEntities(Renderer &renderer);
@@ -36,7 +36,7 @@ public:
     std::vector<PlayerEntity> playerEntities;
 private:
     typedef std::list<sptr<ChunkRenderElem>>::iterator chunk_ref;
-    typedef std::list<sptr<LuaEntity>>::iterator luaent_ref;
+    typedef std::list<sptr<LocalLuaEntity>>::iterator luaent_ref;
 
     void finishMeshes();
     void queueMeshes();
@@ -48,7 +48,7 @@ private:
     std::vector<glm::vec3> pendingMesh {};
 
     std::unordered_map<uint, luaent_ref> luaEntityRefs {};
-    std::list<std::shared_ptr<LuaEntity>> luaEntities {};
+    std::list<std::shared_ptr<LocalLuaEntity>> luaEntities {};
 
     std::unordered_map<glm::vec3, chunk_ref, Vec::compareFunc> renderRefs {};
     std::list<std::shared_ptr<ChunkRenderElem>> renderElems {};

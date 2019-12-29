@@ -5,60 +5,60 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "cppcoreguidelines-pro-type-static-cast-downcast"
 
-#include "LuaEntity.h"
+#include "LocalLuaEntity.h"
 
-void LuaEntity::set_pos(const sol::table &pos) {
+void LocalLuaEntity::set_pos(const sol::table &pos) {
     entity->setPos({pos["x"], pos["y"], pos["z"]});
 }
 
-void LuaEntity::int_pos(const sol::table &pos) {
+void LocalLuaEntity::int_pos(const sol::table &pos) {
     entity->interpPos({pos["x"], pos["y"], pos["z"]});
 }
 
-sol::table LuaEntity::get_pos(sol::this_state s) {
+sol::table LocalLuaEntity::get_pos(sol::this_state s) {
     glm::vec3 pos = entity->getPos();
     return sol::state_view(s).create_table_with("x", pos.x, "y", pos.y, "z", pos.z);
 }
 
-void LuaEntity::set_visual_offset(const sol::table &vs) {
+void LocalLuaEntity::set_visual_offset(const sol::table &vs) {
     entity->setVisualOffset({vs["x"], vs["y"], vs["z"]});
 }
 
-void LuaEntity::int_visual_offset(const sol::table &vs) {
+void LocalLuaEntity::int_visual_offset(const sol::table &vs) {
     entity->interpVisualOffset({vs["x"], vs["y"], vs["z"]});
 }
 
-sol::table LuaEntity::get_visual_offset(sol::this_state s) {
+sol::table LocalLuaEntity::get_visual_offset(sol::this_state s) {
     glm::vec3 v = entity->getVisualOffset();
     return sol::state_view(s).create_table_with("x", v.x, "y", v.y, "z", v.z);
 }
 
-void LuaEntity::set_yaw(float rot) {
+void LocalLuaEntity::set_yaw(float rot) {
     entity->setAngle(rot);
 }
 
-void LuaEntity::int_yaw(float rot) {
+void LocalLuaEntity::int_yaw(float rot) {
     entity->interpAngle(rot);
 }
 
-float LuaEntity::get_yaw() {
+float LocalLuaEntity::get_yaw() {
     return entity->getAngle();
 }
 
-void LuaEntity::set_scale(float scale) {
+void LocalLuaEntity::set_scale(float scale) {
     entity->setScale(scale);
 }
 
-void LuaEntity::int_scale(float scale) {
+void LocalLuaEntity::int_scale(float scale) {
     entity->interpScale(scale);
 }
 
-float LuaEntity::get_scale() {
+float LocalLuaEntity::get_scale() {
     return entity->getScale();
 }
 
-void LuaEntity::set_display_type(const std::string &type, const std::string &arg, sol::optional<std::string> arg2) {
-    if (type == std::string("gameobject")) {
+void LocalLuaEntity::set_display_type(const std::string &type, const std::string &arg, sol::optional<std::string> arg2) {
+    if (strncmp(type.data(), "gameobject", 10) == 0) {
         ItemDef& def = defs.defs.fromStr(arg);
 
         if (def.type == ItemDef::Type::BLOCK)
@@ -66,7 +66,7 @@ void LuaEntity::set_display_type(const std::string &type, const std::string &arg
         else if (def.type == ItemDef::Type::CRAFTITEM)
             entity->setModel(static_cast<CraftItemDef&>(def).entityModel);
     }
-    else if (type == std::string("model") && arg2 && !arg2->empty()) {
+    else if (strncmp(type.data(), "model", 5) == 0 && arg2 && !arg2->empty()) {
         auto model = std::make_shared<Model>();
         model->fromSerialized(defs.models.models[arg], {defs.textures[*arg2]});
         entity->setModel(model);

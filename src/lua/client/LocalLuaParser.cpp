@@ -9,9 +9,9 @@
 #include "LocalRegisterBiomes.h"
 
 #include "../../def/LocalDefs.h"
-#include "../api/type/LuaLocalPlayer.h"
+#include "../api/type/LocalLuaPlayer.h"
 
-#include "../api/type/cLuaEntity.h"
+#include "../api/type/cLocalLuaEntity.h"
 #include "../api/type/cLuaLocalPlayer.h"
 #include "../api/type/cLuaInventory.h"
 #include "../api/type/cLuaItemStack.h"
@@ -67,7 +67,7 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& pla
     ClientApi::item_stack(lua);
 
     core["client"] = true;
-    core["player"] = LuaLocalPlayer(player);
+    core["player"] = LocalLuaPlayer(player);
 
     //Load Modules
     ClientApi::printe(lua);

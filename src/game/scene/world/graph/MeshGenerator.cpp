@@ -14,8 +14,8 @@ MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::sha
     chunk(chunk),
     adjacent(adjacent) {
 
-    meshDetails->vertices.reserve(10000);
-    meshDetails->indices.reserve(10000);
+    meshDetails->vertices.reserve(5000);
+    meshDetails->indices.reserve(7000);
 
     Timer t("ChunkMesh Generation");
 

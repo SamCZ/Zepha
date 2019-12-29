@@ -199,7 +199,7 @@ set(ZEPHA_SRC
     game/entity/AnimationState.h
     game/entity/AnimationSegment.h
     util/Pointer.h
-    lua/api/type/cLuaEntity.h
+        lua/api/type/cLocalLuaEntity.h
     StartGame.h
     game/graph/shader/SSAOShader.cpp
     game/graph/shader/SSAOShader.h
@@ -221,8 +221,8 @@ set(ZEPHA_SRC
     lua/server/ServerRegisterItems.cpp
     lua/server/ServerRegisterItems.h
     lua/api/modules/cAddEntity.h
-    lua/api/type/LuaEntity.cpp
-    lua/api/type/LuaEntity.h
+        lua/api/type/LocalLuaEntity.cpp
+        lua/api/type/LocalLuaEntity.h
     lua/api/modules/cRegisterEntity.h
     def/model/SerializedModel.h
     server/asset/AssetType.h
@@ -237,8 +237,8 @@ set(ZEPHA_SRC
     lua/client/LuaInputManager.cpp
     lua/client/LuaInputManager.h
     lua/api/type/cLuaLocalPlayer.h
-    lua/api/type/LuaLocalPlayer.cpp
-    lua/api/type/LuaLocalPlayer.h
+        lua/api/type/LocalLuaPlayer.cpp
+        lua/api/type/LocalLuaPlayer.h
     game/entity/Collidable.cpp
     game/entity/Collidable.h
     game/hud/components/compound/GUIInventoryList.cpp
@@ -285,6 +285,6 @@ set(ZEPHA_SRC
     game/hud/GuiBuilder.h
     game/hud/GameGuiBuilder.cpp
     game/hud/GameGuiBuilder.h
-    lua/api/modules/mStartGame.h lua/api/type/LuaInventoryList.cpp lua/api/type/LuaInventoryList.h lua/api/type/LuaInventory.cpp lua/api/type/LuaInventory.h game/scene/world/Inventory.cpp game/scene/world/Inventory.h lua/api/type/LuaItemStack.cpp lua/api/type/LuaItemStack.h game/scene/world/ItemStack.cpp lua/api/type/cLuaInventory.h lua/api/type/cLuaItemStack.h game/hud/components/basic/GUIModel.cpp game/hud/components/basic/GUIModel.h)
+    lua/api/modules/mStartGame.h lua/api/type/LuaInventoryList.cpp lua/api/type/LuaInventoryList.h lua/api/type/LuaInventory.cpp lua/api/type/LuaInventory.h game/scene/world/Inventory.cpp game/scene/world/Inventory.h lua/api/type/LuaItemStack.cpp lua/api/type/LuaItemStack.h game/scene/world/ItemStack.cpp lua/api/type/cLuaInventory.h lua/api/type/cLuaItemStack.h game/hud/components/basic/GUIModel.cpp game/hud/components/basic/GUIModel.h lua/api/modules/sAddEntity.h server/world/ServerEntity.cpp server/world/ServerEntity.h lua/api/type/ServerLuaEntity.cpp lua/api/type/ServerLuaEntity.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

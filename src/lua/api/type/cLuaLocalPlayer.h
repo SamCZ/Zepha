@@ -4,36 +4,36 @@
 
 #pragma once
 
-#include "LuaEntity.h"
+#include "LocalLuaEntity.h"
 #include "../../../game/scene/world/LocalWorld.h"
-#include "LuaLocalPlayer.h"
+#include "LocalLuaPlayer.h"
 #include <sol2/sol.hpp>
 
 namespace ClientApi {
     void local_player(sol::state& lua, LocalWorld& world) {
-        lua.new_usertype<LuaLocalPlayer>("LocalPlayer",
-             "set_pos", &LuaLocalPlayer::set_pos,
-             "get_pos", &LuaLocalPlayer::get_pos,
-             "get_block_pos", &LuaLocalPlayer::get_block_pos,
-             "set_vel", &LuaLocalPlayer::set_vel,
-             "get_vel", &LuaLocalPlayer::get_vel,
-             "set_look_yaw", &LuaLocalPlayer::set_look_yaw,
-             "get_look_yaw", &LuaLocalPlayer::get_look_yaw,
-             "set_look_pitch", &LuaLocalPlayer::set_look_pitch,
-             "get_look_pitch", &LuaLocalPlayer::get_look_pitch,
+        lua.new_usertype<LocalLuaPlayer>("LocalPlayer",
+            "set_pos", &LocalLuaPlayer::set_pos,
+            "get_pos", &LocalLuaPlayer::get_pos,
+            "get_block_pos", &LocalLuaPlayer::get_block_pos,
+            "set_vel", &LocalLuaPlayer::set_vel,
+            "get_vel", &LocalLuaPlayer::get_vel,
+            "set_look_yaw", &LocalLuaPlayer::set_look_yaw,
+            "get_look_yaw", &LocalLuaPlayer::get_look_yaw,
+            "set_look_pitch", &LocalLuaPlayer::set_look_pitch,
+            "get_look_pitch", &LocalLuaPlayer::get_look_pitch,
 
-             "pos", sol::property(&LuaLocalPlayer::get_pos, &LuaLocalPlayer::set_pos),
-             "block_pos", sol::property(&LuaLocalPlayer::get_block_pos, &LuaLocalPlayer::set_pos),
-             "vel", sol::property(&LuaLocalPlayer::get_vel, &LuaLocalPlayer::set_vel),
-             "look_yaw", sol::property(&LuaLocalPlayer::get_look_yaw, &LuaLocalPlayer::set_look_yaw),
-             "look_yaw", sol::property(&LuaLocalPlayer::get_look_pitch, &LuaLocalPlayer::set_look_pitch),
+            "pos", sol::property(&LocalLuaPlayer::get_pos, &LocalLuaPlayer::set_pos),
+            "block_pos", sol::property(&LocalLuaPlayer::get_block_pos, &LocalLuaPlayer::set_pos),
+            "vel", sol::property(&LocalLuaPlayer::get_vel, &LocalLuaPlayer::set_vel),
+            "look_yaw", sol::property(&LocalLuaPlayer::get_look_yaw, &LocalLuaPlayer::set_look_yaw),
+            "look_yaw", sol::property(&LocalLuaPlayer::get_look_pitch, &LocalLuaPlayer::set_look_pitch),
 
-             "menu_state", sol::property(&LuaLocalPlayer::get_menu_state),
-             "open_menu", &LuaLocalPlayer::open_menu,
-             "close_menu", &LuaLocalPlayer::close_menu,
+            "menu_state", sol::property(&LocalLuaPlayer::get_menu_state),
+            "open_menu", &LocalLuaPlayer::open_menu,
+            "close_menu", &LocalLuaPlayer::close_menu,
 
-             "get_inventory", &LuaLocalPlayer::get_inventory,
-             "set_selected_block", &LuaLocalPlayer::set_selected_block
+            "get_inventory", &LocalLuaPlayer::get_inventory,
+            "set_selected_block", &LocalLuaPlayer::set_selected_block
         );
     }
 }

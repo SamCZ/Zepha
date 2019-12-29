@@ -9,9 +9,9 @@
 #include "../../../game/scene/world/Player.h"
 #include "LuaInventory.h"
 
-class LuaLocalPlayer {
+class LocalLuaPlayer {
 public:
-    LuaLocalPlayer(Player& player) : player(player) {}
+    LocalLuaPlayer(Player& player) : player(player) {}
 
     Player& player;
 

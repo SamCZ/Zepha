@@ -26,6 +26,8 @@ public:
     unsigned int getBlock(glm::vec3 pos);
 
     ~ServerWorld();
+
+    ServerDimension dimension;
 private:
     void changedChunks(ServerClient& client);
     bool generateMapBlock(glm::vec3 pos);
@@ -37,7 +39,6 @@ private:
     bool isInBounds(glm::vec3 pos, std::pair<glm::vec3, glm::vec3>& bounds);
 
     WorldGenStream* genStream = nullptr;
-    ServerDimension dimension;
 
     std::unordered_set<glm::vec3, Vec::compareFunc> generateQueueMap;
     std::vector<glm::vec3> generateQueueList;

@@ -23,7 +23,7 @@
 #include "../../../game/graph/drawable/DrawableGroup.h"
 #include "../../entity/world/BlockCrackEntity.h"
 #include "../../entity/world/ParticleEntity.h"
-#include "../../../lua/api/type/LuaEntity.h"
+#include "../../../lua/api/type/LocalLuaEntity.h"
 #include "graph/MeshChunk.h"
 #include "WorldInterpolationStream.h"
 #include "MeshGenStream.h"

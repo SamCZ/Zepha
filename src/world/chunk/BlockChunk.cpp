@@ -29,26 +29,10 @@ BlockChunk::BlockChunk(const std::array<unsigned int, 4096>& blocks, const std::
     renderedEmpty = empty;
 }
 
-unsigned int BlockChunk::getBlock(const glm::vec3& pos) const {
-    unsigned int ind = Space::Block::index(pos);
-    if (ind >= 4096) return DefinitionAtlas::INVALID;
-    return blocks[ind];
-}
-
-unsigned int BlockChunk::getBlock(unsigned int ind) const {
-    if (ind >= 4096) return DefinitionAtlas::INVALID;
-    return blocks[ind];
-}
-
-unsigned short BlockChunk::getBiome(const glm::vec3& pos) const {
-    unsigned int ind = Space::Block::index(pos);
-    if (ind >= 4096) return BiomeAtlas::INVALID;
-    return biomes[ind];
-}
-
-unsigned short BlockChunk::getBiome(unsigned int ind) const {
-    if (ind >= 4096) return BiomeAtlas::INVALID;
-    return biomes[ind];
+bool BlockChunk::shouldRender() {
+    bool should = !empty || !renderedEmpty;
+    renderedEmpty = true;
+    return should;
 }
 
 bool BlockChunk::setBlock(const glm::vec3& pos, unsigned int block) {
@@ -76,10 +60,26 @@ bool BlockChunk::setBlock(const glm::vec3& pos, unsigned int block) {
     return false;
 }
 
-bool BlockChunk::shouldRender() {
-    bool should = !empty || !renderedEmpty;
-    renderedEmpty = true;
-    return should;
+unsigned int BlockChunk::getBlock(unsigned int ind) const {
+    if (ind >= 4096) return DefinitionAtlas::INVALID;
+    return blocks[ind];
+}
+
+unsigned int BlockChunk::getBlock(const glm::vec3& pos) const {
+    unsigned int ind = Space::Block::index(pos);
+    if (ind >= 4096) return DefinitionAtlas::INVALID;
+    return blocks[ind];
+}
+
+unsigned short BlockChunk::getBiome(unsigned int ind) const {
+    if (ind >= 4096) return BiomeAtlas::INVALID;
+    return biomes[ind];
+}
+
+unsigned short BlockChunk::getBiome(const glm::vec3& pos) const {
+    unsigned int ind = Space::Block::index(pos);
+    if (ind >= 4096) return BiomeAtlas::INVALID;
+    return biomes[ind];
 }
 
 std::string BlockChunk::serialize() {

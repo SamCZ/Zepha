@@ -1,21 +1,21 @@
 //
-// Created by aurailus on 03/10/19.
+// Created by aurailus on 2019-12-28.
 //
 
 #pragma once
 
-#include <sol2/sol.hpp>
-#include "../../../game/entity/Entity.h"
-#include "../../../def/LocalDefs.h"
+#include <memory>
+#include "../../../server/world/ServerEntity.h"
+#include "../../../def/ServerDefs.h"
 
-class LuaEntity {
+class ServerLuaEntity {
 public:
-    LuaEntity(std::unique_ptr<Entity> entity, unsigned int id, LocalDefs& defs) :
-        entity(std::move(entity)), id(id), defs(defs) {}
+    ServerLuaEntity(std::unique_ptr<ServerEntity> entity, unsigned int id, ServerDefs& defs) :
+            entity(std::move(entity)), id(id), defs(defs) {}
 
-    std::unique_ptr<Entity> entity = nullptr;
+    std::unique_ptr<ServerEntity> entity = nullptr;
     unsigned int id;
-    LocalDefs& defs;
+    ServerDefs& defs;
 
     void set_pos(const sol::table& pos);
     void int_pos(const sol::table& pos);

@@ -25,6 +25,8 @@
 #include "../api/modules/sGetBlock.h"
 #include "../api/modules/sRemoveBlock.h"
 
+#include "../api/modules/sAddEntity.h"
+
 #include "../api/modules/sRegisterKeybind.h"
 
 void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world, std::string path) {
@@ -48,6 +50,7 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
     //Create Zepha Table
     core = lua.create_table();
     lua["zepha"] = core;
+    core["__builtin"] = lua.create_table();
 
     core["server"] = true;
     core["player"] = sol::nil;
@@ -66,6 +69,8 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
     ServerApi::get_block(core, defs, world);
     ServerApi::set_block(core, defs, world);
     ServerApi::remove_block(core, defs, world);
+
+    ServerApi::add_entity(lua, core, defs, world);
 
     ServerApi::register_keybind(lua, core);
 
