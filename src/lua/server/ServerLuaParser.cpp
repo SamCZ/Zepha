@@ -11,8 +11,6 @@
 
 #include "../../def/ServerDefs.h"
 
-#include "../api/modules/sPrintE.h"
-
 #include "../api/modules/sDelay.h"
 
 #include "../api/modules/sRegisterBlock.h"
@@ -56,8 +54,6 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
     core["player"] = sol::nil;
 
     //Load Modules
-    ServerApi::printe(lua);
-
     ServerApi::delay(core, delayed_functions);
 
     ServerApi::register_block(lua, core);
@@ -379,6 +375,14 @@ void ServerLuaParser::serializeMods() {
     }
 }
 
+sol::protected_function_result ServerLuaParser::errorCallback(lua_State*, sol::protected_function_result errPfr) {
+    sol::error err = errPfr;
+    std::cout << Log::err << "The Zepha sandbox has encountered an error:"
+              << std::endl << std::endl << err.what() << std::endl << Log::endl;
+    exit(1);
+    return errPfr;
+}
+
 sol::protected_function_result ServerLuaParser::DoFileSandboxed(std::string file) {
     size_t modname_length = file.find('/');
     std::string modname = file.substr(0, modname_length);
@@ -393,11 +397,9 @@ sol::protected_function_result ServerLuaParser::DoFileSandboxed(std::string file
                     env["_FILE"] = f.path;
                     env["_MODNAME"] = mod.config.name;
 
-                    auto pfr = lua.safe_script(f.file, env, [&](lua_State*, sol::protected_function_result errPfr) {
-                        sol::error err = errPfr;
-                        std::cout << Log::err << file << " returned an error: \n" << err.what() << Log::endl;
-                        return errPfr;
-                    }, "@" + f.path);
+                    //TODO: figure out how to do this lambda thing properly with bind
+//                    auto pfr = lua.safe_script(f.file, env, [&](lua_State*, sol::protected_function_result errPfr) { errorCallback(errPfr); return errPfr; }, "@" + f.path);
+                    auto pfr = lua.safe_script(f.file, env, &ServerLuaParser::errorCallback, "@" + f.path);
                     return pfr;
                 }
             }

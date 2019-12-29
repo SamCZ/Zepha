@@ -11,11 +11,8 @@
 namespace ServerApi {
     void get_block(sol::table &core, ServerDefs& defs, ServerWorld& world) {
         core.set_function("get_block", [&](sol::table pos) -> std::string {
-            if (!pos["x"] || !pos["y"] || !pos["z"]) {
-                std::cout << Log::err << "get_block vector is ill formed." << Log::endl;
-                return "";
-            }
-            return defs.defs.fromId(world.getBlock({pos["x"], pos["y"], pos["z"]})).identifier;
+            if (!pos["x"] || !pos["y"] || !pos["z"]) throw "expected a vector as the first argument.";
+            return defs.defs.fromId(world.getBlock({pos.get<float>("x"), pos.get<float>("y"), pos.get<float>("z")})).identifier;
         });
     }
 }

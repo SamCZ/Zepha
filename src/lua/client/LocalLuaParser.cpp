@@ -16,8 +16,6 @@
 #include "../api/type/cLuaInventory.h"
 #include "../api/type/cLuaItemStack.h"
 
-#include "../api/modules/cPrintE.h"
-
 #include "../api/modules/cDelay.h"
 
 #include "../api/modules/cRegisterBlock.h"
@@ -70,8 +68,6 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& pla
     core["player"] = LocalLuaPlayer(player);
 
     //Load Modules
-    ClientApi::printe(lua);
-
     ClientApi::delay(core, delayed_functions);
 
     ClientApi::register_block(lua, core);

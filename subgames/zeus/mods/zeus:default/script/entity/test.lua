@@ -2,6 +2,7 @@ zepha.register_entity("zeus:default:test", {
     display = "model",
     display_object = "zeus:default:player",
     display_texture = "zeus:default:player",
+
     on_create = function(self)
 --        self.object:set_scale(1/4)
     end,

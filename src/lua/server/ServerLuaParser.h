@@ -36,6 +36,7 @@ private:
     void handleDependencies();
     void serializeMods();
 
+    static sol::protected_function_result errorCallback(lua_State*, sol::protected_function_result errPfr);
     sol::protected_function_result DoFileSandboxed(std::string file);
 };
 

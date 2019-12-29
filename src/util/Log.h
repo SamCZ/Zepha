@@ -16,6 +16,7 @@ namespace Log {
     static void clear() { auto s = system("cls"); }
     #else
     static const char* info = "\033[36m[INFO] ";
+    static const char* warn = "\033[31m[WARN] ";
     static const char* err  = "\033[31m[ERR!] ";
     static const char* endl = "\033[0m\n";
 
