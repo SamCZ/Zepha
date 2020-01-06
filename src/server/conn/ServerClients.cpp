@@ -40,8 +40,9 @@ void ServerClients::handleDisconnect(ENetEvent e) {
 void ServerClients::createPlayer(ServerClient &c) {
     c.initPlayer();
 
-    Packet p(PacketType::PLAYER);
+    Packet p(PacketType::THIS_PLAYER_INFO);
     Serializer::encodeInt(p.data, c.getConnectID());
     Serializer::encodeFloatVec3(p.data, c.getPlayer().getPos());
-    p.sendTo(c.getPeer(), PacketChannel::PLAYER);
+    Serializer::encodeFloat(p.data, c.getPlayer().getAngle());
+    p.sendTo(c.getPeer(), PacketChannel::ENTITY);
 }

@@ -113,6 +113,8 @@ void ServerWorld::update() {
         }
     }
 
+    // Send the # of generated chunks to the client (debug),
+    // and trigger new chunks to be generated if a player has changed MapBlocks.
     Packet r(PacketType::SERVER_INFO);
     Serializer::encodeInt(r.data, generatedChunks);
 
@@ -121,6 +123,23 @@ void ServerWorld::update() {
             r.sendTo(client->getPeer(), PacketChannel::SERVER);
 
             if (client->getPlayer().changedMapBlocks) changedChunks(*client);
+        }
+    }
+
+    // Send all dirty entities to all clients
+    // TODO: Only send to *nearby clients*.
+    for (auto& entity : dimension.getLuaEntities()) {
+        if (entity->entity->checkAndResetDirty()) {
+            std::cout << entity->id << std::endl;
+
+            Packet p(PacketType::ENTITY_INFO);
+            entity->entity->fillPacket(p);
+
+            for (auto& client : clientList.clients) {
+                if (client->hasPlayer()) {
+                    p.sendTo(client->getPeer(), PacketChannel::ENTITY);
+                }
+            }
         }
     }
 }

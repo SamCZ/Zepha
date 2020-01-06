@@ -18,7 +18,7 @@ public:
     void removeLuaEntity(std::shared_ptr<ServerLuaEntity>& entity);
 
     unsigned long long getMapBlockIntegrity(glm::vec3 mapBlock);
-
+    std::list<std::shared_ptr<ServerLuaEntity>>& getLuaEntities();
 private:
     typedef std::list<sptr<ServerLuaEntity>>::iterator luaent_ref;
 

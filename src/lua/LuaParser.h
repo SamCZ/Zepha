@@ -16,6 +16,8 @@
 
 class LuaParser {
 public:
+    constexpr static double UPDATE_STEP {1 / 60.0};
+
     static inline void override_panic(sol::optional<std::string> message) {
         std::cout << Log::err << "Zepha has panicked! Error:" << Log::endl;
         if (message) std::cout << Log::err << message.value() << Log::endl;

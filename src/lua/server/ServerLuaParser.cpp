@@ -11,6 +11,8 @@
 
 #include "../../def/ServerDefs.h"
 
+#include "../api/type/sServerLuaEntity.h"
+
 #include "../api/modules/sDelay.h"
 
 #include "../api/modules/sRegisterBlock.h"
@@ -26,6 +28,8 @@
 #include "../api/modules/sAddEntity.h"
 
 #include "../api/modules/sRegisterKeybind.h"
+
+#include "../api/functions/sUpdateEntities.h"
 
 void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world, std::string path) {
     //Load Base Libraries
@@ -50,6 +54,9 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
     lua["zepha"] = core;
     core["__builtin"] = lua.create_table();
 
+    //Load Types
+    ServerApi::entity(lua);
+
     core["server"] = true;
     core["player"] = sol::nil;
 
@@ -69,6 +76,8 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
     ServerApi::add_entity(lua, core, defs, world);
 
     ServerApi::register_keybind(lua, core);
+
+    ServerApi::update_entities(lua);
 
     //Sandbox the dofile function
     lua["dofile"] = lua["loadfile"] = sol::nil;
@@ -101,6 +110,16 @@ void ServerLuaParser::loadMods(ServerDefs& defs, const std::string& rootPath) {
         if (mod.config.name != "base") {
             DoFileSandboxed(mod.config.name + "/main");
         }
+    }
+}
+
+void ServerLuaParser::update(double delta) {
+    LuaParser::update(delta);
+
+    this->delta += delta;
+    while (this->delta > double(UPDATE_STEP)) {
+        core["__builtin"]["update_entities"](double(UPDATE_STEP));
+        this->delta -= double(UPDATE_STEP);
     }
 }
 
@@ -397,8 +416,6 @@ sol::protected_function_result ServerLuaParser::DoFileSandboxed(std::string file
                     env["_FILE"] = f.path;
                     env["_MODNAME"] = mod.config.name;
 
-                    //TODO: figure out how to do this lambda thing properly with bind
-//                    auto pfr = lua.safe_script(f.file, env, [&](lua_State*, sol::protected_function_result errPfr) { errorCallback(errPfr); return errPfr; }, "@" + f.path);
                     auto pfr = lua.safe_script(f.file, env, &ServerLuaParser::errorCallback, "@" + f.path);
                     return pfr;
                 }

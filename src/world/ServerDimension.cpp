@@ -35,3 +35,7 @@ unsigned long long ServerDimension::getMapBlockIntegrity(glm::vec3 mapBlock) {
     if (mapBlockIntegrity.count(mapBlock)) return mapBlockIntegrity[mapBlock];
     return 0;
 }
+
+std::list<std::shared_ptr<ServerLuaEntity>> &ServerDimension::getLuaEntities() {
+    return luaEntities;
+}

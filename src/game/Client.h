@@ -5,13 +5,13 @@
 #pragma once
 
 #include "ClientState.h"
+#include "../util/Timer.h"
 #include "graph/Renderer.h"
 #include "graph/scene/SceneManager.h"
-#include "../util/Timer.h"
-#include "scene/GameScene.h"
 #include "scene/MainMenuScene.h"
 #include "scene/ConnectScene.h"
-#include "../server/LocalServerInstance.h"
+#include "scene/GameScene.h"
+#include "scene/LuaErrorScene.h"
 
 class Client {
 public:

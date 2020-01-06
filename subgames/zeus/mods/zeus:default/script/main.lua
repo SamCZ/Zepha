@@ -19,21 +19,16 @@ local blockTypes = {
 }
 
 for i, v in ipairs(blockTypes) do
-    zepha.register_keybind("block_" .. i, {
+    zepha.register_keybind("zeus:default:block_" .. i, {
         description = "Select Block " .. i,
         default = zepha.keys[tostring(i)],
-        on_press = function()
-            print("Setting block to " .. i)
-            zepha.player:set_selected_block(v)
-        end
+        on_press = function() zepha.player:set_selected_block(v) end
     });
 end
 
 local chat_down = false
-zepha.register_keybind("open_chat", {
+zepha.register_keybind("zeus:default:open_chat", {
     description = "Open Chat",
     default = zepha.keys.t,
-    on_press = function()
-        print "Opened chat!"
-    end
+    on_press = function() print "Opened chat!" end
 })

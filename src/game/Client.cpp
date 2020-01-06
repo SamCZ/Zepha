@@ -12,6 +12,7 @@ Client::Client(const std::string& path, const Address &addr, glm::ivec2 dims) :
     std::cout << Log::info << "Starting Zepha Client." << Log::endl;
 
     std::unique_ptr<Scene> scene = std::make_unique<MainMenuScene>(state);
+//    std::unique_ptr<Scene> scene = std::make_unique<LuaErrorScene>(state, "whoopsie poopsie did a fucky wucky");
     sceneManager.setScene(std::move(scene));
 
     while (!renderer.window.shouldClose()) loop();

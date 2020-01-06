@@ -20,7 +20,6 @@ public:
     void update(double delta);
 
     ~ServerDefs() = default;
-    double delta = 0;
     std::string subgamePath = "";
 
     ServerDefinitionAtlas defs;

@@ -28,7 +28,8 @@ public:
     std::vector<LuaMod> mods;
     std::vector<std::string> modsOrder;
 private:
-    double delta = 0;
     sol::protected_function_result DoFileSandboxed(std::string file);
+
+    double delta = 0;
     LuaInputManager manager;
 };

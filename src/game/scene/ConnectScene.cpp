@@ -26,7 +26,7 @@ ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
 
     connection.attemptConnect(std::move(addr));
 
-    state.renderer.window.addResizeCallback("connect", [&](glm::ivec2 win) {
+    state.renderer.window.addResizeCallback("scene", [&](glm::ivec2 win) {
         components.get<GUIRect>("loadBar")->setPos({0, win.y - 32});
     });
 }
@@ -245,5 +245,5 @@ void ConnectScene::draw() {
 }
 
 void ConnectScene::cleanup() {
-    state.renderer.window.removeResizeCallback("connect");
+    state.renderer.window.removeResizeCallback("scene");
 }

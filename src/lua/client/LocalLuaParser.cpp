@@ -117,11 +117,12 @@ void LocalLuaParser::registerDefinitions(LocalDefs &defs) {
 
 void LocalLuaParser::update(double delta, bool* keys) {
     LuaParser::update(delta);
+
     this->delta += delta;
-    while (this->delta > 1/60.f) {
-        core["__builtin"]["update_entities"](this->delta);
+    while (this->delta > double(UPDATE_STEP)) {
+        core["__builtin"]["update_entities"](double(UPDATE_STEP));
         manager.triggerKeybinds();
-        this->delta -= 1/60.f;
+        this->delta -= double(UPDATE_STEP);
     }
 
     manager.update(keys);

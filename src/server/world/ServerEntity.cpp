@@ -6,6 +6,7 @@
 
 void ServerEntity::setPos(glm::vec3 position) {
     this->position = position;
+    this->dirty = true;
 }
 
 glm::vec3 ServerEntity::getPos() {
@@ -14,6 +15,7 @@ glm::vec3 ServerEntity::getPos() {
 
 void ServerEntity::setVisualOffset(glm::vec3 vs) {
     this->visualOffset = vs;
+    this->dirty = true;
 }
 
 glm::vec3 ServerEntity::getVisualOffset(){
@@ -22,6 +24,7 @@ glm::vec3 ServerEntity::getVisualOffset(){
 
 void ServerEntity::setAngle(float angle) {
     this->angle = angle;
+    this->dirty = true;
 }
 
 float ServerEntity::getAngle() {
@@ -30,14 +33,33 @@ float ServerEntity::getAngle() {
 
 void ServerEntity::setScale(float scale) {
     this->scale = scale;
+    this->dirty = true;
 }
 
 float ServerEntity::getScale() {
     return scale;
 }
 
-void ServerEntity::setAppearance(std::string appearance, std::string arg1, std::string arg2) {
-    this->appearance = appearance;
-    this->arg1 = arg1;
-    this->arg2 = arg2;
+void ServerEntity::setAppearance(std::string displayMode, std::string displayArgument1, std::string displayArgument2) {
+    this->displayMode = displayMode;
+    this->displayArgument1 = displayArgument1;
+    this->displayArgument2 = displayArgument2;
+    this->dirty = true;
+}
+
+bool ServerEntity::checkAndResetDirty() {
+//    std::cout << "Checking" << this->dirty << std::endl;
+    bool dirty = this->dirty;
+    this->dirty = false;
+    return dirty;
+}
+
+void ServerEntity::fillPacket(Packet &p) {
+    Serializer::encodeFloatVec3(p.data, position);
+    Serializer::encodeFloatVec3(p.data, visualOffset);
+    Serializer::encodeFloat(p.data, angle);
+    Serializer::encodeFloat(p.data, scale);
+    Serializer::encodeString(p.data, displayMode);
+    Serializer::encodeString(p.data, displayArgument1);
+    Serializer::encodeString(p.data, displayArgument2);
 }

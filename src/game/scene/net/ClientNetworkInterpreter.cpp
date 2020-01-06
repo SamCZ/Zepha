@@ -33,13 +33,15 @@ void ClientNetworkInterpreter::update(Player &player) {
                 std::unique_ptr<Packet> p = std::make_unique<Packet>(event.packet);
 
                 switch (p->type) {
-                    case PacketType::PLAYER: {
+                    case PacketType::THIS_PLAYER_INFO: {
                         id = Serializer::decodeInt(&p->data[0]);
                         auto playerPos = Serializer::decodeFloatVec3(&p->data[4]);
+                        auto playerAngle = Serializer::decodeFloat(&p->data[16]);
                         player.setPos(playerPos);
+                        player.setYaw(playerAngle);
                         break;
                     }
-                    case PacketType::ENTITY_INFO: {
+                    case PacketType::PLAYER_INFO: {
                         int peer_id = Serializer::decodeInt(&p->data[0]);
                         if (peer_id == id) break;
 
@@ -73,6 +75,8 @@ void ClientNetworkInterpreter::update(Player &player) {
                         break;
                     }
                     default:
+                        std::cout << Log::err << "Received unknown packet of type " << static_cast<int>(p->type)
+                                  << ". Is the server on a different protocol version?" << Log::endl;
                         break;
                 }
 
@@ -91,10 +95,8 @@ void ClientNetworkInterpreter::update(Player &player) {
     }
 
     //Send Player Position
-    Packet p(PacketType::PLAYER);
-    Serializer::encodeFloat(p.data, player.getPos().x);
-    Serializer::encodeFloat(p.data, player.getPos().y);
-    Serializer::encodeFloat(p.data, player.getPos().z);
+    Packet p(PacketType::THIS_PLAYER_INFO);
+    Serializer::encodeFloatVec3(p.data, player.getPos());
     Serializer::encodeFloat(p.data, player.getYaw());
     p.sendTo(connection.getPeer(), PacketChannel::PLAYER);
 }

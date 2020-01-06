@@ -25,6 +25,8 @@ public:
     void loadMods(ServerDefs& defs, const std::string& rootPath);
     void registerDefinitions(ServerDefs &defs);
 
+    void update(double delta) override;
+
     ~ServerLuaParser() = default;
 
     std::vector<LuaMod> mods;
@@ -38,5 +40,7 @@ private:
 
     static sol::protected_function_result errorCallback(lua_State*, sol::protected_function_result errPfr);
     sol::protected_function_result DoFileSandboxed(std::string file);
+
+    double delta = 0;
 };
 

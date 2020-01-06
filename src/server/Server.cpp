@@ -84,12 +84,12 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
             break;
         }
 
-        case PacketType::PLAYER: {
+        case PacketType::THIS_PLAYER_INFO: {
             player.setPos(Serializer::decodeFloatVec3(&p.data[0]));
             player.setAngle(Serializer::decodeFloat(&p.data[12]));
 
             //Send All ServerClients the new positon
-            Packet r(PacketType::ENTITY_INFO);
+            Packet r(PacketType::PLAYER_INFO);
 
             Serializer::encodeInt(r.data, client.getConnectID());
             Serializer::encodeFloatVec3(r.data, player.getPos());
