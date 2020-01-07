@@ -12,3 +12,4 @@ TEST_CASE("Catch2 Library", "[core]") {
 
 #include "tests/TestSpace.cpp"
 #include "tests/TestBlockChunk.cpp"
+#include "tests/TestSerializer.cpp"

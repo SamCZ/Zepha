@@ -41,7 +41,7 @@ void ServerWorld::changedChunks(ServerClient& client) {
     auto mapBlock = client.getPlayer().mapBlock;
     auto lastMapBlock = client.getPlayer().lastMapBlock;
 
-    std::pair<glm::vec3, glm::vec3> oldBounds = {
+    std::pair<glm::ivec3, glm::ivec3> oldBounds = {
             {lastMapBlock.x - MB_GEN_H, lastMapBlock.y - MB_GEN_V, lastMapBlock.z - MB_GEN_H},
             {lastMapBlock.x + MB_GEN_H, lastMapBlock.y + MB_GEN_V, lastMapBlock.z + MB_GEN_H}};
 
@@ -65,7 +65,7 @@ void ServerWorld::changedChunks(ServerClient& client) {
     client.getPlayer().changedMapBlocks = false;
 }
 
-bool ServerWorld::generateMapBlock(glm::vec3 pos) {
+bool ServerWorld::generateMapBlock(glm::ivec3 pos) {
     if(!generateQueueMap.count(pos) && !dimension.getMapBlock(pos)) {
         generateQueueMap.insert(pos);
         generateQueueList.push_back(pos);
@@ -94,14 +94,14 @@ void ServerWorld::update() {
         dimension.setChunk(chunk);
 
         // TODO: Make this only happen once per mapblock, not for every chunk
-        glm::vec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunk->pos);
+        glm::ivec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunk->pos);
         unsigned long long mapBlockIntegrity = dimension.getMapBlockIntegrity(mapBlockPos);
 
         for (auto& client : clientList.clients) {
             if (client->hasPlayer()) {
                 auto playerMapBlock = client->getPlayer().mapBlock;
 
-                std::pair<glm::vec3, glm::vec3> bounds = {
+                std::pair<glm::ivec3, glm::ivec3> bounds = {
                         {playerMapBlock.x - MB_GEN_H, playerMapBlock.y - MB_GEN_V, playerMapBlock.z - MB_GEN_H},
                         {playerMapBlock.x + MB_GEN_H, playerMapBlock.y + MB_GEN_V, playerMapBlock.z + MB_GEN_H}};
 
@@ -116,7 +116,7 @@ void ServerWorld::update() {
     // Send the # of generated chunks to the client (debug),
     // and trigger new chunks to be generated if a player has changed MapBlocks.
     Packet r(PacketType::SERVER_INFO);
-    Serializer::encodeInt(r.data, generatedChunks);
+    r.data = Serializer().append(generatedChunks).data;
 
     for (auto& client : clientList.clients) {
         if (client->hasPlayer()) {
@@ -146,20 +146,15 @@ void ServerWorld::update() {
 void ServerWorld::sendChunk(const std::shared_ptr<BlockChunk>& chunk, ServerClient &peer) {
     assert(chunk != nullptr);
 
-    Packet r(PacketType::CHUNK);
-    auto serialized = chunk->serialize();
-
-    Serializer::encodeIntVec3(r.data, chunk->pos);
-    Serializer::encodeString(r.data, serialized);
-
+    Packet r = chunk->serialize();
     r.sendTo(peer.getPeer(), PacketChannel::CHUNK);
 }
 
-void ServerWorld::sendChunk(const glm::vec3& pos, ServerClient &peer) {
+void ServerWorld::sendChunk(const glm::ivec3& pos, ServerClient &peer) {
     sendChunk(dimension.getChunk(pos), peer);
 }
 
-void ServerWorld::sendMapBlock(const glm::vec3& pos, ServerClient &peer) {
+void ServerWorld::sendMapBlock(const glm::ivec3& pos, ServerClient &peer) {
     unsigned long long mapBlockIntegrity = dimension.getMapBlockIntegrity(pos);
     if (peer.getPlayer().getMapBlockIntegrity(pos) < mapBlockIntegrity) {
         auto mapBlock = dimension.getMapBlock(pos);
@@ -183,15 +178,15 @@ void ServerWorld::sendMapBlock(const glm::vec3& pos, ServerClient &peer) {
 //            auto chunk = (*mapBlock)[i];
 //            auto serialized = chunk->serialize();
 //
-//            Serializer::encodeIntVec3(r.data, chunk->pos);
-//            Serializer::encodeString(r.data, serialized);
+//            OLDSerializer::encodeIntVec3(r.data, chunk->pos);
+//            OLDSerializer::encodeString(r.data, serialized);
 //        }
 //
 //        r.sendTo(peer.getPeer(), PacketChannel::CHUNK);
 //    }
 //}
 
-void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {
+void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
     auto oldBlock = getBlock(pos);
 
     if (block == DefinitionAtlas::AIR) {
@@ -210,8 +205,10 @@ void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {
     dimension.setBlock(pos, block);
 
     Packet b(PacketType::BLOCK_SET);
-    Serializer::encodeIntVec3(b.data, pos);
-    Serializer::encodeInt(b.data, block);
+    b.data = Serializer()
+            .append(pos)
+            .append(block)
+            .data;
 
     auto chunkPos = Space::Chunk::world::fromBlock(pos);
 
@@ -219,7 +216,7 @@ void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {
         if (client->hasPlayer()) {
             auto mapBlock = client->getPlayer().mapBlock;
 
-            std::pair<glm::vec3, glm::vec3> bounds = {
+            std::pair<glm::ivec3, glm::ivec3> bounds = {
                     {mapBlock.x - MB_GEN_H, mapBlock.y - MB_GEN_V, mapBlock.z - MB_GEN_H},
                     {mapBlock.x + MB_GEN_H, mapBlock.y + MB_GEN_V, mapBlock.z + MB_GEN_H}};
 
@@ -243,13 +240,13 @@ void ServerWorld::setBlock(glm::vec3 pos, unsigned int block) {
     }
 }
 
-bool ServerWorld::isInBounds(glm::vec3 cPos, std::pair<glm::vec3, glm::vec3> &bounds) {
+bool ServerWorld::isInBounds(glm::ivec3 cPos, std::pair<glm::ivec3, glm::ivec3> &bounds) {
     return (cPos.x >= bounds.first.x && cPos.x <= bounds.second.x
          && cPos.y >= bounds.first.y && cPos.y <= bounds.second.y
          && cPos.z >= bounds.first.z && cPos.z <= bounds.second.z);
 }
 
-unsigned int ServerWorld::getBlock(glm::vec3 pos) {
+unsigned int ServerWorld::getBlock(glm::ivec3 pos) {
     return dimension.getBlock(pos);
 }
 

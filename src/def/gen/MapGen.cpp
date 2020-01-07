@@ -172,7 +172,7 @@ void MapGen::generateChunk(std::array<std::pair<MapGenJob*, BlockChunk*>, 64>& c
 void MapGen::buildDensityMap(MapGenJob* job, const glm::vec3& worldPos) {
 	auto sTerrainFinal = NoiseSample(terrainFinal, worldPos, { 4, 1 }, true);
 
-	glm::vec3 lp;
+	glm::ivec3 lp;
 	for (int m = 0; m < 4096; m++) {
 		Vec::indAssignVec(m, lp);
 		job->density[m] = sTerrainFinal.get(lp) - (lp.y + worldPos.y * 16);
@@ -231,7 +231,7 @@ void MapGen::populateChunk(std::pair<MapGenJob*, BlockChunk*>& chunk, const glm:
 	auto sHumidity = NoiseSample(humidity, worldPos, { 4, 4 }, false);
 	auto sRoughness = NoiseSample(roughness, worldPos, { 4, 4 }, false);
 
-	glm::vec3 lp;
+	glm::ivec3 lp;
 
 	for (int m = 0; m < 4096; m++) {
 		Vec::indAssignVec(m, lp);

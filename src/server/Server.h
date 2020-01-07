@@ -17,6 +17,7 @@
 #include "../util/net/Packet.h"
 #include "../util/Timer.h"
 #include "../util/net/NetHandler.h"
+#include "../util/net/Serializer.h"
 
 class Server {
 public:

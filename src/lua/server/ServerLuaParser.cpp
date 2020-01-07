@@ -368,11 +368,10 @@ void ServerLuaParser::handleDependencies() {
 
 void ServerLuaParser::serializeMods() {
     for (LuaMod& mod : mods) {
-        std::string s;
-
-        Serializer::encodeString(s, mod.config.name);
-        Serializer::encodeString(s, mod.config.description);
-        Serializer::encodeString(s, mod.config.version);
+        Serializer s = {};
+        s.append(mod.config.name)
+         .append(mod.config.description)
+         .append(mod.config.version);
 
         std::string depends;
         bool delimiter = false;
@@ -382,14 +381,13 @@ void ServerLuaParser::serializeMods() {
             depends.append(dep);
         }
 
-        Serializer::encodeString(s, depends);
+        s.append(depends);
 
         for (LuaModFile& file : mod.files) {
-            Serializer::encodeString(s, file.path);
-            Serializer::encodeString(s, file.file);
+            s.append(file.path).append(file.file);
         }
 
-        std::string comp = gzip::compress(s.data(), s.length());
+        std::string comp = gzip::compress(s.data.c_str(), s.data.length());
         mod.serialized = comp;
     }
 }

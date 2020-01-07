@@ -121,17 +121,17 @@ void LocalDimension::removeLocalEntity(std::shared_ptr<LocalLuaEntity> &entity) 
 }
 
 void LocalDimension::handleServerEntity(const Packet& p) {
-    unsigned int id = Serializer::decodeUInt(&p.data[0]);
-    glm::vec3 position = Serializer::decodeFloatVec3(&p.data[4]);
-    glm::vec3 visualOffset = Serializer::decodeFloatVec3(&p.data[16]);
-    float angle = Serializer::decodeFloat(&p.data[20]);
-    float scale = Serializer::decodeFloat(&p.data[24]);
+    unsigned int id = OLDSerializer::decodeUInt(&p.data[0]);
+    glm::vec3 position = OLDSerializer::decodeFloatVec3(&p.data[4]);
+    glm::vec3 visualOffset = OLDSerializer::decodeFloatVec3(&p.data[16]);
+    float angle = OLDSerializer::decodeFloat(&p.data[20]);
+    float scale = OLDSerializer::decodeFloat(&p.data[24]);
 //    std::string displayMode =
-//    Serializer::encodeFloat(p.data, angle);
-//    Serializer::encodeFloat(p.data, scale);
-//    Serializer::encodeString(p.data, displayMode);
-//    Serializer::encodeString(p.data, displayArgument1);
-//    Serializer::encodeString(p.data, displayArgument2);
+//    OLDSerializer::encodeFloat(p.data, angle);
+//    OLDSerializer::encodeFloat(p.data, scale);
+//    OLDSerializer::encodeString(p.data, displayMode);
+//    OLDSerializer::encodeString(p.data, displayArgument1);
+//    OLDSerializer::encodeString(p.data, displayArgument2);
 }
 
 int LocalDimension::getMeshChunkCount() {

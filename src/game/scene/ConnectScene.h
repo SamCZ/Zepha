@@ -12,6 +12,8 @@
 #include "../hud/components/basic/GUIRect.h"
 #include "../../lua/LuaModFile.h"
 #include "../../lua/LuaMod.h"
+#include "../../server/asset/AssetType.h"
+#include "../../util/net/Deserializer.h"
 
 class ConnectScene : public Scene {
 public:

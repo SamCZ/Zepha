@@ -2,9 +2,9 @@
 // Created by aurailus on 06/02/19.
 //
 
-#include "Serializer.h"
+#include "OLDSerializer.h"
 
-void Serializer::encodeInt(string &target, int num) {
+void OLDSerializer::encodeInt(string &target, int num) {
     int_union cv = {num};
 
     target += cv.bytes[0];
@@ -13,7 +13,7 @@ void Serializer::encodeInt(string &target, int num) {
     target += cv.bytes[3];
 }
 
-void Serializer::encodeUInt(string &target, unsigned int num) {
+void OLDSerializer::encodeUInt(string &target, unsigned int num) {
     uint_union cv = {num};
 
     target += cv.bytes[0];
@@ -22,21 +22,21 @@ void Serializer::encodeUInt(string &target, unsigned int num) {
     target += cv.bytes[3];
 }
 
-void Serializer::encodeShort(string &target, short num) {
+void OLDSerializer::encodeShort(string &target, short num) {
     short_union cv = {num};
 
     target += cv.bytes[0];
     target += cv.bytes[1];
 }
 
-void Serializer::encodeUShort(string &target, unsigned short num) {
+void OLDSerializer::encodeUShort(string &target, unsigned short num) {
     ushort_union cv = {num};
 
     target += cv.bytes[0];
     target += cv.bytes[1];
 }
 
-void Serializer::encodeFloat(string &target, float num) {
+void OLDSerializer::encodeFloat(string &target, float num) {
     float_union cv {num};
 
     target += cv.bytes[0];
@@ -45,48 +45,48 @@ void Serializer::encodeFloat(string &target, float num) {
     target += cv.bytes[3];
 }
 
-void Serializer::encodeString(string &target, string str) {
+void OLDSerializer::encodeString(string &target, string str) {
     encodeInt(target, (int)str.length());
     target += str;
 }
 
-void Serializer::encodeFloatVec3(string &target, glm::vec3 vec) {
+void OLDSerializer::encodeFloatVec3(string &target, glm::vec3 vec) {
     encodeFloat(target, vec.x);
     encodeFloat(target, vec.y);
     encodeFloat(target, vec.z);
 }
 
-void Serializer::encodeIntVec3(string &target, glm::vec3 vec) {
+void OLDSerializer::encodeIntVec3(string &target, glm::vec3 vec) {
     encodeInt(target, static_cast<int>(vec.x));
     encodeInt(target, static_cast<int>(vec.y));
     encodeInt(target, static_cast<int>(vec.z));
 }
 
-void Serializer::encodeIntVec(string &target, vector<int> &vec) {
+void OLDSerializer::encodeIntVec(string &target, vector<int> &vec) {
     //Used a reinterpret cast to speed things up
     target.reserve(target.length() + vec.size() * 4);
     target += string(reinterpret_cast<const char*>(&vec[0]), vec.size()*4);
 }
 
-void Serializer::encodeUIntVec(string &target, vector<unsigned int> &vec) {
+void OLDSerializer::encodeUIntVec(string &target, vector<unsigned int> &vec) {
     //Used a reinterpret cast to speed things up
     target.reserve(target.length() + vec.size() * 4);
     target += string(reinterpret_cast<const char*>(&vec[0]), vec.size()*4);
 }
 
-void Serializer::encodeUShortVec(string &target, vector<unsigned short> &vec) {
+void OLDSerializer::encodeUShortVec(string &target, vector<unsigned short> &vec) {
     //Used a reinterpret cast to speed things up
     target.reserve(target.length() + vec.size() * 2);
     target += string(reinterpret_cast<const char*>(&vec[0]), vec.size()*2);
 }
 
-void Serializer::encodeFloatVec(string &target, vector<float> &vec){
+void OLDSerializer::encodeFloatVec(string &target, vector<float> &vec){
     //Used a reinterpret cast to speed things up
     target.reserve(target.length() + vec.size() * 4);
     target += string(reinterpret_cast<const char*>(&vec[0]), vec.size()*4);
 }
 
-int Serializer::decodeInt(const char *in) {
+int OLDSerializer::decodeInt(const char *in) {
     int_union cv;
     cv.bytes[0] = *(in);
     cv.bytes[1] = *(in+1);
@@ -96,7 +96,7 @@ int Serializer::decodeInt(const char *in) {
     return cv.in;
 }
 
-unsigned int Serializer::decodeUInt(const char *in) {
+unsigned int OLDSerializer::decodeUInt(const char *in) {
     uint_union cv;
     cv.bytes[0] = *(in);
     cv.bytes[1] = *(in+1);
@@ -106,7 +106,7 @@ unsigned int Serializer::decodeUInt(const char *in) {
     return cv.in;
 }
 
-short Serializer::decodeShort(const char *in) {
+short OLDSerializer::decodeShort(const char *in) {
     short_union cv;
     cv.bytes[0] = *(in);
     cv.bytes[1] = *(in+1);
@@ -114,7 +114,7 @@ short Serializer::decodeShort(const char *in) {
     return cv.sh;
 }
 
-unsigned short Serializer::decodeUShort(const char *in) {
+unsigned short OLDSerializer::decodeUShort(const char *in) {
     short_union cv;
     cv.bytes[0] = *(in);
     cv.bytes[1] = *(in+1);
@@ -122,7 +122,7 @@ unsigned short Serializer::decodeUShort(const char *in) {
     return cv.sh;
 }
 
-float Serializer::decodeFloat(const char *in) {
+float OLDSerializer::decodeFloat(const char *in) {
     float_union cv;
     cv.bytes[0] = *(in);
     cv.bytes[1] = *(in+1);
@@ -132,38 +132,38 @@ float Serializer::decodeFloat(const char *in) {
     return cv.fl;
 }
 
-string Serializer::decodeString(const char *stringStart) {
+string OLDSerializer::decodeString(const char *stringStart) {
     int len = decodeInt(stringStart);
 
     return string(stringStart + 4, stringStart + 4 + len);
 }
 
-vector<int> Serializer::decodeIntVec(const string &string) {
+vector<int> OLDSerializer::decodeIntVec(const string &string) {
     //Reverse the conversion done to vectors in the encode*Vec classes using reinterpret_cast.
     return std::vector<int>(reinterpret_cast<const int*>(&string[0]),
                             reinterpret_cast<const int*>(&string[string.size()]));
 }
 
-vector<unsigned int> Serializer::decodeUIntVec(const string &string) {
+vector<unsigned int> OLDSerializer::decodeUIntVec(const string &string) {
     //Reverse the conversion done to vectors in the encode*Vec classes using reinterpret_cast.
     return std::vector<unsigned int>(reinterpret_cast<const int*>(&string[0]),
                                      reinterpret_cast<const int*>(&string[string.size()]));
 }
 
-vector<unsigned short> Serializer::decodeUShortVec(const string &string) {
+vector<unsigned short> OLDSerializer::decodeUShortVec(const string &string) {
     //Reverse the conversion done to vectors in the encode*Vec classes using reinterpret_cast.
     return std::vector<unsigned short>(reinterpret_cast<const unsigned short*>(&string[0]),
                                      reinterpret_cast<const unsigned short*>(&string[string.size()]));
 }
 
 
-vector<float> Serializer::decodeFloatVec(const string &string) {
+vector<float> OLDSerializer::decodeFloatVec(const string &string) {
     //Reversed the conversion done to vectors in the encode*Vec classes using reinterpret_cast.
     return std::vector<float>(reinterpret_cast<const float*>(&string[0]),
                               reinterpret_cast<const float*>(&string[string.size()]));
 }
 
-glm::vec3 Serializer::decodeFloatVec3(const char *vecStart) {
+glm::vec3 OLDSerializer::decodeFloatVec3(const char *vecStart) {
     return {
         decodeFloat(vecStart),
         decodeFloat(vecStart + 4),
@@ -171,7 +171,7 @@ glm::vec3 Serializer::decodeFloatVec3(const char *vecStart) {
     };
 }
 
-glm::vec3 Serializer::decodeIntVec3(const char *vecStart) {
+glm::vec3 OLDSerializer::decodeIntVec3(const char *vecStart) {
     return {
         decodeInt(vecStart),
         decodeInt(vecStart + 4),

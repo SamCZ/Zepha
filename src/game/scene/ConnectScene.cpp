@@ -58,11 +58,11 @@ void ConnectScene::update() {
                     statusText->setText(statusText->getText() + "Received block index-identifier table.\n");
 
                     std::vector<std::string> indexIdentifierTable{};
-                    indexIdentifierTable.reserve(static_cast<unsigned long>(Serializer::decodeUInt(&p.data[0])));
+                    indexIdentifierTable.reserve(static_cast<unsigned long>(OLDSerializer::decodeUInt(&p.data[0])));
 
                     unsigned int ind = 4;
                     while (true) {
-                        auto len = Serializer::decodeInt(&p.data[ind]);
+                        auto len = OLDSerializer::decodeInt(&p.data[ind]);
                         indexIdentifierTable.emplace_back(&p.data[ind + 4], &p.data[ind + 4 + len]);
                         ind += 4 + len;
                         if (ind >= p.data.length() - 4) break;
@@ -78,11 +78,11 @@ void ConnectScene::update() {
                     statusText->setText(statusText->getText() + "Received biome index-identifier table.\nDownloading mods...\n");
 
                     std::vector<std::string> indexIdentifierTable{};
-                    indexIdentifierTable.reserve(static_cast<unsigned long>(Serializer::decodeUInt(&p.data[0])));
+                    indexIdentifierTable.reserve(static_cast<unsigned long>(OLDSerializer::decodeUInt(&p.data[0])));
 
                     unsigned int ind = 4;
                     while (true) {
-                        auto len = Serializer::decodeInt(&p.data[ind]);
+                        auto len = OLDSerializer::decodeInt(&p.data[ind]);
                         indexIdentifierTable.emplace_back(&p.data[ind + 4], &p.data[ind + 4 + len]);
                         ind += 4 + len;
                         if (ind >= p.data.length() - 4) break;
@@ -111,7 +111,7 @@ void ConnectScene::update() {
                     state.defs.luaApi.mods.push_back(std::move(luaMod));
                 }
                 else if (p.type == PacketType::MOD_ORDER) {
-                    std::string order = Serializer::decodeString(&p.data[0]);
+                    std::string order = OLDSerializer::decodeString(&p.data[0]);
 
                     size_t pos = 0;
                     std::string token;
@@ -140,21 +140,21 @@ void ConnectScene::update() {
                 auto statusText = components.get<GUIText>("statusText");
 
                 if (p.type == PacketType::MEDIA) {
-                    AssetType t = static_cast<AssetType>(Serializer::decodeInt(&p.data[0]));
+                    AssetType t = static_cast<AssetType>(OLDSerializer::decodeInt(&p.data[0]));
                     size_t offset = 4;
                     unsigned int count = 0;
 
                     while (t != AssetType::END) {
-                        std::string assetName = Serializer::decodeString(&p.data[offset]);
+                        std::string assetName = OLDSerializer::decodeString(&p.data[offset]);
                         offset += assetName.length() + 4;
 
                         if (t == AssetType::TEXTURE) {
-                            int width = Serializer::decodeInt(&p.data[offset]);
+                            int width = OLDSerializer::decodeInt(&p.data[offset]);
                             offset += 4;
-                            int height = Serializer::decodeInt(&p.data[offset]);
+                            int height = OLDSerializer::decodeInt(&p.data[offset]);
                             offset += 4;
 
-                            std::string data = Serializer::decodeString(&p.data[offset]);
+                            std::string data = OLDSerializer::decodeString(&p.data[offset]);
                             std::string uncompressed = gzip::decompress(data.data(), data.length());
 
                             state.defs.textures.addImage(
@@ -164,9 +164,9 @@ void ConnectScene::update() {
                             offset += data.length() + 4;
                         }
                         else if (t == AssetType::MODEL) {
-                            std::string format = Serializer::decodeString(&p.data[offset]);
+                            std::string format = OLDSerializer::decodeString(&p.data[offset]);
                             offset += format.length() + 4;
-                            std::string data = Serializer::decodeString(&p.data[offset]);
+                            std::string data = OLDSerializer::decodeString(&p.data[offset]);
                             offset += data.length() + 4;
 
                             state.defs.models.models.insert({assetName, SerializedModel{assetName, data, format}});
@@ -174,7 +174,7 @@ void ConnectScene::update() {
 
                         count++;
 
-                        t = static_cast<AssetType>(Serializer::decodeInt(&p.data[offset]));
+                        t = static_cast<AssetType>(OLDSerializer::decodeInt(&p.data[offset]));
                         offset += 4;
                     }
 

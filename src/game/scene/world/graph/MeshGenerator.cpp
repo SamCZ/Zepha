@@ -19,7 +19,7 @@ MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::sha
 
     Timer t("ChunkMesh Generation");
 
-    glm::vec3 off;
+    glm::ivec3 off;
     glm::vec3 vis;
     glm::vec3 check;
 

@@ -29,8 +29,10 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
         case PacketType::BLOCK_IDENTIFIER_LIST: {
             Packet p(PacketType::BLOCK_IDENTIFIER_LIST);
 
-            Serializer::encodeUInt(p.data, static_cast<int>(blockIdentifierList.size()));
-            for (auto& str : blockIdentifierList) Serializer::encodeString(p.data, str);
+            Serializer s {};
+            s.append(static_cast<unsigned int>(blockIdentifierList.size()));
+            for (auto& str : blockIdentifierList) s.append(str);
+            p.data = s.data;
 
             p.sendTo(client.getPeer(), PacketChannel::CONNECT);
             break;
@@ -38,8 +40,10 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
         case PacketType::BIOME_IDENTIFIER_LIST: {
             Packet p(PacketType::BIOME_IDENTIFIER_LIST);
 
-            Serializer::encodeUInt(p.data, static_cast<int>(biomeIdentifierList.size()));
-            for (auto& str : biomeIdentifierList) Serializer::encodeString(p.data, str);
+            Serializer s {};
+            s.append(static_cast<unsigned int>(biomeIdentifierList.size()));
+            for (auto& str : biomeIdentifierList) s.append(str);
+            p.data = s.data;
 
             p.sendTo(client.getPeer(), PacketChannel::CONNECT);
             break;
@@ -47,7 +51,7 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
         case PacketType::MODS: {
             for (LuaMod& mod : defs.luaApi.mods) {
                 Packet p(PacketType::MODS);
-                Serializer::encodeString(p.data, mod.serialized);
+                p.data = Serializer().append(mod.serialized).data;
                 p.sendTo(client.getPeer(), PacketChannel::CONNECT);
             }
 
@@ -59,7 +63,7 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
                 else delimiter = true;
                 depends.append(mod.config.name);
             }
-            Serializer::encodeString(p.data, depends);
+            p.data = Serializer().append(depends).data;
             p.sendTo(client.getPeer(), PacketChannel::CONNECT);
             break;
         }
@@ -67,40 +71,53 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
             const unsigned int MAX_PACKET_SIZE = 32*1024;
             unsigned int packetSize = 0;
 
-            Packet p(PacketType::MEDIA);
+            Serializer s {};
 
             for (ServerTexture& texture : defs.assets.textures) {
                 if (packetSize + 20 + texture.data.length() > MAX_PACKET_SIZE && packetSize != 0) {
-                    Serializer::encodeInt(p.data, static_cast<int>(AssetType::END));
-                    p.sendTo(client.getPeer(), PacketChannel::CONNECT);
-                    p = Packet(PacketType::MEDIA);
+                    s.append(static_cast<int>(AssetType::END));
+                    Packet p(PacketType::MEDIA);
+
+                    p.data = s.data;
                     packetSize = 0;
+                    s = {};
+
+                    p.sendTo(client.getPeer(), PacketChannel::CONNECT);
                 }
 
-                Serializer::encodeInt(p.data, static_cast<int>(AssetType::TEXTURE));
-                Serializer::encodeString(p.data, texture.name);
-                Serializer::encodeInt(p.data, texture.width);
-                Serializer::encodeInt(p.data, texture.height);
-                Serializer::encodeString(p.data, texture.data);
+                s.append(static_cast<int>(AssetType::TEXTURE))
+                 .append(texture.name)
+                 .append(texture.width)
+                 .append(texture.height)
+                 .append(texture.data);
+
                 packetSize += texture.data.length() + 20;
             }
 
             for (SerializedModel& model : defs.assets.models) {
                 if (packetSize + 16 + model.data.length() > MAX_PACKET_SIZE && packetSize != 0) {
-                    Serializer::encodeInt(p.data, static_cast<int>(AssetType::END));
-                    p.sendTo(client.getPeer(), PacketChannel::CONNECT);
-                    p = Packet(PacketType::MEDIA);
+                    s.append(static_cast<int>(AssetType::END));
+                    Packet p(PacketType::MEDIA);
+
+                    p.data = s.data;
                     packetSize = 0;
+                    s = {};
+
+                    p.sendTo(client.getPeer(), PacketChannel::CONNECT);
                 }
 
-                Serializer::encodeInt(p.data, static_cast<int>(AssetType::MODEL));
-                Serializer::encodeString(p.data, model.name);
-                Serializer::encodeString(p.data, model.format);
-                Serializer::encodeString(p.data, model.data);
+                s.append(static_cast<int>(AssetType::MODEL))
+                 .append(model.name)
+                 .append(model.format)
+                 .append(model.data);
+
                 packetSize += model.data.length() + 16;
             }
 
-            Serializer::encodeInt(p.data, static_cast<int>(AssetType::END));
+            s.append(static_cast<int>(AssetType::END));
+            Packet p(PacketType::MEDIA);
+            p.data = s.data;
+
             p.sendTo(client.getPeer(), PacketChannel::CONNECT);
 
             Packet d(PacketType::MEDIA_DONE);

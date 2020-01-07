@@ -3,6 +3,7 @@
 //
 
 #include "ServerClients.h"
+#include "../../util/net/Serializer.h"
 
 void ServerClients::handleConnect(ENetEvent e) {
     ENetPeer* peer = e.peer;
@@ -41,8 +42,11 @@ void ServerClients::createPlayer(ServerClient &c) {
     c.initPlayer();
 
     Packet p(PacketType::THIS_PLAYER_INFO);
-    Serializer::encodeInt(p.data, c.getConnectID());
-    Serializer::encodeFloatVec3(p.data, c.getPlayer().getPos());
-    Serializer::encodeFloat(p.data, c.getPlayer().getAngle());
+    p.data = Serializer()
+            .append(c.getConnectID())
+            .append(c.getPlayer().getPos())
+            .append(c.getPlayer().getAngle())
+            .data;
+
     p.sendTo(c.getPeer(), PacketChannel::ENTITY);
 }

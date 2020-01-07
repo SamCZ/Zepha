@@ -13,16 +13,16 @@ LuaMod LuaMod::fromPacket(const Packet& p) {
 
     unsigned int offset = 0;
 
-    std::string name = Serializer::decodeString(&mod[0]);
+    std::string name = OLDSerializer::decodeString(&mod[0]);
     offset += 4 + name.length();
 
-    std::string description = Serializer::decodeString(&mod[offset]);
+    std::string description = OLDSerializer::decodeString(&mod[offset]);
     offset += 4 + description.length();
 
-    std::string version = Serializer::decodeString(&mod[offset]);
+    std::string version = OLDSerializer::decodeString(&mod[offset]);
     offset += 4 + version.length();
 
-    std::string dependsStr = Serializer::decodeString(&mod[offset]);
+    std::string dependsStr = OLDSerializer::decodeString(&mod[offset]);
     offset += 4 + dependsStr.length();
 
     std::vector<std::string> depends;
@@ -38,9 +38,9 @@ LuaMod LuaMod::fromPacket(const Packet& p) {
     luaMod.config = {name, description, version, depends};
 
     while (offset < mod.length()) {
-        std::string path = Serializer::decodeString(&mod[offset]);
+        std::string path = OLDSerializer::decodeString(&mod[offset]);
         offset += 4 + path.length();
-        std::string file = Serializer::decodeString(&mod[offset]);
+        std::string file = OLDSerializer::decodeString(&mod[offset]);
         offset += 4 + file.length();
 
         LuaModFile modFile {path, file};

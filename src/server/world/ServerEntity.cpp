@@ -48,19 +48,20 @@ void ServerEntity::setAppearance(std::string displayMode, std::string displayArg
 }
 
 bool ServerEntity::checkAndResetDirty() {
-//    std::cout << "Checking" << this->dirty << std::endl;
     bool dirty = this->dirty;
     this->dirty = false;
     return dirty;
 }
 
 void ServerEntity::fillPacket(Packet &p) {
-    Serializer::encodeUInt(p.data, id);
-    Serializer::encodeFloatVec3(p.data, position);
-    Serializer::encodeFloatVec3(p.data, visualOffset);
-    Serializer::encodeFloat(p.data, angle);
-    Serializer::encodeFloat(p.data, scale);
-    Serializer::encodeString(p.data, displayMode);
-    Serializer::encodeString(p.data, displayArgument1);
-    Serializer::encodeString(p.data, displayArgument2);
+    p.data = Serializer()
+            .append(id)
+            .append(position)
+            .append(visualOffset)
+            .append(angle)
+            .append(scale)
+            .append(displayMode)
+            .append(displayArgument1)
+            .append(displayArgument2)
+            .data;
 }

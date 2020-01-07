@@ -17,25 +17,17 @@ namespace Vec {
         }
     };
 
-    const static std::array<glm::vec3, 6> cardinalVectors = {
-            glm::vec3 {1, 0, 0}, glm::vec3 {-1, 0, 0},
-            glm::vec3 {0, 1, 0}, glm::vec3 {0, -1, 0},
-            glm::vec3 {0, 0, 1}, glm::vec3 {0, 0, -1}
+    const static std::array<glm::ivec3, 6> cardinalVectors = {
+            glm::ivec3 {1, 0, 0}, glm::ivec3 {-1, 0, 0},
+            glm::ivec3 {0, 1, 0}, glm::ivec3 {0, -1, 0},
+            glm::ivec3 {0, 0, 1}, glm::ivec3 {0, 0, -1}
     };
 
-    static inline void indAssignVec(int ind, glm::vec3& vec) {
+    static inline void indAssignVec(int ind, glm::ivec3& vec) {
         vec.z = ind / (16 * 16);
         ind -= ((int)vec.z * 16 * 16);
         vec.y = ind / 16;
         vec.x = ind % 16;
-    }
-
-    static inline glm::vec3* indToVec(int ind) {
-        int z = ind / (16 * 16);
-        ind -= (z * 16 * 16);
-        int y = ind / 16;
-        int x = ind % 16;
-        return new glm::vec3(x, y, z);
     }
 };
 

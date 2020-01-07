@@ -3,6 +3,7 @@
 //
 
 #include "Server.h"
+#include "../util/net/Deserializer.h"
 
 Server::Server(const std::string& path, unsigned short port, const std::string& subgame) :
     defs(subgame, path),
@@ -85,15 +86,17 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
         }
 
         case PacketType::THIS_PLAYER_INFO: {
-            player.setPos(Serializer::decodeFloatVec3(&p.data[0]));
-            player.setAngle(Serializer::decodeFloat(&p.data[12]));
+            Deserializer d(p.data);
+            player.setPos(d.read<glm::vec3>());
+            player.setAngle(d.read<float>());
 
             //Send All ServerClients the new positon
             Packet r(PacketType::PLAYER_INFO);
-
-            Serializer::encodeInt(r.data, client.getConnectID());
-            Serializer::encodeFloatVec3(r.data, player.getPos());
-            Serializer::encodeFloat(r.data, player.getAngle());
+            r.data = Serializer()
+                    .append(client.getConnectID())
+                    .append(player.getPos())
+                    .append(player.getAngle())
+                    .data;
 
             for (auto& iter : clientList.clients) {
                 if (iter->getConnectID() != client.getConnectID()) {
@@ -105,8 +108,10 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
         }
 
         case PacketType::BLOCK_SET: {
-            glm::vec3 pos = Serializer::decodeIntVec3(&p.data[0]);
-            unsigned int block = static_cast<unsigned int>(Serializer::decodeInt(&p.data[12]));
+            Deserializer d(p.data);
+
+            glm::vec3 pos = d.read<glm::vec3>();
+            unsigned int block = d.read<unsigned int>();
 
             world.setBlock(pos, block);
 

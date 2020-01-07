@@ -1,0 +1,142 @@
+//
+// Created by aurailus on 2020-01-06.
+//
+
+#pragma once
+
+#include <string>
+#include <vector>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+
+class Deserializer {
+public:
+    Deserializer(const std::string& data) : data(data) {};
+
+    template <typename T> inline T read() {};
+    template <typename T> inline Deserializer& read(T& ref) {
+        ref = read<T>();
+        return *this;
+    };
+
+    const std::string& data;
+    size_t ind = 0;
+};
+
+template <> inline int Deserializer::read<int>() {
+    int_union cv;
+    cv.bytes[0] = data[ind];
+    cv.bytes[1] = data[ind+1];
+    cv.bytes[2] = data[ind+2];
+    cv.bytes[3] = data[ind+3];
+    ind += 4;
+    return cv.in;
+}
+
+template <> inline unsigned int Deserializer::read<unsigned int>() {
+    uint_union cv;
+    cv.bytes[0] = data[ind];
+    cv.bytes[1] = data[ind+1];
+    cv.bytes[2] = data[ind+2];
+    cv.bytes[3] = data[ind+3];
+    ind += 4;
+    return cv.in;
+}
+
+template <> inline short Deserializer::read<short>() {
+    short_union cv;
+    cv.bytes[0] = data[ind];
+    cv.bytes[1] = data[ind+1];
+    ind += 2;
+    return cv.sh;
+}
+
+template <> inline unsigned short Deserializer::read<unsigned short>() {
+    ushort_union cv;
+    cv.bytes[0] = data[ind];
+    cv.bytes[1] = data[ind+1];
+    ind += 2;
+    return cv.sh;
+}
+
+template <> inline float Deserializer::read<float>() {
+    float_union cv;
+    cv.bytes[0] = data[ind];
+    cv.bytes[1] = data[ind+1];
+    cv.bytes[2] = data[ind+2];
+    cv.bytes[3] = data[ind+3];
+    ind += 4;
+    return cv.fl;
+}
+
+template <> inline std::string Deserializer::read<std::string>() {
+    unsigned int len = read<unsigned int>();
+    size_t i = ind;
+    ind += len;
+    return data.substr(i, len);
+}
+
+template <> inline glm::vec2 Deserializer::read<glm::vec2>() {
+    return {
+        read<float>(),
+        read<float>()
+    };
+}
+
+template <> inline glm::ivec2 Deserializer::read<glm::ivec2>() {
+    return {
+        read<int>(),
+        read<int>()
+    };
+}
+
+template <> inline glm::vec3 Deserializer::read<glm::vec3>() {
+    return {
+        read<float>(),
+        read<float>(),
+        read<float>()
+    };
+}
+
+template <> inline glm::ivec3 Deserializer::read<glm::ivec3>() {
+    return {
+        read<int>(),
+        read<int>(),
+        read<int>()
+    };
+}
+
+template <> inline std::vector<int> Deserializer::read<std::vector<int>>() {
+    unsigned int len = read<unsigned int>();
+    return std::vector<int>(
+            reinterpret_cast<const int*>(&data[ind]),
+            reinterpret_cast<const int*>(&data[ind + len * 4]));
+}
+
+template <> inline std::vector<unsigned int> Deserializer::read<std::vector<unsigned int>>() {
+    unsigned int len = read<unsigned int>();
+    return std::vector<unsigned int>(
+            reinterpret_cast<const unsigned int*>(&data[ind]),
+            reinterpret_cast<const unsigned int*>(&data[ind + len * 4]));
+}
+
+template <> inline std::vector<short> Deserializer::read<std::vector<short>>() {
+    unsigned int len = read<unsigned int>();
+    return std::vector<short>(
+            reinterpret_cast<const short*>(&data[ind]),
+            reinterpret_cast<const short*>(&data[ind + len * 2]));
+}
+
+template <> inline std::vector<unsigned short> Deserializer::read<std::vector<unsigned short>>() {
+    unsigned int len = read<unsigned int>();
+    return std::vector<unsigned short>(
+            reinterpret_cast<const unsigned short*>(&data[ind]),
+            reinterpret_cast<const unsigned short*>(&data[ind + len * 2]));
+}
+
+template <> inline std::vector<float> Deserializer::read<std::vector<float>>() {
+    unsigned int len = read<unsigned int>();
+    return std::vector<float>(
+            reinterpret_cast<const float*>(&data[ind]),
+            reinterpret_cast<const float*>(&data[ind + len * 4]));
+}

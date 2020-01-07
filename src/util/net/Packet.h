@@ -11,6 +11,7 @@
 #include <iostream>
 #include <enet/enet.h>
 
+#include "OLDSerializer.h"
 #include "Serializer.h"
 #include "PacketType.h"
 #include "PacketChannel.h"

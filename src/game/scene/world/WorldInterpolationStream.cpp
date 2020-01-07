@@ -63,11 +63,10 @@ void WorldInterpolationStream::threadFunction(WorldInterpolationStream::Thread *
             if (!u.unlocked) {
                 noJobs = false;
 
-                auto pos = Serializer::decodeIntVec3(&u.packet->data[0]);
+                auto pos = OLDSerializer::decodeIntVec3(&u.packet->data[0]);
 
                 u.chunk = new BlockChunk;
-                u.chunk->pos = pos;
-                u.chunk->deserialize(&u.packet->data.data()[16]);
+                u.chunk->deserialize(*u.packet);
 
                 u.unlocked = true;
                 break;

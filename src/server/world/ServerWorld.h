@@ -22,21 +22,21 @@ public:
     void init();
     void update();
 
-    void setBlock(glm::vec3 pos, unsigned int block);
-    unsigned int getBlock(glm::vec3 pos);
+    void setBlock(glm::ivec3 pos, unsigned int block);
+    unsigned int getBlock(glm::ivec3 pos);
 
     ~ServerWorld();
 
     ServerDimension dimension;
 private:
     void changedChunks(ServerClient& client);
-    bool generateMapBlock(glm::vec3 pos);
+    bool generateMapBlock(glm::ivec3 pos);
 
-    void sendChunk(const glm::vec3& pos, ServerClient& client);
+    void sendChunk(const glm::ivec3& pos, ServerClient& client);
     void sendChunk(const std::shared_ptr<BlockChunk>& chunk, ServerClient& client);
-    void sendMapBlock(const glm::vec3& pos, ServerClient& client);
+    void sendMapBlock(const glm::ivec3& pos, ServerClient& client);
 
-    bool isInBounds(glm::vec3 pos, std::pair<glm::vec3, glm::vec3>& bounds);
+    bool isInBounds(glm::ivec3 pos, std::pair<glm::ivec3, glm::ivec3>& bounds);
 
     WorldGenStream* genStream = nullptr;
 

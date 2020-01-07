@@ -3,9 +3,6 @@
 //
 
 #include "BlockChunk.h"
-#include "../../util/Util.h"
-#include "../../def/DefinitionAtlas.h"
-#include "../../def/gen/BiomeAtlas.h"
 
 #include <gzip/compress.hpp>
 #include <gzip/decompress.hpp>
@@ -14,7 +11,7 @@
 BlockChunk::BlockChunk(const std::array<unsigned int, 4096>& blocks, const std::array<unsigned short, 4096>& biomes) :
     BlockChunk(blocks, biomes, {0, 0, 0}) {}
 
-BlockChunk::BlockChunk(const std::array<unsigned int, 4096>& blocks, const std::array<unsigned short, 4096>& biomes, glm::vec3 pos) :
+BlockChunk::BlockChunk(const std::array<unsigned int, 4096>& blocks, const std::array<unsigned short, 4096>& biomes, glm::ivec3 pos) :
     blocks(std::move(blocks)),
     biomes(std::move(biomes)),
     pos(pos) {
@@ -35,7 +32,7 @@ bool BlockChunk::shouldRender() {
     return should;
 }
 
-bool BlockChunk::setBlock(const glm::vec3& pos, unsigned int block) {
+bool BlockChunk::setBlock(const glm::ivec3& pos, unsigned int block) {
     unsigned int ind = Space::Block::index(pos);
     if (ind >= (int)pow(16, 3)) return false;
 
@@ -65,7 +62,7 @@ unsigned int BlockChunk::getBlock(unsigned int ind) const {
     return blocks[ind];
 }
 
-unsigned int BlockChunk::getBlock(const glm::vec3& pos) const {
+unsigned int BlockChunk::getBlock(const glm::ivec3& pos) const {
     unsigned int ind = Space::Block::index(pos);
     if (ind >= 4096) return DefinitionAtlas::INVALID;
     return blocks[ind];
@@ -76,15 +73,15 @@ unsigned short BlockChunk::getBiome(unsigned int ind) const {
     return biomes[ind];
 }
 
-unsigned short BlockChunk::getBiome(const glm::vec3& pos) const {
+unsigned short BlockChunk::getBiome(const glm::ivec3& pos) const {
     unsigned int ind = Space::Block::index(pos);
     if (ind >= 4096) return BiomeAtlas::INVALID;
     return biomes[ind];
 }
 
-std::string BlockChunk::serialize() {
-    std::string blocksGzip {};
-    std::string biomesGzip {};
+Packet BlockChunk::serialize() {
+    Serializer s;
+    s.append(pos);
 
     {
         unsigned int curr = blocks[0];
@@ -104,11 +101,9 @@ std::string BlockChunk::serialize() {
         blocksRle.push_back(curr);
         blocksRle.push_back(length);
 
-        std::string temp;
-        Serializer::encodeUIntVec(temp, blocksRle);
-        blocksGzip = gzip::compress(temp.data(), temp.size());
-    }
-    {
+        std::string temp = Serializer().append(blocksRle).data;
+        s.append<std::string>(gzip::compress(temp.data(), temp.size()));
+    } {
         unsigned int curr = biomes[0];
         unsigned short length = 1;
 
@@ -126,66 +121,61 @@ std::string BlockChunk::serialize() {
         biomesRle.push_back(curr);
         biomesRle.push_back(length);
 
-        std::string temp = "";
-        Serializer::encodeUShortVec(temp, biomesRle);
-        biomesGzip = gzip::compress(temp.data(), temp.size());
+        std::string temp = Serializer().append(biomesRle).data;
+        s.append<std::string>(gzip::compress(temp.data(), temp.size()));
     }
 
-    std::string data = "";
-    Serializer::encodeString(data, blocksGzip);
-    Serializer::encodeString(data, biomesGzip);
-    return data;
+    Packet p(PacketType::CHUNK);
+    p.data = s.data;
+    return p;
 }
 
-void BlockChunk::deserialize(const char* packet) {
-    size_t biomeOffset;
+void BlockChunk::deserialize(Packet& packet) {
+    Deserializer d(packet.data);
+
+    pos = d.read<glm::ivec3>();
 
     {
-        std::string str;
+        auto gzip = d.read<std::string>();
+        if (!gzip::is_compressed(gzip.data(), gzip.length())) throw "Invalid Blocks GZip Data.";
+        gzip = gzip::decompress(gzip.data(), gzip.length());
 
-        std::string blocksGzip = Serializer::decodeString(packet);
-        biomeOffset = blocksGzip.length() + 4;
+        std::vector<unsigned int> rle = Deserializer(gzip).read<std::vector<unsigned int>>();
 
-        if (!gzip::is_compressed(blocksGzip.data(), blocksGzip.length())) throw "Invalid Blocks GZip Data.";
-        blocksGzip = gzip::decompress(blocksGzip.data(), blocksGzip.length());
-        std::vector<unsigned int> blocksRle = Serializer::decodeUIntVec(blocksGzip);
-
-        int ind = 0;
         this->empty = true;
 
-        for (int i = 0; i < blocksRle.size() / 2; i++) {
-            unsigned int block = blocksRle[i*2];
-            unsigned int count = blocksRle[i*2 + 1];
+        int ind = 0;
+        for (int i = 0; i < rle.size() / 2; i++) {
+            unsigned int block = rle[i * 2];
+            unsigned int count = rle[i * 2 + 1];
 
             for (int j = 0; j < count; j++) {
                 blocks[ind++] = block;
                 if (block != 0) this->empty = false;
-                if (ind >= 4096) goto stop1;
+                if (ind >= 4096) goto biomes;
             }
         }
-        stop1: {};
     }
+    biomes: {}
     {
-        std::string str;
+        auto gzip = d.read<std::string>();
+        if (!gzip::is_compressed(gzip.data(), gzip.length())) throw "Invalid Biomes GZip Data.";
+        gzip = gzip::decompress(gzip.data(), gzip.length());
 
-        std::string biomesGzip = Serializer::decodeString(&packet[biomeOffset]);
-        if (!gzip::is_compressed(biomesGzip.data(), biomesGzip.length())) throw "Invalid Biomes GZip Data.";
-        biomesGzip = gzip::decompress(biomesGzip.data(), biomesGzip.length());
-        std::vector<unsigned short> biomesRle = Serializer::decodeUShortVec(biomesGzip);
+        std::vector<unsigned short> rle = Deserializer(gzip).read<std::vector<unsigned short>>();
 
         int ind = 0;
-
-        for (int i = 0; i < biomesRle.size() / 2; i++) {
-            unsigned int biome = biomesRle[i*2];
-            unsigned int count = biomesRle[i*2 + 1];
+        for (int i = 0; i < rle.size() / 2; i++) {
+            unsigned int biome = rle[i * 2];
+            unsigned int count = rle[i * 2 + 1];
 
             for (int j = 0; j < count; j++) {
                 biomes[ind++] = biome;
-                if (ind >= 4096) goto stop2;
+                if (ind >= 4096) goto end;
             }
         }
-        stop2: {};
     }
+    end: {}
 }
 
 void BlockChunk::mgRegenEmpty() {

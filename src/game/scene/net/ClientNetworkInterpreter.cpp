@@ -3,6 +3,7 @@
 //
 
 #include "ClientNetworkInterpreter.h"
+#include "../../../util/net/Serializer.h"
 
 ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, LocalDefs &defs) :
     connection(connection),
@@ -34,19 +35,19 @@ void ClientNetworkInterpreter::update(Player &player) {
 
                 switch (p->type) {
                     case PacketType::THIS_PLAYER_INFO: {
-                        id = Serializer::decodeInt(&p->data[0]);
-                        auto playerPos = Serializer::decodeFloatVec3(&p->data[4]);
-                        auto playerAngle = Serializer::decodeFloat(&p->data[16]);
+                        id = OLDSerializer::decodeInt(&p->data[0]);
+                        auto playerPos = OLDSerializer::decodeFloatVec3(&p->data[4]);
+                        auto playerAngle = OLDSerializer::decodeFloat(&p->data[16]);
                         player.setPos(playerPos);
                         player.setYaw(playerAngle);
                         break;
                     }
                     case PacketType::PLAYER_INFO: {
-                        int peer_id = Serializer::decodeInt(&p->data[0]);
+                        int peer_id = OLDSerializer::decodeInt(&p->data[0]);
                         if (peer_id == id) break;
 
-                        auto playerPos = Serializer::decodeFloatVec3(&p->data[4]);
-                        auto playerAngle = Serializer::decodeFloat(&p->data[16]);
+                        auto playerPos = OLDSerializer::decodeFloatVec3(&p->data[4]);
+                        auto playerAngle = OLDSerializer::decodeFloat(&p->data[16]);
 
                         bool found = false;
                         for (auto& ent : world->dimension.playerEntities) {
@@ -64,8 +65,8 @@ void ClientNetworkInterpreter::update(Player &player) {
                         world->dimension.handleServerEntity(*p);
                     }
                     case PacketType::BLOCK_SET: {
-                        auto pos = Serializer::decodeIntVec3(&p->data[0]);
-                        uint block = static_cast<uint>(Serializer::decodeInt(&p->data[12]));
+                        auto pos = OLDSerializer::decodeIntVec3(&p->data[0]);
+                        uint block = static_cast<uint>(OLDSerializer::decodeInt(&p->data[12]));
                         world->setBlock(pos, block);
                         break;
                     }
@@ -74,7 +75,7 @@ void ClientNetworkInterpreter::update(Player &player) {
                         break;
                     }
                     case PacketType::SERVER_INFO: {
-                        serverSideChunkGens = Serializer::decodeInt(&p->data[0]);
+                        serverSideChunkGens = OLDSerializer::decodeInt(&p->data[0]);
                         break;
                     }
                     default:
@@ -99,8 +100,11 @@ void ClientNetworkInterpreter::update(Player &player) {
 
     //Send Player Position
     Packet p(PacketType::THIS_PLAYER_INFO);
-    Serializer::encodeFloatVec3(p.data, player.getPos());
-    Serializer::encodeFloat(p.data, player.getYaw());
+    p.data = Serializer()
+            .append(player.getPos())
+            .append(player.getYaw())
+            .data;
+
     p.sendTo(connection.getPeer(), PacketChannel::PLAYER);
 }
 
@@ -114,7 +118,10 @@ ClientNetworkInterpreter::~ClientNetworkInterpreter() {
 
 void ClientNetworkInterpreter::setBlock(glm::vec3 pos, int block) {
     Packet p(PacketType::BLOCK_SET);
-    Serializer::encodeIntVec3(p.data, pos);
-    Serializer::encodeInt(p.data, block);
+    p.data = Serializer()
+            .append(pos)
+            .append(block)
+            .data;
+
     p.sendTo(connection.getPeer(), PacketChannel::BLOCK);
 }
