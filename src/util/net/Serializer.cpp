@@ -138,32 +138,32 @@ string Serializer::decodeString(const char *stringStart) {
     return string(stringStart + 4, stringStart + 4 + len);
 }
 
-vector<int> Serializer::decodeIntVec(string &string) {
+vector<int> Serializer::decodeIntVec(const string &string) {
     //Reverse the conversion done to vectors in the encode*Vec classes using reinterpret_cast.
     return std::vector<int>(reinterpret_cast<const int*>(&string[0]),
                             reinterpret_cast<const int*>(&string[string.size()]));
 }
 
-vector<unsigned int> Serializer::decodeUIntVec(string &string) {
+vector<unsigned int> Serializer::decodeUIntVec(const string &string) {
     //Reverse the conversion done to vectors in the encode*Vec classes using reinterpret_cast.
     return std::vector<unsigned int>(reinterpret_cast<const int*>(&string[0]),
                                      reinterpret_cast<const int*>(&string[string.size()]));
 }
 
-vector<unsigned short> Serializer::decodeUShortVec(string &string) {
+vector<unsigned short> Serializer::decodeUShortVec(const string &string) {
     //Reverse the conversion done to vectors in the encode*Vec classes using reinterpret_cast.
     return std::vector<unsigned short>(reinterpret_cast<const unsigned short*>(&string[0]),
                                      reinterpret_cast<const unsigned short*>(&string[string.size()]));
 }
 
 
-vector<float> Serializer::decodeFloatVec(string &string) {
+vector<float> Serializer::decodeFloatVec(const string &string) {
     //Reversed the conversion done to vectors in the encode*Vec classes using reinterpret_cast.
     return std::vector<float>(reinterpret_cast<const float*>(&string[0]),
                               reinterpret_cast<const float*>(&string[string.size()]));
 }
 
-glm::vec3 Serializer::decodeFloatVec3(char *vecStart) {
+glm::vec3 Serializer::decodeFloatVec3(const char *vecStart) {
     return {
         decodeFloat(vecStart),
         decodeFloat(vecStart + 4),
@@ -171,7 +171,7 @@ glm::vec3 Serializer::decodeFloatVec3(char *vecStart) {
     };
 }
 
-glm::vec3 Serializer::decodeIntVec3(char *vecStart) {
+glm::vec3 Serializer::decodeIntVec3(const char *vecStart) {
     return {
         decodeInt(vecStart),
         decodeInt(vecStart + 4),

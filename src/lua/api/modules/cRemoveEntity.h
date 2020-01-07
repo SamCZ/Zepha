@@ -17,7 +17,7 @@ namespace ClientApi {
             sol::optional<sol::function> onDestruct = (*luaEntTable)["on_destroy"];
             if (onDestruct) (*onDestruct)();
             core["entities"][object->id] = sol::nil;
-            world.dimension.removeLuaEntity(object);
+            world.dimension.removeLocalEntity(object);
         });
     }
 }

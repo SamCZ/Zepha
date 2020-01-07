@@ -60,6 +60,9 @@ void ClientNetworkInterpreter::update(Player &player) {
                         if (!found) world->dimension.playerEntities.emplace_back(playerPos, peer_id, playerModel);
                         break;
                     }
+                    case PacketType::ENTITY_INFO: {
+                        world->dimension.handleServerEntity(*p);
+                    }
                     case PacketType::BLOCK_SET: {
                         auto pos = Serializer::decodeIntVec3(&p->data[0]);
                         uint block = static_cast<uint>(Serializer::decodeInt(&p->data[12]));

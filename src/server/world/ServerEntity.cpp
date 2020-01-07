@@ -55,6 +55,7 @@ bool ServerEntity::checkAndResetDirty() {
 }
 
 void ServerEntity::fillPacket(Packet &p) {
+    Serializer::encodeUInt(p.data, id);
     Serializer::encodeFloatVec3(p.data, position);
     Serializer::encodeFloatVec3(p.data, visualOffset);
     Serializer::encodeFloat(p.data, angle);

@@ -39,7 +39,7 @@ namespace ClientApi {
                 auto on_create = entityDef.get<sol::optional<sol::function>>("on_create");
                 if (on_create) (*on_create)(luaEntity, staticData);
 
-                world.dimension.addLuaEntity(entityRef);
+                world.dimension.addLocalEntity(entityRef);
                 return luaEntity;
             }
             throw "Tried to create undefined entity.";

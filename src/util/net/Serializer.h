@@ -34,13 +34,13 @@ public:
     static float          decodeFloat     (const char* floatStart);
     static string         decodeString    (const char* stringStart);
 
-    static glm::vec3      decodeFloatVec3 (char* vecStart);
-    static glm::vec3      decodeIntVec3   (char* vecStart);
+    static glm::vec3      decodeFloatVec3 (const char* vecStart);
+    static glm::vec3      decodeIntVec3   (const char* vecStart);
 
-    static vector<int>            decodeIntVec   (string &string);
-    static vector<unsigned int>   decodeUIntVec  (string &string);
-    static vector<unsigned short> decodeUShortVec(string &target);
-    static vector<float>          decodeFloatVec (string &string);
+    static vector<int>            decodeIntVec   (const string& string);
+    static vector<unsigned int>   decodeUIntVec  (const string& string);
+    static vector<unsigned short> decodeUShortVec(const string& target);
+    static vector<float>          decodeFloatVec (const string& string);
 private:
     typedef union { int in; char bytes[4]; }            int_union;
     typedef union { unsigned int in; char bytes[4]; }   uint_union;

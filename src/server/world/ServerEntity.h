@@ -10,7 +10,7 @@
 
 class ServerEntity {
 public:
-    ServerEntity() = default;
+    explicit ServerEntity(unsigned int id) : id(id) {};
 
     void setPos(glm::vec3 position);
     glm::vec3 getPos();
@@ -29,6 +29,8 @@ public:
     bool checkAndResetDirty();
     void fillPacket(Packet &p);
 protected:
+    unsigned int id = 0;
+
     glm::vec3 position {};
     glm::vec3 visualOffset {};
     float angle = 0;

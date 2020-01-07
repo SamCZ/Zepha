@@ -130,7 +130,6 @@ void ServerWorld::update() {
     // TODO: Only send to *nearby clients*.
     for (auto& entity : dimension.getLuaEntities()) {
         if (entity->entity->checkAndResetDirty()) {
-            std::cout << entity->id << std::endl;
 
             Packet p(PacketType::ENTITY_INFO);
             entity->entity->fillPacket(p);

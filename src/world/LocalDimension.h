@@ -25,8 +25,10 @@ public:
     void setMeshChunk(std::shared_ptr<MeshChunk> chunk);
     void removeMeshChunk(const glm::vec3& pos);
 
-    void addLuaEntity(std::shared_ptr<LocalLuaEntity>& entity);
-    void removeLuaEntity(std::shared_ptr<LocalLuaEntity>& entity);
+    void addLocalEntity(std::shared_ptr<LocalLuaEntity>& entity);
+    void removeLocalEntity(std::shared_ptr<LocalLuaEntity>& entity);
+
+    void handleServerEntity(const Packet& p);
 
     int renderChunks(Renderer &renderer);
     void renderEntities(Renderer &renderer);

@@ -107,17 +107,31 @@ void LocalDimension::removeMeshChunk(const glm::vec3& pos) {
     }
 }
 
-void LocalDimension::addLuaEntity(std::shared_ptr<LocalLuaEntity> &entity) {
+void LocalDimension::addLocalEntity(std::shared_ptr<LocalLuaEntity> &entity) {
     luaEntities.push_back(entity);
     luaEntityRefs.emplace(entity->id, --luaEntities.end());
 }
 
-void LocalDimension::removeLuaEntity(std::shared_ptr<LocalLuaEntity> &entity) {
+void LocalDimension::removeLocalEntity(std::shared_ptr<LocalLuaEntity> &entity) {
     if (!luaEntityRefs.count(entity->id)) return;
     auto refIter = luaEntityRefs.at(entity->id);
 
     luaEntities.erase(refIter);
     luaEntityRefs.erase(entity->id);
+}
+
+void LocalDimension::handleServerEntity(const Packet& p) {
+    unsigned int id = Serializer::decodeUInt(&p.data[0]);
+    glm::vec3 position = Serializer::decodeFloatVec3(&p.data[4]);
+    glm::vec3 visualOffset = Serializer::decodeFloatVec3(&p.data[16]);
+    float angle = Serializer::decodeFloat(&p.data[20]);
+    float scale = Serializer::decodeFloat(&p.data[24]);
+//    std::string displayMode =
+//    Serializer::encodeFloat(p.data, angle);
+//    Serializer::encodeFloat(p.data, scale);
+//    Serializer::encodeString(p.data, displayMode);
+//    Serializer::encodeString(p.data, displayArgument1);
+//    Serializer::encodeString(p.data, displayArgument2);
 }
 
 int LocalDimension::getMeshChunkCount() {

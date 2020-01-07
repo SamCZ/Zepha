@@ -7,8 +7,6 @@ zepha.register_entity("zeus:default:test", {
 --        self.object:set_scale(1/4)
     end,
     on_update = function(self, delta)
-        print "Entity is updating"
-
 --        local pos = self.object.pos
 --        pos.z = pos.z + 1 * delta
 --        if pos.z > 13 then

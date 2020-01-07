@@ -21,7 +21,7 @@ namespace ServerApi {
             if (core["registered_entities"][*identifier] == sol::nil) throw "identifier '" + *identifier + "' is not a valid entity identifier.";
             sol::table entityDef = core["registered_entities"][*identifier];
 
-            auto entity = std::make_unique<ServerEntity>();
+            auto entity = std::make_unique<ServerEntity>(server_entities_ind);
             entity->setPos({pos->get<float>("x"), pos->get<float>("y"), pos->get<float>("z")});
             auto entityRef = std::make_shared<ServerLuaEntity>(std::move(entity), server_entities_ind++, defs);
 
