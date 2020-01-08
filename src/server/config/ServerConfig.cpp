@@ -45,16 +45,9 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
                 p.sendTo(client.getPeer(), PacketChannel::CONNECT);
             }
 
-            Packet p(PacketType::MOD_ORDER);
-            std::string depends;
-            bool delimiter = false;
-            for (LuaMod& mod : defs.luaApi.mods) {
-                if (delimiter) depends.append(",");
-                else delimiter = true;
-                depends.append(mod.config.name);
-            }
-            p.data = Serializer().append(depends).data;
-            p.sendTo(client.getPeer(), PacketChannel::CONNECT);
+            std::vector<std::string> order {};
+            for (LuaMod& mod : defs.luaApi.mods) order.push_back(mod.config.name);
+            Serializer().append(order).packet(PacketType::MOD_ORDER).sendTo(client.getPeer(), PacketChannel::CONNECT);
             break;
         }
         case PacketType::MEDIA: {

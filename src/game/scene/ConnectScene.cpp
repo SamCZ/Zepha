@@ -93,17 +93,7 @@ void ConnectScene::update() {
                     state.defs.luaApi.mods.push_back(std::move(luaMod));
                 }
                 else if (p.type == PacketType::MOD_ORDER) {
-                    //TODO: Look into encoding vectors here
-                    std::string order = d.read<std::string>();
-
-                    size_t pos = 0;
-                    std::string token;
-                    while ((pos = order.find(',')) != std::string::npos) {
-                        token = order.substr(0, pos);
-                        state.defs.luaApi.modsOrder.push_back(token);
-                        order.erase(0, pos + 1);
-                    }
-                    state.defs.luaApi.modsOrder.push_back(order);
+                    state.defs.luaApi.modsOrder = d.read<std::vector<std::string>>();
 
                     statusText->setText(statusText->getText() + "Done downloading mods.\nReceived the mods order.\nDownloading media...\n");
 
