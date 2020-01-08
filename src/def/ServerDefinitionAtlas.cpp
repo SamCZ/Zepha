@@ -13,7 +13,7 @@ ServerDefinitionAtlas::ServerDefinitionAtlas() {
 
     //Air Node
     BlockModel nullModel {};
-    BlockDef* air = new BlockDef("", AIR, "Air", 1, nullModel, false, {}, {});
+    BlockDef* air = new BlockDef("air", AIR, "Air (you broke the game!)", 1, nullModel, false, {}, {});
     registerDef(air);
 }
 

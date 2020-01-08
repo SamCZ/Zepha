@@ -110,17 +110,20 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
         case PacketType::BLOCK_SET: {
             Deserializer d(p.data);
 
-            glm::vec3 pos = d.read<glm::vec3>();
+            glm::ivec3 pos = d.read<glm::ivec3>();
             unsigned int block = d.read<unsigned int>();
+
+            unsigned int worldBlock = (block == DefinitionAtlas::AIR ? world.getBlock(pos) : 0);
 
             world.setBlock(pos, block);
 
             if (block == DefinitionAtlas::AIR) {
-                auto def = defs.defs.blockFromId(world.getBlock(pos));
+                auto def = defs.defs.blockFromId(worldBlock);
                 if (def.callbacks.count(Callback::BREAK)) {
                     def.callbacks[Callback::BREAK](defs.luaApi.vecToTable(pos));
                 }
-            } else {
+            }
+            else {
                 auto def = defs.defs.blockFromId(block);
                 if (def.callbacks.count(Callback::PLACE)) {
                     def.callbacks[Callback::PLACE](defs.luaApi.vecToTable(pos));

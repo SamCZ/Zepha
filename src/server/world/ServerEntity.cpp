@@ -53,8 +53,8 @@ bool ServerEntity::checkAndResetDirty() {
     return dirty;
 }
 
-void ServerEntity::fillPacket(Packet &p) {
-    p.data = Serializer()
+Packet ServerEntity::createPacket(bool reliable) {
+    return std::move(Serializer()
             .append(id)
             .append(position)
             .append(visualOffset)
@@ -63,5 +63,5 @@ void ServerEntity::fillPacket(Packet &p) {
             .append(displayMode)
             .append(displayArgument1)
             .append(displayArgument2)
-            .data;
+            .packet(PacketType::ENTITY_INFO, reliable));
 }

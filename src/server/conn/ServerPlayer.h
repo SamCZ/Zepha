@@ -35,6 +35,6 @@ private:
     glm::vec3 pos {};
     float angle = 0;
 
-    std::unordered_map<glm::vec3, unsigned long long, Vec::compareFunc> mapBlockIntegrity {};
+    std::unordered_map<glm::vec3, unsigned long long, Vec::vec3> mapBlockIntegrity {};
 };
 

@@ -130,14 +130,9 @@ void ServerWorld::update() {
     // TODO: Only send to *nearby clients*.
     for (auto& entity : dimension.getLuaEntities()) {
         if (entity->entity->checkAndResetDirty()) {
-
-            Packet p(PacketType::ENTITY_INFO);
-            entity->entity->fillPacket(p);
-
+            Packet p = entity->entity->createPacket();
             for (auto& client : clientList.clients) {
-                if (client->hasPlayer()) {
-                    p.sendTo(client->getPeer(), PacketChannel::ENTITY);
-                }
+                if (client->hasPlayer()) p.sendTo(client->getPeer(), PacketChannel::ENTITY);
             }
         }
     }

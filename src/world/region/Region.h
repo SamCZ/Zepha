@@ -11,11 +11,11 @@
 
 class Region {
 public:
-    Region(glm::vec3 pos);
+    Region(glm::ivec3 pos);
 
     std::shared_ptr<MapBlock> operator[](int index);
     void set(int index, std::shared_ptr<MapBlock> block);
 private:
-    glm::vec3 pos {};
+    glm::ivec3 pos {};
     std::array<std::shared_ptr<MapBlock>, 64> mapBlocks {};
 };

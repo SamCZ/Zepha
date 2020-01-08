@@ -4,7 +4,7 @@
 
 #include "MapBlock.h"
 
-MapBlock::MapBlock(glm::vec3 pos) :
+MapBlock::MapBlock(glm::ivec3 pos) :
     pos(pos) {
 
     for (int i = 0; i < 64; i++) {

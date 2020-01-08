@@ -7,7 +7,7 @@
 #include "Serializer.h"
 #include "Deserializer.h"
 
-Packet::Packet(PacketType type) : type(type) {}
+Packet::Packet(PacketType type, bool reliable) : type(type), reliable(reliable) {}
 
 Packet::Packet(ENetPacket *packet) {
     std::string packetData(packet->data, packet->data + packet->dataLength);
@@ -19,7 +19,7 @@ Packet::Packet(ENetPacket *packet) {
 ENetPacket* Packet::toENetPacket() {
     std::string serialized = Serializer().append(static_cast<unsigned int>(type)).data + data;
 
-    ENetPacket* enet = enet_packet_create(serialized.data(), serialized.length() + 1, ENET_PACKET_FLAG_RELIABLE);
+    ENetPacket* enet = enet_packet_create(serialized.data(), serialized.length() + 1, (reliable ? ENET_PACKET_FLAG_RELIABLE : 0));
     return enet;
 }
 

@@ -12,11 +12,11 @@
 
 class MapBlock {
 public:
-    MapBlock(glm::vec3 pos);
+    MapBlock(glm::ivec3 pos);
 
     std::shared_ptr<BlockChunk> operator[](int index);
     void set(int index, std::shared_ptr<BlockChunk> chunk);
 private:
-    glm::vec3 pos {};
+    glm::ivec3 pos {};
     std::array<std::shared_ptr<BlockChunk>, 64> blockChunks;
 };

@@ -137,15 +137,15 @@ void Player::updateCamera() {
 }
 
 void Player::findPointedThing(Input &input) {
-    glm::vec3 chunkPos = {};
+    glm::ivec3 chunkPos = {};
     sptr<BlockChunk> blockChunk = nullptr;
 
     for (Ray ray(this); ray.getLength() < LOOK_DISTANCE; ray.step(LOOK_PRECISION)) {
         glm::vec3 rayEnd = ray.getEnd();
-        glm::vec3 roundedPos = glm::floor(rayEnd);
+        glm::ivec3 roundedPos = glm::floor(rayEnd);
 
         auto currChunkPos = Space::Chunk::world::fromBlock(roundedPos);
-        if (currChunkPos != chunkPos || blockChunk == nullptr) {
+        if (glm::ivec3(currChunkPos) != chunkPos || blockChunk == nullptr) {
             chunkPos = currChunkPos;
             blockChunk = world.getChunk(chunkPos);
         }
@@ -178,7 +178,7 @@ void Player::updateWireframe() {
     }
     else if (pointedThing.thing == PointedThing::Thing::BLOCK) {
         auto& boxes = defs.defs.blockFromId(pointedThing.target.block.blockId).sBoxes;
-        float distance = glm::distance(pos, pointedThing.target.block.pos + glm::vec3(0.5));
+        float distance = glm::distance(pos, glm::vec3(pointedThing.target.block.pos) + glm::vec3(0.5));
 
         wireframe.updateMesh(boxes, 0.002f + distance * 0.0014f);
         wireframe.setPos(pointedThing.target.block.pos);

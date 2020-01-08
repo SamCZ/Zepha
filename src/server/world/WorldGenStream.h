@@ -56,7 +56,7 @@ private:
 
     MapGen gen;
     std::vector<glm::vec3> queuedTasks;
-    std::unordered_set<glm::vec3, Vec::compareFunc> queuedMap;
+    std::unordered_set<glm::vec3, Vec::vec3> queuedMap;
 };
 
 #pragma clang diagnostic pop

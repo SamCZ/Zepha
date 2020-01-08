@@ -37,7 +37,7 @@ namespace ServerApi {
             //TODO: Move these checks to register_entity
             if (!displayType) throw "entity '" + *identifier + "' is missing the display property.";
             if (!displayObject) throw "entity '" + *identifier + "' is missing the display_object property.";
-            if (!displayTexture) throw "entity '" + *identifier + "' is missing the display_texture property.";
+            if (strncmp(displayType->data(), "model", 5) == 0 && !displayTexture) throw "entity '" + *identifier + "' is missing the display_texture property.";
 
             entityRef->set_display_type(*displayType, *displayObject, displayTexture);
 

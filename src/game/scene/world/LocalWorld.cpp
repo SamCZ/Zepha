@@ -150,7 +150,7 @@ unsigned short LocalWorld::getBiome(glm::vec3 pos) {
     return BiomeAtlas::INVALID;
 }
 
-void LocalWorld::localSetBlock(glm::vec3 pos, unsigned int block) {
+void LocalWorld::localSetBlock(glm::ivec3 pos, unsigned int block) {
     if (block == LocalDefinitionAtlas::AIR) {
         auto def = defs.defs.blockFromId(getBlock(pos));
         if (def.callbacks.count(Callback::BREAK_CLIENT)) {

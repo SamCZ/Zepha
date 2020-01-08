@@ -33,6 +33,8 @@ zepha.register_entity("zeus:default:dropped_item", {
         self.object:int_yaw(self.object.yaw + self.speed)
         if self.speed > 4 then self.speed = self.speed * 0.92 end
 
+        print(collides(self.object))
+
         if not self.scooping then
             if (not collides(self.object)) then
                 self.velocityY = math.min(self.velocityY + 0.5, 8)
@@ -58,7 +60,7 @@ zepha.register_entity("zeus:default:dropped_item", {
 
         self.tick = self.tick + delta
         if self.tick > 0.15 then
-            self:check_collect()
+--             self:check_collect()
             self.tick = 0
         end
     end,
@@ -69,21 +71,21 @@ zepha.register_entity("zeus:default:dropped_item", {
             speed = self.speed
         }
     end,
-    check_collect = function(self)
-        local diff = vector.abs(vector.subtract(zepha.player.pos, self.object.pos))
-        local distance = math.sqrt(diff.x ^ 2 + diff.y ^ 2 + diff.z ^ 2)
-
-        if distance < 2 then
-            self.object:int_pos(vector.add(zepha.player.pos, v{0, 1.10, 0}))
-            self.object:int_scale(0.5)
-
-            if not self.scooping then
-                zepha.delay(function()
-                    self.delete = true
-                    zepha.player:get_inventory():get_list("main"):add_stack({self.item, 1})
-                end, 2/20)
-                self.scooping = true
-            end
-        end
-    end
+--     check_collect = function(self)
+--         local diff = vector.abs(vector.subtract(zepha.player.pos, self.object.pos))
+--         local distance = math.sqrt(diff.x ^ 2 + diff.y ^ 2 + diff.z ^ 2)
+--
+--         if distance < 2 then
+--             self.object:int_pos(vector.add(zepha.player.pos, v{0, 1.10, 0}))
+--             self.object:int_scale(0.5)
+--
+--             if not self.scooping then
+--                 zepha.delay(function()
+--                     self.delete = true
+--                     zepha.player:get_inventory():get_list("main"):add_stack({self.item, 1})
+--                 end, 2/20)
+--                 self.scooping = true
+--             end
+--         end
+--     end
 })

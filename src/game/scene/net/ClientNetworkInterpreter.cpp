@@ -114,7 +114,7 @@ ClientNetworkInterpreter::~ClientNetworkInterpreter() {
     cleanup();
 }
 
-void ClientNetworkInterpreter::setBlock(glm::vec3 pos, unsigned int block) {
+void ClientNetworkInterpreter::setBlock(glm::ivec3 pos, unsigned int block) {
     Packet p(PacketType::BLOCK_SET);
     Serializer()
         .append(pos)

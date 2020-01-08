@@ -17,7 +17,7 @@ public:
 
     struct PointedBlock {
         unsigned int blockId;
-        glm::vec3 pos;
+        glm::ivec3 pos;
         Dir face;
     };
 

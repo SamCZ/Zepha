@@ -4,7 +4,7 @@
 
 #include "ServerDimension.h"
 
-bool ServerDimension::setBlock(glm::vec3 pos, unsigned int block) {
+bool ServerDimension::setBlock(glm::ivec3 pos, unsigned int block) {
     bool manip = Dimension::setBlock(pos, block);
     if (!manip) return false;
     glm::vec3 mb = Space::MapBlock::world::fromBlock(pos);
@@ -31,7 +31,7 @@ void ServerDimension::removeLuaEntity(std::shared_ptr<ServerLuaEntity> &entity) 
     luaEntityRefs.erase(entity->id);
 }
 
-unsigned long long ServerDimension::getMapBlockIntegrity(glm::vec3 mapBlock) {
+unsigned long long ServerDimension::getMapBlockIntegrity(glm::ivec3 mapBlock) {
     if (mapBlockIntegrity.count(mapBlock)) return mapBlockIntegrity[mapBlock];
     return 0;
 }

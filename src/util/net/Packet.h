@@ -17,7 +17,7 @@
 class Packet {
 public:
     Packet() = default;
-    explicit Packet(PacketType type);
+    explicit Packet(PacketType type, bool reliable = true);
     explicit Packet(ENetPacket* packet);
 
     ENetPacket* toENetPacket();
@@ -28,5 +28,6 @@ public:
 
     PacketType type = PacketType::UNDEFINED;
     std::string data;
+    bool reliable;
 };
 

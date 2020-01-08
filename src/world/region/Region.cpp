@@ -4,7 +4,7 @@
 
 #include "Region.h"
 
-Region::Region(glm::vec3 pos) :
+Region::Region(glm::ivec3 pos) :
     pos(pos) {
 
     for (int i = 0; i < 64; i++) {

@@ -4,13 +4,14 @@
 
 #include "LocalDimension.h"
 
-LocalDimension::LocalDimension(LocalDefs &defs) : meshGenStream(std::make_unique<MeshGenStream>(defs, *this)) {}
+LocalDimension::LocalDimension(LocalDefs &defs) : defs(defs), meshGenStream(std::make_unique<MeshGenStream>(defs, *this)) {}
 
 void LocalDimension::update(double delta, glm::vec3 playerPos) {
     finishMeshes();
     queueMeshes();
 
-    for (auto& entities : luaEntities) entities->entity->update(delta);
+    for (auto& entities : localEntities) entities->entity->update(delta);
+    for (auto& entities : serverEntities) entities->entity->update(delta);
     for (auto& playerEnt : playerEntities) playerEnt.update(delta);
 
     auto chunkPosOfPlayer = Space::Chunk::world::fromBlock(playerPos);
@@ -82,7 +83,8 @@ int LocalDimension::renderChunks(Renderer &renderer) {
 }
 
 void LocalDimension::renderEntities(Renderer &renderer) {
-    for (auto& entity : luaEntities) entity->entity->draw(renderer);
+    for (auto& entity : localEntities) entity->entity->draw(renderer);
+    for (auto& entity : serverEntities) entity->entity->draw(renderer);
     for (auto& entity : playerEntities) entity.draw(renderer);
 }
 
@@ -97,7 +99,7 @@ void LocalDimension::setMeshChunk(std::shared_ptr<MeshChunk> meshChunk) {
     renderRefs.emplace(meshChunk->getPos(), --renderElems.end());
 }
 
-void LocalDimension::removeMeshChunk(const glm::vec3& pos) {
+void LocalDimension::removeMeshChunk(const glm::ivec3& pos) {
     if (!renderRefs.count(pos)) return;
     auto refIter = renderRefs.at(pos);
 
@@ -108,16 +110,16 @@ void LocalDimension::removeMeshChunk(const glm::vec3& pos) {
 }
 
 void LocalDimension::addLocalEntity(std::shared_ptr<LocalLuaEntity> &entity) {
-    luaEntities.push_back(entity);
-    luaEntityRefs.emplace(entity->id, --luaEntities.end());
+    localEntities.push_back(entity);
+    localEntityRefs.emplace(entity->id, --localEntities.end());
 }
 
 void LocalDimension::removeLocalEntity(std::shared_ptr<LocalLuaEntity> &entity) {
-    if (!luaEntityRefs.count(entity->id)) return;
-    auto refIter = luaEntityRefs.at(entity->id);
+    if (!localEntityRefs.count(entity->id)) return;
+    auto refIter = localEntityRefs.at(entity->id);
 
-    luaEntities.erase(refIter);
-    luaEntityRefs.erase(entity->id);
+    localEntities.erase(refIter);
+    localEntityRefs.erase(entity->id);
 }
 
 void LocalDimension::handleServerEntity(const Packet& p) {
@@ -128,15 +130,37 @@ void LocalDimension::handleServerEntity(const Packet& p) {
     auto visualOffset = d.read<glm::vec3>();
     auto angle        = d.read<float>();
     auto scale        = d.read<float>();
+    auto displayMode  = d.read<std::string>();
+    auto displayArg1  = d.read<std::string>();
+    auto displayArg2  = d.read<std::string>();
 
-    //TODO: Finish this function
+    if (serverEntityRefs.count(id)) {
+        auto& luaEntity = *serverEntityRefs.at(id)->get();
+        auto& entity = *luaEntity.entity;
+
+        entity.interpPos(position);
+        entity.interpVisualOffset(visualOffset);
+        entity.interpAngle(angle);
+        entity.interpScale(scale);
+
+        luaEntity.setDisplayType(displayMode, displayArg1, displayArg2);
+    }
+    else {
+        auto entity = std::make_shared<ServerLocalLuaEntity>(id, defs, displayMode, displayArg1, displayArg2);
+        entity->entity->setPos(position);
+        entity->entity->setVisualOffset(visualOffset);
+        entity->entity->setAngle(angle);
+        entity->entity->setScale(scale);
+        serverEntities.push_back(entity);
+        serverEntityRefs.emplace(id, --serverEntities.end());
+    }
 }
 
 int LocalDimension::getMeshChunkCount() {
     return static_cast<int>(renderElems.size());
 }
 
-bool LocalDimension::setBlock(glm::vec3 pos, unsigned int block) {
+bool LocalDimension::setBlock(glm::ivec3 pos, unsigned int block) {
     bool exists = Dimension::setBlock(pos, block);
     if (!exists) return false;
 

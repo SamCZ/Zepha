@@ -31,7 +31,7 @@ namespace ClientApi {
                 auto displayObject = luaEntity.get<sol::optional<std::string>>("display_object");
                 auto displayTexture = luaEntity.get<sol::optional<std::string>>("display_texture");
                 if (!displayType || !displayObject) throw "Missing display or display_object field.";
-                if (*displayType == "model" && !displayTexture) throw "Missing model display_texture field.";
+                if (strncmp(displayType->data(), "model", 5) == 0 && !displayTexture) throw "Missing model display_texture field.";
 
                 entityRef->set_display_type(*displayType, *displayObject, displayTexture);
 

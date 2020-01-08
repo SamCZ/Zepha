@@ -17,8 +17,8 @@ public:
 
     template <typename T> inline Serializer& append(const T& elem) {};
 
-    Packet packet(PacketType p) {
-        Packet packet(p);
+    Packet packet(PacketType p, bool reliable = true) {
+        Packet packet(p, reliable);
         packet.data = data;
         return std::move(packet);
     };

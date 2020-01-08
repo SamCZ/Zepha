@@ -46,8 +46,8 @@ public:
         return Dir::NONE;
     }
 
-    static glm::vec3 faceToOffset(Dir f) {
-        static const glm::vec3 positionOffsets[6] {
+    static glm::ivec3 faceToOffset(Dir f) {
+        static const glm::ivec3 positionOffsets[6] {
             { 1, 0, 0},
             {-1, 0, 0},
             { 0, 1, 0},

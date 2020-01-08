@@ -40,7 +40,7 @@ private:
 
     WorldGenStream* genStream = nullptr;
 
-    std::unordered_set<glm::vec3, Vec::compareFunc> generateQueueMap;
+    std::unordered_set<glm::vec3, Vec::vec3> generateQueueMap;
     std::vector<glm::vec3> generateQueueList;
 
     unsigned int seed;

@@ -28,7 +28,7 @@ public:
     void setAppearance(std::string displayMode, std::string displayArgument1, std::string displayArgument2);
 
     bool checkAndResetDirty();
-    void fillPacket(Packet &p);
+    Packet createPacket(bool reliable = true);
 protected:
     unsigned int id = 0;
 
@@ -41,6 +41,6 @@ protected:
     std::string displayArgument1 = "";
     std::string displayArgument2 = "";
 
-    bool dirty = false;
+    bool dirty = true;
 };
 
