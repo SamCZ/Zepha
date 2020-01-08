@@ -19,8 +19,19 @@ public:
         return *this;
     };
 
+    bool atEnd() {
+        return ind >= data.length();
+    };
+
     const std::string& data;
     size_t ind = 0;
+
+private:
+    typedef union { int in; char bytes[4]; }            int_union;
+    typedef union { unsigned int in; char bytes[4]; }   uint_union;
+    typedef union { short sh; char bytes[2]; }          short_union;
+    typedef union { unsigned short sh; char bytes[2]; } ushort_union;
+    typedef union { float fl; char bytes[4]; }          float_union;
 };
 
 template <> inline int Deserializer::read<int>() {
@@ -139,4 +150,14 @@ template <> inline std::vector<float> Deserializer::read<std::vector<float>>() {
     return std::vector<float>(
             reinterpret_cast<const float*>(&data[ind]),
             reinterpret_cast<const float*>(&data[ind + len * 4]));
+}
+
+template <> inline std::vector<std::string> Deserializer::read<std::vector<std::string>>() {
+    unsigned int len = read<unsigned int>();
+    std::vector<std::string> v {};
+    v.reserve(len);
+    for (unsigned int i = 0; i < len; i++) {
+        v.push_back(read<std::string>());
+    }
+    return std::move(v);
 }

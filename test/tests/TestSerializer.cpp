@@ -180,4 +180,19 @@ TEST_CASE("Serialization", "[net]") {
         REQUIRE(vec[1] == 2.1f);
         REQUIRE(vec[2] == 5.7f);
     }
+
+    SECTION("Vector<String") {
+        s.append<std::vector<std::string>>({
+            "hi",
+            "hello",
+            "how are you?"
+        });
+
+        Deserializer d(s.data);
+        auto vec = d.read<std::vector<std::string>>();
+        REQUIRE(vec.size() == 3);
+        REQUIRE(vec[0] == "hi");
+        REQUIRE(vec[1] == "hello");
+        REQUIRE(vec[2] == "how are you?");
+    }
 }

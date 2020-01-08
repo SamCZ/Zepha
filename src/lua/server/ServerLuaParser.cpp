@@ -281,7 +281,7 @@ void ServerLuaParser::createTextures(ServerDefs &defs) {
                             std::string comp = gzip::compress(str.data(), str.length());
                             free(data);
 
-                            defs.assets.textures.push_back({std::move(name), comp, width, height});
+                            defs.assets.textures.push_back({std::move(name), comp, static_cast<unsigned int>(width), static_cast<unsigned int>(height)});
                         }
                     }
                 }

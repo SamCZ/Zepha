@@ -27,7 +27,7 @@ public:
     void update(Player &player);
     void cleanup();
 
-    void setBlock(glm::vec3 pos, int block);
+    void setBlock(glm::vec3 pos, unsigned int block);
 
     ~ClientNetworkInterpreter();
 

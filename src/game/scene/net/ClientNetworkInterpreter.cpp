@@ -32,41 +32,39 @@ void ClientNetworkInterpreter::update(Player &player) {
             }
             case ENET_EVENT_TYPE_RECEIVE: {
                 std::unique_ptr<Packet> p = std::make_unique<Packet>(event.packet);
+                Deserializer d(p->data);
 
                 switch (p->type) {
                     case PacketType::THIS_PLAYER_INFO: {
-                        id = OLDSerializer::decodeInt(&p->data[0]);
-                        auto playerPos = OLDSerializer::decodeFloatVec3(&p->data[4]);
-                        auto playerAngle = OLDSerializer::decodeFloat(&p->data[16]);
-                        player.setPos(playerPos);
-                        player.setYaw(playerAngle);
+                        id = d.read<unsigned int>();
+
+                        player.setPos(d.read<glm::vec3>());
+                        player.setYaw(d.read<float>());
                         break;
                     }
                     case PacketType::PLAYER_INFO: {
-                        int peer_id = OLDSerializer::decodeInt(&p->data[0]);
+                        unsigned int peer_id = d.read<unsigned int>();
                         if (peer_id == id) break;
-
-                        auto playerPos = OLDSerializer::decodeFloatVec3(&p->data[4]);
-                        auto playerAngle = OLDSerializer::decodeFloat(&p->data[16]);
 
                         bool found = false;
                         for (auto& ent : world->dimension.playerEntities) {
                             if (ent.peer_id == peer_id) {
-                                ent.interpPos(playerPos);
-                                ent.interpAngle(-playerAngle + 90);
+                                ent.interpPos(d.read<glm::vec3>());
+                                ent.interpAngle(-d.read<float>() + 90);
                                 found = true;
                                 break;
                             }
                         }
-                        if (!found) world->dimension.playerEntities.emplace_back(playerPos, peer_id, playerModel);
+                        if (!found) world->dimension.playerEntities.emplace_back(d.read<glm::vec3>(), peer_id, playerModel);
                         break;
                     }
                     case PacketType::ENTITY_INFO: {
                         world->dimension.handleServerEntity(*p);
+                        break;
                     }
                     case PacketType::BLOCK_SET: {
-                        auto pos = OLDSerializer::decodeIntVec3(&p->data[0]);
-                        uint block = static_cast<uint>(OLDSerializer::decodeInt(&p->data[12]));
+                        auto pos = d.read<glm::ivec3>();
+                        auto block = d.read<unsigned int>();
                         world->setBlock(pos, block);
                         break;
                     }
@@ -75,7 +73,7 @@ void ClientNetworkInterpreter::update(Player &player) {
                         break;
                     }
                     case PacketType::SERVER_INFO: {
-                        serverSideChunkGens = OLDSerializer::decodeInt(&p->data[0]);
+                        serverSideChunkGens = d.read<unsigned int>();
                         break;
                     }
                     default:
@@ -116,12 +114,11 @@ ClientNetworkInterpreter::~ClientNetworkInterpreter() {
     cleanup();
 }
 
-void ClientNetworkInterpreter::setBlock(glm::vec3 pos, int block) {
+void ClientNetworkInterpreter::setBlock(glm::vec3 pos, unsigned int block) {
     Packet p(PacketType::BLOCK_SET);
-    p.data = Serializer()
-            .append(pos)
-            .append(block)
-            .data;
-
-    p.sendTo(connection.getPeer(), PacketChannel::BLOCK);
+    Serializer()
+        .append(pos)
+        .append(block)
+        .packet(PacketType::BLOCK_SET)
+        .sendTo(connection.getPeer(), PacketChannel::BLOCK);
 }

@@ -4,17 +4,20 @@
 
 #include "Packet.h"
 
+#include "Serializer.h"
+#include "Deserializer.h"
+
 Packet::Packet(PacketType type) : type(type) {}
 
 Packet::Packet(ENetPacket *packet) {
     std::string packetData(packet->data, packet->data + packet->dataLength);
-    this->type = static_cast<PacketType>(OLDSerializer::decodeInt(&packetData[0]));
+    this->type = static_cast<PacketType>(Deserializer(packetData).read<unsigned int>());
 
     this->data = packetData.substr(4, packetData.length() - 4);
 }
 
 ENetPacket* Packet::toENetPacket() {
-    std::string serialized = Serializer().append(static_cast<int>(type)).data + data;
+    std::string serialized = Serializer().append(static_cast<unsigned int>(type)).data + data;
 
     ENetPacket* enet = enet_packet_create(serialized.data(), serialized.length() + 1, ENET_PACKET_FLAG_RELIABLE);
     return enet;

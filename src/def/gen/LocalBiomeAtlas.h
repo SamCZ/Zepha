@@ -14,5 +14,5 @@ public:
     LocalBiomeAtlas();
     void registerBiome(BiomeDef* def) override;
 
-    void setIdentifiers(std::vector<std::string>& identifiers);
+    void setIdentifiers(const std::vector<std::string>& identifiers);
 };

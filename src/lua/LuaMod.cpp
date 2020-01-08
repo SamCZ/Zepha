@@ -3,27 +3,19 @@
 //
 
 #include "LuaMod.h"
+#include "../util/net/Deserializer.h"
 #include <gzip/decompress.hpp>
 
 LuaMod LuaMod::fromPacket(const Packet& p) {
     LuaMod luaMod {};
 
-    std::string mod = gzip::decompress(&p.data[4], p.data.size());
-    luaMod.serialized = &p.data[4];
+    auto serialized = Deserializer(p.data).read<std::string>();
+    std::string mod = gzip::decompress(serialized.c_str(), serialized.length());
+    luaMod.serialized = serialized;
 
-    unsigned int offset = 0;
-
-    std::string name = OLDSerializer::decodeString(&mod[0]);
-    offset += 4 + name.length();
-
-    std::string description = OLDSerializer::decodeString(&mod[offset]);
-    offset += 4 + description.length();
-
-    std::string version = OLDSerializer::decodeString(&mod[offset]);
-    offset += 4 + version.length();
-
-    std::string dependsStr = OLDSerializer::decodeString(&mod[offset]);
-    offset += 4 + dependsStr.length();
+    std::string name, description, version, dependsStr;
+    Deserializer d(mod);
+    d.read(name).read(description).read(version).read(dependsStr);
 
     std::vector<std::string> depends;
     size_t pos = 0;
@@ -37,15 +29,7 @@ LuaMod LuaMod::fromPacket(const Packet& p) {
 
     luaMod.config = {name, description, version, depends};
 
-    while (offset < mod.length()) {
-        std::string path = OLDSerializer::decodeString(&mod[offset]);
-        offset += 4 + path.length();
-        std::string file = OLDSerializer::decodeString(&mod[offset]);
-        offset += 4 + file.length();
-
-        LuaModFile modFile {path, file};
-        luaMod.files.push_back(modFile);
-    }
+    while (!d.atEnd()) luaMod.files.push_back({ d.read<std::string>(), d.read<std::string>() });
 
     return std::move(luaMod);
 }

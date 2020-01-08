@@ -3,8 +3,6 @@
 //
 
 #include "ServerConfig.h"
-#include "../../util/net/PacketChannel.h"
-#include "../asset/AssetType.h"
 
 ServerConfig::ServerConfig(ServerDefs &defs) : defs(defs) {}
 
@@ -27,25 +25,17 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
             return true;
         }
         case PacketType::BLOCK_IDENTIFIER_LIST: {
-            Packet p(PacketType::BLOCK_IDENTIFIER_LIST);
-
-            Serializer s {};
-            s.append(static_cast<unsigned int>(blockIdentifierList.size()));
-            for (auto& str : blockIdentifierList) s.append(str);
-            p.data = s.data;
-
-            p.sendTo(client.getPeer(), PacketChannel::CONNECT);
+            Serializer()
+                .append(blockIdentifierList)
+                .packet(PacketType::BLOCK_IDENTIFIER_LIST)
+                .sendTo(client.getPeer(), PacketChannel::CONNECT);
             break;
         }
         case PacketType::BIOME_IDENTIFIER_LIST: {
-            Packet p(PacketType::BIOME_IDENTIFIER_LIST);
-
-            Serializer s {};
-            s.append(static_cast<unsigned int>(biomeIdentifierList.size()));
-            for (auto& str : biomeIdentifierList) s.append(str);
-            p.data = s.data;
-
-            p.sendTo(client.getPeer(), PacketChannel::CONNECT);
+            Serializer()
+                .append(biomeIdentifierList)
+                .packet(PacketType::BIOME_IDENTIFIER_LIST)
+                .sendTo(client.getPeer(), PacketChannel::CONNECT);
             break;
         }
         case PacketType::MODS: {

@@ -5,8 +5,10 @@
 #pragma once
 
 #include "../conn/ServerClient.h"
+#include "../asset/AssetType.h"
 #include "../../def/ServerDefs.h"
 #include "../../util/net/Packet.h"
+#include "../../util/net/Serializer.h"
 
 class ServerConfig {
 public:

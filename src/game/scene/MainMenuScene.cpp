@@ -181,7 +181,7 @@ void MainMenuScene::positionElements() {
 
     auto navigationBarBg = navigationBar->get<GUIContainer>("navigationBarBg");
     for (unsigned int i = 0; i < static_cast<float>(win.x) / 64.f / GS; i++) {
-        auto segment = std::make_shared<GUIRect>("segment_" + to_string(i));
+        auto segment = std::make_shared<GUIRect>("segment_" + std::to_string(i));
         segment->create({64 * GS, 18 * GS}, {}, state.defs.textures["menu_bar_bg"]);
         segment->setPos({i * 64 * GS, 0});
         navigationBarBg->add(segment);

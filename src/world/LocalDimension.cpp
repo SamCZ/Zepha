@@ -93,7 +93,7 @@ void LocalDimension::setChunk(sptr<BlockChunk> chunk) {
 
 void LocalDimension::setMeshChunk(std::shared_ptr<MeshChunk> meshChunk) {
     if (renderRefs.count(meshChunk->getPos())) removeMeshChunk(meshChunk->getPos());
-    renderElems.push_back(static_pointer_cast<ChunkRenderElem>(meshChunk));
+    renderElems.push_back(std::static_pointer_cast<ChunkRenderElem>(meshChunk));
     renderRefs.emplace(meshChunk->getPos(), --renderElems.end());
 }
 
@@ -121,17 +121,15 @@ void LocalDimension::removeLocalEntity(std::shared_ptr<LocalLuaEntity> &entity) 
 }
 
 void LocalDimension::handleServerEntity(const Packet& p) {
-    unsigned int id = OLDSerializer::decodeUInt(&p.data[0]);
-    glm::vec3 position = OLDSerializer::decodeFloatVec3(&p.data[4]);
-    glm::vec3 visualOffset = OLDSerializer::decodeFloatVec3(&p.data[16]);
-    float angle = OLDSerializer::decodeFloat(&p.data[20]);
-    float scale = OLDSerializer::decodeFloat(&p.data[24]);
-//    std::string displayMode =
-//    OLDSerializer::encodeFloat(p.data, angle);
-//    OLDSerializer::encodeFloat(p.data, scale);
-//    OLDSerializer::encodeString(p.data, displayMode);
-//    OLDSerializer::encodeString(p.data, displayArgument1);
-//    OLDSerializer::encodeString(p.data, displayArgument2);
+    Deserializer d(p.data);
+
+    auto id           = d.read<unsigned int>();
+    auto position     = d.read<glm::vec3>();
+    auto visualOffset = d.read<glm::vec3>();
+    auto angle        = d.read<float>();
+    auto scale        = d.read<float>();
+
+    //TODO: Finish this function
 }
 
 int LocalDimension::getMeshChunkCount() {

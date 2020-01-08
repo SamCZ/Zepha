@@ -49,26 +49,17 @@ void ConnectScene::update() {
 
         case State::IDENTIFIER_LIST: {
             components.get<GUIRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.2, 32});
+
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
+                Deserializer d(p.data);
 
                 if (p.type == PacketType::BLOCK_IDENTIFIER_LIST) {
                     auto statusText = components.get<GUIText>("statusText");
                     statusText->setText(statusText->getText() + "Received block index-identifier table.\n");
 
-                    std::vector<std::string> indexIdentifierTable{};
-                    indexIdentifierTable.reserve(static_cast<unsigned long>(OLDSerializer::decodeUInt(&p.data[0])));
-
-                    unsigned int ind = 4;
-                    while (true) {
-                        auto len = OLDSerializer::decodeInt(&p.data[ind]);
-                        indexIdentifierTable.emplace_back(&p.data[ind + 4], &p.data[ind + 4 + len]);
-                        ind += 4 + len;
-                        if (ind >= p.data.length() - 4) break;
-                    }
-
-                    state.defs.defs.setIdentifiers(indexIdentifierTable);
+                    state.defs.defs.setIdentifiers(d.read<std::vector<std::string>>());
 
                     Packet resp(PacketType::BIOME_IDENTIFIER_LIST);
                     resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
@@ -77,18 +68,7 @@ void ConnectScene::update() {
                     auto statusText = components.get<GUIText>("statusText");
                     statusText->setText(statusText->getText() + "Received biome index-identifier table.\nDownloading mods...\n");
 
-                    std::vector<std::string> indexIdentifierTable{};
-                    indexIdentifierTable.reserve(static_cast<unsigned long>(OLDSerializer::decodeUInt(&p.data[0])));
-
-                    unsigned int ind = 4;
-                    while (true) {
-                        auto len = OLDSerializer::decodeInt(&p.data[ind]);
-                        indexIdentifierTable.emplace_back(&p.data[ind + 4], &p.data[ind + 4 + len]);
-                        ind += 4 + len;
-                        if (ind >= p.data.length() - 4) break;
-                    }
-
-                    state.defs.biomes.setIdentifiers(indexIdentifierTable);
+                    state.defs.biomes.setIdentifiers(d.read<std::vector<std::string>>());
 
                     connectState = State::MODS;
                     Packet resp(PacketType::MODS);
@@ -103,6 +83,8 @@ void ConnectScene::update() {
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
+                Deserializer d(p.data);
+
                 auto statusText = components.get<GUIText>("statusText");
 
                 if (p.type == PacketType::MODS) {
@@ -111,7 +93,8 @@ void ConnectScene::update() {
                     state.defs.luaApi.mods.push_back(std::move(luaMod));
                 }
                 else if (p.type == PacketType::MOD_ORDER) {
-                    std::string order = OLDSerializer::decodeString(&p.data[0]);
+                    //TODO: Look into encoding vectors here
+                    std::string order = d.read<std::string>();
 
                     size_t pos = 0;
                     std::string token;
@@ -134,51 +117,44 @@ void ConnectScene::update() {
 
         case State::MEDIA: {
             components.get<GUIRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.6, 32});
+
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
+                Deserializer d(p.data);
+
                 auto statusText = components.get<GUIText>("statusText");
 
                 if (p.type == PacketType::MEDIA) {
-                    AssetType t = static_cast<AssetType>(OLDSerializer::decodeInt(&p.data[0]));
-                    size_t offset = 4;
+                    AssetType t = static_cast<AssetType>(d.read<int>());
                     unsigned int count = 0;
 
                     while (t != AssetType::END) {
-                        std::string assetName = OLDSerializer::decodeString(&p.data[offset]);
-                        offset += assetName.length() + 4;
+                        std::string assetName = d.read<std::string>();
 
                         if (t == AssetType::TEXTURE) {
-                            int width = OLDSerializer::decodeInt(&p.data[offset]);
-                            offset += 4;
-                            int height = OLDSerializer::decodeInt(&p.data[offset]);
-                            offset += 4;
+                            int width = d.read<unsigned int>();
+                            int height = d.read<unsigned int>();
 
-                            std::string data = OLDSerializer::decodeString(&p.data[offset]);
+                            std::string data = d.read<std::string>();
                             std::string uncompressed = gzip::decompress(data.data(), data.length());
 
                             state.defs.textures.addImage(
                                     reinterpret_cast<unsigned char *>(const_cast<char *>(uncompressed.data())),
                                     assetName, true, width, height);
-
-                            offset += data.length() + 4;
                         }
                         else if (t == AssetType::MODEL) {
-                            std::string format = OLDSerializer::decodeString(&p.data[offset]);
-                            offset += format.length() + 4;
-                            std::string data = OLDSerializer::decodeString(&p.data[offset]);
-                            offset += data.length() + 4;
+                            std::string format = d.read<std::string>();
+                            std::string data = d.read<std::string>();
 
                             state.defs.models.models.insert({assetName, SerializedModel{assetName, data, format}});
                         }
 
+                        t = static_cast<AssetType>(d.read<int>());
                         count++;
-
-                        t = static_cast<AssetType>(OLDSerializer::decodeInt(&p.data[offset]));
-                        offset += 4;
                     }
 
-                    statusText->setText(statusText->getText() + "Received " + to_string(count) + "x media files.\n");
+                    statusText->setText(statusText->getText() + "Received " + std::to_string(count) + "x media files.\n");
                 }
                 else if (p.type == PacketType::MEDIA_DONE) {
                     components.get<GUIRect>("loadBar")->setScale({state.renderer.window.getSize().x, 32});

@@ -180,7 +180,7 @@ void MapGen::buildDensityMap(MapGenJob* job, const glm::vec3& worldPos) {
 }
 
 void MapGen::buildElevationMap(std::array<std::pair<MapGenJob*, BlockChunk*>, 64>& chunks,
-	pair<MapGenJob*, BlockChunk*>& chunk, const glm::vec3& localPos, const glm::vec3& worldPos) {
+	std::pair<MapGenJob*, BlockChunk*>& chunk, const glm::vec3& localPos, const glm::vec3& worldPos) {
 
 	MapGenJob* upperChunk = nullptr;
 

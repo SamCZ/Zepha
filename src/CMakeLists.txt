@@ -63,9 +63,7 @@ set(ZEPHA_SRC
     util/net/NetHandler.h
     game/hud/GameGui.cpp
     game/hud/GameGui.h
-        util/net/OLDSerializer.cpp
-        util/net/OLDSerializer.h
-    server/conn/ServerClients.cpp
+        server/conn/ServerClients.cpp
     server/conn/ServerClients.h
     server/conn/ServerClient.h
     util/net/PacketChannel.h

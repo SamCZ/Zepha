@@ -115,7 +115,7 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
 
             world.setBlock(pos, block);
 
-            if (block == 0) {
+            if (block == DefinitionAtlas::AIR) {
                 auto def = defs.defs.blockFromId(world.getBlock(pos));
                 if (def.callbacks.count(Callback::BREAK)) {
                     def.callbacks[Callback::BREAK](defs.luaApi.vecToTable(pos));

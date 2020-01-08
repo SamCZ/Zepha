@@ -58,8 +58,8 @@ void GUIInventoryList::hoverEvent(bool hovered, glm::ivec2 pos) {
         if (!this->hovered) hoverRect->setScale({16*scale.x, 16*scale.y});
 
         glm::ivec2 slot = pos / (glm::ivec2(this->scale) * this->innerPadding);
-        slot.x = min(slot.x, static_cast<int>(list->getWidth() - 1));
-        slot.y = min(slot.y, list->getLength() / list->getWidth() - 1);
+        slot.x = std::min(slot.x, static_cast<int>(list->getWidth() - 1));
+        slot.y = std::min(slot.y, list->getLength() / list->getWidth() - 1);
         glm::ivec2 highlightPos = slot * glm::ivec2(this->scale) * this->innerPadding;
 
         hoverRect->setPos(highlightPos);
@@ -73,8 +73,8 @@ void GUIInventoryList::leftClick(bool down, glm::ivec2 pos) {
     pos += glm::ivec2(glm::vec2(this->padding.x, this->padding.y) * this->scale);
 
     glm::ivec2 slot = pos / (glm::ivec2(this->scale) * this->innerPadding);
-    slot.x = min(slot.x, static_cast<int>(list->getWidth() - 1));
-    slot.y = min(slot.y, list->getLength() / list->getWidth() - 1);
+    slot.x = std::min(slot.x, static_cast<int>(list->getWidth() - 1));
+    slot.y = std::min(slot.y, list->getLength() / list->getWidth() - 1);
 
     unsigned short index = slot.x + slot.y * list->getWidth();
 
@@ -87,8 +87,8 @@ void GUIInventoryList::rightClick(bool down, glm::ivec2 pos) {
     pos += glm::ivec2(glm::vec2(this->padding.x, this->padding.y) * this->scale);
 
     glm::ivec2 slot = pos / (glm::ivec2(this->scale) * this->innerPadding);
-    slot.x = min(slot.x, static_cast<int>(list->getWidth() - 1));
-    slot.y = min(slot.y, list->getLength() / list->getWidth() - 1);
+    slot.x = std::min(slot.x, static_cast<int>(list->getWidth() - 1));
+    slot.y = std::min(slot.y, list->getLength() / list->getWidth() - 1);
 
     unsigned short index = slot.x + slot.y * list->getWidth();
 
@@ -132,7 +132,7 @@ void GUIInventoryList::drawContents() {
             auto stack = list->getStack(j + i * list->getWidth());
             if (stack.id == 0) continue;
 
-            auto item = std::make_shared<GUIInventoryItem>("item_" + to_string(i) + "_" + to_string(j));
+            auto item = std::make_shared<GUIInventoryItem>("item_" + std::to_string(i) + "_" + std::to_string(j));
             item->create(scale, stack.count, defs->defs.fromId(stack.id), f);
             add(item);
             item->setPos({padding.x + j * (16*scale.x+innerPadding.x/scale.x), padding.y + i * (16*scale.y+innerPadding.y/scale.y)});

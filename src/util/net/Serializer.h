@@ -8,20 +8,27 @@
 #include <vector>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
-
-namespace {
-    typedef union { int in; char bytes[4]; }            int_union;
-    typedef union { unsigned int in; char bytes[4]; }   uint_union;
-    typedef union { short sh; char bytes[2]; }          short_union;
-    typedef union { unsigned short sh; char bytes[2]; } ushort_union;
-    typedef union { float fl; char bytes[4]; }          float_union;
-}
+#include "Packet.h"
+#include "PacketType.h"
 
 class Serializer {
 public:
     std::string data {};
 
     template <typename T> inline Serializer& append(const T& elem) {};
+
+    Packet packet(PacketType p) {
+        Packet packet(p);
+        packet.data = data;
+        return std::move(packet);
+    };
+
+private:
+    typedef union { int in; char bytes[4]; }            int_union;
+    typedef union { unsigned int in; char bytes[4]; }   uint_union;
+    typedef union { short sh; char bytes[2]; }          short_union;
+    typedef union { unsigned short sh; char bytes[2]; } ushort_union;
+    typedef union { float fl; char bytes[4]; }          float_union;
 };
 
 template <> inline Serializer& Serializer::append<int>(const int& elem) {
@@ -129,5 +136,13 @@ template <> inline Serializer& Serializer::append<std::vector<float>>(const std:
     data.reserve(data.length() + elem.size() * 4 + 4);
     append<unsigned int>(elem.size());
     data += std::string { reinterpret_cast<const char*>(&elem[0]), elem.size() * 4 };
+    return *this;
+}
+
+template <> inline Serializer& Serializer::append<std::vector<std::string>>(const std::vector<std::string>& elem) {
+    append<unsigned int>(elem.size());
+    for (unsigned int i = 0; i < elem.size(); i++) {
+        append<std::string>(elem[i]);
+    }
     return *this;
 }

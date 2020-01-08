@@ -7,6 +7,7 @@
 #include <string>
 #include <glm/vec3.hpp>
 #include "../../util/net/Packet.h"
+#include "../../util/net/Serializer.h"
 
 class ServerEntity {
 public:

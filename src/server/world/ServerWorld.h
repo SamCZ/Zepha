@@ -47,7 +47,7 @@ private:
     ServerDefs& defs;
     ServerClients& clientList;
 
-    int generatedChunks = 0;
+    unsigned int generatedChunks = 0;
 
     //Static vector of chunks to place around players
     std::vector<glm::vec3> generateOrder;

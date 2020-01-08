@@ -61,12 +61,12 @@ std::vector<MeshDetails*> MeshGenStream::update() {
                 std::shared_ptr<BlockChunk> chunk = dimension.getChunk(pos);
                 if (chunk == nullptr) goto breakAddTask;
 
-                u.thisChunk = shared_ptr<BlockChunk>(chunk);
+                u.thisChunk = std::shared_ptr<BlockChunk>(chunk);
 
                 int ind = 0;
                 for (glm::vec3 dir : Vec::cardinalVectors) {
                     std::shared_ptr<BlockChunk> adjacent = dimension.getChunk(pos + dir);
-                    u.adjacentChunks[ind++] = shared_ptr<BlockChunk>(adjacent);
+                    u.adjacentChunks[ind++] = std::shared_ptr<BlockChunk>(adjacent);
                     if (adjacent == nullptr) goto breakAddTask;
                 }
 
@@ -92,7 +92,7 @@ void MeshGenStream::threadFunction(MeshGenStream::Thread *thread) {
             u.busy = false;
         }
 
-         if (hasNoTasks) std::this_thread::sleep_for(1ms);
+         if (hasNoTasks) std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 

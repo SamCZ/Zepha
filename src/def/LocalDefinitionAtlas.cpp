@@ -18,7 +18,7 @@ LocalDefinitionAtlas::LocalDefinitionAtlas(TextureAtlas& atlas) {
     defTable.insert({"air", 1});
 }
 
-void LocalDefinitionAtlas::setIdentifiers(std::vector<std::string> &identifiers) {
+void LocalDefinitionAtlas::setIdentifiers(const std::vector<std::string>& identifiers) {
     for (unsigned int i = 0; i < identifiers.size(); i++) {
         if (i >= 2) defs.emplace_back(); //Don't emplace air or ignore
         defTable.insert({identifiers[i], i});
