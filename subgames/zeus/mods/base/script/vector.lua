@@ -65,3 +65,18 @@ vector.floor = function(v)
     if type(v) ~= "table" then return nil end
     return {x = math.ceil(v.x), y = math.ceil(v.y), z = math.ceil(v.z)}
 end
+
+-- vector.distance_squared
+-- Get the square of the distance between two vectors
+-- This function is faster if you only need to compare two distances
+vector.distance_squared = function(v1, v2)
+    if type(v1) ~= "table" or type(v2) ~= "table" then return nil end
+    local diff = vector.abs(vector.subtract(v1, v2))
+    return diff.x ^ 2 + diff.y ^ 2 + diff.z ^ 2
+end
+
+-- vector.distance
+-- Get the distance between two vectors
+vector.distance = function(v1, v2)
+    return math.sqrt(vector.distance_squared(v1, v2))
+end

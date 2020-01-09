@@ -7,11 +7,11 @@
 
 #include "ServerLuaEntity.h"
 
-void ServerLuaEntity::set_pos(const sol::table &pos) {
+void ServerLuaEntity::snap_pos(const sol::table &pos) {
     entity->setPos({pos["x"], pos["y"], pos["z"]});
 }
 
-void ServerLuaEntity::int_pos(const sol::table &pos) {
+void ServerLuaEntity::set_pos(const sol::table &pos) {
     entity->setPos({pos["x"], pos["y"], pos["z"]});
 }
 
@@ -20,12 +20,12 @@ sol::table ServerLuaEntity::get_pos(sol::this_state s) {
     return sol::state_view(s).create_table_with("x", pos.x, "y", pos.y, "z", pos.z);
 }
 
-void ServerLuaEntity::set_visual_offset(const sol::table &vs) {
+void ServerLuaEntity::snap_visual_offset(const sol::table &vs) {
     entity->setVisualOffset({vs["x"], vs["y"], vs["z"]});
 }
 
-void ServerLuaEntity::int_visual_offset(const sol::table &vs) {
-    entity->setVisualOffset({vs["x"], vs["y"], vs["z"]});
+void ServerLuaEntity::set_visual_offset(const sol::table &pos) {
+    entity->setVisualOffset({pos["x"], pos["y"], pos["z"]});
 }
 
 sol::table ServerLuaEntity::get_visual_offset(sol::this_state s) {
@@ -33,11 +33,11 @@ sol::table ServerLuaEntity::get_visual_offset(sol::this_state s) {
     return sol::state_view(s).create_table_with("x", v.x, "y", v.y, "z", v.z);
 }
 
-void ServerLuaEntity::set_yaw(float rot) {
+void ServerLuaEntity::snap_yaw(float rot) {
     entity->setAngle(rot);
 }
 
-void ServerLuaEntity::int_yaw(float rot) {
+void ServerLuaEntity::set_yaw(float rot) {
     entity->setAngle(rot);
 }
 
@@ -45,11 +45,11 @@ float ServerLuaEntity::get_yaw() {
     return entity->getAngle();
 }
 
-void ServerLuaEntity::set_scale(float scale) {
+void ServerLuaEntity::snap_scale(float scale) {
     entity->setScale(scale);
 }
 
-void ServerLuaEntity::int_scale(float scale) {
+void ServerLuaEntity::set_scale(float scale) {
     entity->setScale(scale);
 }
 
@@ -60,7 +60,7 @@ float ServerLuaEntity::get_scale() {
 void ServerLuaEntity::set_display_type(const std::string &type, const std::string &arg, sol::optional<std::string> arg2) {
     if (strncmp(type.data(), "gameobject", 10) == 0) {
         ItemDef& def = defs.defs.fromStr(arg);
-        if (def.index == 0) throw "Invalid gameobject to display";
+//        if (def.index == 0) throw "Invalid gameobject to display";
 
         if (def.type == ItemDef::Type::BLOCK)
             entity->setAppearance("gameobject", "block", arg);

@@ -21,7 +21,7 @@ zepha.register_block("zeus:default:grass", {
     drop = "zeus:default:dirt",
     on_break = function(pos)
         zepha.add_entity("zeus:default:dropped_item", vector.add(pos, v(0.5)),
-            {object = zepha.registered_blocks["zeus:default:grass"].drop});
+            {item = zepha.registered_blocks["zeus:default:grass"].drop});
     end
 })
 
@@ -57,6 +57,6 @@ zepha.register_block("zeus:default:grass_slab", {
     drop = "zeus:default:grass_slab",
     on_break_client = function(pos)
         zepha.add_entity("zeus:default:dropped_item", vector.add(pos, v(0.5)),
-            {object = zepha.registered_blocks["zeus:default:grass_slab"].drop});
+            {item = zepha.registered_blocks["zeus:default:grass_slab"].drop});
     end
 })

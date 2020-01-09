@@ -7,11 +7,11 @@
 
 #include "LocalLuaEntity.h"
 
-void LocalLuaEntity::set_pos(const sol::table &pos) {
+void LocalLuaEntity::snap_pos(const sol::table &pos) {
     entity->setPos({pos["x"], pos["y"], pos["z"]});
 }
 
-void LocalLuaEntity::int_pos(const sol::table &pos) {
+void LocalLuaEntity::set_pos(const sol::table &pos) {
     entity->interpPos({pos["x"], pos["y"], pos["z"]});
 }
 
@@ -20,12 +20,12 @@ sol::table LocalLuaEntity::get_pos(sol::this_state s) {
     return sol::state_view(s).create_table_with("x", pos.x, "y", pos.y, "z", pos.z);
 }
 
-void LocalLuaEntity::set_visual_offset(const sol::table &vs) {
+void LocalLuaEntity::snap_visual_offset(const sol::table &vs) {
     entity->setVisualOffset({vs["x"], vs["y"], vs["z"]});
 }
 
-void LocalLuaEntity::int_visual_offset(const sol::table &vs) {
-    entity->interpVisualOffset({vs["x"], vs["y"], vs["z"]});
+void LocalLuaEntity::set_visual_offset(const sol::table &pos) {
+    entity->interpVisualOffset({pos["x"], pos["y"], pos["z"]});
 }
 
 sol::table LocalLuaEntity::get_visual_offset(sol::this_state s) {
@@ -33,11 +33,11 @@ sol::table LocalLuaEntity::get_visual_offset(sol::this_state s) {
     return sol::state_view(s).create_table_with("x", v.x, "y", v.y, "z", v.z);
 }
 
-void LocalLuaEntity::set_yaw(float rot) {
+void LocalLuaEntity::snap_yaw(float rot) {
     entity->setAngle(rot);
 }
 
-void LocalLuaEntity::int_yaw(float rot) {
+void LocalLuaEntity::set_yaw(float rot) {
     entity->interpAngle(rot);
 }
 
@@ -45,11 +45,11 @@ float LocalLuaEntity::get_yaw() {
     return entity->getAngle();
 }
 
-void LocalLuaEntity::set_scale(float scale) {
+void LocalLuaEntity::snap_scale(float scale) {
     entity->setScale(scale);
 }
 
-void LocalLuaEntity::int_scale(float scale) {
+void LocalLuaEntity::set_scale(float scale) {
     entity->interpScale(scale);
 }
 

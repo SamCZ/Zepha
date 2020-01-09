@@ -13,7 +13,7 @@ LocalDefinitionAtlas::LocalDefinitionAtlas(TextureAtlas& atlas) {
 
     //Air Node
     BlockModel nullModel {};
-    BlockDef* air = new BlockDef("", 0, "Air", 1, nullModel, false, {}, {});
+    BlockDef* air = new BlockDef("air", 0, "Air", 1, nullModel, false, {}, {});
     defs.push_back(air);
     defTable.insert({"air", 1});
 }

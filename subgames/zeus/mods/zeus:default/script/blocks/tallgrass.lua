@@ -17,7 +17,7 @@ for i=1,5,1 do
         on_break_client = function(pos)
             if math.random() > 0.8 then
                 zepha.add_entity("zeus:default:dropped_item", vector.add(pos, v(0.5)),
-                    {object = "zeus:materials:plant_fibre"});
+                    {item = "zeus:materials:plant_fibre"});
             end
         end
     })
