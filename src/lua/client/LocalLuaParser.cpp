@@ -3,10 +3,10 @@
 //
 
 #include "LocalLuaParser.h"
-#include "LocalRegisterBlocks.h"
-#include "LocalRegisterItems.h"
-#include "LocalRegisterKeybinds.h"
-#include "LocalRegisterBiomes.h"
+#include "../register/RegisterBlocks.h"
+#include "../register/RegisterItems.h"
+#include "../register/RegisterKeybinds.h"
+#include "../register/RegisterBiomes.h"
 
 #include "../../def/LocalDefs.h"
 #include "../api/type/LocalLuaPlayer.h"
@@ -108,10 +108,10 @@ void LocalLuaParser::loadMods() {
 }
 
 void LocalLuaParser::registerDefinitions(LocalDefs &defs) {
-    LocalRegisterBlocks(core, defs);
-    LocalRegisterItems(core, defs);
-    LocalRegisterKeybinds(core, defs, manager);
-    LocalRegisterBiomes(core, defs);
+    RegisterBlocks  ::client(core, defs);
+    RegisterItems   ::client(core, defs);
+    RegisterBiomes  ::client(core, defs);
+    RegisterKeybinds::client(core, manager);
 }
 
 void LocalLuaParser::update(double delta, bool* keys) {

@@ -7,7 +7,7 @@
 #include <cute_files/cute_files.h>
 #include "../LuaParser.h"
 #include "../LuaMod.h"
-#include "LuaInputManager.h"
+#include "../LuaInputManager.h"
 
 class LocalDefs;
 class LocalWorld;

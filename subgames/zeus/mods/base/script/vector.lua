@@ -38,6 +38,17 @@ vector.subtract = function(v1, v2)
     return vector.add(v1, vector.negative(v2))
 end
 
+-- vector.multiply
+-- Multiply v1 by a vector or number
+vector.multiply = function(v1, m)
+    if type(v1) ~= "table" then return nil end
+    if type(m) == "table" then
+        return {x = (v1.x or 0) * (m.x or 0), y = (v1.y or 0) * (m.y or 0), z = (v1.z or 0) * (m.z or 0)}
+    elseif type(m) == "number" then
+        return {x = (v1.x or 0) * m, y = (v1.y or 0) * m, z = (v1.z or 0) * m}
+    else return nil end
+end
+
 -- vector.abs
 -- Return the absolute value of v
 vector.abs = function(v)

@@ -1,6 +1,6 @@
 #version 330 core
 
-#define TAU 6.28318530718f
+#define TAU 6.28318530718
 
 layout (location = 0) in vec3  aPos;
 layout (location = 1) in vec2  aTexCoords;

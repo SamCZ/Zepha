@@ -5,7 +5,7 @@ if zepha.server then return end -- Only run the following code on the client.
 local shit_adding = false
 local main = zepha.player:get_inventory():get_list("main")
 
-zepha.register_keybind("add_shit_b", {
+zepha.register_keybind("zeus:inventory:add_shit_b", {
     description = "Add testing items to inventory",
     default = zepha.keys.b,
     on_press = function()
@@ -16,7 +16,7 @@ zepha.register_keybind("add_shit_b", {
     end
 })
 
-zepha.register_keybind("add_shit_i", {
+zepha.register_keybind("zeus:inventory:add_shit_i", {
     description = "Add testing items to inventory",
     default = zepha.keys.n,
     on_press = function()
@@ -43,7 +43,7 @@ zepha.delay(function()
     return true
 end, 0)
 
-zepha.register_keybind("open_inventory", {
+zepha.register_keybind("zeus:inventory:open_inventory", {
     description = "Open Inventory",
     default = zepha.keys.e,
     on_press = function()

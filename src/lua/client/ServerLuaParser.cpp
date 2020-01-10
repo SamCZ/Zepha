@@ -5,11 +5,9 @@
 #include <gzip/compress.hpp>
 
 #include "ServerLuaParser.h"
-#include "ServerRegisterBlocks.h"
-#include "ServerRegisterItems.h"
-#include "ServerRegisterBiomes.h"
-
-#include "../../def/ServerDefs.h"
+#include "../register/RegisterBlocks.h"
+#include "../register/RegisterItems.h"
+#include "../register/RegisterBiomes.h"
 
 #include "../api/type/sServerLuaEntity.h"
 
@@ -85,9 +83,9 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
 }
 
 void ServerLuaParser::registerDefinitions(ServerDefs &defs) {
-    ServerRegisterBlocks(core, defs);
-    ServerRegisterItems(core, defs);
-    ServerRegisterBiomes(core, defs);
+    RegisterBlocks::server(core, defs);
+    RegisterItems ::server(core, defs);
+    RegisterBiomes::server(core, defs);
 }
 
 void ServerLuaParser::loadMods(ServerDefs& defs, const std::string& rootPath) {

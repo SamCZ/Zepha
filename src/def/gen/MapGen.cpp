@@ -50,6 +50,7 @@ MapGen::MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeAtlas& biomes) :
 	worldFeatureBase.SetSeed(seed);
 	worldFeatureBase.SetFrequency(0.2);
 	worldFeatureBase.SetOctaveCount(3);
+
 	worldFeatureScaled.SetSourceModule(0, worldFeatureBase);
 	worldFeatureScaled.SetScale(6);
 	worldFeatureScaled.SetBias(6);

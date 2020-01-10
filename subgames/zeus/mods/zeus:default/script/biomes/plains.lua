@@ -1,35 +1,42 @@
+local noise = {
+    module = "add",
+    sources = {
+        { -- Elevation
+            module = "scale_bias",
+            source = {
+                module = "perlin",
+                seed = zepha.seed,
+                frequency = 0.002,
+                octaves = 8
+            },
+            scale = 250,
+            bias = 32
+        },
+        { -- Features
+            module = "scale_bias",
+            source = {
+                module = "perlin",
+                seed = zepha.seed,
+                frequency = 0.2,
+                octaves = 3,
+            },
+            scale = 6,
+            bias = 6
+        }
+    }
+}
+
 zepha.register_biome("zeus:default:plains", {
-    temperature = 15/100,
-    humidity = 80/100,
-    roughness = 20/100,
+    environment = {
+        temperature = 15/100,
+        humidity = 80/100,
+        roughness = 20/100,
+    },
     blocks = {
         top = "zeus:default:tallgrass_1",
         soil = "zeus:default:grass",
         rock = "zeus:default:stone"
     },
-    biome_tint = "#aaed45"
-})
-
-zepha.register_biome("zeus:default:lush_plains", {
-    temperature = 15/100,
-    humidity = 95/100,
-    roughness = 20/100,
-    blocks = {
-        top = "zeus:default:grass",
-        soil = "zeus:default:dirt",
-        rock = "zeus:default:stone"
-    },
-    biome_tint = "#05ff1e"
-})
-
-zepha.register_biome("zeus:default:dry_plains", {
-    temperature = 15/100,
-    humidity = 40/100,
-    roughness = 20/100,
-    blocks = {
-        top = "zeus:default:grass",
-        soil = "zeus:default:dirt",
-        rock = "zeus:default:stone"
-    },
-    biome_tint = "#e6fa61"
+    biome_tint = "#aaed45",
+    noise = noise
 })

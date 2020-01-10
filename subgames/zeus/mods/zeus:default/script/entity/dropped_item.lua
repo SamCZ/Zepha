@@ -18,12 +18,19 @@ zepha.register_entity("zeus:default:dropped_item", {
         self.tick = 0
         self.time = static.time or 0
         self.speed = static.speed or 20
-        self.velocityY = static.velocityY or -100
 
         self.delete = false
         self.scooping = false
 
-        if not zepha.registered_blocks[static.object] then self.object.scale = 1/2
+        local angle = math.random() * (math.pi*2)
+        local amp = (math.random() + 0.5) * 5
+        local x = math.sin(angle) * amp
+        local z = math.cos(angle) * amp
+
+
+        self.vel = static.vel or v{x, -85, z}
+
+        if not zepha.registered_blocks[self.item] then self.object.scale = 1/2
         else self.object.scale = 1/3 end
     end,
     on_update = function(self, delta)
@@ -40,21 +47,25 @@ zepha.register_entity("zeus:default:dropped_item", {
         if self.scooping then return end
 
         if not collides(self.object) then
-            self.velocityY = math.min(self.velocityY + 300 * delta, 480)
+            self.vel.y = math.min(self.vel.y + 300 * delta, 480)
         end
 
         local iter = 1
-        while not collides(self.object) and iter <= math.abs(self.velocityY * delta) do
+        while not collides(self.object) and iter <= math.abs(self.vel.y * delta) do
             local interval = 0
-            if self.velocityY < 0 then interval = 1/16 else interval = -1/16 end
+            if self.vel.y < 0 then interval = 1/16 else interval = -1/16 end
             self.object.pos = vector.add(self.object.pos, v{0, interval, 0})
             iter = iter + 0.25
         end
 
+        self.object.pos = vector.add(self.object.pos, vector.multiply(v{self.vel.x, 0, self.vel.z}, delta))
+        self.vel.x = self.vel.x * 0.6
+        self.vel.z = self.vel.z * 0.6
+
         self.object.visual_offset = v{0, math.sin(self.time * 2) / 8, 0}
 
         if collides(self.object) then
-            self.velocityY = 0
+            self.vel.y = 0
             self.time = self.time + delta
         end
 
@@ -76,7 +87,7 @@ zepha.register_entity("zeus:default:dropped_item", {
     end,
     on_serialize = function(self)
         return {
-            velocityY = self.velocityY,
+            vel = self.vel,
             time = self.time,
             speed = self.speed
         }

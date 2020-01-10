@@ -4,9 +4,9 @@
 
 #include "MenuSandbox.h"
 
-#include "../../../lua/api/modules/mDelay.h"
-#include "../../../lua/api/modules/mSetGui.h"
-#include "../../../lua/api/modules/mStartGame.h"
+#include "../../../lua/api/menu/mDelay.h"
+#include "../../../lua/api/menu/mSetGui.h"
+#include "../../../lua/api/menu/mStartGame.h"
 
 MenuSandbox::MenuSandbox(glm::ivec2 &win, ClientState& state, std::shared_ptr<GUIContainer> container) :
         win(win),

@@ -6,7 +6,7 @@
 
 
 #include "ServerDefinitionAtlas.h"
-#include "../lua/server/ServerLuaParser.h"
+#include "../lua/client/ServerLuaParser.h"
 #include "../server/asset/AssetStorage.h"
 #include "gen/ServerBiomeAtlas.h"
 
