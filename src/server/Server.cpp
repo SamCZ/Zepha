@@ -26,7 +26,7 @@ void Server::update() {
     const static long interval_ns = (long)((1000 / 20.f) * 1000000L);
     Timer loop("");
 
-    world.update();
+    world.update(0);
     defs.update(deltaTime);
 
     ENetEvent event;

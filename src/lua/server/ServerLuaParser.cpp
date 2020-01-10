@@ -13,21 +13,21 @@
 
 #include "../api/type/sServerLuaEntity.h"
 
-#include "../api/modules/sDelay.h"
+#include "../api/modules/delay.h"
 
-#include "../api/modules/sRegisterBlock.h"
-#include "../api/modules/sRegisterBlockmodel.h"
-#include "../api/modules/sRegisterBiome.h"
-#include "../api/modules/sRegisterItem.h"
-#include "../api/modules/sRegisterEntity.h"
+#include "../api/modules/register_block.h"
+#include "../api/modules/register_blockmodel.h"
+#include "../api/modules/register_biome.h"
+#include "../api/modules/register_item.h"
+#include "../api/modules/register_entity.h"
+#include "../api/modules/register_keybind.h"
 
-#include "../api/modules/sSetBlock.h"
-#include "../api/modules/sGetBlock.h"
-#include "../api/modules/sRemoveBlock.h"
+#include "../api/modules/set_block.h"
+#include "../api/modules/get_block.h"
+#include "../api/modules/remove_block.h"
 
-#include "../api/modules/sAddEntity.h"
-
-#include "../api/modules/sRegisterKeybind.h"
+#include "../api/modules/add_entity.h"
+#include "../api/modules/remove_entity.h"
 
 #include "../api/functions/sUpdateEntities.h"
 
@@ -61,21 +61,21 @@ void ServerLuaParser::loadModules(ServerDefs &defs, ServerWorld &world) {
     core["player"] = sol::nil;
 
     //Load Modules
-    ServerApi::delay(core, delayed_functions);
+    Api::delay(core, delayed_functions);
 
-    ServerApi::register_block(lua, core);
-    ServerApi::register_blockmodel(lua, core);
-    ServerApi::register_biome(lua, core);
-    ServerApi::register_item(lua, core);
-    ServerApi::register_entity(lua, core);
+    Api::register_block      (lua, core);
+    Api::register_blockmodel (lua, core);
+    Api::register_biome      (lua, core);
+    Api::register_item       (lua, core);
+    Api::register_entity     (lua, core);
+    Api::register_keybind    (lua, core);
 
-    ServerApi::get_block(core, defs, world);
-    ServerApi::set_block(core, defs, world);
-    ServerApi::remove_block(core, defs, world);
+    Api::get_block    (core, defs.defs, world);
+    Api::set_block    (core, defs.defs, world);
+    Api::remove_block (core, defs.defs, world);
 
-    ServerApi::add_entity(lua, core, defs, world);
-
-    ServerApi::register_keybind(lua, core);
+    Api::add_entity_s    (lua, core, defs, world);
+    Api::remove_entity_s (lua, core, defs, world);
 
     ServerApi::update_entities(lua);
 

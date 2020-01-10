@@ -6,8 +6,8 @@
 
 #include <sol2/sol.hpp>
 
-namespace ServerApi {
-    void register_keybind(sol::state& lua, sol::table& core) {
+namespace Api {
+    static void register_keybind(sol::state& lua, sol::table& core) {
         core["registered_keybinds"] = lua.create_table();
         core["keys"] = lua.create_table();
         core["keycodes"] = lua.create_table();

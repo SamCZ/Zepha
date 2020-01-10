@@ -5,7 +5,6 @@
 #include "MenuSandbox.h"
 
 #include "../../../lua/api/modules/mDelay.h"
-#include "../../../lua/api/modules/mPrintE.h"
 #include "../../../lua/api/modules/mSetGui.h"
 #include "../../../lua/api/modules/mStartGame.h"
 
@@ -30,7 +29,6 @@ void MenuSandbox::setup() {
     lua.set_function("runfile", &MenuSandbox::DoFileSandboxed, this);
 
     MenuApi::delay(core, delayed_functions);
-    MenuApi::printe(lua);
     MenuApi::set_gui(builder, win, lua, core);
     MenuApi::start_game(state, core);
 }

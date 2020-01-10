@@ -16,22 +16,22 @@
 #include "../api/type/cLuaInventory.h"
 #include "../api/type/cLuaItemStack.h"
 
-#include "../api/modules/cDelay.h"
+#include "../api/modules/delay.h"
 
-#include "../api/modules/cRegisterBlock.h"
-#include "../api/modules/cRegisterBlockmodel.h"
-#include "../api/modules/cRegisterBiome.h"
-#include "../api/modules/cRegisterItem.h"
-#include "../api/modules/cRegisterEntity.h"
+#include "../api/modules/register_block.h"
+#include "../api/modules/register_blockmodel.h"
+#include "../api/modules/register_biome.h"
+#include "../api/modules/register_item.h"
+#include "../api/modules/register_entity.h"
 
-#include "../api/modules/cSetBlock.h"
-#include "../api/modules/cGetBlock.h"
-#include "../api/modules/cRemoveBlock.h"
+#include "../api/modules/set_block.h"
+#include "../api/modules/get_block.h"
+#include "../api/modules/remove_block.h"
 
-#include "../api/modules/cAddEntity.h"
-#include "../api/modules/cRemoveEntity.h"
+#include "../api/modules/add_entity.h"
+#include "../api/modules/remove_entity.h"
 
-#include "../api/modules/cRegisterKeybind.h"
+#include "../api/modules/register_keybind.h"
 
 #include "../api/functions/cUpdateEntities.h"
 
@@ -68,22 +68,21 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& pla
     core["player"] = LocalLuaPlayer(player);
 
     //Load Modules
-    ClientApi::delay(core, delayed_functions);
+    Api::delay(core, delayed_functions);
 
-    ClientApi::register_block(lua, core);
-    ClientApi::register_blockmodel(lua, core);
-    ClientApi::register_biome(lua, core);
-    ClientApi::register_item(lua, core);
-    ClientApi::register_entity(lua, core);
+    Api::register_block      (lua, core);
+    Api::register_blockmodel (lua, core);
+    Api::register_biome      (lua, core);
+    Api::register_item       (lua, core);
+    Api::register_entity     (lua, core);
+    Api::register_keybind    (lua, core);
 
-    ClientApi::get_block(core, defs, world);
-    ClientApi::set_block(core, defs, world);
-    ClientApi::remove_block(core, defs, world);
+    Api::get_block    (core, defs.defs, world);
+    Api::set_block    (core, defs.defs, world);
+    Api::remove_block (core, defs.defs, world);
 
-    ClientApi::add_entity(lua, core, defs, world);
-    ClientApi::remove_entity(lua, core, defs, world);
-
-    ClientApi::register_keybind(lua, core);
+    Api::add_entity_c    (lua, core, defs, world);
+    Api::remove_entity_c (lua, core, defs, world);
 
     ClientApi::update_entities(lua);
 

@@ -10,9 +10,9 @@ const static int MB_GEN_H = 2;
 const static int MB_GEN_V = 2;
 
 ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& clients) :
+    clientList(clients),
     seed(seed),
-    defs(defs),
-    clientList(clients) {
+    defs(defs) {
 
     //Pregenerate chunk generation order
     generateOrder.reserve(MB_GEN_H * 2 * MB_GEN_H * 2 * MB_GEN_V * 2);
@@ -37,44 +37,7 @@ void ServerWorld::init() {
     genStream = new WorldGenStream(seed, defs);
 }
 
-void ServerWorld::changedChunks(ServerClient& client) {
-    auto mapBlock = client.getPlayer().mapBlock;
-    auto lastMapBlock = client.getPlayer().lastMapBlock;
-
-    std::pair<glm::ivec3, glm::ivec3> oldBounds = {
-            {lastMapBlock.x - MB_GEN_H, lastMapBlock.y - MB_GEN_V, lastMapBlock.z - MB_GEN_H},
-            {lastMapBlock.x + MB_GEN_H, lastMapBlock.y + MB_GEN_V, lastMapBlock.z + MB_GEN_H}};
-
-    unsigned int mapBlocksExisting = 0;
-    unsigned int mapBlocksGenerating = 0;
-
-    for (const auto &c : generateOrder) {
-        glm::vec3 mapBlockPos = mapBlock + c;
-        if (!isInBounds(mapBlockPos, oldBounds)) {
-            if (dimension.getMapBlock(mapBlockPos) != nullptr) {
-                mapBlocksExisting++;
-                sendMapBlock(mapBlockPos, client);
-            }
-            else {
-                mapBlocksGenerating += generateMapBlock(mapBlockPos);
-            }
-        }
-    }
-
-    std::cout << "Generating " << mapBlocksGenerating << " blocks, sending " << mapBlocksExisting << " existing blocks." << std::endl;
-    client.getPlayer().changedMapBlocks = false;
-}
-
-bool ServerWorld::generateMapBlock(glm::ivec3 pos) {
-    if(!generateQueueMap.count(pos) && !dimension.getMapBlock(pos)) {
-        generateQueueMap.insert(pos);
-        generateQueueList.push_back(pos);
-        return true;
-    }
-    return false;
-}
-
-void ServerWorld::update() {
+void ServerWorld::update(double delta) {
     while (!generateQueueList.empty()) {
         auto it = generateQueueList.begin();
         glm::vec3 pos = *it;
@@ -138,6 +101,43 @@ void ServerWorld::update() {
     }
 }
 
+void ServerWorld::changedChunks(ServerClient& client) {
+    auto mapBlock = client.getPlayer().mapBlock;
+    auto lastMapBlock = client.getPlayer().lastMapBlock;
+
+    std::pair<glm::ivec3, glm::ivec3> oldBounds = {
+            {lastMapBlock.x - MB_GEN_H, lastMapBlock.y - MB_GEN_V, lastMapBlock.z - MB_GEN_H},
+            {lastMapBlock.x + MB_GEN_H, lastMapBlock.y + MB_GEN_V, lastMapBlock.z + MB_GEN_H}};
+
+    unsigned int mapBlocksExisting = 0;
+    unsigned int mapBlocksGenerating = 0;
+
+    for (const auto &c : generateOrder) {
+        glm::vec3 mapBlockPos = mapBlock + c;
+        if (!isInBounds(mapBlockPos, oldBounds)) {
+            if (dimension.getMapBlock(mapBlockPos) != nullptr) {
+                mapBlocksExisting++;
+                sendMapBlock(mapBlockPos, client);
+            }
+            else {
+                mapBlocksGenerating += generateMapBlock(mapBlockPos);
+            }
+        }
+    }
+
+    std::cout << "Generating " << mapBlocksGenerating << " blocks, sending " << mapBlocksExisting << " existing blocks." << std::endl;
+    client.getPlayer().changedMapBlocks = false;
+}
+
+bool ServerWorld::generateMapBlock(glm::ivec3 pos) {
+    if(!generateQueueMap.count(pos) && !dimension.getMapBlock(pos)) {
+        generateQueueMap.insert(pos);
+        generateQueueList.push_back(pos);
+        return true;
+    }
+    return false;
+}
+
 void ServerWorld::sendChunk(const std::shared_ptr<BlockChunk>& chunk, ServerClient &peer) {
     assert(chunk != nullptr);
 
@@ -180,6 +180,10 @@ void ServerWorld::sendMapBlock(const glm::ivec3& pos, ServerClient &peer) {
 //        r.sendTo(peer.getPeer(), PacketChannel::CHUNK);
 //    }
 //}
+
+unsigned int ServerWorld::getBlock(glm::ivec3 pos) {
+    return dimension.getBlock(pos);
+}
 
 void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
     auto oldBlock = getBlock(pos);
@@ -239,10 +243,6 @@ bool ServerWorld::isInBounds(glm::ivec3 cPos, std::pair<glm::ivec3, glm::ivec3> 
     return (cPos.x >= bounds.first.x && cPos.x <= bounds.second.x
          && cPos.y >= bounds.first.y && cPos.y <= bounds.second.y
          && cPos.z >= bounds.first.z && cPos.z <= bounds.second.z);
-}
-
-unsigned int ServerWorld::getBlock(glm::ivec3 pos) {
-    return dimension.getBlock(pos);
 }
 
 ServerWorld::~ServerWorld() {

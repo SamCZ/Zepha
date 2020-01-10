@@ -14,20 +14,21 @@
 #include "../../def/ServerDefs.h"
 #include "../conn/ServerClients.h"
 #include "../../world/ServerDimension.h"
+#include "../../game/scene/world/World.h"
 
-class ServerWorld {
+class ServerWorld : public World {
 public:
     explicit ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& clients);
 
     void init();
-    void update();
+    void update(double delta) override;
 
-    void setBlock(glm::ivec3 pos, unsigned int block);
-    unsigned int getBlock(glm::ivec3 pos);
+    unsigned int getBlock(glm::ivec3 pos) override;
+    void setBlock(glm::ivec3 pos, unsigned int block) override;
 
     ~ServerWorld();
 
-    ServerDimension dimension;
+    ServerDimension dimension {};
 private:
     void changedChunks(ServerClient& client);
     bool generateMapBlock(glm::ivec3 pos);

@@ -1,13 +1,13 @@
 //
-// Created by aurailus on 11/10/19.
+// Created by aurailus on 2020-01-09.
 //
 
 #pragma once
 
 #include <sol2/sol.hpp>
 
-namespace ServerApi {
-    void register_entity(sol::state& lua, sol::table& core) {
+namespace Api {
+    static void register_entity(sol::state& lua, sol::table& core) {
         core["registered_entities"] = lua.create_table();
 
         core.set_function("register_entity", [&](sol::this_environment env, sol::optional<std::string> identifier, sol::optional<sol::table> data) {

@@ -134,15 +134,9 @@ set(ZEPHA_SRC
     lua/server/ServerLuaParser.h
     util/Log.h
     lua/Callback.h
-    lua/api/modules/cRegisterBlock.h
-    lua/api/modules/cDelay.h
-    game/graph/shader/GuiUniforms.h
+        game/graph/shader/GuiUniforms.h
     game/graph/meshtypes/EntityMesh.cpp
     game/graph/meshtypes/EntityMesh.h
-    lua/api/modules/cRegisterBlockmodel.h
-    lua/api/modules/cSetBlock.h
-    lua/api/modules/cGetBlock.h
-    lua/api/modules/cRemoveBlock.h
         lua/client/LocalRegisterBlocks.cpp
     lua/client/LocalRegisterBlocks.h
     lua/server/ServerRegisterBlocks.cpp
@@ -171,8 +165,7 @@ set(ZEPHA_SRC
     def/ItemDef.h
     def/DefinitionAtlas.cpp
     def/item/BlockModel.h
-    lua/api/modules/sRegisterItem.h
-    def/texture/Font.cpp
+        def/texture/Font.cpp
     def/texture/Font.h
     game/entity/Model.cpp
     game/entity/Model.h
@@ -217,20 +210,17 @@ set(ZEPHA_SRC
     def/item/CraftItemDef.h
     lua/server/ServerRegisterItems.cpp
     lua/server/ServerRegisterItems.h
-    lua/api/modules/cAddEntity.h
+        lua/api/modules/add_entity.h
         lua/api/type/LocalLuaEntity.cpp
         lua/api/type/LocalLuaEntity.h
-    lua/api/modules/cRegisterEntity.h
-    def/model/SerializedModel.h
+        def/model/SerializedModel.h
     server/asset/AssetType.h
     def/model/ModelStore.h
-    lua/api/modules/cRemoveEntity.h
+        lua/api/modules/remove_entity.h
     lua/api/functions/cUpdateEntities.h
-    lua/api/modules/sRegisterEntity.h
-    lua/api/modules/cRegisterKeybind.h
-    lua/client/LocalRegisterKeybinds.cpp
+        lua/client/LocalRegisterKeybinds.cpp
     lua/client/LocalRegisterKeybinds.h
-    lua/api/modules/sRegisterKeybind.h
+        lua/api/modules/register_keybind.h
     lua/client/LuaInputManager.cpp
     lua/client/LuaInputManager.h
     lua/api/type/cLuaLocalPlayer.h
@@ -250,9 +240,7 @@ set(ZEPHA_SRC
     game/hud/SerializedGuiElem.h
     util/Voronoi3D.cpp
     util/Voronoi3D.h
-    lua/api/modules/sRegisterBiome.h
-    lua/api/modules/cRegisterBiome.h
-    lua/server/ServerRegisterBiomes.cpp
+        lua/server/ServerRegisterBiomes.cpp
     lua/server/ServerRegisterBiomes.h
     def/gen/BiomeDef.cpp
     def/gen/BiomeDef.h
@@ -276,8 +264,7 @@ set(ZEPHA_SRC
     game/scene/menu/MenuSandbox.cpp
     game/scene/menu/MenuSandbox.h
     lua/api/modules/mDelay.h
-    lua/api/modules/mPrintE.h
-    lua/api/modules/mSetGui.h
+        lua/api/modules/mSetGui.h
     game/hud/GuiBuilder.cpp
     game/hud/GuiBuilder.h
     game/hud/GameGuiBuilder.cpp
@@ -296,8 +283,7 @@ set(ZEPHA_SRC
     lua/api/type/cLuaItemStack.h
     game/hud/components/basic/GUIModel.cpp
     game/hud/components/basic/GUIModel.h
-    lua/api/modules/sAddEntity.h
-    server/world/ServerEntity.cpp
+        server/world/ServerEntity.cpp
     server/world/ServerEntity.h
     lua/api/type/ServerLuaEntity.cpp
     lua/api/type/ServerLuaEntity.h
@@ -308,6 +294,6 @@ set(ZEPHA_SRC
     util/net/Serializer.h
     util/net/Deserializer.h
     lua/api/type/ServerLocalLuaEntity.cpp
-    lua/api/type/ServerLocalLuaEntity.h)
+    lua/api/type/ServerLocalLuaEntity.h lua/api/modules/register_item.h lua/api/modules/register_biome.h lua/api/modules/delay.h lua/api/modules/register_block.h lua/api/modules/register_blockmodel.h lua/api/modules/register_entity.h game/scene/world/World.cpp game/scene/world/World.h lua/api/modules/set_block.h lua/api/modules/get_block.h lua/api/modules/remove_block.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

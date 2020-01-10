@@ -12,6 +12,8 @@
 #include <glm/vec3.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "World.h"
+
 #include "../../../def/LocalDefinitionAtlas.h"
 #include "../../../world/chunk/BlockChunk.h"
 #include "../../../def/gen/MapGen.h"
@@ -30,38 +32,34 @@
 
 class ClientNetworkInterpreter;
 
-class LocalWorld {
+class LocalWorld : public World {
 public:
     LocalWorld(LocalDefs& defs, glm::vec3* playerPos, ClientNetworkInterpreter* server);
 
     void init();
-    void update(double delta);
+    void update(double delta) override;
 
     void loadChunkPacket(std::unique_ptr<Packet> p);
-    std::shared_ptr<BlockChunk> getChunk(glm::vec3 chunkPos);
-    void commitChunk(glm::vec3 pos, std::shared_ptr<BlockChunk>);
+    void commitChunk(std::shared_ptr<BlockChunk> chunk);
+
+    unsigned int getBlock(glm::ivec3 pos) override;
+    void setBlock(glm::ivec3 pos, unsigned int block) override;
+    void localSetBlock(glm::ivec3 pos, unsigned int block);
 
     void damageBlock(glm::vec3 pos, float amount);
 
+    unsigned short getBiome(glm::vec3 pos);
+    std::shared_ptr<BlockChunk> getChunk(glm::ivec3 pos);
+
+    int getMeshChunkCount();
     int renderChunks(Renderer &render);
     void renderEntities(Renderer &renderer);
-    int getMeshChunkCount();
 
-    unsigned int getBlock(glm::vec3 pos);
-    unsigned short getBiome(glm::vec3 pos);
-
-    //Called by the Client
-    void localSetBlock(glm::ivec3 pos, unsigned int block);
-    //Called from ClientNetworkInterpreter
-    void setBlock(glm::vec3 pos, unsigned int block);
-
-    bool solidAt(glm::vec3 pos);
+    LocalDefs& defs;
+    LocalDimension dimension;
 
     int lastGenUpdates = 0;
     int lastMeshUpdates = 0;
-
-    LocalDimension dimension;
-    LocalDefs& defs;
 private:
     void finishChunks();
     void updateBlockDamages(double delta);

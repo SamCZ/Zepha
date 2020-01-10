@@ -9,10 +9,10 @@
 #include "../net/ClientNetworkInterpreter.h"
 
 LocalWorld::LocalWorld(LocalDefs& defs, glm::vec3* playerPos, ClientNetworkInterpreter* server) :
-    playerPos(playerPos),
     dimension(defs),
+    defs(defs),
     server(server),
-    defs(defs) {}
+    playerPos(playerPos) {}
 
 void LocalWorld::init() {
     delete worldGenStream;
@@ -65,7 +65,7 @@ void LocalWorld::finishChunks() {
 
     lastGenUpdates = 0;
     for (const auto &chunk : finishedChunks) {
-        commitChunk(chunk->pos, chunk);
+        commitChunk(chunk);
         lastGenUpdates++;
     }
 }
@@ -109,11 +109,7 @@ void LocalWorld::loadChunkPacket(std::unique_ptr<Packet> p) {
     worldGenStream->pushBack(std::move(p));
 }
 
-std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::vec3 chunkPos) {
-    return dimension.getChunk(chunkPos);
-}
-
-void LocalWorld::commitChunk(glm::vec3 pos, std::shared_ptr<BlockChunk> c) {
+void LocalWorld::commitChunk(std::shared_ptr<BlockChunk> c) {
     dimension.setChunk(std::move(c));
 }
 
@@ -132,15 +128,6 @@ int LocalWorld::getMeshChunkCount() {
     return dimension.getMeshChunkCount();
 }
 
-unsigned int LocalWorld::getBlock(glm::vec3 pos) {
-    auto chunkPos = Space::Chunk::world::fromBlock(pos);
-    auto local = Space::Block::relative::toChunk(pos);
-
-    auto chunk = getChunk(chunkPos);
-    if (chunk != nullptr) return chunk->getBlock(local);
-    return DefinitionAtlas::INVALID;
-}
-
 unsigned short LocalWorld::getBiome(glm::vec3 pos) {
     auto chunkPos = Space::Chunk::world::fromBlock(pos);
     auto local = Space::Block::relative::toChunk(pos);
@@ -148,6 +135,14 @@ unsigned short LocalWorld::getBiome(glm::vec3 pos) {
     auto chunk = getChunk(chunkPos);
     if (chunk != nullptr) return chunk->getBiome(local);
     return BiomeAtlas::INVALID;
+}
+
+unsigned int LocalWorld::getBlock(glm::ivec3 pos) {
+    return dimension.getBlock(pos);
+}
+
+void LocalWorld::setBlock(glm::ivec3 pos, unsigned int block) {
+    dimension.setBlock(pos, block);
 }
 
 void LocalWorld::localSetBlock(glm::ivec3 pos, unsigned int block) {
@@ -168,10 +163,6 @@ void LocalWorld::localSetBlock(glm::ivec3 pos, unsigned int block) {
     dimension.setBlock(pos, block);
 }
 
-void LocalWorld::setBlock(glm::vec3 pos, unsigned int block) {
-    dimension.setBlock(pos, block);
-}
-
-bool LocalWorld::solidAt(glm::vec3 pos) {
-    return defs.defs.blockFromId(getBlock(pos)).solid;
+std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::ivec3 pos) {
+    return dimension.getChunk(pos);
 }
