@@ -6,7 +6,7 @@
 
 ServerBiomeAtlas::ServerBiomeAtlas() {
     //Invalid Biome
-    BiomeDef* invalid = new BiomeDef("invalid", INVALID, -1, -1, -1, 0, 0, 0, {});
+    BiomeDef* invalid = new BiomeDef("invalid", INVALID, -1, -1, -1, 0, 0, 0, {}, {});
     registerBiome(invalid);
 }
 

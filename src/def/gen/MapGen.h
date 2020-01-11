@@ -43,49 +43,11 @@ private:
 	module::Perlin roughnessBase;
 	module::ScaleBias roughness;
 
-	//
-	//  OLD PARAMETERS
-	//
-
-	//Smooth world noise factors
-	module::Perlin worldElevationBase;
-	module::ScaleBias worldElevationScaled;
-
-	module::Perlin worldFeatureBase;
-	module::ScaleBias worldFeatureScaled;
-
-	module::Add worldSmoothElevation;
-
-	//Mountain hold
-	module::Perlin mountainMultiplierBase;
-	module::ScaleBias mountainMultiplierScaled;
-	module::Clamp mountainMultiplierClamped;
-
-	//Mountain noise types
-	module::Perlin mountainSmoothBase;
-	module::ScaleBias mountainSmoothScaled;
-
-	module::RidgedMulti mountainRoughBase;
-	module::ScaleBias mountainRoughScaled;
-	module::Perlin mountainRoughHoldBase;
-	module::ScaleBias mountainRoughHoldScaled;
-
-	module::Multiply mountainRoughMultiplied;
-
-	module::Add mountainNoise;
-	module::Multiply mountainMultiplied;
-
-	module::Add terrainFinal;
-
-	module::Perlin grassNoise;
-	module::Turbulence grassTurbulence;
-	module::ScaleBias grassFinal;
-
-	module::Perlin floraNoise;
-	module::Turbulence floraTurbulence;
-	module::ScaleBias floraFinal;
-
-	module::Perlin floraDensity;
-
-	module::Perlin biomeTemp;
+//	module::Perlin worldElevationBase;
+//	module::ScaleBias worldElevationScaled;
+//
+//	module::Perlin worldFeatureBase;
+//	module::ScaleBias worldFeatureScaled;
+//
+//	module::Add worldSmoothElevation;
 };

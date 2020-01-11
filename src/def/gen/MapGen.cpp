@@ -33,106 +33,6 @@ MapGen::MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeAtlas& biomes) :
 	roughness.SetSourceModule(0, roughnessBase);
 	roughness.SetScale(0.5);
 	roughness.SetBias(0.5);
-
-
-
-
-	//First stage smooth elevation
-	worldElevationBase.SetSeed(seed);
-	worldElevationBase.SetFrequency(0.002);
-	worldElevationBase.SetOctaveCount(8);
-
-	worldElevationScaled.SetSourceModule(0, worldElevationBase);
-	worldElevationScaled.SetScale(250);
-	worldElevationScaled.SetBias(32);
-
-	//Smooth elevation features
-	worldFeatureBase.SetSeed(seed);
-	worldFeatureBase.SetFrequency(0.2);
-	worldFeatureBase.SetOctaveCount(3);
-
-	worldFeatureScaled.SetSourceModule(0, worldFeatureBase);
-	worldFeatureScaled.SetScale(6);
-	worldFeatureScaled.SetBias(6);
-
-	//Smooth elevation combined
-	worldSmoothElevation.SetSourceModule(0, worldElevationScaled);
-	worldSmoothElevation.SetSourceModule(1, worldFeatureScaled);
-
-	//Smooth mountain terrain
-	mountainSmoothBase.SetSeed(seed);
-	mountainSmoothBase.SetFrequency(0.05);
-	mountainSmoothScaled.SetSourceModule(0, mountainSmoothBase);
-	mountainSmoothScaled.SetScale(300);
-	mountainSmoothScaled.SetBias(400);
-
-	//Craggy mountains hold
-	mountainRoughHoldBase.SetSeed(seed);
-	mountainRoughHoldBase.SetFrequency(0.05);
-	mountainRoughHoldScaled.SetSourceModule(0, mountainRoughHoldBase);
-	mountainRoughHoldScaled.SetScale(0.5);
-	mountainRoughHoldScaled.SetBias(0.5);
-
-	//Craggy mountains
-	mountainRoughBase.SetSeed(seed);
-	mountainRoughBase.SetFrequency(0.75);
-	mountainRoughBase.SetLacunarity(1.5);
-	mountainRoughBase.SetOctaveCount(8);
-	mountainRoughScaled.SetSourceModule(0, mountainRoughBase);
-	mountainRoughScaled.SetScale(20);
-	mountainRoughScaled.SetBias(20);
-
-	mountainRoughMultiplied.SetSourceModule(0, mountainRoughHoldScaled);
-	mountainRoughMultiplied.SetSourceModule(1, mountainRoughScaled);
-
-	mountainNoise.SetSourceModule(0, mountainSmoothScaled);
-	mountainNoise.SetSourceModule(1, mountainRoughMultiplied);
-
-	//Noise for the strength "multiplier" for mountains
-	mountainMultiplierBase.SetSeed(seed);
-	mountainMultiplierBase.SetFrequency(0.02);
-	mountainMultiplierBase.SetPersistence(0.25f);
-	mountainMultiplierScaled.SetSourceModule(0, mountainMultiplierBase);
-	//    mountainMultiplierScaled.SetScale(2);
-	//    mountainMultiplierScaled.SetBias(-1);
-	mountainMultiplierClamped.SetSourceModule(0, mountainMultiplierScaled);
-	mountainMultiplierClamped.SetBounds(0, 1);
-
-	//Multiply mountain terrain by the multiplier
-	mountainMultiplied.SetSourceModule(0, mountainMultiplierClamped);
-	mountainMultiplied.SetSourceModule(1, mountainNoise);
-
-	//Add both the general elevation and the mountain terrain
-	terrainFinal.SetSourceModule(0, worldSmoothElevation);
-	terrainFinal.SetSourceModule(1, mountainMultiplied);
-
-	grassNoise.SetFrequency(2);
-	grassNoise.SetOctaveCount(3);
-
-	grassTurbulence.SetSourceModule(0, grassNoise);
-	grassTurbulence.SetFrequency(4.0);
-	grassTurbulence.SetPower(0.125);
-
-	grassFinal.SetSourceModule(0, grassTurbulence);
-	grassFinal.SetScale(3);
-	grassFinal.SetBias(1);
-
-	floraNoise.SetFrequency(2);
-	floraNoise.SetOctaveCount(3);
-
-	floraTurbulence.SetSourceModule(0, floraNoise);
-	floraTurbulence.SetFrequency(4.0);
-	floraTurbulence.SetPower(0.125);
-
-	floraFinal.SetSourceModule(0, floraTurbulence);
-	floraFinal.SetScale(4);
-	floraFinal.SetBias(4);
-
-	floraDensity.SetFrequency(4);
-
-	biomeTemp.SetFrequency(0.1);
-	biomeTemp.SetOctaveCount(12);
-	biomeTemp.SetPersistence(0.40);
 }
 
 std::vector<BlockChunk*> MapGen::generateMapBlock(glm::vec3 mbPos) {
@@ -171,7 +71,12 @@ void MapGen::generateChunk(std::array<std::pair<MapGenJob*, BlockChunk*>, 64>& c
 }
 
 void MapGen::buildDensityMap(MapGenJob* job, const glm::vec3& worldPos) {
-	auto sTerrainFinal = NoiseSample(terrainFinal, worldPos, { 4, 1 }, true);
+    auto sTemperature = NoiseSample(temperature, worldPos, { 4, 4 }, false);
+    auto sHumidity = NoiseSample(humidity, worldPos, { 4, 4 }, false);
+    auto sRoughness = NoiseSample(roughness, worldPos, { 4, 4 }, false);
+
+    auto biome = biomes.getBiomeAt(sTemperature.get({}), sHumidity.get({}), sRoughness.get({}));
+	auto sTerrainFinal = NoiseSample(*biome.modules[biome.modules.size() - 1], worldPos, { 4, 1 }, true);
 
 	glm::ivec3 lp;
 	for (int m = 0; m < 4096; m++) {

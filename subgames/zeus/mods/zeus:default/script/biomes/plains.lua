@@ -5,18 +5,16 @@ local noise = {
             module = "scale_bias",
             source = {
                 module = "perlin",
-                seed = zepha.seed,
                 frequency = 0.002,
                 octaves = 8
             },
             scale = 250,
-            bias = 32
+            bias = -32
         },
         { -- Features
             module = "scale_bias",
             source = {
                 module = "perlin",
-                seed = zepha.seed,
                 frequency = 0.2,
                 octaves = 3,
             },
@@ -33,8 +31,8 @@ zepha.register_biome("zeus:default:plains", {
         roughness = 20/100,
     },
     blocks = {
-        top = "zeus:default:tallgrass_1",
-        soil = "zeus:default:grass",
+        top = "zeus:default:grass",
+        soil = "zeus:default:dirt",
         rock = "zeus:default:stone"
     },
     biome_tint = "#aaed45",
