@@ -16,6 +16,7 @@ MapGen::MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeAtlas& biomes) :
 	temperatureBase.SetSeed(seed);
 	temperatureBase.SetFrequency(0.02);
 	temperatureBase.SetOctaveCount(4);
+//	temperatureTurbulance.Set
 	temperature.SetSourceModule(0, temperatureBase);
 	temperature.SetScale(0.35);
 	temperature.SetBias(0.25);
@@ -71,17 +72,42 @@ void MapGen::generateChunk(std::array<std::pair<MapGenJob*, BlockChunk*>, 64>& c
 }
 
 void MapGen::buildDensityMap(MapGenJob* job, const glm::vec3& worldPos) {
-    auto sTemperature = NoiseSample(temperature, worldPos, { 4, 4 }, false);
-    auto sHumidity = NoiseSample(humidity, worldPos, { 4, 4 }, false);
-    auto sRoughness = NoiseSample(roughness, worldPos, { 4, 4 }, false);
+    job->temperature = NoiseSample(temperature, worldPos, {4, 4}, false);
+    job->humidity    = NoiseSample(humidity,    worldPos, {4, 4}, false);
+    job->roughness   = NoiseSample(roughness,   worldPos, {4, 4}, false);
 
-    auto biome = biomes.getBiomeAt(sTemperature.get({}), sHumidity.get({}), sRoughness.get({}));
-	auto sTerrainFinal = NoiseSample(*biome.modules[biome.modules.size() - 1], worldPos, { 4, 1 }, true);
+    auto biome = biomes.getBiomeAt(job->temperature.get({}), job->humidity.get({}), job->roughness.get({}));
+//    auto terrain = NoiseSample(*biome.modules[biome.modules.size() - 1], worldPos, {4, 1}, true);
+
+    auto terrain = NoiseSample({4, 1});
+
+    float offsetH = 16.f / 4.f;
+    float offsetV = 16.f / 1.f;
+
+    for (int i = 0; i <= 4; i++) {
+        for (int j = 0; j <= 1; j++) {
+            for (int k = 0; k <= 4; k++) {
+                //TODO: Find out why this is being stoopd
+                glm::vec3 localPos = {(offsetH * i) / 1.01f, 0, (offsetH * k) / 1.01f};
+                glm::vec3 pos = {(worldPos.x * 16 + offsetH * i) / 16.f, 0, (worldPos.z * 16 + offsetH * k) / 16.f};
+                auto& biome = biomes.getBiomeAt(job->temperature.get(localPos), job->humidity.get(localPos), job->roughness.get(localPos));
+                auto& mod = biome.modules[biome.modules.size() - 1];
+                terrain.set({i, j, k}, static_cast<float>(mod->GetValue(pos.x, pos.y, pos.z)));
+            }
+        }
+    }
+
+
+    for (auto i = 0; i < 4; i++) {
+        for (auto j = 0; j < 4; j++) {
+            std::cout << biomes.getBiomeAt(job->temperature.get({i*4, 0, j*4}), job->humidity.get({i*4, 0, j*4}), job->roughness.get({i*4, 0, j*4})).identifier << std::endl;
+        }
+    }
 
 	glm::ivec3 lp;
 	for (int m = 0; m < 4096; m++) {
 		Vec::indAssignVec(m, lp);
-		job->density[m] = sTerrainFinal.get(lp) - (lp.y + worldPos.y * 16);
+		job->density[m] = terrain.get(lp) - (lp.y + worldPos.y * 16);
 	}
 }
 
@@ -133,16 +159,12 @@ void MapGen::buildElevationMap(std::array<std::pair<MapGenJob*, BlockChunk*>, 64
 }
 
 void MapGen::populateChunk(std::pair<MapGenJob*, BlockChunk*>& chunk, const glm::vec3& worldPos) {
-	auto sTemperature = NoiseSample(temperature, worldPos, { 4, 4 }, false);
-	auto sHumidity = NoiseSample(humidity, worldPos, { 4, 4 }, false);
-	auto sRoughness = NoiseSample(roughness, worldPos, { 4, 4 }, false);
-
 	glm::ivec3 lp;
 
 	for (int m = 0; m < 4096; m++) {
 		Vec::indAssignVec(m, lp);
 
-		auto biome = biomes.getBiomeAt(sTemperature.get(lp), sHumidity.get(lp), sRoughness.get(lp));
+		auto biome = biomes.getBiomeAt(chunk.first->temperature.get(lp), chunk.first->humidity.get(lp), chunk.first->roughness.get(lp));
 		chunk.second->biomes[m] = biome.index;
 
 		int d = std::floor(chunk.first->depth[m]);

@@ -17,10 +17,13 @@ public:
     explicit NoiseSample(glm::ivec2 precision);
     NoiseSample(noise::module::Module& module, glm::vec3 pos, glm::ivec2 precision, bool flat = false);
 
-    void set(glm::vec3 pos, float value);
-    float get(const glm::vec3& pos);
+    void set(glm::ivec3 pos, float value);
+    float get(const glm::ivec3& pos);
+
 
 private:
+    void reserveSpace();
+
     glm::ivec2 prec {};
     std::vector<std::vector<std::vector<float>>> data {};
 };

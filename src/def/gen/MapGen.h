@@ -34,13 +34,16 @@ private:
 	DefinitionAtlas& atlas;
 	BiomeAtlas& biomes;
 
-	module::Perlin temperatureBase;
+    module::Perlin temperatureBase;
+//    module::Turbulence temperatureTurbulence;
 	module::ScaleBias temperature;
 
 	module::Perlin humidityBase;
+//    module::Turbulence humidityTurbulence;
 	module::ScaleBias humidity;
 
 	module::Perlin roughnessBase;
+//    module::Turbulence roughnessTurbulence;
 	module::ScaleBias roughness;
 
 //	module::Perlin worldElevationBase;
