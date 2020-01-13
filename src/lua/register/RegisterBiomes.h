@@ -25,9 +25,9 @@ namespace RegisterBiomes {
         }
         else if (type == "clamp") {
             auto module = new noise::module::Clamp();
-
             module->SetBounds(noise.get_or<float>("low", noise::module::DEFAULT_CLAMP_LOWER_BOUND),
                               noise.get_or<float>("high", noise::module::DEFAULT_CLAMP_UPPER_BOUND));
+
             modules.push_back(module);
             return module;
         }
@@ -232,8 +232,8 @@ namespace RegisterBiomes {
             auto mod0 = parseNoise(modules, source);
             module->SetSourceModule(0, *mod0);
             module->SetPower(noise.get_or<float>("power", noise::module::DEFAULT_TURBULENCE_POWER));
-            module->SetFrequency(noise.get_or<float>("power", noise::module::DEFAULT_TURBULENCE_FREQUENCY));
-            module->SetRoughness(noise.get_or<float>("power", noise::module::DEFAULT_TURBULENCE_ROUGHNESS));
+            module->SetFrequency(noise.get_or<float>("frequency", noise::module::DEFAULT_TURBULENCE_FREQUENCY));
+            module->SetRoughness(noise.get_or<float>("roughness", noise::module::DEFAULT_TURBULENCE_ROUGHNESS));
 
             modules.push_back(module);
             return module;

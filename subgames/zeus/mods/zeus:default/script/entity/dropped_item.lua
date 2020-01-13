@@ -17,7 +17,7 @@ zepha.register_entity("zeus:default:dropped_item", {
 
         self.tick = 0
         self.time = static.time or 0
-        self.speed = static.speed or 20
+        self.speed = static.speed or 15
 
         self.delete = false
         self.scooping = false
@@ -27,7 +27,6 @@ zepha.register_entity("zeus:default:dropped_item", {
         local x = math.sin(angle) * amp
         local z = math.cos(angle) * amp
 
-
         self.vel = static.vel or v{x, -85, z}
 
         if not zepha.registered_blocks[self.item] then self.object.scale = 1/2
@@ -35,7 +34,7 @@ zepha.register_entity("zeus:default:dropped_item", {
     end,
     on_update = function(self, delta)
         self.object.yaw = self.object.yaw + self.speed
-        if self.speed > 4 then self.speed = self.speed * 0.92 end
+        if self.speed > 1 then self.speed = self.speed * 0.92 end
 
         self.tick = self.tick + delta
 

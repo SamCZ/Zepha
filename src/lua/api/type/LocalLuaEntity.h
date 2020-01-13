@@ -25,9 +25,17 @@ public:
     void set_visual_offset(const sol::table& pos);
     sol::table get_visual_offset(sol::this_state s);
 
+    void snap_pitch(float rot);
+    void set_pitch(float rot);
+    float get_pitch();
+
     void snap_yaw(float rot);
     void set_yaw(float rot);
     float get_yaw();
+
+    void snap_roll(float rot);
+    void set_roll(float rot);
+    float get_roll();
 
     void snap_scale(float scale);
     void set_scale(float scale);

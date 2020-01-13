@@ -65,7 +65,7 @@ void ParticleEntity::update(double delta, glm::vec3 player) {
     setPos(getPos() + velocity * glm::vec3(static_cast<float>(delta)));
 
     double angle = -glm::degrees(std::atan2(player.z - position.z, player.x - position.x)) + 90.f;
-    setAngle(static_cast<float>(angle));
+    setRotateY(static_cast<float>(angle));
 
     velocity.y -= 32.f  * delta;
 }

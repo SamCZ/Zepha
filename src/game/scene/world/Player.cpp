@@ -126,13 +126,10 @@ void Player::updateCamera() {
     glm::vec3 up = glm::normalize(glm::cross(right, front));
     glm::vec3 handPos = eyesPos + front * 0.25f + right * 0.25f + up * -0.2f;
 
-    glm::mat4 rotation;
-    rotation = glm::rotate(rotation, glm::radians(-yaw ), {0, 1, 0});
-    rotation = glm::rotate(rotation, glm::radians(pitch), {0, 0, 1});
-    rotation = glm::rotate(rotation, glm::radians(+2.f ), {1, 0, 0});
+    handModel.setRotateY(-yaw);
+    handModel.setRotateZ(pitch);
 
     handModel.setPos(handPos + vel * 0.1f);
-    handModel.setRotation(rotation);
     handModel.setScale(0.12f);
 }
 

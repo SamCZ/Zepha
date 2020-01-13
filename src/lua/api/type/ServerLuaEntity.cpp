@@ -33,16 +33,40 @@ sol::table ServerLuaEntity::get_visual_offset(sol::this_state s) {
     return sol::state_view(s).create_table_with("x", v.x, "y", v.y, "z", v.z);
 }
 
+void ServerLuaEntity::snap_pitch(float rot) {
+    entity->setRotateX(rot);
+}
+
+void ServerLuaEntity::set_pitch(float rot) {
+    entity->setRotateX(rot);
+}
+
+float ServerLuaEntity::get_pitch() {
+    return entity->getRotateX();
+}
+
 void ServerLuaEntity::snap_yaw(float rot) {
-    entity->setAngle(rot);
+    entity->setRotateY(rot);
 }
 
 void ServerLuaEntity::set_yaw(float rot) {
-    entity->setAngle(rot);
+    entity->setRotateY(rot);
 }
 
 float ServerLuaEntity::get_yaw() {
-    return entity->getAngle();
+    return entity->getRotateY();
+}
+
+void ServerLuaEntity::snap_roll(float rot) {
+    entity->setRotateZ(rot);
+}
+
+void ServerLuaEntity::set_roll(float rot) {
+    entity->setRotateZ(rot);
+}
+
+float ServerLuaEntity::get_roll() {
+    return entity->getRotateZ();
 }
 
 void ServerLuaEntity::snap_scale(float scale) {

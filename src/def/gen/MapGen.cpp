@@ -97,13 +97,6 @@ void MapGen::buildDensityMap(MapGenJob* job, const glm::vec3& worldPos) {
         }
     }
 
-
-    for (auto i = 0; i < 4; i++) {
-        for (auto j = 0; j < 4; j++) {
-            std::cout << biomes.getBiomeAt(job->temperature.get({i*4, 0, j*4}), job->humidity.get({i*4, 0, j*4}), job->roughness.get({i*4, 0, j*4})).identifier << std::endl;
-        }
-    }
-
 	glm::ivec3 lp;
 	for (int m = 0; m < 4096; m++) {
 		Vec::indAssignVec(m, lp);

@@ -50,7 +50,7 @@ void ClientNetworkInterpreter::update(Player &player) {
                         for (auto& ent : world->dimension.playerEntities) {
                             if (ent.peer_id == peer_id) {
                                 ent.interpPos(d.read<glm::vec3>());
-                                ent.interpAngle(-d.read<float>() + 90);
+                                ent.interpRotateY(-d.read<float>() + 90);
                                 found = true;
                                 break;
                             }

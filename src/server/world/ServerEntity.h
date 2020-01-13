@@ -19,8 +19,14 @@ public:
     void setVisualOffset(glm::vec3 vs);
     glm::vec3 getVisualOffset();
 
-    void setAngle(float angle);
-    float getAngle();
+    void setRotateX(float rotation);
+    float getRotateX();
+
+    void setRotateY(float rotation);
+    float getRotateY();
+
+    void setRotateZ(float rotation);
+    float getRotateZ();
 
     void setScale(float scale);
     float getScale();
@@ -34,7 +40,7 @@ protected:
 
     glm::vec3 position {};
     glm::vec3 visualOffset {};
-    float angle = 0;
+    glm::vec3 rotation {};
     float scale = 1;
 
     std::string displayMode = "";

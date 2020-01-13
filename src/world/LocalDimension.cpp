@@ -128,7 +128,7 @@ void LocalDimension::handleServerEntity(const Packet& p) {
     auto id           = d.read<unsigned int>();
     auto position     = d.read<glm::vec3>();
     auto visualOffset = d.read<glm::vec3>();
-    auto angle        = d.read<float>();
+    auto rotation     = d.read<glm::vec3>();
     auto scale        = d.read<float>();
     auto displayMode  = d.read<std::string>();
     auto displayArg1  = d.read<std::string>();
@@ -140,7 +140,9 @@ void LocalDimension::handleServerEntity(const Packet& p) {
 
         entity.interpPos(position);
         entity.interpVisualOffset(visualOffset);
-        entity.interpAngle(angle);
+        entity.interpRotateX(rotation.x);
+        entity.interpRotateY(rotation.y);
+        entity.interpRotateZ(rotation.z);
         entity.interpScale(scale);
 
         luaEntity.setDisplayType(displayMode, displayArg1, displayArg2);
@@ -149,7 +151,9 @@ void LocalDimension::handleServerEntity(const Packet& p) {
         auto entity = std::make_shared<ServerLocalLuaEntity>(id, defs, displayMode, displayArg1, displayArg2);
         entity->entity->setPos(position);
         entity->entity->setVisualOffset(visualOffset);
-        entity->entity->setAngle(angle);
+        entity->entity->interpRotateX(rotation.x);
+        entity->entity->interpRotateY(rotation.y);
+        entity->entity->interpRotateZ(rotation.z);
         entity->entity->setScale(scale);
         serverEntities.push_back(entity);
         serverEntityRefs.emplace(id, --serverEntities.end());

@@ -22,13 +22,28 @@ glm::vec3 ServerEntity::getVisualOffset(){
     return visualOffset;
 }
 
-void ServerEntity::setAngle(float angle) {
-    this->angle = angle;
-    this->dirty = true;
+void ServerEntity::setRotateX(float rotation) {
+    this->rotation.x = rotation;
 }
 
-float ServerEntity::getAngle() {
-    return angle;
+float ServerEntity::getRotateX() {
+    return rotation.x;
+}
+
+void ServerEntity::setRotateY(float rotation) {
+    this->rotation.y = rotation;
+}
+
+float ServerEntity::getRotateY() {
+    return rotation.y;
+}
+
+void ServerEntity::setRotateZ(float rotation) {
+    this->rotation.z = rotation;
+}
+
+float ServerEntity::getRotateZ() {
+    return rotation.z;
 }
 
 void ServerEntity::setScale(float scale) {
@@ -58,7 +73,7 @@ Packet ServerEntity::createPacket(bool reliable) {
             .append(id)
             .append(position)
             .append(visualOffset)
-            .append(angle)
+            .append(rotation)
             .append(scale)
             .append(displayMode)
             .append(displayArgument1)

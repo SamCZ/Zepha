@@ -27,7 +27,7 @@ void Entity::update(double delta) {
 
     visualPosition = visualPosition * (1 - factor) + position * factor;
     visualVisualOffset = visualVisualOffset * (1 - factor) + visualOffset * factor;
-    visualAngle = visualAngle * (1 - factor) + angle * factor;
+    visualRotation = visualRotation * (1 - factor) + rotation * factor;
     visualScale = visualScale * (1 - factor) + scale * factor;
 }
 
@@ -68,25 +68,43 @@ glm::vec3 Entity::getVisualOffset(){
     return visualOffset;
 }
 
-void Entity::setAngle(float angle) {
-    this->visualAngle = angle;
-    this->angle = angle;
+void Entity::setRotateX(float rotation) {
+    this->visualRotation.x = rotation;
+    this->rotation.x = rotation;
 }
 
-void Entity::interpAngle(float angle) {
-    this->angle = angle;
+void Entity::interpRotateX(float rotation) {
+    this->rotation.x = rotation;
 }
 
-float Entity::getAngle() {
-    return angle;
+float Entity::getRotateX() {
+    return rotation.x;
 }
 
-void Entity::setRotation(glm::mat4 rotation) {
-    this->rotation = rotation;
+void Entity::setRotateY(float rotation) {
+    this->visualRotation.y = rotation;
+    this->rotation.y = rotation;
 }
 
-glm::mat4 Entity::getRotation() {
-    return rotation;
+void Entity::interpRotateY(float rotation) {
+    this->rotation.y = rotation;
+}
+
+float Entity::getRotateY() {
+    return rotation.y;
+}
+
+void Entity::setRotateZ(float rotation) {
+    this->visualRotation.z = rotation;
+    this->rotation.z = rotation;
+}
+
+void Entity::interpRotateZ(float rotation) {
+    this->rotation.z = rotation;
+}
+
+float Entity::getRotateZ() {
+    return rotation.z;
 }
 
 void Entity::setScale(float scale) {
@@ -106,8 +124,11 @@ glm::mat4 Entity::getModelMatrix() {
     glm::mat4 model = glm::mat4(1.0);
 
     model = glm::translate(model, visualPosition + visualVisualOffset);
-//    model = glm::rotate(model, visualAngle * static_cast<float>(3.14159265 / 180), {0.0, 1.0, 0.0});
-    model = model * rotation;
+
+    model = glm::rotate(model, glm::radians(visualRotation.x), {1, 0, 0});
+    model = glm::rotate(model, glm::radians(visualRotation.y), {0, 1, 0});
+    model = glm::rotate(model, glm::radians(visualRotation.z), {0, 0, 1});
+
     model = glm::scale(model, glm::vec3(visualScale));
 
     return model;
