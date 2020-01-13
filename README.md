@@ -10,7 +10,7 @@ Zepha is very early in developement, however it already has several strengths ov
 
 Zepha's full source code is currently available on this repository for viewing and personal use, however it is important to note that this project is *not* free nor open source. Unfortunately, as my dream is to make a living off of game development this is not a viable strategy for me. Learning from the source code or exploring the source is allowed and encouraged, though. Feel free to use this repository as a reference for similar works until the repository eventually becomes private.
 
-**(c) 2018-2019 Nicole Collings, All Rights Reserved.**
+**(c) 2018-2020 Nicole Collings, All Rights Reserved.**
 
 You do not have permission to redistribute, copy, or share this work without my explicit written permission. 
 You may download the repository and compile it for personal use or potential contributions.
