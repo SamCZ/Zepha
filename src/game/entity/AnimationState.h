@@ -15,21 +15,26 @@ public:
 
     void update(double delta);
 
+    void setAnimations(const std::vector<AnimationSegment>& anims);
     void defineAnimation(const std::string& animationName, uint startFrame, uint endFrame);
 
-    void setAnimation(const std::string& animationName, double interpolateTime, bool loop);
+    void setAnimNamed(const std::string& animationName, double interpolateTime, bool loop);
+    void setAnimRange(unsigned int startFrame, unsigned int endFrame, double interpolateTime, bool loop);
+
     void setPlaying(bool playing);
 
     void setFrame(double frame);
     double getFrame();
-    std::tuple<int, int> getBounds();
+    std::tuple<unsigned int, unsigned int> getBounds();
 
 private:
-    AnimationSegment* currentAnimation = nullptr;
     std::map<std::string, AnimationSegment> animations;
 
+    unsigned int startFrame = 0;
+    unsigned int endFrame = 0;
+
     bool playing = false;
-    bool looping = false;
+    bool loop = false;
 
     double currentFrame = 0;
     double ticksPerSecond = 0;

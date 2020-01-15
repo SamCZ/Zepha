@@ -77,19 +77,18 @@ void MapGen::buildDensityMap(MapGenJob* job, const glm::vec3& worldPos) {
     job->roughness   = NoiseSample(roughness,   worldPos, {4, 4}, false);
 
     auto biome = biomes.getBiomeAt(job->temperature.get({}), job->humidity.get({}), job->roughness.get({}));
-//    auto terrain = NoiseSample(*biome.modules[biome.modules.size() - 1], worldPos, {4, 1}, true);
 
-    auto terrain = NoiseSample({4, 1});
+    auto terrain = NoiseSample({4, 4});
 
     float offsetH = 16.f / 4.f;
-    float offsetV = 16.f / 1.f;
+    float offsetV = 16.f / 4.f;
 
     for (int i = 0; i <= 4; i++) {
-        for (int j = 0; j <= 1; j++) {
+        for (int j = 0; j <= 4; j++) {
             for (int k = 0; k <= 4; k++) {
                 //TODO: Find out why this is being stoopd
-                glm::vec3 localPos = {(offsetH * i) / 1.01f, 0, (offsetH * k) / 1.01f};
-                glm::vec3 pos = {(worldPos.x * 16 + offsetH * i) / 16.f, 0, (worldPos.z * 16 + offsetH * k) / 16.f};
+                glm::vec3 localPos = {(offsetH * i) / 1.01f, (offsetV * j) / 1.01f, (offsetH * k) / 1.01f};
+                glm::vec3 pos = {(worldPos.x * 16 + offsetH * i) / 16.f, (worldPos.y * 16 + offsetV * j) / 16.f, (worldPos.z * 16 + offsetH * k) / 16.f};
                 auto& biome = biomes.getBiomeAt(job->temperature.get(localPos), job->humidity.get(localPos), job->roughness.get(localPos));
                 auto& mod = biome.modules[biome.modules.size() - 1];
                 terrain.set({i, j, k}, static_cast<float>(mod->GetValue(pos.x, pos.y, pos.z)));

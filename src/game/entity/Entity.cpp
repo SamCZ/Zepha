@@ -21,8 +21,6 @@ void Entity::setModel(std::shared_ptr<Model> model) {
 void Entity::update(double delta) {
     animState.update(delta);
 
-    if (animState.getFrame() > 390) animState.setFrame(302);
-
     float factor = static_cast<float>(fmin(delta * 8, 1));
 
     visualPosition = visualPosition * (1 - factor) + position * factor;
@@ -140,4 +138,21 @@ void Entity::cleanup() {
 
 Entity::~Entity() {
     cleanup();
+}
+
+void Entity::setAnimations(const std::vector<AnimationSegment>& anims) {
+    animState.setAnimations(anims);
+}
+
+void Entity::playAnimation(const std::string &anim, bool loop) {
+    animState.setAnimNamed(anim, 0, loop);
+}
+
+void Entity::playRange(unsigned int start, unsigned int end, bool loop) {
+    animState.setAnimRange(start, end, 0, loop);
+}
+
+void Entity::setPlaying(bool playing, unsigned int offset) {
+    animState.setPlaying(playing);
+    if (offset != UINT_MAX) animState.setFrame(offset + animState.getFrame());
 }

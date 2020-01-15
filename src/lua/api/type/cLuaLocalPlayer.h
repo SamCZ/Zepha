@@ -10,7 +10,7 @@
 #include <sol2/sol.hpp>
 
 namespace ClientApi {
-    void local_player(sol::state& lua, LocalWorld& world) {
+    void local_player(sol::state& lua) {
         lua.new_usertype<LocalLuaPlayer>("LocalPlayer",
             "set_pos", &LocalLuaPlayer::set_pos,
             "get_pos", &LocalLuaPlayer::get_pos,

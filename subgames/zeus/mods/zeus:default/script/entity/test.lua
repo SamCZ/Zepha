@@ -4,6 +4,9 @@ zepha.register_entity("zeus:default:test", {
     display_texture = "zeus:default:player",
 
     on_create = function(self)
+--         self.object.set_animations({
+--             {"wal0, 100}
+--         })
 --        self.object:snap_scale(1/4)
     end,
     on_update = function(self, delta)
@@ -20,7 +23,7 @@ zepha.register_entity("zeus:default:test", {
             y = self.object.pos.y,
             z = self.object.pos.z + 0.08 * math.cos(math.rad(self.object.yaw))})
         self.object:set_yaw(self.object.yaw + 2)
-        self.object:set_pitch(self.object.pitch + 2)
+--         self.object:set_pitch(self.object.pitch + 2)
 
 --         self.object:set_yaw(math.deg(math.atan2(zepha.player.pos.x - self.object.pos.x, zepha.player.pos.z - self.object.pos.z)) + 180)
     end

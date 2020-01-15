@@ -9,7 +9,7 @@
 #include <sol2/sol.hpp>
 
 namespace ClientApi {
-    void entity(sol::state& lua, LocalWorld& world) {
+    void entity(sol::state& lua) {
         lua.new_usertype<LocalLuaEntity>("LuaEntity",
              "id", sol::readonly(&LocalLuaEntity::id),
 
@@ -38,6 +38,8 @@ namespace ClientApi {
              "yaw", sol::property(&LocalLuaEntity::get_yaw, &LocalLuaEntity::set_yaw),
              "roll", sol::property(&LocalLuaEntity::get_roll, &LocalLuaEntity::set_roll),
              "scale", sol::property(&LocalLuaEntity::get_scale, &LocalLuaEntity::set_scale),
+
+             "anims", sol::readonly(&LocalLuaEntity::manager),
 
              "set_display_type", &LocalLuaEntity::set_display_type
         );

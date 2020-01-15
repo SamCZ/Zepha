@@ -11,6 +11,13 @@ AnimationState::AnimationState(Model &source) {
     currentFrame = 100;
     ticksPerSecond = animation.ticksPerSecond;
     duration = animation.duration;
+    endFrame = duration;
+}
+
+void AnimationState::setAnimations(const std::vector<AnimationSegment> &anims) {
+    for (auto& anim : anims) {
+        defineAnimation(anim.animationName, anim.startFrame, anim.endFrame);
+    }
 }
 
 void AnimationState::defineAnimation(const std::string& animationName, uint startFrame, uint endFrame) {
@@ -18,19 +25,40 @@ void AnimationState::defineAnimation(const std::string& animationName, uint star
 }
 
 void AnimationState::update(double delta) {
-    uint start = (currentAnimation ? currentAnimation->startFrame : 0);
-    uint end = (currentAnimation ? currentAnimation->endFrame : duration);
+    if (playing) {
+        float frame = currentFrame + (delta * ticksPerSecond);
+        if (loop) frame = fmod(frame - startFrame, endFrame - startFrame) + startFrame;
+        else frame = fmin(frame, endFrame);
 
-    //TODO: Implement loop toggle
+        if (frame == endFrame) playing = false;
 
-    if (playing) currentFrame = fmod((currentFrame - start) + (delta * ticksPerSecond), end - start) + start;
+        currentFrame = frame;
+    }
 }
 
-void AnimationState::setAnimation(const std::string &animationName, double interpolateTime, bool loop) {
+//void AnimationState::update(double delta) {
+//    uint start = startFrame;
+//    uint end = endFrame;
+//
+//    //TODO: Implement loop toggle
+//
+//    if (playing) currentFrame = fmod((currentFrame - start) + (delta * ticksPerSecond), end - start) + start;
+//}
+
+void AnimationState::setAnimNamed(const std::string &animationName, double interpolateTime, bool loop) {
+    auto& anim = animations[animationName];
+    setAnimRange(anim.startFrame, anim.endFrame, 0, loop);
+}
+
+void AnimationState::setAnimRange(unsigned int startFrame, unsigned int endFrame, double interpolateTime, bool loop) {
     //TODO: Interpolate
-    currentAnimation = &animations[animationName];
-    currentFrame = currentAnimation->startFrame;
-    looping = loop;
+
+    this->startFrame = startFrame;
+    this->endFrame = endFrame;
+
+    currentFrame = startFrame;
+
+    this->loop = loop;
 }
 
 void AnimationState::setPlaying(bool playing) {
@@ -45,11 +73,6 @@ double AnimationState::getFrame() {
     return currentFrame;
 }
 
-std::tuple<int, int> AnimationState::getBounds() {
-    if (currentAnimation) return std::make_tuple(
-        static_cast<int>(currentAnimation->startFrame),
-        static_cast<int>(currentAnimation->endFrame)
-    );
-    else return std::make_tuple<int>(0, duration);
-
+std::tuple<unsigned int, unsigned int> AnimationState::getBounds() {
+    return std::make_tuple(startFrame, endFrame);
 }

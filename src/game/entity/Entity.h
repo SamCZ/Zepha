@@ -46,6 +46,11 @@ public:
     void setScale(float scale);
     float getScale();
 
+    void setAnimations(const std::vector<AnimationSegment>& anims);
+    void playAnimation(const std::string& anim, bool loop);
+    void playRange(unsigned int start, unsigned int end, bool loop);
+    void setPlaying(bool playing, unsigned int offset);
+
     void cleanup();
     ~Entity() override;
 

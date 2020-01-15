@@ -8,13 +8,13 @@
 #include "../register/RegisterKeybinds.h"
 #include "../register/RegisterBiomes.h"
 
-#include "../../def/LocalDefs.h"
 #include "../api/type/LocalLuaPlayer.h"
 
 #include "../api/type/cLocalLuaEntity.h"
 #include "../api/type/cLuaLocalPlayer.h"
 #include "../api/type/cLuaInventory.h"
 #include "../api/type/cLuaItemStack.h"
+#include "../api/type/cLocalLuaAnimationManager.h"
 
 #include "../api/modules/delay.h"
 
@@ -59,8 +59,9 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& pla
     core["__builtin"] = lua.create_table();
 
     //Load Types
-    ClientApi::entity(lua, world);
-    ClientApi::local_player(lua, world);
+    ClientApi::entity(lua);
+    ClientApi::animation_manager(lua);
+    ClientApi::local_player(lua);
     ClientApi::inventory(lua);
     ClientApi::item_stack(lua);
 

@@ -1,25 +1,38 @@
 local noise = {
     module = "add",
     sources = {
-        { -- Voronoi
-            module = "scale_bias",
-            source = {
-                module = "voronoi",
-                frequency = 0.2,
-                displacement = 5
-            },
-            scale = 8,
-            bias = -32
+        {
+            module = "add",
+            sources = {
+                { -- Voronoi
+                    module = "scale_bias",
+                    source = {
+                        module = "voronoi",
+                        frequency = 0.2,
+                        displacement = 5
+                    },
+                    scale = 8,
+                    bias = -32
+                },
+                { -- Features
+                    module = "scale_bias",
+                    source = {
+                        module = "perlin",
+                        frequency = 0.6,
+                        octaves = 3,
+                    },
+                    scale = 3
+                }
+            }
         },
-        { -- Features
+        { -- Variation
             module = "scale_bias",
             source = {
                 module = "perlin",
-                frequency = 0.8,
-                octaves = 6,
+                frequency = 0.05,
+                octaves = 6
             },
-            scale = 6,
-            bias = 0
+            scale = 15
         }
     }
 }
