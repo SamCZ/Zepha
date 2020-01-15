@@ -4,45 +4,43 @@
 
 #include "LocalServerInstance.h"
 #include "../util/Log.h"
+#include "Server.h"
 #include <iostream>
 
-LocalServerInstance::LocalServerInstance(const std::string &path, unsigned short port) :
+LocalServerInstance::LocalServerInstance(const std::string &path, unsigned short port, const std::string& subgame) :
     port(port),
-    path(path) {}
+    path(path),
+    subgame(subgame) {}
 
 bool LocalServerInstance::start() {
-#ifdef _WIN32
-    std::cout << Log::err << "Local Server not implemented on Windows! [1]" << Log::endl;
-    return false;
-#else
+#ifndef _WIN32
     pid = fork();
-    if (pid == 0) initServer();
+    if (pid == 0) {
+        char *arr[] = {
+            const_cast <char*>(""),
+//            const_cast <char*>("-iconic"),
+            const_cast <char*>("-e"),
+            const_cast <char*>(path.data()),
+            const_cast <char*>("--mode=server"),
+            const_cast <char*>("--subgame=zeus"), //TODO: Don't hardcode this
+            static_cast<char*>(nullptr)
+        };
+
+        execvp("xterm", arr);
+    }
+    return true;
+#else
+    std::thread([&]() {
+       Server s(path.data(), port, subgame);
+    }).detach();
     return true;
 #endif
 }
 
-void LocalServerInstance::initServer() {
-    //This method is called on the Server Process.
-    //TODO: Implement version for Win32.
-
-    char *arr[] = {
-            (char*) "",
-//            (char*) "-iconic",
-            (char*) "-e",
-            const_cast<char *>(path.data()),
-            (char*) "--mode=server",
-            (char*) nullptr
-    };
-
-	#ifndef _WIN32
-		execvp("xterm", arr);
-	#endif
-}
-
 void LocalServerInstance::stop() {
-#ifdef _WIN32
-    std::cout << Log::err << "Local Server not implemented on Windows! [2]" << Log::endl;
-#else
-    if (pid != 0) kill(pid, SIGKILL);
-#endif
+    #ifndef _WIN32
+        if (pid != 0) kill(pid, SIGKILL);
+    #else
+        std::cout << Log::err << "Local Server destructor not implemented on Windows!" << Log::endl;
+    #endif
 }

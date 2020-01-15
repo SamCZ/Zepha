@@ -36,15 +36,6 @@ void AnimationState::update(double delta) {
     }
 }
 
-//void AnimationState::update(double delta) {
-//    uint start = startFrame;
-//    uint end = endFrame;
-//
-//    //TODO: Implement loop toggle
-//
-//    if (playing) currentFrame = fmod((currentFrame - start) + (delta * ticksPerSecond), end - start) + start;
-//}
-
 void AnimationState::setAnimNamed(const std::string &animationName, double interpolateTime, bool loop) {
     auto& anim = animations[animationName];
     setAnimRange(anim.startFrame, anim.endFrame, 0, loop);

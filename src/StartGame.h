@@ -108,11 +108,6 @@ int StartGame(int argc, char* argv[]) {
             Client c(path, addr, {1366, 768});
             break;
         }
-//        case Mode::LOCAL_SERVER: {
-//            auto localServer = std::make_unique<LocalServerInstance>(path, addr.port);
-//            Client c(std::move(localServer), {1366, 768});
-//            break;
-//        }
         case Mode::SERVER: {
             Server s(path, addr.port, subgame);
             break;

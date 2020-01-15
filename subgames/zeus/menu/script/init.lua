@@ -34,12 +34,12 @@ zepha.set_gui([[
 ]], {
     buttonPlay = {
         left = function()
-            zepha.start_game()
+            zepha.start_game_local()
         end
     },
     buttonServers = {
         left = function()
-            zepha.server_select()
+            zepha.start_game()
         end
     }
 })

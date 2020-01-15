@@ -9,19 +9,20 @@
 #ifndef _WIN32
 #include <zconf.h>
 #include <signal.h>
+#include <thread>
+
 #endif
 
 class LocalServerInstance {
 public:
-    LocalServerInstance(const std::string& path, unsigned short port);
+    LocalServerInstance(const std::string& path, unsigned short port, const std::string& subgame);
 
     bool start();
     void stop();
-
-    unsigned short port = 0;
 private:
-    void initServer();
-
     std::string path;
+    std::string subgame;
+    unsigned short port = 0;
+
     int pid = 0;
 };

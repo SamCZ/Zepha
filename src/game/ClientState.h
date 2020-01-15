@@ -14,6 +14,7 @@ public:
     ClientState(const std::string& path, Renderer& renderer);
 
     std::string path;
+    std::string subgame;
 
     Renderer& renderer;
     ServerConnection connection {};

@@ -7,7 +7,8 @@
 Client::Client(const std::string& path, const Address &addr, glm::ivec2 dims) :
     state(path.substr(0, path.find_last_of('/') + 1), renderer),
     renderer(dims),
-    addr(addr) {
+    addr(addr),
+    executablePath(path) {
 
     std::cout << Log::info << "Starting Zepha Client." << Log::endl;
 
@@ -20,6 +21,12 @@ Client::Client(const std::string& path, const Address &addr, glm::ivec2 dims) :
 
 void Client::loop() {
     Timer t("Client Loop");
+
+    if (state.desiredState == "local") {
+        state.desiredState = "connect";
+        localServer = std::make_unique<LocalServerInstance>(executablePath, addr.port, state.subgame);
+        localServer->start();
+    }
 
     if (state.desiredState == "connect") {
         state.desiredState = "this";
@@ -47,4 +54,7 @@ void Client::loop() {
 
 Client::~Client() {
     sceneManager.cleanupScene();
+    if (localServer) localServer->stop();
+
+    //TODO: Kill local server
 }
