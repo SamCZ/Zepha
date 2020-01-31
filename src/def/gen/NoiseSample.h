@@ -19,8 +19,6 @@ public:
 
     void set(glm::ivec3 pos, float value);
     float get(const glm::ivec3& pos);
-
-
 private:
     void reserveSpace();
 

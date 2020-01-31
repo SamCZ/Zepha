@@ -178,7 +178,6 @@ bool LocalDimension::setBlock(glm::ivec3 pos, unsigned int block) {
 
 void LocalDimension::attemptMeshChunk(const sptr<BlockChunk>& chunk, bool updateAdjacents) {
 //    if (!chunk->dirty) return; //TODO
-
     auto dirs = Vec::cardinalVectors;
     bool allExists = true;
     for (auto dir : dirs) {
@@ -187,9 +186,15 @@ void LocalDimension::attemptMeshChunk(const sptr<BlockChunk>& chunk, bool update
         }
     }
 
-    if (allExists && chunk->shouldRender()) {
-        chunk->dirty = false;
-        pendingMesh.push_back(chunk->pos);
+    if (allExists) {
+        if (chunk->shouldRender()) {
+            pendingMesh.push_back(chunk->pos);
+        }
+        else {
+            removeMeshChunk(chunk->pos);
+        }
+
+        chunk->dirty = false; //TODO: Make dirty work
     }
 }
 

@@ -33,8 +33,8 @@ public:
     std::vector<std::shared_ptr<BlockChunk>> update();
 
     struct Unit {
-        glm::vec3 pos {};
-        std::vector<BlockChunk*> chunks {};
+        glm::ivec3 pos {};
+        MapGen::chunk_partials_map chunks {};
 
         bool unlocked = true;
     };

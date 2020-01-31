@@ -18,39 +18,45 @@ using namespace noise;
 
 class MapGen {
 public:
+    typedef std::pair<MapGenJob*, BlockChunk*> chunk_partial;
+    typedef std::unordered_map<glm::ivec3, chunk_partial, Vec::ivec3> chunk_partials_map;
+
 	MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeAtlas& biome);
-	std::vector<BlockChunk*> generateMapBlock(glm::vec3 mbPos);
+    chunk_partials_map generateMapBlock(glm::ivec3 mbPos);
 private:
-	void generateChunk(std::array<std::pair<MapGenJob*, BlockChunk*>, 64>& chunks, glm::vec3 localPos, glm::vec3 worldPos);
+    // Generate a chunk at `worldPos`, and place it & any partials in `chunks`.
+	void generateChunk(chunk_partials_map& chunks, glm::ivec3 worldPos);
 
-	void buildDensityMap(MapGenJob* job, const glm::vec3& worldPos);
-	void buildElevationMap(std::array<std::pair<MapGenJob*, BlockChunk*>, 64>& chunks,
-		std::pair<MapGenJob*, BlockChunk*>& chunk, const glm::vec3& localPos, const glm::vec3& worldPos);
+    // Build the density map for a job.
+	void buildDensityMap(MapGenJob* job, glm::ivec3 worldPos);
 
-	void populateChunk(std::pair<MapGenJob*, BlockChunk*>& chunk, const glm::vec3& worldPos);
+	// Build the elevation map for a chunk, which uses the `chunks` partials array for efficiency.
+	void buildElevationMap(chunk_partials_map& chunks, chunk_partial& chunk);
+
+	// Fill a chunk with blocks and any structures that should be included, may generate partials.
+	// Returns chunks in the `chunk` vector.
+	void fillChunkBlocks(chunk_partial& chunk);
+
+	// Fill a chunk with structures
+	void fillChunkStructures(chunk_partial& chunk);
 
 	unsigned int seed = 0;
 
-	DefinitionAtlas& atlas;
+	DefinitionAtlas& defs;
 	BiomeAtlas& biomes;
 
     module::Perlin temperatureBase;
-//    module::Turbulence temperatureTurbulence;
+    module::Turbulence temperatureTurbulence;
 	module::ScaleBias temperature;
 
 	module::Perlin humidityBase;
-//    module::Turbulence humidityTurbulence;
+    module::Turbulence humidityTurbulence;
 	module::ScaleBias humidity;
 
 	module::Perlin roughnessBase;
-//    module::Turbulence roughnessTurbulence;
+    module::Turbulence roughnessTurbulence;
 	module::ScaleBias roughness;
 
-//	module::Perlin worldElevationBase;
-//	module::ScaleBias worldElevationScaled;
-//
-//	module::Perlin worldFeatureBase;
-//	module::ScaleBias worldFeatureScaled;
-//
-//	module::Add worldSmoothElevation;
+	module::Perlin treeMap;
+	module::Abs treeAbs;
 };

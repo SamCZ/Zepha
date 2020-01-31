@@ -23,32 +23,29 @@ BlockChunk::BlockChunk(const std::array<unsigned int, 4096>& blocks, const std::
         }
     }
 
-    renderedEmpty = empty;
+    shouldHaveMesh = empty;
 }
 
 bool BlockChunk::shouldRender() {
-    bool should = !empty || !renderedEmpty;
-    renderedEmpty = true;
-    return should;
+    return shouldHaveMesh;
 }
 
 bool BlockChunk::setBlock(const glm::ivec3& pos, unsigned int block) {
+    if (pos.x > 15 || pos.x < 0 || pos.y > 15 || pos.y < 0 || pos.z > 15 || pos.z < 0) return false;
     unsigned int ind = Space::Block::index(pos);
-    if (ind >= (int)pow(16, 3)) return false;
 
     if (blocks[ind] != block) {
-        if (block == 0) {
-            this->fullBlocks--;
-            if (this->fullBlocks == 0) {
-                std::cout << "Empty" << std::endl;
-                this->empty = true;
-                this->renderedEmpty = false;
+        if (block == DefinitionAtlas::AIR) {
+            fullBlocks--;
+            if (fullBlocks == 0) {
+                empty = true;
+                shouldHaveMesh = false;
             }
         }
-        else if (blocks[ind] == 0) {
-            this->fullBlocks++;
-            this->empty = false;
-            this->renderedEmpty = true;
+        else if (blocks[ind] == DefinitionAtlas::AIR) {
+            if (fullBlocks == 0) shouldHaveMesh = true;
+            empty = false;
+            fullBlocks++;
         }
 
         blocks[ind] = block;
@@ -189,5 +186,5 @@ void BlockChunk::mgRegenEmpty() {
         }
     }
 
-    renderedEmpty = empty;
+    shouldHaveMesh = empty;
 }

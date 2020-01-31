@@ -5,6 +5,7 @@ runfile(_PATH .. "entity/_index")
 runfile(_PATH .. "biomes/_index")
 
 local blockTypes = {
+    "@aurailus:tnt:tnt",
     "zeus:default:grass_slab",
     "zeus:kinetic:axle_0",
     "zeus:default:stone",

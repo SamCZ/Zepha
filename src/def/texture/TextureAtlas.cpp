@@ -107,7 +107,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::addImage(unsigned char *data, const std:
         auto space = findImageSpace(tileWidth, tileHeight);
 
         if (space.x < 0) {
-            std::cout << Log::err << "Failed to find space in dynamic atlas." << Log::endl;
+            std::cout << Log::err << "Failed to find space in dynamic defs." << Log::endl;
             return nullptr;
         }
 

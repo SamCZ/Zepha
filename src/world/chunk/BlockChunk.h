@@ -44,7 +44,7 @@ public:
     Packet serialize();
     void deserialize(Packet& packet);
 
-    bool renderedEmpty = true;
+    bool shouldHaveMesh = true;
     bool dirty = true;
 
     glm::ivec3 pos;

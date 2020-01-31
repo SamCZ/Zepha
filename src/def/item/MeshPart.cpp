@@ -40,7 +40,7 @@ MeshPart::MeshPart(const std::vector<BlockModelVertex>& vertices, const std::vec
             //Store the old positions in texUVs
             vertex.texUVs.x = vertex.tex.x;
             vertex.texUVs.y = vertex.tex.y;
-            //Generate solid coordinates for the atlas positions
+            //Generate solid coordinates for the defs positions
             vertex.tex.x = uv.x + ((uv.z - uv.x) * vertex.tex.x);
             vertex.tex.y = uv.y + ((uv.w - uv.y) * vertex.tex.y);
         }
