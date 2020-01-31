@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Dimension.h"
+#include "../def/gen/MapGen.h"
 #include "../lua/api/type/ServerLuaEntity.h"
 
 class ServerDimension : public Dimension {

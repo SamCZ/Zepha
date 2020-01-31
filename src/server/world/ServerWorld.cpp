@@ -50,14 +50,17 @@ void ServerWorld::update(double delta) {
     }
 
     auto finished = genStream->update();
-    generatedChunks = static_cast<int>(finished.size());
+    generatedChunks = static_cast<int>(finished->size());
 
-    //TODO: Make this finish MapBlocks @ a time
-    for (const auto& chunk : finished) {
+    // TODO: Could be optimized if WorldGenStream passed structs for whole mapBlocks at a time, however
+    // that gets complicated quick when considering partials being passed back for other mapblocks,
+    // it might be worth the effort to reduce user list iterations, but it might not be.
+
+    for (const auto& chunk : *finished) {
         dimension.setChunk(chunk);
 
-        // TODO: Make this only happen once per mapblock, not for every chunk
         glm::ivec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunk->pos);
+        if (chunk->generated) dimension.getMapBlock(mapBlockPos)->generated = true;
         unsigned long long mapBlockIntegrity = dimension.getMapBlockIntegrity(mapBlockPos);
 
         for (auto& client : clientList.clients) {
@@ -115,7 +118,8 @@ void ServerWorld::changedChunks(ServerClient& client) {
     for (const auto &c : generateOrder) {
         glm::vec3 mapBlockPos = mapBlock + c;
         if (!isInBounds(mapBlockPos, oldBounds)) {
-            if (dimension.getMapBlock(mapBlockPos) != nullptr) {
+            auto existing = dimension.getMapBlock(mapBlockPos);
+            if (existing != nullptr && existing->generated) {
                 mapBlocksExisting++;
                 sendMapBlock(mapBlockPos, client);
             }
@@ -130,7 +134,7 @@ void ServerWorld::changedChunks(ServerClient& client) {
 }
 
 bool ServerWorld::generateMapBlock(glm::ivec3 pos) {
-    if(!generateQueueMap.count(pos) && !dimension.getMapBlock(pos)) {
+    if(!generateQueueMap.count(pos) && (!dimension.getMapBlock(pos) || !dimension.getMapBlock(pos)->generated)) {
         generateQueueMap.insert(pos);
         generateQueueList.push_back(pos);
         return true;
@@ -156,7 +160,7 @@ void ServerWorld::sendMapBlock(const glm::ivec3& pos, ServerClient &peer) {
         assert(mapBlock != nullptr);
 
         for (unsigned short i = 0; i < 64; i++) {
-            sendChunk((*mapBlock)[i], peer);
+            if ((*mapBlock)[i] != nullptr) sendChunk((*mapBlock)[i], peer);
         }
     }
 }

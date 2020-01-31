@@ -30,7 +30,7 @@ public:
 
     //Will return a vector of BlockChunk pointers containing finished chunks.
     //Frees up the threads and starts new units.
-    std::vector<std::shared_ptr<BlockChunk>> update();
+    std::unique_ptr<std::vector<std::shared_ptr<BlockChunk>>> update();
 
     struct Unit {
         glm::ivec3 pos {};

@@ -13,6 +13,10 @@ bool ServerDimension::setBlock(glm::ivec3 pos, unsigned int block) {
 }
 
 void ServerDimension::setChunk(std::shared_ptr<BlockChunk> chunk) {
+    // Combine partials if there are any
+    std::shared_ptr<BlockChunk> existing = getChunk(chunk->pos);
+    if (existing != nullptr) chunk = MapGen::combinePartials(chunk, existing);
+
     Dimension::setChunk(chunk);
     glm::vec3 mb = Space::MapBlock::world::fromChunk(chunk->pos);
     mapBlockIntegrity[mb] = mapBlockIntegrity[mb] + 1;

@@ -76,8 +76,10 @@ void MapGen::generateChunk(chunk_partials_map& chunks, glm::ivec3 worldPos) {
 	buildDensityMap(chunk.first, worldPos);
 	buildElevationMap(chunks, chunk);
 
-    fillChunkBlocks(chunk);
-    fillChunkStructures(chunk);
+    generateBlocks(chunk);
+    generateStructures(chunks, chunk);
+
+    chunk.second->generated = true;
 }
 
 void MapGen::buildDensityMap(MapGenJob* job, glm::ivec3 worldPos) {
@@ -115,6 +117,7 @@ void MapGen::buildDensityMap(MapGenJob* job, glm::ivec3 worldPos) {
 
 void MapGen::buildElevationMap(chunk_partials_map& chunks, chunk_partial& chunk) {
     glm::ivec3 worldPos = chunk.second->pos;
+
     MapGenJob* upperJob = nullptr;
     bool createdUpperJob = false;
 
@@ -129,8 +132,6 @@ void MapGen::buildElevationMap(chunk_partials_map& chunks, chunk_partial& chunk)
                 glm::ivec3 rel = worldPos + glm::ivec3 {0, 1, 0};
                 if (chunks.count(rel) != 0) upperJob = chunks.at(rel).first;
                 else {
-                    // TODO: Consider pushing this into the partials array? Could be used to save some mapgen time.. but could also complicate the system.
-                    // If I do decide to do that I need to remove the delete command at the end of this function.
                     upperJob = new MapGenJob();
                     buildDensityMap(upperJob, rel);
                     createdUpperJob = true;
@@ -156,10 +157,11 @@ void MapGen::buildElevationMap(chunk_partials_map& chunks, chunk_partial& chunk)
 	if (createdUpperJob) delete upperJob;
 }
 
-void MapGen::fillChunkBlocks(chunk_partial& chunk) {
+void MapGen::generateBlocks(chunk_partial& chunk) {
 	glm::ivec3 lp;
 
 	for (unsigned short m = 0; m < 4096; m++) {
+	    if (chunk.second->getBlock(m) != DefinitionAtlas::INVALID) continue;
 		Vec::indAssignVec(m, lp);
 
 		auto biome = biomes.getBiomeAt(chunk.first->temperature.get(lp), chunk.first->humidity.get(lp), chunk.first->roughness.get(lp));
@@ -174,10 +176,10 @@ void MapGen::fillChunkBlocks(chunk_partial& chunk) {
 			: biome.rockBlock;
 	}
 
-	chunk.second->mgRegenEmpty();
+    chunk.second->calcNonAirBlocks();
 }
 
-void MapGen::fillChunkStructures(chunk_partial& chunk) {
+void MapGen::generateStructures(chunk_partials_map& chunks, chunk_partial& chunk) {
     unsigned int cWood = defs.blockFromStr("zeus:default:wood").index;
     unsigned int cLeaves = defs.blockFromStr("zeus:default:leaves").index;
 
@@ -189,22 +191,71 @@ void MapGen::fillChunkStructures(chunk_partial& chunk) {
 
         glm::ivec3 p = wp * 16 + lp;
 
-        if (treeAbs.GetValue(p.x, p.y, p.z) > 1.2 && chunk.first->density[m] <= 2 && chunk.first->density[m] > 1) {
+        if (treeAbs.GetValue(p.x, p.y, p.z) > 1.2 && chunk.first->depth[m] <= 2 && chunk.first->depth[m] > 1) {
             glm::ivec3 rp {};
             for (unsigned int i = 0; i < 5; i++) {
-                rp.x = lp.x - 2 + i;
+                rp.x = p.x - 2 + i;
                 for (unsigned int j = 0; j < 5; j++) {
-                    rp.z = lp.z - 2 + j;
+                    rp.z = p.z - 2 + j;
                     for (unsigned int k = 0; k < 2; k++) {
-                        rp.y = lp.y + 3 + k;
-                        chunk.second->setBlock(rp, cLeaves);
+                        rp.y = p.y + 3 + k;
+                        setBlock(rp, cLeaves, chunks);
                     }
                 }
             }
+
+            rp = {};
+            for (unsigned int i = 0; i < 3; i++) {
+                rp.x = p.x - 1 + i;
+                for (unsigned int j = 0; j < 3; j++) {
+                    rp.z = p.z - 1 + j;
+                    for (unsigned int k = 0; k < 2; k++) {
+                        rp.y = p.y + 5 + k;
+                        setBlock(rp, cLeaves, chunks);
+                    }
+                }
+            }
+
             for (unsigned int i = 0; i < 5; i++) {
-                chunk.second->setBlock(lp, cWood);
-                if (++lp.y > 15) break;
+                setBlock(p, cWood, chunks);
+                p.y++;
             }
         }
     }
+}
+
+void MapGen::setBlock(glm::ivec3 worldPos, unsigned int block, MapGen::chunk_partials_map &chunks) {
+    glm::ivec3 chunkPos = Space::Chunk::world::fromBlock(worldPos);
+    BlockChunk* chunk = nullptr;
+
+    if (chunks.count(chunkPos)) chunk = chunks.at(chunkPos).second;
+    else {
+        chunk = new BlockChunk();
+        chunk->pos = chunkPos;
+        chunks.insert(std::pair<glm::ivec3, chunk_partial>{chunkPos, {new MapGenJob(), chunk}});
+    }
+
+    chunk->setBlock(Space::Block::relative::toChunk(worldPos), block);
+}
+
+std::shared_ptr<BlockChunk> MapGen::combinePartials(std::shared_ptr<BlockChunk> a, std::shared_ptr<BlockChunk> b) {
+    std::shared_ptr<BlockChunk> src;
+    std::shared_ptr<BlockChunk> res;
+
+    if (a->generated) {
+        res = a;
+        src = b;
+    }
+    else {
+        res = b;
+        src = a;
+    }
+
+    for (unsigned int i = 0; i < 4096; i++) {
+        if (src->getBlock(i) != DefinitionAtlas::INVALID) res->setBlock(i, src->getBlock(i));
+    }
+    res->generated = src->generated || res->generated;
+
+    assert(res != nullptr);
+    return res;
 }

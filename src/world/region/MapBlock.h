@@ -16,6 +16,8 @@ public:
 
     std::shared_ptr<BlockChunk> operator[](int index);
     void set(int index, std::shared_ptr<BlockChunk> chunk);
+
+    bool generated = false;
 private:
     glm::ivec3 pos {};
     std::array<std::shared_ptr<BlockChunk>, 64> blockChunks;

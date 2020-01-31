@@ -23,22 +23,26 @@ public:
 
 	MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeAtlas& biome);
     chunk_partials_map generateMapBlock(glm::ivec3 mbPos);
+
+    // Combine two chunk partials, or a chunk and a chunk partial.
+    // If both are partials `b` takes preference, if one is a fully generated chunk the partial takes preference.
+    static std::shared_ptr<BlockChunk> combinePartials(std::shared_ptr<BlockChunk> a, std::shared_ptr<BlockChunk> b);
 private:
-    // Generate a chunk at `worldPos`, and place it & any partials in `chunks`.
+    // Generate a chunk at `worldPos`, and place it and any partials in `chunks`.
 	void generateChunk(chunk_partials_map& chunks, glm::ivec3 worldPos);
 
     // Build the density map for a job.
 	void buildDensityMap(MapGenJob* job, glm::ivec3 worldPos);
 
-	// Build the elevation map for a chunk, which uses the `chunks` partials array for efficiency.
+	// Build the elevation map for a chunk, which uses the `chunks` array for efficiency.
 	void buildElevationMap(chunk_partials_map& chunks, chunk_partial& chunk);
 
-	// Fill a chunk with blocks and any structures that should be included, may generate partials.
-	// Returns chunks in the `chunk` vector.
-	void fillChunkBlocks(chunk_partial& chunk);
+	// Generate blocks and structures on a chunk, respectively. generateStructures can create partials.
+	void generateBlocks(chunk_partial& chunk);
+	void generateStructures(chunk_partials_map& chunks, chunk_partial& chunk);
 
-	// Fill a chunk with structures
-	void fillChunkStructures(chunk_partial& chunk);
+	// Place block in the `chunks` array, creates a partial if necessary.
+    static void setBlock(glm::ivec3 worldPos, unsigned int block, chunk_partials_map& chunks);
 
 	unsigned int seed = 0;
 

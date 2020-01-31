@@ -14,66 +14,9 @@ BlockChunk::BlockChunk(const std::array<unsigned int, 4096>& blocks, const std::
 BlockChunk::BlockChunk(const std::array<unsigned int, 4096>& blocks, const std::array<unsigned short, 4096>& biomes, glm::ivec3 pos) :
     blocks(std::move(blocks)),
     biomes(std::move(biomes)),
-    pos(pos) {
-
-    for (unsigned int block : this->blocks) {
-        if (block != DefinitionAtlas::AIR) {
-            empty = false;
-            fullBlocks++;
-        }
-    }
-
-    shouldHaveMesh = empty;
-}
-
-bool BlockChunk::shouldRender() {
-    return shouldHaveMesh;
-}
-
-bool BlockChunk::setBlock(const glm::ivec3& pos, unsigned int block) {
-    if (pos.x > 15 || pos.x < 0 || pos.y > 15 || pos.y < 0 || pos.z > 15 || pos.z < 0) return false;
-    unsigned int ind = Space::Block::index(pos);
-
-    if (blocks[ind] != block) {
-        if (block == DefinitionAtlas::AIR) {
-            fullBlocks--;
-            if (fullBlocks == 0) {
-                empty = true;
-                shouldHaveMesh = false;
-            }
-        }
-        else if (blocks[ind] == DefinitionAtlas::AIR) {
-            if (fullBlocks == 0) shouldHaveMesh = true;
-            empty = false;
-            fullBlocks++;
-        }
-
-        blocks[ind] = block;
-        return true;
-    }
-    return false;
-}
-
-unsigned int BlockChunk::getBlock(unsigned int ind) const {
-    if (ind >= 4096) return DefinitionAtlas::INVALID;
-    return blocks[ind];
-}
-
-unsigned int BlockChunk::getBlock(const glm::ivec3& pos) const {
-    unsigned int ind = Space::Block::index(pos);
-    if (ind >= 4096) return DefinitionAtlas::INVALID;
-    return blocks[ind];
-}
-
-unsigned short BlockChunk::getBiome(unsigned int ind) const {
-    if (ind >= 4096) return BiomeAtlas::INVALID;
-    return biomes[ind];
-}
-
-unsigned short BlockChunk::getBiome(const glm::ivec3& pos) const {
-    unsigned int ind = Space::Block::index(pos);
-    if (ind >= 4096) return BiomeAtlas::INVALID;
-    return biomes[ind];
+    pos(pos),
+    generated(true) {
+    calcNonAirBlocks();
 }
 
 Packet BlockChunk::serialize() {
@@ -175,14 +118,14 @@ void BlockChunk::deserialize(Packet& packet) {
     end: {}
 }
 
-void BlockChunk::mgRegenEmpty() {
-    fullBlocks = 0;
+void BlockChunk::calcNonAirBlocks() {
+    nonAirBlocks = 0;
     empty = true;
 
     for (unsigned int block : this->blocks) {
         if (block != DefinitionAtlas::AIR) {
             empty = false;
-            fullBlocks++;
+            nonAirBlocks++;
         }
     }
 

@@ -187,12 +187,8 @@ void LocalDimension::attemptMeshChunk(const sptr<BlockChunk>& chunk, bool update
     }
 
     if (allExists) {
-        if (chunk->shouldRender()) {
-            pendingMesh.push_back(chunk->pos);
-        }
-        else {
-            removeMeshChunk(chunk->pos);
-        }
+        if (chunk->shouldHaveMesh) pendingMesh.push_back(chunk->pos);
+        else removeMeshChunk(chunk->pos);
 
         chunk->dirty = false; //TODO: Make dirty work
     }
