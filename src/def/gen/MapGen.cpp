@@ -198,7 +198,7 @@ void MapGen::generateStructures(chunk_partials_map& chunks, chunk_partial& chunk
                 for (unsigned int j = 0; j < 5; j++) {
                     rp.z = p.z - 2 + j;
                     for (unsigned int k = 0; k < 2; k++) {
-                        rp.y = p.y + 3 + k;
+                        rp.y = p.y + 48 + k;
                         setBlock(rp, cLeaves, chunks);
                     }
                 }
@@ -210,13 +210,13 @@ void MapGen::generateStructures(chunk_partials_map& chunks, chunk_partial& chunk
                 for (unsigned int j = 0; j < 3; j++) {
                     rp.z = p.z - 1 + j;
                     for (unsigned int k = 0; k < 2; k++) {
-                        rp.y = p.y + 5 + k;
+                        rp.y = p.y + 50 + k;
                         setBlock(rp, cLeaves, chunks);
                     }
                 }
             }
 
-            for (unsigned int i = 0; i < 5; i++) {
+            for (unsigned int i = 0; i < 50; i++) {
                 setBlock(p, cWood, chunks);
                 p.y++;
             }
@@ -235,7 +235,8 @@ void MapGen::setBlock(glm::ivec3 worldPos, unsigned int block, MapGen::chunk_par
         chunks.insert(std::pair<glm::ivec3, chunk_partial>{chunkPos, {new MapGenJob(), chunk}});
     }
 
-    chunk->setBlock(Space::Block::relative::toChunk(worldPos), block);
+    unsigned int index = Space::Block::index(worldPos);
+    if (chunk->getBlock(index) <= DefinitionAtlas::AIR) chunk->setBlock(index, block);
 }
 
 std::shared_ptr<BlockChunk> MapGen::combinePartials(std::shared_ptr<BlockChunk> a, std::shared_ptr<BlockChunk> b) {

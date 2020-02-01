@@ -3,7 +3,6 @@
 //
 
 #include "AnimationState.h"
-typedef unsigned int uint;
 
 AnimationState::AnimationState(Model &source) {
     const ModelAnimation& animation = source.getAnimation();
@@ -20,7 +19,7 @@ void AnimationState::setAnimations(const std::vector<AnimationSegment> &anims) {
     }
 }
 
-void AnimationState::defineAnimation(const std::string& animationName, uint startFrame, uint endFrame) {
+void AnimationState::defineAnimation(const std::string& animationName, unsigned int startFrame, unsigned int endFrame) {
     animations.emplace(animationName, AnimationSegment {animationName, startFrame, endFrame});
 }
 

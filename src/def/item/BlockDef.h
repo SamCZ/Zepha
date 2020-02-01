@@ -31,8 +31,8 @@ public:
 
     std::vector<SelectionBox> sBoxes;
     std::vector<SelectionBox> cBoxes;
-    sptr<Model> entityModel = std::make_shared<Model>();
-    sptr<GuiMesh> guiModel = std::make_shared<GuiMesh>();
+    std::shared_ptr<Model> entityModel = std::make_shared<Model>();
+    std::shared_ptr<GuiMesh> guiModel = std::make_shared<GuiMesh>();
 
     std::unordered_map<Callback, sol::function, Util::EnumClassHash> callbacks {};
 };

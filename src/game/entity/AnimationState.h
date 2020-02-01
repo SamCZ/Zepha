@@ -16,7 +16,7 @@ public:
     void update(double delta);
 
     void setAnimations(const std::vector<AnimationSegment>& anims);
-    void defineAnimation(const std::string& animationName, uint startFrame, uint endFrame);
+    void defineAnimation(const std::string& animationName, unsigned int startFrame, unsigned int endFrame);
 
     void setAnimNamed(const std::string& animationName, double interpolateTime, bool loop);
     void setAnimRange(unsigned int startFrame, unsigned int endFrame, double interpolateTime, bool loop);
@@ -38,5 +38,5 @@ private:
 
     double currentFrame = 0;
     double ticksPerSecond = 0;
-    uint duration = 0;
+    unsigned int duration = 0;
 };

@@ -5,7 +5,6 @@
 #pragma once
 
 #include "Shader.h"
-typedef unsigned int uint;
 
 class LightingShader : public Shader {
 public:
@@ -24,11 +23,11 @@ public:
 
     Uniforms uniforms {};
 
-    uint gBuffer;
-    uint gPosition;
-    uint gNormal;
-    uint gColorSpec;
-    uint rDepth;
+    unsigned int gBuffer;
+    unsigned int gPosition;
+    unsigned int gNormal;
+    unsigned int gColorSpec;
+    unsigned int rDepth;
 
 private:
     glm::ivec2 windowSize {};

@@ -7,8 +7,6 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-typedef unsigned short ushort;
-
 LuaInputManager::LuaInputManager() {
     for (bool& key : keysDown) key = false;
     for (bool& key : keysPressed) key = false;
@@ -18,7 +16,7 @@ LuaInputManager::LuaInputManager() {
 }
 
 void LuaInputManager::update(bool* keys) {
-    for (ushort i = 0; i < 1024; i++) {
+    for (unsigned short i = 0; i < 1024; i++) {
         bool key = keys[i];
 
         if (key) {
@@ -33,7 +31,7 @@ void LuaInputManager::update(bool* keys) {
 }
 
 void LuaInputManager::triggerKeybinds() {
-    for (ushort i = 0; i < 1024; i++) {
+    for (unsigned short i = 0; i < 1024; i++) {
         if (keysPressed[i]) {
             for (auto& cb : callbacksDown[i]) cb();
             keysPressed[i] = false;
@@ -45,10 +43,10 @@ void LuaInputManager::triggerKeybinds() {
     }
 }
 
-void LuaInputManager::bindOnDown(ushort key, const sol::function &cb) {
+void LuaInputManager::bindOnDown(unsigned short key, const sol::function &cb) {
     callbacksDown[key].push_back(cb);
 }
 
-void LuaInputManager::bindOnUp(ushort key, const sol::function &cb) {
+void LuaInputManager::bindOnUp(unsigned short key, const sol::function &cb) {
     callbacksUp[key].push_back(cb);
 }

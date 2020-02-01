@@ -74,9 +74,9 @@ void TextureAtlas::update() {
     }
 }
 
-glm::vec4 TextureAtlas::sampleTexturePixel(const sptr<AtlasRef> &atlasRef, glm::vec2 pixel) {
+glm::vec4 TextureAtlas::sampleTexturePixel(const std::shared_ptr<AtlasRef> &atlasRef, glm::vec2 pixel) {
     glm::vec2 absPos = {atlasRef->pos.x + pixel.x, atlasRef->pos.y + pixel.y};
-    uint index = (static_cast<unsigned int>(absPos.y) * pixelSize.x + static_cast<unsigned int>(absPos.x)) * 4;
+    unsigned int index = (static_cast<unsigned int>(absPos.y) * pixelSize.x + static_cast<unsigned int>(absPos.x)) * 4;
 
     return {
         static_cast<float>(atlasData[index]) / 255.f,

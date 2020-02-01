@@ -12,7 +12,7 @@ namespace Api {
         core["keys"] = lua.create_table();
         core["keycodes"] = lua.create_table();
 
-        for (ushort i = 0; i < 350; i++) {
+        for (unsigned short i = 0; i < 350; i++) {
             auto key = Util::getKeyStr(i);
             if (!key.empty()) {
                 core["keys"][key] = i;

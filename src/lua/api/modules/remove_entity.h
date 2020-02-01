@@ -13,7 +13,7 @@ namespace Api {
     static void remove_entity_c(sol::state& lua, sol::table& core, LocalDefs& defs, LocalWorld& world) {
         core.set_function("remove_entity", [&](sol::table entity) {
 
-            sptr<LocalLuaEntity> object = entity.get<sptr<LocalLuaEntity>>("object");
+            std::shared_ptr<LocalLuaEntity> object = entity.get<std::shared_ptr<LocalLuaEntity>>("object");
             sol::optional<sol::table> luaEntTable = core["entities"][object->id];
             if (!luaEntTable) return;
 

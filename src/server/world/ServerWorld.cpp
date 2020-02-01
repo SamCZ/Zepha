@@ -6,8 +6,8 @@
 #include <glm/glm.hpp>
 #include "ServerWorld.h"
 
-const static int MB_GEN_H = 2;
-const static int MB_GEN_V = 2;
+const static int MB_GEN_H = 6;
+const static int MB_GEN_V = 4;
 
 ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& clients) :
     clientList(clients),
@@ -143,7 +143,7 @@ bool ServerWorld::generateMapBlock(glm::ivec3 pos) {
 }
 
 void ServerWorld::sendChunk(const std::shared_ptr<BlockChunk>& chunk, ServerClient &peer) {
-    assert(chunk != nullptr);
+    if (chunk == nullptr || !chunk->generated) return;
 
     Packet r = chunk->serialize();
     r.sendTo(peer.getPeer(), PacketChannel::CHUNK);

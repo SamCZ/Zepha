@@ -14,8 +14,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "../../../util/Log.h"
 
-typedef unsigned int uint;
-
 class Shader {
 public:
     Shader();
@@ -30,13 +28,13 @@ public:
     void use();
     static void clearShader();
 
-    void set(int loc, uint val);
+    void set(int loc, unsigned int val);
     void set(int loc, int val);
     void set(int loc, float val);
     void set(int loc, glm::vec3 val);
     void set(int loc, glm::mat4 val);
 
-    void setArr(int loc, uint count, glm::mat4 &start);
+    void setArr(int loc, unsigned int count, glm::mat4 &start);
 
     void cleanup();
 

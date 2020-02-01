@@ -12,8 +12,6 @@
 #include <iostream>
 #include "Log.h"
 
-typedef unsigned short ushort;
-
 namespace Util {
     struct EnumClassHash {
         template <typename T>
@@ -100,7 +98,7 @@ namespace Util {
         return color;
     }
 
-    static std::string getKeyStr(ushort key) {
+    static std::string getKeyStr(unsigned short key) {
         switch (key) {
             default: return "";
             case 32: return " ";

@@ -31,7 +31,7 @@ namespace RegisterItems {
 
             //Convert Textures Table to Vector
             std::vector<std::string> textures;
-            std::vector<sptr<AtlasRef>> textureRefs;
+            std::vector<std::shared_ptr<AtlasRef>> textureRefs;
             for (auto pair : *texturesOpt) {
                 if (!pair.second.is<std::string>()) throw "textures table has non-string value";
                 textures.push_back(pair.second.as<std::string>());

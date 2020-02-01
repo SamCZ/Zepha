@@ -24,7 +24,7 @@ public:
     void setPos(glm::vec3 pos);
     glm::vec3 getPos() override;
 private:
-    uptr<ChunkMesh> mesh = nullptr;
+    std::unique_ptr<ChunkMesh> mesh = nullptr;
     glm::vec3 pos {};
 };
 

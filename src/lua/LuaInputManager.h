@@ -6,8 +6,6 @@
 
 #include <sol2/sol.hpp>
 
-typedef unsigned short ushort;
-
 class LuaInputManager {
 public:
     LuaInputManager();
@@ -15,8 +13,8 @@ public:
     void update(bool* keys);
     void triggerKeybinds();
 
-    void bindOnDown(ushort key, const sol::function& cb);
-    void bindOnUp(ushort key, const sol::function& cb);
+    void bindOnDown(unsigned short key, const sol::function& cb);
+    void bindOnUp(unsigned short key, const sol::function& cb);
 private:
     bool keysDown[1024] {};
     bool keysPressed[1024] {};

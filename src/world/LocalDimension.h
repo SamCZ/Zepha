@@ -39,25 +39,25 @@ public:
     int lastMeshUpdates = 0;
     std::vector<PlayerEntity> playerEntities;
 private:
-    typedef std::list<sptr<ChunkRenderElem>>::iterator chunk_ref;
-    typedef std::list<sptr<LocalLuaEntity>>::iterator local_ent_ref;
-    typedef std::list<sptr<ServerLocalLuaEntity>>::iterator server_ent_ref;
+    typedef std::list<std::shared_ptr<ChunkRenderElem>>::iterator chunk_ref;
+    typedef std::list<std::shared_ptr<LocalLuaEntity>>::iterator local_ent_ref;
+    typedef std::list<std::shared_ptr<ServerLocalLuaEntity>>::iterator server_ent_ref;
 
     void finishMeshes();
     void queueMeshes();
 
-    void attemptMeshChunk(const sptr<BlockChunk>& chunk, bool updateAdjacents = true);
+    void attemptMeshChunk(const std::shared_ptr<BlockChunk>& chunk, bool updateAdjacents = true);
     bool getAdjacentExists(glm::vec3 pos, bool updateAdjacents);
 
     LocalDefs& defs;
 
-    uptr<MeshGenStream> meshGenStream = nullptr;
+    std::unique_ptr<MeshGenStream> meshGenStream = nullptr;
     std::vector<glm::vec3> pendingMesh {};
 
-    std::unordered_map<uint, local_ent_ref> localEntityRefs {};
+    std::unordered_map<unsigned int, local_ent_ref> localEntityRefs {};
     std::list<std::shared_ptr<LocalLuaEntity>> localEntities {};
 
-    std::unordered_map<uint, server_ent_ref> serverEntityRefs {};
+    std::unordered_map<unsigned int, server_ent_ref> serverEntityRefs {};
     std::list<std::shared_ptr<ServerLocalLuaEntity>> serverEntities {};
 
     std::unordered_map<glm::vec3, chunk_ref, Vec::vec3> renderRefs {};

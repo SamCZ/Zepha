@@ -31,7 +31,7 @@ unsigned int Dimension::getBlock(glm::ivec3 pos) {
     return 0;
 }
 
-bool Dimension::setBlock(glm::ivec3 pos, uint block) {
+bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {
     auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
     if (chunk == nullptr) return false;
 

@@ -12,7 +12,7 @@ class Font {
 public:
     Font() = default;
     Font(TextureAtlas& atlas, std::shared_ptr<AtlasRef> tex);
-    uint getCharWidth(char c);
+    unsigned int getCharWidth(char c);
     glm::vec4 getCharUVs(char c);
 
     const static unsigned int amountOfChars = 95;

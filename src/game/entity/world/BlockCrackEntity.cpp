@@ -36,7 +36,7 @@ void BlockCrackEntity::update() {
             addFaces(indOffset, vertices, indices, model.parts[i]);
         }
 
-        uptr<EntityMesh> mesh = std::make_unique<EntityMesh>();
+        std::unique_ptr<EntityMesh> mesh = std::make_unique<EntityMesh>();
         mesh->create(vertices, indices);
         this->model->fromMesh(std::move(mesh));
     }

@@ -22,7 +22,7 @@ namespace RegisterKeybinds {
                 throw identifier + "'s definition table is not a table!";
             sol::table keybindTbl = keybindRef.second.as<sol::table>();
 
-            ushort def = keybindTbl.get<ushort>("default");
+            unsigned short def = keybindTbl.get<unsigned short>("default");
 
             auto onPress = keybindTbl.get<sol::optional<sol::function>>("on_press");
             auto onRelease = keybindTbl.get<sol::optional<sol::function>>("on_release");

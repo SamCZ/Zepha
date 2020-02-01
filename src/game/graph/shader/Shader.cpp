@@ -55,7 +55,7 @@ GLint Shader::get(const std::string &name) {
     return glGetUniformLocation(shaderID, name.c_str());
 }
 
-void Shader::set(int loc, uint val) {
+void Shader::set(int loc, unsigned int val) {
     crashIfInactive();
     glUniform1ui(loc, val);
 }
@@ -80,7 +80,7 @@ void Shader::set(int loc, glm::mat4 val) {
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(val));
 }
 
-void Shader::setArr(int loc, uint count, glm::mat4 &start) {
+void Shader::setArr(int loc, unsigned int count, glm::mat4 &start) {
     crashIfInactive();
     glUniformMatrix4fv(loc, count, GL_FALSE, glm::value_ptr(start));
 }

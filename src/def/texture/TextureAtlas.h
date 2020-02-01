@@ -16,7 +16,6 @@
 #include "AtlasRef.h"
 #include "RawTexData.h"
 #include "../../util/Log.h"
-#include "../../util/Pointer.h"
 #include "../../game/graph/Texture.h"
 
 class TextureAtlas {
@@ -28,7 +27,7 @@ public:
 
     void update();
 
-    glm::vec4 sampleTexturePixel(const sptr<AtlasRef>& atlasRef, glm::vec2 pixel);
+    glm::vec4 sampleTexturePixel(const std::shared_ptr<AtlasRef>& atlasRef, glm::vec2 pixel);
 
     std::shared_ptr<AtlasRef> addImage(unsigned char *data, const std::string& name, bool base, int texWidth, int texHeight);
     std::shared_ptr<AtlasRef> generateCrackImage(const std::string &name, unsigned short crackLevel);

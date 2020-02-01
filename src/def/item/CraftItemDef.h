@@ -6,7 +6,6 @@
 
 #include <vector>
 #include "../ItemDef.h"
-#include "../../util/Pointer.h"
 #include "../texture/AtlasRef.h"
 #include "../../game/entity/Model.h"
 
@@ -14,15 +13,15 @@ class CraftItemDef : public ItemDef {
 public:
     CraftItemDef() = default;
     CraftItemDef(const std::string& identifier, const std::string& name, unsigned short maxStackSize,
-            const std::vector<std::string>& textures, const std::vector<sptr<AtlasRef>>& textureRefs);
+            const std::vector<std::string>& textures, const std::vector<std::shared_ptr<AtlasRef>>& textureRefs);
 
     CraftItemDef(const std::string& identifier, unsigned int index, const std::string& name,
-            unsigned short maxStackSize, const std::vector<std::string>& textures, const std::vector<sptr<AtlasRef>>& textureRefs);
+            unsigned short maxStackSize, const std::vector<std::string>& textures, const std::vector<std::shared_ptr<AtlasRef>>& textureRefs);
 
     void createModel(TextureAtlas& atlas);
 
     std::vector<std::string> textures {};
-    std::vector<sptr<AtlasRef>> textureRefs {};
+    std::vector<std::shared_ptr<AtlasRef>> textureRefs {};
 
-    sptr<Model> entityModel = std::make_shared<Model>();
+    std::shared_ptr<Model> entityModel = std::make_shared<Model>();
 };

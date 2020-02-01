@@ -6,11 +6,10 @@
 
 #include "Shader.h"
 #include <random>
-typedef unsigned int uint;
 
 class SSAOShader : public Shader {
 public:
-    explicit SSAOShader(glm::ivec2 windowSize, float bufferScale, uint kernelCount);
+    explicit SSAOShader(glm::ivec2 windowSize, float bufferScale, unsigned int kernelCount);
     void postCreate() override;
 
     void windowResized(glm::ivec2 windowSize);
@@ -24,8 +23,8 @@ public:
 
     Uniforms uniforms {};
 
-    uint kernelCount = 32;
-    uint sampleCount = 16;
+    unsigned int kernelCount = 32;
+    unsigned int sampleCount = 16;
 
     std::vector<glm::vec3> kernels {};
     std::vector<glm::vec3> noise {};

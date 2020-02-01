@@ -7,18 +7,17 @@
 #include <string>
 #include "GUIContainer.h"
 #include "../../../../def/ItemDef.h"
-#include "../../../../util/Pointer.h"
 
 class GUIModel : public GUIComponent {
 public:
     GUIModel() = default;
     GUIModel(const std::string& key);
 
-    void create(glm::vec2 scale, sptr<GuiMesh> model);
+    void create(glm::vec2 scale, std::shared_ptr<GuiMesh> model);
 
     void setRotation(glm::mat4 rotation);
 
     void draw(Renderer& renderer) override;
 
-    sptr<GuiMesh> model;
+    std::shared_ptr<GuiMesh> model;
 };

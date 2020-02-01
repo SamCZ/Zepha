@@ -40,6 +40,6 @@ private:
 
     LocalWorld* world = nullptr;
     ServerConnection& connection;
-    sptr<Model> playerModel;
+    std::shared_ptr<Model> playerModel;
 };
 

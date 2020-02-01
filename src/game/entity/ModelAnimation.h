@@ -7,7 +7,6 @@
 #include <string>
 #include <vector>
 #include "AnimChannel.h"
-typedef unsigned int uint;
 
 class ModelAnimation {
 public:
@@ -16,6 +15,6 @@ public:
 
     std::string name = "";
     std::vector<AnimChannel> channels {};
-    uint duration = 0;
+    unsigned int duration = 0;
     double ticksPerSecond = 0;
 };

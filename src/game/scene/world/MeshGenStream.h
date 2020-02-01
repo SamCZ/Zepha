@@ -37,8 +37,8 @@ public:
     std::vector<MeshDetails*> update();
 
     struct Unit {
-        sptr<BlockChunk> thisChunk = nullptr;
-        std::array<sptr<BlockChunk>, 6> adjacentChunks {};
+        std::shared_ptr<BlockChunk> thisChunk = nullptr;
+        std::array<std::shared_ptr<BlockChunk>, 6> adjacentChunks {};
 
         MeshDetails* meshDetails = new MeshDetails();
 

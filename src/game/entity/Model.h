@@ -18,14 +18,13 @@
 #include "../graph/meshtypes/EntityMesh.h"
 #include "../../def/texture/TextureAtlas.h"
 #include "../../util/Mat4Conv.h"
-#include "../../util/Pointer.h"
 #include "../../def/model/SerializedModel.h"
 
 class Model {
 public:
     Model() = default;
 
-    void fromMesh(uptr<EntityMesh> mesh);
+    void fromMesh(std::unique_ptr<EntityMesh> mesh);
     int  fromFile(const std::string &path, const std::vector<std::shared_ptr<AtlasRef>> &texture);
     int  fromSerialized(const SerializedModel &model, const std::vector<std::shared_ptr<AtlasRef>> &texture);
 
@@ -34,10 +33,10 @@ public:
 
     const ModelAnimation& getAnimation();
 
-    std::vector<uptr<EntityMesh>> meshes;
+    std::vector<std::unique_ptr<EntityMesh>> meshes;
 private:
     void loadModelMeshes(aiNode *node, const aiScene *scene);
-    void loadMeshAndBone(aiMesh *mesh, uptr<EntityMesh> &target);
+    void loadMeshAndBone(aiMesh *mesh, std::unique_ptr<EntityMesh> &target);
     void loadAnimations(const aiScene *scene);
 
     void calcBoneHeirarchy(aiNode *node, const aiScene *scene, int parentBoneIndex);
@@ -48,21 +47,21 @@ private:
     void calcInterpolatedScale(glm::vec3& scale, double animTime, ModelBone& bone, AnimChannel& channel, std::tuple<unsigned int, unsigned int> bounds);
 
     static inline unsigned int findPositionIndex(double animTime, AnimChannel &channel) {
-        for (uint i = 1; i < channel.positionKeys.size(); i++) {
+        for (unsigned int i = 1; i < channel.positionKeys.size(); i++) {
             if (channel.positionKeys[i].first > animTime) return i - 1;
         }
         assert(false);
     }
 
     static inline unsigned int findRotationIndex(double animTime, AnimChannel &channel) {
-        for (uint i = 1; i < channel.rotationKeys.size(); i++) {
+        for (unsigned int i = 1; i < channel.rotationKeys.size(); i++) {
             if (channel.rotationKeys[i].first > animTime) return i - 1;
         }
         assert(false);
     }
 
     static inline unsigned int findScaleIndex(double animTime, AnimChannel &channel) {
-        for (uint i = 1; i < channel.scaleKeys.size(); i++) {
+        for (unsigned int i = 1; i < channel.scaleKeys.size(); i++) {
             if (channel.scaleKeys[i].first > animTime) return i - 1;
         }
         assert(false);

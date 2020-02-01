@@ -21,9 +21,9 @@ public:
     unsigned long long getMapBlockIntegrity(glm::ivec3 mapBlock);
     std::list<std::shared_ptr<ServerLuaEntity>>& getLuaEntities();
 private:
-    typedef std::list<sptr<ServerLuaEntity>>::iterator luaent_ref;
+    typedef std::list<std::shared_ptr<ServerLuaEntity>>::iterator luaent_ref;
 
-    std::unordered_map<uint, luaent_ref> luaEntityRefs {};
+    std::unordered_map<unsigned int, luaent_ref> luaEntityRefs {};
     std::list<std::shared_ptr<ServerLuaEntity>> luaEntities {};
 
     std::unordered_map<glm::ivec3, unsigned long long, Vec::ivec3> mapBlockIntegrity {};

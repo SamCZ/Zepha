@@ -11,8 +11,8 @@ Font::Font(TextureAtlas& atlas, std::shared_ptr<AtlasRef> tex) :
     getCharWidths(atlas);
 }
 
-uint Font::getCharWidth(char c) {
-    uint index = static_cast<uint>(c) - 32;
+unsigned int Font::getCharWidth(char c) {
+    unsigned int index = static_cast<unsigned int>(c) - 32;
     if (index >= amountOfChars) {
         std::cout << Log::err << "Invalid char index!" << std::endl;
         return 0;
@@ -28,18 +28,18 @@ void Font::getCharWidths(TextureAtlas &atlas) {
     for (unsigned int i = 1; i < amountOfChars; i++) {
         glm::vec2 charPos = {i % 18 * charWidth, std::floor(i / 18) * charHeight};
 
-        uint xBase = static_cast<uint>(fontTex->pos.x) + static_cast<uint>(charPos.x);
-        uint yBase = static_cast<uint>(fontTex->pos.y) + static_cast<uint>(charPos.y);
+        unsigned int xBase = static_cast<unsigned int>(fontTex->pos.x) + static_cast<unsigned int>(charPos.x);
+        unsigned int yBase = static_cast<unsigned int>(fontTex->pos.y) + static_cast<unsigned int>(charPos.y);
 
         unsigned short width = 0;
 
-        for (uint j = 0; j < charWidth; j++) {
+        for (unsigned int j = 0; j < charWidth; j++) {
             bool empty = true;
-            for (uint k = 0; k < charHeight; k++) {
-                uint xx = xBase + j;
-                uint yy = yBase + k;
+            for (unsigned int k = 0; k < charHeight; k++) {
+                unsigned int xx = xBase + j;
+                unsigned int yy = yBase + k;
 
-                uint offset = yy * static_cast<uint>(atlasSize.x) * 4 + xx * 4 + 3;
+                unsigned int offset = yy * static_cast<unsigned int>(atlasSize.x) * 4 + xx * 4 + 3;
 
                 if (data[offset] != 0) {
                     empty = false;
@@ -54,7 +54,7 @@ void Font::getCharWidths(TextureAtlas &atlas) {
 }
 
 glm::vec4 Font::getCharUVs(char c) {
-    uint index = static_cast<uint>(c) - 32;
+    unsigned int index = static_cast<unsigned int>(c) - 32;
     if (index >= amountOfChars) {
         std::cout << Log::err << "Invalid char index!" << std::endl;
         return {};

@@ -6,7 +6,7 @@
 
 GUIModel::GUIModel(const std::string &key) : GUIComponent(key) {}
 
-void GUIModel::create(glm::vec2 scale, sptr<GuiMesh> model) {
+void GUIModel::create(glm::vec2 scale, std::shared_ptr<GuiMesh> model) {
     entity.setMesh(model);
     entity.setScale({scale.x + padding.w + padding.y, scale.y + padding.x + padding.z, scale.x + padding.w + padding.y});
 }

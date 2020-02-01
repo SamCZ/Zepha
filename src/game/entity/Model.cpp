@@ -5,7 +5,7 @@
 
 #include "Model.h"
 
-void Model::fromMesh(uptr<EntityMesh> mesh) {
+void Model::fromMesh(std::unique_ptr<EntityMesh> mesh) {
     meshes.clear();
     meshes.push_back(std::move(mesh));
 }
@@ -70,23 +70,23 @@ const ModelAnimation &Model::getAnimation() {
 }
 
 void Model::loadModelMeshes(aiNode *node, const aiScene *scene) {
-    for (uint i = 0; i < node->mNumMeshes; i++) {
+    for (unsigned int i = 0; i < node->mNumMeshes; i++) {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         meshes.emplace_back(std::make_unique<EntityMesh>());
         loadMeshAndBone(mesh, meshes[i]);
     }
 
-    for (uint i = 0; i < node->mNumChildren; i++) {
+    for (unsigned int i = 0; i < node->mNumChildren; i++) {
         loadModelMeshes(node->mChildren[i], scene); //Recurse down
     }
 }
 
-void Model::loadMeshAndBone(aiMesh *mesh, uptr<EntityMesh>& target) {
+void Model::loadMeshAndBone(aiMesh *mesh, std::unique_ptr<EntityMesh>& target) {
     std::vector<EntityVertex> vertices;
     std::vector<unsigned int> indices;
 
     //Process Vertices
-    for (uint i = 0; i < mesh->mNumVertices; i++) {
+    for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
         EntityVertex vertex {};
 
         vertex.position = {mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z};
@@ -110,26 +110,26 @@ void Model::loadMeshAndBone(aiMesh *mesh, uptr<EntityMesh>& target) {
     }
 
     //Process Indices
-    for (uint i = 0; i < mesh->mNumFaces; i++) {
+    for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
         aiFace face = mesh->mFaces[i];
-        for (uint j = 0; j < face.mNumIndices; j++) {
+        for (unsigned int j = 0; j < face.mNumIndices; j++) {
             indices.push_back(face.mIndices[j]);
         }
     }
 
     //Process Mesh Bones and add to bone list
     bones.resize(mesh->mNumBones);
-    for (uint i = 0; i < mesh->mNumBones; i++) {
+    for (unsigned int i = 0; i < mesh->mNumBones; i++) {
         aiBone* bone = mesh->mBones[i];
 
-        bones[i] = ModelBone(static_cast<uint>(i), -1, {bone->mName.data});
+        bones[i] = ModelBone(static_cast<unsigned int>(i), -1, {bone->mName.data});
         bones[i].offsetMatrix = glm::transpose(MatConv::AiToGLMMat4(bone->mOffsetMatrix));
 
-        for (uint j = 0; j < bone->mNumWeights; j++) {
+        for (unsigned int j = 0; j < bone->mNumWeights; j++) {
             aiVertexWeight* weight = &bone->mWeights[j];
             if (weight->mVertexId >= vertices.size()) assert(0);
 
-            uint bid = 0;
+            unsigned int bid = 0;
             while (vertices[weight->mVertexId].boneWeights[bid] != 0) {
                 bid++;
                 assert(bid < 4);
@@ -152,7 +152,7 @@ void Model::loadAnimations(const aiScene *scene) {
 
         animation = ModelAnimation(aiAnim->mName.data);
 
-        animation.duration = static_cast<uint>(aiAnim->mDuration);
+        animation.duration = static_cast<unsigned int>(aiAnim->mDuration);
         animation.ticksPerSecond = aiAnim->mTicksPerSecond;
 
         animation.channels.resize(bones.size());
@@ -214,7 +214,7 @@ void Model::calcBoneHeirarchy(aiNode *node, const aiScene *scene, int parentBone
         }
     }
 
-    for (uint i = 0; i < node->mNumChildren; i++) {
+    for (unsigned int i = 0; i < node->mNumChildren; i++) {
         calcBoneHeirarchy(node->mChildren[i], scene, index);
     }
 }
@@ -256,8 +256,8 @@ void Model::calcInterpolatedPosition(glm::vec3 &position, double animTime, Model
     if (channel.positionKeys.empty()) { position = glm::vec3(0); return; }
     if (channel.positionKeys.size() == 1) { position = channel.positionKeys[0].second; return; }
 
-    uint index = findPositionIndex(animTime, channel);
-    uint nextIndex = index + 1;
+    unsigned int index = findPositionIndex(animTime, channel);
+    unsigned int nextIndex = index + 1;
     assert(nextIndex < channel.positionKeys.size());
 
     double delta = channel.positionKeys[nextIndex].first - channel.positionKeys[index].first;
@@ -275,8 +275,8 @@ void Model::calcInterpolatedRotation(aiQuaternion &rotation, double animTime, Mo
     if (channel.rotationKeys.empty()) { return; }
     if (channel.rotationKeys.size() == 1) { rotation = channel.rotationKeys[0].second; return; }
 
-    uint index = findRotationIndex(animTime, channel);
-    uint nextIndex = index + 1;
+    unsigned int index = findRotationIndex(animTime, channel);
+    unsigned int nextIndex = index + 1;
     assert(nextIndex < channel.rotationKeys.size());
 
     double delta = channel.rotationKeys[nextIndex].first - channel.rotationKeys[index].first;
@@ -295,8 +295,8 @@ void Model::calcInterpolatedScale(glm::vec3 &scale, double animTime, ModelBone& 
     if (channel.scaleKeys.empty()) { scale = glm::vec3(1); return; }
     if (channel.scaleKeys.size() == 1) { scale = channel.scaleKeys[0].second; return; }
 
-    uint index = findScaleIndex(animTime, channel);
-    uint nextIndex = index + 1;
+    unsigned int index = findScaleIndex(animTime, channel);
+    unsigned int nextIndex = index + 1;
     assert(nextIndex < channel.scaleKeys.size());
 
     double delta = channel.scaleKeys[nextIndex].first - channel.scaleKeys[index].first;

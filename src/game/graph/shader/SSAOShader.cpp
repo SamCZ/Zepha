@@ -3,9 +3,8 @@
 //
 
 #include "SSAOShader.h"
-typedef unsigned int uint;
 
-SSAOShader::SSAOShader(glm::ivec2 windowSize, float bufferScale, uint kernelCount) : Shader(),
+SSAOShader::SSAOShader(glm::ivec2 windowSize, float bufferScale, unsigned int kernelCount) : Shader(),
     windowSize(windowSize),
     bufferScale(bufferScale),
     kernelCount(kernelCount) {}
@@ -26,7 +25,7 @@ void SSAOShader::postCreate() {
     std::uniform_real_distribution<float> rand(0.0, 1.0);
     std::default_random_engine generator;
 
-    for (uint i = 0; i < kernelCount; i++) {
+    for (unsigned int i = 0; i < kernelCount; i++) {
         glm::vec3 sample {
             rand(generator) * 2.0 - 1.0,
             rand(generator) * 2.0 - 1.0,
@@ -43,7 +42,7 @@ void SSAOShader::postCreate() {
         kernels.push_back(sample);
     }
 
-    for (uint i = 0; i < sampleCount; i++) {
+    for (unsigned int i = 0; i < sampleCount; i++) {
         noise.emplace_back(rand(generator) * 2.0 - 1.0, rand(generator) * 2.0 - 1.0, 0.0f);
     }
 

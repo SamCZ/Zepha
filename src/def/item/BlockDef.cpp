@@ -20,8 +20,8 @@ BlockDef::BlockDef(const std::string& identifier, unsigned int index, const std:
     cBoxes(cBoxes) {}
 
 void BlockDef::createModel() {
-    uptr<EntityMesh> entity = std::make_unique<EntityMesh>();
-    uint indOffset = 0;
+    std::unique_ptr<EntityMesh> entity = std::make_unique<EntityMesh>();
+    unsigned int indOffset = 0;
 
     std::vector<EntityVertex> entityVertices;
     std::vector<GuiVertex> guiVertices;

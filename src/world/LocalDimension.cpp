@@ -88,7 +88,7 @@ void LocalDimension::renderEntities(Renderer &renderer) {
     for (auto& entity : playerEntities) entity.draw(renderer);
 }
 
-void LocalDimension::setChunk(sptr<BlockChunk> chunk) {
+void LocalDimension::setChunk(std::shared_ptr<BlockChunk> chunk) {
     Dimension::setChunk(chunk);
     attemptMeshChunk(chunk);
 }
@@ -176,7 +176,7 @@ bool LocalDimension::setBlock(glm::ivec3 pos, unsigned int block) {
     return true;
 }
 
-void LocalDimension::attemptMeshChunk(const sptr<BlockChunk>& chunk, bool updateAdjacents) {
+void LocalDimension::attemptMeshChunk(const std::shared_ptr<BlockChunk>& chunk, bool updateAdjacents) {
 //    if (!chunk->dirty) return; //TODO
     auto dirs = Vec::cardinalVectors;
     bool allExists = true;
