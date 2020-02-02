@@ -89,3 +89,11 @@ LuaInventory LocalLuaPlayer::get_inventory() {
 void LocalLuaPlayer::set_selected_block(std::string block) {
     player.setActiveBlock(block);
 }
+
+void LocalLuaPlayer::set_flying(bool shouldFly) {
+    player.setFlying(shouldFly);
+}
+
+bool LocalLuaPlayer::get_flying() {
+    return player.isFlying();
+}

@@ -29,10 +29,13 @@ public:
     float get_look_pitch();
 
     std::string get_menu_state();
-    void open_menu(sol::this_state s, std::string menu, sol::optional<sol::table> callbacks);
     void close_menu();
+    void open_menu(sol::this_state s, std::string menu, sol::optional<sol::table> callbacks);
 
     LuaInventory get_inventory();
 
     void set_selected_block(std::string block);
+
+    void set_flying(bool shouldFly);
+    bool get_flying();
 };

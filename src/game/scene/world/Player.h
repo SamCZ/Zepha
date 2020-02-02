@@ -8,15 +8,16 @@
 #include <iostream>
 
 #include "LocalWorld.h"
+#include "Inventory.h"
+#include "../../hud/GameGui.h"
 #include "../../graph/Camera.h"
-#include "../../../util/Timer.h"
+#include "../../graph/drawable/DrawableGroup.h"
+#include "../../entity/Collidable.h"
 #include "../../entity/world/WireframeEntity.h"
 #include "../../entity/world/BlockCrackEntity.h"
-#include "../../graph/drawable/DrawableGroup.h"
+#include "../../../util/Ray.h"
+#include "../../../util/Timer.h"
 #include "../../../world/block/PointedThing.h"
-#include "../../hud/GameGui.h"
-#include "../../entity/Collidable.h"
-#include "Inventory.h"
 
 class Player : Collidable, public Drawable {
 public:
@@ -30,14 +31,8 @@ public:
     static constexpr float BLOCK_INTERVAL = 0.02f;
 
     Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer);
-
     void update(Input &input, double delta, glm::vec2 mouseDelta);
-
-    void moveAndLook(Input &input, double delta, glm::vec2 mouseDelta);
-    void updateCamera();
-    void findPointedThing(Input &input);
-    void updateWireframe();
-    void breakBlock(Input& input, double delta);
+    ~Player();
 
     void setPos(glm::vec3 pos);
     glm::vec3 getPos();
@@ -47,8 +42,12 @@ public:
 
     void setYaw(float yaw);
     float getYaw();
+
     void setPitch(float pitch);
     float getPitch();
+
+    void setFlying(bool flying);
+    bool isFlying();
 
     void setActiveBlock(const std::string& block);
 
@@ -58,14 +57,18 @@ public:
     void setGuiVisible(bool hudVisible);
 
     void draw(Renderer& renderer) override;
-    void drawViginette(Renderer& renderer);
     void drawGUI(Renderer& renderer);
+    void drawViginette(Renderer& renderer);
 
     Inventory& getInventory();
     PointedThing& getPointedThing();
-
-    ~Player();
 private:
+    void moveAndLook(Input &input, double delta, glm::vec2 mouseDelta);
+    void updateCamera();
+    void findPointedThing(Input &input);
+    void updateWireframe();
+    void breakBlock(Input& input, double delta);
+
     Renderer& renderer;
     LocalDefs& defs;
 
@@ -73,9 +76,9 @@ private:
     Inventory inventory;
     GameGui gameGui;
 
-    bool flying = false;
     float yaw = 0;
     float pitch = 0;
+    bool flying = false;
 
     unsigned int activeBlock = -1;
 

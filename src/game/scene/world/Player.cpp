@@ -3,7 +3,6 @@
 //
 
 #include "Player.h"
-#include "../../../util/Ray.h"
 
 Player::Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer) :
     Collidable(world, defs, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
@@ -31,8 +30,6 @@ void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {
     renderer.window.addResizeCallback("player", [&](glm::ivec2 win) {
         gameGui.winResized(win);
     });
-
-    if (input.isKeyPressed(GLFW_KEY_F)) flying = !flying; //TODO: Move to Lua Bind
 
     moveAndLook(input, delta, mouseDelta);
     findPointedThing(input);
@@ -244,17 +241,20 @@ float Player::getPitch() {
     return pitch;
 }
 
-
-Inventory &Player::getInventory() {
-    return inventory;
+void Player::setFlying(bool flying) {
+    this->flying = flying;
 }
 
-/*
- * Pointed Thing
- */
+bool Player::isFlying() {
+    return flying;
+}
 
 PointedThing& Player::getPointedThing() {
     return pointedThing;
+}
+
+Inventory &Player::getInventory() {
+    return inventory;
 }
 
 /*

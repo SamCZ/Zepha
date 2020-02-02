@@ -69,7 +69,7 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& pla
     core["player"] = LocalLuaPlayer(player);
 
     //Load Modules
-    Api::delay(core, delayed_functions);
+    Api::delay (core, delayed_functions);
 
     Api::register_block      (lua, core);
     Api::register_blockmodel (lua, core);

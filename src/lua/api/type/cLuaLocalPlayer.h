@@ -22,18 +22,21 @@ namespace ClientApi {
             "set_look_pitch", &LocalLuaPlayer::set_look_pitch,
             "get_look_pitch", &LocalLuaPlayer::get_look_pitch,
 
+            "get_inventory", &LocalLuaPlayer::get_inventory,
+            "set_selected_block", &LocalLuaPlayer::set_selected_block,
+
+            "open_menu", &LocalLuaPlayer::open_menu,
+            "close_menu", &LocalLuaPlayer::close_menu,
+
             "pos", sol::property(&LocalLuaPlayer::get_pos, &LocalLuaPlayer::set_pos),
             "block_pos", sol::property(&LocalLuaPlayer::get_block_pos, &LocalLuaPlayer::set_pos),
             "vel", sol::property(&LocalLuaPlayer::get_vel, &LocalLuaPlayer::set_vel),
             "look_yaw", sol::property(&LocalLuaPlayer::get_look_yaw, &LocalLuaPlayer::set_look_yaw),
             "look_yaw", sol::property(&LocalLuaPlayer::get_look_pitch, &LocalLuaPlayer::set_look_pitch),
 
-            "menu_state", sol::property(&LocalLuaPlayer::get_menu_state),
-            "open_menu", &LocalLuaPlayer::open_menu,
-            "close_menu", &LocalLuaPlayer::close_menu,
+            "flying", sol::property(&LocalLuaPlayer::set_flying, &LocalLuaPlayer::get_flying),
 
-            "get_inventory", &LocalLuaPlayer::get_inventory,
-            "set_selected_block", &LocalLuaPlayer::set_selected_block
+            "menu_state", sol::property(&LocalLuaPlayer::get_menu_state)
         );
     }
 }
