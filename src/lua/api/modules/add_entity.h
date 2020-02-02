@@ -36,7 +36,6 @@ namespace Api {
             auto displayObject = luaEntity.get<sol::optional<std::string>>("display_object");
             auto displayTexture = luaEntity.get<sol::optional<std::string>>("display_texture");
 
-            //TODO: Move these checks to register_entity
             if (!displayType) throw "entity '" + *identifier + "' is missing the display property.";
             if (!displayObject) throw "entity '" + *identifier + "' is missing the display_object property.";
             if (strncmp(displayType->data(), "model", 5) == 0 && !displayTexture) throw "entity '" + *identifier + "' is missing the display_texture property.";
@@ -75,7 +74,6 @@ namespace Api {
             auto displayObject = luaEntity.get<sol::optional<std::string>>("display_object");
             auto displayTexture = luaEntity.get<sol::optional<std::string>>("display_texture");
 
-            //TODO: Move these checks to register_entity
             if (!displayType) throw "entity '" + *identifier + "' is missing the display property.";
             if (!displayObject) throw "entity '" + *identifier + "' is missing the display_object property.";
             if (strncmp(displayType->data(), "model", 5) == 0 && !displayTexture) throw "entity '" + *identifier + "' is missing the display_texture property.";

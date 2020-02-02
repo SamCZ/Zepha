@@ -6,8 +6,8 @@
 #include <glm/glm.hpp>
 #include "ServerWorld.h"
 
-const static int MB_GEN_H = 6;
-const static int MB_GEN_V = 4;
+const static int MB_GEN_H = 2;
+const static int MB_GEN_V = 2;
 
 ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& clients) :
     clientList(clients),

@@ -10,25 +10,18 @@ zepha.register_entity("zeus:default:test", {
 --        self.object:snap_scale(1/4)
     end,
     on_update = function(self, delta)
---        local pos = self.object.pos
---        pos.z = pos.z + 1 * delta
---        if pos.z > 13 then
---            pos.z = 0
---        end
---        self.object:int_pos(pos)
---        self.object.yaw = self.object.yaw + 1;
-
         self.object:set_pos({
             x = self.object.pos.x + 0.08 * math.sin(math.rad(self.object.yaw)),
             y = self.object.pos.y,
             z = self.object.pos.z + 0.08 * math.cos(math.rad(self.object.yaw))})
         self.object:set_yaw(self.object.yaw + 2)
---         self.object:set_pitch(self.object.pitch + 2)
-
---         self.object:set_yaw(math.deg(math.atan2(zepha.player.pos.x - self.object.pos.x, zepha.player.pos.z - self.object.pos.z)) + 180)
     end
 })
 
 if zepha.server then
-    zepha.add_entity("zeus:default:test", {x = 10, y = -29, z = 0})
+    local entity = zepha.add_entity("zeus:default:test", {x = 10, y = 0, z = 0})
+
+    zepha.delay(function()
+        zepha.remove_entity(entity)
+    end, 10)
 end

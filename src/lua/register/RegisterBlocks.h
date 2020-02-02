@@ -190,7 +190,6 @@ namespace RegisterBlocks {
         if (atlas) {
             std::vector<std::shared_ptr<AtlasRef>> refs;
             for (auto i = 0; i < lowdef_textures.size(); i++) {
-                // TODO: Make biome tint work on LD models
                 std::string texture = lowdef_textures[i];
                 if (strncmp(texture.data(), "biometint(", 10) == 0) {
                     texture = texture.substr(10, texture.length() - 11);

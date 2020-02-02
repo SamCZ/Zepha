@@ -55,6 +55,4 @@ void Client::loop() {
 Client::~Client() {
     sceneManager.cleanupScene();
     if (localServer) localServer->stop();
-
-    //TODO: Kill local server
 }
