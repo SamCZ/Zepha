@@ -116,18 +116,19 @@ void BlockChunk::deserialize(Packet& packet) {
         }
     }
     end: {}
+    calcNonAirBlocks();
 }
 
 void BlockChunk::calcNonAirBlocks() {
     nonAirBlocks = 0;
     empty = true;
 
-    for (unsigned int block : this->blocks) {
-        if (block != DefinitionAtlas::AIR) {
+    for (unsigned int block : blocks) {
+        if (block > DefinitionAtlas::AIR) {
             empty = false;
             nonAirBlocks++;
         }
     }
 
-    shouldHaveMesh = empty;
+    shouldHaveMesh = !empty;
 }

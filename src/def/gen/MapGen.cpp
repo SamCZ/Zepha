@@ -6,6 +6,7 @@
 
 #include "MapGen.h"
 #include "NoiseSample.h"
+#include "../../game/scene/world/Schematic.h"
 
 MapGen::MapGen(unsigned int seed, DefinitionAtlas& defs, BiomeAtlas& biomes) :
     seed(seed),
@@ -79,6 +80,7 @@ void MapGen::generateChunk(chunk_partials_map& chunks, glm::ivec3 worldPos) {
     generateBlocks(chunk);
     generateStructures(chunks, chunk);
 
+    chunk.second->calcNonAirBlocks();
     chunk.second->generated = true;
 }
 
@@ -175,13 +177,19 @@ void MapGen::generateBlocks(chunk_partial& chunk) {
 			: d <= 4 ? biome.soilBlock
 			: biome.rockBlock;
 	}
-
-    chunk.second->calcNonAirBlocks();
 }
 
 void MapGen::generateStructures(chunk_partials_map& chunks, chunk_partial& chunk) {
     unsigned int cWood = defs.blockFromStr("zeus:default:wood").index;
     unsigned int cLeaves = defs.blockFromStr("zeus:default:leaves").index;
+    unsigned int cAir = DefinitionAtlas::INVALID;
+
+    Schematic c {};
+    c.dimensions = {3, 3, 3};
+    c.origin = {1, 0, 1};
+    c.blocks = { cAir, cAir, cAir, cAir, cLeaves, cAir, cAir, cAir, cAir,
+                 cAir, cWood, cAir, cLeaves, cWood, cLeaves, cAir, cLeaves, cAir,
+                 cAir, cAir, cAir, cAir, cLeaves, cAir, cAir, cAir, cAir};
 
     glm::ivec3 wp = chunk.second->pos;
     glm::ivec3 lp;
@@ -192,39 +200,48 @@ void MapGen::generateStructures(chunk_partials_map& chunks, chunk_partial& chunk
         glm::ivec3 p = wp * 16 + lp;
 
         if (treeAbs.GetValue(p.x, p.y, p.z) > 1.2 && chunk.first->depth[m] <= 2 && chunk.first->depth[m] > 1) {
-            glm::ivec3 rp {};
-            for (unsigned int i = 0; i < 5; i++) {
-                rp.x = p.x - 2 + i;
-                for (unsigned int j = 0; j < 5; j++) {
-                    rp.z = p.z - 2 + j;
-                    for (unsigned int k = 0; k < 2; k++) {
-                        rp.y = p.y + 48 + k;
-                        setBlock(rp, cLeaves, chunks);
-                    }
-                }
+
+            glm::ivec3 off = {};
+            for (unsigned int i = 0; i < c.length(); i++) {
+                c.assignOffset(i, off);
+                setBlock(p + off - c.origin, c.blocks[i], chunks);
             }
 
-            rp = {};
-            for (unsigned int i = 0; i < 3; i++) {
-                rp.x = p.x - 1 + i;
-                for (unsigned int j = 0; j < 3; j++) {
-                    rp.z = p.z - 1 + j;
-                    for (unsigned int k = 0; k < 2; k++) {
-                        rp.y = p.y + 50 + k;
-                        setBlock(rp, cLeaves, chunks);
-                    }
-                }
-            }
-
-            for (unsigned int i = 0; i < 50; i++) {
-                setBlock(p, cWood, chunks);
-                p.y++;
-            }
+//            glm::ivec3 rp {};
+//            for (unsigned int i = 0; i < 5; i++) {
+//                rp.x = p.x - 2 + i;
+//                for (unsigned int j = 0; j < 5; j++) {
+//                    rp.z = p.z - 2 + j;
+//                    for (unsigned int k = 0; k < 2; k++) {
+//                        rp.y = p.y + 48 + k;
+//                        setBlock(rp, cLeaves, chunks);
+//                    }
+//                }
+//            }
+//
+//            rp = {};
+//            for (unsigned int i = 0; i < 3; i++) {
+//                rp.x = p.x - 1 + i;
+//                for (unsigned int j = 0; j < 3; j++) {
+//                    rp.z = p.z - 1 + j;
+//                    for (unsigned int k = 0; k < 2; k++) {
+//                        rp.y = p.y + 50 + k;
+//                        setBlock(rp, cLeaves, chunks);
+//                    }
+//                }
+//            }
+//
+//            for (unsigned int i = 0; i < 50; i++) {
+//                setBlock(p, cWood, chunks);
+//                p.y++;
+//            }
         }
     }
 }
 
 void MapGen::setBlock(glm::ivec3 worldPos, unsigned int block, MapGen::chunk_partials_map &chunks) {
+    if (block == DefinitionAtlas::INVALID) return;
+
     glm::ivec3 chunkPos = Space::Chunk::world::fromBlock(worldPos);
     BlockChunk* chunk = nullptr;
 
