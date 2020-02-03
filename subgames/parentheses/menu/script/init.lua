@@ -5,5 +5,6 @@ zepha.set_gui([[
         text[name]
             position: 4px 4px
             content: "Parentheses"
+        end
     end
 ]])

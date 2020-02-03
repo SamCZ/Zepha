@@ -33,6 +33,7 @@ zepha.set_gui([[
     end
 ]], {
     buttonPlay = {
+        -- TODO: Change left/right notation to primary/secondary.
         left = function()
             zepha.start_game_local()
         end

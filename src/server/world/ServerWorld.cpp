@@ -6,8 +6,8 @@
 #include <glm/glm.hpp>
 #include "ServerWorld.h"
 
-const static int MB_GEN_H = 2;
-const static int MB_GEN_V = 2;
+const static int MB_GEN_H = 3;
+const static int MB_GEN_V = 3;
 
 ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& clients) :
     clientList(clients),
@@ -33,8 +33,7 @@ ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& cli
 }
 
 void ServerWorld::init() {
-    delete genStream;
-    genStream = new WorldGenStream(seed, defs);
+    genStream = std::make_unique<WorldGenStream>(seed, defs);
 }
 
 void ServerWorld::update(double delta) {
@@ -165,26 +164,6 @@ void ServerWorld::sendMapBlock(const glm::ivec3& pos, ServerClient &peer) {
     }
 }
 
-//void ServerWorld::sendMapBlock(const glm::vec3& pos, ServerClient &peer) {
-//    unsigned long long mapBlockIntegrity = dimension.getMapBlockIntegrity(pos);
-//    if (peer.getPlayer().getMapBlockIntegrity(pos) < mapBlockIntegrity) {
-//        Packet r(PacketType::MAPBLOCK);
-//
-//        auto mapBlock = dimension.getMapBlock(pos);
-//        assert(mapBlock != nullptr);
-//
-//        for (unsigned short i = 0; i < 64; i++) {
-//            auto chunk = (*mapBlock)[i];
-//            auto serialized = chunk->serialize();
-//
-//            OLDSerializer::encodeIntVec3(r.data, chunk->pos);
-//            OLDSerializer::encodeString(r.data, serialized);
-//        }
-//
-//        r.sendTo(peer.getPeer(), PacketChannel::CHUNK);
-//    }
-//}
-
 unsigned int ServerWorld::getBlock(glm::ivec3 pos) {
     return dimension.getBlock(pos);
 }
@@ -247,8 +226,4 @@ bool ServerWorld::isInBounds(glm::ivec3 cPos, std::pair<glm::ivec3, glm::ivec3> 
     return (cPos.x >= bounds.first.x && cPos.x <= bounds.second.x
          && cPos.y >= bounds.first.y && cPos.y <= bounds.second.y
          && cPos.z >= bounds.first.z && cPos.z <= bounds.second.z);
-}
-
-ServerWorld::~ServerWorld() {
-    delete genStream;
 }

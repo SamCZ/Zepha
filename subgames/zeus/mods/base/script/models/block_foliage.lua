@@ -21,10 +21,10 @@ zepha.register_blockmodel("base:block_foliage", {
             face = "right",
             tex = 3,
             points = {
-                1, 1, 1, 1, 0,
-                1, 0, 1, 1, 1,
-                1, 0, 0, 0, 1,
-                1, 1, 0, 0, 0
+                1, 1, 1, 0, 0,
+                1, 0, 1, 0, 1,
+                1, 0, 0, 1, 1,
+                1, 1, 0, 1, 0
             }
         }, {
             face = "top",
@@ -57,10 +57,10 @@ zepha.register_blockmodel("base:block_foliage", {
             face = "back",
             tex = 3,
             points = {
-                0, 0, 0, 0, 1,
-                0, 1, 0, 0, 0,
-                1, 1, 0, 1, 0,
-                1, 0, 0, 1, 1
+                0, 0, 0, 1, 1,
+                0, 1, 0, 1, 0,
+                1, 1, 0, 0, 0,
+                1, 0, 0, 0, 1
             }
         }, {
             -- Hovered faces for biome tinting begin here
@@ -76,10 +76,10 @@ zepha.register_blockmodel("base:block_foliage", {
             face = "right",
             tex = 4,
             points = {
-                1.003, 1, 1, 1, 0,
-                1.003, 0, 1, 1, 1,
-                1.003, 0, 0, 0, 1,
-                1.003, 1, 0, 0, 0
+                1.003, 1, 1, 0, 0,
+                1.003, 0, 1, 0, 1,
+                1.003, 0, 0, 1, 1,
+                1.003, 1, 0, 1, 0
             }
         }, {
             face = "front",
@@ -94,10 +94,10 @@ zepha.register_blockmodel("base:block_foliage", {
             face = "back",
             tex = 4,
             points = {
-                0, 0, -0.003, 0, 1,
-                0, 1, -0.003, 0, 0,
-                1, 1, -0.003, 1, 0,
-                1, 0, -0.003, 1, 1
+                0, 0, -0.003, 1, 1,
+                0, 1, -0.003, 1, 0,
+                1, 1, -0.003, 0, 0,
+                1, 0, -0.003, 0, 1
             }
         }, {
             --Floats begin here
@@ -117,10 +117,10 @@ zepha.register_blockmodel("base:block_foliage", {
             face = "back",
             tex = 5,
             points = {
-                1.005, 0.2, -0.2, 1, 1,
-                0.005, 0.2, -0.2, 0, 1,
-                0, 1, 0, 0, 0,
-                1, 1, 0, 1, 0
+                1.005, 0.2, -0.2, 0, 1,
+                0.005, 0.2, -0.2, 1, 1,
+                0, 1, 0, 1, 0,
+                1, 1, 0, 0, 0
             },
             shader_mod = {
                 type = "sway_attached",
@@ -130,10 +130,10 @@ zepha.register_blockmodel("base:block_foliage", {
             face = "right",
             tex = 5,
             points = {
-                1.2, 0.2, 1.005, 1, 1,
-                1.2, 0.2, 0.005, 0, 1,
-                1, 1, 0, 0, 0,
-                1, 1, 1, 1, 0
+                1.2, 0.2, 1.005, 0, 1,
+                1.2, 0.2, 0.005, 1, 1,
+                1, 1, 0, 1, 0,
+                1, 1, 1, 0, 0
             },
             shader_mod = {
                 type = "sway_attached",

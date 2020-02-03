@@ -25,7 +25,11 @@ TEST_CASE("Serialization", "[net]") {
         glm::vec3 v3;
         std::string str;
 
-        d.read<int>(i).read<unsigned short>(s).read<float>(f).read<glm::vec3>(v3).read<std::string>(str);
+        d.read<int>(i)
+         .read<unsigned short>(s)
+         .read<float>(f)
+         .read<glm::vec3>(v3)
+         .read<std::string>(str);
 
         REQUIRE(i == 32);
         REQUIRE(s == 16);
@@ -181,7 +185,7 @@ TEST_CASE("Serialization", "[net]") {
         REQUIRE(vec[2] == 5.7f);
     }
 
-    SECTION("Vector<String") {
+    SECTION("Vector<String>") {
         s.append<std::vector<std::string>>({
             "hi",
             "hello",

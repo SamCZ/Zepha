@@ -26,8 +26,6 @@ public:
     unsigned int getBlock(glm::ivec3 pos) override;
     void setBlock(glm::ivec3 pos, unsigned int block) override;
 
-    ~ServerWorld();
-
     ServerDimension dimension {};
 private:
     void changedChunks(ServerClient& client);
@@ -37,9 +35,9 @@ private:
     void sendChunk(const std::shared_ptr<BlockChunk>& chunk, ServerClient& client);
     void sendMapBlock(const glm::ivec3& pos, ServerClient& client);
 
-    bool isInBounds(glm::ivec3 pos, std::pair<glm::ivec3, glm::ivec3>& bounds);
+    static bool isInBounds(glm::ivec3 pos, std::pair<glm::ivec3, glm::ivec3>& bounds);
 
-    WorldGenStream* genStream = nullptr;
+    std::unique_ptr<WorldGenStream> genStream = nullptr;
 
     std::unordered_set<glm::vec3, Vec::vec3> generateQueueMap;
     std::vector<glm::vec3> generateQueueList;

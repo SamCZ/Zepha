@@ -25,10 +25,10 @@ zepha.register_blockmodel("base:leaf_like", {
             face = "right",
             tex = 1,
             points = {
-                1, 1, 1, 1, 0,
-                1, 0, 1, 1, 1,
-                1, 0, 0, 0, 1,
-                1, 1, 0, 0, 0
+                1, 1, 1, 0, 0,
+                1, 0, 1, 0, 1,
+                1, 0, 0, 1, 1,
+                1, 1, 0, 1, 0
             },
             shader_mod = {
                 type = "sway_full_block",
@@ -77,10 +77,10 @@ zepha.register_blockmodel("base:leaf_like", {
             face = "back",
             tex = 1,
             points = {
-                0, 0, 0, 0, 1,
-                0, 1, 0, 0, 0,
-                1, 1, 0, 1, 0,
-                1, 0, 0, 1, 1
+                0, 0, 0, 1, 1,
+                0, 1, 0, 1, 0,
+                1, 1, 0, 0, 0,
+                1, 0, 0, 0, 1
             },
             shader_mod = {
                 type = "sway_full_block",
