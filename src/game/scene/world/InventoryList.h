@@ -13,10 +13,11 @@ class InventoryList {
 public:
     enum class Callback { ALLOW_TAKE, ALLOW_PUT, ON_TAKE, ON_PUT };
 
-    InventoryList(DefinitionAtlas& defs, unsigned short size, unsigned short width);
+    InventoryList(DefinitionAtlas& defs, std::string name, unsigned short size, unsigned short width);
 
     unsigned short getLength();
     unsigned short getWidth();
+    std::string getName();
 
     // Place the stack at i into the existing stack, returning overflow or other stack.
     ItemStack placeStack(unsigned short i, const ItemStack& stack, bool playerInitiated = false);
@@ -46,6 +47,7 @@ private:
 
     std::vector<ItemStack> itemstacks {};
     unsigned short width = 0;
+    std::string name;
 
     std::function<void()> guiCallback = nullptr;
     std::array<sol::function, 4> luaCallbacks = {};

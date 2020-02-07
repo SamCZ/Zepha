@@ -5,7 +5,7 @@
 #include "Inventory.h"
 
 void Inventory::createList(std::string name, unsigned short length, unsigned short width) {
-    lists.emplace(name, std::make_shared<InventoryList>(defs, length, width));
+    lists.emplace(name, std::make_shared<InventoryList>(defs, name, length, width));
 }
 
 std::shared_ptr<InventoryList> Inventory::operator[](std::string name) {

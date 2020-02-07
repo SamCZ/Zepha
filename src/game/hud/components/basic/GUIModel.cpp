@@ -13,7 +13,10 @@ void GUIModel::create(glm::vec2 scale, std::shared_ptr<GuiMesh> model) {
 
 
 void GUIModel::draw(Renderer &renderer) {
+    renderer.toggleDepthTest(true);
+    renderer.clearDepthBuffer();
     GUIComponent::draw(renderer);
+    renderer.toggleDepthTest(false);
 }
 
 void GUIModel::setRotation(glm::mat4 rotation) {

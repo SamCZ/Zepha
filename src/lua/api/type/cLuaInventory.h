@@ -19,6 +19,7 @@ namespace ClientApi {
         lua.new_usertype<LuaInventoryList>("InventoryListRef",
             "length", sol::property(&LuaInventoryList::get_length),
             "width", sol::property(&LuaInventoryList::get_width),
+            "name", sol::property(&LuaInventoryList::get_name),
 
             "get_stack", &LuaInventoryList::get_stack,
             "set_stack", sol::overload(

@@ -29,7 +29,6 @@ void GUIInventoryItem::create(glm::vec2 scale, unsigned short count, ItemDef& de
         item->create(scale * 10.5f, model);
         item->setPos(glm::vec2{7.75, 7.75} * scale);
 
-        item->setDepth(25);
         glm::mat4 rot;
         rot = glm::rotate(rot, glm::radians(180.f), {1, 0, 0});
         rot = glm::rotate(rot, glm::radians( 45.f), {0, 1, 0});
@@ -45,6 +44,5 @@ void GUIInventoryItem::create(glm::vec2 scale, unsigned short count, ItemDef& de
         text->setText(std::to_string(count));
         add(text);
         text->setPos({(19 - text->getWidth()) * scale.x, 9 * scale.y});
-        text->setDepth(50);
     }
 }

@@ -7,16 +7,12 @@
 Player::Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer) :
     Collidable(world, defs, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
 
-    hand(defs.defs, 1, 1),
+    hand(defs.defs, "hand", 1, 1),
     inventory(defs.defs),
     gameGui(inventory, hand, renderer.window.getSize(), defs, renderer),
     wireframe({}, 0.01, {1, 1, 1}),
     renderer(renderer),
     defs(defs) {
-
-    inventory.createList("main", 44, 11);
-    inventory.createList("craft", 4, 2);
-    inventory.createList("craft_result", 2, 2);
 }
 
 void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {

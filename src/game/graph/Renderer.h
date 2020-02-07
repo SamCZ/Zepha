@@ -32,6 +32,8 @@ public:
     void swapBuffers();
 
     void setClearColor(unsigned char r, unsigned char g, unsigned char b);
+    void toggleDepthTest(bool enable);
+    void clearDepthBuffer();
 
     void setModelMatrix(const glm::mat4& modelMatrix);
     void setBones(std::vector<glm::mat4>& transforms);

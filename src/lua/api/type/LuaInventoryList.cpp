@@ -12,6 +12,10 @@ int LuaInventoryList::get_width() {
     return list.getWidth();
 }
 
+std::string LuaInventoryList::get_name() {
+    return list.getName();
+}
+
 LuaItemStack LuaInventoryList::get_stack(unsigned short i) {
     return LuaItemStack(list.getStack(i - 1), list.defs);
 }

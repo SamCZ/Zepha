@@ -2,8 +2,10 @@ print("Hello from inventory")
 
 if zepha.server then return end -- Only run the following code on the client.
 
+local inventory = zepha.player:get_inventory()
+
 local shit_adding = false
-local main = zepha.player:get_inventory():get_list("main")
+local main = inventory:add_list("main", 44, 11)
 
 zepha.register_keybind("zeus:inventory:add_shit_b", {
     description = "Add testing items to inventory",
@@ -58,7 +60,7 @@ zepha.register_keybind("zeus:inventory:open_inventory", {
                         size: 218px 160px
 
                         rect[inv_background]
-                            position: 0px 60px
+                            position: 0px 45px
                             size: 218px 100px
                             padding: 20px 10px 8px 10px
                             background: asset(zeus:inventory:inventory)
@@ -73,6 +75,7 @@ zepha.register_keybind("zeus:inventory:open_inventory", {
 
                         rect[craft_background]
                             size: 218px 72px
+                            position: 0px -15px
                             padding: 20px 10px 8px 10px
                             background: asset(zeus:inventory:crafting)
 
@@ -87,6 +90,49 @@ zepha.register_keybind("zeus:inventory:open_inventory", {
                                 source: current_player
                                 list: craft_result
                                 position: 163px 10px
+                                slot_spacing: 2px 2px
+                            end
+                        end
+
+                        rect[hot_wheel]
+                            size: 214px 67px
+                            position: 2px 160px
+                            background: asset(zeus:inventory:inventory_wheel)
+
+                            inventory
+                                source: current_player
+                                list: hot_wheel_1
+                                position: 9px 1px
+                                slot_spacing: 2px 2px
+                            end
+                            inventory
+                                source: current_player
+                                list: hot_wheel_2
+                                position: 117px 1px
+                                slot_spacing: 2px 2px
+                            end
+                            inventory
+                                source: current_player
+                                list: hot_wheel_3
+                                position: 125px 25px
+                                slot_spacing: 2px 2px
+                            end
+                            inventory
+                                source: current_player
+                                list: hot_wheel_4
+                                position: 117px 50px
+                                slot_spacing: 2px 2px
+                            end
+                            inventory
+                                source: current_player
+                                list: hot_wheel_5
+                                position: 9px 50px
+                                slot_spacing: 2px 2px
+                            end
+                            inventory
+                                source: current_player
+                                list: hot_wheel_6
+                                position: 1px 25px
                                 slot_spacing: 2px 2px
                             end
                         end
@@ -106,7 +152,31 @@ zepha.register_keybind("zeus:inventory:open_inventory", {
     end
 })
 
-local craft_input = zepha.player:get_inventory():get_list("craft")
-local craft_output = zepha.player:get_inventory():get_list("craft_result")
+-- Bind crafting
+
+local craft_input = inventory:add_list("craft", 4, 2)
+local craft_output = inventory:add_list("craft_result", 2, 2)
 
 crafting.bind(craft_input, craft_output)
+
+-- Make hotwheel
+
+local invs = {
+    inventory:add_list("hot_wheel_1", 5, 5),
+    inventory:add_list("hot_wheel_2", 5, 5),
+    inventory:add_list("hot_wheel_3", 5, 5),
+    inventory:add_list("hot_wheel_4", 5, 5),
+    inventory:add_list("hot_wheel_5", 5, 5),
+    inventory:add_list("hot_wheel_6", 5, 5)
+}
+
+for i, inv in pairs(invs) do
+    inv.allow_take = function() return 0 end
+    inv.allow_put = function(slot, item)
+        zepha.delay(function()
+            -- This delay is necessary to avoid the engine overwriting it with nothing
+            inv:set_stack(slot, item)
+        end, 0)
+        return 0
+    end
+end

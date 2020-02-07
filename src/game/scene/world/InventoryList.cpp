@@ -7,8 +7,9 @@
 #include "InventoryList.h"
 #include "../../../lua/api/type/LuaItemStack.h"
 
-InventoryList::InventoryList(DefinitionAtlas& defs, unsigned short size, unsigned short width) :
+InventoryList::InventoryList(DefinitionAtlas& defs, std::string name, unsigned short size, unsigned short width) :
     defs(defs),
+    name(name),
     itemstacks(size),
     width(width) {}
 
@@ -221,9 +222,6 @@ ItemStack InventoryList::removeStack(unsigned short ind, unsigned short count) {
 
 void InventoryList::triggerCallback() {
     if (guiCallback != nullptr) guiCallback();
-//    for (auto& cb : changeCallbacks) {
-//        cb();
-//    }
 }
 
 unsigned short InventoryList::getLength() {
@@ -232,4 +230,8 @@ unsigned short InventoryList::getLength() {
 
 unsigned short InventoryList::getWidth() {
     return width;
+}
+
+std::string InventoryList::getName() {
+    return name;
 }

@@ -66,14 +66,17 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
     get<GUILabelledGraph>("meshGraph")->setPos({bufferWidth - 254, bufferHeight - 70 - 80});
     get<GUILabelledGraph>("interpGraph")->setPos({bufferWidth - 254, bufferHeight - 70});
 
-    get<GUILabelledGraph>("fpsGraph")->setPos({10, bufferHeight - 70});
-    get<GUILabelledGraph>("drawsGraph")->setPos({10, bufferHeight - 70 - 80});
-    get<GUILabelledGraph>("gpuGraph")->setPos({bufferWidth - 254, 10});
+    get<GUILabelledGraph>("fpsGraph")->setPos({bufferWidth - 254, 10});
+    get<GUILabelledGraph>("drawsGraph")->setPos({bufferWidth - 254, 90});
+    get<GUILabelledGraph>("gpuGraph")->setPos({bufferWidth - 254, 90 + 80});
 }
 
 void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int /*chunks*/, int drawCalls, int ssGen, int ssPack) {
 
-    { //VRam Usage Graph (Top Right)
+    { //Top Right Graphs
+        get<GUILabelledGraph>("fpsGraph")->pushValue(static_cast<float>(fps));
+        get<GUILabelledGraph>("drawsGraph")->pushValue(drawCalls);
+
         int videoMemAvail, videoMemTotal;
 
         glGetIntegerv(0x9048, &videoMemTotal);
@@ -82,11 +85,6 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         get<GUILabelledGraph>("gpuGraph")->pushValue(static_cast<int>(std::round(
                 (videoMemTotal - videoMemAvail) / static_cast<float>(videoMemTotal) * 100.0))
                 / 100.0f);
-    }
-
-    { //Bottom Left Graphs
-        get<GUILabelledGraph>("fpsGraph")->pushValue(static_cast<float>(fps));
-        get<GUILabelledGraph>("drawsGraph")->pushValue(drawCalls);
     }
 
     { //Bottom Right Graphs

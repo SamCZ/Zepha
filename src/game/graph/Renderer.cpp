@@ -103,8 +103,6 @@ void Renderer::beginChunkDeferredCalls() {
 }
 
 void Renderer::beginEntityDeferredCalls() {
-//    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-
     currentModelUniform = entity.uniforms.model;
 
     entity.use();
@@ -113,8 +111,6 @@ void Renderer::beginEntityDeferredCalls() {
 }
 
 void Renderer::endDeferredCalls() {
-//    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-
     activeTexture = nullptr;
 
     glBindFramebuffer(GL_FRAMEBUFFER, ssao.fbo);
@@ -186,7 +182,7 @@ void Renderer::beginGUIDrawCalls() {
     currentModelUniform = gu.model;
 
     glClear(GL_DEPTH_BUFFER_BIT);
-    glDepthFunc(GL_LEQUAL);
+    glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
 
@@ -241,4 +237,12 @@ void Renderer::setClearColor(unsigned char r, unsigned char g, unsigned char b) 
 void Renderer::setBones(std::vector<glm::mat4> &transforms) {
     if (transforms.empty()) return;
     entity.setArr(entity.uniforms.bones, static_cast<GLsizei>(transforms.size()), transforms.at(0));
+}
+
+void Renderer::toggleDepthTest(bool enable) {
+    enable ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
+}
+
+void Renderer::clearDepthBuffer() {
+    glClear(GL_DEPTH_BUFFER_BIT);
 }

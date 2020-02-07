@@ -189,7 +189,7 @@ void MapGen::generateStructures(chunk_partials_map& chunks, chunk_partial& chunk
     c.origin = {1, 0, 1};
     c.blocks = { cAir, cAir, cAir, cAir, cLeaves, cAir, cAir, cAir, cAir,
                  cAir, cWood, cAir, cLeaves, cWood, cLeaves, cAir, cLeaves, cAir,
-                 cAir, cAir, cAir, cAir, cLeaves, cAir, cAir, cAir, cAir};
+                 cAir, cAir, cAir, cAir, cLeaves, cAir, cAir, cAir, cAir };
 
     glm::ivec3 wp = chunk.second->pos;
     glm::ivec3 lp;
@@ -200,41 +200,11 @@ void MapGen::generateStructures(chunk_partials_map& chunks, chunk_partial& chunk
         glm::ivec3 p = wp * 16 + lp;
 
         if (treeAbs.GetValue(p.x, p.y, p.z) > 1.2 && chunk.first->depth[m] <= 2 && chunk.first->depth[m] > 1) {
-
             glm::ivec3 off = {};
             for (unsigned int i = 0; i < c.length(); i++) {
                 c.assignOffset(i, off);
                 setBlock(p + off - c.origin, c.blocks[i], chunks);
             }
-
-//            glm::ivec3 rp {};
-//            for (unsigned int i = 0; i < 5; i++) {
-//                rp.x = p.x - 2 + i;
-//                for (unsigned int j = 0; j < 5; j++) {
-//                    rp.z = p.z - 2 + j;
-//                    for (unsigned int k = 0; k < 2; k++) {
-//                        rp.y = p.y + 48 + k;
-//                        setBlock(rp, cLeaves, chunks);
-//                    }
-//                }
-//            }
-//
-//            rp = {};
-//            for (unsigned int i = 0; i < 3; i++) {
-//                rp.x = p.x - 1 + i;
-//                for (unsigned int j = 0; j < 3; j++) {
-//                    rp.z = p.z - 1 + j;
-//                    for (unsigned int k = 0; k < 2; k++) {
-//                        rp.y = p.y + 50 + k;
-//                        setBlock(rp, cLeaves, chunks);
-//                    }
-//                }
-//            }
-//
-//            for (unsigned int i = 0; i < 50; i++) {
-//                setBlock(p, cWood, chunks);
-//                p.y++;
-//            }
         }
     }
 }
@@ -272,8 +242,7 @@ std::shared_ptr<BlockChunk> MapGen::combinePartials(std::shared_ptr<BlockChunk> 
     for (unsigned int i = 0; i < 4096; i++) {
         if (src->getBlock(i) != DefinitionAtlas::INVALID) res->setBlock(i, src->getBlock(i));
     }
-    res->generated = src->generated || res->generated;
 
-    assert(res != nullptr);
+    res->generated = src->generated || res->generated;
     return res;
 }

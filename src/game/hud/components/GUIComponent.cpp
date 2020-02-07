@@ -160,7 +160,3 @@ bool GUIComponent::clickEvent(bool left, bool state, glm::ivec2 pos) {
     }
     return false;
 }
-
-void GUIComponent::setDepth(float depth) {
-    entity.setDepth(depth);
-}

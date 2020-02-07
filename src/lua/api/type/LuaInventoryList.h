@@ -16,6 +16,7 @@ public:
 
     int get_length();
     int get_width();
+    std::string get_name();
 
     LuaItemStack get_stack(unsigned short i);
 
