@@ -28,6 +28,7 @@
 #include "../api/modules/remove_entity.h"
 
 #include "../api/functions/sUpdateEntities.h"
+#include "../VenusParser.h"
 
 void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world, std::string path) {
     //Load Base Libraries
@@ -188,7 +189,7 @@ std::vector<LuaMod> ServerLuaParser::createLuaMods(std::list<std::string> modDir
                     if (scannedFile.is_dir) dirsToScan.emplace_back(scannedFile.path);
                     else {
                         char *dot = strrchr(scannedFile.path, '.');
-                        if (dot && strncmp(dot, ".lua", 4) == 0) {
+                        if (dot && (strncmp(dot, ".lua", 4) == 0 || strncmp(dot, ".venus", 6) == 0)) {
                             luaFiles.emplace_back(scannedFile.path);
                         }
                     }
@@ -226,12 +227,29 @@ std::vector<LuaMod> ServerLuaParser::createLuaMods(std::list<std::string> modDir
             std::string modPath = file;
             assert(rootPos != std::string::npos);
 
+            std::string fileStr = "";
+
             modPath.erase(rootPos, root.length());
             modPath.insert(0, conf.name);
-            modPath.resize(modPath.size() - 4);
 
-            std::ifstream t(file);
-            std::string fileStr((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+            const static std::string venusSubstr = ".venus";
+            if (std::equal(venusSubstr.rbegin(), venusSubstr.rend(), file.rbegin())) {
+                modPath.resize(modPath.size() - 6);
+
+                try {
+                    fileStr = VenusParser::parse(file);
+                }
+                catch (std::string e) {
+                    std::cout << Log::err << "Error compiling Venus file '" << file << "':\n" << e << Log::endl;
+                    exit(1);
+                }
+            }
+            else {
+                modPath.resize(modPath.size() - 4);
+
+                std::ifstream t(file);
+                fileStr = std::string((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+            }
 
             LuaModFile f {modPath, fileStr};
             mod.files.push_back(f);

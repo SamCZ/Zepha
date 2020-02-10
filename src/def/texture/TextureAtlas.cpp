@@ -4,7 +4,6 @@
 
 #include "TextureAtlas.h"
 #include <stb_image/stb_image.h>
-#include <stb_image/stb_image_write.h>
 
 TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) :
     pixelSize(width, (height == 0 ? width : height)),

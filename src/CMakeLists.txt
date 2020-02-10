@@ -279,6 +279,6 @@ set(ZEPHA_SRC
     util/net/Serializer.h
     util/net/Deserializer.h
     lua/api/type/ServerLocalLuaEntity.cpp
-    lua/api/type/ServerLocalLuaEntity.h lua/api/modules/register_item.h lua/api/modules/register_biome.h lua/api/modules/delay.h lua/api/modules/register_block.h lua/api/modules/register_blockmodel.h lua/api/modules/register_entity.h game/scene/world/World.cpp game/scene/world/World.h lua/api/modules/set_block.h lua/api/modules/get_block.h lua/api/modules/remove_block.h lua/register/RegisterBiomes.h lua/register/RegisterBlocks.h lua/register/RegisterItems.h lua/register/RegisterKeybinds.h lua/api/type/LocalLuaAnimationManager.cpp lua/api/type/LocalLuaAnimationManager.h lua/api/type/cLocalLuaAnimationManager.h game/scene/world/Schematic.cpp game/scene/world/Schematic.h)
+    lua/api/type/ServerLocalLuaEntity.h lua/api/modules/register_item.h lua/api/modules/register_biome.h lua/api/modules/delay.h lua/api/modules/register_block.h lua/api/modules/register_blockmodel.h lua/api/modules/register_entity.h game/scene/world/World.cpp game/scene/world/World.h lua/api/modules/set_block.h lua/api/modules/get_block.h lua/api/modules/remove_block.h lua/register/RegisterBiomes.h lua/register/RegisterBlocks.h lua/register/RegisterItems.h lua/register/RegisterKeybinds.h lua/api/type/LocalLuaAnimationManager.cpp lua/api/type/LocalLuaAnimationManager.h lua/api/type/cLocalLuaAnimationManager.h game/scene/world/Schematic.cpp game/scene/world/Schematic.h lua/VenusParser.cpp lua/VenusParser.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})
