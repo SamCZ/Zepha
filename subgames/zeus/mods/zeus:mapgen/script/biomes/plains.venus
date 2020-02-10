@@ -1,7 +1,7 @@
 local noise = {
     module = "add",
     sources = {
-        { -- Elevation
+        { ## Elevation
             module = "scale_bias",
             source = {
                 module = "perlin",
@@ -11,7 +11,7 @@ local noise = {
             scale = 250,
             bias = -32
         },
-        { -- Features
+        { ## Features
             module = "scale_bias",
             source = {
                 module = "perlin",
@@ -24,7 +24,7 @@ local noise = {
     }
 }
 
-zepha.register_biome("zeus:default:plains", {
+zepha.register_biome("zeus:mapgen:plains", {
     environment = {
         temperature = 15/100,
         humidity = 80/100,

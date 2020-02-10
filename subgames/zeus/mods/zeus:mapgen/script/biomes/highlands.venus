@@ -4,7 +4,7 @@ local noise = {
         {
             module = "add",
             sources = {
-                { -- Voronoi
+                { ## Voronoi
                     module = "scale_bias",
                     source = {
                         module = "voronoi",
@@ -14,7 +14,7 @@ local noise = {
                     scale = 8,
                     bias = -32
                 },
-                { -- Features
+                { ## Features
                     module = "scale_bias",
                     source = {
                         module = "perlin",
@@ -25,7 +25,7 @@ local noise = {
                 }
             }
         },
-        { -- Variation
+        { ## Variation
             module = "scale_bias",
             source = {
                 module = "perlin",
@@ -37,7 +37,7 @@ local noise = {
     }
 }
 
-zepha.register_biome("zeus:default:rocklands", {
+zepha.register_biome("zeus:mapgen:highlands", {
     environment = {
         temperature = 0/100,
         humidity = 0/100,

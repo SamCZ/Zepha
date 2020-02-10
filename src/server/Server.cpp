@@ -23,7 +23,7 @@ Server::Server(const std::string& path, unsigned short port, const std::string& 
 }
 
 void Server::update() {
-    const static long interval_ns = (long)((1000 / 20.f) * 1000000L);
+    const static long interval_ns = static_cast<long>((1000 / 20.f) * 1000000L);
     Timer loop("");
 
     world.update(0);
@@ -76,7 +76,6 @@ void Server::update() {
 }
 
 void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
-    //Client *does* have a player, this is ensured in processConnecting().
     ServerPlayer& player = client.getPlayer();
 
     switch (p.type) {
