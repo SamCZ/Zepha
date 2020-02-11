@@ -17,8 +17,13 @@ Server::Server(const std::string& path, unsigned short port, const std::string& 
     world.init();
     config.init();
 
-    std::cout << Log::info << "Server started successfully." << Log::endl;
-    std::cout << Log::info << "Listening for clients." << Log::endl;
+    std::cout << Log::info << "Loaded " << defs.luaApi.mods.size() << " mods: [ ";
+    for (unsigned int i = 0; i < defs.luaApi.mods.size(); i++) {
+        std::cout << defs.luaApi.mods[i].config.name << (i < defs.luaApi.mods.size() - 1 ? ", " : " ]");
+    }
+    std::cout << std::endl;
+
+    std::cout << Log::info << "Server started successfully, listening for clients." << Log::endl;
     while (alive) update();
 }
 

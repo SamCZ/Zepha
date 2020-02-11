@@ -11,5 +11,5 @@
 
 class VenusParser {
 public:
-    static std::string parse(std::string src);
+    static std::string parse(const std::string& fileName, const std::string& fileContents);
 };

@@ -2,3 +2,4 @@ lib/*/*
 cmake-build-debug
 cmake-build-install
 cmake-build-release
+.hidden

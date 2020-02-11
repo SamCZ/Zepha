@@ -14,13 +14,14 @@ NetHandler::NetHandler(const Address& hostAddress, int attempts, int timeout) {
 
 NetHandler::NetHandler(unsigned short port, short max_clients) {
     initServer(port, max_clients);
+    if (state == NetState::ENET_ERROR) exit(1);
 }
 
 void NetHandler::initServer(unsigned short port, short max_clients) {
     state = NetState::HOST;
 
     if (enet_initialize() != 0) {
-        fprintf(stderr, "[FATAL] Failed to Initialize ENet.\n");
+        std::cout << Log::err << "Failed to initialize enet." << Log::endl;
         state = NetState::ENET_ERROR;
         return;
     }
@@ -32,12 +33,12 @@ void NetHandler::initServer(unsigned short port, short max_clients) {
     peer = nullptr;
 
     if (host == nullptr) {
-        fprintf(stderr, "[FATAL] Failed to create ENet host.\n");
+        std::cout << Log::err << "Failed to create host. Is another application already using port " << address.port << "?" << Log::endl;
         state = NetState::ENET_ERROR;
         return;
     }
 
-    std::cout << Log::info << "Starting Zepha Server." << Log::endl;
+    std::cout << Log::info << "Starting Zepha Server on port " << address.port << "." << Log::endl;
 }
 
 void NetHandler::initClient(Address hostAddress, int attempts, int timeout) {

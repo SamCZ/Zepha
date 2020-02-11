@@ -29,6 +29,7 @@
 
 #include "../api/functions/sUpdateEntities.h"
 #include "../VenusParser.h"
+#include "../ErrorFormatter.h"
 
 void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world, std::string path) {
     //Load Base Libraries
@@ -227,7 +228,8 @@ std::vector<LuaMod> ServerLuaParser::createLuaMods(std::list<std::string> modDir
             std::string modPath = file;
             assert(rootPos != std::string::npos);
 
-            std::string fileStr = "";
+            std::ifstream t(file);
+            std::string fileStr = std::string((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
 
             modPath.erase(rootPos, root.length());
             modPath.insert(0, conf.name);
@@ -237,18 +239,15 @@ std::vector<LuaMod> ServerLuaParser::createLuaMods(std::list<std::string> modDir
                 modPath.resize(modPath.size() - 6);
 
                 try {
-                    fileStr = VenusParser::parse(file);
+                    fileStr = VenusParser::parse(file, fileStr);
                 }
-                catch (std::string e) {
-                    std::cout << Log::err << "Error compiling Venus file '" << file << "':\n" << e << Log::endl;
+                catch (std::runtime_error e) {
+                    std::cout << std::endl << e.what() << std::endl;
                     exit(1);
                 }
             }
             else {
                 modPath.resize(modPath.size() - 4);
-
-                std::ifstream t(file);
-                fileStr = std::string((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
             }
 
             LuaModFile f {modPath, fileStr};
@@ -410,8 +409,33 @@ void ServerLuaParser::serializeMods() {
 
 sol::protected_function_result ServerLuaParser::errorCallback(lua_State*, sol::protected_function_result errPfr) {
     sol::error err = errPfr;
-    std::cout << Log::err << "The Zepha sandbox has encountered an error:"
-              << std::endl << std::endl << err.what() << std::endl << Log::endl;
+    std::string errString = err.what();
+
+    std::string::size_type slash = errString.find('/');
+    assert(slash != std::string::npos);
+
+    std::string modString = errString.substr(0, slash);
+
+    std::string::size_type lineNumStart = errString.find(':', slash);
+    assert(lineNumStart != std::string::npos);
+    std::string::size_type lineNumEnd = errString.find(':', lineNumStart + 1);
+    assert(lineNumEnd != std::string::npos);
+
+    std::string fileName = errString.substr(0, lineNumStart);
+    int lineNum = std::stoi(errString.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1));
+
+    for (auto& mod : mods) {
+        if (mod.config.name == modString) {
+            for (auto& file : mod.files) {
+                if (file.path == fileName) {
+                    std::cout << std::endl << ErrorFormatter::formatError(fileName, lineNum, errString, file.file) << std::endl;
+                    break;
+                }
+            }
+            break;
+        }
+    }
+
     exit(1);
     return errPfr;
 }
@@ -430,7 +454,7 @@ sol::protected_function_result ServerLuaParser::DoFileSandboxed(std::string file
                     env["_FILE"] = f.path;
                     env["_MODNAME"] = mod.config.name;
 
-                    auto pfr = lua.safe_script(f.file, env, &ServerLuaParser::errorCallback, "@" + f.path);
+                    auto pfr = lua.safe_script(f.file, env, std::bind(&ServerLuaParser::errorCallback, this, std::placeholders::_1, std::placeholders::_2), "@" + f.path);
                     return pfr;
                 }
             }
