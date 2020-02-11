@@ -1,0 +1,25 @@
+zepha.register_entity("zeus:default:test", {
+    display = "model",
+    display_object = "zeus:default:player",
+    display_texture = "zeus:default:player",
+
+    on_create = fn(self) {
+##        self.object.set_animations({
+##            {"wal0, 100}
+##        })
+##       self.object:snap_scale(1/4)
+    },
+    on_update = fn(self, delta) {
+        self.object:set_pos(v(
+            self.object.pos.x + 0.08 * math.sin(math.rad(self.object.yaw)),
+            self.object.pos.y,
+            self.object.pos.z + 0.08 * math.cos(math.rad(self.object.yaw)))
+        )
+        self.object.yaw += 2
+    }
+})
+
+if (zepha.server) {
+    local entity = zepha.add_entity("zeus:default:test", v(10, 0, 0))
+    ##zepha.delay(() => { zepha.remove_entity(entity) }, 10)
+}

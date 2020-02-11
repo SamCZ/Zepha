@@ -1,5 +1,3 @@
-print("Hello from inventory")
-
 if (zepha.server) { return } ## Only run the following code on the client.
 
 local inventory = zepha.player:get_inventory()

@@ -1,0 +1,103 @@
+fn collides(entity) {
+    return zepha.get_block({
+        x = math.floor(entity.pos.x),
+        y = math.floor(entity.pos.y - 0.5),
+        z = math.floor(entity.pos.z)}) ~= "air"
+}
+
+zepha.register_entity("zeus:default:dropped_item", {
+    display = "gameobject",
+    display_object = "zeus:default:stone",
+
+    on_create = fn(self, static) {
+        static = static or {}
+        self.item = static.item or self.display_object
+
+        self.object:set_display_type("gameobject", self.item)
+
+        self.tick = 0
+        self.time = static.time or 0
+        self.speed = static.speed or 15
+
+        self.delete = false
+        self.scooping = false
+
+        local angle = math.random() * (math.pi*2)
+        local amp = (math.random() + 0.5) * 5
+        local x = math.sin(angle) * amp
+        local z = math.cos(angle) * amp
+
+        self.vel = static.vel or v(x, -85, z)
+
+        if (not zepha.registered_blocks[self.item]) {
+            self.object.scale = 1/2
+        }
+        else {
+            self.object.scale = 1/3
+        }
+    },
+    on_update = fn(self, delta) {
+        self.object.yaw += self.speed
+        if (self.speed > 1) {
+            self.speed *= 0.92
+        }
+
+        self.tick += delta
+
+        if (self.time > 5 * 60) {
+            zepha.remove_entity(self)
+            return
+        }
+
+        if (self.scooping) { return }
+
+        if (not collides(self.object)) {
+            self.vel.y = math.min(self.vel.y + 300 * delta, 480)
+        }
+
+        local iter = 1
+        while (not collides(self.object) and iter <= math.abs(self.vel.y * delta)) {
+            local interval = 1/16
+            if (self.vel.y > 0) {
+                interval = -1/16
+            }
+
+            self.object.pos = vector.add(self.object.pos, v(0, interval, 0))
+            iter += 0.25
+        }
+
+        self.object.pos = vector.add(self.object.pos, vector.multiply(v(self.vel.x, 0, self.vel.z), delta))
+        self.vel.x *= 0.6
+        self.vel.z *= 0.6
+
+        self.object.visual_offset = v(0, math.sin(self.time * 2) / 8, 0)
+
+        if (collides(self.object)) {
+            self.vel.y = 0
+            self.time += delta
+        }
+
+        if (self.tick > 0.15) {
+            self.tick = 0
+            if (zepha.client) { self:check_collect() }
+        }
+    },
+    check_collect = fn(self) {
+        if (vector.distance(zepha.player.pos, self.object.pos) < 2) {
+            self.object.pos = vector.add(zepha.player.pos, v(0, 0.90, 0))
+            self.scooping = true
+
+            zepha.delay(() => {
+                zepha.remove_entity(self)
+                zepha.player:get_inventory():get_list("main"):add_stack({self.item, 1})
+            }, 2/20)
+        }
+    },
+    on_serialize = fn(self) {
+        return {
+            vel = self.vel,
+            time = self.time,
+            speed = self.speed
+        }
+    }
+})

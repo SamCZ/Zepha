@@ -1,4 +1,4 @@
-for i=1,5,1 do
+for i = 1, 5, 1 {
     zepha.register_block("zeus:default:tallgrass_" .. i, {
         culls = false,
         solid = false,
@@ -14,11 +14,11 @@ for i=1,5,1 do
         toughness = {
             hand = 0
         },
-        on_break_client = function(pos)
-            if math.random() > 0.8 then
+        on_break_client = fn(pos) {
+            if (math.random() > 0.8) {
                 zepha.add_entity("zeus:default:dropped_item", vector.add(pos, v(0.5)),
                     {item = "zeus:materials:plant_fibre"});
-            end
-        end
+            }
+        }
     })
-end
+}

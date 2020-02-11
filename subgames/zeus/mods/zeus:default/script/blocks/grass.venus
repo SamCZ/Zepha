@@ -19,10 +19,10 @@ zepha.register_block("zeus:default:grass", {
         pick = 2
     },
     drop = "zeus:default:dirt",
-    on_break = function(pos)
+    on_break = fn(pos) {
         zepha.add_entity("zeus:default:dropped_item", vector.add(pos, v(0.5)),
             {item = zepha.registered_blocks["zeus:default:grass"].drop});
-    end
+    }
 })
 
 zepha.register_block("zeus:default:grass_slab", {
@@ -38,11 +38,11 @@ zepha.register_block("zeus:default:grass_slab", {
         "biometint(zeus:default:grass_floating)",
     },
     culls = false,
---     lowdef_textures = {
---         "zeus:default:grass_top",
---         "zeus:default:dirt",
---         "zeus:default:grass_side_ld"
---     },
+##     lowdef_textures = {
+##         "zeus:default:grass_top",
+##         "zeus:default:dirt",
+##         "zeus:default:grass_side_ld"
+##     },
     toughness = {
         hand = 3,
         shovel = 1,
@@ -55,8 +55,8 @@ zepha.register_block("zeus:default:grass_slab", {
         {0, 0, 0, 1, 0.5, 1}
     },
     drop = "zeus:default:grass_slab",
-    on_break_client = function(pos)
+    on_break_client = fn(pos) {
         zepha.add_entity("zeus:default:dropped_item", vector.add(pos, v(0.5)),
             {item = zepha.registered_blocks["zeus:default:grass_slab"].drop});
-    end
+    }
 })
