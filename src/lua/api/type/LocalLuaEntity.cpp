@@ -78,7 +78,7 @@ void LocalLuaEntity::set_scale(float scale) {
 }
 
 float LocalLuaEntity::get_scale() {
-    return entity->getScale().x; //TODO: Make this return a vector - maybe?
+    return entity->getScale().x;
 }
 
 void LocalLuaEntity::set_display_type(const std::string &type, const std::string &arg, sol::optional<std::string> arg2) {

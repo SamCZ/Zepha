@@ -162,13 +162,16 @@ void MapGen::generateBlocks(chunk_partial& chunk) {
         unsigned short x = i / 16;
         unsigned short z = i % 16;
 
+        lp = {x, 0, z};
 		auto& biome = biomes.getBiomeAt(chunk.first->temperature.get(lp), chunk.first->humidity.get(lp), chunk.first->roughness.get(lp));
 
 		for (unsigned short y = 0; y < 16; y++) {
-            lp = {x, y, z};
+		    lp.y = y;
             unsigned short ind = Space::Block::index(lp);
 
 		    chunk.second->biomes[ind] = biome.index;
+
+		    if (chunk.second->blocks[ind] != DefinitionAtlas::INVALID) continue;
 
             int d = std::floor(chunk.first->depth[ind]);
             chunk.second->blocks[ind]
@@ -208,7 +211,7 @@ void MapGen::generateStructures(chunk_partials_map& chunks, chunk_partial& chunk
                 lp = {x, y, z};
                 unsigned short ind = Space::Block::index(lp);
 
-                if (chunk.first->depth[ind] <= 2 && chunk.first->depth[ind] > 1) {
+                if (chunk.first->depth[ind] > 0 && chunk.first->depth[ind] <= 1.1) {
 
                     glm::ivec3 off = {};
                     glm::ivec3 p = wp * 16 + lp;
@@ -254,7 +257,7 @@ std::shared_ptr<BlockChunk> MapGen::combinePartials(std::shared_ptr<BlockChunk> 
     }
 
     for (unsigned int i = 0; i < 4096; i++) {
-        if (src->getBlock(i) != DefinitionAtlas::INVALID) res->setBlock(i, src->getBlock(i));
+        if (src->getBlock(i) > DefinitionAtlas::INVALID) res->setBlock(i, src->getBlock(i));
     }
 
     res->generated = src->generated || res->generated;

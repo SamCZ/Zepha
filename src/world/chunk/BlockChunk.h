@@ -86,7 +86,7 @@ inline bool BlockChunk::setBlock(const glm::ivec3& pos, unsigned int blk) {
 }
 
 inline unsigned int BlockChunk::getBlock(unsigned int ind) const {
-    if (ind > 4096) return DefinitionAtlas::INVALID;
+    if (ind >= 4096) return DefinitionAtlas::INVALID;
     return blocks[ind];
 }
 
