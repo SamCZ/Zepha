@@ -185,7 +185,6 @@ namespace RegisterBlocks {
         // Create the low-def block model
         BlockModel lowdefModel;
         auto ldRender = blockTable.get_or("lowdef_render", true);
-        /*hiccup*/
 
         if (atlas) {
             std::vector<std::shared_ptr<AtlasRef>> refs;
@@ -201,18 +200,16 @@ namespace RegisterBlocks {
                 }
                 refs.push_back((*atlas)[texture]);
             }
-            /*hiccup*/
             lowdefModel = BlockModel::createCube(refs, biomeTints);
         }
         else {
-            /*hiccup*//*hiccup*/
-            lowdefModel = BlockModel::createCube({}, {}); /*hiccup*/
+            lowdefModel = BlockModel::createCube({}, {});
         }
-/*hiccup*//*hiccup*/
+
         lowdefModel.culls = ldRender;
         lowdefModel.visible = ldRender;
-        /*hiccup*/
-        return {model, lowdefModel}/*hiccup*/;
+
+        return {model, lowdefModel};
     }
 
     static void registerBlocks(sol::table source, sol::table blockModels, DefinitionAtlas& defs, TextureAtlas* atlas) {
@@ -232,7 +229,7 @@ namespace RegisterBlocks {
 
             bool solid = blockTable.get_or("solid", true);
             auto maxStack = blockTable.get_or("stack", 64);
-/*hiccup*/
+
             // Parse through selection boxes and collision boxes
             auto selectionOpt = blockTable.get<sol::optional<sol::table>>("selection_box");
             auto collisionOpt = blockTable.get<sol::optional<sol::table>>("collision_box");
@@ -249,19 +246,19 @@ namespace RegisterBlocks {
 
             // Create the block model
             std::pair<BlockModel, BlockModel> models = createBlockModel(blockTable, blockModels, atlas);
-/*hiccup*//*hiccup*/
+
             BlockDef *blockDef = new BlockDef(
-                    /*hiccup*/identifier,
+                    identifier,
                     defs.size(),
                     *nameOpt,
-                    maxStack, /*hiccup*//*hiccup*/
+                    maxStack,
                     models.first, models.second,
-                    /*hiccup*/solid,/*hiccup*/
+                    solid,
                     std::move(selectionBoxes),
                     std::move(collisionBoxes)
-            );/*hiccup*/
+            );
 
-            // Create entity model/*hiccup*//*hiccup*/
+            // Create entity model
             if (atlas) blockDef->createModel();
 
             // Bind Callbacks
