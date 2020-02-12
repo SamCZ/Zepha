@@ -9,19 +9,11 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include <glm/gtx/normal.hpp>
-#include <vector>
-#include <cstdio>
-
-#include "../../../../def/item/MeshPart.h"
-#include "../../../../def/item/BlockModelVertex.h"
-#include "../../../../world/chunk/BlockChunk.h"
 #include "../../../../def/LocalDefs.h"
-#include "../../../../def/item/BlockDef.h"
 #include "../../../../def/gen/NoiseSample.h"
-#include "../../../../util/Vec.h"
-#include "../../../../util/Timer.h"
-#include "../MeshDetails.h"
+
+class MeshDetails;
+class BlockChunk;
 
 class MeshGenerator {
 public:

@@ -55,7 +55,7 @@ namespace RegisterBlocks {
         if (!ldTexturesOpt) lowdef_textures = textures;
         else {
             for (auto pair : *ldTexturesOpt) {
-                if (!pair.second.is<std::string>()) throw "textures table has non-string value!";
+                if (!pair.second.is<std::string>()) throw "lowdef_textures table has non-string value!";
                 lowdef_textures.push_back(pair.second.as<std::string>());
             }
         }
@@ -189,19 +189,24 @@ namespace RegisterBlocks {
 
         if (atlas) {
             std::vector<std::shared_ptr<AtlasRef>> refs;
+            std::vector<bool> biomeTints;
             for (auto i = 0; i < lowdef_textures.size(); i++) {
                 std::string texture = lowdef_textures[i];
                 if (strncmp(texture.data(), "biometint(", 10) == 0) {
                     texture = texture.substr(10, texture.length() - 11);
+                    biomeTints.emplace_back(true);
+                }
+                else {
+                    biomeTints.emplace_back(false);
                 }
                 refs.push_back((*atlas)[texture]);
             }
             /*hiccup*/
-            lowdefModel = BlockModel::createCube(refs);
+            lowdefModel = BlockModel::createCube(refs, biomeTints);
         }
         else {
             /*hiccup*//*hiccup*/
-            lowdefModel = BlockModel::createCube({}); /*hiccup*/
+            lowdefModel = BlockModel::createCube({}, {}); /*hiccup*/
         }
 /*hiccup*//*hiccup*/
         lowdefModel.culls = ldRender;
@@ -250,7 +255,7 @@ namespace RegisterBlocks {
                     defs.size(),
                     *nameOpt,
                     maxStack, /*hiccup*//*hiccup*/
-                    models.first,
+                    models.first, models.second,
                     /*hiccup*/solid,/*hiccup*/
                     std::move(selectionBoxes),
                     std::move(collisionBoxes)

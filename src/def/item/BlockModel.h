@@ -19,15 +19,19 @@ struct BlockModel {
     bool culls = false;
     bool visible = false;
 
-    static BlockModel createCube(const std::vector<std::shared_ptr<AtlasRef>>& textureRefs) {
+    static BlockModel createCube(std::vector<std::shared_ptr<AtlasRef>> textureRefs, std::vector<bool> biomeTints) {
         BlockModel blockModel;
         blockModel.visible = true;
         blockModel.culls = true;
 
         std::vector<BlockModelVertex> vertices {};
         std::vector<unsigned int> indices {};
+        unsigned int accessInd;
 
         for (auto& ref : textureRefs) blockModel.textureRefs.insert(ref);
+
+        if (textureRefs.empty()) textureRefs.emplace_back(nullptr);
+        if (biomeTints.empty()) biomeTints.emplace_back(false);
 
         //Left Face
         vertices = {
@@ -36,7 +40,8 @@ struct BlockModel {
                 {glm::vec3{0, 1, 1}, glm::vec3{}, glm::vec2{1, 0}, glm::vec2{}},
                 {glm::vec3{0, 1, 0}, glm::vec3{}, glm::vec2{0, 0}, glm::vec2{}}};
         indices = {0, 1, 2, 2, 3, 0};
-        MeshPart leftMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[(std::min)(static_cast<int>(textureRefs.size() - 1), 2)], false);
+        accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 2));
+        MeshPart leftMeshPart(vertices, indices, textureRefs[accessInd], biomeTints[accessInd]);
         blockModel.parts[static_cast<int>(Dir::LEFT)].push_back(leftMeshPart);
 
         //Right Face
@@ -46,7 +51,8 @@ struct BlockModel {
                 {glm::vec3{1, 0, 0}, glm::vec3{}, glm::vec2{0, 1}, glm::vec2{}},
                 {glm::vec3{1, 1, 0}, glm::vec3{}, glm::vec2{0, 0}, glm::vec2{}}};
         indices = {0, 1, 2, 2, 3, 0};
-        MeshPart rightMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[(std::min)(static_cast<int>(textureRefs.size() - 1), 3)], false);
+        accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 3));
+        MeshPart rightMeshPart(vertices, indices, textureRefs[accessInd], biomeTints[accessInd]);
         blockModel.parts[static_cast<int>(Dir::RIGHT)].push_back(rightMeshPart);
 
         //Top Face
@@ -56,7 +62,8 @@ struct BlockModel {
                 {glm::vec3{1, 1, 1}, glm::vec3{}, glm::vec2{1, 1}, glm::vec2{}},
                 {glm::vec3{1, 1, 0}, glm::vec3{}, glm::vec2{1, 0}, glm::vec2{}}};
         indices = {0, 1, 2, 2, 3, 0};
-        MeshPart topMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[(std::min)(static_cast<int>(textureRefs.size() - 1), 0)], false);
+        accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 0));
+        MeshPart topMeshPart(vertices, indices, textureRefs[accessInd], biomeTints[accessInd]);
         blockModel.parts[static_cast<int>(Dir::TOP)].push_back(topMeshPart);
 
         //Bottom Face
@@ -66,7 +73,8 @@ struct BlockModel {
                 {glm::vec3{1, 0, 1}, glm::vec3{}, glm::vec2{1, 1}, glm::vec2{}},
                 {glm::vec3{0, 0, 1}, glm::vec3{}, glm::vec2{0, 1}, glm::vec2{}}};
         indices = {0, 1, 2, 2, 3, 0};
-        MeshPart bottomMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[(std::min)(static_cast<int>(textureRefs.size() - 1), 1)], false);
+        accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 1));
+        MeshPart bottomMeshPart(vertices, indices, textureRefs[accessInd], biomeTints[accessInd]);
         blockModel.parts[static_cast<int>(Dir::BOTTOM)].push_back(bottomMeshPart);
 
         //Front Face
@@ -76,7 +84,8 @@ struct BlockModel {
                 {glm::vec3{1, 1, 1}, glm::vec3{}, glm::vec2{1, 0}, glm::vec2{}},
                 {glm::vec3{0, 1, 1}, glm::vec3{}, glm::vec2{0, 0}, glm::vec2{}}};
         indices = {0, 1, 2, 2, 3, 0};
-        MeshPart frontMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[(std::min)(static_cast<int>(textureRefs.size() - 1), 4)], false);
+        accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 4));
+        MeshPart frontMeshPart(vertices, indices, textureRefs[accessInd], biomeTints[accessInd]);
         blockModel.parts[static_cast<int>(Dir::FRONT)].push_back(frontMeshPart);
 
         //Back Face
@@ -86,7 +95,8 @@ struct BlockModel {
                 {glm::vec3{1, 1, 0}, glm::vec3{}, glm::vec2{1, 0}, glm::vec2{}},
                 {glm::vec3{1, 0, 0}, glm::vec3{}, glm::vec2{1, 1}, glm::vec2{}}};
         indices = {0, 1, 2, 2, 3, 0};
-        MeshPart backMeshPart(vertices, indices, (textureRefs.empty()) ? nullptr : textureRefs[(std::min)(static_cast<int>(textureRefs.size() - 1), 5)], false);
+        accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 5));
+        MeshPart backMeshPart(vertices, indices, textureRefs[accessInd], biomeTints[accessInd]);
         blockModel.parts[static_cast<int>(Dir::BACK)].push_back(backMeshPart);
 
         return blockModel;

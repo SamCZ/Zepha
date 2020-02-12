@@ -2,17 +2,26 @@
 // Created by aurailus on 01/12/18.
 //
 
-#include <thread>
+#include <vector>
+#include <glm/gtx/normal.hpp>
+#include "../MeshDetails.h"
+#include "../../../../world/chunk/BlockChunk.h"
+//#include "../../../../def/item/MeshPart.h"
+//#include "../../../../def/item/BlockModelVertex.h"
+//#include "../../../../def/item/BlockDef.h"
+//#include "../../../../util/Vec.h"
+#include "../../../../util/Timer.h"
 #include "MeshGenerator.h"
 
 MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::shared_ptr<BlockChunk> chunk,
                              std::array<std::shared_ptr<BlockChunk>, 6> adjacent,
                              std::array<NoiseSample, 3>& blockOffsets) :
-    meshDetails(meshDetails),
+
     defs(defs),
-    atlas(defs.defs),
     chunk(chunk),
-    adjacent(adjacent) {
+    atlas(defs.defs),
+    adjacent(adjacent),
+    meshDetails(meshDetails) {
 
     meshDetails->vertices.reserve(5000);
     meshDetails->indices.reserve(7000);
@@ -23,8 +32,8 @@ MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::sha
     glm::vec3 vis;
     glm::vec3 check;
 
-    for (unsigned int i = 0; i < 4096; i++) {
-        BlockModel& model = atlas.blockFromId(chunk->getBlock(i)).model;
+    for (unsigned short i = 0; i < 4096; i++) {
+        BlockModel& model = atlas.blockFromId(chunk->getBlock(i)).farModel;
         glm::vec3 biomeTint = defs.biomes.biomeFromId(chunk->getBiome(i)).biomeTint;
 
         if (model.visible) {
@@ -77,14 +86,14 @@ MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::sha
 BlockDef& MeshGenerator::getBlockAt(const glm::ivec3 &pos) {
     if (pos.x < 0 || pos.x >= 16 || pos.y < 0 || pos.y >= 16 || pos.z < 0 || pos.z >= 16) {
 
-        if (pos.x == 16) return atlas.blockFromId(adjacent[0]->getBlock(pos - glm::ivec3(16, 0, 0)));
-        if (pos.x == -1) return atlas.blockFromId(adjacent[1]->getBlock(pos + glm::ivec3(16, 0, 0)));
+        if (pos.x == 16) return atlas.blockFromId(adjacent[0]->getBlock(pos - glm::ivec3 {16, 0, 0}));
+        if (pos.x == -1) return atlas.blockFromId(adjacent[1]->getBlock(pos + glm::ivec3 {16, 0, 0}));
 
-        if (pos.y == 16) return atlas.blockFromId(adjacent[2]->getBlock(pos - glm::ivec3(0, 16, 0)));
-        if (pos.y == -1) return atlas.blockFromId(adjacent[3]->getBlock(pos + glm::ivec3(0, 16, 0)));
+        if (pos.y == 16) return atlas.blockFromId(adjacent[2]->getBlock(pos - glm::ivec3 {0, 16, 0}));
+        if (pos.y == -1) return atlas.blockFromId(adjacent[3]->getBlock(pos + glm::ivec3 {0, 16, 0}));
 
-        if (pos.z == 16) return atlas.blockFromId(adjacent[4]->getBlock(pos - glm::ivec3(0, 0, 16)));
-        if (pos.z == -1) return atlas.blockFromId(adjacent[5]->getBlock(pos + glm::ivec3(0, 0, 16)));
+        if (pos.z == 16) return atlas.blockFromId(adjacent[4]->getBlock(pos - glm::ivec3 {0, 0, 16}));
+        if (pos.z == -1) return atlas.blockFromId(adjacent[5]->getBlock(pos + glm::ivec3 {0, 0, 16}));
     }
 
     return atlas.blockFromId(chunk->getBlock(pos));
@@ -92,8 +101,6 @@ BlockDef& MeshGenerator::getBlockAt(const glm::ivec3 &pos) {
 
 void MeshGenerator::addFaces(const glm::vec3 &offset, const std::vector<MeshPart> &meshParts, const glm::vec3& tint) {
     for (const MeshPart& mp : meshParts) {
-
-
         glm::vec3 modData = {};
 
         switch (mp.shaderMod) {
