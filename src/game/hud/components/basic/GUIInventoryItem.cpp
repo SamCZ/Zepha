@@ -23,17 +23,15 @@ void GUIInventoryItem::create(glm::vec2 scale, unsigned short count, ItemDef& de
         add(item);
     }
     else {
-        auto& model = static_cast<BlockDef&>(def).guiModel;
+        auto& model = static_cast<BlockDef&>(def).entityModel;
 
         auto item = std::make_shared<GUIModel>("item");
         item->create(scale * 10.5f, model);
         item->setPos(glm::vec2{7.75, 7.75} * scale);
 
-        glm::mat4 rot;
-        rot = glm::rotate(rot, glm::radians(180.f), {1, 0, 0});
-        rot = glm::rotate(rot, glm::radians( 45.f), {0, 1, 0});
-        rot = glm::rotate(rot, glm::radians(-25.f), {1, 0, 1});
-        item->setRotation(rot);
+        item->setRotationX(180.f - 30.f);
+        item->setRotationY(45.f);
+        item->setRotationZ(0.f);
 
         add(item);
     }

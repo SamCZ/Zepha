@@ -169,12 +169,7 @@ set(ZEPHA_SRC
     game/graph/meshtypes/ChunkVertex.h
     game/graph/meshtypes/Mesh.cpp
     game/graph/meshtypes/Mesh.h
-    game/graph/meshtypes/GuiMesh.cpp
-    game/graph/meshtypes/GuiMesh.h
-    game/graph/meshtypes/GuiVertex.h
-    game/hud/GuiEntity.cpp
-    game/hud/GuiEntity.h
-    util/Mat4Conv.h
+        util/Mat4Conv.h
     game/entity/ModelBone.cpp
     game/entity/ModelBone.h
     game/entity/ModelAnimation.cpp

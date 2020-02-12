@@ -24,7 +24,7 @@ void BlockDef::createModel() {
     unsigned int indOffset = 0;
 
     std::vector<EntityVertex> entityVertices;
-    std::vector<GuiVertex> guiVertices;
+//    std::vector<GuiVertex> guiVertices;
     std::vector<unsigned int> indices;
 
     for (std::vector<MeshPart>& pArray : model.parts) {
@@ -32,19 +32,19 @@ void BlockDef::createModel() {
             for (const BlockModelVertex &vertex : p.vertices) {
                 entityVertices.push_back(EntityVertex {
                     vertex.pos - glm::vec3(0.5f),
-                    {vertex.tex.x, vertex.tex.y, 0, 0},
+                    {vertex.tex.x, vertex.tex.y, 0, 1},
                     {1, 1, 1},
                     true,
                     vertex.nml,
                     {}, {}
                 });
-                float brightness = 0.8 + (glm::abs(vertex.nml.z) * 0.2) + (vertex.nml.y * 0.4);
-                guiVertices.push_back(GuiVertex {
-                    vertex.pos - glm::vec3(0.5f),
-                    {vertex.tex.x, vertex.tex.y, 0, 1},
-                    glm::vec3(brightness),
-                    true
-                });
+//                float brightness = 0.8 + (glm::abs(vertex.nml.z) * 0.2) + (vertex.nml.y * 0.4);
+//                guiVertices.push_back(GuiVertex {
+//                    vertex.pos - glm::vec3(0.5f),
+//                    {vertex.tex.x, vertex.tex.y, 0, 1},
+//                    glm::vec3(brightness),
+//                    true
+//                });
             }
 
             for (unsigned int index : p.indices) {
@@ -56,7 +56,8 @@ void BlockDef::createModel() {
     }
 
     entity->create(entityVertices, indices);
+    entityModel = std::make_shared<Model>();
     entityModel->fromMesh(std::move(entity));
 
-    guiModel->create(guiVertices, indices);
+//    guiModel->create(guiVertices, indices);
 }

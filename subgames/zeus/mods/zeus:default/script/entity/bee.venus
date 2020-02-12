@@ -10,7 +10,9 @@ zepha.register_entity("zeus:default:bee", {
 
         self.object.anims:define({
             fly = {1, 45}
-        }):set_anim("fly"):play()
+        })
+
+        self.object.anims:set_anim("fly"):play()
     },
     on_update = fn(self, delta) {
         self.object.pos = v(

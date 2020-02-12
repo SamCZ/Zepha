@@ -9,7 +9,7 @@ std::shared_ptr<GUIComponent> GameGuiBuilder::createComponent(SerializedGuiElem 
     auto comp = GuiBuilder::createComponent(data);
     if (comp) return comp;
 
-    //Extra definitions
+    // Extra definitions
 
     glm::vec2 pos {};
 

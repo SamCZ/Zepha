@@ -3,7 +3,6 @@
 //
 
 #include "GuiBuilder.h"
-#include "components/compound/GUIImageButton.h"
 
 GuiBuilder::GuiBuilder(LocalDefs& defs, std::shared_ptr<GUIContainer> root) :
     defs(defs), root(root) {}
@@ -269,8 +268,31 @@ std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerializedGuiElem& dat
         return text;
     }
 
+    else if (data.type == "model") {
+        glm::vec2 scale = {1, 1};
+        if (data.tokens.count("size")) {
+            auto tokens = splitValue(data.tokens["size"], 2);
+            scale = {stringToNum(tokens[0], PercentBehavior::DECIMAL),
+                     stringToNum(tokens[1], PercentBehavior::DECIMAL)};
+        }
+
+        std::string modelStr = (data.tokens.count("model")) ? data.tokens["model"] : "";
+
+        auto m = std::make_shared<Model>();
+        m->fromSerialized(defs.models.models["zeus:default:bird"], {defs.textures["zeus:default:raven"]});
+
+        auto model = std::make_shared<GUIModel>(data.key);
+        model->create(scale, m);
+
+        model->setPos(pos);
+        model->setCallbacks(cbLeftClick, cbRightClick, cbHover);
+        return model;
+    }
+
+    // An unknown type was specified.
     return nullptr;
 }
+
 float GuiBuilder::stringToNum(const std::string& input, PercentBehavior behavior = PercentBehavior::BUFF_WIDTH) {
     if (input.find("px") != std::string::npos) {
         return atof(input.substr(0, input.find("px")).c_str()) * SCALE_MODIFIER;

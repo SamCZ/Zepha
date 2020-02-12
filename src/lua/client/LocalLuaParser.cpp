@@ -2,7 +2,10 @@
 // Created by aurailus on 17/12/18.
 //
 
+#include "../ErrorFormatter.h"
+
 #include "LocalLuaParser.h"
+
 #include "../register/RegisterBlocks.h"
 #include "../register/RegisterItems.h"
 #include "../register/RegisterKeybinds.h"
@@ -128,6 +131,39 @@ void LocalLuaParser::update(double delta, bool* keys) {
     manager.update(keys);
 }
 
+sol::protected_function_result LocalLuaParser::errorCallback(lua_State*, sol::protected_function_result errPfr) {
+    sol::error err = errPfr;
+    std::string errString = err.what();
+
+    std::string::size_type slash = errString.find('/');
+    assert(slash != std::string::npos);
+
+    std::string modString = errString.substr(0, slash);
+
+    std::string::size_type lineNumStart = errString.find(':', slash);
+    assert(lineNumStart != std::string::npos);
+    std::string::size_type lineNumEnd = errString.find(':', lineNumStart + 1);
+    assert(lineNumEnd != std::string::npos);
+
+    std::string fileName = errString.substr(0, lineNumStart);
+    int lineNum = std::stoi(errString.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1));
+
+    for (auto& mod : mods) {
+        if (mod.config.name == modString) {
+            for (auto& file : mod.files) {
+                if (file.path == fileName) {
+                    std::cout << std::endl << ErrorFormatter::formatError(fileName, lineNum, errString, file.file) << std::endl;
+                    break;
+                }
+            }
+            break;
+        }
+    }
+
+    exit(1);
+    return errPfr;
+}
+
 sol::protected_function_result LocalLuaParser::DoFileSandboxed(std::string file) {
     size_t modname_length = file.find('/');
     std::string modname = file.substr(0, modname_length);
@@ -142,11 +178,8 @@ sol::protected_function_result LocalLuaParser::DoFileSandboxed(std::string file)
                     env["_FILE"] = f.path;
                     env["_MODNAME"] = mod.config.name;
 
-                    auto pfr = lua.safe_script(f.file, env, [&](lua_State*, sol::protected_function_result errPfr) {
-                        sol::error err = errPfr;
-                        std::cout << Log::err << file << " returned an error: " << err.what() << Log::endl;
-                        return errPfr;
-                    }, "@" + f.path, sol::load_mode::text);
+                    auto pfr = lua.safe_script(f.file, env, std::bind(&LocalLuaParser::errorCallback, this,
+                            std::placeholders::_1, std::placeholders::_2), "@" + f.path, sol::load_mode::text);
 
                     return pfr;
                 }

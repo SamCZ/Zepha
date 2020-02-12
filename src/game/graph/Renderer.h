@@ -31,6 +31,8 @@ public:
     void beginGUIDrawCalls();
     void swapBuffers();
 
+    void setShader(Shader& s);
+
     void setClearColor(unsigned char r, unsigned char g, unsigned char b);
     void toggleDepthTest(bool enable);
     void clearDepthBuffer();
@@ -59,6 +61,8 @@ private:
 
     Shader guiShader;
     GuiUniforms gu;
+
+    Shader* currentShader;
 
     GLint currentModelUniform;
     double elapsedTime = 0;

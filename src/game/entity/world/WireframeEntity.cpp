@@ -58,15 +58,15 @@ void WireframeEntity::createBox(glm::vec3 a, glm::vec3 b, float x, float y, floa
     glm::vec3 c  = color;
 
     std::vector<EntityVertex> myVerts {
-    /*0*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z            }, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}},
-    /*1*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z            }, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}},
-    /*2*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z + zSize + w}, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}},
-    /*3*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z + zSize + w}, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}},
+    /*0*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z            }, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}, {}, {}},
+    /*1*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z            }, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}, {}, {}},
+    /*2*/ {{x - hw + a.x + xSize + w, y - hw + a.y,             z - hw + a.z + zSize + w}, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}, {}, {}},
+    /*3*/ {{x - hw + a.x,             y - hw + a.y,             z - hw + a.z + zSize + w}, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}, {}, {}},
 
-    /*4*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z            }, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}},
-    /*5*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z            }, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}},
-    /*6*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}},
-    /*7*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}},
+    /*4*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z            }, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}, {}, {}},
+    /*5*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z            }, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}, {}, {}},
+    /*6*/ {{x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}, {}, {}},
+    /*7*/ {{x - hw + a.x,             y - hw + a.y + ySize + w, z - hw + a.z + zSize + w}, {c.x, c.y, c.z, 1}, {1, 1, 1}, false, {0, 1, 0}, {}, {}},
     };
 
     std::vector<unsigned int> myInds {

@@ -10,7 +10,9 @@
 #include "../../def/LocalDefs.h"
 #include "components/basic/GUIRect.h"
 #include "components/basic/GUIText.h"
+#include "components/basic/GUIModel.h"
 #include "components/basic/GUIContainer.h"
+#include "components/compound/GUIImageButton.h"
 
 class GuiBuilder {
 public:

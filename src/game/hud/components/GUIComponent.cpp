@@ -10,7 +10,7 @@ GUIComponent::GUIComponent(const std::string& key) :
 
 void GUIComponent::setScale(glm::vec2 scale) {
     this->scale = scale;
-    entity.setScale(scale);
+    entity.setScale({scale.x, scale.y, scale.x});
 }
 
 glm::vec2 GUIComponent::getScale() {
@@ -28,11 +28,11 @@ glm::vec4 GUIComponent::getPadding() {
 void GUIComponent::setPos(glm::ivec2 pos) {
     this->pos = pos;
     if (parent != nullptr) {
-        glm::vec2 parentPos = parent->entity.getPos();
+        glm::vec3 parentPos = parent->entity.getPos();
         pos += glm::vec2 {parentPos.x, parentPos.y};
         pos += glm::vec2 {parent->getPadding().w, parent->getPadding().x};
     }
-    entity.setPos(pos);
+    entity.setPos({pos.x, pos.y, 0});
     for (const auto& child : children) {
         child->updatePos();
     }
@@ -87,11 +87,11 @@ void GUIComponent::setVisible(bool visible) {
 void GUIComponent::updatePos() {
     glm::vec2 realPos(pos);
     if (parent != nullptr) {
-        glm::vec2 parentPos = parent->entity.getPos();
+        glm::vec3 parentPos = parent->entity.getPos();
         realPos += glm::vec2 {parentPos.x, parentPos.y};
         realPos += glm::vec2 {parent->getPadding().w, parent->getPadding().x};
     }
-    entity.setPos(realPos);
+    entity.setPos({realPos.x, realPos.y, 0});
     for (const auto& child : children) {
         child->updatePos();
     }
@@ -117,6 +117,12 @@ bool GUIComponent::mouseActivity(glm::ivec2 pos) {
         }
     }
     return isHovering;
+}
+
+void GUIComponent::update(double delta) {
+    for (const auto& child : children) {
+        child->update(delta);
+    }
 }
 
 bool GUIComponent::leftClickEvent(bool state, glm::ivec2 pos) {

@@ -9,15 +9,13 @@ out vec4 fragColor;
 uniform sampler2D tex;
 
 void main() {
-    vec4 color;
-
     if (useTex > 0.5) {
-        color = texture(tex, colorData.xy) * vec4(colorBlend, colorData.w);
+        vec4 spec = texture(tex, colorData.xy) * vec4(colorBlend, colorData.w);
+        if (spec.a <= 0) discard;
+        fragColor = spec;
     }
     else {
-        color = colorData * vec4(colorBlend, 1);
+        if (colorData.a <= 0) discard;
+        fragColor = colorData * vec4(colorBlend, 1);
     }
-
-    if (color.w == 0) discard;
-    fragColor = color;
 }

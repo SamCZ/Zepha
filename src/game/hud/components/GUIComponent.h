@@ -7,7 +7,7 @@
 
 #include <memory>
 #include <list>
-#include "../GuiEntity.h"
+#include "../../entity/Entity.h"
 
 class GUIComponent : public Drawable {
 public:
@@ -24,6 +24,8 @@ public:
 
     virtual void setPos(glm::ivec2 pos);
     virtual glm::ivec2 getPos();
+
+    virtual void update(double delta);
 
     bool mouseActivity(glm::ivec2 pos);
     bool leftClickEvent(bool state, glm::ivec2 pos);
@@ -70,7 +72,7 @@ protected:
     callback cbRightClick = nullptr;
     callback cbHover = nullptr;
 
-    GuiEntity entity;
+    Entity entity;
 private:
     void updatePos();
 };

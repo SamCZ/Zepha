@@ -44,7 +44,9 @@ public:
 
     void interpScale(float scale);
     void setScale(float scale);
-    float getScale();
+    void interpScale(glm::vec3 scale);
+    void setScale(glm::vec3 scale);
+    glm::vec3 getScale();
 
     void setAnimations(const std::vector<AnimationSegment>& anims);
     void playAnimation(const std::string& anim, bool loop);
@@ -67,8 +69,8 @@ protected:
     glm::vec3 rotation {};
     glm::vec3 visualRotation {};
 
-    float scale = 1;
-    float visualScale = 1;
+    glm::vec3 scale {1, 1, 1};
+    glm::vec3 visualScale {1, 1, 1};
 
     std::shared_ptr<Model> model = nullptr;
     std::vector<glm::mat4> transforms {};

@@ -101,7 +101,7 @@ void Model::loadMeshAndBone(aiMesh *mesh, std::unique_ptr<EntityMesh>& target) {
             vertex.useTex = true;
             vertex.colorData = {
                 texture->uv.x + mesh->mTextureCoords[0][i].x * (texture->uv.z - texture->uv.x),
-                texture->uv.y + mesh->mTextureCoords[0][i].y * (texture->uv.w - texture->uv.y), 0, 0
+                texture->uv.y + mesh->mTextureCoords[0][i].y * (texture->uv.w - texture->uv.y), 0, 1 //Alpha
             };
         }
         else vertex.colorData = {1, 1, 1, 1};

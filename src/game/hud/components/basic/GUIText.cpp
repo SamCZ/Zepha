@@ -18,8 +18,7 @@ void GUIText::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 bgcolor, glm:
     this->bgcolor = bgcolor;
     this->color = color;
 
-    entity.setScale(scale);
-
+    setScale(scale);
     setText("");
 }
 
@@ -29,7 +28,7 @@ void GUIText::setText(std::string text) {
 
     maxLineWidth = 0;
 
-    std::vector<GuiVertex> textVertices;
+    std::vector<EntityVertex> textVertices;
     textVertices.reserve(text.length()*8 + 200);
     std::vector<unsigned int> textIndices;
     textIndices.reserve(text.length()*12 + 240);
@@ -49,10 +48,10 @@ void GUIText::setText(std::string text) {
                 if (lineWidth > maxLineWidth) maxLineWidth = lineWidth;
 
                 if (bgcolor.w != 0) {
-                    textVertices.emplace_back(glm::vec3 {-1,            yOffset - 1,     0}, bgcolor, glm::vec3(1), 0.f);
-                    textVertices.emplace_back(glm::vec3 {-1,            yOffset + h + 1, 0}, bgcolor, glm::vec3(1), 0.f);
-                    textVertices.emplace_back(glm::vec3 {lineWidth + 1, yOffset + h + 1, 0}, bgcolor, glm::vec3(1), 0.f);
-                    textVertices.emplace_back(glm::vec3 {lineWidth + 1, yOffset - 1,     0}, bgcolor, glm::vec3(1), 0.f);
+                    textVertices.emplace_back(glm::vec3 {-1,            yOffset - 1,     0}, bgcolor, glm::vec3(1), 0.f, glm::vec3 {}, glm::ivec4 {}, glm::vec4 {});
+                    textVertices.emplace_back(glm::vec3 {-1,            yOffset + h + 1, 0}, bgcolor, glm::vec3(1), 0.f, glm::vec3 {}, glm::ivec4 {}, glm::vec4 {});
+                    textVertices.emplace_back(glm::vec3 {lineWidth + 1, yOffset + h + 1, 0}, bgcolor, glm::vec3(1), 0.f, glm::vec3 {}, glm::ivec4 {}, glm::vec4 {});
+                    textVertices.emplace_back(glm::vec3 {lineWidth + 1, yOffset - 1,     0}, bgcolor, glm::vec3(1), 0.f, glm::vec3 {}, glm::ivec4 {}, glm::vec4 {});
 
                     textIndices.emplace_back(indOffset);
                     textIndices.emplace_back(indOffset + 1);
@@ -110,10 +109,10 @@ void GUIText::setText(std::string text) {
                 yOffset -= 1;
             }
 
-            textVertices.emplace_back(glm::vec3 {xOffset,             yOffset,     0}, glm::vec4 {charUVs.x, charUVs.y, 0, color.w}, c, 1.f);
-            textVertices.emplace_back(glm::vec3 {xOffset,             yOffset + h, 0}, glm::vec4 {charUVs.x, charUVs.w, 0, color.w}, c, 1.f);
-            textVertices.emplace_back(glm::vec3 {xOffset + charWidth, yOffset + h, 0}, glm::vec4 {charUVs.z, charUVs.w, 0, color.w}, c, 1.f);
-            textVertices.emplace_back(glm::vec3 {xOffset + charWidth, yOffset,     0}, glm::vec4 {charUVs.z, charUVs.y, 0, color.w}, c, 1.f);
+            textVertices.emplace_back(glm::vec3 {xOffset,             yOffset,     0}, glm::vec4 {charUVs.x, charUVs.y, 0, color.w}, c, 1.f, glm::vec3 {}, glm::ivec4 {}, glm::vec4 {});
+            textVertices.emplace_back(glm::vec3 {xOffset,             yOffset + h, 0}, glm::vec4 {charUVs.x, charUVs.w, 0, color.w}, c, 1.f, glm::vec3 {}, glm::ivec4 {}, glm::vec4 {});
+            textVertices.emplace_back(glm::vec3 {xOffset + charWidth, yOffset + h, 0}, glm::vec4 {charUVs.z, charUVs.w, 0, color.w}, c, 1.f, glm::vec3 {}, glm::ivec4 {}, glm::vec4 {});
+            textVertices.emplace_back(glm::vec3 {xOffset + charWidth, yOffset,     0}, glm::vec4 {charUVs.z, charUVs.y, 0, color.w}, c, 1.f, glm::vec3 {}, glm::ivec4 {}, glm::vec4 {});
 
             textIndices.emplace_back(indOffset);
             textIndices.emplace_back(indOffset + 1);
@@ -128,9 +127,13 @@ void GUIText::setText(std::string text) {
         xOffset += charWidth;
     }
 
-    auto m = std::make_shared<GuiMesh>();
+    auto m = std::make_unique<EntityMesh>();
     m->create(textVertices, textIndices);
-    entity.setMesh(m);
+
+    auto model = std::make_shared<Model>();
+    model->fromMesh(std::move(m));
+
+    entity.setModel(model);
 }
 
 std::string GUIText::getText() {

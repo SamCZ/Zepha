@@ -13,4 +13,6 @@ struct GuiUniforms {
 
     GLint ortho;
     GLint model;
+
+    GLint bones;
 };

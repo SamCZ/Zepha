@@ -32,6 +32,7 @@ GameGui::GameGui(Inventory& inventory, InventoryList& hand, glm::vec2 bufferSize
 
 void GameGui::update(double delta) {
     Drawable::update(delta);
+    menuRoot->update(delta);
 
     handList->setPos((renderer.window.getMousePos() - glm::ivec2(24)) / 3 * 3);
 

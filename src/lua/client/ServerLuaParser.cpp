@@ -454,7 +454,8 @@ sol::protected_function_result ServerLuaParser::DoFileSandboxed(std::string file
                     env["_FILE"] = f.path;
                     env["_MODNAME"] = mod.config.name;
 
-                    auto pfr = lua.safe_script(f.file, env, std::bind(&ServerLuaParser::errorCallback, this, std::placeholders::_1, std::placeholders::_2), "@" + f.path);
+                    auto pfr = lua.safe_script(f.file, env, std::bind(&ServerLuaParser::errorCallback, this,
+                            std::placeholders::_1, std::placeholders::_2), "@" + f.path, sol::load_mode::text);
                     return pfr;
                 }
             }

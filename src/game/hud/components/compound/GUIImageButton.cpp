@@ -26,15 +26,17 @@ void GUIImageButton::setHoverCallback(const callback& hoverCallback) {
 void GUIImageButton::rebuild(bool hover) {
     auto tex = (hover) ? (hoverTexture != nullptr) ? hoverTexture : texture : texture;
 
-    auto mesh = std::make_shared<GuiMesh>();
+    auto mesh = std::make_unique<EntityMesh>();
     mesh->create({
-        {{0, 0, 0}, {tex->uv.x, tex->uv.y, 0, 1}, {1, 1, 1}, true},
-        {{0, 1, 0}, {tex->uv.x, tex->uv.w, 0, 1}, {1, 1, 1}, true},
-        {{1, 1, 0}, {tex->uv.z, tex->uv.w, 0, 1}, {1, 1, 1}, true},
-        {{1, 0, 0}, {tex->uv.z, tex->uv.y, 0, 1}, {1, 1, 1}, true}
+        {{0, 0, 0}, {tex->uv.x, tex->uv.y, 0, 1}, {1, 1, 1}, true, {}, {}, {}},
+        {{0, 1, 0}, {tex->uv.x, tex->uv.w, 0, 1}, {1, 1, 1}, true, {}, {}, {}},
+        {{1, 1, 0}, {tex->uv.z, tex->uv.w, 0, 1}, {1, 1, 1}, true, {}, {}, {}},
+        {{1, 0, 0}, {tex->uv.z, tex->uv.y, 0, 1}, {1, 1, 1}, true, {}, {}, {}}
     }, {0, 1, 2, 2, 3, 0});
 
-    entity.setMesh(mesh);
-    entity.setScale({scale.x + padding.w + padding.y, scale.y + padding.x + padding.z});
+    auto model = std::make_shared<Model>();
+    model->fromMesh(std::move(mesh));
 
+    entity.setModel(model);
+    setScale({scale.x + padding.w + padding.y, scale.y + padding.x + padding.z});
 }

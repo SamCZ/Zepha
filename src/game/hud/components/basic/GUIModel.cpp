@@ -6,11 +6,13 @@
 
 GUIModel::GUIModel(const std::string &key) : GUIComponent(key) {}
 
-void GUIModel::create(glm::vec2 scale, std::shared_ptr<GuiMesh> model) {
-    entity.setMesh(model);
-    entity.setScale({scale.x + padding.w + padding.y, scale.y + padding.x + padding.z, scale.x + padding.w + padding.y});
-}
+void GUIModel::create(glm::vec2 scale, std::shared_ptr<Model> model) {
+    entity.setModel(model);
+    setScale({scale.x + padding.w + padding.y, scale.y + padding.x + padding.z});
 
+    setRotationX(180);
+    setRotationY(215);
+}
 
 void GUIModel::draw(Renderer &renderer) {
     renderer.toggleDepthTest(true);
@@ -19,6 +21,18 @@ void GUIModel::draw(Renderer &renderer) {
     renderer.toggleDepthTest(false);
 }
 
-void GUIModel::setRotation(glm::mat4 rotation) {
-    entity.setRotation(rotation);
+void GUIModel::setRotationX(float x) {
+    entity.setRotateX(x);
+}
+
+void GUIModel::setRotationY(float y) {
+    entity.setRotateY(y);
+}
+
+void GUIModel::setRotationZ(float z) {
+    entity.setRotateZ(z);
+}
+
+void GUIModel::update(double delta) {
+    entity.update(delta);
 }

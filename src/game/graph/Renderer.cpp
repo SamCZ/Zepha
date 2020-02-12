@@ -31,6 +31,7 @@ Renderer::Renderer(glm::ivec2 win) :
     gu.matrix = camera.getOrthographicMatrix();
     gu.ortho  = guiShader.get("ortho");
     gu.model  = guiShader.get("model");
+    gu.bones  = guiShader.get("uBones");
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -95,7 +96,7 @@ void Renderer::beginChunkDeferredCalls() {
     glClearBufferfv(GL_COLOR, 1, clearTransparent);
     glClearBufferfv(GL_COLOR, 2, skyColor);
 
-    world.use();
+    setShader(world);
     world.set(world.uniforms.proj, camera.getProjectionMatrix());
     world.set(world.uniforms.view, camera.getViewMatrix());
     world.set(world.uniforms.time, static_cast<float>(elapsedTime));
@@ -105,7 +106,7 @@ void Renderer::beginChunkDeferredCalls() {
 void Renderer::beginEntityDeferredCalls() {
     currentModelUniform = entity.uniforms.model;
 
-    entity.use();
+    setShader(entity);
     entity.set(entity.uniforms.proj, camera.getProjectionMatrix());
     entity.set(entity.uniforms.view, camera.getViewMatrix());
 }
@@ -117,7 +118,7 @@ void Renderer::endDeferredCalls() {
     glClearColor(clearColor.x, clearColor.y, clearColor.z, 0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    ssao.use();
+    setShader(ssao);
     ssao.set(ssao.uniforms.proj, camera.getProjectionMatrix());
     ssao.set(ssao.uniforms.view, camera.getViewMatrix());
     ssao.set(ssao.uniforms.kernelCount, ssao.kernelCount);
@@ -141,7 +142,7 @@ void Renderer::endDeferredCalls() {
 
     glBindFramebuffer(GL_FRAMEBUFFER, blur.fbo);
     glClear(GL_COLOR_BUFFER_BIT);
-    blur.use();
+    setShader(blur);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, ssao.colorBuffer);
     renderQuad();
@@ -151,7 +152,7 @@ void Renderer::endDeferredCalls() {
     glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    lighting.use();
+    setShader(lighting);
     lighting.set(lighting.uniforms.camPosition, camera.getPos());
 
     glActiveTexture(GL_TEXTURE0);
@@ -186,7 +187,7 @@ void Renderer::beginGUIDrawCalls() {
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
 
-    guiShader.use();
+    setShader(guiShader);
     guiShader.set(gu.ortho, gu.matrix);
 }
 
@@ -230,13 +231,18 @@ void Renderer::enableTexture(Texture *texture) {
     }
 }
 
+void Renderer::setShader(Shader& s) {
+    s.use();
+    this->currentShader = &s;
+}
+
 void Renderer::setClearColor(unsigned char r, unsigned char g, unsigned char b) {
     clearColor = {static_cast<float>(r)/255.f, static_cast<float>(g)/255.f, static_cast<float>(b)/255.f, 1};
 }
 
 void Renderer::setBones(std::vector<glm::mat4> &transforms) {
     if (transforms.empty()) return;
-    entity.setArr(entity.uniforms.bones, static_cast<GLsizei>(transforms.size()), transforms.at(0));
+    currentShader->setArr((currentShader == &entity ? entity.uniforms.bones : gu.bones), static_cast<GLsizei>(transforms.size()), transforms.at(0));
 }
 
 void Renderer::toggleDepthTest(bool enable) {

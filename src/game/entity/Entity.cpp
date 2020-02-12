@@ -106,15 +106,24 @@ float Entity::getRotateZ() {
 }
 
 void Entity::setScale(float scale) {
+    this->visualScale = glm::vec3(scale);
+    this->scale = glm::vec3(scale);
+}
+
+void Entity::interpScale(float scale) {
+    this->scale = glm::vec3(scale);
+}
+
+void Entity::setScale(glm::vec3 scale) {
     this->visualScale = scale;
     this->scale = scale;
 }
 
-void Entity::interpScale(float scale) {
+void Entity::interpScale(glm::vec3 scale) {
     this->scale = scale;
 }
 
-float Entity::getScale() {
+glm::vec3 Entity::getScale() {
     return scale;
 }
 
@@ -127,7 +136,7 @@ glm::mat4 Entity::getModelMatrix() {
     model = glm::rotate(model, glm::radians(visualRotation.y), {0, 1, 0});
     model = glm::rotate(model, glm::radians(visualRotation.z), {0, 0, 1});
 
-    model = glm::scale(model, glm::vec3(visualScale));
+    model = glm::scale(model, visualScale);
 
     return model;
 }
