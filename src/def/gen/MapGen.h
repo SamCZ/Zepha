@@ -60,7 +60,4 @@ private:
 	module::Perlin roughnessBase;
     module::Turbulence roughnessTurbulence;
 	module::ScaleBias roughness;
-
-	module::Perlin treeMap;
-	module::Abs treeAbs;
 };

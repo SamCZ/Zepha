@@ -32,7 +32,7 @@ void GUIComponent::setPos(glm::ivec2 pos) {
         pos += glm::vec2 {parentPos.x, parentPos.y};
         pos += glm::vec2 {parent->getPadding().w, parent->getPadding().x};
     }
-    entity.setPos({pos.x, pos.y, 0});
+    entity.setPos({pos.x, pos.y, depth});
     for (const auto& child : children) {
         child->updatePos();
     }
@@ -91,7 +91,7 @@ void GUIComponent::updatePos() {
         realPos += glm::vec2 {parentPos.x, parentPos.y};
         realPos += glm::vec2 {parent->getPadding().w, parent->getPadding().x};
     }
-    entity.setPos({realPos.x, realPos.y, 0});
+    entity.setPos({realPos.x, realPos.y, depth});
     for (const auto& child : children) {
         child->updatePos();
     }

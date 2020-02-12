@@ -73,6 +73,8 @@ protected:
     callback cbHover = nullptr;
 
     Entity entity;
+protected:
+    float depth = 0;
 private:
     void updatePos();
 };

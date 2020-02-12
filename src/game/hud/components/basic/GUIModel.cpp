@@ -14,11 +14,12 @@ void GUIModel::create(glm::vec2 scale, std::shared_ptr<Model> model) {
     setRotationY(215);
 }
 
-void GUIModel::draw(Renderer &renderer) {
-    renderer.toggleDepthTest(true);
-    renderer.clearDepthBuffer();
-    GUIComponent::draw(renderer);
-    renderer.toggleDepthTest(false);
+void GUIModel::update(double delta) {
+    entity.update(delta);
+}
+
+void GUIModel::animate(glm::vec2 range) {
+    entity.playRange(range.x, range.y, true);
 }
 
 void GUIModel::setRotationX(float x) {
@@ -33,6 +34,9 @@ void GUIModel::setRotationZ(float z) {
     entity.setRotateZ(z);
 }
 
-void GUIModel::update(double delta) {
-    entity.update(delta);
+void GUIModel::draw(Renderer &renderer) {
+    renderer.toggleDepthTest(true);
+    renderer.clearDepthBuffer();
+    GUIComponent::draw(renderer);
+    renderer.toggleDepthTest(false);
 }

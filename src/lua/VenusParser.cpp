@@ -25,7 +25,7 @@ std::string VenusParser::parse(const std::string& fileName, const std::string& f
     if (!pipe) throw std::runtime_error("popen() failed!");
 
     std::string result;
-    std::array<char, 128> buffer;
+    std::array<char, 1024> buffer;
     while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) result += buffer.data();
 
     const static std::string errorHeader = "--ZEPHA_PARSING_ERROR--";

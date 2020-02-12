@@ -130,8 +130,12 @@ zepha.register_keybind("zeus:inventory:open_inventory", {
                         end
 
                         model
-                            size: 8px 8px
-                            position: 100, 100
+                            scale: 96 96
+                            position: 195 145
+                            type: model
+                            source: zeus:default:player
+                            texture: zeus:default:player
+                            anim_range: 0 300
                         end
                     end
                 end

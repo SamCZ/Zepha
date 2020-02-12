@@ -1,5 +1,3 @@
-#include <cmath>
-
 //
 // Created by aurailus on 28/01/19.
 //
@@ -7,6 +5,8 @@
 #include "MapGen.h"
 #include "NoiseSample.h"
 #include "../../game/scene/world/Schematic.h"
+#include <random>
+#include <cmath>
 
 MapGen::MapGen(unsigned int seed, DefinitionAtlas& defs, BiomeAtlas& biomes) :
     seed(seed),
@@ -42,10 +42,6 @@ MapGen::MapGen(unsigned int seed, DefinitionAtlas& defs, BiomeAtlas& biomes) :
 	roughness.SetSourceModule(0, roughnessTurbulence);
 	roughness.SetScale(0.5);
 	roughness.SetBias(0.5);
-
-	treeMap.SetFrequency(1.25);
-	treeMap.SetOctaveCount(4);
-	treeAbs.SetSourceModule(0, treeMap);
 }
 
 MapGen::chunk_partials_map MapGen::generateMapBlock(glm::ivec3 mbPos) {
@@ -160,26 +156,35 @@ void MapGen::buildElevationMap(chunk_partials_map& chunks, chunk_partial& chunk)
 }
 
 void MapGen::generateBlocks(chunk_partial& chunk) {
-	glm::ivec3 lp;
+    glm::ivec3 lp {};
 
-	for (unsigned short m = 0; m < 4096; m++) {
-	    if (chunk.second->getBlock(m) != DefinitionAtlas::INVALID) continue;
-		Vec::indAssignVec(m, lp);
+	for (unsigned short i = 0; i < 256; i++) {
+        unsigned short x = i / 16;
+        unsigned short z = i % 16;
 
-		auto biome = biomes.getBiomeAt(chunk.first->temperature.get(lp), chunk.first->humidity.get(lp), chunk.first->roughness.get(lp));
-		chunk.second->biomes[m] = biome.index;
+		auto& biome = biomes.getBiomeAt(chunk.first->temperature.get(lp), chunk.first->humidity.get(lp), chunk.first->roughness.get(lp));
 
-		int d = std::floor(chunk.first->depth[m]);
+		for (unsigned short y = 0; y < 16; y++) {
+            lp = {x, y, z};
+            unsigned short ind = Space::Block::index(lp);
 
-		chunk.second->blocks[m]
-			= d <= 1 ? DefinitionAtlas::AIR
-			: d <= 2 ? biome.topBlock
-			: d <= 4 ? biome.soilBlock
-			: biome.rockBlock;
-	}
+		    chunk.second->biomes[ind] = biome.index;
+
+            int d = std::floor(chunk.first->depth[ind]);
+            chunk.second->blocks[ind]
+                = d <= 1 ? DefinitionAtlas::AIR
+                : d <= 2 ? biome.topBlock
+                : d <= 4 ? biome.soilBlock
+                : biome.rockBlock;
+
+        }
+    }
 }
 
 void MapGen::generateStructures(chunk_partials_map& chunks, chunk_partial& chunk) {
+    std::default_random_engine generator(chunk.second->pos.x + chunk.second->pos.y * 30 + chunk.second->pos.z * 3.5);
+    std::uniform_real_distribution<float> distribution(0, 1);
+
     unsigned int cWood = defs.blockFromStr("zeus:default:wood").index;
     unsigned int cLeaves = defs.blockFromStr("zeus:default:leaves").index;
     unsigned int cAir = DefinitionAtlas::INVALID;
@@ -194,16 +199,25 @@ void MapGen::generateStructures(chunk_partials_map& chunks, chunk_partial& chunk
     glm::ivec3 wp = chunk.second->pos;
     glm::ivec3 lp;
 
-    for (unsigned short m = 0; m < 4096; m++) {
-        Vec::indAssignVec(m, lp);
+    for (unsigned short i = 0; i < 256; i++) {
+        unsigned short x = i / 16;
+        unsigned short z = i % 16;
 
-        glm::ivec3 p = wp * 16 + lp;
+        if (distribution(generator) > 0.97) {
+            for (unsigned short y = 0; y < 16; y++) {
+                lp = {x, y, z};
+                unsigned short ind = Space::Block::index(lp);
 
-        if (treeAbs.GetValue(p.x, p.y, p.z) > 1.2 && chunk.first->depth[m] <= 2 && chunk.first->depth[m] > 1) {
-            glm::ivec3 off = {};
-            for (unsigned int i = 0; i < c.length(); i++) {
-                c.assignOffset(i, off);
-                setBlock(p + off - c.origin, c.blocks[i], chunks);
+                if (chunk.first->depth[ind] <= 2 && chunk.first->depth[ind] > 1) {
+
+                    glm::ivec3 off = {};
+                    glm::ivec3 p = wp * 16 + lp;
+
+                    for (unsigned int j = 0; j < c.length(); j++) {
+                        c.assignOffset(j, off);
+                        setBlock(p + off - c.origin, c.blocks[j], chunks);
+                    }
+                }
             }
         }
     }

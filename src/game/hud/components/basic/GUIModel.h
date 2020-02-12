@@ -16,9 +16,13 @@ public:
     void create(glm::vec2 scale, std::shared_ptr<Model> model);
     void update(double delta) override;
 
+    void animate(glm::vec2 range);
+
     void setRotationX(float x);
     void setRotationY(float x);
     void setRotationZ(float x);
 
     void draw(Renderer& renderer) override;
+protected:
+    float depth = 300;
 };

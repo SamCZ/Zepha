@@ -270,19 +270,34 @@ std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerializedGuiElem& dat
 
     else if (data.type == "model") {
         glm::vec2 scale = {1, 1};
-        if (data.tokens.count("size")) {
-            auto tokens = splitValue(data.tokens["size"], 2);
+        if (data.tokens.count("scale")) {
+            auto tokens = splitValue(data.tokens["scale"], 2);
             scale = {stringToNum(tokens[0], PercentBehavior::DECIMAL),
                      stringToNum(tokens[1], PercentBehavior::DECIMAL)};
         }
+        std::string type = (data.tokens.count("type") ? data.tokens["type"] : "model");
+        std::string source = (data.tokens.count("source") ? data.tokens["source"] : "");
+        std::string texture = (data.tokens.count("texture") ? data.tokens["texture"] : "");
 
-        std::string modelStr = (data.tokens.count("model")) ? data.tokens["model"] : "";
+        glm::vec2 anim_range = {0, 0};
+        if (data.tokens.count("anim_range")) {
+            auto tokens = splitValue(data.tokens["anim_range"], 2);
+            anim_range = {stringToNum(tokens[0], PercentBehavior::DECIMAL),
+                     stringToNum(tokens[1], PercentBehavior::DECIMAL)};
+        }
 
         auto m = std::make_shared<Model>();
-        m->fromSerialized(defs.models.models["zeus:default:bird"], {defs.textures["zeus:default:raven"]});
+
+        if (type == "model") {
+            m->fromSerialized(defs.models.models[source], {defs.textures[texture]});
+        }
 
         auto model = std::make_shared<GUIModel>(data.key);
         model->create(scale, m);
+
+        if (anim_range.y != 0) {
+            model->animate(anim_range);
+        }
 
         model->setPos(pos);
         model->setCallbacks(cbLeftClick, cbRightClick, cbHover);
