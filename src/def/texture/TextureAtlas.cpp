@@ -10,6 +10,8 @@ TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) :
     tileSize(pixelSize.x / 16, pixelSize.y / 16),
     atlasData(new unsigned char[pixelSize.x * 4 * pixelSize.y]) {
 
+    maxTextureSlots = tileSize.x * tileSize.y;
+
 //    int maxTexSize, texUnits;
 //
 //    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
@@ -109,6 +111,8 @@ std::shared_ptr<AtlasRef> TextureAtlas::addImage(unsigned char *data, const std:
             std::cout << Log::err << "Failed to find space in dynamic defs." << Log::endl;
             return nullptr;
         }
+
+        textureSlotsUsed += tileWidth * tileHeight;
 
         ref->tileX = static_cast<int>(space.x);
         ref->tileY = static_cast<int>(space.y);
@@ -310,6 +314,8 @@ void TextureAtlas::deleteImage(std::shared_ptr<AtlasRef> ref) {
     //
     //updateAtlas(ref->tileX, ref->tileY, ref->width, ref->height, data);
     //delete[] data;
+
+    textureSlotsUsed -= ref->tileWidth * ref->tileHeight;
 
     for (float i = ref->tileX; i < ref->tileX + ref->tileWidth; i++) {
         for (float j = ref->tileY; j < ref->tileY + ref->tileHeight; j++) {

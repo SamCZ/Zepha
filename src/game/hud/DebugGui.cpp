@@ -137,6 +137,9 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double
         str << "Standing On: " << on << std::endl;
         str << "Biome: " << biome << std::endl << std::endl;
 
+        str << "Texture Slots: " << defs.textures.textureSlotsUsed << " / " << defs.textures.maxTextureSlots
+            << " (" << round(defs.textures.textureSlotsUsed / static_cast<float>(defs.textures.maxTextureSlots) * 100) << "%)" << std::endl << std::endl;
+
         PointedThing thing = player.getPointedThing();
         if (thing.thing == PointedThing::Thing::BLOCK) {
             Dir faceDir = thing.target.block.face;

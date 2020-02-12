@@ -27,10 +27,10 @@ void CraftItemDef::createModel(TextureAtlas& atlas) {
     for (unsigned int i = 0; i <= 1; i++) {
         float xx = xo * (i == 1 ? -1 : 1);
         std::vector<EntityVertex> myVerts = {
-                {{xx, -0.5, -0.5}, {ref->uv.x, ref->uv.w, 0, 0}, {1, 1, 1}, true, {(i == 1 ? -1 : 1), 0, 0}, {}, {}},
-                {{xx,  0.5, -0.5}, {ref->uv.x, ref->uv.y, 0, 0}, {1, 1, 1}, true, {(i == 1 ? -1 : 1), 0, 0}, {}, {}},
-                {{xx,  0.5,  0.5}, {ref->uv.z, ref->uv.y, 0, 0}, {1, 1, 1}, true, {(i == 1 ? -1 : 1), 0, 0}, {}, {}},
-                {{xx, -0.5,  0.5}, {ref->uv.z, ref->uv.w, 0, 0}, {1, 1, 1}, true, {(i == 1 ? -1 : 1), 0, 0}, {}, {}}
+                {{xx, -0.5, -0.5}, {ref->uv.x, ref->uv.w, 0, 1}, {1, 1, 1}, true, {(i == 1 ? -1 : 1), 0, 0}, {}, {}},
+                {{xx,  0.5, -0.5}, {ref->uv.x, ref->uv.y, 0, 1}, {1, 1, 1}, true, {(i == 1 ? -1 : 1), 0, 0}, {}, {}},
+                {{xx,  0.5,  0.5}, {ref->uv.z, ref->uv.y, 0, 1}, {1, 1, 1}, true, {(i == 1 ? -1 : 1), 0, 0}, {}, {}},
+                {{xx, -0.5,  0.5}, {ref->uv.z, ref->uv.w, 0, 1}, {1, 1, 1}, true, {(i == 1 ? -1 : 1), 0, 0}, {}, {}}
         };
         vertices.insert(vertices.end(), myVerts.begin(), myVerts.end());
     }

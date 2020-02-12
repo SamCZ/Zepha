@@ -41,6 +41,9 @@ public:
 
     Texture atlasTexture {};
     unsigned char* atlasData = nullptr;
+
+    unsigned int textureSlotsUsed = 0;
+    unsigned int maxTextureSlots = 0;
 private:
     std::shared_ptr<AtlasRef> generateTexture(std::string req);
 
