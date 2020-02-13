@@ -19,7 +19,9 @@ struct BlockModel {
     bool culls = false;
     bool visible = false;
 
-    static BlockModel createCube(std::vector<std::shared_ptr<AtlasRef>> textureRefs, std::vector<bool> biomeTints) {
+    static BlockModel createCube(std::vector<std::shared_ptr<AtlasRef>> textureRefs,
+            std::vector<unsigned int> blendInds, std::vector<std::shared_ptr<AtlasRef>> blendMaskRefs) {
+
         BlockModel blockModel;
         blockModel.visible = true;
         blockModel.culls = true;
@@ -28,75 +30,76 @@ struct BlockModel {
         std::vector<unsigned int> indices {};
         unsigned int accessInd;
 
-        for (auto& ref : textureRefs) blockModel.textureRefs.insert(ref);
+        for (auto& ref : textureRefs) if (ref != nullptr) blockModel.textureRefs.insert(ref);
 
         if (textureRefs.empty()) textureRefs.emplace_back(nullptr);
-        if (biomeTints.empty()) biomeTints.emplace_back(false);
+        if (blendInds.empty()) blendInds.emplace_back(0);
+        if (blendMaskRefs.empty()) blendMaskRefs.emplace_back(nullptr);
 
         //Left Face
         vertices = {
-                {glm::vec3{0, 0, 0}, glm::vec3{}, glm::vec2{0, 1}, glm::vec2{}},
-                {glm::vec3{0, 0, 1}, glm::vec3{}, glm::vec2{1, 1}, glm::vec2{}},
-                {glm::vec3{0, 1, 1}, glm::vec3{}, glm::vec2{1, 0}, glm::vec2{}},
-                {glm::vec3{0, 1, 0}, glm::vec3{}, glm::vec2{0, 0}, glm::vec2{}}};
+            {{0, 0, 0}, {}, {0, 1}, {0, 1}},
+            {{0, 0, 1}, {}, {1, 1}, {1, 1}},
+            {{0, 1, 1}, {}, {1, 0}, {1, 0}},
+            {{0, 1, 0}, {}, {0, 0}, {0, 0}}};
         indices = {0, 1, 2, 2, 3, 0};
         accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 2));
-        MeshPart leftMeshPart(vertices, indices, textureRefs[accessInd], biomeTints[accessInd], nullptr);
+        MeshPart leftMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
         blockModel.parts[static_cast<int>(Dir::LEFT)].push_back(leftMeshPart);
 
         //Right Face
         vertices = {
-                {glm::vec3{1, 1, 1}, glm::vec3{}, glm::vec2{1, 0}, glm::vec2{}},
-                {glm::vec3{1, 0, 1}, glm::vec3{}, glm::vec2{1, 1}, glm::vec2{}},
-                {glm::vec3{1, 0, 0}, glm::vec3{}, glm::vec2{0, 1}, glm::vec2{}},
-                {glm::vec3{1, 1, 0}, glm::vec3{}, glm::vec2{0, 0}, glm::vec2{}}};
+            {{1, 1, 1}, {}, {1, 0}, {1, 0}},
+            {{1, 0, 1}, {}, {1, 1}, {1, 1}},
+            {{1, 0, 0}, {}, {0, 1}, {0, 1}},
+            {{1, 1, 0}, {}, {0, 0}, {0, 0}}};
         indices = {0, 1, 2, 2, 3, 0};
         accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 3));
-        MeshPart rightMeshPart(vertices, indices, textureRefs[accessInd], biomeTints[accessInd], nullptr);
+        MeshPart rightMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
         blockModel.parts[static_cast<int>(Dir::RIGHT)].push_back(rightMeshPart);
 
         //Top Face
         vertices = {
-                {glm::vec3{0, 1, 0}, glm::vec3{}, glm::vec2{0, 0}, glm::vec2{}},
-                {glm::vec3{0, 1, 1}, glm::vec3{}, glm::vec2{0, 1}, glm::vec2{}},
-                {glm::vec3{1, 1, 1}, glm::vec3{}, glm::vec2{1, 1}, glm::vec2{}},
-                {glm::vec3{1, 1, 0}, glm::vec3{}, glm::vec2{1, 0}, glm::vec2{}}};
+            {{0, 1, 0}, {}, {0, 0}, {0, 0}},
+            {{0, 1, 1}, {}, {0, 1}, {0, 1}},
+            {{1, 1, 1}, {}, {1, 1}, {1, 1}},
+            {{1, 1, 0}, {}, {1, 0}, {1, 0}}};
         indices = {0, 1, 2, 2, 3, 0};
         accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 0));
-        MeshPart topMeshPart(vertices, indices, textureRefs[accessInd], biomeTints[accessInd], nullptr);
+        MeshPart topMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
         blockModel.parts[static_cast<int>(Dir::TOP)].push_back(topMeshPart);
 
         //Bottom Face
         vertices = {
-                {glm::vec3{0, 0, 0}, glm::vec3{}, glm::vec2{0, 0}, glm::vec2{}},
-                {glm::vec3{1, 0, 0}, glm::vec3{}, glm::vec2{1, 0}, glm::vec2{}},
-                {glm::vec3{1, 0, 1}, glm::vec3{}, glm::vec2{1, 1}, glm::vec2{}},
-                {glm::vec3{0, 0, 1}, glm::vec3{}, glm::vec2{0, 1}, glm::vec2{}}};
+            {{0, 0, 0}, {}, {0, 0}, {0, 0}},
+            {{1, 0, 0}, {}, {1, 0}, {1, 0}},
+            {{1, 0, 1}, {}, {1, 1}, {1, 1}},
+            {{0, 0, 1}, {}, {0, 1}, {0, 1}}};
         indices = {0, 1, 2, 2, 3, 0};
         accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 1));
-        MeshPart bottomMeshPart(vertices, indices, textureRefs[accessInd], biomeTints[accessInd], nullptr);
+        MeshPart bottomMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
         blockModel.parts[static_cast<int>(Dir::BOTTOM)].push_back(bottomMeshPart);
 
         //Front Face
         vertices = {
-                {glm::vec3{0, 0, 1}, glm::vec3{}, glm::vec2{0, 1}, glm::vec2{}},
-                {glm::vec3{1, 0, 1}, glm::vec3{}, glm::vec2{1, 1}, glm::vec2{}},
-                {glm::vec3{1, 1, 1}, glm::vec3{}, glm::vec2{1, 0}, glm::vec2{}},
-                {glm::vec3{0, 1, 1}, glm::vec3{}, glm::vec2{0, 0}, glm::vec2{}}};
+            {{0, 0, 1}, {}, {0, 1}, {0, 1}},
+            {{1, 0, 1}, {}, {1, 1}, {1, 1}},
+            {{1, 1, 1}, {}, {1, 0}, {1, 0}},
+            {{0, 1, 1}, {}, {0, 0}, {0, 0}}};
         indices = {0, 1, 2, 2, 3, 0};
         accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 4));
-        MeshPart frontMeshPart(vertices, indices, textureRefs[accessInd], biomeTints[accessInd], nullptr);
+        MeshPart frontMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
         blockModel.parts[static_cast<int>(Dir::FRONT)].push_back(frontMeshPart);
 
         //Back Face
         vertices = {
-                {glm::vec3{0, 0, 0}, glm::vec3{}, glm::vec2{0, 1}, glm::vec2{}},
-                {glm::vec3{0, 1, 0}, glm::vec3{}, glm::vec2{0, 0}, glm::vec2{}},
-                {glm::vec3{1, 1, 0}, glm::vec3{}, glm::vec2{1, 0}, glm::vec2{}},
-                {glm::vec3{1, 0, 0}, glm::vec3{}, glm::vec2{1, 1}, glm::vec2{}}};
+            {{0, 0, 0}, {}, {0, 1}, {0, 1}},
+            {{0, 1, 0}, {}, {0, 0}, {0, 0}},
+            {{1, 1, 0}, {}, {1, 0}, {1, 0}},
+            {{1, 0, 0}, {}, {1, 1}, {1, 1}}};
         indices = {0, 1, 2, 2, 3, 0};
         accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 5));
-        MeshPart backMeshPart(vertices, indices, textureRefs[accessInd], biomeTints[accessInd], nullptr);
+        MeshPart backMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
         blockModel.parts[static_cast<int>(Dir::BACK)].push_back(backMeshPart);
 
         return blockModel;

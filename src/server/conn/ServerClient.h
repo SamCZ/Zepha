@@ -13,7 +13,8 @@ public:
 
     void initPlayer();
 
-    bool hasPlayer();
+    bool hasPlayer() const;
+    const ServerPlayer& cGetPlayer() const;
     ServerPlayer& getPlayer();
     ENetPeer& getPeer();
 

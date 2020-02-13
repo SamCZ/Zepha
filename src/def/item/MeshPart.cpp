@@ -3,7 +3,6 @@
 //
 
 #include "MeshPart.h"
-#include "../../util/Util.h"
 
 MeshPart::MeshPart(const std::vector<BlockModelVertex>& vertices, const std::vector<unsigned int>& indices,
         std::shared_ptr<AtlasRef> texture, unsigned int blendInd, std::shared_ptr<AtlasRef> blendMask) :
@@ -48,7 +47,6 @@ MeshPart::MeshPart(const std::vector<BlockModelVertex>& vertices, const std::vec
             vertex.tex.y = uv.y + ((uv.w - uv.y) * vertex.tex.y);
 
             if (blendMask) {
-                std::cout << Util::floatVecToString({vertex.blendMask.x, vertex.blendMask.y, 0}) << std::endl;
                 auto bUV = blendMask->uv;
 
                 //Store the old positions in blendMaskUVs

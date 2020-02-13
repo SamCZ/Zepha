@@ -19,7 +19,7 @@ void ServerClient::initPlayer() {
     player = new ServerPlayer({0, 0, 0}, connectID, "TEMPORARY");
 }
 
-bool ServerClient::hasPlayer() {
+bool ServerClient::hasPlayer() const {
     return player != nullptr;
 }
 
@@ -27,6 +27,12 @@ ServerPlayer& ServerClient::getPlayer() {
     if (!player) throw "getPlayer() called on client without player!";
     return *player;
 }
+
+const ServerPlayer &ServerClient::cGetPlayer() const {
+    if (!player) throw "getPlayer() called on client without player!";
+    return *player;
+}
+
 
 ENetPeer& ServerClient::getPeer() {
     return *peer;

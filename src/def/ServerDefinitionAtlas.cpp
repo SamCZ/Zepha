@@ -7,7 +7,7 @@
 ServerDefinitionAtlas::ServerDefinitionAtlas() {
 
     //Invalid Node
-    BlockModel invalidModel = BlockModel::createCube({}, {false});
+    BlockModel invalidModel = BlockModel::createCube({}, {}, {});
     BlockDef* invalid = new BlockDef("invalid", INVALID, "Invalid (you broke the game!)", 1, invalidModel, invalidModel, true, {{}}, {{}});
     registerDef(invalid);
 

@@ -19,7 +19,7 @@ public:
     void setAngle(float angle);
 
     glm::vec3 getPos();
-    glm::vec3 getChunkPos();
+    glm::ivec3 getChunkPos() const;
     float getAngle();
 
     glm::vec3 mapBlock;

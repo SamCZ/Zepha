@@ -25,6 +25,32 @@ namespace RegisterBlocks {
         return boxes;
     }
 
+    static inline void getMeshPartTexture(std::string& texture, unsigned int& blendInd, std::string& blendMask) {
+        if (strncmp(texture.data(), "tint(", 5) == 0 && texture.find_last_of(')') != std::string::npos) {
+            // Biome tinting time
+            texture.erase(std::remove(texture.begin(), texture.end(), ' '), texture.end());
+
+            std::string::size_type paramsBegin = texture.find_first_of('(');
+            std::string::size_type paramsEnd = texture.find_last_of(')');
+
+            std::string paramsString = texture.substr(paramsBegin + 1, paramsEnd - paramsBegin - 1);
+
+            std::vector<std::string> params;
+            std::string::size_type pos = 0;
+            while ((pos = paramsString.find(',')) != std::string::npos) {
+                params.push_back(paramsString.substr(0, pos));
+                paramsString.erase(0, pos + 1);
+            }
+            params.push_back(paramsString);
+
+            if (params.size() < 2) throw "Invalid biome tint values. Must have at least 2 params.";
+
+            texture = params[1];
+            blendInd = atoi(params[0].data()) + 1; //TODO: support multiple blend colors
+            blendMask = (params.size() >= 3 ? params[2] : "");
+        }
+    }
+
     static std::pair<BlockModel, BlockModel> createBlockModel(sol::table blockTable, sol::table blockModels, TextureAtlas* atlas) {
         // Get the specified block model
         auto modelStr = blockTable.get_or<std::string>("model", "default:cube");
@@ -119,34 +145,11 @@ namespace RegisterBlocks {
 
             // Get the part's texture
             int tex = std::max(static_cast<int>(meshPartTable.get_or<float>("tex", 1)), 1);
+
             auto texture = textures[std::min(tex - 1, (int) textures.size() - 1)];
-
-            bool blendInd = false;
+            unsigned int blendInd = 0;
             std::string blendMask = "";
-
-            if (strncmp(texture.data(), "tint(", 5) == 0 && texture.find_last_of(')') != std::string::npos) {
-                // Biome tinting time
-                texture.erase(std::remove(texture.begin(), texture.end(), ' '), texture.end());
-
-                std::string::size_type paramsBegin = texture.find_first_of('(');
-                std::string::size_type paramsEnd = texture.find_last_of(')');
-
-                std::string paramsString = texture.substr(paramsBegin + 1, paramsEnd - paramsBegin - 1);
-
-                std::vector<std::string> params;
-                std::string::size_type pos = 0;
-                while ((pos = paramsString.find(',')) != std::string::npos) {
-                    params.push_back(paramsString.substr(0, pos));
-                    paramsString.erase(0, pos + 1);
-                }
-                params.push_back(paramsString);
-
-                if (params.size() < 2) throw "Invalid biome tint values. Must have at least 2 params.";
-
-                texture = params[1];
-                blendInd = atoi(params[0].data()) + 1; //TODO: support multiple blend colors
-                blendMask = (params.size() >= 3 ? params[2] : "");
-            }
+            getMeshPartTexture(texture, blendInd, blendMask);
 
             // Add texture refs to blockModel if the textures table is provided
             std::shared_ptr<AtlasRef> textureRef = nullptr, blendMaskRef = nullptr;
@@ -207,34 +210,36 @@ namespace RegisterBlocks {
             model.parts[static_cast<int>(d)].push_back(meshPart);
         });
 
-        // Create the low-def block model
-        BlockModel lowdefModel;
+        // Create the far model
+        BlockModel farModel;
         auto ldRender = blockTable.get_or("lowdef_render", true);
 
         if (atlas) {
-            std::vector<std::shared_ptr<AtlasRef>> refs;
-            std::vector<bool> biomeTints;
+            std::vector<std::shared_ptr<AtlasRef>> textureRefs;
+            std::vector<unsigned int> blendInds;
+            std::vector<std::shared_ptr<AtlasRef>> blendMaskRefs;
+
             for (auto i = 0; i < lowdef_textures.size(); i++) {
                 std::string texture = lowdef_textures[i];
-                if (strncmp(texture.data(), "tint(", 5) == 0) {
-                    texture = texture.substr(8, texture.length() - 8);
-                    biomeTints.emplace_back(true);
-                }
-                else {
-                    biomeTints.emplace_back(false);
-                }
-                refs.push_back((*atlas)[texture]);
+                unsigned int blendInd = 0;
+                std::string blendMask = "";
+                getMeshPartTexture(texture, blendInd, blendMask);
+
+                textureRefs.push_back((*atlas)[texture]);
+                blendInds.push_back(blendInd);
+                blendMaskRefs.push_back(blendMask != "" ? (*atlas)[blendMask] : nullptr);
             }
-            lowdefModel = BlockModel::createCube(refs, biomeTints);
+
+            farModel = BlockModel::createCube(textureRefs, blendInds, blendMaskRefs);
         }
         else {
-            lowdefModel = BlockModel::createCube({}, {});
+            farModel = BlockModel::createCube({}, {}, {});
         }
 
-        lowdefModel.culls = ldRender;
-        lowdefModel.visible = ldRender;
+        farModel.culls = ldRender;
+        farModel.visible = ldRender;
 
-        return {model, lowdefModel};
+        return {model, farModel};
     }
 
     static void registerBlocks(sol::table source, sol::table blockModels, DefinitionAtlas& defs, TextureAtlas* atlas) {

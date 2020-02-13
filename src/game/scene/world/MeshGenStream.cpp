@@ -87,7 +87,9 @@ void MeshGenStream::threadFunction(MeshGenStream::Thread *thread) {
         for (Unit& u : thread->tasks) {
             if (!u.busy) continue;
 
-            MeshGenerator m(u.meshDetails, thread->defs, u.thisChunk, u.adjacentChunks, thread->offsetSamplers);
+//            bool hi = glm::distance(glm::vec3{0, 0, 0}, glm::vec3(u.thisChunk->pos)) < 4;
+
+            MeshGenerator m(u.meshDetails, thread->defs, u.thisChunk, u.adjacentChunks, thread->offsetSamplers, true);
             hasNoTasks = false;
             u.busy = false;
         }

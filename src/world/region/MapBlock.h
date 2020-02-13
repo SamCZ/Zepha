@@ -14,11 +14,13 @@ class MapBlock {
 public:
     MapBlock(glm::ivec3 pos);
 
-    std::shared_ptr<BlockChunk> operator[](int index);
-    void set(int index, std::shared_ptr<BlockChunk> chunk);
+    std::shared_ptr<BlockChunk> operator[](unsigned short index);
+    void set(unsigned short index, std::shared_ptr<BlockChunk> chunk);
+    void remove(unsigned short index);
 
-    bool generated = false;
-private:
     glm::ivec3 pos {};
+    bool generated = false;
+    unsigned short count = 0;
+private:
     std::array<std::shared_ptr<BlockChunk>, 64> blockChunks;
 };

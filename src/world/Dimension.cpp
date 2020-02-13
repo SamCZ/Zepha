@@ -5,13 +5,26 @@
 #include "Dimension.h"
 
 std::shared_ptr<Region> Dimension::getRegion(glm::ivec3 regionPosition) {
+    if (!regions.count(regionPosition)) return nullptr;
     return regions[regionPosition];
+}
+
+void Dimension::removeRegion(glm::ivec3 pos) {
+    regions.erase(pos);
 }
 
 std::shared_ptr<MapBlock> Dimension::getMapBlock(glm::ivec3 mapBlockPosition) {
     auto region = getRegion(Space::Region::world::fromMapBlock(mapBlockPosition));
     if (region == nullptr) return nullptr;
     return (*region)[Space::MapBlock::index(mapBlockPosition)];
+}
+
+void Dimension::removeMapBlock(glm::ivec3 pos) {
+    auto region = getMapBlock(Space::Region::world::fromMapBlock(pos));
+    if (region == nullptr) return;
+    auto ind = Space::MapBlock::index(pos);
+    region->remove(ind);
+    if (region->count == 0) removeRegion(Space::Region::world::fromMapBlock(pos));
 }
 
 std::shared_ptr<BlockChunk> Dimension::getChunk(glm::ivec3 chunkPosition) {
@@ -23,6 +36,14 @@ std::shared_ptr<BlockChunk> Dimension::getChunk(glm::ivec3 chunkPosition) {
 void Dimension::setChunk(std::shared_ptr<BlockChunk> chunk) {
     auto mapBlock = getOrCreateMapBlock(Space::MapBlock::world::fromChunk(chunk->pos));
     (*mapBlock).set(Space::Chunk::index(chunk->pos), chunk);
+}
+
+void Dimension::removeChunk(glm::ivec3 pos){
+    auto mapBlock = getMapBlock(Space::MapBlock::world::fromChunk(pos));
+    if (mapBlock == nullptr) return;
+    auto ind = Space::Chunk::index(pos);
+    mapBlock->remove(ind);
+    if (mapBlock->count == 0) removeMapBlock(Space::MapBlock::world::fromChunk(pos));
 }
 
 unsigned int Dimension::getBlock(glm::ivec3 pos) {

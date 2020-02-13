@@ -5,17 +5,13 @@
 #include <vector>
 #include <glm/gtx/normal.hpp>
 #include "../MeshDetails.h"
-#include "../../../../world/chunk/BlockChunk.h"
-//#include "../../../../def/item/MeshPart.h"
-//#include "../../../../def/item/BlockModelVertex.h"
-//#include "../../../../def/item/BlockDef.h"
-//#include "../../../../util/Vec.h"
 #include "../../../../util/Timer.h"
+#include "../../../../world/chunk/BlockChunk.h"
 #include "MeshGenerator.h"
 
 MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::shared_ptr<BlockChunk> chunk,
                              std::array<std::shared_ptr<BlockChunk>, 6> adjacent,
-                             std::array<NoiseSample, 3>& blockOffsets) :
+                             std::array<NoiseSample, 3>& blockOffsets, bool hi) :
 
     defs(defs),
     chunk(chunk),
@@ -33,7 +29,8 @@ MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::sha
     glm::vec3 check;
 
     for (unsigned short i = 0; i < 4096; i++) {
-        BlockModel& model = atlas.blockFromId(chunk->getBlock(i)).model;
+        BlockModel& model = hi ? atlas.blockFromId(chunk->getBlock(i)).model : atlas.blockFromId(chunk->getBlock(i)).farModel;
+
         glm::vec3 biomeTint = defs.biomes.biomeFromId(chunk->getBiome(i)).biomeTint;
 
         if (model.visible) {

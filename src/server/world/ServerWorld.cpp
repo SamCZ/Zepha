@@ -6,9 +6,6 @@
 #include <glm/glm.hpp>
 #include "ServerWorld.h"
 
-const static int MB_GEN_H = 6;
-const static int MB_GEN_V = 4;
-
 ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& clients) :
     clientList(clients),
     seed(seed),
@@ -37,6 +34,8 @@ void ServerWorld::init() {
 }
 
 void ServerWorld::update(double delta) {
+    dimension.update(clientList.clients);
+
     while (!generateQueueList.empty()) {
         auto it = generateQueueList.begin();
         glm::vec3 pos = *it;
@@ -50,10 +49,6 @@ void ServerWorld::update(double delta) {
 
     auto finished = genStream->update();
     generatedChunks = static_cast<int>(finished->size());
-
-    // TODO: Could be optimized if WorldGenStream passed structs for whole mapBlocks at a time, however
-    // that gets complicated quick when considering partials being passed back for other mapblocks,
-    // it might be worth the effort to reduce user list iterations, but it might not be.
 
     for (const auto& chunk : *finished) {
         dimension.setChunk(chunk);

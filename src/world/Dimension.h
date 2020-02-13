@@ -7,7 +7,6 @@
 #include <memory>
 #include <glm/glm.hpp>
 #include <unordered_map>
-#include "chunk/BlockChunk.h"
 #include "region/Region.h"
 
 class Dimension {
@@ -15,10 +14,14 @@ public:
     Dimension() = default;
 
     std::shared_ptr<Region> getRegion(glm::ivec3 regionPosition);
-    std::shared_ptr<MapBlock> getMapBlock(glm::ivec3 mapBlockPosition);
-    std::shared_ptr<BlockChunk> getChunk(glm::ivec3 chunkPosition);
+    void removeRegion(glm::ivec3 pos);
 
+    std::shared_ptr<MapBlock> getMapBlock(glm::ivec3 mapBlockPosition);
+    void removeMapBlock(glm::ivec3 pos);
+
+    std::shared_ptr<BlockChunk> getChunk(glm::ivec3 chunkPosition);
     virtual void setChunk(std::shared_ptr<BlockChunk> chunk);
+    virtual void removeChunk(glm::ivec3 pos);
 
     unsigned int getBlock(glm::ivec3 pos);
     virtual bool setBlock(glm::ivec3 pos, unsigned int block);

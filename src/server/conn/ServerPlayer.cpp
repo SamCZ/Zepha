@@ -40,7 +40,7 @@ float ServerPlayer::getAngle() {
     return angle;
 }
 
-glm::vec3 ServerPlayer::getChunkPos() {
+glm::ivec3 ServerPlayer::getChunkPos() const {
     return Space::Chunk::world::fromBlock(pos);
 }
 

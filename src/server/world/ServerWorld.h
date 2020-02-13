@@ -18,6 +18,9 @@
 
 class ServerWorld : public World {
 public:
+    const static int MB_GEN_H = 6;
+    const static int MB_GEN_V = 4;
+
     explicit ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& clients);
 
     void init();
@@ -32,7 +35,7 @@ private:
     bool generateMapBlock(glm::ivec3 pos);
 
     void sendChunk(const glm::ivec3& pos, ServerClient& client);
-    void sendChunk(const std::shared_ptr<BlockChunk>& chunk, ServerClient& client);
+    static void sendChunk(const std::shared_ptr<BlockChunk>& chunk, ServerClient& client);
     void sendMapBlock(const glm::ivec3& pos, ServerClient& client);
 
     static bool isInBounds(glm::ivec3 pos, std::pair<glm::ivec3, glm::ivec3>& bounds);

@@ -5,12 +5,15 @@
 #pragma once
 
 #include "Dimension.h"
-#include "../def/gen/MapGen.h"
 #include "../lua/api/type/ServerLuaEntity.h"
+
+class ServerClient;
 
 class ServerDimension : public Dimension {
 public:
     ServerDimension() = default;
+
+    void update(const std::vector<ServerClient*>& clients);
 
     void setChunk(std::shared_ptr<BlockChunk> chunk) override;
     bool setBlock(glm::ivec3 pos, unsigned int block) override;
