@@ -11,6 +11,7 @@ struct ChunkVertex {
     glm::vec3 position;
     glm::vec2 texCoords;
     glm::vec3 blendColor;
+    glm::vec2 blendMaskCoords;
     float     normal;
     float     shaderMod;
     glm::vec3 modValues;

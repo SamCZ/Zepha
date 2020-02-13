@@ -33,7 +33,7 @@ MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::sha
     glm::vec3 check;
 
     for (unsigned short i = 0; i < 4096; i++) {
-        BlockModel& model = atlas.blockFromId(chunk->getBlock(i)).farModel;
+        BlockModel& model = atlas.blockFromId(chunk->getBlock(i)).model;
         glm::vec3 biomeTint = defs.biomes.biomeFromId(chunk->getBiome(i)).biomeTint;
 
         if (model.visible) {
@@ -120,7 +120,8 @@ void MeshGenerator::addFaces(const glm::vec3 &offset, const std::vector<MeshPart
             meshDetails->vertices.push_back({
                    vertex.pos + offset,
                    vertex.tex,
-                   ((mp.biomeTint) ? tint : glm::vec3{1, 1, 1}),
+                   (mp.blendInd ? tint : glm::vec3 {1, 1, 1}),
+                   (mp.blendInd ? vertex.blendMask : glm::vec2 {-1, -1}),
                    Util::packFloat(vertex.nml),
                    static_cast<float>(mp.shaderMod),
                    modData

@@ -103,7 +103,7 @@ namespace RegisterBlocks {
                 glm::vec3 pos(points[offset], points[offset + 1], points[offset + 2]);
                 glm::vec2 tex(points[offset + 3], points[offset + 4]);
 
-                vertices.push_back({pos, {0, 0, 0}, tex, {0, 0}});
+                vertices.push_back(BlockModelVertex {pos, {}, tex, tex, {}, {}});
             }
 
             int ind = 0;
@@ -121,22 +121,47 @@ namespace RegisterBlocks {
             int tex = std::max(static_cast<int>(meshPartTable.get_or<float>("tex", 1)), 1);
             auto texture = textures[std::min(tex - 1, (int) textures.size() - 1)];
 
-            //TODO: Make this a proper texture modifier, dont do jank bullshit
-            bool biometint = false;
-            if (strncmp(texture.data(), "biometint(", 10) == 0) {
-                biometint = true;
-                texture = texture.substr(10, texture.length() - 11);
+            bool blendInd = false;
+            std::string blendMask = "";
+
+            if (strncmp(texture.data(), "tint(", 5) == 0 && texture.find_last_of(')') != std::string::npos) {
+                // Biome tinting time
+                texture.erase(std::remove(texture.begin(), texture.end(), ' '), texture.end());
+
+                std::string::size_type paramsBegin = texture.find_first_of('(');
+                std::string::size_type paramsEnd = texture.find_last_of(')');
+
+                std::string paramsString = texture.substr(paramsBegin + 1, paramsEnd - paramsBegin - 1);
+
+                std::vector<std::string> params;
+                std::string::size_type pos = 0;
+                while ((pos = paramsString.find(',')) != std::string::npos) {
+                    params.push_back(paramsString.substr(0, pos));
+                    paramsString.erase(0, pos + 1);
+                }
+                params.push_back(paramsString);
+
+                if (params.size() < 2) throw "Invalid biome tint values. Must have at least 2 params.";
+
+                texture = params[1];
+                blendInd = atoi(params[0].data()) + 1; //TODO: support multiple blend colors
+                blendMask = (params.size() >= 3 ? params[2] : "");
             }
 
             // Add texture refs to blockModel if the textures table is provided
-            std::shared_ptr<AtlasRef> textureRef = nullptr;
+            std::shared_ptr<AtlasRef> textureRef = nullptr, blendMaskRef = nullptr;
             if (atlas) {
                 textureRef = (*atlas)[texture];
                 model.textureRefs.insert(textureRef);
+
+                if (blendInd && !blendMask.empty()) {
+                    blendMaskRef = (*atlas)[blendMask];
+                    model.textureRefs.insert(blendMaskRef);
+                }
             }
 
             // Create the meshpart object
-            MeshPart meshPart(std::move(vertices), std::move(indices), textureRef, biometint);
+            MeshPart meshPart(std::move(vertices), std::move(indices), textureRef, blendInd, blendMaskRef);
 
             // Add the shader mod, if it exists
             sol::optional<sol::table> shaderModTable = meshPartTable.get<sol::optional<sol::table>>("shader_mod");
@@ -191,8 +216,8 @@ namespace RegisterBlocks {
             std::vector<bool> biomeTints;
             for (auto i = 0; i < lowdef_textures.size(); i++) {
                 std::string texture = lowdef_textures[i];
-                if (strncmp(texture.data(), "biometint(", 10) == 0) {
-                    texture = texture.substr(10, texture.length() - 11);
+                if (strncmp(texture.data(), "tint(", 5) == 0) {
+                    texture = texture.substr(8, texture.length() - 8);
                     biomeTints.emplace_back(true);
                 }
                 else {

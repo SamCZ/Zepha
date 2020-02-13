@@ -63,46 +63,9 @@ zepha.register_blockmodel("base:block_foliage", {
                 1, 0, 0, 0, 1
             }
         }, {
-            -- Hovered faces for biome tinting begin here
-            face = "left",
-            tex = 4,
-            points = {
-                -0.003, 0, 0, 0, 1,
-                -0.003, 0, 1, 1, 1,
-                -0.003, 1, 1, 1, 0,
-                -0.003, 1, 0, 0, 0
-            }
-        }, {
-            face = "right",
-            tex = 4,
-            points = {
-                1.003, 1, 1, 0, 0,
-                1.003, 0, 1, 0, 1,
-                1.003, 0, 0, 1, 1,
-                1.003, 1, 0, 1, 0
-            }
-        }, {
-            face = "front",
-            tex = 4,
-            points = {
-                0, 0, 1.003, 0, 1,
-                1, 0, 1.003, 1, 1,
-                1, 1, 1.003, 1, 0,
-                0, 1, 1.003, 0, 0
-            }
-        }, {
-            face = "back",
-            tex = 4,
-            points = {
-                0, 0, -0.003, 1, 1,
-                0, 1, -0.003, 1, 0,
-                1, 1, -0.003, 0, 0,
-                1, 0, -0.003, 0, 1
-            }
-        }, {
             --Floats begin here
             face = "front",
-            tex = 5,
+            tex = 4,
             points = {
                 0, 1, 1, 0, 0,
                 0.005, 0.2, 1.2, 0, 1,
@@ -115,7 +78,7 @@ zepha.register_blockmodel("base:block_foliage", {
             }
         }, {
             face = "back",
-            tex = 5,
+            tex = 4,
             points = {
                 1.005, 0.2, -0.2, 0, 1,
                 0.005, 0.2, -0.2, 1, 1,
@@ -128,7 +91,7 @@ zepha.register_blockmodel("base:block_foliage", {
             }
         }, {
             face = "right",
-            tex = 5,
+            tex = 4,
             points = {
                 1.2, 0.2, 1.005, 0, 1,
                 1.2, 0.2, 0.005, 1, 1,
@@ -141,7 +104,7 @@ zepha.register_blockmodel("base:block_foliage", {
             }
         }, {
             face = "left",
-            tex = 5,
+            tex = 4,
             points = {
                 0, 1, 0, 0, 0,
                 -0.2, 0.2, 0.005, 0, 1,

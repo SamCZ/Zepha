@@ -5,9 +5,10 @@
 layout (location = 0) in vec3  aPos;
 layout (location = 1) in vec2  aTexCoords;
 layout (location = 2) in vec3  aBlend;
-layout (location = 3) in float aNormal;
-layout (location = 4) in float aShaderMod;
-layout (location = 5) in vec3  aModValues;
+layout (location = 3) in vec2  aBlendMaskCoords;
+layout (location = 4) in float aNormal;
+layout (location = 5) in float aShaderMod;
+layout (location = 6) in vec3  aModValues;
 
 uniform mat4 model;
 uniform mat4 projection;
@@ -18,6 +19,7 @@ uniform sampler2D swayTex;
 uniform float time;
 
 out vec2  texCoords;
+out vec2  blendMaskCoords;
 out vec3  blend;
 out vec3  fragPos;
 out vec3  normal;
@@ -90,6 +92,7 @@ void main() {
 
     fragPos = (view * worldPos).xyz;
     texCoords = aTexCoords;
+    blendMaskCoords = aBlendMaskCoords;
     blend = aBlend;
     normal = nml.xyz;
 
