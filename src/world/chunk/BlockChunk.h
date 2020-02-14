@@ -9,6 +9,7 @@
 #include <glm/vec3.hpp>
 #include "../../util/Log.h"
 #include "../../util/Vec.h"
+#include "../../util/RIE.h"
 #include "../../util/Util.h"
 #include "../../util/net/Packet.h"
 #include "../../def/gen/BiomeAtlas.h"
@@ -30,7 +31,8 @@ public:
     inline unsigned int getBlock(unsigned int ind) const;
     inline unsigned int getBlock(const glm::ivec3& pos) const;
 
-//    bool setBiome(const glm::ivec3& pos, unsigned int ind);
+    inline bool setBiome(unsigned int ind, unsigned short bio);
+    inline bool setBiome(const glm::ivec3& pos, unsigned short bio);
 
     inline unsigned short getBiome(unsigned int ind) const;
     inline unsigned short getBiome(const glm::ivec3& pos) const;
@@ -73,10 +75,7 @@ inline bool BlockChunk::setBlock(const glm::ivec3& pos, unsigned int blk) {
 
 inline unsigned int BlockChunk::getBlock(unsigned int ind) const {
     if (ind >= 4096) return DefinitionAtlas::INVALID;
-    for (unsigned int i = 0; i < blocks.size(); i += 2) {
-        if (blocks[i] > ind) return blocks[i - 1];
-    }
-    return blocks[blocks.size() - 1];
+    return RIE::read<unsigned int>(ind, blocks, 4096);
 }
 
 inline unsigned int BlockChunk::getBlock(const glm::ivec3& pos) const {
@@ -84,12 +83,18 @@ inline unsigned int BlockChunk::getBlock(const glm::ivec3& pos) const {
     return getBlock(Space::Block::index(pos));
 }
 
+inline bool BlockChunk::setBiome(unsigned int ind, unsigned short bio) {
+    RIE::write(ind, bio, biomes, 4096);
+}
+
+inline bool BlockChunk::setBiome(const glm::ivec3& pos, unsigned short bio) {
+    if (pos.x > 15 || pos.x < 0 || pos.y > 15 || pos.y < 0 || pos.z > 15 || pos.z < 0) return false;
+    return setBiome(Space::Block::index(pos), bio);
+}
+
 inline unsigned short BlockChunk::getBiome(unsigned int ind) const {
     if (ind >= 4096) return BiomeAtlas::INVALID;
-    for (unsigned int i = 0; i < biomes.size(); i += 2) {
-        if (biomes[i] > ind) return biomes[i - 1];
-    }
-    return biomes[biomes.size() - 1];
+    return RIE::read<unsigned short>(ind, biomes, 4096);
 }
 
 inline unsigned short BlockChunk::getBiome(const glm::ivec3& pos) const {
