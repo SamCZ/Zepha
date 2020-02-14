@@ -56,7 +56,6 @@ include_directories(
     lib/header/json/include
 )
 
-
 add_subdirectory(src)
 add_executable(${MAIN_EXEC_NAME} src/Main.cpp)
 target_link_libraries(${MAIN_EXEC_NAME} Zepha_Core)
@@ -76,6 +75,11 @@ target_compile_definitions(${MAIN_EXEC_NAME} PUBLIC SOL_ALL_SAFETIES_ON)
 # Test Build
 add_subdirectory(test)
 add_executable(${TEST_EXEC_NAME} test/Main.cpp)
-
 target_link_libraries(${TEST_EXEC_NAME} Zepha_Core)
 target_link_libraries(${TEST_EXEC_NAME} Zepha_Test)
+
+target_include_directories(${TEST_EXEC_NAME} PRIVATE ${GLFW_HEADERS})
+target_compile_definitions(${TEST_EXEC_NAME} PUBLIC SOL_ALL_SAFETIES_ON)
+target_link_libraries(${TEST_EXEC_NAME} ${LUA_LIB})
+target_link_libraries (${TEST_EXEC_NAME} z)
+target_link_libraries(${TEST_EXEC_NAME} ${ENET_LIB})

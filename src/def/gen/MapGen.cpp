@@ -158,29 +158,53 @@ void MapGen::buildElevationMap(chunk_partials_map& chunks, chunk_partial& chunk)
 void MapGen::generateBlocks(chunk_partial& chunk) {
     glm::ivec3 lp {};
 
-	for (unsigned short i = 0; i < 256; i++) {
-        unsigned short x = i / 16;
-        unsigned short z = i % 16;
+    auto dupe = std::make_unique<BlockChunk>(*chunk.second);
 
-        lp = {x, 0, z};
-		auto& biome = biomes.getBiomeAt(chunk.first->temperature.get(lp), chunk.first->humidity.get(lp), chunk.first->roughness.get(lp));
+    chunk.second->blocks = {};
+    chunk.second->biomes = {};
 
-		for (unsigned short y = 0; y < 16; y++) {
-		    lp.y = y;
-            unsigned short ind = Space::Block::index(lp);
+    std::array<std::array<unsigned short, 16>, 16> biomeArray {};
+    for (unsigned short x = 0; x < 16; x++) {
+        biomeArray[x] = {};
+        for (unsigned short z = 0; z < 16; z++) {
+            lp = {x, 0, z};
+            biomeArray[x][z] = biomes.getBiomeAt(
+                    chunk.first->temperature.get(lp),
+                    chunk.first->humidity.get(lp),
+                    chunk.first->roughness.get(lp)).index;
+        }
+    }
 
-		    chunk.second->biomes[ind] = biome.index;
+    for (unsigned short m = 0; m < 4096; m++) {
+        Vec::indAssignVec(m, lp);
+        auto& biome = biomes.biomeFromId(biomeArray[lp.x][lp.z]);
 
-		    if (chunk.second->blocks[ind] != DefinitionAtlas::INVALID) continue;
+        unsigned int storedBlock = (chunk.second->blocks.size() <= 0 ? -1 : chunk.second->blocks[chunk.second->blocks.size() - 1]);
+        unsigned int storedBiome = (chunk.second->biomes.size() <= 0 ? -1 : chunk.second->biomes[chunk.second->biomes.size() - 1]);
 
-            int d = std::floor(chunk.first->depth[ind]);
-            chunk.second->blocks[ind]
+        if (biome.index != storedBiome) {
+            chunk.second->biomes.emplace_back(m);
+            chunk.second->biomes.emplace_back(biome.index);
+        }
+
+//        if (chunk.second->blocks[ind] != DefinitionAtlas::INVALID) continue;
+
+        int d = std::floor(chunk.first->depth[m]);
+        unsigned int targetBlock
                 = d <= 1 ? DefinitionAtlas::AIR
                 : d <= 2 ? biome.topBlock
                 : d <= 4 ? biome.soilBlock
                 : biome.rockBlock;
 
+        if (targetBlock != storedBlock) {
+            chunk.second->blocks.emplace_back(m);
+            chunk.second->blocks.emplace_back(targetBlock);
         }
+    }
+
+    if (dupe->partial) for (unsigned short i = 0; i < 4096; i++) {
+        unsigned int b = dupe->getBlock(i);
+        if (b != DefinitionAtlas::INVALID) chunk.second->setBlock(i, b);
     }
 }
 
@@ -235,7 +259,9 @@ void MapGen::setBlock(glm::ivec3 worldPos, unsigned int block, MapGen::chunk_par
     if (chunks.count(chunkPos)) chunk = chunks.at(chunkPos).second;
     else {
         chunk = new BlockChunk();
+        chunk->initializeEmpty();
         chunk->pos = chunkPos;
+        chunk->partial = true;
         chunks.insert(std::pair<glm::ivec3, chunk_partial>{chunkPos, {new MapGenJob(), chunk}});
     }
 
@@ -261,5 +287,6 @@ std::shared_ptr<BlockChunk> MapGen::combinePartials(std::shared_ptr<BlockChunk> 
     }
 
     res->generated = src->generated || res->generated;
+    res->partial = !res->generated;
     return res;
 }

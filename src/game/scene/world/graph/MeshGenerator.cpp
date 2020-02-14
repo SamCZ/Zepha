@@ -28,10 +28,26 @@ MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::sha
     glm::vec3 vis;
     glm::vec3 check;
 
-    for (unsigned short i = 0; i < 4096; i++) {
-        BlockModel& model = hi ? atlas.blockFromId(chunk->getBlock(i)).model : atlas.blockFromId(chunk->getBlock(i)).farModel;
+    const auto& blocks = chunk->cGetBlocks();
+    const auto& biomes = chunk->cGetBiomes();
 
-        glm::vec3 biomeTint = defs.biomes.biomeFromId(chunk->getBiome(i)).biomeTint;
+    unsigned short blockArrayPos = 0;
+    unsigned int cBlock = blocks[blockArrayPos + 1];
+    unsigned short biomeArrayPos = 0;
+    unsigned short cBiome = biomes[biomeArrayPos + 1];
+
+    for (unsigned short i = 0; i < 4096; i++) {
+        if (blockArrayPos + 2 < blocks.size() && i >= blocks[blockArrayPos + 2]) {
+            blockArrayPos += 2;
+            cBlock = blocks[blockArrayPos + 1];
+        }
+        if (biomeArrayPos + 2 < biomes.size() && i >= biomes[biomeArrayPos + 2]) {
+            biomeArrayPos += 2;
+            cBiome = biomes[biomeArrayPos + 1];
+        }
+
+        BlockModel& model = hi ? atlas.blockFromId(cBlock).model : atlas.blockFromId(cBlock).farModel;
+        glm::vec3 biomeTint = defs.biomes.biomeFromId(cBiome).biomeTint;
 
         if (model.visible) {
             Vec::indAssignVec(i, off);
@@ -82,7 +98,6 @@ MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::sha
 
 BlockDef& MeshGenerator::getBlockAt(const glm::ivec3 &pos) {
     if (pos.x < 0 || pos.x >= 16 || pos.y < 0 || pos.y >= 16 || pos.z < 0 || pos.z >= 16) {
-
         if (pos.x == 16) return atlas.blockFromId(adjacent[0]->getBlock(pos - glm::ivec3 {16, 0, 0}));
         if (pos.x == -1) return atlas.blockFromId(adjacent[1]->getBlock(pos + glm::ivec3 {16, 0, 0}));
 

@@ -19,10 +19,12 @@
 class BlockChunk {
 public:
     BlockChunk() = default;
-    explicit BlockChunk(const std::array<unsigned int, 4096>& blocks, const std::array<unsigned short, 4096>& biomes);
-    BlockChunk(const std::array<unsigned int, 4096>& blocks, const std::array<unsigned short, 4096>& biomes, glm::ivec3 pos);
+    explicit BlockChunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes);
+    BlockChunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes, glm::ivec3 pos);
 
-    inline bool setBlock(unsigned int ind, unsigned int blk);
+    void initializeEmpty();
+
+    bool setBlock(unsigned int ind, unsigned int blk);
     inline bool setBlock(const glm::ivec3& pos, unsigned int blk);
 
     inline unsigned int getBlock(unsigned int ind) const;
@@ -39,6 +41,9 @@ public:
     inline int getSunlight(unsigned int ind);
     inline int getBlocklight(unsigned int ind);
 
+    const std::vector<unsigned int>& cGetBlocks() const;
+    const std::vector<unsigned short>& cGetBiomes() const;
+
     Packet serialize();
     void deserialize(Packet& packet);
 
@@ -49,36 +54,17 @@ public:
 
     glm::ivec3 pos;
 private:
-    std::array<unsigned int, 4096> blocks {};
-    std::array<unsigned short, 4096> biomes {};
+    std::vector<unsigned int> blocks {};
+    std::vector<unsigned short> biomes {};
     std::array<unsigned char, 4096> lighting {};
 
     bool empty = true;
+    bool partial = false;
     unsigned short nonAirBlocks = 0;
 
     friend class MapGen;
     void calcNonAirBlocks();
 };
-
-inline bool BlockChunk::setBlock(unsigned int ind, unsigned int blk) {
-    if (ind >= 4096) return false;
-    if (blocks[ind] != blk) {
-        if (blk == DefinitionAtlas::AIR) {
-            if ((nonAirBlocks = fmax(nonAirBlocks - 1, 0)) == 0) {
-                empty = true;
-                shouldHaveMesh = false;
-            }
-        }
-        else if (blocks[ind] == DefinitionAtlas::AIR) {
-            if (nonAirBlocks == 0) shouldHaveMesh = true;
-            empty = false;
-            nonAirBlocks++;
-        }
-        blocks[ind] = blk;
-        return true;
-    }
-    return false;
-}
 
 inline bool BlockChunk::setBlock(const glm::ivec3& pos, unsigned int blk) {
     if (pos.x > 15 || pos.x < 0 || pos.y > 15 || pos.y < 0 || pos.z > 15 || pos.z < 0) return false;
@@ -87,7 +73,10 @@ inline bool BlockChunk::setBlock(const glm::ivec3& pos, unsigned int blk) {
 
 inline unsigned int BlockChunk::getBlock(unsigned int ind) const {
     if (ind >= 4096) return DefinitionAtlas::INVALID;
-    return blocks[ind];
+    for (unsigned int i = 0; i < blocks.size(); i += 2) {
+        if (blocks[i] > ind) return blocks[i - 1];
+    }
+    return blocks[blocks.size() - 1];
 }
 
 inline unsigned int BlockChunk::getBlock(const glm::ivec3& pos) const {
@@ -97,7 +86,10 @@ inline unsigned int BlockChunk::getBlock(const glm::ivec3& pos) const {
 
 inline unsigned short BlockChunk::getBiome(unsigned int ind) const {
     if (ind >= 4096) return BiomeAtlas::INVALID;
-    return biomes[ind];
+    for (unsigned int i = 0; i < biomes.size(); i += 2) {
+        if (biomes[i] > ind) return biomes[i - 1];
+    }
+    return biomes[biomes.size() - 1];
 }
 
 inline unsigned short BlockChunk::getBiome(const glm::ivec3& pos) const {
