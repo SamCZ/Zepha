@@ -28,26 +28,26 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
             Serializer()
                 .append(blockIdentifierList)
                 .packet(PacketType::BLOCK_IDENTIFIER_LIST)
-                .sendTo(client.getPeer(), PacketChannel::CONNECT);
+                .sendTo(client.peer, PacketChannel::CONNECT);
             break;
         }
         case PacketType::BIOME_IDENTIFIER_LIST: {
             Serializer()
                 .append(biomeIdentifierList)
                 .packet(PacketType::BIOME_IDENTIFIER_LIST)
-                .sendTo(client.getPeer(), PacketChannel::CONNECT);
+                .sendTo(client.peer, PacketChannel::CONNECT);
             break;
         }
         case PacketType::MODS: {
             for (LuaMod& mod : defs.luaApi.mods) {
                 Packet p(PacketType::MODS);
                 p.data = Serializer().append(mod.serialized).data;
-                p.sendTo(client.getPeer(), PacketChannel::CONNECT);
+                p.sendTo(client.peer, PacketChannel::CONNECT);
             }
 
             std::vector<std::string> order {};
             for (LuaMod& mod : defs.luaApi.mods) order.push_back(mod.config.name);
-            Serializer().append(order).packet(PacketType::MOD_ORDER).sendTo(client.getPeer(), PacketChannel::CONNECT);
+            Serializer().append(order).packet(PacketType::MOD_ORDER).sendTo(client.peer, PacketChannel::CONNECT);
             break;
         }
         case PacketType::MEDIA: {
@@ -65,7 +65,7 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
                     packetSize = 0;
                     s = {};
 
-                    p.sendTo(client.getPeer(), PacketChannel::CONNECT);
+                    p.sendTo(client.peer, PacketChannel::CONNECT);
                 }
 
                 s.append(static_cast<int>(AssetType::TEXTURE))
@@ -86,7 +86,7 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
                     packetSize = 0;
                     s = {};
 
-                    p.sendTo(client.getPeer(), PacketChannel::CONNECT);
+                    p.sendTo(client.peer, PacketChannel::CONNECT);
                 }
 
                 s.append(static_cast<int>(AssetType::MODEL))
@@ -101,10 +101,10 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
             Packet p(PacketType::MEDIA);
             p.data = s.data;
 
-            p.sendTo(client.getPeer(), PacketChannel::CONNECT);
+            p.sendTo(client.peer, PacketChannel::CONNECT);
 
             Packet d(PacketType::MEDIA_DONE);
-            d.sendTo(client.getPeer(), PacketChannel::CONNECT);
+            d.sendTo(client.peer, PacketChannel::CONNECT);
         }
     }
     return false;

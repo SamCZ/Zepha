@@ -4,6 +4,13 @@
 
 #include <algorithm>
 #include <glm/glm.hpp>
+#include <unordered_map>
+
+#include "WorldGenStream.h"
+#include "../conn/ServerClient.h"
+#include "../../world/chunk/BlockChunk.h"
+#include "../../util/Vec.h"
+
 #include "ServerWorld.h"
 
 ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& clients) :
@@ -58,16 +65,16 @@ void ServerWorld::update(double delta) {
         unsigned long long mapBlockIntegrity = dimension.getMapBlockIntegrity(mapBlockPos);
 
         for (auto& client : clientList.clients) {
-            if (client->hasPlayer()) {
-                auto playerMapBlock = client->getPlayer().mapBlock;
+            if (client->hasPlayer) {
+                auto playerMapBlock = Space::MapBlock::world::fromBlock(client->getPos());
 
                 std::pair<glm::ivec3, glm::ivec3> bounds = {
                         {playerMapBlock.x - MB_GEN_H, playerMapBlock.y - MB_GEN_V, playerMapBlock.z - MB_GEN_H},
                         {playerMapBlock.x + MB_GEN_H, playerMapBlock.y + MB_GEN_V, playerMapBlock.z + MB_GEN_H}};
 
-                if (isInBounds(mapBlockPos, bounds) && client->getPlayer().getMapBlockIntegrity(mapBlockPos) < mapBlockIntegrity) {
+                if (isInBounds(mapBlockPos, bounds) && client->getMapBlockIntegrity(mapBlockPos) < mapBlockIntegrity) {
+                    client->setMapBlockIntegrity(mapBlockPos, mapBlockIntegrity);
                     sendChunk(chunk->pos, *client);
-                    client->getPlayer().setMapBlockIntegrity(mapBlockPos, mapBlockIntegrity);
                 }
             }
         }
@@ -79,10 +86,10 @@ void ServerWorld::update(double delta) {
     r.data = Serializer().append(generatedChunks).data;
 
     for (auto& client : clientList.clients) {
-        if (client->hasPlayer()) {
-            r.sendTo(client->getPeer(), PacketChannel::SERVER);
+        if (client->hasPlayer) {
+            r.sendTo(client->peer, PacketChannel::SERVER);
 
-            if (client->getPlayer().changedMapBlocks) changedChunks(*client);
+            if (client->changedMapBlocks) changedChunks(*client);
         }
     }
 
@@ -92,15 +99,15 @@ void ServerWorld::update(double delta) {
         if (entity->entity->checkAndResetDirty()) {
             Packet p = entity->entity->createPacket();
             for (auto& client : clientList.clients) {
-                if (client->hasPlayer()) p.sendTo(client->getPeer(), PacketChannel::ENTITY);
+                if (client->hasPlayer) p.sendTo(client->peer, PacketChannel::ENTITY);
             }
         }
     }
 }
 
 void ServerWorld::changedChunks(ServerClient& client) {
-    auto mapBlock = client.getPlayer().mapBlock;
-    auto lastMapBlock = client.getPlayer().lastMapBlock;
+    auto mapBlock = Space::MapBlock::world::fromBlock(client.getPos());
+    auto lastMapBlock = Space::MapBlock::world::fromBlock(client.lastPos);
 
     std::pair<glm::ivec3, glm::ivec3> oldBounds = {
             {lastMapBlock.x - MB_GEN_H, lastMapBlock.y - MB_GEN_V, lastMapBlock.z - MB_GEN_H},
@@ -124,7 +131,7 @@ void ServerWorld::changedChunks(ServerClient& client) {
     }
 
     std::cout << "Generating " << mapBlocksGenerating << " blocks, sending " << mapBlocksExisting << " existing blocks." << std::endl;
-    client.getPlayer().changedMapBlocks = false;
+    client.changedMapBlocks = false;
 }
 
 bool ServerWorld::generateMapBlock(glm::ivec3 pos) {
@@ -140,7 +147,7 @@ void ServerWorld::sendChunk(const std::shared_ptr<BlockChunk>& chunk, ServerClie
     if (chunk == nullptr || !chunk->generated) return;
 
     Packet r = chunk->serialize();
-    r.sendTo(peer.getPeer(), PacketChannel::CHUNK);
+    r.sendTo(peer.peer, PacketChannel::CHUNK);
 }
 
 void ServerWorld::sendChunk(const glm::ivec3& pos, ServerClient &peer) {
@@ -149,7 +156,7 @@ void ServerWorld::sendChunk(const glm::ivec3& pos, ServerClient &peer) {
 
 void ServerWorld::sendMapBlock(const glm::ivec3& pos, ServerClient &peer) {
     unsigned long long mapBlockIntegrity = dimension.getMapBlockIntegrity(pos);
-    if (peer.getPlayer().getMapBlockIntegrity(pos) < mapBlockIntegrity) {
+    if (peer.getMapBlockIntegrity(pos) < mapBlockIntegrity) {
         auto mapBlock = dimension.getMapBlock(pos);
         assert(mapBlock != nullptr);
 
@@ -190,15 +197,15 @@ void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
     auto chunkPos = Space::Chunk::world::fromBlock(pos);
 
     for (auto &client : clientList.clients) {
-        if (client->hasPlayer()) {
-            auto mapBlock = client->getPlayer().mapBlock;
+        if (client->hasPlayer) {
+            auto mapBlock = Space::MapBlock::world::fromBlock(client->getPos());
 
             std::pair<glm::ivec3, glm::ivec3> bounds = {
                     {mapBlock.x - MB_GEN_H, mapBlock.y - MB_GEN_V, mapBlock.z - MB_GEN_H},
                     {mapBlock.x + MB_GEN_H, mapBlock.y + MB_GEN_V, mapBlock.z + MB_GEN_H}};
 
             if (isInBounds(Space::MapBlock::world::fromChunk(chunkPos), bounds)) {
-                b.sendTo(client->getPeer(), PacketChannel::BLOCK);
+                b.sendTo(client->peer, PacketChannel::BLOCK);
             }
         }
     }

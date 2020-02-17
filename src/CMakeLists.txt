@@ -53,9 +53,7 @@ set(ZEPHA_SRC
     server/Server.h
     util/net/Packet.cpp
     util/net/Packet.h
-    server/conn/ServerPlayer.cpp
-    server/conn/ServerPlayer.h
-    game/scene/net/ClientNetworkInterpreter.cpp
+        game/scene/net/ClientNetworkInterpreter.cpp
     game/scene/net/ClientNetworkInterpreter.h
     def/gen/MapGen.cpp
     def/gen/MapGen.h

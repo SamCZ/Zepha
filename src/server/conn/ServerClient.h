@@ -5,27 +5,40 @@
 #pragma once
 
 #include <enet/enet.h>
-#include "ServerPlayer.h"
+#include <glm/vec3.hpp>
+#include <unordered_map>
+
+#include "../../util/Vec.h"
 
 class ServerClient {
 public:
+    const static int CHUNK_SEND_RANGE = 32;
+
     ServerClient(ENetPeer* peer, ENetAddress address);
 
-    void initPlayer();
+    void setPos(glm::vec3 pos);
+    glm::vec3 getPos();
 
-    bool hasPlayer() const;
-    const ServerPlayer& cGetPlayer() const;
-    ServerPlayer& getPlayer();
-    ENetPeer& getPeer();
+    void setAngle(float angle);
+    float getAngle();
 
-    unsigned int getConnectID();
+    void setMapBlockIntegrity(glm::ivec3 pos, unsigned long long integrity);
+    unsigned long long getMapBlockIntegrity(glm::ivec3 pos);
 
-    ~ServerClient();
-private:
+    bool hasPlayer = false;
+
+    unsigned int cid;
+    std::string username;
+
     ENetPeer* peer;
     ENetAddress address;
 
-    ServerPlayer* player = nullptr;
+    bool changedMapBlocks = true;
+    glm::vec3 lastPos {-10000000, -10000000, -10000000};
 
-    unsigned int connectID;
+private:
+    glm::vec3 pos {};
+    float angle = 0;
+
+    std::unordered_map<glm::ivec3, unsigned long long, Vec::ivec3> mapBlockIntegrity {};
 };

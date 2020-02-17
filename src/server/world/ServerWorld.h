@@ -4,17 +4,12 @@
 
 #pragma once
 
-#include <unordered_map>
 #include <unordered_set>
 #include "WorldGenStream.h"
-#include "../conn/ServerClient.h"
-#include "../conn/ServerPlayer.h"
-#include "../../world/chunk/BlockChunk.h"
-#include "../../util/Vec.h"
-#include "../../def/ServerDefs.h"
 #include "../conn/ServerClients.h"
-#include "../../world/ServerDimension.h"
+#include "../../def/ServerDefs.h"
 #include "../../game/scene/world/World.h"
+#include "../../world/ServerDimension.h"
 
 class ServerWorld : public World {
 public:
@@ -52,6 +47,6 @@ private:
     unsigned int generatedChunks = 0;
 
     //Static vector of chunks to place around players
-    std::vector<glm::vec3> generateOrder;
+    std::vector<glm::ivec3> generateOrder;
 };
 

@@ -15,8 +15,8 @@ void ServerDimension::update(const std::vector<ServerClient*> &clients) {
 
             bool clientNearby = false;
             for (const auto& client : clients) {
-                if (client->hasPlayer()) {
-                    auto clientPos = Space::MapBlock::world::fromChunk(client->cGetPlayer().getChunkPos());
+                if (client->hasPlayer) {
+                    auto clientPos = Space::MapBlock::world::fromBlock(client->getPos());
                     if (abs(clientPos.x - mapBlockPos.x) <= ServerWorld::MB_GEN_H + 1
                      && abs(clientPos.y - mapBlockPos.y) <= ServerWorld::MB_GEN_V + 1
                      && abs(clientPos.z - mapBlockPos.z) <= ServerWorld::MB_GEN_H + 1) {

@@ -2,8 +2,9 @@
 // Created by aurailus on 09/01/19.
 //
 
+#include <thread>
+
 #include "Server.h"
-#include "../util/net/Deserializer.h"
 
 Server::Server(const std::string& path, unsigned short port, const std::string& subgame) :
     defs(subgame, path),
@@ -56,7 +57,7 @@ void Server::update() {
                 Packet p(event.packet);
                 ServerClient* client = static_cast<ServerClient*>(event.peer->data);
 
-                if (client->hasPlayer()) {
+                if (client->hasPlayer) {
                     handlePlayerPacket(*client, p);
                 }
                 else {
@@ -81,8 +82,6 @@ void Server::update() {
 }
 
 void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
-    ServerPlayer& player = client.getPlayer();
-
     switch (p.type) {
         default: {
             std::cout << Log::err << "Invalid packet type (" << static_cast<int>(p.type) << ") recieved." << Log::endl;
@@ -91,20 +90,20 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
 
         case PacketType::THIS_PLAYER_INFO: {
             Deserializer d(p.data);
-            player.setPos(d.read<glm::vec3>());
-            player.setAngle(d.read<float>());
+            client.setPos(d.read<glm::vec3>());
+            client.setAngle(d.read<float>());
 
             //Send All ServerClients the new positon
             Packet r(PacketType::PLAYER_INFO);
             r.data = Serializer()
-                    .append(client.getConnectID())
-                    .append(player.getPos())
-                    .append(player.getAngle())
+                    .append(client.cid)
+                    .append(client.getPos())
+                    .append(client.getAngle())
                     .data;
 
             for (auto& iter : clientList.clients) {
-                if (iter->getConnectID() != client.getConnectID()) {
-                    r.sendTo(iter->getPeer(), PacketChannel::ENTITY);
+                if (iter->cid != client.cid) {
+                    r.sendTo(iter->peer, PacketChannel::ENTITY);
                 }
             }
 

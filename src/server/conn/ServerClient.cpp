@@ -8,36 +8,37 @@
 ServerClient::ServerClient(ENetPeer *peer, ENetAddress address) :
     peer(peer),
     address(address),
-    connectID(peer->connectID) {}
+    cid(peer->connectID) {}
 
-unsigned int ServerClient::getConnectID() {
-    return connectID;
+void ServerClient::setMapBlockIntegrity(glm::ivec3 pos, unsigned long long integrity) {
+    mapBlockIntegrity[pos] = integrity;
 }
 
-void ServerClient::initPlayer() {
-    delete player;
-    player = new ServerPlayer({0, 0, 0}, connectID, "TEMPORARY");
+unsigned long long ServerClient::getMapBlockIntegrity(glm::ivec3 pos) {
+    if (mapBlockIntegrity.count(pos)) return mapBlockIntegrity[pos];
+    return 0;
 }
 
-bool ServerClient::hasPlayer() const {
-    return player != nullptr;
+void ServerClient::setPos(glm::vec3 pos) {
+    glm::vec3 lastMapBlock = Space::MapBlock::world::fromBlock(this->pos);
+    glm::vec3 newMapBlock = Space::MapBlock::world::fromBlock(pos);
+
+    if (newMapBlock != lastMapBlock && !changedMapBlocks) {
+        lastMapBlock = newMapBlock;
+        changedMapBlocks = true;
+    }
+
+    this->pos = pos;
 }
 
-ServerPlayer& ServerClient::getPlayer() {
-    if (!player) throw "getPlayer() called on client without player!";
-    return *player;
+glm::vec3 ServerClient::getPos() {
+    return pos;
 }
 
-const ServerPlayer &ServerClient::cGetPlayer() const {
-    if (!player) throw "getPlayer() called on client without player!";
-    return *player;
+void ServerClient::setAngle(float angle) {
+    this->angle = angle;
 }
 
-
-ENetPeer& ServerClient::getPeer() {
-    return *peer;
-}
-
-ServerClient::~ServerClient() {
-    delete player;
+float ServerClient::getAngle() {
+    return angle;
 }

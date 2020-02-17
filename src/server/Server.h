@@ -4,20 +4,14 @@
 
 #pragma once
 
-#include <thread>
-#include <vector>
-#include <iostream>
-
-#include "conn/ServerPlayer.h"
-#include "conn/ServerClient.h"
 #include "conn/ServerClients.h"
 #include "world/ServerWorld.h"
 #include "config/ServerConfig.h"
 #include "../def/ServerDefs.h"
-#include "../util/net/Packet.h"
-#include "../util/Timer.h"
 #include "../util/net/NetHandler.h"
-#include "../util/net/Serializer.h"
+
+class ServerClient;
+class Packet;
 
 class Server {
 public:
