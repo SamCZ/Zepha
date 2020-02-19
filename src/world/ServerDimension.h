@@ -13,7 +13,7 @@ class ServerDimension : public Dimension {
 public:
     ServerDimension() = default;
 
-    void update(const std::vector<ServerClient*>& clients);
+    void update(const std::vector<std::shared_ptr<ServerClient>>& clients);
 
     void setChunk(std::shared_ptr<BlockChunk> chunk) override;
     bool setBlock(glm::ivec3 pos, unsigned int block) override;

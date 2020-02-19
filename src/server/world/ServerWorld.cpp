@@ -13,7 +13,7 @@
 
 #include "ServerWorld.h"
 
-ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& clients) :
+ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs, ClientList& clients) :
     clientList(clients),
     seed(seed),
     defs(defs) {

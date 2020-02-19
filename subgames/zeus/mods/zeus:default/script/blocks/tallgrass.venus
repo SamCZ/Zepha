@@ -13,12 +13,6 @@ for i = 1, 5, 1 {
         },
         toughness = {
             hand = 0
-        },
-        on_break_client = fn(pos) {
-            if (math.random() > 0.8) {
-                zepha.add_entity("zeus:default:dropped_item", vector.add(pos, v(0.5)),
-                    {item = "zeus:materials:plant_fibre"});
-            }
         }
     })
 }

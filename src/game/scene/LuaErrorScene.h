@@ -6,6 +6,7 @@
 
 #include <string>
 #include "../graph/scene/Scene.h"
+#include "../hud/components/basic/GUIContainer.h"
 
 class LuaErrorScene : public Scene {
 public:

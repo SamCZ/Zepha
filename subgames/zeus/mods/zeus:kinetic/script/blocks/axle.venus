@@ -26,10 +26,6 @@ zepha.register_block('zeus:kinetic:axle_0', {
         zepha.delay(() => {
             zepha.set_block(pos, "zeus:kinetic:axle_1")
         }, 4)
-    },
-    on_break_client = fn(pos) {
-        zepha.add_entity("zeus:default:dropped_item", {x = pos.x + 0.5, y = pos.y + 0.5, z = pos.z + 0.5},
-            {item = zepha.registered_blocks["zeus:kinetic:axle_0"].drop});
     }
 })
 

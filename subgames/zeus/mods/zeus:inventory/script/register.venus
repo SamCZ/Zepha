@@ -1,0 +1,71 @@
+zepha.register_on("player_join", (p) => {
+    ## Create the main inventory list
+    local inv = p:get_inventory()
+    local main = inv:add_list("main", 44, 11)
+
+    local shit_adding = false
+
+    zepha.register_keybind("zeus:inventory:add_shit_b", {
+        description = "Add testing items to inventory",
+        default = zepha.keys.b,
+        on_press = () => { shit_adding = 1 },
+        on_release = () => { shit_adding = 0 }
+    })
+
+    zepha.register_keybind("zeus:inventory:add_shit_i", {
+        description = "Add testing items to inventory",
+        default = zepha.keys.n,
+        on_press = () => { shit_adding = 2 },
+        on_release = () => { shit_adding = 0 }
+    })
+
+    zepha.delay(() => {
+        if (shit_adding == 1) {
+            main:add_stack({"zeus:default:cobblestone", 1})
+            main:add_stack({"zeus:default:tallgrass_5", 1})
+            main:add_stack({"zeus:default:leaves", 1})
+            main:add_stack({"zeus:kinetic:axle_0", 1})
+            main:add_stack({"zeus:default:wood", 1})
+        }
+
+        if (shit_adding == 2) {
+            main:add_stack({"zeus:materials:plant_fibre", 1})
+            main:add_stack({"zeus:materials:plant_twine", 1})
+            main:add_stack({"zeus:materials:stick", 1})
+            main:add_stack({"zeus:materials:flint", 1})
+        }
+        return true
+    }, 0)
+
+    ## Bind crafting
+
+    local craft_input = inv:add_list("craft", 4, 2)
+    local craft_output = inv:add_list("craft_result", 2, 2)
+
+    crafting.bind(craft_input, craft_output)
+
+    ## Make hotwheel
+
+    local invs = {
+        inv:add_list("hot_wheel_1", 5, 5),
+        inv:add_list("hot_wheel_2", 5, 5),
+        inv:add_list("hot_wheel_3", 5, 5),
+        inv:add_list("hot_wheel_4", 5, 5),
+        inv:add_list("hot_wheel_5", 5, 5),
+        inv:add_list("hot_wheel_6", 5, 5)
+    }
+
+    foreach inv in invs {
+        inv.allow_take = fn() {
+            return 0
+        }
+
+        inv.allow_put = fn(slot, item) {
+            zepha.delay(() => {
+                ## This delay is necessary to avoid the engine overwriting it with nothing
+                inv:set_stack(slot, item)
+            }, 0)
+            return 0
+        }
+    }
+})

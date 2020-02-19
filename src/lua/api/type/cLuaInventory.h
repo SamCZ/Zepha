@@ -7,9 +7,8 @@
 #include <sol2/sol.hpp>
 #include "LuaInventory.h"
 
-void remove_list(std::string name);
 namespace ClientApi {
-    void inventory(sol::state& lua) {
+    static void inventory(sol::state& lua) {
         lua.new_usertype<LuaInventory>("InventoryRef",
             "add_list", &LuaInventory::add_list,
             "get_list", &LuaInventory::get_list,

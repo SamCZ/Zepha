@@ -187,7 +187,9 @@ void LocalDimension::attemptMeshChunk(const std::shared_ptr<BlockChunk>& chunk, 
     }
 
     if (allExists) {
-        if (chunk->shouldHaveMesh) pendingMesh.push_back(chunk->pos);
+        if (chunk->shouldHaveMesh) {
+            pendingMesh.push_back(chunk->pos);
+        }
         else removeMeshChunk(chunk->pos);
 
         chunk->dirty = false; //TODO: Make dirty work

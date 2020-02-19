@@ -18,12 +18,13 @@ void ServerConfig::init() {
     }
 }
 
-bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
+bool ServerConfig::handlePacket(ServerClient& client, Packet& r) {
     switch (r.type) {
         default: break;
         case PacketType::CONNECT_DATA_RECVD: {
             return true;
         }
+
         case PacketType::BLOCK_IDENTIFIER_LIST: {
             Serializer()
                 .append(blockIdentifierList)
@@ -31,6 +32,7 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
                 .sendTo(client.peer, PacketChannel::CONNECT);
             break;
         }
+
         case PacketType::BIOME_IDENTIFIER_LIST: {
             Serializer()
                 .append(biomeIdentifierList)
@@ -38,18 +40,12 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
                 .sendTo(client.peer, PacketChannel::CONNECT);
             break;
         }
-        case PacketType::MODS: {
-            for (LuaMod& mod : defs.luaApi.mods) {
-                Packet p(PacketType::MODS);
-                p.data = Serializer().append(mod.serialized).data;
-                p.sendTo(client.peer, PacketChannel::CONNECT);
-            }
 
-            std::vector<std::string> order {};
-            for (LuaMod& mod : defs.luaApi.mods) order.push_back(mod.config.name);
-            Serializer().append(order).packet(PacketType::MOD_ORDER).sendTo(client.peer, PacketChannel::CONNECT);
+        case PacketType::MODS: {
+            defs.luaApi.sendModsPacket(client.peer);
             break;
         }
+
         case PacketType::MEDIA: {
             const unsigned int MAX_PACKET_SIZE = 32*1024;
             unsigned int packetSize = 0;
@@ -107,5 +103,6 @@ bool ServerConfig::handlePacket(ServerClient &client, Packet &r) {
             d.sendTo(client.peer, PacketChannel::CONNECT);
         }
     }
+
     return false;
 }

@@ -3,6 +3,9 @@
 //
 
 #include "LuaErrorScene.h"
+#include "../../def/texture/Font.h"
+#include "../hud/components/basic/GUIRect.h"
+#include "../hud/components/basic/GUIText.h"
 
 LuaErrorScene::LuaErrorScene(ClientState &state, const std::string &err) : Scene(state), err(err) {
     state.renderer.setClearColor(0, 0, 0);

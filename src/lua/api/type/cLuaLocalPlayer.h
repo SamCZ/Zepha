@@ -4,10 +4,8 @@
 
 #pragma once
 
-#include "LocalLuaEntity.h"
-#include "../../../game/scene/world/LocalWorld.h"
-#include "LocalLuaPlayer.h"
 #include <sol2/sol.hpp>
+#include "LocalLuaPlayer.h"
 
 namespace ClientApi {
     void local_player(sol::state& lua) {

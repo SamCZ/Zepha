@@ -5,9 +5,10 @@
 #pragma once
 
 #include <sol2/sol.hpp>
+
+#include "LuaInventory.h"
 #include "../../../def/LocalDefs.h"
 #include "../../../game/scene/world/Player.h"
-#include "LuaInventory.h"
 
 class LocalLuaPlayer {
 public:

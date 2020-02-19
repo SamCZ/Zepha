@@ -288,5 +288,6 @@ std::shared_ptr<BlockChunk> MapGen::combinePartials(std::shared_ptr<BlockChunk> 
 
     res->generated = src->generated || res->generated;
     res->partial = !res->generated;
+    res->calcNonAirBlocks();
     return res;
 }

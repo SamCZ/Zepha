@@ -6,17 +6,17 @@
 
 #include <unordered_set>
 #include "WorldGenStream.h"
-#include "../conn/ServerClients.h"
+#include "../conn/ClientList.h"
 #include "../../def/ServerDefs.h"
 #include "../../game/scene/world/World.h"
 #include "../../world/ServerDimension.h"
 
 class ServerWorld : public World {
 public:
-    const static int MB_GEN_H = 6;
-    const static int MB_GEN_V = 4;
+    const static int MB_GEN_H = 3;
+    const static int MB_GEN_V = 3;
 
-    explicit ServerWorld(unsigned int seed, ServerDefs& defs, ServerClients& clients);
+    explicit ServerWorld(unsigned int seed, ServerDefs& defs, ClientList& clients);
 
     void init();
     void update(double delta) override;
@@ -42,7 +42,7 @@ private:
 
     unsigned int seed;
     ServerDefs& defs;
-    ServerClients& clientList;
+    ClientList& clientList;
 
     unsigned int generatedChunks = 0;
 

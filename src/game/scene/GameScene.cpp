@@ -6,7 +6,7 @@
 
 GameScene::GameScene(ClientState& state) : Scene(state),
     defs(state.defs),
-    server(state.connection, defs),
+    server(state.connection, defs, player),
     world(defs, &playerPos, &server),
 
     player(world, defs, state.renderer),
@@ -30,7 +30,7 @@ GameScene::GameScene(ClientState& state) : Scene(state),
 void GameScene::update() {
     defs.update(state.deltaTime, state.renderer.window.keys);
     defs.textures.update();
-    server.update(player);
+    server.update();
 
     Window& window = state.renderer.window;
 

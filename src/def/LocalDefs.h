@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "texture/TextureAtlas.h"
 #include "LocalDefinitionAtlas.h"
-#include "../lua/client/LocalLuaParser.h"
-#include "model/ModelStore.h"
 #include "gen/LocalBiomeAtlas.h"
+#include "model/ModelStore.h"
+#include "texture/TextureAtlas.h"
+#include "../lua/parser/LocalLuaParser.h"
 
 class LocalDefs {
 public:

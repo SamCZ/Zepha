@@ -24,10 +24,8 @@ public:
     void sendTo(ENetPeer* peer, PacketChannel channel);
     void sendTo(const ENetPeer &peer, PacketChannel channel);
 
-    ~Packet() = default;
-
     PacketType type = PacketType::UNDEFINED;
-    std::string data;
-    bool reliable;
+    std::string data {};
+    bool reliable = true;
 };
 

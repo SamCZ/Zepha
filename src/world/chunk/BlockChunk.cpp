@@ -23,17 +23,20 @@ bool BlockChunk::setBlock(unsigned int ind, unsigned int blk) {
     // Exit if someone is doing something stupid
     if (ind >= 4096) return false;
     // Mesh emptiness manipulation
-    if (blk == DefinitionAtlas::AIR && (nonAirBlocks = fmax(nonAirBlocks - 1, 0)) == 0) {
-        empty = true;
-        shouldHaveMesh = false;
+    if (blk == DefinitionAtlas::AIR) {
+        if ((nonAirBlocks = fmax(nonAirBlocks - 1, 0)) == 0) {
+            empty = true;
+            shouldHaveMesh = false;
+        }
     }
-    else if (blk != DefinitionAtlas::AIR && getBlock(ind) == DefinitionAtlas::AIR) {
-        if (nonAirBlocks == 0) shouldHaveMesh = true;
+    else if (getBlock(ind) == DefinitionAtlas::AIR) {
+        shouldHaveMesh = true;
         empty = false;
         nonAirBlocks++;
     }
-    // Return the value
-    RIE::write(ind, blk, blocks, 4096);
+
+    // Actually set the block
+    return RIE::write(ind, blk, blocks, 4096);
 }
 
 const std::vector<unsigned int> &BlockChunk::cGetBlocks() const {
@@ -82,12 +85,12 @@ void BlockChunk::calcNonAirBlocks() {
 
     for (unsigned int i = 0; i < blocks.size(); i += 2) {
         unsigned int cInd = blocks[i];
-        unsigned int lInd = (i == 0 ? 0 : blocks[i - 2]);
+        unsigned int nInd = (i == blocks.size() - 2 ? 4095 : blocks[i + 2]);
         unsigned int blk  = blocks[i + 1];
 
         if (blk > DefinitionAtlas::AIR) {
             empty = false;
-            nonAirBlocks += cInd - lInd;
+            nonAirBlocks += nInd - cInd;
         }
     }
 

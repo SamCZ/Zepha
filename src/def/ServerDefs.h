@@ -5,19 +5,20 @@
 #pragma once
 
 
-#include "ServerDefinitionAtlas.h"
-#include "../lua/client/ServerLuaParser.h"
-#include "../server/asset/AssetStorage.h"
 #include "gen/ServerBiomeAtlas.h"
+#include "ServerDefinitionAtlas.h"
+#include "../server/asset/AssetStorage.h"
+#include "../lua/parser/ServerLuaParser.h"
 
 class ServerWorld;
+class ClientList;
 
 class ServerDefs {
 public:
     ServerDefs(const std::string& subgame, const std::string& execPath);
     void init(ServerWorld& world);
 
-    void update(double delta);
+    void update(double delta, ClientList& clients);
 
     ~ServerDefs() = default;
     std::string subgamePath = "";

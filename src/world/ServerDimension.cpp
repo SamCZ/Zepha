@@ -7,7 +7,7 @@
 #include "../server/world/ServerWorld.h"
 #include "ServerDimension.h"
 
-void ServerDimension::update(const std::vector<ServerClient*> &clients) {
+void ServerDimension::update(const std::vector<std::shared_ptr<ServerClient>> &clients) {
     for (const auto& region : regions) {
         for (unsigned short i = 0; i < 64; i++) {
             if (region.second->operator[](i) == nullptr) continue;

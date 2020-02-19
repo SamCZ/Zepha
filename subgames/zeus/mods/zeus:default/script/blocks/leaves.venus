@@ -14,9 +14,5 @@ zepha.register_block("zeus:default:leaves", {
         hand = 1,
         axe = 0.2,
     },
-    drop = "zeus:materials:stick",
-    on_break_client = fn(pos) {
-        zepha.add_entity("zeus:default:dropped_item", vector.add(pos, v(0.5)),
-            {item = zepha.registered_blocks["zeus:default:leaves"].drop});
-    }
+    drop = "zeus:materials:stick"
 })

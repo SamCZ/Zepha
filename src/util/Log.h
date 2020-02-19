@@ -9,9 +9,9 @@
 
 namespace Log {
     #ifdef _WIN32
-    static const char* info = "[INFO] ";
-    static const char* warn = "[WARN] ";
-    static const char* err  = "[ERR!] ";
+    static const char* info = "[info] ";
+    static const char* warn = "[warn] ";
+    static const char* err  = "[err] ";
     static const char* endl = "\n";
 
     static const char* undl = "";
@@ -21,9 +21,9 @@ namespace Log {
 
     static void clear() { auto s = system("cls"); }
     #else
-    static const char* info = "\033[36m[INFO] ";
-    static const char* warn = "\033[31m[WARN] ";
-    static const char* err  = "\033[31m[ERR!] ";
+    static const char* info = "\033[36m[info] ";
+    static const char* warn = "\033[31m[warn] ";
+    static const char* err  = "\033[31m[err] ";
     static const char* endl = "\033[0m\n";
 
     static const char* undl = "\033[4m";

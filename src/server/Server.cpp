@@ -4,11 +4,13 @@
 
 #include <thread>
 
+#include "../util/Timer.h"
+
 #include "Server.h"
 
 Server::Server(const std::string& path, unsigned short port, const std::string& subgame) :
     defs(subgame, path),
-    clientList(),
+    clientList(defs),
     world(10, defs, clientList),
     port(port),
     handler(port, 32),
@@ -17,12 +19,6 @@ Server::Server(const std::string& path, unsigned short port, const std::string& 
     defs.init(world);
     world.init();
     config.init();
-
-    std::cout << Log::info << "Loaded " << defs.luaApi.mods.size() << " mods: [ ";
-    for (unsigned int i = 0; i < defs.luaApi.mods.size(); i++) {
-        std::cout << defs.luaApi.mods[i].config.name << (i < defs.luaApi.mods.size() - 1 ? ", " : " ]");
-    }
-    std::cout << std::endl;
 
     std::cout << Log::info << "Server started successfully, listening for clients." << Log::endl;
     while (alive) update();
@@ -33,7 +29,7 @@ void Server::update() {
     Timer loop("");
 
     world.update(0);
-    defs.update(deltaTime);
+    defs.update(deltaTime, clientList);
 
     ENetEvent event;
     while (handler.update(&event) && loop.elapsedNs() < interval_ns) {
@@ -63,7 +59,15 @@ void Server::update() {
                 else {
                     bool done = config.handlePacket(*client, p);
                     if (done) {
-                        clientList.createPlayer(*client);
+                        std::shared_ptr<ServerClient> clientShared = nullptr;
+                        for (auto& sClient : clientList.clients) {
+                            if (sClient->cid == client->cid) {
+                                clientShared = sClient;
+                                break;
+                            }
+                        }
+                        if (!clientShared) break;
+                        clientList.createPlayer(clientShared);
                     }
                 }
 
@@ -91,14 +95,16 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
         case PacketType::THIS_PLAYER_INFO: {
             Deserializer d(p.data);
             client.setPos(d.read<glm::vec3>());
-            client.setAngle(d.read<float>());
+            client.setPitch(d.read<float>());
+            client.setYaw(d.read<float>());
 
-            //Send All ServerClients the new positon
+            //Send All ClientList the new positon
             Packet r(PacketType::PLAYER_INFO);
             r.data = Serializer()
                     .append(client.cid)
                     .append(client.getPos())
-                    .append(client.getAngle())
+                    .append(client.getPitch())
+                    .append(client.getYaw())
                     .data;
 
             for (auto& iter : clientList.clients) {

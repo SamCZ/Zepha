@@ -28,8 +28,8 @@ public:
     std::vector<LuaMod> mods;
     std::vector<std::string> modsOrder;
 private:
-    sol::protected_function_result DoFileSandboxed(std::string file);
     sol::protected_function_result errorCallback(lua_State*, sol::protected_function_result errPfr);
+    sol::protected_function_result runFileSandboxed(std::string file);
 
     double delta = 0;
     LuaInputManager manager;

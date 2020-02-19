@@ -7,9 +7,5 @@ zepha.register_block("zeus:default:sand", {
         shovel = 1,
         pick = 2
     },
-    drop = "zeus:default:sand",
-    on_break_client = fn(pos) {
-        zepha.add_entity("zeus:default:dropped_item", vector.add(pos, v(0.5)),
-            {item = zepha.registered_blocks["zeus:default:sand"].drop});
-    }
+    drop = "zeus:default:sand"
 })

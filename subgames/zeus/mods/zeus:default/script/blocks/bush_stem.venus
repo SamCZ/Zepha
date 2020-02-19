@@ -11,9 +11,5 @@ zepha.register_block("zeus:default:bush_stem", {
         hand = 0.3,
         axe = 0.1
     },
-    drop = "zeus:default:wood",
-    on_break_client = fn(pos) {
-        zepha.add_entity("zeus:default:dropped_item", vector.add(pos, v(0.5)),
-            {item = zepha.registered_blocks["zeus:default:bush_stem"].drop});
-    }
+    drop = "zeus:default:wood"
 })

@@ -1,0 +1,119 @@
+## Register the inventory menu and keybind
+zepha.register_keybind("zeus:inventory:open_inventory", {
+    description = "Open Inventory",
+    default = zepha.keys.e,
+    on_press = () => {
+        if (zepha.player.menu_state == "") {
+            zepha.player:open_menu([[
+                body[body]
+                    background: #0003
+
+                    rect[inventory]
+                        position: 50% 50%
+                        position_anchor: 50% 55%
+                        size: 218px 160px
+
+                        rect[inv_background]
+                            position: 0px 45px
+                            size: 218px 100px
+                            padding: 20px 10px 8px 10px
+                            background: asset(zeus:inventory:inventory)
+
+                            inventory
+                                source: current_player
+                                list: main
+                                position: 1px 1px
+                                slot_spacing: 2px 2px
+                            end
+                        end
+
+                        rect[craft_background]
+                            size: 218px 72px
+                            position: 0px -15px
+                            padding: 20px 10px 8px 10px
+                            background: asset(zeus:inventory:crafting)
+
+                            inventory
+                                source: current_player
+                                list: craft
+                                position: 111px 1px
+                                slot_spacing: 2px 2px
+                            end
+
+                            inventory
+                                source: current_player
+                                list: craft_result
+                                position: 163px 10px
+                                slot_spacing: 2px 2px
+                            end
+                        end
+
+                        rect[hot_wheel]
+                            size: 214px 67px
+                            position: 2px 160px
+                            background: asset(zeus:inventory:inventory_wheel)
+
+                            inventory
+                                source: current_player
+                                list: hot_wheel_1
+                                position: 9px 1px
+                                slot_spacing: 2px 2px
+                            end
+                            inventory
+                                source: current_player
+                                list: hot_wheel_2
+                                position: 117px 1px
+                                slot_spacing: 2px 2px
+                            end
+                            inventory
+                                source: current_player
+                                list: hot_wheel_3
+                                position: 125px 25px
+                                slot_spacing: 2px 2px
+                            end
+                            inventory
+                                source: current_player
+                                list: hot_wheel_4
+                                position: 117px 50px
+                                slot_spacing: 2px 2px
+                            end
+                            inventory
+                                source: current_player
+                                list: hot_wheel_5
+                                position: 9px 50px
+                                slot_spacing: 2px 2px
+                            end
+                            inventory
+                                source: current_player
+                                list: hot_wheel_6
+                                position: 1px 25px
+                                slot_spacing: 2px 2px
+                            end
+                        end
+
+                        model
+                            scale: 96 96
+                            position: 195 145
+                            type: model
+                            source: zeus:default:player
+                            texture: zeus:default:player
+                            anim_range: 0 300
+                        end
+                    end
+                end
+            ]], {
+                body = {
+                    left = fn() {
+                        zepha.player:close_menu()
+                    }
+                },
+                inv_background = {
+                    left = fn() {} ## Prevent close menu from triggering.
+                }
+            })
+        }
+        else {
+            zepha.player:close_menu()
+        }
+    }
+})

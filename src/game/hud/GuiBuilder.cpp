@@ -117,8 +117,10 @@ void GuiBuilder::clear(bool clrCallbacks) {
 void GuiBuilder::recursivelyCreate(std::vector<SerializedGuiElem> components, std::shared_ptr<GUIComponent> parent) {
     for (auto& data : components) {
         std::shared_ptr<GUIComponent> component = createComponent(data);
-        parent->add(component);
-        recursivelyCreate(data.children, component);
+        if (component != nullptr) {
+            parent->add(component);
+            recursivelyCreate(data.children, component);
+        }
     }
 }
 

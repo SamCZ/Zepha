@@ -5,11 +5,9 @@
 #pragma once
 
 #include <sol2/sol.hpp>
-#include "../type/LocalLuaEntity.h"
-#include "../../../game/scene/world/LocalWorld.h"
 
-namespace ClientApi {
-    void update_entities(sol::state& lua) {
+namespace Api {
+    static void update_entities(sol::state& lua) {
         lua.script(R"(
             zepha.__builtin.update_entities = function(delta)
                 for k, v in pairs(zepha.entities) do

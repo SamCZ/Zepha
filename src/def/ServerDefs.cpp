@@ -3,6 +3,7 @@
 //
 
 #include "ServerDefs.h"
+#include "../server/conn/ClientList.h"
 
 ServerDefs::ServerDefs(const std::string& subgame, const std::string& execPath) {
     size_t exec = execPath.find_last_of('/');
@@ -23,6 +24,6 @@ void ServerDefs::init(ServerWorld &world) {
     luaApi.init(*this, world, subgamePath);
 }
 
-void ServerDefs::update(double delta) {
+void ServerDefs::update(double delta, ClientList& clients) {
     luaApi.update(delta);
 }

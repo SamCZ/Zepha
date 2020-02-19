@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "conn/ServerClients.h"
+#include "conn/ClientList.h"
 #include "world/ServerWorld.h"
 #include "config/ServerConfig.h"
 #include "../def/ServerDefs.h"
@@ -29,7 +29,7 @@ private:
     ServerDefs defs;
     ServerWorld world;
     NetHandler handler;
-    ServerClients clientList;
+    ClientList clientList;
     ServerConfig config;
 
     double elapsedSeconds = 0;

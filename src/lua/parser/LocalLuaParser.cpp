@@ -12,7 +12,6 @@
 #include "../register/RegisterBiomes.h"
 
 #include "../api/type/LocalLuaPlayer.h"
-
 #include "../api/type/cLocalLuaEntity.h"
 #include "../api/type/cLuaLocalPlayer.h"
 #include "../api/type/cLuaInventory.h"
@@ -20,23 +19,19 @@
 #include "../api/type/cLocalLuaAnimationManager.h"
 
 #include "../api/modules/delay.h"
-
 #include "../api/modules/register_block.h"
 #include "../api/modules/register_blockmodel.h"
 #include "../api/modules/register_biome.h"
 #include "../api/modules/register_item.h"
 #include "../api/modules/register_entity.h"
-
 #include "../api/modules/set_block.h"
 #include "../api/modules/get_block.h"
 #include "../api/modules/remove_block.h"
-
 #include "../api/modules/add_entity.h"
 #include "../api/modules/remove_entity.h"
-
 #include "../api/modules/register_keybind.h"
 
-#include "../api/functions/cUpdateEntities.h"
+#include "../api/functions/update_entities.h"
 
 void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world, Player& player) {
     //Load Base Libraries
@@ -88,25 +83,25 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& pla
     Api::add_entity_c    (lua, core, defs, world);
     Api::remove_entity_c (lua, core, defs, world);
 
-    ClientApi::update_entities(lua);
+    Api::update_entities(lua);
 
     //Sandbox the dofile function
     lua["dofile"] = lua["loadfile"] = sol::nil;
-    lua.set_function("runfile", &LocalLuaParser::DoFileSandboxed, this);
+    lua.set_function("runfile", &LocalLuaParser::runFileSandboxed, this);
 }
 
 void LocalLuaParser::loadMods() {
     //Load "base" if it exists.
     for (const std::string& modName : modsOrder) {
         if (modName == "base") {
-            DoFileSandboxed(modName + "/main");
+            runFileSandboxed(modName + "/main");
             break;
         }
     }
 
     for (const std::string& modName : modsOrder) {
         if (modName != "base") {
-            DoFileSandboxed(modName + "/main");
+            runFileSandboxed(modName + "/main");
         }
     }
 }
@@ -164,7 +159,7 @@ sol::protected_function_result LocalLuaParser::errorCallback(lua_State*, sol::pr
     return errPfr;
 }
 
-sol::protected_function_result LocalLuaParser::DoFileSandboxed(std::string file) {
+sol::protected_function_result LocalLuaParser::runFileSandboxed(std::string file) {
     size_t modname_length = file.find('/');
     std::string modname = file.substr(0, modname_length);
 

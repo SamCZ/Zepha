@@ -31,8 +31,8 @@ set(ZEPHA_SRC
     game/scene/GameScene.h
     game/graph/Renderer.cpp
     game/graph/Renderer.h
-    lua/client/LocalLuaParser.cpp
-    lua/client/LocalLuaParser.h
+        lua/parser/LocalLuaParser.cpp
+        lua/parser/LocalLuaParser.h
     game/hud/components/basic/GUIText.cpp
     game/hud/components/basic/GUIText.h
     game/hud/DebugGui.cpp
@@ -61,12 +61,11 @@ set(ZEPHA_SRC
     util/net/NetHandler.h
     game/hud/GameGui.cpp
     game/hud/GameGui.h
-    server/conn/ServerClients.cpp
-    server/conn/ServerClients.h
+        server/conn/ClientList.cpp
+        server/conn/ClientList.h
     server/conn/ServerClient.h
     util/net/PacketChannel.h
-    game/entity/world/PlayerEntity.cpp
-    game/entity/world/PlayerEntity.h
+        game/entity/world/PlayerEntity.h
     game/hud/components/basic/GUIRect.cpp
     game/hud/components/basic/GUIRect.h
     game/hud/components/basic/GUIGraph.cpp
@@ -128,8 +127,8 @@ set(ZEPHA_SRC
     def/DefinitionAtlas.h
     lua/LuaParser.cpp
     lua/LuaParser.h
-    lua/client/ServerLuaParser.cpp
-    lua/client/ServerLuaParser.h
+        lua/parser/ServerLuaParser.cpp
+        lua/parser/ServerLuaParser.h
     util/Log.h
     lua/Callback.h
     game/graph/shader/GuiUniforms.h
@@ -201,7 +200,7 @@ set(ZEPHA_SRC
     server/asset/AssetType.h
     def/model/ModelStore.h
     lua/api/modules/remove_entity.h
-    lua/api/functions/cUpdateEntities.h
+        lua/api/functions/update_entities.h
     lua/api/modules/register_keybind.h
     lua/LuaInputManager.cpp
     lua/LuaInputManager.h
@@ -267,8 +266,7 @@ set(ZEPHA_SRC
     lua/api/type/ServerLuaEntity.h
     game/scene/LuaErrorScene.cpp
     game/scene/LuaErrorScene.h
-    lua/api/functions/sUpdateEntities.h
-    lua/api/type/sServerLuaEntity.h
+        lua/api/type/sServerLuaEntity.h
     util/net/Serializer.h
     util/net/Deserializer.h
     lua/api/type/ServerLocalLuaEntity.cpp
@@ -297,6 +295,6 @@ set(ZEPHA_SRC
     lua/VenusParser.h
     lua/ErrorFormatter.cpp
     lua/ErrorFormatter.h
-    util/RIE.h)
+    util/RIE.h lua/api/type/ServerLuaPlayer.cpp lua/api/type/ServerLuaPlayer.h lua/api/type/sServerLuaPlayer.h lua/api/modules/register_on.h lua/api/functions/trigger_event.h lua/parser/ServerModHandler.cpp lua/parser/ServerModHandler.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

@@ -4,42 +4,33 @@
 
 #pragma once
 
-#include <string>
-#include <iostream>
-#include <glm/vec3.hpp>
-
-#include "../../../util/Timer.h"
-#include "../../../util/net/Packet.h"
-#include "../../../util/net/NetHandler.h"
-#include "../../entity/world/PlayerEntity.h"
-#include "../../graph/drawable/DrawableGroup.h"
-#include "../world/Player.h"
-#include "../world/LocalWorld.h"
-#include "../../../util/net/Address.h"
 #include "ServerConnection.h"
+#include "../world/LocalWorld.h"
 
 class ClientNetworkInterpreter {
 public:
-    ClientNetworkInterpreter(ServerConnection& connection, LocalDefs& defs);
+    ClientNetworkInterpreter(ServerConnection& connection, LocalDefs& defs, Player& player);
     ClientNetworkInterpreter(const ClientNetworkInterpreter& other) = default;
 
     void init(LocalWorld* world);
-    void update(Player &player);
-    void cleanup();
+    void update();
+
+    void receivedPacket(std::unique_ptr<Packet> ePacket);
 
     void setBlock(glm::ivec3 pos, unsigned int block);
 
     ~ClientNetworkInterpreter();
 
-    std::vector<std::unique_ptr<Packet>> chunkPackets;
-    int serverSideChunkGens = 0;
     int recvPackets = 0;
+    int serverSideChunkGens = 0;
+    std::vector<std::unique_ptr<Packet>> chunkPackets;
 private:
-    std::shared_ptr<AtlasRef> playerFrontTex, playerBackTex, shadowTex;
-    int id = 0;
+    Player& player;
+    ServerConnection& connection;
 
     LocalWorld* world = nullptr;
-    ServerConnection& connection;
     std::shared_ptr<Model> playerModel;
+
+    int id = 0;
 };
 
