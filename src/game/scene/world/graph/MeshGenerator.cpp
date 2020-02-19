@@ -9,7 +9,7 @@
 #include "../../../../world/chunk/BlockChunk.h"
 #include "MeshGenerator.h"
 
-MeshGenerator::MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs, std::shared_ptr<BlockChunk> chunk,
+MeshGenerator::MeshGenerator(MeshDetails* meshDetails, ClientGame& defs, std::shared_ptr<BlockChunk> chunk,
                              std::array<std::shared_ptr<BlockChunk>, 6> adjacent,
                              std::array<NoiseSample, 3>& blockOffsets, bool hi) :
 

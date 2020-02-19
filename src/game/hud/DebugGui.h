@@ -19,13 +19,13 @@
 
 class DebugGui : public GUIContainer {
 public:
-    DebugGui(glm::vec2 bufferSize, LocalDefs& atlas);
+    DebugGui(glm::vec2 bufferSize, ClientGame& atlas);
 
     void bufferResized(glm::vec2 bufferSize);
     void changeVisibilityState(int state);
     void positionElements(glm::vec2 bufferSize);
 
-    void update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
+    void update(Player& player, LocalWorld& world, ClientGame& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
 private:
     int displayMode;
 };

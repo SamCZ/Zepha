@@ -5,7 +5,7 @@
 #pragma once
 
 #include "../basic/GUIContainer.h"
-#include "../../../../def/LocalDefs.h"
+#include "../../../../def/ClientGame.h"
 #include "../basic/GUIRect.h"
 #include "../basic/GUIInventoryItem.h"
 #include "../../../../def/texture/Font.h"
@@ -17,7 +17,7 @@ public:
     GUIInventoryList(const std::string& key);
     ~GUIInventoryList() override;
 
-    void create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding, InventoryList& list, InventoryList& hand, LocalDefs& defs);
+    void create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding, InventoryList& list, InventoryList& hand, ClientGame& defs);
 
     void setHoverCallback(const callback& hoverCallback) override;
     void setLeftClickCallback(const callback& leftClickCallback) override;
@@ -32,6 +32,6 @@ private:
 
     InventoryList* list;
     InventoryList* hand;
-    LocalDefs* defs;
+    ClientGame* defs;
     glm::ivec2 innerPadding;
 };

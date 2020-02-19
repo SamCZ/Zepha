@@ -5,7 +5,7 @@
 #include "BlockCrackEntity.h"
 
 
-BlockCrackEntity::BlockCrackEntity(LocalDefs &defs, glm::vec3 blockPos, unsigned int blockID) :
+BlockCrackEntity::BlockCrackEntity(ClientGame &defs, glm::vec3 blockPos, unsigned int blockID) :
     defs(defs),
     blockPos(blockPos),
     blockID(blockID) {

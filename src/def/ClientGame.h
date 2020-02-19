@@ -10,20 +10,20 @@
 #include "texture/TextureAtlas.h"
 #include "../lua/parser/LocalLuaParser.h"
 
-class LocalDefs {
+class ClientGame {
 public:
-    explicit LocalDefs(const std::string& tex_path);
-    LocalDefs(const LocalDefs& copy);
+    explicit ClientGame(const std::string& tex_path);
+    ClientGame(const ClientGame& copy);
 
     void init(LocalWorld &world, Player& player);
     void update(double delta, bool* keys);
 
-    ~LocalDefs() = default;
+    ~ClientGame() = default;
 
     std::string tex_path;
 
     TextureAtlas         textures;
-    LocalLuaParser       luaApi;
+    LocalLuaParser       parser;
     LocalDefinitionAtlas defs;
     LocalBiomeAtlas      biomes;
     ModelStore           models;

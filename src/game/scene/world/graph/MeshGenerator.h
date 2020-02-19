@@ -9,7 +9,7 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include "../../../../def/LocalDefs.h"
+#include "../../../../def/ClientGame.h"
 #include "../../../../def/gen/NoiseSample.h"
 
 class MeshDetails;
@@ -17,7 +17,7 @@ class BlockChunk;
 
 class MeshGenerator {
 public:
-    MeshGenerator(MeshDetails* meshDetails, LocalDefs& defs,
+    MeshGenerator(MeshDetails* meshDetails, ClientGame& defs,
                   std::shared_ptr<BlockChunk> chunk, std::array<std::shared_ptr<BlockChunk>, 6> adjacent,
                   std::array<NoiseSample, 3>& blockOffsets, bool hi);
 private:
@@ -26,7 +26,7 @@ private:
 
     unsigned int indOffset = 0;
 
-    LocalDefs& defs;
+    ClientGame& defs;
     LocalDefinitionAtlas& atlas;
     MeshDetails* meshDetails;
 

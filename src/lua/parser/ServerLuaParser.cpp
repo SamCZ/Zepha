@@ -16,6 +16,7 @@
 #include "../api/type/sServerLuaPlayer.h"
 #include "../api/type/sServerLuaEntity.h"
 #include "../api/type/cLuaInventory.h"
+#include "../api/type/cLuaItemStack.h"
 
 // Modules
 #include "../api/modules/delay.h"
@@ -37,7 +38,7 @@
 #include "../api/functions/update_entities.h"
 
 
-void ServerLuaParser::init(ServerDefs& defs, ServerWorld& world, std::string path) {
+void ServerLuaParser::init(ServerGame& defs, ServerWorld& world, std::string path) {
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
 
     loadApi(defs, world);
@@ -90,22 +91,23 @@ void ServerLuaParser::playerDisconnected(std::shared_ptr<ServerClient> client) {
     }
 }
 
-void ServerLuaParser::loadApi(ServerDefs &defs, ServerWorld &world) {
+void ServerLuaParser::loadApi(ServerGame &defs, ServerWorld &world) {
     //Create Zepha Table
     core = lua.create_table();
     lua["zepha"] = core;
     core["__builtin"] = lua.create_table();
 
-    //Load Types
+    // Types
     ServerApi::entity(lua);
     ServerApi::server_player(lua);
     ClientApi::inventory(lua);
+    ClientApi::item_stack(lua);
 
     core["server"] = true;
     core["players"] = lua.create_table();
 
-    //Load Modules
-    Api::delay(core, delayed_functions);
+    // Modules
+    Api::delay (core, delayed_functions);
 
     Api::register_block      (lua, core);
     Api::register_blockmodel (lua, core);
@@ -122,15 +124,16 @@ void ServerLuaParser::loadApi(ServerDefs &defs, ServerWorld &world) {
     Api::add_entity_s    (lua, core, defs, world);
     Api::remove_entity_s (lua, core, defs, world);
 
+    // Functions
     Api::trigger_event(lua);
     Api::update_entities(lua);
 
-    //Sandbox the dofile function
+    // Create sandboxed runfile()
     lua["dofile"] = lua["loadfile"] = sol::nil;
     lua.set_function("runfile", &ServerLuaParser::runFileSandboxed, this);
 }
 
-void ServerLuaParser::registerDefs(ServerDefs &defs) {
+void ServerLuaParser::registerDefs(ServerGame &defs) {
     RegisterBlocks::server(core, defs);
     RegisterItems ::server(core, defs);
     RegisterBiomes::server(core, defs);
@@ -183,9 +186,8 @@ sol::protected_function_result ServerLuaParser::runFileSandboxed(const std::stri
                     env["_FILE"] = f.path;
                     env["_MODNAME"] = mod.config.name;
 
-                    auto pfr = lua.safe_script(f.file, env, std::bind(&ServerLuaParser::errorCallback, this,
+                    return lua.safe_script(f.file, env, std::bind(&ServerLuaParser::errorCallback, this,
                             std::placeholders::_1, std::placeholders::_2), "@" + f.path, sol::load_mode::text);
-                    return pfr;
                 }
             }
 

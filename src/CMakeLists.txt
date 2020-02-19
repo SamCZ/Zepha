@@ -107,8 +107,8 @@ set(ZEPHA_SRC
     def/texture/TextureAtlas.h
     def/texture/AtlasRef.h
     world/region/MapBlock.h
-    def/LocalDefs.cpp
-    def/LocalDefs.h
+        def/ClientGame.cpp
+        def/ClientGame.h
     world/region/Region.cpp
     world/region/MapBlock.cpp
     util/Util.h
@@ -117,8 +117,8 @@ set(ZEPHA_SRC
     game/hud/components/compound/GUILabelledGraph.cpp
     game/entity/world/ParticleEntity.cpp
     game/entity/world/ParticleEntity.h
-    def/ServerDefs.cpp
-    def/ServerDefs.h
+        def/ServerGame.cpp
+        def/ServerGame.h
     def/ServerDefinitionAtlas.cpp
     def/ServerDefinitionAtlas.h
     def/item/BlockDef.cpp
@@ -295,6 +295,6 @@ set(ZEPHA_SRC
     lua/VenusParser.h
     lua/ErrorFormatter.cpp
     lua/ErrorFormatter.h
-    util/RIE.h lua/api/type/ServerLuaPlayer.cpp lua/api/type/ServerLuaPlayer.h lua/api/type/sServerLuaPlayer.h lua/api/modules/register_on.h lua/api/functions/trigger_event.h lua/parser/ServerModHandler.cpp lua/parser/ServerModHandler.h)
+    util/RIE.h lua/api/type/ServerLuaPlayer.cpp lua/api/type/ServerLuaPlayer.h lua/api/type/sServerLuaPlayer.h lua/api/modules/register_on.h lua/api/functions/trigger_event.h lua/parser/ServerModHandler.cpp lua/parser/ServerModHandler.h lua/parser/LocalModHandler.cpp lua/parser/LocalModHandler.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

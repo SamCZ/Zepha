@@ -5,8 +5,8 @@
 #pragma once
 
 #include <sol2/sol.hpp>
-#include "../../def/LocalDefs.h"
-#include "../../def/ServerDefs.h"
+#include "../../def/ClientGame.h"
+#include "../../def/ServerGame.h"
 #include "../../def/gen/BiomeDef.h"
 
 namespace RegisterKeybinds {
@@ -32,7 +32,7 @@ namespace RegisterKeybinds {
         }
     }
 
-//    static void server(sol::table& core, ServerDefs& defs) {
+//    static void server(sol::table& core, ServerGame& defs) {
 //        registerItems(core.get<sol::table>("registered_items"), defs.defs, nullptr);
 //    }
 

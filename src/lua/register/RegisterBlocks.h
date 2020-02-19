@@ -5,8 +5,8 @@
 #pragma once
 
 #include <sol2/sol.hpp>
-#include "../../def/LocalDefs.h"
-#include "../../def/ServerDefs.h"
+#include "../../def/ClientGame.h"
+#include "../../def/ServerGame.h"
 #include "../../def/gen/BiomeDef.h"
 
 namespace RegisterBlocks {
@@ -321,12 +321,12 @@ namespace RegisterBlocks {
         }
     }
 
-    static void server(sol::table& core, ServerDefs& defs) {
+    static void server(sol::table& core, ServerGame& defs) {
         registerBlocks(core.get<sol::table>("registered_blocks"),
                 core.get<sol::table>("registered_blockmodels"), defs.defs, nullptr);
     }
 
-    static void client(sol::table& core, LocalDefs& defs) {
+    static void client(sol::table& core, ClientGame& defs) {
         registerBlocks(core.get<sol::table>("registered_blocks"),
                 core.get<sol::table>("registered_blockmodels"), defs.defs, &defs.textures);
     }

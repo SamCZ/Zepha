@@ -13,7 +13,7 @@
 #include "../../../world/chunk/BlockChunk.h"
 #include "../../../def/LocalDefinitionAtlas.h"
 #include "../../../util/Vec.h"
-#include "../../../def/LocalDefs.h"
+#include "../../../def/ClientGame.h"
 
 class LocalDimension;
 
@@ -23,7 +23,7 @@ public:
     static const int THREADS = 2;
     static const int TOTAL_QUEUE_SIZE = THREADS * THREAD_QUEUE_SIZE;
 
-    explicit MeshGenStream(LocalDefs& defs, LocalDimension& dimension);
+    explicit MeshGenStream(ClientGame& defs, LocalDimension& dimension);
     ~MeshGenStream();
 
     bool spaceInQueue();
@@ -46,9 +46,9 @@ public:
     };
 
     struct Thread {
-        explicit Thread(LocalDefs &defs, std::array<NoiseSample, 3>& offsetSampler);
+        explicit Thread(ClientGame &defs, std::array<NoiseSample, 3>& offsetSampler);
 
-        LocalDefs &defs;
+        ClientGame &defs;
         std::array<NoiseSample, 3>& offsetSamplers;
 
         std::thread thread {};
@@ -62,7 +62,7 @@ private:
     static void threadFunction(Thread* thread);
 
     LocalDimension& dimension;
-    LocalDefs& defs;
+    ClientGame& defs;
 
     std::array<NoiseSample, 3> noiseSampler;
     std::vector<glm::vec3> queuedTasks;

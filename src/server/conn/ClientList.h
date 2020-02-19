@@ -10,7 +10,7 @@
 
 class ClientList {
 public:
-    explicit ClientList(ServerDefs& defs);
+    explicit ClientList(ServerGame& defs);
 
     void handleConnect(ENetEvent e);
     void handleDisconnect(ENetEvent e);
@@ -19,5 +19,5 @@ public:
 
     std::vector<std::shared_ptr<ServerClient>> clients;
 private:
-    ServerDefs& defs;
+    ServerGame& defs;
 };

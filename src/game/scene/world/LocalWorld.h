@@ -20,7 +20,7 @@
 #include "../../../util/Space.h"
 #include "../../../util/Vec.h"
 #include "../../../world/LocalDimension.h"
-#include "../../../def/LocalDefs.h"
+#include "../../../def/ClientGame.h"
 #include "../../../world/block/PointedThing.h"
 #include "../../../game/graph/drawable/DrawableGroup.h"
 #include "../../entity/world/BlockCrackEntity.h"
@@ -34,7 +34,7 @@ class ClientNetworkInterpreter;
 
 class LocalWorld : public World {
 public:
-    LocalWorld(LocalDefs& defs, glm::vec3* playerPos, ClientNetworkInterpreter* server);
+    LocalWorld(ClientGame& defs, glm::vec3* playerPos, ClientNetworkInterpreter* server);
 
     void init();
     void update(double delta) override;
@@ -55,7 +55,7 @@ public:
     int renderChunks(Renderer &render);
     void renderEntities(Renderer &renderer);
 
-    LocalDefs& defs;
+    ClientGame& defs;
     LocalDimension dimension;
 
     int lastGenUpdates = 0;

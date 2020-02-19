@@ -2,10 +2,10 @@
 // Created by aurailus on 10/06/19.
 //
 
-#include "ServerDefs.h"
+#include "ServerGame.h"
 #include "../server/conn/ClientList.h"
 
-ServerDefs::ServerDefs(const std::string& subgame, const std::string& execPath) {
+ServerGame::ServerGame(const std::string& subgame, const std::string& execPath) {
     size_t exec = execPath.find_last_of('/');
     std::string gamePath = execPath.substr(0, exec + 1);
     subgamePath += "subgames/" + subgame + "/";
@@ -20,10 +20,10 @@ ServerDefs::ServerDefs(const std::string& subgame, const std::string& execPath) 
     }
 }
 
-void ServerDefs::init(ServerWorld &world) {
-    luaApi.init(*this, world, subgamePath);
+void ServerGame::init(ServerWorld &world) {
+    parser.init(*this, world, subgamePath);
 }
 
-void ServerDefs::update(double delta, ClientList& clients) {
-    luaApi.update(delta);
+void ServerGame::update(double delta, ClientList& clients) {
+    parser.update(delta);
 }

@@ -6,7 +6,7 @@
 
 #include <memory>
 #include "AtlasRef.h"
-#include "../LocalDefs.h"
+#include "../ClientGame.h"
 
 class Font {
 public:

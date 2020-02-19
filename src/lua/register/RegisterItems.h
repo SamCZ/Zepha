@@ -5,8 +5,8 @@
 #pragma once
 
 #include <sol2/sol.hpp>
-#include "../../def/LocalDefs.h"
-#include "../../def/ServerDefs.h"
+#include "../../def/ClientGame.h"
+#include "../../def/ServerGame.h"
 #include "../../def/gen/BiomeDef.h"
 
 namespace RegisterItems {
@@ -57,11 +57,11 @@ namespace RegisterItems {
         }
     }
 
-    static void server(sol::table& core, ServerDefs& defs) {
+    static void server(sol::table& core, ServerGame& defs) {
         registerItems(core.get<sol::table>("registered_items"), defs.defs, nullptr);
     }
 
-    static void client(sol::table& core, LocalDefs& defs) {
+    static void client(sol::table& core, ClientGame& defs) {
         registerItems(core.get<sol::table>("registered_items"), defs.defs, &defs.textures);
     }
 };

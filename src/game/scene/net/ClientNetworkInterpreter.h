@@ -9,7 +9,7 @@
 
 class ClientNetworkInterpreter {
 public:
-    ClientNetworkInterpreter(ServerConnection& connection, LocalDefs& defs, Player& player);
+    ClientNetworkInterpreter(ServerConnection& connection, ClientGame& defs, Player& player);
     ClientNetworkInterpreter(const ClientNetworkInterpreter& other) = default;
 
     void init(LocalWorld* world);

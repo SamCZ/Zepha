@@ -5,7 +5,7 @@
 #pragma once
 
 #include "../../def/item/BlockDef.h"
-#include "../../def/LocalDefs.h"
+#include "../../def/ClientGame.h"
 
 class PointedThing {
 public:

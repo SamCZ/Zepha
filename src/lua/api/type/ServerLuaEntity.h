@@ -6,16 +6,16 @@
 
 #include <memory>
 #include "../../../server/world/ServerEntity.h"
-#include "../../../def/ServerDefs.h"
+#include "../../../def/ServerGame.h"
 
 class ServerLuaEntity {
 public:
-    ServerLuaEntity(std::unique_ptr<ServerEntity> entity, unsigned int id, ServerDefs& defs) :
+    ServerLuaEntity(std::unique_ptr<ServerEntity> entity, unsigned int id, ServerGame& defs) :
             entity(std::move(entity)), id(id), defs(defs) {}
 
     std::unique_ptr<ServerEntity> entity = nullptr;
     unsigned int id;
-    ServerDefs& defs;
+    ServerGame& defs;
 
     void snap_pos(const sol::table& pos);
     void set_pos(const sol::table& pos);

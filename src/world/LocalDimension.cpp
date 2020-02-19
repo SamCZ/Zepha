@@ -4,7 +4,7 @@
 
 #include "LocalDimension.h"
 
-LocalDimension::LocalDimension(LocalDefs &defs) : defs(defs), meshGenStream(std::make_unique<MeshGenStream>(defs, *this)) {}
+LocalDimension::LocalDimension(ClientGame &defs) : defs(defs), meshGenStream(std::make_unique<MeshGenStream>(defs, *this)) {}
 
 void LocalDimension::update(double delta, glm::vec3 playerPos) {
     finishMeshes();

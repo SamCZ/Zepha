@@ -3,14 +3,14 @@
 //
 
 #include "../ErrorFormatter.h"
+#include "../register/RegisterBlocks.h"
+#include "../register/RegisterItems.h"
+#include "../register/RegisterBiomes.h"
+#include "../register/RegisterKeybinds.h"
 
 #include "LocalLuaParser.h"
 
-#include "../register/RegisterBlocks.h"
-#include "../register/RegisterItems.h"
-#include "../register/RegisterKeybinds.h"
-#include "../register/RegisterBiomes.h"
-
+// Types
 #include "../api/type/LocalLuaPlayer.h"
 #include "../api/type/cLocalLuaEntity.h"
 #include "../api/type/cLuaLocalPlayer.h"
@@ -18,6 +18,7 @@
 #include "../api/type/cLuaItemStack.h"
 #include "../api/type/cLocalLuaAnimationManager.h"
 
+// Modules
 #include "../api/modules/delay.h"
 #include "../api/modules/register_block.h"
 #include "../api/modules/register_blockmodel.h"
@@ -31,32 +32,43 @@
 #include "../api/modules/remove_entity.h"
 #include "../api/modules/register_keybind.h"
 
+// Functions
+#include "../api/functions/trigger_event.h"
 #include "../api/functions/update_entities.h"
 
-void LocalLuaParser::init(LocalDefs& defs, LocalWorld& world, Player& player) {
-    //Load Base Libraries
+void LocalLuaParser::init(ClientGame& defs, LocalWorld& world, Player& player) {
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
 
-    //Define Panic Callback
-//    lua_atpanic(lua, sol::c_call<decltype(&LuaParser::override_panic), &LuaParser::override_panic>);
+    loadApi(defs, world, player);
+    handler.executeMods(std::bind(&LocalLuaParser::runFileSandboxed, this, std::placeholders::_1));
 
-    //Load Modules
-    loadModules(defs, world, player);
-
-    //Load Mods
-    loadMods();
-
-    //Register Blocks
-    registerDefinitions(defs);
+    registerDefs(defs);
 }
 
-void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& player) {
+void LocalLuaParser::update(double delta, bool* keys) {
+    LuaParser::update(delta);
+
+    this->delta += delta;
+    while (this->delta > double(UPDATE_STEP)) {
+        manager.triggerKeybinds();
+        core["__builtin"]["update_entities"](double(UPDATE_STEP));
+        this->delta -= double(UPDATE_STEP);
+    }
+
+    manager.update(keys);
+}
+
+LocalModHandler& LocalLuaParser::getHandler() {
+    return handler;
+}
+
+void LocalLuaParser::loadApi(ClientGame &defs, LocalWorld &world, Player& player) {
     //Create Zepha Table
     core = lua.create_table();
     lua["zepha"] = core;
     core["__builtin"] = lua.create_table();
 
-    //Load Types
+    // Types
     ClientApi::entity(lua);
     ClientApi::animation_manager(lua);
     ClientApi::local_player(lua);
@@ -66,7 +78,7 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& pla
     core["client"] = true;
     core["player"] = LocalLuaPlayer(player);
 
-    //Load Modules
+    // Modules
     Api::delay (core, delayed_functions);
 
     Api::register_block      (lua, core);
@@ -83,47 +95,19 @@ void LocalLuaParser::loadModules(LocalDefs &defs, LocalWorld &world, Player& pla
     Api::add_entity_c    (lua, core, defs, world);
     Api::remove_entity_c (lua, core, defs, world);
 
+    // Functions
     Api::update_entities(lua);
 
-    //Sandbox the dofile function
+    // Create sandboxed runfile()
     lua["dofile"] = lua["loadfile"] = sol::nil;
     lua.set_function("runfile", &LocalLuaParser::runFileSandboxed, this);
 }
 
-void LocalLuaParser::loadMods() {
-    //Load "base" if it exists.
-    for (const std::string& modName : modsOrder) {
-        if (modName == "base") {
-            runFileSandboxed(modName + "/main");
-            break;
-        }
-    }
-
-    for (const std::string& modName : modsOrder) {
-        if (modName != "base") {
-            runFileSandboxed(modName + "/main");
-        }
-    }
-}
-
-void LocalLuaParser::registerDefinitions(LocalDefs &defs) {
+void LocalLuaParser::registerDefs(ClientGame &defs) {
     RegisterBlocks  ::client(core, defs);
     RegisterItems   ::client(core, defs);
     RegisterBiomes  ::client(core, defs);
     RegisterKeybinds::client(core, manager);
-}
-
-void LocalLuaParser::update(double delta, bool* keys) {
-    LuaParser::update(delta);
-
-    this->delta += delta;
-    while (this->delta > double(UPDATE_STEP)) {
-        core["__builtin"]["update_entities"](double(UPDATE_STEP));
-        manager.triggerKeybinds();
-        this->delta -= double(UPDATE_STEP);
-    }
-
-    manager.update(keys);
 }
 
 sol::protected_function_result LocalLuaParser::errorCallback(lua_State*, sol::protected_function_result errPfr) {
@@ -143,7 +127,7 @@ sol::protected_function_result LocalLuaParser::errorCallback(lua_State*, sol::pr
     std::string fileName = errString.substr(0, lineNumStart);
     int lineNum = std::stoi(errString.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1));
 
-    for (auto& mod : mods) {
+    for (const auto& mod : handler.cGetMods()) {
         if (mod.config.name == modString) {
             for (auto& file : mod.files) {
                 if (file.path == fileName) {
@@ -163,9 +147,9 @@ sol::protected_function_result LocalLuaParser::runFileSandboxed(std::string file
     size_t modname_length = file.find('/');
     std::string modname = file.substr(0, modname_length);
 
-    for (LuaMod& mod : mods) {
+    for (const LuaMod& mod : handler.cGetMods()) {
         if (strncmp(mod.config.name.c_str(), modname.c_str(), modname_length) == 0) {
-            for (LuaModFile& f : mod.files) {
+            for (const LuaModFile& f : mod.files) {
                 if (f.path == file) {
 
                     sol::environment env(lua, sol::create, lua.globals());
@@ -173,10 +157,8 @@ sol::protected_function_result LocalLuaParser::runFileSandboxed(std::string file
                     env["_FILE"] = f.path;
                     env["_MODNAME"] = mod.config.name;
 
-                    auto pfr = lua.safe_script(f.file, env, std::bind(&LocalLuaParser::errorCallback, this,
+                    return lua.safe_script(f.file, env, std::bind(&LocalLuaParser::errorCallback, this,
                             std::placeholders::_1, std::placeholders::_2), "@" + f.path, sol::load_mode::text);
-
-                    return pfr;
                 }
             }
 

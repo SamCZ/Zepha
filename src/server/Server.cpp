@@ -129,13 +129,13 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
             if (block == DefinitionAtlas::AIR) {
                 auto def = defs.defs.blockFromId(worldBlock);
                 if (def.callbacks.count(Callback::BREAK)) {
-                    def.callbacks[Callback::BREAK](defs.luaApi.vecToTable(pos));
+                    def.callbacks[Callback::BREAK](defs.parser.vecToTable(pos));
                 }
             }
             else {
                 auto def = defs.defs.blockFromId(block);
                 if (def.callbacks.count(Callback::PLACE)) {
-                    def.callbacks[Callback::PLACE](defs.luaApi.vecToTable(pos));
+                    def.callbacks[Callback::PLACE](defs.parser.vecToTable(pos));
                 }
             }
 

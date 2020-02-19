@@ -4,7 +4,7 @@
 
 #include "ServerConfig.h"
 
-ServerConfig::ServerConfig(ServerDefs &defs) : defs(defs) {}
+ServerConfig::ServerConfig(ServerGame &defs) : defs(defs) {}
 
 void ServerConfig::init() {
     blockIdentifierList.reserve(static_cast<unsigned long>(defs.defs.size()));
@@ -42,7 +42,7 @@ bool ServerConfig::handlePacket(ServerClient& client, Packet& r) {
         }
 
         case PacketType::MODS: {
-            defs.luaApi.sendModsPacket(client.peer);
+            defs.parser.sendModsPacket(client.peer);
             break;
         }
 

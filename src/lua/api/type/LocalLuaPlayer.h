@@ -7,7 +7,7 @@
 #include <sol2/sol.hpp>
 
 #include "LuaInventory.h"
-#include "../../../def/LocalDefs.h"
+#include "../../../def/ClientGame.h"
 #include "../../../game/scene/world/Player.h"
 
 class LocalLuaPlayer {

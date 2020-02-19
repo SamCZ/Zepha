@@ -13,19 +13,19 @@
 class ServerWorld;
 class ClientList;
 
-class ServerDefs {
+class ServerGame {
 public:
-    ServerDefs(const std::string& subgame, const std::string& execPath);
+    ServerGame(const std::string& subgame, const std::string& execPath);
     void init(ServerWorld& world);
 
     void update(double delta, ClientList& clients);
 
-    ~ServerDefs() = default;
+    ~ServerGame() = default;
     std::string subgamePath = "";
 
     ServerDefinitionAtlas defs;
-    ServerLuaParser luaApi;
-    ServerBiomeAtlas biomes;
-    AssetStorage assets;
+    ServerLuaParser       parser;
+    ServerBiomeAtlas      biomes;
+    AssetStorage          assets;
 };
 

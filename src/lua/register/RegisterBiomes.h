@@ -8,8 +8,8 @@
 #include <noise/module/modulebase.h>
 #include <noise/module/add.h>
 #include <noise/module/module.h>
-#include "../../def/LocalDefs.h"
-#include "../../def/ServerDefs.h"
+#include "../../def/ClientGame.h"
+#include "../../def/ServerGame.h"
 #include "../../def/gen/BiomeDef.h"
 
 namespace RegisterBiomes {
@@ -302,12 +302,12 @@ namespace RegisterBiomes {
         }
     }
 
-    static void server(sol::table& core, ServerDefs& defs) {
+    static void server(sol::table& core, ServerGame& defs) {
         registerBiomes(core.get<sol::table>("registered_biomes"), defs.defs, defs.biomes);
         defs.biomes.generateVoronoi();
     }
 
-    static void client(sol::table& core, LocalDefs& defs) {
+    static void client(sol::table& core, ClientGame& defs) {
         registerBiomes(core.get<sol::table>("registered_biomes"), defs.defs, defs.biomes);
         defs.biomes.generateVoronoi();
     }

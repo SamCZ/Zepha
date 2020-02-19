@@ -6,7 +6,7 @@
 #include "../../def/texture/Font.h"
 #include "components/compound/GUIInventoryList.h"
 
-DebugGui::DebugGui(glm::vec2 bufferSize, LocalDefs& defs) :
+DebugGui::DebugGui(glm::vec2 bufferSize, ClientGame& defs) :
     displayMode(0) {
 
     auto fpsHistogramRef = defs.textures["histogram"];
@@ -71,7 +71,7 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
     get<GUILabelledGraph>("gpuGraph")->setPos({bufferWidth - 254, 90 + 80});
 }
 
-void DebugGui::update(Player& player, LocalWorld& world, LocalDefs& defs, double fps, int /*chunks*/, int drawCalls, int ssGen, int ssPack) {
+void DebugGui::update(Player& player, LocalWorld& world, ClientGame& defs, double fps, int /*chunks*/, int drawCalls, int ssGen, int ssPack) {
 
     { //Top Right Graphs
         get<GUILabelledGraph>("fpsGraph")->pushValue(static_cast<float>(fps));

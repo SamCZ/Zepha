@@ -18,7 +18,7 @@
 
 class LocalDimension : public Dimension {
 public:
-    explicit LocalDimension(LocalDefs& defs);
+    explicit LocalDimension(ClientGame& defs);
     void update(double delta, glm::vec3 playerPos);
 
     void setChunk(std::shared_ptr<BlockChunk> chunk) override;
@@ -49,7 +49,7 @@ private:
     void attemptMeshChunk(const std::shared_ptr<BlockChunk>& chunk, bool updateAdjacents = true);
     bool getAdjacentExists(glm::vec3 pos, bool updateAdjacents);
 
-    LocalDefs& defs;
+    ClientGame& defs;
 
     std::unique_ptr<MeshGenStream> meshGenStream = nullptr;
     std::vector<glm::vec3> pendingMesh {};

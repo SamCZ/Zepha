@@ -7,7 +7,7 @@
 #include <string>
 #include <algorithm>
 #include "SerializedGuiElem.h"
-#include "../../def/LocalDefs.h"
+#include "../../def/ClientGame.h"
 #include "components/basic/GUIRect.h"
 #include "components/basic/GUIText.h"
 #include "components/basic/GUIModel.h"
@@ -20,7 +20,7 @@ public:
         GUIComponent::callback left {}, right {}, hover {};
     };
 
-    GuiBuilder(LocalDefs& defs, std::shared_ptr<GUIContainer> root);
+    GuiBuilder(ClientGame& defs, std::shared_ptr<GUIContainer> root);
     void setGui(const std::string& menu, const std::map<std::string, ComponentCallbacks>& callbacks = {});
     void build(glm::ivec2 win);
     void clear(bool clrCallbacks = true);
@@ -50,5 +50,5 @@ protected:
 
     std::shared_ptr<GUIContainer> root;
     std::vector<SerializedGuiElem> components {};
-    LocalDefs& defs;
+    ClientGame& defs;
 };

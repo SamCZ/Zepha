@@ -6,14 +6,14 @@
 
 #include <sol2/sol.hpp>
 #include "../type/LocalLuaEntity.h"
-#include "../../../def/ServerDefs.h"
+#include "../../../def/ServerGame.h"
 #include "../../../server/world/ServerWorld.h"
 #include "../../../game/scene/world/LocalWorld.h"
 
 namespace Api {
     static int entities_ind = 0;
 
-    static void add_entity_c(sol::state& lua, sol::table& core, LocalDefs& defs, LocalWorld& world) {
+    static void add_entity_c(sol::state& lua, sol::table& core, ClientGame& defs, LocalWorld& world) {
         core["entities"] = lua.create_table();
 
         core.set_function("add_entity", [&](sol::optional<std::string> identifier, sol::optional<sol::table> pos, sol::object staticData) {
@@ -51,7 +51,7 @@ namespace Api {
         });
     }
 
-    static void add_entity_s(sol::state& lua, sol::table& core, ServerDefs& defs, ServerWorld& world) {
+    static void add_entity_s(sol::state& lua, sol::table& core, ServerGame& defs, ServerWorld& world) {
         core["entities"] = lua.create_table();
 
         core.set_function("add_entity", [&](sol::optional<std::string> identifier, sol::optional<sol::table> pos, sol::object staticData) {

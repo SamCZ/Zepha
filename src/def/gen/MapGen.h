@@ -10,8 +10,8 @@
 #include <noise/noise.h>
 
 #include "MapGenJob.h"
-#include "../LocalDefs.h"
 #include "BiomeAtlas.h"
+#include "../ClientGame.h"
 #include "../../world/chunk/BlockChunk.h"
 
 using namespace noise;

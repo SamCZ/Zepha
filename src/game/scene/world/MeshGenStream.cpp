@@ -6,7 +6,7 @@
 
 #include "../../../world/LocalDimension.h"
 
-MeshGenStream::MeshGenStream(LocalDefs &defs, LocalDimension &dimension) :
+MeshGenStream::MeshGenStream(ClientGame &defs, LocalDimension &dimension) :
     defs(defs),
     dimension(dimension) {
 
@@ -34,7 +34,7 @@ MeshGenStream::MeshGenStream(LocalDefs &defs, LocalDimension &dimension) :
     }
 }
 
-MeshGenStream::Thread::Thread(LocalDefs &defs, std::array<NoiseSample, 3>& offsetSamplers) :
+MeshGenStream::Thread::Thread(ClientGame &defs, std::array<NoiseSample, 3>& offsetSamplers) :
     defs(defs), offsetSamplers(offsetSamplers) {
     thread = std::thread(MeshGenStream::threadFunction, this);
 }

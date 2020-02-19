@@ -5,11 +5,11 @@
 #pragma once
 
 #include "../Entity.h"
-#include "../../../def/LocalDefs.h"
+#include "../../../def/ClientGame.h"
 
 class BlockCrackEntity : public Entity {
 public:
-    explicit BlockCrackEntity(LocalDefs &defs, glm::vec3 blockPos, unsigned int blockID);
+    explicit BlockCrackEntity(ClientGame &defs, glm::vec3 blockPos, unsigned int blockID);
 
     void update();
     void setNewDamage(float damage);
@@ -25,5 +25,5 @@ private:
     void addFaces(unsigned int &indOffset, std::vector<EntityVertex> &vertices, std::vector<unsigned int> &indices, std::vector<MeshPart> &meshParts);
 
     std::vector<std::shared_ptr<AtlasRef>> crackedFaces;
-    LocalDefs& defs;
+    ClientGame& defs;
 };

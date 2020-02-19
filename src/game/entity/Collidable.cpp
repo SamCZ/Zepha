@@ -4,7 +4,7 @@
 
 #include "Collidable.h"
 
-Collidable::Collidable(LocalWorld &world, LocalDefs& defs, const SelectionBox& collisionBox) :
+Collidable::Collidable(LocalWorld &world, ClientGame& defs, const SelectionBox& collisionBox) :
     world(world),
     defs(defs),
     collisionBox(collisionBox) {}

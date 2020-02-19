@@ -4,7 +4,7 @@
 
 #include "GuiBuilder.h"
 
-GuiBuilder::GuiBuilder(LocalDefs& defs, std::shared_ptr<GUIContainer> root) :
+GuiBuilder::GuiBuilder(ClientGame& defs, std::shared_ptr<GUIContainer> root) :
     defs(defs), root(root) {}
 
 void GuiBuilder::setGui(const std::string& menu, const std::map<std::string, ComponentCallbacks>& callbacks) {

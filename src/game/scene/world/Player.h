@@ -30,7 +30,7 @@ public:
     static constexpr float BLOCK_DAMAGE = 0.36f;
     static constexpr float BLOCK_INTERVAL = 0.02f;
 
-    Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer);
+    Player(LocalWorld& world, ClientGame& defs, Renderer& renderer);
     void update(Input &input, double delta, glm::vec2 mouseDelta);
     ~Player();
 
@@ -70,7 +70,7 @@ private:
     void breakBlock(Input& input, double delta);
 
     Renderer& renderer;
-    LocalDefs& defs;
+    ClientGame& defs;
 
     InventoryList hand;
     Inventory inventory;

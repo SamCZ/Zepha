@@ -6,7 +6,7 @@
 
 #include "graph/Renderer.h"
 #include "scene/net/ClientNetworkInterpreter.h"
-#include "../def/LocalDefs.h"
+#include "../def/ClientGame.h"
 #include "scene/net/ServerConnection.h"
 
 class ClientState {
@@ -18,7 +18,7 @@ public:
 
     Renderer& renderer;
     ServerConnection connection {};
-    LocalDefs defs;
+    ClientGame defs;
 
     std::string desiredState = "this";
 

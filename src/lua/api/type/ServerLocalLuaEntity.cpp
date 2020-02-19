@@ -4,7 +4,7 @@
 
 #include "ServerLocalLuaEntity.h"
 
-ServerLocalLuaEntity::ServerLocalLuaEntity(unsigned int id, LocalDefs &defs, const std::string &appearance,
+ServerLocalLuaEntity::ServerLocalLuaEntity(unsigned int id, ClientGame &defs, const std::string &appearance,
     const std::string &arg1, const std::string &arg2) :
 
     id(id),

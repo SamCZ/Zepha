@@ -8,18 +8,18 @@
 #include <string>
 #include "../LuaMod.h"
 
-class ServerDefs;
+class ServerGame;
 
 class ServerModHandler {
 public:
-    void loadMods(ServerDefs& defs, const std::string& path);
+    void loadMods(ServerGame& defs, const std::string& path);
     void executeMods(std::function<void(std::string)> run);
     const std::vector<LuaMod>& cGetMods() const;
 private:
     static std::list<std::string> findModDirectories(const std::string& path);
     static std::vector<LuaMod> initializeLuaMods(const std::list<std::string> modDirs);
-    static void loadTextures(ServerDefs &defs, const std::vector<LuaMod>& mods);
-    static void loadModels(ServerDefs &defs, const std::vector<LuaMod>& mods);
+    static void loadTextures(ServerGame &defs, const std::vector<LuaMod>& mods);
+    static void loadModels(ServerGame &defs, const std::vector<LuaMod>& mods);
     static void organizeDependencies(std::vector<LuaMod>& mods);
     static void serializeMods(std::vector<LuaMod>& mods);
 

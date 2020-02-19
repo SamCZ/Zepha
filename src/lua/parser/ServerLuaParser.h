@@ -4,17 +4,16 @@
 
 #pragma once
 
-#include "../LuaParser.h"
 #include "ServerModHandler.h"
+#include "../LuaParser.h"
 #include "../../server/conn/ServerClient.h"
 
-class ServerDefs;
+class ServerGame;
 class ServerWorld;
-class EnetPeer;
 
 class ServerLuaParser : public LuaParser {
 public:
-    void init(ServerDefs& defs, ServerWorld& world, std::string rootPath);
+    void init(ServerGame& defs, ServerWorld& world, std::string rootPath);
     void update(double delta) override;
 
     void sendModsPacket(ENetPeer* peer) const;
@@ -22,8 +21,8 @@ public:
     void playerConnected(std::shared_ptr<ServerClient> client);
     void playerDisconnected(std::shared_ptr<ServerClient> client);
 private:
-    void loadApi(ServerDefs& defs, ServerWorld& world);
-    void registerDefs(ServerDefs &defs);
+    void loadApi(ServerGame& defs, ServerWorld& world);
+    void registerDefs(ServerGame &defs);
 
     sol::protected_function_result errorCallback(lua_State*, sol::protected_function_result errPfr);
     sol::protected_function_result runFileSandboxed(const std::string& file);

@@ -5,10 +5,10 @@
 #include "ClientList.h"
 #include "../../util/net/Serializer.h"
 #include "../../util/net/NetHandler.h"
-#include "../../def/ServerDefs.h"
+#include "../../def/ServerGame.h"
 
 
-ClientList::ClientList(ServerDefs& defs) :
+ClientList::ClientList(ServerGame& defs) :
     defs(defs) {}
 
 void ClientList::handleConnect(ENetEvent e) {
@@ -27,7 +27,7 @@ void ClientList::handleDisconnect(ENetEvent e) {
 
     for (unsigned int i = 0; i < clients.size(); i++) {
         if (clients[i]->cid == cid) {
-            defs.luaApi.playerDisconnected(clients[i]);
+            defs.parser.playerDisconnected(clients[i]);
             clients.erase(clients.begin() + i);
             break;
         }
@@ -41,7 +41,7 @@ void ClientList::createPlayer(std::shared_ptr<ServerClient> c) {
     c->hasPlayer = true;
     c->setUsername("TEMPORaRY");
 
-    defs.luaApi.playerConnected(c);
+    defs.parser.playerConnected(c);
 
     Packet p(PacketType::THIS_PLAYER_INFO);
     p.data = Serializer()

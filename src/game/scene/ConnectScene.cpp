@@ -90,10 +90,10 @@ void ConnectScene::update() {
                 if (p.type == PacketType::MODS) {
                     auto luaMod = LuaMod::fromPacket(p);
                     statusText->setText(statusText->getText() + "Received mod " + luaMod.config.name + ".\n");
-                    state.defs.luaApi.mods.push_back(std::move(luaMod));
+                    state.defs.parser.getHandler().addLuaMod(std::move(luaMod));
                 }
                 else if (p.type == PacketType::MOD_ORDER) {
-                    state.defs.luaApi.modsOrder = d.read<std::vector<std::string>>();
+                    state.defs.parser.getHandler().setModsOrder(d.read<std::vector<std::string>>());
 
                     statusText->setText(statusText->getText() + "Done downloading mods.\nReceived the mods order.\nDownloading media...\n");
 

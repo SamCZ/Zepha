@@ -18,7 +18,7 @@
 
 class GameGui : public GUIContainer {
 public:
-    explicit GameGui(Inventory& inventory, InventoryList& hand, glm::vec2 bufferSize, LocalDefs& defs, Renderer& renderer);
+    explicit GameGui(Inventory& inventory, InventoryList& hand, glm::vec2 bufferSize, ClientGame& defs, Renderer& renderer);
     void winResized(glm::ivec2 win);
 
     void update(double delta) override;
@@ -30,7 +30,7 @@ public:
 
     void drawViginette(Renderer& renderer);
 private:
-    LocalDefs& defs;
+    ClientGame& defs;
     Renderer& renderer;
 
     glm::ivec2 win {};

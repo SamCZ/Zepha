@@ -7,7 +7,7 @@
 #include <unordered_set>
 #include "WorldGenStream.h"
 #include "../conn/ClientList.h"
-#include "../../def/ServerDefs.h"
+#include "../../def/ServerGame.h"
 #include "../../game/scene/world/World.h"
 #include "../../world/ServerDimension.h"
 
@@ -16,7 +16,7 @@ public:
     const static int MB_GEN_H = 3;
     const static int MB_GEN_V = 3;
 
-    explicit ServerWorld(unsigned int seed, ServerDefs& defs, ClientList& clients);
+    explicit ServerWorld(unsigned int seed, ServerGame& defs, ClientList& clients);
 
     void init();
     void update(double delta) override;
@@ -41,7 +41,7 @@ private:
     std::vector<glm::vec3> generateQueueList;
 
     unsigned int seed;
-    ServerDefs& defs;
+    ServerGame& defs;
     ClientList& clientList;
 
     unsigned int generatedChunks = 0;

@@ -5,7 +5,7 @@
 #include "GameGui.h"
 #include "components/compound/GUIInventoryList.h"
 
-GameGui::GameGui(Inventory& inventory, InventoryList& hand, glm::vec2 bufferSize, LocalDefs& defs, Renderer& renderer) :
+GameGui::GameGui(Inventory& inventory, InventoryList& hand, glm::vec2 bufferSize, ClientGame& defs, Renderer& renderer) :
     menuRoot(std::make_shared<GUIContainer>("__luaroot")),
     handList(std::make_shared<GUIInventoryList>("hand")),
     builder(inventory, hand, defs, menuRoot),

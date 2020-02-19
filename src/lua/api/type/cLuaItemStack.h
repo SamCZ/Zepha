@@ -8,7 +8,7 @@
 #include "LuaItemStack.h"
 
 namespace ClientApi {
-    void item_stack(sol::state& lua) {
+    static void item_stack(sol::state& lua) {
         lua.new_usertype<LuaItemStack>("ItemStack",
             sol::constructors<LuaItemStack(sol::table), LuaItemStack(std::string, unsigned short)>(),
 

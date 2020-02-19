@@ -8,7 +8,7 @@
 #include "LocalWorld.h"
 #include "../net/ClientNetworkInterpreter.h"
 
-LocalWorld::LocalWorld(LocalDefs& defs, glm::vec3* playerPos, ClientNetworkInterpreter* server) :
+LocalWorld::LocalWorld(ClientGame& defs, glm::vec3* playerPos, ClientNetworkInterpreter* server) :
     dimension(defs),
     defs(defs),
     server(server),
@@ -149,13 +149,13 @@ void LocalWorld::localSetBlock(glm::ivec3 pos, unsigned int block) {
     if (block == LocalDefinitionAtlas::AIR) {
         auto def = defs.defs.blockFromId(getBlock(pos));
         if (def.callbacks.count(Callback::BREAK_CLIENT)) {
-            def.callbacks[Callback::BREAK_CLIENT](defs.luaApi.vecToTable(pos));
+            def.callbacks[Callback::BREAK_CLIENT](defs.parser.vecToTable(pos));
         }
     }
     else {
         auto def = defs.defs.blockFromId(block);
         if (def.callbacks.count(Callback::PLACE_CLIENT)) {
-            def.callbacks[Callback::PLACE_CLIENT](defs.luaApi.vecToTable(pos));
+            def.callbacks[Callback::PLACE_CLIENT](defs.parser.vecToTable(pos));
         }
     }
 

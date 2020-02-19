@@ -7,7 +7,7 @@
 #include "conn/ClientList.h"
 #include "world/ServerWorld.h"
 #include "config/ServerConfig.h"
-#include "../def/ServerDefs.h"
+#include "../def/ServerGame.h"
 #include "../util/net/NetHandler.h"
 
 class ServerClient;
@@ -26,7 +26,7 @@ public:
 private:
     bool alive = true;
 
-    ServerDefs defs;
+    ServerGame defs;
     ServerWorld world;
     NetHandler handler;
     ClientList clientList;

@@ -6,7 +6,7 @@
 
 GUIInventoryList::GUIInventoryList(const std::string &key) : GUIContainer(key) {}
 
-void GUIInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding, InventoryList &list, InventoryList& hand, LocalDefs &defs) {
+void GUIInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding, InventoryList &list, InventoryList& hand, ClientGame &defs) {
     this->list = &list;
     this->hand = &hand;
     this->defs = &defs;

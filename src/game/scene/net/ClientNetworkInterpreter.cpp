@@ -18,7 +18,7 @@
 //#include "../../graph/drawable/DrawableGroup.h"
 //#include "../../../util/net/Address.h"
 
-ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, LocalDefs &defs, Player& player) :
+ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, ClientGame &defs, Player& player) :
     world(nullptr),
     player(player),
     connection(connection),

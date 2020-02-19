@@ -4,7 +4,7 @@
 
 #include "Player.h"
 
-Player::Player(LocalWorld& world, LocalDefs& defs, Renderer& renderer) :
+Player::Player(LocalWorld& world, ClientGame& defs, Renderer& renderer) :
     Collidable(world, defs, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
 
     hand(defs.defs, "hand", 1, 1),

@@ -13,7 +13,7 @@
 
 #include "ServerWorld.h"
 
-ServerWorld::ServerWorld(unsigned int seed, ServerDefs& defs, ClientList& clients) :
+ServerWorld::ServerWorld(unsigned int seed, ServerGame& defs, ClientList& clients) :
     clientList(clients),
     seed(seed),
     defs(defs) {
@@ -176,13 +176,13 @@ void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
     if (block == DefinitionAtlas::AIR) {
         auto def = defs.defs.blockFromId(oldBlock);
         if (def.callbacks.count(Callback::DESTRUCT)) {
-            def.callbacks[Callback::DESTRUCT](defs.luaApi.vecToTable(pos));
+            def.callbacks[Callback::DESTRUCT](defs.parser.vecToTable(pos));
         }
     }
     else {
         auto def = defs.defs.blockFromId(block);
         if (def.callbacks.count(Callback::CONSTRUCT)) {
-            def.callbacks[Callback::CONSTRUCT](defs.luaApi.vecToTable(pos));
+            def.callbacks[Callback::CONSTRUCT](defs.parser.vecToTable(pos));
         }
     }
 
@@ -213,13 +213,13 @@ void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
     if (block == DefinitionAtlas::AIR) {
         auto def = defs.defs.blockFromId(oldBlock);
         if (def.callbacks.count(Callback::AFTER_DESTRUCT)) {
-            def.callbacks[Callback::AFTER_DESTRUCT](defs.luaApi.vecToTable(pos));
+            def.callbacks[Callback::AFTER_DESTRUCT](defs.parser.vecToTable(pos));
         }
     }
     else {
         auto def = defs.defs.blockFromId(block);
         if (def.callbacks.count(Callback::AFTER_CONSTRUCT)) {
-            def.callbacks[Callback::AFTER_CONSTRUCT](defs.luaApi.vecToTable(pos));
+            def.callbacks[Callback::AFTER_CONSTRUCT](defs.parser.vecToTable(pos));
         }
     }
 }

@@ -15,7 +15,7 @@
 #include "../entity/world/WireframeEntity.h"
 #include "../entity/world/BlockCrackEntity.h"
 #include "../entity/Model.h"
-#include "../../def/LocalDefs.h"
+#include "../../def/ClientGame.h"
 
 class GameScene : public Scene {
 public:
@@ -26,7 +26,7 @@ public:
 
     void cleanup() override;
 public:
-    LocalDefs& defs;
+    ClientGame& defs;
 
     glm::vec3 playerPos;
     Player player;

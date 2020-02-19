@@ -13,7 +13,7 @@
 #include "../../util/Vec.h"
 #include "../../def/gen/MapGen.h"
 #include "../../world/chunk/BlockChunk.h"
-#include "../../def/ServerDefs.h"
+#include "../../def/ServerGame.h"
 
 class WorldGenStream {
 public:
@@ -21,7 +21,7 @@ public:
     static const int THREADS = 4;
     static const int TOTAL_QUEUE_SIZE = THREADS * THREAD_QUEUE_SIZE;
 
-    explicit WorldGenStream(unsigned int seed, ServerDefs& defs);
+    explicit WorldGenStream(unsigned int seed, ServerGame& defs);
     ~WorldGenStream();
 
     //Attempt to add `pos` to the pre-thread queue.

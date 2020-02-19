@@ -4,33 +4,29 @@
 
 #pragma once
 
-#include <cute_files/cute_files.h>
-#include "../LuaParser.h"
+#include "LocalModHandler.h"
 #include "../LuaMod.h"
+#include "../LuaParser.h"
 #include "../LuaInputManager.h"
 
-class LocalDefs;
+class ClientGame;
 class LocalWorld;
 class Player;
 
 class LocalLuaParser : public LuaParser {
 public:
-    void init(LocalDefs& defs, LocalWorld& world, Player& player);
-
-    void loadModules(LocalDefs& defs, LocalWorld& world, Player& player);
-    void loadMods();
-    void registerDefinitions(LocalDefs &defs);
-
+    void init(ClientGame& defs, LocalWorld& world, Player& player);
     void update(double delta, bool* keys);
 
-    ~LocalLuaParser() = default;
-
-    std::vector<LuaMod> mods;
-    std::vector<std::string> modsOrder;
+    LocalModHandler& getHandler();
 private:
+    void loadApi(ClientGame& defs, LocalWorld& world, Player& player);
+    void registerDefs(ClientGame &defs);
+
     sol::protected_function_result errorCallback(lua_State*, sol::protected_function_result errPfr);
     sol::protected_function_result runFileSandboxed(std::string file);
 
-    double delta = 0;
     LuaInputManager manager;
+    LocalModHandler handler;
+    double delta = 0;
 };

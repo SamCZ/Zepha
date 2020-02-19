@@ -6,17 +6,17 @@
 
 #include <sol2/sol.hpp>
 #include "../../../game/entity/Entity.h"
-#include "../../../def/LocalDefs.h"
+#include "../../../def/ClientGame.h"
 #include "LocalLuaAnimationManager.h"
 
 class LocalLuaEntity {
 public:
-    LocalLuaEntity(std::unique_ptr<Entity> entity, unsigned int id, LocalDefs& defs) :
+    LocalLuaEntity(std::unique_ptr<Entity> entity, unsigned int id, ClientGame& defs) :
         entity(std::move(entity)), id(id), defs(defs), manager(*this->entity) {}
 
     std::unique_ptr<Entity> entity = nullptr;
     unsigned int id;
-    LocalDefs& defs;
+    ClientGame& defs;
 
     LocalLuaAnimationManager manager;
 

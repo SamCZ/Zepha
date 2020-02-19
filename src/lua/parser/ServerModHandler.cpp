@@ -7,12 +7,12 @@
 #include <gzip/compress.hpp>
 
 #include "../VenusParser.h"
-#include "../../def/ServerDefs.h"
+#include "../../def/ServerGame.h"
 #include "../../util/net/Serializer.h"
 
 #include "ServerModHandler.h"
 
-void ServerModHandler::loadMods(ServerDefs& defs, const std::string &path) {
+void ServerModHandler::loadMods(ServerGame& defs, const std::string &path) {
     auto modDirs = findModDirectories(path);
     mods = initializeLuaMods(modDirs);
 
@@ -176,7 +176,7 @@ std::vector<LuaMod> ServerModHandler::initializeLuaMods(const std::list<std::str
     return mods;
 }
 
-void ServerModHandler::loadTextures(ServerDefs &defs, const std::vector<LuaMod>& mods) {
+void ServerModHandler::loadTextures(ServerGame &defs, const std::vector<LuaMod>& mods) {
     cf_dir_t dir;
     for (const LuaMod& mod : mods) {
         std::string root = mod.modPath + "/textures";
@@ -221,7 +221,7 @@ void ServerModHandler::loadTextures(ServerDefs &defs, const std::vector<LuaMod>&
     }
 }
 
-void ServerModHandler::loadModels(ServerDefs &defs, const std::vector<LuaMod>& mods) {
+void ServerModHandler::loadModels(ServerGame &defs, const std::vector<LuaMod>& mods) {
     cf_dir_t dir;
     for (const LuaMod& mod : mods) {
         std::string root = mod.modPath + "/models";
