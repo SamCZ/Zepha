@@ -22,6 +22,10 @@ struct RIE {
     template<typename T, typename = typename std::enable_if<std::is_integral<T>::value>::type> static bool write(
             const unsigned int ind, const T val, std::vector<T>& data, const unsigned int dataLen) {
 
+        // Automatically keep the vectors in sane ranges
+        if (data.capacity() < data.size() + 8) data.reserve(data.size() + 50);
+        if (data.capacity() > data.size() + 60) data.shrink_to_fit();
+
         if (ind >= dataLen) return false;
         if (read(ind, data, dataLen) == val) return false;
 
