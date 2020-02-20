@@ -9,7 +9,7 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-TEST_CASE("BlockChunk", "[world]") {
+TEST_CASE("BlockChunk", "[engine]") {
     SECTION("Lighting") {
         BlockChunk b;
 

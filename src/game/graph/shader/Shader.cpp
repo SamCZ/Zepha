@@ -2,11 +2,13 @@
 // Created by aurailus on 26/11/18.
 //
 
+#include <fstream>
+#include <iostream>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Shader.h"
 
-Shader::Shader() {
-    shaderID = 0;
-}
+#include "../../../util/Log.h"
 
 void Shader::createFromString(std::string& vertexSource, std::string& fragmentSource) {
     compileShader(vertexSource, fragmentSource);
@@ -29,8 +31,8 @@ std::string Shader::readFile(const std::string& fileLocation) {
     std::ifstream fileStream(fileLocation, std::ios::in);
 
     if (!fileStream.is_open()) {
-        std::cout << Log::err << "-- Failed to open shader file '" << fileLocation << "' --" << Log::endl;
-        return "";
+        std::cout << Log::err << "Failed to open shader file '" << fileLocation << "'." << Log::endl;
+        exit(1);
     }
 
     std::string line;
@@ -89,8 +91,8 @@ void Shader::compileShader(const std::string& vertexSource, const std::string& f
     shaderID = glCreateProgram();
 
     if (!shaderID) {
-        std::cout << Log::err << "-- Error creating shader program --" << Log::endl;
-        return;
+        std::cout << Log::err << "Error creating shader program." << Log::endl;
+        exit(1);
     }
 
     addShader(shaderID, vertexSource, GL_VERTEX_SHADER);
@@ -104,8 +106,8 @@ void Shader::compileShader(const std::string& vertexSource, const std::string& f
 
     if (!result) {
         glGetProgramInfoLog(shaderID, sizeof(eLog), nullptr, eLog);
-        std::cout << Log::err << "-- Error linking program --\n" << eLog << Log::endl;
-        return;
+        std::cout << Log::err << "Error linking program.\n" << eLog << Log::endl;
+        exit(1);
     }
 
     glValidateProgram(shaderID);
@@ -113,8 +115,8 @@ void Shader::compileShader(const std::string& vertexSource, const std::string& f
 
     if (!result) {
         glGetProgramInfoLog(shaderID, sizeof(eLog), nullptr, eLog);
-        std::cout << Log::err << "-- Error validating program --\n" << eLog << Log::endl;
-        return;
+        std::cout << Log::err << "Error validating program.\n" << eLog << Log::endl;
+        exit(1);
     }
 }
 

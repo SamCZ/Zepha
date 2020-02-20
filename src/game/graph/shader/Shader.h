@@ -4,26 +4,19 @@
 
 #pragma once
 
-#include <GL/glew.h>
-
 #include <string>
-#include <cstring>
-#include <fstream>
-#include <iostream>
+#include <GL/glew.h>
+#include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "../../../util/Log.h"
 
 class Shader {
 public:
-    Shader();
-
     void createFromString(std::string& vertexSource, std::string& fragmentSource);
     void createFromFile(const std::string& vertexFile, const std::string& fragmentFile);
 
     virtual void postCreate() {};
 
-    GLint get(const std::string &name);
+    int get(const std::string &name);
 
     void use();
     static void clearShader();
@@ -44,12 +37,12 @@ private:
     std::string readFile(const std::string& fileLocation);
 
     void compileShader(const std::string& vertexSource, const std::string& fragmentSource);
-    void addShader(GLuint program, const std::string& shaderCode, GLenum shaderType);
+    void addShader(uint program, const std::string& shaderCode, GLenum shaderType);
 
     void crashIfInactive();
 
-    GLuint shaderID;
-    std::string vertexFile = "string";
-    std::string fragmentFile = "string";
+    unsigned int shaderID = 0;
+    std::string vertexFile {};
+    std::string fragmentFile {};
 };
 

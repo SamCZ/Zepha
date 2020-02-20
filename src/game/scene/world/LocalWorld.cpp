@@ -2,11 +2,12 @@
 // Created by aurailus on 14/12/18.
 //
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
-
 #include "LocalWorld.h"
+
+#include "WorldInterpolationStream.h"
 #include "../net/ClientNetworkInterpreter.h"
+#include "../../entity/engine/BlockCrackEntity.h"
+#include "../../entity/engine/ParticleEntity.h"
 
 LocalWorld::LocalWorld(ClientGame& defs, glm::vec3* playerPos, ClientNetworkInterpreter* server) :
     dimension(defs),
@@ -36,6 +37,40 @@ void LocalWorld::update(double delta) {
     if (end != particles.begin()) particles.erase(particles.begin(), end + 1);
 }
 
+void LocalWorld::loadChunkPacket(std::unique_ptr<Packet> p) {
+    worldGenStream->pushBack(std::move(p));
+}
+
+void LocalWorld::commitChunk(std::shared_ptr<BlockChunk> c) {
+    dimension.setChunk(std::move(c));
+}
+
+unsigned int LocalWorld::getBlock(glm::ivec3 pos) {
+    return dimension.getBlock(pos);
+}
+
+void LocalWorld::setBlock(glm::ivec3 pos, unsigned int block) {
+    dimension.setBlock(pos, block);
+}
+
+void LocalWorld::localSetBlock(glm::ivec3 pos, unsigned int block) {
+    if (block == LocalDefinitionAtlas::AIR) {
+        auto def = defs.defs.blockFromId(getBlock(pos));
+        if (def.callbacks.count(Callback::BREAK_CLIENT)) {
+            def.callbacks[Callback::BREAK_CLIENT](defs.parser.vecToTable(pos));
+        }
+    }
+    else {
+        auto def = defs.defs.blockFromId(block);
+        if (def.callbacks.count(Callback::PLACE_CLIENT)) {
+            def.callbacks[Callback::PLACE_CLIENT](defs.parser.vecToTable(pos));
+        }
+    }
+
+    server->setBlock(pos, block);
+    dimension.setBlock(pos, block);
+}
+
 void LocalWorld::damageBlock(glm::vec3 pos, float amount) {
     BlockCrackEntity* block = nullptr;
     for (auto test : crackedBlocks) {
@@ -60,14 +95,32 @@ void LocalWorld::damageBlock(glm::vec3 pos, float amount) {
     }
 }
 
-void LocalWorld::finishChunks() {
-    auto finishedChunks = worldGenStream->update();
+unsigned short LocalWorld::getBiome(glm::vec3 pos) {
+    auto chunkPos = Space::Chunk::world::fromBlock(pos);
+    auto local = Space::Block::relative::toChunk(pos);
 
-    lastGenUpdates = 0;
-    for (const auto &chunk : finishedChunks) {
-        commitChunk(chunk);
-        lastGenUpdates++;
-    }
+    auto chunk = getChunk(chunkPos);
+    if (chunk != nullptr) return chunk->getBiome(local);
+    return BiomeAtlas::INVALID;
+}
+
+std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::ivec3 pos) {
+    return dimension.getChunk(pos);
+}
+
+int LocalWorld::getMeshChunkCount() {
+    return dimension.getMeshChunkCount();
+}
+
+int LocalWorld::renderChunks(Renderer &renderer) {
+    return dimension.renderChunks(renderer);
+}
+
+void LocalWorld::renderEntities(Renderer &renderer) {
+    for (auto block : crackedBlocks) block->draw(renderer);
+    for (auto &p : particles) p->draw(renderer);
+
+    dimension.renderEntities(renderer);
 }
 
 void LocalWorld::updateBlockDamages(double delta) {
@@ -105,64 +158,12 @@ void LocalWorld::updateBlockDamages(double delta) {
     }
 }
 
-void LocalWorld::loadChunkPacket(std::unique_ptr<Packet> p) {
-    worldGenStream->pushBack(std::move(p));
-}
+void LocalWorld::finishChunks() {
+    auto finishedChunks = worldGenStream->update();
 
-void LocalWorld::commitChunk(std::shared_ptr<BlockChunk> c) {
-    dimension.setChunk(std::move(c));
-}
-
-int LocalWorld::renderChunks(Renderer &renderer) {
-    return dimension.renderChunks(renderer);
-}
-
-void LocalWorld::renderEntities(Renderer &renderer) {
-    for (auto block : crackedBlocks) block->draw(renderer);
-    for (auto &p : particles) p->draw(renderer);
-
-    dimension.renderEntities(renderer);
-}
-
-int LocalWorld::getMeshChunkCount() {
-    return dimension.getMeshChunkCount();
-}
-
-unsigned short LocalWorld::getBiome(glm::vec3 pos) {
-    auto chunkPos = Space::Chunk::world::fromBlock(pos);
-    auto local = Space::Block::relative::toChunk(pos);
-
-    auto chunk = getChunk(chunkPos);
-    if (chunk != nullptr) return chunk->getBiome(local);
-    return BiomeAtlas::INVALID;
-}
-
-unsigned int LocalWorld::getBlock(glm::ivec3 pos) {
-    return dimension.getBlock(pos);
-}
-
-void LocalWorld::setBlock(glm::ivec3 pos, unsigned int block) {
-    dimension.setBlock(pos, block);
-}
-
-void LocalWorld::localSetBlock(glm::ivec3 pos, unsigned int block) {
-    if (block == LocalDefinitionAtlas::AIR) {
-        auto def = defs.defs.blockFromId(getBlock(pos));
-        if (def.callbacks.count(Callback::BREAK_CLIENT)) {
-            def.callbacks[Callback::BREAK_CLIENT](defs.parser.vecToTable(pos));
-        }
+    lastGenUpdates = 0;
+    for (const auto &chunk : finishedChunks) {
+        commitChunk(chunk);
+        lastGenUpdates++;
     }
-    else {
-        auto def = defs.defs.blockFromId(block);
-        if (def.callbacks.count(Callback::PLACE_CLIENT)) {
-            def.callbacks[Callback::PLACE_CLIENT](defs.parser.vecToTable(pos));
-        }
-    }
-
-    server->setBlock(pos, block);
-    dimension.setBlock(pos, block);
-}
-
-std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::ivec3 pos) {
-    return dimension.getChunk(pos);
 }

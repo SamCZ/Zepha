@@ -65,7 +65,7 @@ set(ZEPHA_SRC
         server/conn/ClientList.h
     server/conn/ServerClient.h
     util/net/PacketChannel.h
-        game/entity/world/PlayerEntity.h
+        game/entity/engine/PlayerEntity.h
     game/hud/components/basic/GUIRect.cpp
     game/hud/components/basic/GUIRect.h
     game/hud/components/basic/GUIGraph.cpp
@@ -93,16 +93,16 @@ set(ZEPHA_SRC
     world/LocalDimension.cpp
     world/LocalDimension.h
     world/region/Region.h
-    game/entity/world/WireframeEntity.cpp
-    game/entity/world/WireframeEntity.h
+        game/entity/engine/WireframeEntity.cpp
+        game/entity/engine/WireframeEntity.h
     def/item/SelectionBox.h
     game/graph/drawable/Drawable.h
     game/graph/drawable/DrawableGroup.cpp
     game/graph/drawable/DrawableGroup.h
     game/graph/window/Input.cpp
     game/graph/window/Input.h
-    game/entity/world/BlockCrackEntity.cpp
-    game/entity/world/BlockCrackEntity.h
+        game/entity/engine/BlockCrackEntity.cpp
+        game/entity/engine/BlockCrackEntity.h
     def/texture/TextureAtlas.cpp
     def/texture/TextureAtlas.h
     def/texture/AtlasRef.h
@@ -115,8 +115,8 @@ set(ZEPHA_SRC
     world/block/PointedThing.h
     game/hud/components/compound/GUILabelledGraph.cpp
     game/hud/components/compound/GUILabelledGraph.cpp
-    game/entity/world/ParticleEntity.cpp
-    game/entity/world/ParticleEntity.h
+        game/entity/engine/ParticleEntity.cpp
+        game/entity/engine/ParticleEntity.h
         def/ServerGame.cpp
         def/ServerGame.h
     def/ServerDefinitionAtlas.cpp

@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <glm/vec3.hpp>
 #include <array>
 #include <memory>
-#include "../../util/Space.h"
+#include <glm/vec3.hpp>
+
 #include "../chunk/BlockChunk.h"
 
 class MapBlock {

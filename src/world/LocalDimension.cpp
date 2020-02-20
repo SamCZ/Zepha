@@ -4,30 +4,67 @@
 
 #include "LocalDimension.h"
 
+#include "../game/scene/world/graph/MeshChunk.h"
+
 LocalDimension::LocalDimension(ClientGame &defs) : defs(defs), meshGenStream(std::make_unique<MeshGenStream>(defs, *this)) {}
 
 void LocalDimension::update(double delta, glm::vec3 playerPos) {
     finishMeshes();
     queueMeshes();
 
-    for (auto& entities : localEntities) entities->entity->update(delta);
-    for (auto& entities : serverEntities) entities->entity->update(delta);
-    for (auto& playerEnt : playerEntities) playerEnt.update(delta);
+    for (auto& entity : localEntities ) entity->entity->update(delta);
+    for (auto& entity : serverEntities) entity->entity->update(delta);
+    for (auto& entity : playerEntities) entity.update(delta);
 
-    auto chunkPosOfPlayer = Space::Chunk::world::fromBlock(playerPos);
+    auto clientMapBlock = Space::MapBlock::world::fromBlock(playerPos);
 
-//    for (auto it = blockChunks.begin(); it != blockChunks.end();) {
-//        auto pos = it->first;
+
+    for (auto it = regions.cbegin(); it != regions.cend();) {
+        bool remove = false;
+        for (unsigned short m = 0; m < 64; m++) {
+            auto mapBlock = it->second->operator[](m);
+            if (!mapBlock) continue;
+
+            if (abs(clientMapBlock.x - mapBlock->pos.x) > LocalDimension::MB_STORE_H + 1
+             || abs(clientMapBlock.y - mapBlock->pos.y) > LocalDimension::MB_STORE_V + 1
+             || abs(clientMapBlock.z - mapBlock->pos.z) > LocalDimension::MB_STORE_H + 1) {
+
+                for (unsigned short c = 0; c < 64; c++) {
+                    auto chunk = mapBlock->operator[](c);
+                    if (!chunk) continue;
+
+                    removeMeshChunk(chunk->pos);
+                }
+
+                it->second->remove(m);
+                if (it->second->count <= 0) {
+                    remove = true;
+                    it = regions.erase(it);
+                    break;
+                }
+            }
+        }
+        if (!remove) it++;
+    }
+
+//    for (const auto& region : regions) {
+//        for (unsigned short i = 0; i < 64; i++) {
+//            auto mapBlock = region.second->operator[](i);
+//            if (mapBlock == nullptr) continue;
 //
-//        auto diffVec = pos - chunkPosOfPlayer;
-//        float distance = max(abs(diffVec.x), max(abs(diffVec.y), abs(diffVec.z)));
+//            if (abs(clientMapBlock.x - mapBlock->pos.x) > LocalDimension::MB_STORE_H + 1
+//             || abs(clientMapBlock.y - mapBlock->pos.y) > LocalDimension::MB_STORE_V + 1
+//             || abs(clientMapBlock.z - mapBlock->pos.z) > LocalDimension::MB_STORE_H + 1) {
 //
-//        //TODO: Don't hard code this number
-//        if (distance >= 24) {
-//            removeMeshChunk(pos);
-//            it = blockChunks.erase(it);
-//        } else {
-//            it++;
+//                for (unsigned short j = 0; j < 64; j++) {
+//                    auto chunk = mapBlock->operator[](j);
+//                    if (chunk == nullptr) continue;
+//                    removeMeshChunk(chunk->pos);
+//                }
+//
+//                removeMapBlock(mapBlock->pos);
+//                if (region.second->count == 0) break;
+//            }
 //        }
 //    }
 }
@@ -45,9 +82,8 @@ void LocalDimension::finishMeshes() {
 
             setMeshChunk(meshChunk);
             lastMeshUpdates++;
-        } else {
-            removeMeshChunk(meshDetails->pos);
         }
+        else removeMeshChunk(meshDetails->pos);
 
         delete meshDetails;
     }

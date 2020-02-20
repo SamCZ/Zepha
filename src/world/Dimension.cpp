@@ -20,7 +20,7 @@ std::shared_ptr<MapBlock> Dimension::getMapBlock(glm::ivec3 mapBlockPosition) {
 }
 
 void Dimension::removeMapBlock(glm::ivec3 pos) {
-    auto region = getMapBlock(Space::Region::world::fromMapBlock(pos));
+    auto region = getRegion(Space::Region::world::fromMapBlock(pos));
     if (region == nullptr) return;
     auto ind = Space::MapBlock::index(pos);
     region->remove(ind);
@@ -61,7 +61,7 @@ bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {
 }
 
 std::shared_ptr<Region> Dimension::getOrCreateRegion(glm::ivec3 pos) {
-    if (regions[pos]) return regions[pos];
+    if (regions[pos] != nullptr) return regions[pos];
     regions[pos] = std::make_shared<Region>(pos);
     return regions[pos];
 }
@@ -70,8 +70,7 @@ std::shared_ptr<MapBlock> Dimension::getOrCreateMapBlock(glm::ivec3 mapBlockPosi
     auto region = getOrCreateRegion(Space::Region::world::fromMapBlock(mapBlockPosition));
     unsigned int index = Space::MapBlock::index(mapBlockPosition);
 
-    auto mapBlock = (*region)[index];
-    if (mapBlock) return mapBlock;
+    if ((*region)[index] != nullptr) return (*region)[index];
     (*region).set(index, std::make_shared<MapBlock>(mapBlockPosition));
     return (*region)[index];
 }

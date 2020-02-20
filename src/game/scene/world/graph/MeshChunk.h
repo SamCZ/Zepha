@@ -2,17 +2,14 @@
 // Created by aurailus on 15/12/18.
 //
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "HidingNonVirtualFunction"
-
 #pragma once
 
-#include <glm/vec3.hpp>
-#include <list>
-#include "ChunkRenderElem.h"
-#include "../../../entity/Entity.h"
-#include "../../../../util/Space.h"
+#include <memory>
 
+#include "ChunkRenderElem.h"
+#include "../../../graph/drawable/Drawable.h"
+#include "../../../graph/meshtypes/ChunkVertex.h"
+#include "../../../graph/meshtypes/ChunkMesh.h"
 class MeshChunk : public ChunkRenderElem, Drawable {
 public:
     MeshChunk() = default;
@@ -27,6 +24,3 @@ private:
     std::unique_ptr<ChunkMesh> mesh = nullptr;
     glm::vec3 pos {};
 };
-
-
-#pragma clang diagnostic pop

@@ -2,6 +2,8 @@
 // Created by aurailus on 25/09/19.
 //
 
+#include <glm/vec2.hpp>
+
 #include "WorldGeometryShader.h"
 
 WorldGeometryShader::WorldGeometryShader(glm::ivec2 windowSize, float bufferScale) : Shader(),

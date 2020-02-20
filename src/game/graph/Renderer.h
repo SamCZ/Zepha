@@ -4,11 +4,10 @@
 
 #pragma once
 
-#include <glm/gtx/transform.hpp>
-#include <noise/noise.h>
 #include "Camera.h"
-#include "Texture.h"
 #include "window/Window.h"
+
+// Shaders
 #include "shader/Shader.h"
 #include "shader/SSAOShader.h"
 #include "shader/BlurShader.h"
@@ -16,7 +15,6 @@
 #include "shader/WorldGeometryShader.h"
 #include "shader/EntityGeometryShader.h"
 #include "shader/GuiUniforms.h"
-#include "meshtypes/ChunkMesh.h"
 
 class Renderer {
 public:
@@ -32,10 +30,10 @@ public:
     void swapBuffers();
 
     void setShader(Shader& s);
-
     void setClearColor(unsigned char r, unsigned char g, unsigned char b);
-    void toggleDepthTest(bool enable);
-    void clearDepthBuffer();
+
+    static void toggleDepthTest(bool enable);
+    static void clearDepthBuffer();
 
     void setModelMatrix(const glm::mat4& modelMatrix);
     void setBones(std::vector<glm::mat4>& transforms);
@@ -57,7 +55,7 @@ private:
     EntityGeometryShader entity;
     SSAOShader ssao;
     BlurShader blur;
-    LightingShader lighting;
+    LightingShader light;
 
     Shader guiShader;
     GuiUniforms gu;

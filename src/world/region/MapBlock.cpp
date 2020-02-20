@@ -4,12 +4,11 @@
 
 #include "MapBlock.h"
 
+#include "../../util/Space.h"
+
 MapBlock::MapBlock(glm::ivec3 pos) :
     pos(pos) {
-
-    for (unsigned short i = 0; i < 64; i++) {
-        blockChunks[i] = nullptr;
-    }
+    for(unsigned short i = 0; i < 64; i++) blockChunks[i] = nullptr;
 }
 
 std::shared_ptr<BlockChunk> MapBlock::operator[](unsigned short index) {
@@ -17,11 +16,11 @@ std::shared_ptr<BlockChunk> MapBlock::operator[](unsigned short index) {
 }
 
 void MapBlock::set(unsigned short index, std::shared_ptr<BlockChunk> chunk) {
+    if (blockChunks[index] == nullptr) count++;
     blockChunks[index] = chunk;
-    count++;
 }
 
 void MapBlock::remove(unsigned short index) {
+    if (blockChunks[index] != nullptr) count--;
     blockChunks[index] = nullptr;
-    count--;
 }

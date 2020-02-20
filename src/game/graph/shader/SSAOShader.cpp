@@ -2,6 +2,8 @@
 // Created by aurailus on 24/09/19.
 //
 
+#include <glm/glm.hpp>
+
 #include "SSAOShader.h"
 
 SSAOShader::SSAOShader(glm::ivec2 windowSize, float bufferScale, unsigned int kernelCount) : Shader(),

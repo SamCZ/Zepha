@@ -17,7 +17,7 @@ public:
     void removeRegion(glm::ivec3 pos);
 
     std::shared_ptr<MapBlock> getMapBlock(glm::ivec3 mapBlockPosition);
-    void removeMapBlock(glm::ivec3 pos);
+    virtual void removeMapBlock(glm::ivec3 pos);
 
     std::shared_ptr<BlockChunk> getChunk(glm::ivec3 chunkPosition);
     virtual void setChunk(std::shared_ptr<BlockChunk> chunk);

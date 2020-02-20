@@ -4,8 +4,10 @@
 
 #pragma once
 
-#include "Shader.h"
 #include <random>
+#include <glm/vec2.hpp>
+
+#include "Shader.h"
 
 class SSAOShader : public Shader {
 public:

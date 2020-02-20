@@ -4,20 +4,13 @@
 
 #pragma once
 
-
-#include <iostream>
-
-#include "LocalWorld.h"
 #include "Inventory.h"
 #include "../../hud/GameGui.h"
-#include "../../graph/Camera.h"
-#include "../../graph/drawable/DrawableGroup.h"
 #include "../../entity/Collidable.h"
-#include "../../entity/world/WireframeEntity.h"
-#include "../../entity/world/BlockCrackEntity.h"
-#include "../../../util/Ray.h"
-#include "../../../util/Timer.h"
+#include "../../hud/GameGuiBuilder.h"
+#include "../../graph/drawable/Drawable.h"
 #include "../../../world/block/PointedThing.h"
+#include "../../entity/engine/WireframeEntity.h"
 
 class Player : Collidable, public Drawable {
 public:

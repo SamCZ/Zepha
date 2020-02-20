@@ -2,6 +2,8 @@
 // Created by aurailus on 17/12/18.
 //
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Renderer.h"
 
 Renderer::Renderer() : Renderer({1366, 768}) {};
@@ -10,18 +12,18 @@ Renderer::Renderer(glm::ivec2 win) :
     activeTexture(nullptr),
     window(win),
 
-    world   (win, 2),
-    entity  (win, 2),
-    ssao    (win, 1, 24),
-    blur    (win, 1),
-    lighting(win, 2) {
+    world (win, 2),
+    entity(win, 2),
+    ssao  (win, 1, 24),
+    blur  (win, 1),
+    light (win, 2) {
 
     window.initialize();
     camera.create(window.getSize().x, window.getSize().y, glm::vec3(0, 1, 0));
 
     ssao.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoCalc.fs");
     blur.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoBlur.fs");
-    lighting.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/deferredLighting.fs");
+    light.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/deferredLighting.fs");
     world.createFromFile("./assets/shader/world/deferredGeometryWorld.vs", "./assets/shader/world/deferredGeometryWorld.fs");
     entity.createFromFile("./assets/shader/world/deferredGeometryEntity.vs", "./assets/shader/world/deferredGeometryEntity.fs");
 
@@ -38,7 +40,7 @@ Renderer::Renderer(glm::ivec2 win) :
     window.addResizeCallback("renderer", [&](glm::ivec2 win) {
         ssao.windowResized(win);
         blur.windowResized(win);
-        lighting.windowResized(win);
+        light.windowResized(win);
         world.windowResized(win);
 
         camera.changeWindowDimensions(win);
@@ -46,23 +48,6 @@ Renderer::Renderer(glm::ivec2 win) :
         gu.matrix = camera.getOrthographicMatrix();
     });
 }
-
-    //Initialize Shading Shader for Shadowmapping
-
-//    const unsigned int SHADOW_SCALE = 2048;
-//    glGenFramebuffers(1, &sBuffer);
-//    glGenTextures(1, &sDepthMap);
-//    glBindTexture(GL_TEXTURE_2D, sDepthMap);
-//    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_SCALE, SHADOW_SCALE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-//    glBindFramebuffer(GL_FRAMEBUFFER, sBuffer);
-//    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, sDepthMap, 0);
-//    glDrawBuffer(GL_NONE);
-//    glReadBuffer(GL_NONE);
-//    glBindBuffer(GL_FRAMEBUFFER, 0);
 
 void Renderer::update(double delta) {
     //VSync 1 = On, 0 = Off
@@ -87,7 +72,7 @@ void Renderer::beginChunkDeferredCalls() {
 
     glViewport(0, 0, static_cast<int>(world.windowSize.x * world.bufferScale), static_cast<int>(world.windowSize.y * world.bufferScale));
 
-    glBindFramebuffer(GL_FRAMEBUFFER, lighting.gBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, light.gBuffer);
     glClear(GL_DEPTH_BUFFER_BIT);
 
     const float skyColor[] = {clearColor.x, clearColor.y, clearColor.z, 1};
@@ -129,9 +114,9 @@ void Renderer::endDeferredCalls() {
     }
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, lighting.gPosition);
+    glBindTexture(GL_TEXTURE_2D, light.gPosition);
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, lighting.gNormal);
+    glBindTexture(GL_TEXTURE_2D, light.gNormal);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, ssao.tex);
 
@@ -152,30 +137,18 @@ void Renderer::endDeferredCalls() {
     glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    setShader(lighting);
-    lighting.set(lighting.uniforms.camPosition, camera.getPos());
+    setShader(light);
+    light.set(light.uniforms.camPosition, camera.getPos());
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, blur.colorBuffer);
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, lighting.gNormal);
+    glBindTexture(GL_TEXTURE_2D, light.gNormal);
     glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, lighting.gColorSpec);
+    glBindTexture(GL_TEXTURE_2D, light.gColorSpec);
 
     glEnable(GL_BLEND);
     renderQuad();
-
-    //Used to push the depth map to the default framebuffer
-    //Enable when creating forward rendering stage
-
-//    glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
-//    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-//
-//    auto winSize = window.getSize();
-//    glBlitFramebuffer(0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y),
-//                      0, 0, static_cast<int>(winSize.x), static_cast<int>(winSize.y),
-//                      GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Renderer::beginGUIDrawCalls() {

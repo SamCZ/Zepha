@@ -4,10 +4,11 @@
 
 #pragma once
 
-#include <glm/vec3.hpp>
 #include <array>
+#include <memory>
+#include <glm/vec3.hpp>
+
 #include "MapBlock.h"
-#include "../../util/Space.h"
 
 class Region {
 public:

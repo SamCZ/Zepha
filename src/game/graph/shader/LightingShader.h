@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <glm/vec2.hpp>
+
 #include "Shader.h"
 
 class LightingShader : public Shader {

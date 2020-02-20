@@ -13,8 +13,8 @@
 
 class ServerWorld : public World {
 public:
-    const static int MB_GEN_H = 3;
-    const static int MB_GEN_V = 3;
+    const static int MB_GEN_H = 6;
+    const static int MB_GEN_V = 4;
 
     explicit ServerWorld(unsigned int seed, ServerGame& defs, ClientList& clients);
 

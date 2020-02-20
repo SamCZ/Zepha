@@ -4,6 +4,8 @@
 
 #include "LightingShader.h"
 
+#include "../../../util/Log.h"
+
 LightingShader::LightingShader(glm::ivec2 windowSize, float bufferScale) : Shader(),
     windowSize(windowSize),
     bufferScale(bufferScale) {}
@@ -57,7 +59,7 @@ void LightingShader::postCreate() {
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            std::cout << Log::err << "-- Lighting framebuffer incomplete! --" << std::endl;
+            std::cout << Log::err << "Lighting framebuffer incomplete!" << std::endl;
         }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

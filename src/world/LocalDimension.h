@@ -4,20 +4,20 @@
 
 #pragma once
 
-#include <unordered_map>
-#include <glm/vec3.hpp>
-
 #include "Dimension.h"
-#include "region/Region.h"
-#include "../util/Vec.h"
-#include "../game/scene/world/MeshGenStream.h"
-#include "../game/scene/world/graph/MeshChunk.h"
 #include "../lua/api/type/LocalLuaEntity.h"
 #include "../lua/api/type/ServerLocalLuaEntity.h"
-#include "../game/entity/world/PlayerEntity.h"
+#include "../game/entity/engine/PlayerEntity.h"
+#include "../game/scene/world/MeshGenStream.h"
+#include "../game/scene/world/graph/ChunkRenderElem.h"
+
+class MeshChunk;
 
 class LocalDimension : public Dimension {
 public:
+    const static int MB_STORE_H = 6;
+    const static int MB_STORE_V = 4;
+
     explicit LocalDimension(ClientGame& defs);
     void update(double delta, glm::vec3 playerPos);
 

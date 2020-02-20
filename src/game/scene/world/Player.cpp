@@ -4,6 +4,8 @@
 
 #include "Player.h"
 
+#include "../../../util/Ray.h"
+
 Player::Player(LocalWorld& world, ClientGame& defs, Renderer& renderer) :
     Collidable(world, defs, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
 
