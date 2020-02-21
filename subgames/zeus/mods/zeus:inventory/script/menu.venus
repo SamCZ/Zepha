@@ -46,6 +46,21 @@ zepha.register_keybind("zeus:inventory:open_inventory", {
                                 position: 163px 10px
                                 slot_spacing: 2px 2px
                             end
+
+                            rect[player_clamp]
+                                position: 41px -8px
+                                size: 34px 52px
+                                overflow: hidden
+
+                                model
+                                    scale: 86 86
+                                    position: 15px 52px
+                                    type: model
+                                    source: zeus:default:player
+                                    texture: zeus:default:player
+                                    anim_range: 0 300
+                                end
+                            end
                         end
 
                         rect[hot_wheel]
@@ -89,15 +104,6 @@ zepha.register_keybind("zeus:inventory:open_inventory", {
                                 position: 1px 25px
                                 slot_spacing: 2px 2px
                             end
-                        end
-
-                        model
-                            scale: 96 96
-                            position: 195 145
-                            type: model
-                            source: zeus:default:player
-                            texture: zeus:default:player
-                            anim_range: 0 300
                         end
                     end
                 end

@@ -5,8 +5,9 @@
 #pragma once
 
 
-#include <memory>
 #include <list>
+#include <memory>
+
 #include "../../entity/Entity.h"
 
 class GuiComponent : public Drawable {
@@ -25,7 +26,9 @@ public:
     virtual void setPos(glm::ivec2 pos);
     virtual glm::ivec2 getPos();
 
-    virtual void update(double delta);
+    void setHideOverflow(bool hideOverflow);
+
+    virtual void update(double delta) override;
 
     bool mouseActivity(glm::ivec2 pos);
     bool leftClickEvent(bool state, glm::ivec2 pos);
@@ -67,6 +70,8 @@ protected:
     glm::vec2 scale {};
     glm::vec4 padding {};
     glm::ivec2 hitbox {};
+
+    bool hideOverflow = false;
 
     callback cbLeftClick = nullptr;
     callback cbRightClick = nullptr;

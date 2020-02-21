@@ -77,6 +77,11 @@ void Shader::set(int loc, glm::vec3 val) {
     glUniform3f(loc, val.x, val.y, val.z);
 }
 
+void Shader::set(int loc, glm::vec4 val) {
+    crashIfInactive();
+    glUniform4f(loc, val.x, val.y, val.z, val.w);
+}
+
 void Shader::set(int loc, glm::mat4 val) {
     crashIfInactive();
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(val));

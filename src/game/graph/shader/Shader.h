@@ -25,6 +25,7 @@ public:
     void set(int loc, int val);
     void set(int loc, float val);
     void set(int loc, glm::vec3 val);
+    void set(int loc, glm::vec4 val);
     void set(int loc, glm::mat4 val);
 
     void setArr(int loc, unsigned int count, glm::mat4 &start);

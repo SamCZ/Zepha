@@ -22,6 +22,8 @@ std::shared_ptr<GuiImageButton> GuiImageButton::fromSerialized(SerialGui::Elem s
     std::string background_hover = s.tokens["background_hover"];
     if (background_hover.length() == 0) background_hover = background;
 
+    bool hideOverflow = s.tokens["overflow"] == "hidden";
+
     std::string content = "";
     if (s.tokens.count("content") && s.tokens["content"].length() >= 2) content = s.tokens["content"].substr(1, s.tokens["content"].size() - 2);
     std::string::size_type off = 0;
@@ -32,6 +34,7 @@ std::shared_ptr<GuiImageButton> GuiImageButton::fromSerialized(SerialGui::Elem s
 
     auto button = std::make_shared<GuiImageButton>(s.key);
     button->create(size, padding, game.textures[background], game.textures[background_hover]);
+    button->setHideOverflow(hideOverflow);
     button->setPos(pos);
 
     if (content != "") {

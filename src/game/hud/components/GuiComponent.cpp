@@ -42,6 +42,10 @@ glm::ivec2 GuiComponent::getPos() {
     return pos;
 }
 
+void GuiComponent::setHideOverflow(bool hideOverflow) {
+    this->hideOverflow = hideOverflow;
+}
+
 void GuiComponent::add(std::shared_ptr<GuiComponent> component) {
     component->parent = this;
     component->updatePos();
@@ -72,6 +76,8 @@ void GuiComponent::empty() {
 void GuiComponent::draw(Renderer& renderer) {
     entity.draw(renderer);
     for (const auto& child : children) {
+        renderer.setClipBounds(hideOverflow ? glm::vec4 {entity.getPos().x, entity.getPos().y,
+            entity.getPos().x + scale.x, entity.getPos().y + scale.y} : glm::vec4 {});
         child->draw(renderer);
     }
 }

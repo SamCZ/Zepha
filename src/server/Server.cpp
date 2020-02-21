@@ -75,12 +75,11 @@ void Server::update() {
         enet_packet_destroy(event.packet);
     }
 
-    for (auto& pair : playersUpdated) {
-        unsigned int cid = pair.first;
+    for (auto& cid : playersUpdated) {
         auto client = clientList.getClient(cid);
         if (client == nullptr) continue;
 
-        Packet r(PacketType::PLAYER_INFO);
+        Packet r(PacketType::PLAYER_INFO, false);
         r.data = Serializer()
                 .append(client->cid)
                 .append(client->getPos())
@@ -113,7 +112,7 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
             client.setPitch(d.read<float>());
             client.setYaw(d.read<float>());
 
-            playersUpdated.emplace(client.cid, true);
+            playersUpdated.emplace(client.cid);
             break;
         }
         case PacketType::BLOCK_SET: {

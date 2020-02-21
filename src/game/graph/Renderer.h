@@ -37,6 +37,7 @@ public:
 
     void setModelMatrix(const glm::mat4& modelMatrix);
     void setBones(std::vector<glm::mat4>& transforms);
+    void setClipBounds(glm::vec4 bounds);
     void enableTexture(Texture* texture);
 
     Window window;

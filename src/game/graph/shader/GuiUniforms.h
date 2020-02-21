@@ -15,4 +15,5 @@ struct GuiUniforms {
     GLint model;
 
     GLint bones;
+    GLint clipBounds;
 };

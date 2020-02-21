@@ -32,7 +32,7 @@ private:
     ClientList clientList;
     ServerConfig config;
 
-    std::unordered_map<unsigned int, bool> playersUpdated {};
+    std::unordered_set<unsigned int> playersUpdated {};
 
     double elapsedSeconds = 0;
     double deltaTime = 0;

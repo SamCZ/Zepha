@@ -30,10 +30,11 @@ Renderer::Renderer(glm::ivec2 win) :
     guiShader = Shader();
     guiShader.createFromFile("./assets/shader/ortho/hud.vs", "./assets/shader/ortho/hud.fs");
 
-    gu.matrix = camera.getOrthographicMatrix();
-    gu.ortho  = guiShader.get("ortho");
-    gu.model  = guiShader.get("model");
-    gu.bones  = guiShader.get("uBones");
+    gu.matrix     = camera.getOrthographicMatrix();
+    gu.ortho      = guiShader.get("ortho");
+    gu.model      = guiShader.get("model");
+    gu.bones      = guiShader.get("uBones");
+    gu.clipBounds = guiShader.get("uClipBounds");
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -169,6 +170,43 @@ void Renderer::swapBuffers() {
     window.swapBuffers();
 }
 
+void Renderer::setShader(Shader& s) {
+    s.use();
+    this->currentShader = &s;
+}
+
+void Renderer::setClearColor(unsigned char r, unsigned char g, unsigned char b) {
+    clearColor = {static_cast<float>(r)/255.f, static_cast<float>(g)/255.f, static_cast<float>(b)/255.f, 1};
+}
+
+void Renderer::toggleDepthTest(bool enable) {
+    enable ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
+}
+
+void Renderer::clearDepthBuffer() {
+    glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void Renderer::setModelMatrix(const glm::mat4& modelMatrix) {
+    glUniformMatrix4fv(currentModelUniform, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+}
+
+void Renderer::setBones(std::vector<glm::mat4> &transforms) {
+    if (transforms.empty()) return;
+    currentShader->setArr((currentShader == &entity ? entity.uniforms.bones : gu.bones), static_cast<GLsizei>(transforms.size()), transforms.at(0));
+}
+
+void Renderer::setClipBounds(glm::vec4 bounds) {
+    guiShader.set(gu.clipBounds, {bounds.x, window.getSize().y - bounds.w, bounds.z, window.getSize().y - bounds.y});
+}
+
+void Renderer::enableTexture(Texture *texture) {
+    if (texture != activeTexture) {
+        activeTexture = texture;
+        texture->use(0);
+    }
+}
+
 void Renderer::renderQuad() {
     if (quadVAO == 0) {
         float quadVertices[] = {
@@ -193,35 +231,3 @@ void Renderer::renderQuad() {
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
-void Renderer::setModelMatrix(const glm::mat4& modelMatrix) {
-    glUniformMatrix4fv(currentModelUniform, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-}
-
-void Renderer::enableTexture(Texture *texture) {
-    if (texture != activeTexture) {
-        activeTexture = texture;
-        texture->use(0);
-    }
-}
-
-void Renderer::setShader(Shader& s) {
-    s.use();
-    this->currentShader = &s;
-}
-
-void Renderer::setClearColor(unsigned char r, unsigned char g, unsigned char b) {
-    clearColor = {static_cast<float>(r)/255.f, static_cast<float>(g)/255.f, static_cast<float>(b)/255.f, 1};
-}
-
-void Renderer::setBones(std::vector<glm::mat4> &transforms) {
-    if (transforms.empty()) return;
-    currentShader->setArr((currentShader == &entity ? entity.uniforms.bones : gu.bones), static_cast<GLsizei>(transforms.size()), transforms.at(0));
-}
-
-void Renderer::toggleDepthTest(bool enable) {
-    enable ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
-}
-
-void Renderer::clearDepthBuffer() {
-    glClear(GL_DEPTH_BUFFER_BIT);
-}

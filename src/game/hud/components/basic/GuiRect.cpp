@@ -21,10 +21,13 @@ std::shared_ptr<GuiRect> GuiRect::fromSerialized(SerialGui::Elem s, ClientGame& 
 
     std::string background = s.tokens["background"];
 
+    bool hideOverflow = s.tokens["overflow"] == "hidden";
+
     auto rect = std::make_shared<GuiRect>(s.key);
     if (background[0] == '#') rect->create(size, padding, Util::hexToColorVec(background));
     else if (background.size() > 0) rect->create(size, padding, game.textures[background]);
     else rect->create(size, padding, glm::vec4 {});
+    rect->setHideOverflow(hideOverflow);
     rect->setPos(pos);
     return rect;
 }

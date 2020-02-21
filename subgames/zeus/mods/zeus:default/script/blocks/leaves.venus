@@ -4,11 +4,11 @@ zepha.register_block("zeus:default:leaves", {
     name = "Leaves",
     model = "base:leaf_like",
     textures = {
-        "zeus:default:leaves",
-        "zeus:default:leaves_puff"
+        "tint(0, zeus:default:leaves)",
+        "tint(0, zeus:default:leaves_puff)"
     },
     lowdef_textures = {
-        "zeus:default:leaves_opaque",
+        "tint(0, zeus:default:leaves_opaque)",
     },
     toughness = {
         hand = 1,
