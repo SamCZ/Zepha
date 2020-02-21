@@ -4,9 +4,10 @@
 
 #pragma once
 
-#include "GUIRect.h"
-#include "../../../../def/texture/Font.h"
 #include "GUIContainer.h"
+
+class ItemDef;
+class Font;
 
 class GUIInventoryItem : public GUIContainer {
 public:

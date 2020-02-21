@@ -17,7 +17,7 @@ zepha.register_keybind("zeus:inventory:open_inventory", {
                             position: 0px 45px
                             size: 218px 100px
                             padding: 20px 10px 8px 10px
-                            background: asset(zeus:inventory:inventory)
+                            background: zeus:inventory:inventory
 
                             inventory
                                 source: current_player
@@ -31,7 +31,7 @@ zepha.register_keybind("zeus:inventory:open_inventory", {
                             size: 218px 72px
                             position: 0px -15px
                             padding: 20px 10px 8px 10px
-                            background: asset(zeus:inventory:crafting)
+                            background: zeus:inventory:crafting
 
                             inventory
                                 source: current_player
@@ -51,7 +51,7 @@ zepha.register_keybind("zeus:inventory:open_inventory", {
                         rect[hot_wheel]
                             size: 214px 67px
                             position: 2px 160px
-                            background: asset(zeus:inventory:inventory_wheel)
+                            background: zeus:inventory:inventory_wheel
 
                             inventory
                                 source: current_player

@@ -10,14 +10,6 @@
 
 enum class Mode { INVALID, CLIENT, SERVER };
 
-uint64_t constexpr mix(char m, uint64_t s) {
-    return ((s<<7) + ~(s>>3)) + ~m;
-}
-
-uint64_t constexpr hashStr(const char * m) {
-    return (*m) ? mix(*m, hashStr(m+1)) : 0;
-}
-
 std::map<std::string, std::string> parseArgs(int argc, char* argv[]) {
     //Collect arguments into `args` map
     std::map<std::string, std::string> args;
@@ -54,30 +46,30 @@ int StartGame(int argc, char* argv[]) {
 
     //Parse the arguments map
     for (auto arg : parseArgs(argc, argv)) {
-        switch (hashStr(arg.first.c_str())) {
+        switch (Util::hash(arg.first.c_str())) {
             default: {
                 std::cout << Log::err << "Invalid argument " << arg.first << "." << Log::endl;
                 return -1;
             }
-            case hashStr("--mode"): {
+            case Util::hash("--mode"): {
                 if      (arg.second == "client") mode = Mode::CLIENT;
                 else if (arg.second == "server") mode = Mode::SERVER;
                 else std::cout << Log::err << "Invalid mode argument." << Log::endl;
                 break;
             }
-            case hashStr("--port"): {
+            case Util::hash("--port"): {
                 addr.port = static_cast<unsigned short>(stoi(arg.second));
                 break;
             }
-            case hashStr("--address"): {
+            case Util::hash("--address"): {
                 addr.host = arg.second;
                 break;
             }
-            case hashStr("--subgame"): {
+            case Util::hash("--subgame"): {
                 subgame = arg.second;
                 break;
             }
-            case hashStr("--noascii"): {
+            case Util::hash("--noascii"): {
                 ascii = false;
                 break;
             }

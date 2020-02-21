@@ -218,7 +218,7 @@ set(ZEPHA_SRC
     game/scene/world/ItemStack.h
     server/LocalServerInstance.cpp
     server/LocalServerInstance.h
-    game/hud/SerializedGuiElem.h
+        game/hud/SerialGui.h
     util/Voronoi3D.cpp
     util/Voronoi3D.h
     def/gen/BiomeDef.cpp

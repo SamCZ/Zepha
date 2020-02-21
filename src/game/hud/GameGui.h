@@ -5,7 +5,7 @@
 #pragma once
 
 #include "GameGuiBuilder.h"
-#include "SerializedGuiElem.h"
+#include "SerialGui.h"
 #include "components/basic/GUIText.h"
 #include "components/basic/GUIRect.h"
 #include "components/basic/GUIContainer.h"

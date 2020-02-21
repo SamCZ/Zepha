@@ -20,8 +20,8 @@ BlockChunk::BlockChunk(const std::vector<unsigned int>& blocks, const std::vecto
 }
 
 bool BlockChunk::setBlock(unsigned int ind, unsigned int blk) {
-    // Exit if someone is doing something stupid
-    if (ind >= 4096) return false;
+    if (!RIE::write(ind, blk, blocks, 4096)) return false;
+
     // Mesh emptiness manipulation
     if (blk == DefinitionAtlas::AIR) {
         if ((nonAirBlocks = fmax(nonAirBlocks - 1, 0)) == 0) {
@@ -35,8 +35,7 @@ bool BlockChunk::setBlock(unsigned int ind, unsigned int blk) {
         nonAirBlocks++;
     }
 
-    // Actually set the block
-    return RIE::write(ind, blk, blocks, 4096);
+    return true;
 }
 
 const std::vector<unsigned int> &BlockChunk::cGetBlocks() const {

@@ -4,7 +4,30 @@
 
 #include "GUIRect.h"
 
+#include "../../SerialGui.h"
+#include "../../../../util/Util.h"
+#include "../../../../def/ClientGame.h"
+
 GUIRect::GUIRect(const std::string &key) : GUIComponent(key) {}
+
+std::shared_ptr<GUIRect> GUIRect::fromSerialized(SerialGui::Elem s, ClientGame& game, glm::ivec2 bounds) {
+    glm::vec2 pos     = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position", bounds);
+    glm::vec2 offset  = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position_anchor");
+    glm::vec2 size    = SerialGui::deserializeToken<glm::vec2>(s.tokens, "size", bounds);
+    glm::vec4 padding = SerialGui::deserializeToken<glm::vec4>(s.tokens, "padding", bounds);
+
+    pos -= offset * size;
+    size -= glm::vec2 {padding.y + padding.w, padding.x + padding.z};
+
+    std::string background = s.tokens["background"];
+
+    auto rect = std::make_shared<GUIRect>(s.key);
+    if (background[0] == '#') rect->create(size, padding, Util::hexToColorVec(background));
+    else if (background.size() > 0) rect->create(size, padding, game.textures[background]);
+    else rect->create(size, padding, glm::vec4 {});
+    rect->setPos(pos);
+    return rect;
+}
 
 // Single Color Constructor
 // Creates a GUIRect object whose background

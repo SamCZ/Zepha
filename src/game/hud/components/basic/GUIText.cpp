@@ -2,8 +2,9 @@
 // Created by aurailus on 25/12/18.
 //
 
-#include "GUIText.h"
 #include <utility>
+
+#include "GUIText.h"
 
 GUIText::GUIText(const std::string &key) : GUIComponent(key) {}
 
@@ -20,6 +21,38 @@ void GUIText::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 bgcolor, glm:
 
     setScale(scale);
     setText("");
+}
+
+std::shared_ptr<GUIText> GUIText::fromSerialized(SerialGui::Elem s, ClientGame &game, glm::ivec2 bounds) {
+    glm::vec2 pos     = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position", bounds);
+    glm::vec2 offset  = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position_anchor");
+    glm::vec2 size    = SerialGui::deserializeToken<glm::vec2>(s.tokens, "size", bounds);
+    glm::vec4 padding = SerialGui::deserializeToken<glm::vec4>(s.tokens, "padding", bounds);
+    glm::vec2 scale =   SerialGui::deserializeToken<glm::vec2>(s.tokens, "scale");
+    if (scale == glm::vec2{0, 0}) scale = {1, 1};
+
+    pos -= offset * size;
+    size -= glm::vec2 {padding.y + padding.w, padding.x + padding.z};
+
+    glm::vec4 background_color = Util::hexToColorVec("#0000");
+    if (s.tokens.count("background")) background_color = Util::hexToColorVec(s.tokens["background"]);
+    glm::vec4 color = Util::hexToColorVec("#fff");
+    if (s.tokens.count("color")) color = Util::hexToColorVec(s.tokens["color"]);
+
+    std::string content = "";
+    if (s.tokens.count("content") && s.tokens["content"].length() >= 2) content = s.tokens["content"].substr(1, s.tokens["content"].size() - 2);
+    std::string::size_type off = 0;
+    while ((off = content.find("\\n", off)) != std::string::npos) {
+        content.replace(off, 2, "\n");
+        off += 1;
+    }
+
+    auto text = std::make_shared<GUIText>(s.key);
+    text->create(scale * SerialGui::SCALE_MODIFIER, padding, background_color, color, {game.textures, game.textures["font"]});
+    text->setText(content);
+    text->setPos(pos);
+
+    return text;
 }
 
 void GUIText::setText(std::string text) {

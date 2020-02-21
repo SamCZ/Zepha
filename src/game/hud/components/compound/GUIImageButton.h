@@ -11,6 +11,8 @@ public:
     GUIImageButton() = default;
     GUIImageButton(const std::string& key);
 
+    static std::shared_ptr<GUIImageButton> fromSerialized(SerialGui::Elem s, ClientGame& game, glm::ivec2 bounds);
+
     void create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<AtlasRef> texture, std::shared_ptr<AtlasRef> hoverTexture);
 
     void setHoverCallback(const callback& hoverCallback) override;

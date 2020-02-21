@@ -3,8 +3,11 @@
 //
 
 #include "GUIInventoryItem.h"
+
 #include "GUIText.h"
+#include "GUIRect.h"
 #include "GUIModel.h"
+#include "../../../../def/texture/Font.h"
 
 GUIInventoryItem::GUIInventoryItem(const std::string &key) : GUIContainer(key) {}
 

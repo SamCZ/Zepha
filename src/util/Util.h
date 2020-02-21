@@ -221,5 +221,15 @@ namespace Util {
             case 348: return "menu";
         }
     }
+
+    namespace {
+        constexpr static uint64_t mix(char m, uint64_t s) {
+            return ((s << 7) + ~(s >> 3)) + ~m;
+        }
+    }
+
+    constexpr static uint64_t hash(const char * m) {
+        return (*m) ? mix(*m, hash(m + 1)) : 0;
+    }
 };
 

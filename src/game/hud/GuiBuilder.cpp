@@ -4,17 +4,22 @@
 
 #include "GuiBuilder.h"
 
+#include "components/basic/GUIRect.h"
+#include "components/basic/GUIText.h"
+#include "components/basic/GUIModel.h"
+#include "components/basic/GUIContainer.h"
+#include "components/compound/GUIImageButton.h"
+
 GuiBuilder::GuiBuilder(ClientGame& defs, std::shared_ptr<GUIContainer> root) :
-    defs(defs), root(root) {}
+        game(defs), root(root) {}
 
 void GuiBuilder::setGui(const std::string& menu, const std::map<std::string, ComponentCallbacks>& callbacks) {
-    this->menu = menu;
     this->callbacks = callbacks;
-
-    deserialize();
+    deserialize(menu);
 }
 
-void GuiBuilder::deserialize() {
+void GuiBuilder::deserialize(const std::string& menu) {
+    // Split the lines by the newline delimiter
     std::vector<std::string> lines;
     {
         std::string::size_type pos = 0;
@@ -33,14 +38,15 @@ void GuiBuilder::deserialize() {
     }
 
     components.clear();
-    std::vector<SerializedGuiElem*> stack {};
-    unsigned int missingKey = 0;
-    SerializedGuiElem* component = nullptr;
+    unsigned int keyInd = 0;
+    std::vector<SerialGui::Elem*> stack {};
+    SerialGui::Elem* component = nullptr;
 
+    // Parse through the serialized structure and create the Serialized tree
     for (const std::string& line : lines) {
         if (line.find(':') != std::string::npos) {
-            //Token
-            if (component == nullptr) throw "Property before component.";
+            // A Property
+            if (component == nullptr) throw "expected a component name before a property";
 
             std::string::size_type delimiter = line.find(':');
 
@@ -58,19 +64,8 @@ void GuiBuilder::deserialize() {
 
             component->tokens.emplace(name, value);
         }
-        else if (line == "end") {
-            //End Component Def
-            if (stack.size() > 0) {
-                component = stack[stack.size() - 1];
-                stack.pop_back();
-            }
-            else {
-                stack.pop_back();
-                component = nullptr;
-            }
-        }
-        else {
-            //Component
+        else if (line != "end") {
+            // Beginning of a component definition
             std::string key = "";
             std::string::size_type keyStart;
             std::string::size_type keyEnd;
@@ -79,15 +74,12 @@ void GuiBuilder::deserialize() {
                 key = line.substr(keyStart + 1, keyEnd - keyStart - 1);
             }
             else {
-                key = "__" + std::to_string(missingKey++);
+                // Create an implicit key because one was not specified
+                key = "__" + std::to_string(keyInd++);
             }
-            std::string type = line.substr(0, keyStart);
 
-            SerializedGuiElem g;
-            g.key = key;
-            g.type = type;
-            g.tokens = {};
-            g.children = {};
+            std::string type = line.substr(0, keyStart);
+            SerialGui::Elem g {type, key, {}, {}};
 
             if (component == nullptr) {
                 components.push_back(std::move(g));
@@ -99,14 +91,20 @@ void GuiBuilder::deserialize() {
                 component = &component->children[component->children.size() - 1];
             }
         }
+        else {
+            // End of a component definition -- pop the stack up
+            if (stack.size() > 0) {
+                component = stack[stack.size() - 1];
+                stack.pop_back();
+            }
+            else component = nullptr;
+        }
     }
 }
 
-void GuiBuilder::build(glm::ivec2 win) {
-    this->win = win;
-
+void GuiBuilder::build(glm::ivec2 winBounds) {
     clear(false);
-    recursivelyCreate(components, root);
+    recursivelyCreate(components, root, winBounds);
 }
 
 void GuiBuilder::clear(bool clrCallbacks) {
@@ -114,248 +112,52 @@ void GuiBuilder::clear(bool clrCallbacks) {
     root->empty();
 }
 
-void GuiBuilder::recursivelyCreate(std::vector<SerializedGuiElem> components, std::shared_ptr<GUIComponent> parent) {
+void GuiBuilder::recursivelyCreate(std::vector<SerialGui::Elem> components, std::shared_ptr<GUIComponent> parent, glm::ivec2 bounds) {
     for (auto& data : components) {
-        std::shared_ptr<GUIComponent> component = createComponent(data);
-        if (component != nullptr) {
-            parent->add(component);
-            recursivelyCreate(data.children, component);
-        }
+        std::shared_ptr<GUIComponent> component = createComponent(data, bounds);
+        if (component == nullptr) continue;
+        parent->add(component);
+        recursivelyCreate(data.children, component, bounds);
     }
 }
 
-std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerializedGuiElem& data) {
-    glm::vec2 pos {};
+std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerialGui::Elem& data, glm::ivec2 bounds) {
+    std::shared_ptr<GUIComponent> c = nullptr;
 
-    std::function<void(bool, glm::ivec2)> cbLeftClick = nullptr, cbRightClick = nullptr, cbHover = nullptr;
+    GUIComponent::callback cbLeftClick = nullptr;
+    GUIComponent::callback cbRightClick = nullptr;
+    GUIComponent::callback cbHover = nullptr;
+
     if (callbacks.count(data.key)) {
         cbLeftClick = callbacks[data.key].left;
         cbRightClick = callbacks[data.key].right;
         cbHover = callbacks[data.key].hover;
     }
 
-    if (data.tokens.count("position")) {
-        auto tokens = splitValue(data.tokens["position"], 2);
-        pos = {stringToNum(tokens[0], PercentBehavior::BUFF_WIDTH),
-               stringToNum(tokens[1], PercentBehavior::BUFF_HEIGHT)};
-    }
-
-    glm::vec2 offset {};
-    if (data.tokens.count("position_anchor")) {
-        auto tokens = splitValue(data.tokens["position_anchor"], 2);
-        offset = {stringToNum(tokens[0], PercentBehavior::DECIMAL),
-                  stringToNum(tokens[1], PercentBehavior::DECIMAL)};
-    }
-
-    glm::vec2 size {};
-    if (data.tokens.count("size")) {
-        auto tokens = splitValue(data.tokens["size"], 2);
-        size = {stringToNum(tokens[0], PercentBehavior::BUFF_WIDTH),
-                stringToNum(tokens[1], PercentBehavior::BUFF_HEIGHT)};
-    }
-
-    pos -= offset * size;
-
-    glm::vec4 padding {};
-    if (data.tokens.count("padding")) {
-        auto tokens = splitValue(data.tokens["padding"], 4);
-        padding = {stringToNum(tokens[0], PercentBehavior::BUFF_HEIGHT),
-                   stringToNum(tokens[1], PercentBehavior::BUFF_WIDTH),
-                   stringToNum(tokens[2], PercentBehavior::BUFF_HEIGHT),
-                   stringToNum(tokens[3], PercentBehavior::BUFF_WIDTH)};
-    }
-
-    if (data.type == "body") {
-        auto rect = std::make_shared<GUIRect>(data.key);
-
-        std::string background = "";
-        if (data.tokens.count("background")) background = data.tokens["background"];
-
-        if (background[0] == '#') rect->create(win, {}, Util::hexToColorVec(background));
-        else if (background.substr(0, 6) == "asset(") rect->create(win, {}, defs.textures[background.substr(6, background.length() - 7)]);
-        else rect->create(win, {}, glm::vec4 {});
-
-        rect->setCallbacks(cbLeftClick, cbRightClick, cbHover);
-        return rect;
-    }
-
-    else if (data.type == "rect") {
-        size.x -= padding.y + padding.w;
-        size.y -= padding.x + padding.z;
-
-        std::string background = "";
-        if (data.tokens.count("background")) background = data.tokens["background"];
-
-        auto rect = std::make_shared<GUIRect>(data.key);
-        if (background[0] == '#') rect->create(size, padding, Util::hexToColorVec(background));
-        else if (background.substr(0, 6) == "asset(") rect->create(size, padding, defs.textures[background.substr(6, background.length() - 7)]);
-        else rect->create(size, padding, glm::vec4 {});
-
-        rect->setPos(pos);
-        rect->setCallbacks(cbLeftClick, cbRightClick, cbHover);
-        return rect;
-    }
-
-    else if (data.type == "button") {
-        size.x -= padding.y + padding.w;
-        size.y -= padding.x + padding.z;
-
-        std::string background = "";
-        if (data.tokens.count("background")) background = data.tokens["background"];
-        std::string background_hover = background;
-        if (data.tokens.count("background_hover")) background_hover = data.tokens["background_hover"];
-
-        auto button = std::make_shared<GUIImageButton>(data.key);
-        button->create(size, padding, defs.textures[background.substr(6, background.length() - 7)], defs.textures[background_hover.substr(6, background_hover.length() - 7)]);
-
-        std::string content = "";
-        if (data.tokens.count("content")) content = data.tokens["content"].substr(1, data.tokens["content"].size() - 2);
-
-        if (content != "") {
-            std::string::size_type off = 0;
-            while ((off = content.find("\\n", off)) != std::string::npos) {
-                content.replace(off, 2, "\n");
-                off += 1;
-            }
-
-            auto text = std::make_shared<GUIText>(data.key + "__TEXT");
-            text->create(glm::vec2(SCALE_MODIFIER), padding, {}, {1, 1, 1, 1},
-                         {defs.textures, defs.textures["font"]});
-            text->setText(content);
-            text->setPos({6*SCALE_MODIFIER, size.y / 2 - 4.5*SCALE_MODIFIER});
-            button->add(text);
+    switch (Util::hash(data.type.c_str())) {
+        default: break;
+        case Util::hash("body"): {
+            auto body = GUIRect::fromSerialized(data, game, bounds);
+            body->setScale(bounds);
+            c = body;
+            break;
         }
-
-        button->setPos(pos);
-        button->setCallbacks(cbLeftClick, cbRightClick, cbHover);
-        return button;
+        case Util::hash("rect"):
+            c = GUIRect::fromSerialized(data, game, bounds);
+            break;
+        case Util::hash("button"):
+            c = GUIImageButton::fromSerialized(data, game, bounds);
+            break;
+        case Util::hash("text"):
+            c = GUIText::fromSerialized(data, game, bounds);
+            break;
+        case Util::hash("model"):
+            c = GUIModel::fromSerialized(data, game, bounds);
+            break;
     }
 
-    else if (data.type == "text") {
-        glm::vec2 scale = {1, 1};
-        if (data.tokens.count("scale")) {
-            auto tokens = splitValue(data.tokens["scale"], 2);
-            scale = {stringToNum(tokens[0], PercentBehavior::DECIMAL),
-                     stringToNum(tokens[1], PercentBehavior::DECIMAL)};
-        }
-
-        glm::vec4 padding {};
-        if (data.tokens.count("padding")) {
-            auto tokens = splitValue(data.tokens["padding"], 4);
-            padding = {stringToNum(tokens[0], PercentBehavior::BUFF_HEIGHT),
-                       stringToNum(tokens[1], PercentBehavior::BUFF_WIDTH),
-                       stringToNum(tokens[2], PercentBehavior::BUFF_HEIGHT),
-                       stringToNum(tokens[3], PercentBehavior::BUFF_WIDTH)};
-        }
-
-        glm::vec4 background_color = Util::hexToColorVec("#0000");
-        if (data.tokens.count("background")) background_color = Util::hexToColorVec(data.tokens["background"]);
-        glm::vec4 color = Util::hexToColorVec("#fff");
-        if (data.tokens.count("color")) color = Util::hexToColorVec(data.tokens["color"]);
-
-        std::string content = "Missing content string";
-        if (data.tokens.count("content")) content = data.tokens["content"].substr(1, data.tokens["content"].size() - 2);
-
-        std::string::size_type off = 0;
-        while ((off = content.find("\\n", off)) != std::string::npos) {
-            content.replace(off, 2, "\n");
-            off += 1;
-        }
-
-        auto text = std::make_shared<GUIText>(data.key);
-        text->create(scale * SCALE_MODIFIER, padding, background_color, color, {defs.textures, defs.textures["font"]});
-        text->setText(content);
-        text->setPos(pos);
-        text->setCallbacks(cbLeftClick, cbRightClick, cbHover);
-        return text;
-    }
-
-    else if (data.type == "model") {
-        glm::vec2 scale = {1, 1};
-        if (data.tokens.count("scale")) {
-            auto tokens = splitValue(data.tokens["scale"], 2);
-            scale = {stringToNum(tokens[0], PercentBehavior::DECIMAL),
-                     stringToNum(tokens[1], PercentBehavior::DECIMAL)};
-        }
-        std::string type = (data.tokens.count("type") ? data.tokens["type"] : "model");
-        std::string source = (data.tokens.count("source") ? data.tokens["source"] : "");
-        std::string texture = (data.tokens.count("texture") ? data.tokens["texture"] : "");
-
-        glm::vec2 anim_range = {0, 0};
-        if (data.tokens.count("anim_range")) {
-            auto tokens = splitValue(data.tokens["anim_range"], 2);
-            anim_range = {stringToNum(tokens[0], PercentBehavior::DECIMAL),
-                     stringToNum(tokens[1], PercentBehavior::DECIMAL)};
-        }
-
-        auto m = std::make_shared<Model>();
-
-        if (type == "model") {
-            m->fromSerialized(defs.models.models[source], {defs.textures[texture]});
-        }
-
-        auto model = std::make_shared<GUIModel>(data.key);
-        model->create(scale, m);
-
-        if (anim_range.y != 0) {
-            model->animate(anim_range);
-        }
-
-        model->setPos(pos);
-        model->setCallbacks(cbLeftClick, cbRightClick, cbHover);
-        return model;
-    }
-
-    // An unknown type was specified.
-    return nullptr;
-}
-
-float GuiBuilder::stringToNum(const std::string& input, PercentBehavior behavior = PercentBehavior::BUFF_WIDTH) {
-    if (input.find("px") != std::string::npos) {
-        return atof(input.substr(0, input.find("px")).c_str()) * SCALE_MODIFIER;
-    }
-
-    if (input.find('%') != std::string::npos) {
-        float decimal = atof(input.substr(0, input.find('%')).c_str()) / 100;
-        switch (behavior) {
-            case PercentBehavior::DECIMAL:
-                return decimal;
-            case PercentBehavior::BUFF_WIDTH:
-                return round(decimal * win.x / SCALE_MODIFIER) * SCALE_MODIFIER;
-            case PercentBehavior::BUFF_HEIGHT:
-                return round(decimal * win.y / SCALE_MODIFIER) * SCALE_MODIFIER;
-        }
-    }
-
-    return atof(input.c_str());
-
-    return 0;
-}
-
-std::vector<std::string> GuiBuilder::splitValue(const std::string &value, unsigned int targetVals) {
-    std::vector<std::string> vec {};
-
-    if (value == "") throw "No values for splitValue.";
-
-    size_t count = std::count(value.begin(), value.end(), ' ');
-    if (count + 1 > targetVals) throw "Too many values for splitValue.";
-
-    size_t begin = 0;
-    for (int i = 0; i < count; i++) {
-        size_t end = value.find(' ', begin);
-        vec.push_back(value.substr(begin, end - begin));
-        begin = end + 1;
-    }
-    vec.push_back(value.substr(begin));
-
-    while (vec.size() < targetVals) {
-        for (auto& v: vec) {
-            vec.push_back(v);
-            if (vec.size() >= targetVals) break;
-        }
-    }
-
-    return std::move(vec);
+    if (c != nullptr) c->setCallbacks(cbLeftClick, cbRightClick, cbHover);
+    return c;
 }
 
 GuiBuilder::~GuiBuilder() {

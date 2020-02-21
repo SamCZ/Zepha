@@ -5,10 +5,11 @@
 #pragma once
 
 #include "../basic/GUIContainer.h"
-#include "../../../../def/ClientGame.h"
+
 #include "../basic/GUIRect.h"
-#include "../basic/GUIInventoryItem.h"
-#include "../../../../def/texture/Font.h"
+#include "../../SerialGui.h"
+#include "../../../../def/ClientGame.h"
+#include "../../../scene/world/Inventory.h"
 #include "../../../scene/world/InventoryList.h"
 
 class GUIInventoryList : public GUIContainer {
@@ -16,6 +17,9 @@ public:
     GUIInventoryList() = default;
     GUIInventoryList(const std::string& key);
     ~GUIInventoryList() override;
+
+    static std::shared_ptr<GUIInventoryList> fromSerialized(SerialGui::Elem s, ClientGame &game,
+            glm::ivec2 bounds, Inventory& inventory, InventoryList& hand);
 
     void create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding, InventoryList& list, InventoryList& hand, ClientGame& defs);
 

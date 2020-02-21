@@ -4,7 +4,42 @@
 
 #include "GUIInventoryList.h"
 
+#include "../basic/GUIInventoryItem.h"
+#include "../../../../def/texture/Font.h"
+
 GUIInventoryList::GUIInventoryList(const std::string &key) : GUIContainer(key) {}
+
+std::shared_ptr<GUIInventoryList> GUIInventoryList::fromSerialized(SerialGui::Elem s, ClientGame &game,
+        glm::ivec2 bounds, Inventory& inventory, InventoryList& hand) {
+
+    glm::vec2 pos     = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position", bounds);
+    glm::vec2 offset  = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position_anchor");
+    glm::vec2 size    = SerialGui::deserializeToken<glm::vec2>(s.tokens, "size", bounds);
+    glm::vec4 padding = SerialGui::deserializeToken<glm::vec4>(s.tokens, "padding", bounds);
+    glm::vec2 slotspc = SerialGui::deserializeToken<glm::vec2>(s.tokens, "slot_spacing", bounds);
+
+    std::string source = s.tokens["source"];
+    std::string list   = s.tokens["list"];
+
+    if (source != "current_player") {
+        std::cerr << "Invalid source specified, " << source << std::endl;
+        return nullptr;
+    }
+
+    if (!inventory[list]) {
+        std::cerr << "Invalid list specified, " << list << std::endl;
+        return nullptr;
+    }
+
+    auto invList = inventory[list];
+    auto inv = std::make_shared<GUIInventoryList>(s.key);
+
+    inv->create(glm::vec2(SerialGui::SCALE_MODIFIER), padding * SerialGui::SCALE_MODIFIER,
+            slotspc * SerialGui::SCALE_MODIFIER, *invList, hand, game);
+    inv->setPos(pos);
+
+    return inv;
+}
 
 void GUIInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding, InventoryList &list, InventoryList& hand, ClientGame &defs) {
     this->list = &list;
