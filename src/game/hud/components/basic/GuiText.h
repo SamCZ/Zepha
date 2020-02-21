@@ -6,18 +6,18 @@
 
 #include <utility>
 
-#include "../GUIComponent.h"
+#include "../GuiComponent.h"
 
 #include "../../SerialGui.h"
 #include "../../../../def/texture/Font.h"
 #include "../../../../def/texture/AtlasRef.h"
 
-class GUIText : public GUIComponent {
+class GuiText : public GuiComponent {
 public:
-    GUIText() = default;
-    explicit GUIText(const std::string& key);
+    GuiText() = default;
+    explicit GuiText(const std::string& key);
 
-    static std::shared_ptr<GUIText> fromSerialized(SerialGui::Elem s, ClientGame& game, glm::ivec2 bounds);
+    static std::shared_ptr<GuiText> fromSerialized(SerialGui::Elem s, ClientGame& game, glm::ivec2 bounds);
 
     void create(glm::vec2 scale, glm::vec4 padding, glm::vec4 bgcolor, glm::vec4 color, Font font);
 

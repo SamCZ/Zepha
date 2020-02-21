@@ -2,13 +2,13 @@
 // Created by aurailus on 28/04/19.
 //
 
-#include "GUILabelledGraph.h"
+#include "GuiLabelledGraph.h"
 
-GUILabelledGraph::GUILabelledGraph(const std::string &key) : GUIContainer(key) {}
+GuiLabelledGraph::GuiLabelledGraph(const std::string &key) : GuiContainer(key) {}
 
-void GUILabelledGraph::create(glm::vec2 scale, glm::vec4 padding, const std::string &title,
-    unsigned int graphLength, unsigned int graphScale,
-    std::shared_ptr<AtlasRef> graphTextureRef, Font font) {
+void GuiLabelledGraph::create(glm::vec2 scale, glm::vec4 padding, const std::string &title,
+                              unsigned int graphLength, unsigned int graphScale,
+                              std::shared_ptr<AtlasRef> graphTextureRef, Font font) {
 
     const static int GRAPH_PAD_X = 2;
     const static int GRAPH_PAD_Y = 62;
@@ -21,17 +21,17 @@ void GUILabelledGraph::create(glm::vec2 scale, glm::vec4 padding, const std::str
     this->font = std::move(font);
     this->graphTextureRef = std::move(graphTextureRef);
 
-    auto background = std::make_shared<GUIRect>("background");
+    auto background = std::make_shared<GuiRect>("background");
     background->create(scale, {}, {0.1, 0.1, 0.1, 0.2}, {0.1, 0.1, 0.1, 0.2}, {0.1, 0.1, 0.1, 0.7}, {0.1, 0.1, 0.1, 0.7});
     add(background);
     background->setPos({0, 0});
 
-    auto graph = std::make_shared<GUIGraph>("graph");
+    auto graph = std::make_shared<GuiGraph>("graph");
     graph->create({scale.x / (graphLength + GRAPH_PAD_X), scale.y * 0.4}, {}, this->graphTextureRef, graphLength, graphScale, true);
     add(graph);
     graph->setPos({GRAPH_PAD_X, GRAPH_PAD_Y});
 
-    auto label = std::make_shared<GUIText>("label");
+    auto label = std::make_shared<GuiText>("label");
     label->create({2, 2}, {}, {}, {1, 1, 1, 1}, this->font);
     add(label);
     label->setPos({TEXT_PAD_X, TEXT_PAD_Y});
@@ -39,8 +39,8 @@ void GUILabelledGraph::create(glm::vec2 scale, glm::vec4 padding, const std::str
     for (float &i : history) i = 0;
 }
 
-void GUILabelledGraph::pushValue(float value) {
-    get<GUIGraph>("graph")->pushValue(value);
+void GuiLabelledGraph::pushValue(float value) {
+    get<GuiGraph>("graph")->pushValue(value);
 
     history[ind] = value;
     if (++ind >= 5) {
@@ -53,6 +53,6 @@ void GUILabelledGraph::pushValue(float value) {
                                 ? std::to_string(static_cast<int>(value))
                                 : Util::floatToString(value);
 
-        get<GUIText>("label")->setText(title + ": " + stringVal);
+        get<GuiText>("label")->setText(title + ": " + stringVal);
     }
 }

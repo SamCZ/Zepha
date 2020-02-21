@@ -3,11 +3,11 @@
 //
 
 #include "GameGui.h"
-#include "components/compound/GUIInventoryList.h"
+#include "components/compound/GuiInventoryList.h"
 
 GameGui::GameGui(Inventory& inventory, InventoryList& hand, glm::vec2 bufferSize, ClientGame& defs, Renderer& renderer) :
-    menuRoot(std::make_shared<GUIContainer>("__luaroot")),
-    handList(std::make_shared<GUIInventoryList>("hand")),
+    menuRoot(std::make_shared<GuiContainer>("__luaroot")),
+    handList(std::make_shared<GuiInventoryList>("hand")),
     builder(inventory, hand, defs, menuRoot),
     inventory(inventory),
     renderer(renderer),
@@ -15,12 +15,12 @@ GameGui::GameGui(Inventory& inventory, InventoryList& hand, glm::vec2 bufferSize
     hand(hand),
     defs(defs) {
 
-    auto crosshair = std::make_shared<GUIRect>("crosshair");
+    auto crosshair = std::make_shared<GuiRect>("crosshair");
     crosshair->create({22, 22}, {}, defs.textures["crosshair"]);
     crosshair->setPos({bufferSize.x / 2 - 11, bufferSize.y / 2 - 9});
     builtIn.add(crosshair);
 
-    auto viginette = std::make_shared<GUIRect>("viginette");
+    auto viginette = std::make_shared<GuiRect>("viginette");
     viginette->create(bufferSize, {}, defs.textures["viginette"]);
     builtIn.add(viginette);
 
@@ -50,8 +50,8 @@ void GameGui::update(double delta) {
 void GameGui::winResized(glm::ivec2 win) {
     this->win = win;
 
-    builtIn.get<GUIRect>("crosshair")->setPos({win.x / 2 - 11, win.y / 2 - 9});
-    builtIn.get<GUIRect>("viginette")->setScale(win);
+    builtIn.get<GuiRect>("crosshair")->setPos({win.x / 2 - 11, win.y / 2 - 9});
+    builtIn.get<GuiRect>("viginette")->setScale(win);
 
     builder.build(win);
 }
@@ -72,7 +72,7 @@ const std::string &GameGui::getMenuState() {
 }
 
 void GameGui::setVisible(bool visible) {
-    GUIComponent::setVisible(visible);
+    GuiComponent::setVisible(visible);
     builtIn.setVisible(visible);
 }
 

@@ -7,9 +7,9 @@
 #include <utility>
 #include "net/ServerConnection.h"
 #include "../graph/scene/Scene.h"
-#include "../hud/components/basic/GUIText.h"
-#include "../hud/components/basic/GUIContainer.h"
-#include "../hud/components/basic/GUIRect.h"
+#include "../hud/components/basic/GuiText.h"
+#include "../hud/components/basic/GuiContainer.h"
+#include "../hud/components/basic/GuiRect.h"
 #include "../../lua/LuaModFile.h"
 #include "../../lua/LuaMod.h"
 #include "../../server/asset/AssetType.h"
@@ -39,7 +39,7 @@ private:
     State connectState = State::CONNECTING;
     ServerConnection& connection;
 
-    GUIContainer components;
+    GuiContainer components;
 
     double dotsTime = 0;
 };

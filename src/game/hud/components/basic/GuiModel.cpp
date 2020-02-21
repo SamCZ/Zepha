@@ -2,13 +2,13 @@
 // Created by aurailus on 2019-12-17.
 //
 
-#include "GUIModel.h"
+#include "GuiModel.h"
 
 #include "../../../../def/ClientGame.h"
 
-GUIModel::GUIModel(const std::string &key) : GUIComponent(key) {}
+GuiModel::GuiModel(const std::string &key) : GuiComponent(key) {}
 
-std::shared_ptr<GUIModel> GUIModel::fromSerialized(SerialGui::Elem s, ClientGame &game, glm::ivec2 bounds) {
+std::shared_ptr<GuiModel> GuiModel::fromSerialized(SerialGui::Elem s, ClientGame &game, glm::ivec2 bounds) {
     glm::vec2 pos        = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position", bounds);
     glm::vec2 scale      = SerialGui::deserializeToken<glm::vec2>(s.tokens, "scale");
     glm::vec2 anim_range = SerialGui::deserializeToken<glm::vec2>(s.tokens, "anim_range");
@@ -21,7 +21,7 @@ std::shared_ptr<GUIModel> GUIModel::fromSerialized(SerialGui::Elem s, ClientGame
     auto m = std::make_shared<Model>();
     if (type == "model") m->fromSerialized(game.models.models[source], {game.textures[texture]});
 
-    auto model = std::make_shared<GUIModel>(s.key);
+    auto model = std::make_shared<GuiModel>(s.key);
     model->create(scale, m);
     model->setPos(pos);
 
@@ -30,7 +30,7 @@ std::shared_ptr<GUIModel> GUIModel::fromSerialized(SerialGui::Elem s, ClientGame
     return model;
 }
 
-void GUIModel::create(glm::vec2 scale, std::shared_ptr<Model> model) {
+void GuiModel::create(glm::vec2 scale, std::shared_ptr<Model> model) {
     entity.setModel(model);
     setScale({scale.x + padding.w + padding.y, scale.y + padding.x + padding.z});
 
@@ -38,29 +38,29 @@ void GUIModel::create(glm::vec2 scale, std::shared_ptr<Model> model) {
     setRotationY(215);
 }
 
-void GUIModel::update(double delta) {
+void GuiModel::update(double delta) {
     entity.update(delta);
 }
 
-void GUIModel::animate(glm::vec2 range) {
+void GuiModel::animate(glm::vec2 range) {
     entity.playRange(range.x, range.y, true);
 }
 
-void GUIModel::setRotationX(float x) {
+void GuiModel::setRotationX(float x) {
     entity.setRotateX(x);
 }
 
-void GUIModel::setRotationY(float y) {
+void GuiModel::setRotationY(float y) {
     entity.setRotateY(y);
 }
 
-void GUIModel::setRotationZ(float z) {
+void GuiModel::setRotationZ(float z) {
     entity.setRotateZ(z);
 }
 
-void GUIModel::draw(Renderer &renderer) {
+void GuiModel::draw(Renderer &renderer) {
     renderer.toggleDepthTest(true);
     renderer.clearDepthBuffer();
-    GUIComponent::draw(renderer);
+    GuiComponent::draw(renderer);
     renderer.toggleDepthTest(false);
 }

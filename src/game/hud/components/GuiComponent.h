@@ -9,12 +9,12 @@
 #include <list>
 #include "../../entity/Entity.h"
 
-class GUIComponent : public Drawable {
+class GuiComponent : public Drawable {
 public:
     typedef std::function<void(bool, glm::ivec2)> callback;
 
-    GUIComponent() = default;
-    explicit GUIComponent(const std::string& key);
+    GuiComponent() = default;
+    explicit GuiComponent(const std::string& key);
 
     virtual void setScale(glm::vec2 scale);
     virtual glm::vec2 getScale();
@@ -36,8 +36,8 @@ public:
     virtual void setRightClickCallback(const callback& rightClickCallback);
     void setCallbacks(const callback& left, const callback& right, const callback& hover);
 
-    void add(std::shared_ptr<GUIComponent> component);
-    void insert(unsigned int index, std::shared_ptr<GUIComponent> component);
+    void add(std::shared_ptr<GuiComponent> component);
+    void insert(unsigned int index, std::shared_ptr<GuiComponent> component);
     template<class T> std::shared_ptr<T> get(const std::string &key) {
         for (auto &it : children) {
             if (it.get()->key == key) {
@@ -58,8 +58,8 @@ protected:
     bool clickEvent(bool left, bool state, glm::ivec2 pos);
 
     std::string key = "";
-    GUIComponent* parent = nullptr;
-    std::list<std::shared_ptr<GUIComponent>> children;
+    GuiComponent* parent = nullptr;
+    std::list<std::shared_ptr<GuiComponent>> children;
 
     bool visible = true;
 

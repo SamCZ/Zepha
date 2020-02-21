@@ -10,14 +10,14 @@
 #include "../../util/Space.h"
 #include "../../util/Util.h"
 #include "../../util/Ray.h"
-#include "components/compound/GUILabelledGraph.h"
-#include "components/basic/GUIRect.h"
-#include "components/basic/GUIGraph.h"
-#include "components/basic/GUIText.h"
-#include "components/basic/GUIContainer.h"
+#include "components/compound/GuiLabelledGraph.h"
+#include "components/basic/GuiRect.h"
+#include "components/basic/GuiGraph.h"
+#include "components/basic/GuiText.h"
+#include "components/basic/GuiContainer.h"
 #include "../scene/world/InventoryList.h"
 
-class DebugGui : public GUIContainer {
+class DebugGui : public GuiContainer {
 public:
     DebugGui(glm::vec2 bufferSize, ClientGame& atlas);
 

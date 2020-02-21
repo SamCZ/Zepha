@@ -6,18 +6,18 @@
 
 #include <string>
 
-#include "GUIContainer.h"
+#include "GuiContainer.h"
 #include "../../../../def/ItemDef.h"
 #include "../../SerialGui.h"
 
 class ClientGame;
 
-class GUIModel : public GUIComponent {
+class GuiModel : public GuiComponent {
 public:
-    GUIModel() = default;
-    GUIModel(const std::string& key);
+    GuiModel() = default;
+    GuiModel(const std::string& key);
 
-    static std::shared_ptr<GUIModel> fromSerialized(SerialGui::Elem s, ClientGame& game, glm::ivec2 bounds);
+    static std::shared_ptr<GuiModel> fromSerialized(SerialGui::Elem s, ClientGame& game, glm::ivec2 bounds);
 
     void create(glm::vec2 scale, std::shared_ptr<Model> model);
     void update(double delta) override;

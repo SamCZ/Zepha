@@ -8,7 +8,7 @@
 #include "../../../lua/api/menu/mSetGui.h"
 #include "../../../lua/api/menu/mStartGame.h"
 
-MenuSandbox::MenuSandbox(glm::ivec2 &win, ClientState& state, std::shared_ptr<GUIContainer> container) :
+MenuSandbox::MenuSandbox(glm::ivec2 &win, ClientState& state, std::shared_ptr<GuiContainer> container) :
         win(win),
         state(state),
         container(container),

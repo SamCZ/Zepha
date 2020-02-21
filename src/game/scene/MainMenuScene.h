@@ -7,9 +7,9 @@
 #include <json/json.hpp>
 #include "../../game/ClientState.h"
 #include "../../game/graph/scene/Scene.h"
-#include "../hud/components/basic/GUIText.h"
-#include "../hud/components/basic/GUIContainer.h"
-#include "../hud/components/compound/GUIImageButton.h"
+#include "../hud/components/basic/GuiText.h"
+#include "../hud/components/basic/GuiContainer.h"
+#include "../hud/components/compound/GuiImageButton.h"
 #include "menu/Subgame.h"
 #include "menu/MenuSandbox.h"
 
@@ -32,10 +32,10 @@ private:
     glm::ivec2 win {};
     glm::ivec2 sandboxArea {};
 
-    GUIContainer components;
-    std::shared_ptr<GUIContainer> branding = nullptr;
-    std::shared_ptr<GUIContainer> navigationBar = nullptr;
-    std::shared_ptr<GUIContainer> sandboxContainer = std::make_shared<GUIContainer>("_sandbox");
+    GuiContainer components;
+    std::shared_ptr<GuiContainer> branding = nullptr;
+    std::shared_ptr<GuiContainer> navigationBar = nullptr;
+    std::shared_ptr<GuiContainer> sandboxContainer = std::make_shared<GuiContainer>("_sandbox");
 
     MenuSandbox sandbox;
 

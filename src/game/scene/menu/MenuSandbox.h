@@ -9,14 +9,14 @@
 #include "Subgame.h"
 #include "../../ClientState.h"
 #include "../../hud/GuiBuilder.h"
-#include "../../hud/components/basic/GUIContainer.h"
+#include "../../hud/components/basic/GuiContainer.h"
 #include "../../../lua/LuaMod.h"
 #include "../../../lua/LuaParser.h"
 
 
 class MenuSandbox : LuaParser {
 public:
-    MenuSandbox(glm::ivec2& win, ClientState& state, std::shared_ptr<GUIContainer> container);
+    MenuSandbox(glm::ivec2& win, ClientState& state, std::shared_ptr<GuiContainer> container);
     void load(const Subgame& subgame);
 
     void windowResized();
@@ -30,7 +30,7 @@ private:
     LuaMod mod {};
     std::vector<std::shared_ptr<AtlasRef>> modAssets {};
 
-    std::shared_ptr<GUIContainer> container = nullptr;
+    std::shared_ptr<GuiContainer> container = nullptr;
     ClientState& state;
     GuiBuilder builder;
     glm::ivec2& win;

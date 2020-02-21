@@ -10,10 +10,10 @@
 
 class GameGuiBuilder : public GuiBuilder {
 public:
-    GameGuiBuilder(Inventory& inventory, InventoryList& hand, ClientGame& defs, std::shared_ptr<GUIContainer> root) :
+    GameGuiBuilder(Inventory& inventory, InventoryList& hand, ClientGame& defs, std::shared_ptr<GuiContainer> root) :
         inventory(inventory), hand(hand), GuiBuilder(defs, root) {};
 
-    std::shared_ptr<GUIComponent> createComponent(SerialGui::Elem& data, glm::ivec2 bounds) override;
+    std::shared_ptr<GuiComponent> createComponent(SerialGui::Elem& data, glm::ivec2 bounds) override;
 
 private:
     Inventory& inventory;

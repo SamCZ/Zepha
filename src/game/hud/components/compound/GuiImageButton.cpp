@@ -2,14 +2,14 @@
 // Created by aurailus on 2019-12-11.
 //
 
-#include "GUIImageButton.h"
+#include "GuiImageButton.h"
 
 #include "../../../../def/ClientGame.h"
-#include "../basic/GUIText.h"
+#include "../basic/GuiText.h"
 
-GUIImageButton::GUIImageButton(const std::string &key) : GUIRect(key) {}
+GuiImageButton::GuiImageButton(const std::string &key) : GuiRect(key) {}
 
-std::shared_ptr<GUIImageButton> GUIImageButton::fromSerialized(SerialGui::Elem s, ClientGame &game, glm::ivec2 bounds) {
+std::shared_ptr<GuiImageButton> GuiImageButton::fromSerialized(SerialGui::Elem s, ClientGame &game, glm::ivec2 bounds) {
     glm::vec2 pos     = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position", bounds);
     glm::vec2 offset  = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position_anchor");
     glm::vec2 size    = SerialGui::deserializeToken<glm::vec2>(s.tokens, "size", bounds);
@@ -30,12 +30,12 @@ std::shared_ptr<GUIImageButton> GUIImageButton::fromSerialized(SerialGui::Elem s
         off += 1;
     }
 
-    auto button = std::make_shared<GUIImageButton>(s.key);
+    auto button = std::make_shared<GuiImageButton>(s.key);
     button->create(size, padding, game.textures[background], game.textures[background_hover]);
     button->setPos(pos);
 
     if (content != "") {
-        auto text = std::make_shared<GUIText>(s.key + "__TEXT");
+        auto text = std::make_shared<GuiText>(s.key + "__TEXT");
         text->create(glm::vec2(SerialGui::SCALE_MODIFIER), padding, {}, {1, 1, 1, 1}, {game.textures, game.textures["font"]});
         text->setPos({6 * SerialGui::SCALE_MODIFIER, size.y / 2 - 4.5 * SerialGui::SCALE_MODIFIER});
         text->setText(content);
@@ -46,23 +46,23 @@ std::shared_ptr<GUIImageButton> GUIImageButton::fromSerialized(SerialGui::Elem s
 }
 
 // Texture Constructor
-// Creates a GUIImageButton object with two textures
+// Creates a GuiImageButton object with two textures
 // defined by the 'texture' & 'hoverTexture' reference.
-void GUIImageButton::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<AtlasRef> texture, std::shared_ptr<AtlasRef> hoverTexture) {
+void GuiImageButton::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<AtlasRef> texture, std::shared_ptr<AtlasRef> hoverTexture) {
     this->hoverTexture = hoverTexture;
-    GUIRect::create(scale, padding, texture);
+    GuiRect::create(scale, padding, texture);
 
     setHoverCallback(nullptr);
 }
 
-void GUIImageButton::setHoverCallback(const callback& hoverCallback) {
-    GUIComponent::setHoverCallback([&, hoverCallback](bool nowHovered, glm::ivec2 pos) {
+void GuiImageButton::setHoverCallback(const callback& hoverCallback) {
+    GuiComponent::setHoverCallback([&, hoverCallback](bool nowHovered, glm::ivec2 pos) {
         if (hoverCallback) hoverCallback(nowHovered, pos);
         if (nowHovered != hovered) this->rebuild(nowHovered);
     });
 }
 
-void GUIImageButton::rebuild(bool hover) {
+void GuiImageButton::rebuild(bool hover) {
     auto tex = (hover) ? (hoverTexture != nullptr) ? hoverTexture : texture : texture;
 
     auto mesh = std::make_unique<EntityMesh>();

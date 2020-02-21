@@ -6,15 +6,15 @@
 
 #include "SerialGui.h"
 #include "../../def/ClientGame.h"
-#include "components/GUIComponent.h"
+#include "components/GuiComponent.h"
 
-class GUIContainer;
+class GuiContainer;
 
 class GuiBuilder {
 public:
-    struct ComponentCallbacks { GUIComponent::callback left {}, right {}, hover {}; };
+    struct ComponentCallbacks { GuiComponent::callback left {}, right {}, hover {}; };
 
-    GuiBuilder(ClientGame& defs, std::shared_ptr<GUIContainer> root);
+    GuiBuilder(ClientGame& defs, std::shared_ptr<GuiContainer> root);
     void setGui(const std::string& menu, const std::map<std::string, ComponentCallbacks>& callbacks = {});
     void clear(bool clrCallbacks = true);
     void build(glm::ivec2 winBounds);
@@ -23,12 +23,12 @@ public:
 
 protected:
     void deserialize(const std::string& menu);
-    void recursivelyCreate(std::vector<SerialGui::Elem> components, std::shared_ptr<GUIComponent> parent, glm::ivec2 bounds);
-    virtual std::shared_ptr<GUIComponent> createComponent(SerialGui::Elem& component, glm::ivec2 bounds);
+    void recursivelyCreate(std::vector<SerialGui::Elem> components, std::shared_ptr<GuiComponent> parent, glm::ivec2 bounds);
+    virtual std::shared_ptr<GuiComponent> createComponent(SerialGui::Elem& component, glm::ivec2 bounds);
 
     std::map<std::string, ComponentCallbacks> callbacks;
 
     ClientGame& game;
-    std::shared_ptr<GUIContainer> root;
+    std::shared_ptr<GuiContainer> root;
     std::vector<SerialGui::Elem> components {};
 };

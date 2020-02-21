@@ -4,13 +4,13 @@
 
 #include <utility>
 
-#include "GUIText.h"
+#include "GuiText.h"
 
-GUIText::GUIText(const std::string &key) : GUIComponent(key) {}
+GuiText::GuiText(const std::string &key) : GuiComponent(key) {}
 
-void GUIText::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 bgcolor, glm::vec4 color, Font font) {
+void GuiText::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 bgcolor, glm::vec4 color, Font font) {
     // Text Constructor
-    // Creates a GUIText object.
+    // Creates a GuiText object.
 
     this->scale = scale;
     this->padding = padding;
@@ -23,7 +23,7 @@ void GUIText::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 bgcolor, glm:
     setText("");
 }
 
-std::shared_ptr<GUIText> GUIText::fromSerialized(SerialGui::Elem s, ClientGame &game, glm::ivec2 bounds) {
+std::shared_ptr<GuiText> GuiText::fromSerialized(SerialGui::Elem s, ClientGame &game, glm::ivec2 bounds) {
     glm::vec2 pos     = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position", bounds);
     glm::vec2 offset  = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position_anchor");
     glm::vec2 size    = SerialGui::deserializeToken<glm::vec2>(s.tokens, "size", bounds);
@@ -47,7 +47,7 @@ std::shared_ptr<GUIText> GUIText::fromSerialized(SerialGui::Elem s, ClientGame &
         off += 1;
     }
 
-    auto text = std::make_shared<GUIText>(s.key);
+    auto text = std::make_shared<GuiText>(s.key);
     text->create(scale * SerialGui::SCALE_MODIFIER, padding, background_color, color, {game.textures, game.textures["font"]});
     text->setText(content);
     text->setPos(pos);
@@ -55,7 +55,7 @@ std::shared_ptr<GUIText> GUIText::fromSerialized(SerialGui::Elem s, ClientGame &
     return text;
 }
 
-void GUIText::setText(std::string text) {
+void GuiText::setText(std::string text) {
     this->text = std::move(text);
     unsigned int indOffset = 0;
 
@@ -169,10 +169,10 @@ void GUIText::setText(std::string text) {
     entity.setModel(model);
 }
 
-std::string GUIText::getText() {
+std::string GuiText::getText() {
     return text;
 }
 
-unsigned int GUIText::getWidth() {
+unsigned int GuiText::getWidth() {
     return maxLineWidth;
 }

@@ -2,15 +2,15 @@
 // Created by aurailus on 10/02/19.
 //
 
-#include "GUIRect.h"
+#include "GuiRect.h"
 
 #include "../../SerialGui.h"
 #include "../../../../util/Util.h"
 #include "../../../../def/ClientGame.h"
 
-GUIRect::GUIRect(const std::string &key) : GUIComponent(key) {}
+GuiRect::GuiRect(const std::string &key) : GuiComponent(key) {}
 
-std::shared_ptr<GUIRect> GUIRect::fromSerialized(SerialGui::Elem s, ClientGame& game, glm::ivec2 bounds) {
+std::shared_ptr<GuiRect> GuiRect::fromSerialized(SerialGui::Elem s, ClientGame& game, glm::ivec2 bounds) {
     glm::vec2 pos     = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position", bounds);
     glm::vec2 offset  = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position_anchor");
     glm::vec2 size    = SerialGui::deserializeToken<glm::vec2>(s.tokens, "size", bounds);
@@ -21,7 +21,7 @@ std::shared_ptr<GUIRect> GUIRect::fromSerialized(SerialGui::Elem s, ClientGame& 
 
     std::string background = s.tokens["background"];
 
-    auto rect = std::make_shared<GUIRect>(s.key);
+    auto rect = std::make_shared<GuiRect>(s.key);
     if (background[0] == '#') rect->create(size, padding, Util::hexToColorVec(background));
     else if (background.size() > 0) rect->create(size, padding, game.textures[background]);
     else rect->create(size, padding, glm::vec4 {});
@@ -30,9 +30,9 @@ std::shared_ptr<GUIRect> GUIRect::fromSerialized(SerialGui::Elem s, ClientGame& 
 }
 
 // Single Color Constructor
-// Creates a GUIRect object whose background
+// Creates a GuiRect object whose background
 // is a flat color defined by 'color'.
-void GUIRect::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 color) {
+void GuiRect::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 color) {
     this->scale = scale;
     this->padding = padding;
 
@@ -50,9 +50,9 @@ void GUIRect::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 color) {
 }
 
 // Multiple Color Constructor
-// Creates a GUIRect object with a gradient background
+// Creates a GuiRect object with a gradient background
 // defined by 'tl', 'tr', 'bl', and 'br'.
-void GUIRect::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::vec4 br) {
+void GuiRect::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::vec4 br) {
     this->scale = scale;
     this->padding = padding;
 
@@ -71,9 +71,9 @@ void GUIRect::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 tl, glm::vec4
 }
 
 // Texture Constructor
-// Creates a GUIRect object with a textured background
+// Creates a GuiRect object with a textured background
 // defined by the 'texture' reference.
-void GUIRect::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<AtlasRef> texture) {
+void GuiRect::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<AtlasRef> texture) {
     this->scale = scale;
     this->padding = padding;
     this->texture = texture;
@@ -94,9 +94,9 @@ void GUIRect::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<AtlasRe
 }
 
 // Texture Constructor
-// Creates a GUIRect object with a textured background
+// Creates a GuiRect object with a textured background
 // defined by the 'texture' reference.
-void GUIRect::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<AtlasRef> texture, glm::vec4 tint) {
+void GuiRect::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<AtlasRef> texture, glm::vec4 tint) {
     this->scale = scale;
     this->padding = padding;
     this->texture = std::move(texture);

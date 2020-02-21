@@ -6,17 +6,17 @@
 
 #include "GameGuiBuilder.h"
 #include "SerialGui.h"
-#include "components/basic/GUIText.h"
-#include "components/basic/GUIRect.h"
-#include "components/basic/GUIContainer.h"
+#include "components/basic/GuiText.h"
+#include "components/basic/GuiRect.h"
+#include "components/basic/GuiContainer.h"
 #include "../graph/drawable/DrawableGroup.h"
 #include "../scene/world/InventoryList.h"
 #include "../entity/Entity.h"
 #include "../../util/Util.h"
-#include "components/compound/GUIInventoryList.h"
+#include "components/compound/GuiInventoryList.h"
 #include "../scene/world/Inventory.h"
 
-class GameGui : public GUIContainer {
+class GameGui : public GuiContainer {
 public:
     explicit GameGui(Inventory& inventory, InventoryList& hand, glm::vec2 bufferSize, ClientGame& defs, Renderer& renderer);
     void winResized(glm::ivec2 win);
@@ -36,9 +36,9 @@ private:
     glm::ivec2 win {};
     std::string menuState = "";
 
-    std::shared_ptr<GUIContainer> menuRoot = {};
-    std::shared_ptr<GUIInventoryList> handList = {};
-    GUIContainer builtIn = {};
+    std::shared_ptr<GuiContainer> menuRoot = {};
+    std::shared_ptr<GuiInventoryList> handList = {};
+    GuiContainer builtIn = {};
     GameGuiBuilder builder;
 
     InventoryList& hand;

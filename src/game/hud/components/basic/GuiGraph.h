@@ -5,13 +5,13 @@
 #pragma once
 
 
-#include "../GUIComponent.h"
+#include "../GuiComponent.h"
 #include "../../../../def/texture/AtlasRef.h"
 
-class GUIGraph : public GUIComponent {
+class GuiGraph : public GuiComponent {
 public:
-    GUIGraph() = default;
-    GUIGraph(const std::string& key);
+    GuiGraph() = default;
+    GuiGraph(const std::string& key);
 
     void create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<AtlasRef> texture, unsigned int length, float maxValue, bool editInPlace);
 

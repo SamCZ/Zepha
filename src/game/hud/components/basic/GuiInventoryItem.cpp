@@ -2,33 +2,33 @@
 // Created by aurailus on 2019-10-29.
 //
 
-#include "GUIInventoryItem.h"
+#include "GuiInventoryItem.h"
 
-#include "GUIText.h"
-#include "GUIRect.h"
-#include "GUIModel.h"
+#include "GuiText.h"
+#include "GuiRect.h"
+#include "GuiModel.h"
 #include "../../../../def/texture/Font.h"
 
-GUIInventoryItem::GUIInventoryItem(const std::string &key) : GUIContainer(key) {}
+GuiInventoryItem::GuiInventoryItem(const std::string &key) : GuiContainer(key) {}
 
-void GUIInventoryItem::create(glm::vec2 scale, unsigned short count, ItemDef& def, Font f) {
+void GuiInventoryItem::create(glm::vec2 scale, unsigned short count, ItemDef& def, Font f) {
 
     if (def.type == ItemDef::Type::CRAFTITEM) {
         auto texture = static_cast<CraftItemDef&>(def).textureRefs[0];
 
-        auto shadow = std::make_shared<GUIRect>("shadow");
+        auto shadow = std::make_shared<GuiRect>("shadow");
         shadow->create(scale * 16.f, {}, texture, {0, 0, 0, 0.2});
         add(shadow);
         shadow->setPos(scale);
 
-        auto item = std::make_shared<GUIRect>("item");
+        auto item = std::make_shared<GuiRect>("item");
         item->create(scale * 16.f, {}, texture);
         add(item);
     }
     else {
         auto& model = static_cast<BlockDef&>(def).entityModel;
 
-        auto item = std::make_shared<GUIModel>("item");
+        auto item = std::make_shared<GuiModel>("item");
         item->create(scale * 10.5f, model);
         item->setPos(glm::vec2{7.75, 7.75} * scale);
 
@@ -40,7 +40,7 @@ void GUIInventoryItem::create(glm::vec2 scale, unsigned short count, ItemDef& de
     }
 
     if (count > 1) {
-        auto text = std::make_shared<GUIText>("count");
+        auto text = std::make_shared<GuiText>("count");
         text->create(scale, {}, {}, {1, 1, 1, 1}, f);
         text->setText(std::to_string(count));
         add(text);

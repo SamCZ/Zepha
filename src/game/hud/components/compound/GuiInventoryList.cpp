@@ -2,15 +2,15 @@
 // Created by aurailus on 2019-10-29.
 //
 
-#include "GUIInventoryList.h"
+#include "GuiInventoryList.h"
 
-#include "../basic/GUIInventoryItem.h"
+#include "../basic/GuiInventoryItem.h"
 #include "../../../../def/texture/Font.h"
 
-GUIInventoryList::GUIInventoryList(const std::string &key) : GUIContainer(key) {}
+GuiInventoryList::GuiInventoryList(const std::string &key) : GuiContainer(key) {}
 
-std::shared_ptr<GUIInventoryList> GUIInventoryList::fromSerialized(SerialGui::Elem s, ClientGame &game,
-        glm::ivec2 bounds, Inventory& inventory, InventoryList& hand) {
+std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(SerialGui::Elem s, ClientGame &game,
+                                                                   glm::ivec2 bounds, Inventory& inventory, InventoryList& hand) {
 
     glm::vec2 pos     = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position", bounds);
     glm::vec2 offset  = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position_anchor");
@@ -32,7 +32,7 @@ std::shared_ptr<GUIInventoryList> GUIInventoryList::fromSerialized(SerialGui::El
     }
 
     auto invList = inventory[list];
-    auto inv = std::make_shared<GUIInventoryList>(s.key);
+    auto inv = std::make_shared<GuiInventoryList>(s.key);
 
     inv->create(glm::vec2(SerialGui::SCALE_MODIFIER), padding * SerialGui::SCALE_MODIFIER,
             slotspc * SerialGui::SCALE_MODIFIER, *invList, hand, game);
@@ -41,7 +41,7 @@ std::shared_ptr<GUIInventoryList> GUIInventoryList::fromSerialized(SerialGui::El
     return inv;
 }
 
-void GUIInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding, InventoryList &list, InventoryList& hand, ClientGame &defs) {
+void GuiInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding, InventoryList &list, InventoryList& hand, ClientGame &defs) {
     this->list = &list;
     this->hand = &hand;
     this->defs = &defs;
@@ -55,7 +55,7 @@ void GUIInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 inn
     };
 
     drawContents();
-    list.setGuiCallback(std::bind(&GUIInventoryList::drawContents, this));
+    list.setGuiCallback(std::bind(&GuiInventoryList::drawContents, this));
 
     hoverRect->create({}, {}, {1, 1, 1, 0.1});
 
@@ -65,28 +65,28 @@ void GUIInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 inn
             [=](bool hovered, glm::ivec2 pos){this->hoverEvent(hovered, pos);});
 }
 
-void GUIInventoryList::setHoverCallback(const callback& hoverCallback) {
-    GUIComponent::setHoverCallback([&, hoverCallback](bool hovered, glm::ivec2 pos) {
+void GuiInventoryList::setHoverCallback(const callback& hoverCallback) {
+    GuiComponent::setHoverCallback([&, hoverCallback](bool hovered, glm::ivec2 pos) {
         if (hoverCallback) hoverCallback(hovered, pos);
         this->hoverEvent(hovered, pos);
     });
 }
 
-void GUIInventoryList::setLeftClickCallback(const callback& leftClickCallback) {
-    GUIComponent::setLeftClickCallback([&, leftClickCallback](bool down, glm::ivec2 pos) {
+void GuiInventoryList::setLeftClickCallback(const callback& leftClickCallback) {
+    GuiComponent::setLeftClickCallback([&, leftClickCallback](bool down, glm::ivec2 pos) {
         if (leftClickCallback) leftClickCallback(down, pos);
         this->leftClick(down, pos);
     });
 }
 
-void GUIInventoryList::setRightClickCallback(const callback& rightClickCallback) {
-    GUIComponent::setRightClickCallback([&, rightClickCallback](bool down, glm::ivec2 pos) {
+void GuiInventoryList::setRightClickCallback(const callback& rightClickCallback) {
+    GuiComponent::setRightClickCallback([&, rightClickCallback](bool down, glm::ivec2 pos) {
         if (rightClickCallback) rightClickCallback(down, pos);
         this->rightClick(down, pos);
     });
 }
 
-void GUIInventoryList::hoverEvent(bool hovered, glm::ivec2 pos) {
+void GuiInventoryList::hoverEvent(bool hovered, glm::ivec2 pos) {
     pos += glm::ivec2(glm::vec2(this->padding.x, this->padding.y) * this->scale);
 
     if (hovered) {
@@ -102,7 +102,7 @@ void GUIInventoryList::hoverEvent(bool hovered, glm::ivec2 pos) {
     else if (this->hovered) hoverRect->setScale({});
 }
 
-void GUIInventoryList::leftClick(bool down, glm::ivec2 pos) {
+void GuiInventoryList::leftClick(bool down, glm::ivec2 pos) {
     if (!down) return;
 
     pos += glm::ivec2(glm::vec2(this->padding.x, this->padding.y) * this->scale);
@@ -118,7 +118,7 @@ void GUIInventoryList::leftClick(bool down, glm::ivec2 pos) {
     hand->setStack(0, list->placeStack(index, hand->getStack(0), true));
 }
 
-void GUIInventoryList::rightClick(bool down, glm::ivec2 pos) {
+void GuiInventoryList::rightClick(bool down, glm::ivec2 pos) {
     pos += glm::ivec2(glm::vec2(this->padding.x, this->padding.y) * this->scale);
 
     glm::ivec2 slot = pos / (glm::ivec2(this->scale) * this->innerPadding);
@@ -151,7 +151,7 @@ void GUIInventoryList::rightClick(bool down, glm::ivec2 pos) {
     }
 }
 
-void GUIInventoryList::drawContents() {
+void GuiInventoryList::drawContents() {
     empty();
 
     auto fontRef = defs->textures["font"];
@@ -159,7 +159,7 @@ void GUIInventoryList::drawContents() {
 
     for (unsigned short i = 0; i < list->getLength() / list->getWidth(); i++) {
         for (unsigned short j = 0; j < list->getWidth(); j++) {
-//            auto bg = std::make_shared<GUIRect>("background_" + to_string(i) + "_" + to_string(j));
+//            auto bg = std::make_shared<GuiRect>("background_" + to_string(i) + "_" + to_string(j));
 //            bg->create(scale * 16.f, {}, {1, 0, 0, 0.3});
 //            add(bg);
 //            bg->setPos({padding.x + j * (16*scale.x+innerPadding.x/scale.x), padding.y + i * (16*scale.y+innerPadding.y/scale.y)});
@@ -167,7 +167,7 @@ void GUIInventoryList::drawContents() {
             auto stack = list->getStack(j + i * list->getWidth());
             if (stack.id == 0) continue;
 
-            auto item = std::make_shared<GUIInventoryItem>("item_" + std::to_string(i) + "_" + std::to_string(j));
+            auto item = std::make_shared<GuiInventoryItem>("item_" + std::to_string(i) + "_" + std::to_string(j));
             item->create(scale, stack.count, defs->defs.fromId(stack.id), f);
             add(item);
             item->setPos({padding.x + j * (16*scale.x+innerPadding.x/scale.x), padding.y + i * (16*scale.y+innerPadding.y/scale.y)});
@@ -177,6 +177,6 @@ void GUIInventoryList::drawContents() {
     add(hoverRect);
 }
 
-GUIInventoryList::~GUIInventoryList() {
+GuiInventoryList::~GuiInventoryList() {
     list->setGuiCallback(nullptr);
 }

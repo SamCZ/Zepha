@@ -2,12 +2,12 @@
 // Created by aurailus on 08/02/19.
 //
 
-#include "GUIGraph.h"
+#include "GuiGraph.h"
 
-GUIGraph::GUIGraph(const std::string &key) : GUIComponent(key) {}
+GuiGraph::GuiGraph(const std::string &key) : GuiComponent(key) {}
 
-void GUIGraph::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr <AtlasRef> texture,
-    unsigned int length, float maxValue, bool editInPlace) {
+void GuiGraph::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr <AtlasRef> texture,
+                      unsigned int length, float maxValue, bool editInPlace) {
 
     this->scale = scale;
     this->padding = padding;
@@ -25,7 +25,7 @@ void GUIGraph::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr <Atlas
     entity.setModel(std::make_shared<Model>());
 }
 
-void GUIGraph::pushValue(float value) {
+void GuiGraph::pushValue(float value) {
     if (editInPlace) {
         insertionPoint++;
         if (insertionPoint >= length) insertionPoint = 0;
@@ -50,11 +50,11 @@ void GUIGraph::pushValue(float value) {
     buildHistogramMesh();
 }
 
-void GUIGraph::setMax(float max) {
+void GuiGraph::setMax(float max) {
     maxVal = max;
 }
 
-void GUIGraph::buildHistogramMesh() {
+void GuiGraph::buildHistogramMesh() {
     std::vector<EntityVertex> vertices {};
     std::vector<unsigned int> indices {};
 

@@ -6,7 +6,7 @@
 
 #include <string>
 #include "../graph/scene/Scene.h"
-#include "../hud/components/basic/GUIContainer.h"
+#include "../hud/components/basic/GuiContainer.h"
 
 class LuaErrorScene : public Scene {
 public:
@@ -17,6 +17,6 @@ public:
     void cleanup() override;
 
 private:
-    GUIContainer components;
+    GuiContainer components;
     const std::string err;
 };

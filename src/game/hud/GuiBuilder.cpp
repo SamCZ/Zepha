@@ -4,13 +4,13 @@
 
 #include "GuiBuilder.h"
 
-#include "components/basic/GUIRect.h"
-#include "components/basic/GUIText.h"
-#include "components/basic/GUIModel.h"
-#include "components/basic/GUIContainer.h"
-#include "components/compound/GUIImageButton.h"
+#include "components/basic/GuiRect.h"
+#include "components/basic/GuiText.h"
+#include "components/basic/GuiModel.h"
+#include "components/basic/GuiContainer.h"
+#include "components/compound/GuiImageButton.h"
 
-GuiBuilder::GuiBuilder(ClientGame& defs, std::shared_ptr<GUIContainer> root) :
+GuiBuilder::GuiBuilder(ClientGame& defs, std::shared_ptr<GuiContainer> root) :
         game(defs), root(root) {}
 
 void GuiBuilder::setGui(const std::string& menu, const std::map<std::string, ComponentCallbacks>& callbacks) {
@@ -112,21 +112,21 @@ void GuiBuilder::clear(bool clrCallbacks) {
     root->empty();
 }
 
-void GuiBuilder::recursivelyCreate(std::vector<SerialGui::Elem> components, std::shared_ptr<GUIComponent> parent, glm::ivec2 bounds) {
+void GuiBuilder::recursivelyCreate(std::vector<SerialGui::Elem> components, std::shared_ptr<GuiComponent> parent, glm::ivec2 bounds) {
     for (auto& data : components) {
-        std::shared_ptr<GUIComponent> component = createComponent(data, bounds);
+        std::shared_ptr<GuiComponent> component = createComponent(data, bounds);
         if (component == nullptr) continue;
         parent->add(component);
         recursivelyCreate(data.children, component, bounds);
     }
 }
 
-std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerialGui::Elem& data, glm::ivec2 bounds) {
-    std::shared_ptr<GUIComponent> c = nullptr;
+std::shared_ptr<GuiComponent> GuiBuilder::createComponent(SerialGui::Elem& data, glm::ivec2 bounds) {
+    std::shared_ptr<GuiComponent> c = nullptr;
 
-    GUIComponent::callback cbLeftClick = nullptr;
-    GUIComponent::callback cbRightClick = nullptr;
-    GUIComponent::callback cbHover = nullptr;
+    GuiComponent::callback cbLeftClick = nullptr;
+    GuiComponent::callback cbRightClick = nullptr;
+    GuiComponent::callback cbHover = nullptr;
 
     if (callbacks.count(data.key)) {
         cbLeftClick = callbacks[data.key].left;
@@ -137,22 +137,22 @@ std::shared_ptr<GUIComponent> GuiBuilder::createComponent(SerialGui::Elem& data,
     switch (Util::hash(data.type.c_str())) {
         default: break;
         case Util::hash("body"): {
-            auto body = GUIRect::fromSerialized(data, game, bounds);
+            auto body = GuiRect::fromSerialized(data, game, bounds);
             body->setScale(bounds);
             c = body;
             break;
         }
         case Util::hash("rect"):
-            c = GUIRect::fromSerialized(data, game, bounds);
+            c = GuiRect::fromSerialized(data, game, bounds);
             break;
         case Util::hash("button"):
-            c = GUIImageButton::fromSerialized(data, game, bounds);
+            c = GuiImageButton::fromSerialized(data, game, bounds);
             break;
         case Util::hash("text"):
-            c = GUIText::fromSerialized(data, game, bounds);
+            c = GuiText::fromSerialized(data, game, bounds);
             break;
         case Util::hash("model"):
-            c = GUIModel::fromSerialized(data, game, bounds);
+            c = GuiModel::fromSerialized(data, game, bounds);
             break;
     }
 

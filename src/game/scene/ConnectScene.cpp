@@ -13,13 +13,13 @@ ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
 
     Font f(state.defs.textures, state.defs.textures["font"]);
 
-    auto statusText = std::make_shared<GUIText>("statusText");
+    auto statusText = std::make_shared<GuiText>("statusText");
     statusText->create({2, 2}, {}, {}, {1, 1, 1, 1}, f);
     statusText->setText("Connecting...");
     statusText->setPos({32, 24});
     components.add(statusText);
 
-    auto loadBar = std::make_shared<GUIRect>("loadBar");
+    auto loadBar = std::make_shared<GuiRect>("loadBar");
     loadBar->create({1, 32}, {}, {0.17, 0.75, 0.93, 1});
     loadBar->setPos({0, state.renderer.window.getSize().y - 32});
     components.add(loadBar);
@@ -27,7 +27,7 @@ ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
     connection.attemptConnect(std::move(addr));
 
     state.renderer.window.addResizeCallback("scene", [&](glm::ivec2 win) {
-        components.get<GUIRect>("loadBar")->setPos({0, win.y - 32});
+        components.get<GuiRect>("loadBar")->setPos({0, win.y - 32});
     });
 }
 
@@ -48,7 +48,7 @@ void ConnectScene::update() {
             break;
 
         case State::IDENTIFIER_LIST: {
-            components.get<GUIRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.2, 32});
+            components.get<GuiRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.2, 32});
 
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
@@ -56,7 +56,7 @@ void ConnectScene::update() {
                 Deserializer d(p.data);
 
                 if (p.type == PacketType::BLOCK_IDENTIFIER_LIST) {
-                    auto statusText = components.get<GUIText>("statusText");
+                    auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received block index-identifier table.\n");
 
                     state.defs.defs.setIdentifiers(d.read<std::vector<std::string>>());
@@ -65,7 +65,7 @@ void ConnectScene::update() {
                     resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
                 }
                 else if (p.type == PacketType::BIOME_IDENTIFIER_LIST) {
-                    auto statusText = components.get<GUIText>("statusText");
+                    auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received biome index-identifier table.\nDownloading mods...\n");
 
                     state.defs.biomes.setIdentifiers(d.read<std::vector<std::string>>());
@@ -79,13 +79,13 @@ void ConnectScene::update() {
         }
 
         case State::MODS: {
-            components.get<GUIRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.4, 32});
+            components.get<GuiRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.4, 32});
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
                 Deserializer d(p.data);
 
-                auto statusText = components.get<GUIText>("statusText");
+                auto statusText = components.get<GuiText>("statusText");
 
                 if (p.type == PacketType::MODS) {
                     auto luaMod = LuaMod::fromPacket(p);
@@ -106,14 +106,14 @@ void ConnectScene::update() {
         }
 
         case State::MEDIA: {
-            components.get<GUIRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.6, 32});
+            components.get<GuiRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.6, 32});
 
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 Packet p(e.packet);
                 Deserializer d(p.data);
 
-                auto statusText = components.get<GUIText>("statusText");
+                auto statusText = components.get<GuiText>("statusText");
 
                 if (p.type == PacketType::MEDIA) {
                     AssetType t = static_cast<AssetType>(d.read<int>());
@@ -147,7 +147,7 @@ void ConnectScene::update() {
                     statusText->setText(statusText->getText() + "Received " + std::to_string(count) + "x media files.\n");
                 }
                 else if (p.type == PacketType::MEDIA_DONE) {
-                    components.get<GUIRect>("loadBar")->setScale({state.renderer.window.getSize().x, 32});
+                    components.get<GuiRect>("loadBar")->setScale({state.renderer.window.getSize().x, 32});
                     statusText->setText(statusText->getText() + "Done downloading media.\nJoining world...\n");
 
                     connectState = State::DONE;
@@ -161,7 +161,7 @@ void ConnectScene::update() {
 
 void ConnectScene::handleConnecting() {
     Packet resp(PacketType::BLOCK_IDENTIFIER_LIST);
-    auto statusText = components.get<GUIText>("statusText");
+    auto statusText = components.get<GuiText>("statusText");
 
     switch (connection.getConnectionStatus()) {
         default:

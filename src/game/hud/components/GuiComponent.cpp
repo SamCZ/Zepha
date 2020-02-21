@@ -3,29 +3,29 @@
 //
 
 #include <utility>
-#include "GUIComponent.h"
+#include "GuiComponent.h"
 
-GUIComponent::GUIComponent(const std::string& key) :
+GuiComponent::GuiComponent(const std::string& key) :
     key(key) {}
 
-void GUIComponent::setScale(glm::vec2 scale) {
+void GuiComponent::setScale(glm::vec2 scale) {
     this->scale = scale;
     entity.setScale({scale.x, scale.y, scale.x});
 }
 
-glm::vec2 GUIComponent::getScale() {
+glm::vec2 GuiComponent::getScale() {
     return scale;
 }
 
-void GUIComponent::setPadding(glm::vec4 padding) {
+void GuiComponent::setPadding(glm::vec4 padding) {
     this->padding = padding;
 }
 
-glm::vec4 GUIComponent::getPadding() {
+glm::vec4 GuiComponent::getPadding() {
     return padding;
 }
 
-void GUIComponent::setPos(glm::ivec2 pos) {
+void GuiComponent::setPos(glm::ivec2 pos) {
     this->pos = pos;
     if (parent != nullptr) {
         glm::vec3 parentPos = parent->entity.getPos();
@@ -38,23 +38,23 @@ void GUIComponent::setPos(glm::ivec2 pos) {
     }
 }
 
-glm::ivec2 GUIComponent::getPos() {
+glm::ivec2 GuiComponent::getPos() {
     return pos;
 }
 
-void GUIComponent::add(std::shared_ptr<GUIComponent> component) {
+void GuiComponent::add(std::shared_ptr<GuiComponent> component) {
     component->parent = this;
     component->updatePos();
     children.push_back(std::move(component));
 }
 
-void GUIComponent::insert(unsigned int index, std::shared_ptr<GUIComponent> component) {
+void GuiComponent::insert(unsigned int index, std::shared_ptr<GuiComponent> component) {
     component->parent = this;
     component->updatePos();
     children.insert(std::next(children.begin(), index), std::move(component));
 }
 
-void GUIComponent::remove(const std::string& key) {
+void GuiComponent::remove(const std::string& key) {
     for (auto it = children.cbegin(); it != children.cend(); it++) {
         if (it->get()->key == key) {
             children.erase(it);
@@ -63,20 +63,20 @@ void GUIComponent::remove(const std::string& key) {
     }
 }
 
-void GUIComponent::empty() {
+void GuiComponent::empty() {
     for (auto it = children.cbegin(); it != children.cend();) {
         it = children.erase(it);
     }
 }
 
-void GUIComponent::draw(Renderer& renderer) {
+void GuiComponent::draw(Renderer& renderer) {
     entity.draw(renderer);
     for (const auto& child : children) {
         child->draw(renderer);
     }
 }
 
-void GUIComponent::setVisible(bool visible) {
+void GuiComponent::setVisible(bool visible) {
     Drawable::setVisible(visible);
     entity.setVisible(visible);
     for (const auto& child : children) {
@@ -84,7 +84,7 @@ void GUIComponent::setVisible(bool visible) {
     }
 }
 
-void GUIComponent::updatePos() {
+void GuiComponent::updatePos() {
     glm::vec2 realPos(pos);
     if (parent != nullptr) {
         glm::vec3 parentPos = parent->entity.getPos();
@@ -97,7 +97,7 @@ void GUIComponent::updatePos() {
     }
 }
 
-bool GUIComponent::mouseActivity(glm::ivec2 pos) {
+bool GuiComponent::mouseActivity(glm::ivec2 pos) {
     bool isHovering = false;
     for (auto child = children.rbegin(); child != children.rend(); ++child) {
         if ((*child)->mouseActivity(pos - (*child)->getPos() - glm::ivec2((*child)->getPadding().y, (*child)->getPadding().x))) isHovering = true;
@@ -119,43 +119,43 @@ bool GUIComponent::mouseActivity(glm::ivec2 pos) {
     return isHovering;
 }
 
-void GUIComponent::update(double delta) {
+void GuiComponent::update(double delta) {
     for (const auto& child : children) {
         child->update(delta);
     }
 }
 
-bool GUIComponent::leftClickEvent(bool state, glm::ivec2 pos) {
+bool GuiComponent::leftClickEvent(bool state, glm::ivec2 pos) {
     clickEvent(true, state, pos);
 }
 
-bool GUIComponent::rightClickEvent(bool state, glm::ivec2 pos) {
+bool GuiComponent::rightClickEvent(bool state, glm::ivec2 pos) {
     clickEvent(false, state, pos);
 }
 
-void GUIComponent::setHoverCallback(const callback& hoverCallback) {
+void GuiComponent::setHoverCallback(const callback& hoverCallback) {
     cbHover = hoverCallback;
 }
 
-void GUIComponent::setLeftClickCallback(const callback& leftClickCallback) {
+void GuiComponent::setLeftClickCallback(const callback& leftClickCallback) {
     cbLeftClick = leftClickCallback;
 }
 
-void GUIComponent::setRightClickCallback(const callback& rightClickCallback) {
+void GuiComponent::setRightClickCallback(const callback& rightClickCallback) {
     cbRightClick = rightClickCallback;
 }
 
-void GUIComponent::setCallbacks(const callback &left, const callback &right, const callback &hover) {
+void GuiComponent::setCallbacks(const callback &left, const callback &right, const callback &hover) {
     setLeftClickCallback(left);
     setRightClickCallback(right);
     setHoverCallback(hover);
 }
 
-const std::string &GUIComponent::getKey() {
+const std::string &GuiComponent::getKey() {
     return key;
 }
 
-bool GUIComponent::clickEvent(bool left, bool state, glm::ivec2 pos) {
+bool GuiComponent::clickEvent(bool left, bool state, glm::ivec2 pos) {
     for (auto child = children.rbegin(); child != children.rend(); ++child) {
         glm::ivec2 cp = pos - (*child)->getPos() - glm::ivec2((*child)->getPadding().y, (*child)->getPadding().x);
         if ((*child)->clickEvent(left, state, cp)) return true;

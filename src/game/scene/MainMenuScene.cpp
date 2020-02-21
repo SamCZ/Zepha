@@ -17,50 +17,50 @@ MainMenuScene::MainMenuScene(ClientState& state) :
 
     components.add(sandboxContainer);
 
-    branding = std::make_shared<GUIContainer>("zephaBranding");
+    branding = std::make_shared<GuiContainer>("zephaBranding");
     components.add(branding);
     {
-        auto zephaText = std::make_shared<GUIText>("zephaText");
+        auto zephaText = std::make_shared<GuiText>("zephaText");
         zephaText->create({GS, GS}, {}, {}, {1, 1, 1, 1}, f);
         zephaText->setText("Zepha");
         branding->add(zephaText);
 
-        auto alphaText = std::make_shared<GUIText>("alphaText");
+        auto alphaText = std::make_shared<GuiText>("alphaText");
         alphaText->create({GS, GS}, {}, {}, {1, 0.5, 0.7, 1}, f);
         alphaText->setText("ALPHA");
         alphaText->setPos({25*GS, 0});
         branding->add(alphaText);
     }
 
-    navigationBar = std::make_shared<GUIContainer>("navigationBar");
-    navigationBar->add(std::make_shared<GUIContainer>("navigationBarBg"));
-    navigationBar->add(std::make_shared<GUIContainer>("navigationBarIcons"));
+    navigationBar = std::make_shared<GuiContainer>("navigationBar");
+    navigationBar->add(std::make_shared<GuiContainer>("navigationBarBg"));
+    navigationBar->add(std::make_shared<GuiContainer>("navigationBarIcons"));
 
-    auto navigationBarIcons = navigationBar->get<GUIContainer>("navigationBarIcons");
+    auto navigationBarIcons = navigationBar->get<GuiContainer>("navigationBarIcons");
 
     components.add(navigationBar);
     {
-        auto settingsButton = std::make_shared<GUIImageButton>("settingsButton");
+        auto settingsButton = std::make_shared<GuiImageButton>("settingsButton");
         settingsButton->create({16 * GS, 16 * GS}, {},
                                state.defs.textures["crop(0, 0, 16, 16, menu_flag_settings)"],
                                state.defs.textures["crop(16, 0, 16, 16, menu_flag_settings)"]);
-        navigationBar->get<GUIContainer>("navigationBarIcons")->add(settingsButton);
+        navigationBar->get<GuiContainer>("navigationBarIcons")->add(settingsButton);
 
-        auto closeButton = std::make_shared<GUIImageButton>("closeButton");
+        auto closeButton = std::make_shared<GuiImageButton>("closeButton");
         closeButton->create({16 * GS, 16 * GS}, {},
                             state.defs.textures["crop(0, 0, 16, 16, menu_flag_quit)"],
                             state.defs.textures["crop(16, 0, 16, 16, menu_flag_quit)"]);
         closeButton->setLeftClickCallback([](bool down, glm::ivec2) { if (down) exit(0); });
-        navigationBar->get<GUIContainer>("navigationBarIcons")->add(closeButton);
+        navigationBar->get<GuiContainer>("navigationBarIcons")->add(closeButton);
 
-        auto serversButton = std::make_shared<GUIImageButton>("serversButton");
+        auto serversButton = std::make_shared<GuiImageButton>("serversButton");
         serversButton->create({16 * GS, 16 * GS}, {},
                               state.defs.textures["crop(0, 0, 16, 16, menu_flag_multiplayer)"],
                               state.defs.textures["crop(16, 0, 16, 16, menu_flag_multiplayer)"]);
         serversButton->setPos({GS, GS});
         navigationBarIcons->add(serversButton);
 
-        auto contentButton = std::make_shared<GUIImageButton>("contentButton");
+        auto contentButton = std::make_shared<GuiImageButton>("contentButton");
         contentButton->create({16 * GS, 16 * GS}, {},
                               state.defs.textures["crop(0, 0, 16, 16, menu_flag_content)"],
                               state.defs.textures["crop(16, 0, 16, 16, menu_flag_content)"]);
@@ -68,7 +68,7 @@ MainMenuScene::MainMenuScene(ClientState& state) :
         contentButton->setLeftClickCallback([&](bool down, glm::ivec2) { if (down) state.desiredState = "connect"; });
         navigationBarIcons->add(contentButton);
 
-        auto divider = std::make_shared<GUIRect>("divider");
+        auto divider = std::make_shared<GuiRect>("divider");
         divider->create({GS, GS * 10}, {}, {1, 1, 1, 0.3});
         divider->setPos({GS * 2 + GS * 18 * 2, GS * 4});
         navigationBarIcons->add(divider);
@@ -77,7 +77,7 @@ MainMenuScene::MainMenuScene(ClientState& state) :
 
         for (unsigned int i = 0; i < subgames.size(); i++) {
             auto &subgame = subgames[i];
-            auto button = std::make_shared<GUIImageButton>(subgame.config.name);
+            auto button = std::make_shared<GuiImageButton>(subgame.config.name);
             button->create({16 * GS, 16 * GS}, {},
                            state.defs.textures["crop(0, 0, 16, 16, " + subgame.iconRef->name + ")"],
                            state.defs.textures["crop(16, 0, 16, 16, " + subgame.iconRef->name + ")"]);
@@ -179,17 +179,17 @@ void MainMenuScene::positionElements() {
 
     navigationBar->setPos({0, win.y - 18*GS});
 
-    auto navigationBarBg = navigationBar->get<GUIContainer>("navigationBarBg");
+    auto navigationBarBg = navigationBar->get<GuiContainer>("navigationBarBg");
     for (unsigned int i = 0; i < static_cast<float>(win.x) / 64.f / GS; i++) {
-        auto segment = std::make_shared<GUIRect>("segment_" + std::to_string(i));
+        auto segment = std::make_shared<GuiRect>("segment_" + std::to_string(i));
         segment->create({64 * GS, 18 * GS}, {}, state.defs.textures["menu_bar_bg"]);
         segment->setPos({i * 64 * GS, 0});
         navigationBarBg->add(segment);
     }
 
-    auto navigationBarIcons = navigationBar->get<GUIContainer>("navigationBarIcons");
-    navigationBarIcons->get<GUIImageButton>("closeButton")->setPos({win.x - 16*GS - GS, GS});
-    navigationBarIcons->get<GUIImageButton>("settingsButton")->setPos({win.x - 16*GS*2 - GS*3, GS});
+    auto navigationBarIcons = navigationBar->get<GuiContainer>("navigationBarIcons");
+    navigationBarIcons->get<GuiImageButton>("closeButton")->setPos({win.x - 16 * GS - GS, GS});
+    navigationBarIcons->get<GuiImageButton>("settingsButton")->setPos({win.x - 16 * GS * 2 - GS * 3, GS});
 }
 
 void MainMenuScene::update() {
