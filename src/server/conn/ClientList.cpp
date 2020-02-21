@@ -53,3 +53,8 @@ void ClientList::createPlayer(std::shared_ptr<ServerClient> c) {
 
     p.sendTo(c->peer, PacketChannel::ENTITY);
 }
+
+const std::shared_ptr<ServerClient> ClientList::getClient(unsigned int cid) const {
+    for (auto& c : clients) if (c->cid == cid) return c;
+    return nullptr;
+}

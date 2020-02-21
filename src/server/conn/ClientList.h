@@ -16,6 +16,7 @@ public:
     void handleDisconnect(ENetEvent e);
 
     void createPlayer(std::shared_ptr<ServerClient> c);
+    const std::shared_ptr<ServerClient> getClient(unsigned int cid) const;
 
     std::vector<std::shared_ptr<ServerClient>> clients;
 private:

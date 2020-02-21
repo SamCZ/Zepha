@@ -35,20 +35,18 @@ void Server::update() {
     while (handler.update(&event) && loop.elapsedNs() < interval_ns) {
         switch (event.type) {
             default:
-            case ENET_EVENT_TYPE_NONE:
+            case ENET_EVENT_TYPE_NONE: {
                 std::cout << "Unknown packet type: " << event.type << std::endl;
                 break;
-
+            }
             case ENET_EVENT_TYPE_CONNECT: {
                 clientList.handleConnect(event);
                 break;
             }
-
             case ENET_EVENT_TYPE_DISCONNECT: {
                 clientList.handleDisconnect(event);
                 break;
             }
-
             case ENET_EVENT_TYPE_RECEIVE: {
                 Packet p(event.packet);
                 ServerClient* client = static_cast<ServerClient*>(event.peer->data);
@@ -70,13 +68,31 @@ void Server::update() {
                         clientList.createPlayer(clientShared);
                     }
                 }
-
                 break;
             }
         }
 
         enet_packet_destroy(event.packet);
     }
+
+    for (auto& pair : playersUpdated) {
+        unsigned int cid = pair.first;
+        auto client = clientList.getClient(cid);
+        if (client == nullptr) continue;
+
+        Packet r(PacketType::PLAYER_INFO);
+        r.data = Serializer()
+                .append(client->cid)
+                .append(client->getPos())
+                .append(client->getPitch())
+                .append(client->getYaw())
+                .data;
+
+        for (auto& iter : clientList.clients)
+            if (iter->cid != cid && glm::distance(client->getPos(), iter->getPos()) < 200)
+                r.sendTo(iter->peer, PacketChannel::ENTITY);
+    }
+    playersUpdated.clear();
 
     long sleep_for = interval_ns - loop.elapsedNs();
     if (sleep_for > 0) std::this_thread::sleep_for(std::chrono::nanoseconds(sleep_for));
@@ -91,31 +107,15 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
             std::cout << Log::err << "Invalid packet type (" << static_cast<int>(p.type) << ") recieved." << Log::endl;
             break;
         }
-
         case PacketType::THIS_PLAYER_INFO: {
             Deserializer d(p.data);
             client.setPos(d.read<glm::vec3>());
             client.setPitch(d.read<float>());
             client.setYaw(d.read<float>());
 
-            //Send All ClientList the new positon
-            Packet r(PacketType::PLAYER_INFO);
-            r.data = Serializer()
-                    .append(client.cid)
-                    .append(client.getPos())
-                    .append(client.getPitch())
-                    .append(client.getYaw())
-                    .data;
-
-            for (auto& iter : clientList.clients) {
-                if (iter->cid != client.cid) {
-                    r.sendTo(iter->peer, PacketChannel::ENTITY);
-                }
-            }
-
+            playersUpdated.emplace(client.cid, true);
             break;
         }
-
         case PacketType::BLOCK_SET: {
             Deserializer d(p.data);
 
@@ -138,7 +138,6 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
                     def.callbacks[Callback::PLACE](defs.parser.vecToTable(pos));
                 }
             }
-
             break;
         }
     }

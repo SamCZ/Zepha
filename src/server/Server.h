@@ -32,6 +32,8 @@ private:
     ClientList clientList;
     ServerConfig config;
 
+    std::unordered_map<unsigned int, bool> playersUpdated {};
+
     double elapsedSeconds = 0;
     double deltaTime = 0;
 

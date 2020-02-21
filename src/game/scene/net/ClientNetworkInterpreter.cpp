@@ -94,6 +94,7 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
             id = d.read<unsigned int>();
 
             player.setPos(d.read<glm::vec3>());
+            player.setPitch(d.read<float>());
             player.setYaw(d.read<float>());
             break;
         }
@@ -107,8 +108,8 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
                 if (entity.getCid() == cid) {
                     // Update an existing PlayerEntity
                     entity.interpPos(d.read<glm::vec3>());
+                    entity.interpRotateZ(-d.read<float>() + 90);
                     entity.interpRotateY(-d.read<float>() + 90);
-                    entity.interpRotateZ(-d.read<float>());
 
                     found = true;
                     break;
