@@ -20,12 +20,15 @@ public:
 
     void setUsername(const std::string& name);
 
+    void assertPos(glm::vec3 pos);
     void setPos(glm::vec3 pos);
     glm::vec3 getPos();
 
+    void assertPitch(float pitch);
     void setPitch(float pitch);
     float getPitch();
 
+    void assertYaw(float yaw);
     void setYaw(float yaw);
     float getYaw();
 

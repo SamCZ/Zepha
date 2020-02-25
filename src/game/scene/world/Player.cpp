@@ -6,16 +6,14 @@
 
 #include "../../../util/Ray.h"
 
-Player::Player(LocalWorld& world, ClientGame& defs, Renderer& renderer) :
+Player::Player(LocalWorld& world, ClientGame& defs, Renderer& renderer, LocalInventoryRefs& refs) :
     Collidable(world, defs, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
 
-    hand(defs.defs, "hand", 1, 1),
-    inventory(defs.defs),
-    gameGui(inventory, hand, renderer.window.getSize(), defs, renderer),
-    wireframe({}, 0.01, {1, 1, 1}),
+    refs(refs),
+    defs(defs),
     renderer(renderer),
-    defs(defs) {
-}
+    wireframe({}, 0.01, {1, 1, 1}),
+    gameGui(refs, renderer.window.getSize(), defs, renderer) {}
 
 void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {
     if (activeBlock == -1) {
@@ -142,11 +140,9 @@ void Player::findPointedThing(Input &input) {
             blockChunk = world.getChunk(chunkPos);
         }
 
-        unsigned int blockID = 0;
-        if (blockChunk != nullptr) {
-            blockID = blockChunk->getBlock(Space::Block::relative::toChunk(roundedPos));
-        }
+        if (blockChunk == nullptr) continue;
 
+        unsigned int blockID = blockChunk->getBlock(Space::Block::relative::toChunk(roundedPos));
         auto& boxes = defs.defs.blockFromId(blockID).sBoxes;
 
         for (auto& sBox : boxes) {
@@ -251,8 +247,8 @@ PointedThing& Player::getPointedThing() {
     return pointedThing;
 }
 
-Inventory &Player::getInventory() {
-    return inventory;
+LocalInventory& Player::getInventory() {
+    return *refs.getInv("current_player");
 }
 
 /*

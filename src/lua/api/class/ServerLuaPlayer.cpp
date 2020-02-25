@@ -6,7 +6,7 @@
 #include "../../../util/net/NetHandler.h"
 
 void ServerLuaPlayer::set_pos(const sol::table &pos) {
-    player.setPos({pos["x"], pos["y"], pos["z"]});
+    player.assertPos({pos["x"], pos["y"], pos["z"]});
 }
 
 sol::table ServerLuaPlayer::get_pos(sol::this_state s) {
@@ -29,7 +29,7 @@ sol::table ServerLuaPlayer::get_block_pos(sol::this_state s) {
 //}
 
 void ServerLuaPlayer::set_look_yaw(float rot) {
-    player.setYaw(rot);
+    player.assertYaw(rot);
 }
 
 float ServerLuaPlayer::get_look_yaw() {
@@ -37,7 +37,7 @@ float ServerLuaPlayer::get_look_yaw() {
 }
 
 void ServerLuaPlayer::set_look_pitch(float rot) {
-    player.setPitch(rot);
+    player.assertPitch(rot);
 }
 
 float ServerLuaPlayer::get_look_pitch() {
@@ -64,6 +64,6 @@ std::string ServerLuaPlayer::get_address() {
     return NetHandler::intToIPString(player.address.host) + ":" + std::to_string(player.address.port);
 }
 
-LuaInventory ServerLuaPlayer::get_inventory() {
-    return LuaInventory(player.getInventory());
+ServerLuaInventory ServerLuaPlayer::get_inventory() {
+    return ServerLuaInventory(player.getInventory());
 }

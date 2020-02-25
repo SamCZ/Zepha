@@ -16,7 +16,7 @@ public:
     ItemDef& fromId(unsigned int index) const;
     ItemDef& fromStr(const std::string& identifier) const;
 
-    //Specializations that throw an error upon an invalid type.
+    //Specializations that throw an error upon an invalid usertype.
     BlockDef& blockFromId(unsigned int index) const;
     BlockDef& blockFromStr(const std::string& identifier) const;
     CraftItemDef& craftItemFromId(unsigned int index) const;

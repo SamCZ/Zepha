@@ -10,7 +10,8 @@
 #include "../../SerialGui.h"
 #include "../../../../def/ClientGame.h"
 #include "../../../scene/world/Inventory.h"
-#include "../../../scene/world/InventoryList.h"
+#include "../../../scene/world/LocalInventoryList.h"
+#include "../../../scene/world/LocalInventoryRefs.h"
 
 class GuiInventoryList : public GuiContainer {
 public:
@@ -19,9 +20,10 @@ public:
     ~GuiInventoryList() override;
 
     static std::shared_ptr<GuiInventoryList> fromSerialized(SerialGui::Elem s, ClientGame &game,
-        glm::ivec2 bounds, Inventory& inventory, InventoryList& hand);
+            glm::ivec2 bounds, LocalInventoryRefs& refs);
 
-    void create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding, InventoryList& list, InventoryList& hand, ClientGame& defs);
+    void create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding,
+            std::shared_ptr<LocalInventoryList>  list, std::shared_ptr<LocalInventoryList>  hand, ClientGame& defs);
 
     void setHoverCallback(const callback& hoverCallback) override;
     void setLeftClickCallback(const callback& leftClickCallback) override;
@@ -34,8 +36,7 @@ public:
 private:
     std::shared_ptr<GuiRect> hoverRect = std::make_shared<GuiRect>("hover_rect");
 
-    InventoryList* list;
-    InventoryList* hand;
-    ClientGame* defs;
+    std::shared_ptr<LocalInventoryList> list, hand;
     glm::ivec2 innerPadding;
+    ClientGame* defs;
 };

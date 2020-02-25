@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "ServerLuaEntity.h"
+#include "../class/ServerLuaEntity.h"
 #include <sol2/sol.hpp>
 
 namespace ServerApi {

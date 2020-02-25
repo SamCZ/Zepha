@@ -5,7 +5,7 @@
 #pragma once
 
 #include <sol2/sol.hpp>
-#include "LuaItemStack.h"
+#include "../class/LuaItemStack.h"
 
 namespace ClientApi {
     static void item_stack(sol::state& lua) {

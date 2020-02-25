@@ -82,8 +82,8 @@ void LocalLuaPlayer::close_menu() {
     player.closeMenu();
 }
 
-LuaInventory LocalLuaPlayer::get_inventory() {
-    return LuaInventory(player.getInventory());
+LocalLuaInventory LocalLuaPlayer::get_inventory() {
+    return LocalLuaInventory(player.getInventory());
 }
 
 void LocalLuaPlayer::set_selected_block(std::string block) {

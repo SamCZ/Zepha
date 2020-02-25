@@ -160,7 +160,7 @@ std::vector<LuaMod> ServerModHandler::initializeLuaMods(const std::list<std::str
                     fileStr = VenusParser::parse(file, fileStr);
                 }
                 catch (std::runtime_error e) {
-                    std::cout << std::endl << e.what() << std::endl;
+                    std::cout << Log::err << "Encountered a venus compilation err" << std::endl << e.what() << Log::endl;
                     exit(1);
                 }
             }

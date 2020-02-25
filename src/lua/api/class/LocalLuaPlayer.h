@@ -6,7 +6,7 @@
 
 #include <sol2/sol.hpp>
 
-#include "LuaInventory.h"
+#include "LocalLuaInventory.h"
 #include "../../../def/ClientGame.h"
 #include "../../../game/scene/world/Player.h"
 
@@ -33,7 +33,7 @@ public:
     void close_menu();
     void open_menu(sol::this_state s, std::string menu, sol::optional<sol::table> callbacks);
 
-    LuaInventory get_inventory();
+    LocalLuaInventory get_inventory();
 
     void set_selected_block(std::string block);
 

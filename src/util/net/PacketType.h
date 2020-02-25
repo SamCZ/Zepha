@@ -6,8 +6,6 @@
 
 enum class PacketType {
     UNDEFINED = 0,
-    CONNECT,
-    AUTH,
 
     // Information Request Types
     BLOCK_IDENTIFIER_LIST,
@@ -22,9 +20,10 @@ enum class PacketType {
     SERVER_INFO,
     THIS_PLAYER_INFO,
     PLAYER_INFO,
-    MAPBLOCK,
     CHUNK,
     BLOCK_SET,
-    ENTITY_INFO
+    ENTITY_INFO,
+    WATCH_INV,
+    UNWATCH_INV
 };
 

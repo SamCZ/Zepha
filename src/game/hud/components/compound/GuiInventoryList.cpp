@@ -5,12 +5,12 @@
 #include "GuiInventoryList.h"
 
 #include "../basic/GuiInventoryItem.h"
+#include "../../../scene/world/LocalInventoryList.cpp"
 #include "../../../../def/texture/Font.h"
-
 GuiInventoryList::GuiInventoryList(const std::string &key) : GuiContainer(key) {}
 
 std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(SerialGui::Elem s, ClientGame &game,
-                                                                   glm::ivec2 bounds, Inventory& inventory, InventoryList& hand) {
+        glm::ivec2 bounds, LocalInventoryRefs& refs) {
 
     glm::vec2 pos     = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position", bounds);
     glm::vec2 offset  = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position_anchor");
@@ -21,41 +21,32 @@ std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(SerialGui::El
     std::string source = s.tokens["source"];
     std::string list   = s.tokens["list"];
 
-    if (source != "current_player") {
-        std::cerr << "Invalid source specified, " << source << std::endl;
-        return nullptr;
-    }
-
-    if (!inventory[list]) {
-        std::cerr << "Invalid list specified, " << list << std::endl;
-        return nullptr;
-    }
-
-    auto invList = inventory[list];
+    auto invList = refs.getList(source, list);
     auto inv = std::make_shared<GuiInventoryList>(s.key);
 
     inv->create(glm::vec2(SerialGui::SCALE_MODIFIER), padding * SerialGui::SCALE_MODIFIER,
-            slotspc * SerialGui::SCALE_MODIFIER, *invList, hand, game);
+            slotspc * SerialGui::SCALE_MODIFIER, invList, refs.getHand(), game);
     inv->setPos(pos);
 
     return inv;
 }
 
-void GuiInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding, InventoryList &list, InventoryList& hand, ClientGame &defs) {
-    this->list = &list;
-    this->hand = &hand;
+void GuiInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding,
+        std::shared_ptr<LocalInventoryList> list, std::shared_ptr<LocalInventoryList> hand, ClientGame& defs) {
+    this->list = list;
+    this->hand = hand;
     this->defs = &defs;
 
     this->scale = scale;
     this->padding = padding;
     this->innerPadding = innerPadding;
     this->hitbox = glm::ivec2 {
-        padding.x + list.getWidth() * (innerPadding.x*scale.x),
-        padding.y + (list.getLength() / list.getWidth()) * (innerPadding.y*scale.y)
+        padding.x + list->getWidth() * (innerPadding.x*scale.x),
+        padding.y + (list->getLength() / list->getWidth()) * (innerPadding.y*scale.y)
     };
 
     drawContents();
-    list.setGuiCallback(std::bind(&GuiInventoryList::drawContents, this));
+    list->setGuiCallback(std::bind(&GuiInventoryList::drawContents, this));
 
     hoverRect->create({}, {}, {1, 1, 1, 0.1});
 

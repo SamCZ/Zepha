@@ -10,13 +10,12 @@
 
 #include "LocalLuaParser.h"
 
-// Types
-#include "../api/type/LocalLuaPlayer.h"
-#include "../api/type/cLocalLuaEntity.h"
-#include "../api/type/cLuaLocalPlayer.h"
-#include "../api/type/cLuaInventory.h"
-#include "../api/type/cLuaItemStack.h"
-#include "../api/type/cLocalLuaAnimationManager.h"
+// Usertypes
+#include "../api/usertype/cItemStack.h"
+#include "../api/usertype/cLocalPlayer.h"
+#include "../api/usertype/cLuaEntity.h"
+#include "../api/usertype/cInventoryRef.h"
+#include "../api/usertype/cAnimationManager.h"
 
 // Modules
 #include "../api/modules/delay.h"
@@ -69,11 +68,11 @@ void LocalLuaParser::loadApi(ClientGame &defs, LocalWorld &world, Player& player
     core["__builtin"] = lua.create_table();
 
     // Types
-    ClientApi::entity(lua);
+    ClientApi::entity           (lua);
     ClientApi::animation_manager(lua);
-    ClientApi::local_player(lua);
-    ClientApi::inventory(lua);
-    ClientApi::item_stack(lua);
+    ClientApi::local_player     (lua);
+    ClientApi::inventory        (lua);
+    ClientApi::item_stack       (lua);
 
     core["client"] = true;
     core["player"] = LocalLuaPlayer(player);
@@ -132,12 +131,15 @@ sol::protected_function_result LocalLuaParser::errorCallback(lua_State*, sol::pr
             for (auto& file : mod.files) {
                 if (file.path == fileName) {
                     std::cout << std::endl << ErrorFormatter::formatError(fileName, lineNum, errString, file.file) << std::endl;
-                    break;
+                    exit(1);
                 }
             }
             break;
         }
     }
+
+    std::cout << Log::err << "Zepha has encountered an error, and ErrorFormatter failed to format it:"
+              << std::endl << std::endl << errString << Log::endl;
 
     exit(1);
     return errPfr;

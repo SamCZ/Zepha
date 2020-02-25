@@ -23,7 +23,7 @@ public:
     static constexpr float BLOCK_DAMAGE = 0.36f;
     static constexpr float BLOCK_INTERVAL = 0.02f;
 
-    Player(LocalWorld& world, ClientGame& defs, Renderer& renderer);
+    Player(LocalWorld& world, ClientGame& defs, Renderer& renderer, LocalInventoryRefs& refs);
     void update(Input &input, double delta, glm::vec2 mouseDelta);
     ~Player();
 
@@ -53,7 +53,7 @@ public:
     void drawGUI(Renderer& renderer);
     void drawViginette(Renderer& renderer);
 
-    Inventory& getInventory();
+    LocalInventory& getInventory();
     PointedThing& getPointedThing();
 private:
     void moveAndLook(Input &input, double delta, glm::vec2 mouseDelta);
@@ -62,22 +62,20 @@ private:
     void updateWireframe();
     void breakBlock(Input& input, double delta);
 
-    Renderer& renderer;
     ClientGame& defs;
+    Renderer& renderer;
+    LocalInventoryRefs& refs;
 
-    InventoryList hand;
-    Inventory inventory;
     GameGui gameGui;
+    Entity handModel;
+    WireframeEntity wireframe;
 
     float yaw = 0;
     float pitch = 0;
     bool flying = false;
 
     unsigned int activeBlock = -1;
-
     PointedThing pointedThing;
-    WireframeEntity wireframe;
-    Entity handModel;
     double breakInterval = 0;
 };
 

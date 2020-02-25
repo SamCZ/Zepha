@@ -31,10 +31,10 @@ set(ZEPHA_SRC
     game/scene/GameScene.h
     game/graph/Renderer.cpp
     game/graph/Renderer.h
-        lua/parser/LocalLuaParser.cpp
-        lua/parser/LocalLuaParser.h
-        game/hud/components/basic/GuiText.cpp
-        game/hud/components/basic/GuiText.h
+    lua/parser/LocalLuaParser.cpp
+    lua/parser/LocalLuaParser.h
+    game/hud/components/basic/GuiText.cpp
+    game/hud/components/basic/GuiText.h
     game/hud/DebugGui.cpp
     game/hud/DebugGui.h
     game/scene/world/Player.cpp
@@ -53,7 +53,7 @@ set(ZEPHA_SRC
     server/Server.h
     util/net/Packet.cpp
     util/net/Packet.h
-        game/scene/net/ClientNetworkInterpreter.cpp
+    game/scene/net/ClientNetworkInterpreter.cpp
     game/scene/net/ClientNetworkInterpreter.h
     def/gen/MapGen.cpp
     def/gen/MapGen.h
@@ -61,15 +61,15 @@ set(ZEPHA_SRC
     util/net/NetHandler.h
     game/hud/GameGui.cpp
     game/hud/GameGui.h
-        server/conn/ClientList.cpp
-        server/conn/ClientList.h
+    server/conn/ClientList.cpp
+    server/conn/ClientList.h
     server/conn/ServerClient.h
     util/net/PacketChannel.h
-        game/entity/engine/PlayerEntity.h
-        game/hud/components/basic/GuiRect.cpp
-        game/hud/components/basic/GuiRect.h
-        game/hud/components/basic/GuiGraph.cpp
-        game/hud/components/basic/GuiGraph.h
+    game/entity/engine/PlayerEntity.h
+    game/hud/components/basic/GuiRect.cpp
+    game/hud/components/basic/GuiRect.h
+    game/hud/components/basic/GuiGraph.cpp
+    game/hud/components/basic/GuiGraph.h
     def/gen/MapGenJob.h
     util/Interp.h
     def/gen/NoiseSample.cpp
@@ -93,32 +93,32 @@ set(ZEPHA_SRC
     world/LocalDimension.cpp
     world/LocalDimension.h
     world/region/Region.h
-        game/entity/engine/WireframeEntity.cpp
-        game/entity/engine/WireframeEntity.h
+    game/entity/engine/WireframeEntity.cpp
+    game/entity/engine/WireframeEntity.h
     def/item/SelectionBox.h
     game/graph/drawable/Drawable.h
     game/graph/drawable/DrawableGroup.cpp
     game/graph/drawable/DrawableGroup.h
     game/graph/window/Input.cpp
     game/graph/window/Input.h
-        game/entity/engine/BlockCrackEntity.cpp
-        game/entity/engine/BlockCrackEntity.h
+    game/entity/engine/BlockCrackEntity.cpp
+    game/entity/engine/BlockCrackEntity.h
     def/texture/TextureAtlas.cpp
     def/texture/TextureAtlas.h
     def/texture/AtlasRef.h
     world/region/MapBlock.h
-        def/ClientGame.cpp
-        def/ClientGame.h
+    def/ClientGame.cpp
+    def/ClientGame.h
     world/region/Region.cpp
     world/region/MapBlock.cpp
     util/Util.h
     world/block/PointedThing.h
-        game/hud/components/compound/GuiLabelledGraph.cpp
-        game/hud/components/compound/GuiLabelledGraph.cpp
-        game/entity/engine/ParticleEntity.cpp
-        game/entity/engine/ParticleEntity.h
-        def/ServerGame.cpp
-        def/ServerGame.h
+    game/hud/components/compound/GuiLabelledGraph.cpp
+    game/hud/components/compound/GuiLabelledGraph.cpp
+    game/entity/engine/ParticleEntity.cpp
+    game/entity/engine/ParticleEntity.h
+    def/ServerGame.cpp
+    def/ServerGame.h
     def/ServerDefinitionAtlas.cpp
     def/ServerDefinitionAtlas.h
     def/item/BlockDef.cpp
@@ -127,8 +127,8 @@ set(ZEPHA_SRC
     def/DefinitionAtlas.h
     lua/LuaParser.cpp
     lua/LuaParser.h
-        lua/parser/ServerLuaParser.cpp
-        lua/parser/ServerLuaParser.h
+    lua/parser/ServerLuaParser.cpp
+    lua/parser/ServerLuaParser.h
     util/Log.h
     lua/Callback.h
     game/graph/shader/GuiUniforms.h
@@ -145,10 +145,10 @@ set(ZEPHA_SRC
     game/scene/net/ServerConnection.cpp
     game/scene/net/ServerConnection.h
     game/scene/world/MeshDetails.h
-        game/hud/components/GuiComponent.cpp
-        game/hud/components/GuiComponent.h
-        game/hud/components/basic/GuiContainer.cpp
-        game/hud/components/basic/GuiContainer.h
+    game/hud/components/GuiComponent.cpp
+    game/hud/components/GuiComponent.h
+    game/hud/components/basic/GuiContainer.cpp
+    game/hud/components/basic/GuiContainer.h
     lua/LuaModFile.h
     lua/LuaMod.h
     lua/LuaModConfig.h
@@ -176,7 +176,7 @@ set(ZEPHA_SRC
     game/entity/AnimationState.cpp
     game/entity/AnimationState.h
     game/entity/AnimationSegment.h
-    lua/api/type/cLocalLuaEntity.h
+    lua/api/usertype/cLuaEntity.h
     StartGame.h
     game/graph/shader/SSAOShader.cpp
     game/graph/shader/SSAOShader.h
@@ -194,31 +194,31 @@ set(ZEPHA_SRC
     def/item/CraftItemDef.cpp
     def/item/CraftItemDef.h
     lua/api/modules/add_entity.h
-    lua/api/type/LocalLuaEntity.cpp
-    lua/api/type/LocalLuaEntity.h
+    lua/api/class/LocalLuaEntity.cpp
+    lua/api/class/LocalLuaEntity.h
     def/model/SerializedModel.h
     server/asset/AssetType.h
     def/model/ModelStore.h
     lua/api/modules/remove_entity.h
-        lua/api/functions/update_entities.h
+    lua/api/functions/update_entities.h
     lua/api/modules/register_keybind.h
     lua/LuaInputManager.cpp
     lua/LuaInputManager.h
-    lua/api/type/cLuaLocalPlayer.h
-    lua/api/type/LocalLuaPlayer.cpp
-    lua/api/type/LocalLuaPlayer.h
+    lua/api/usertype/cLocalPlayer.h
+    lua/api/class/LocalLuaPlayer.cpp
+    lua/api/class/LocalLuaPlayer.h
     game/entity/Collidable.cpp
     game/entity/Collidable.h
-        game/hud/components/compound/GuiInventoryList.cpp
-        game/hud/components/compound/GuiInventoryList.h
-        game/hud/components/basic/GuiInventoryItem.cpp
-        game/hud/components/basic/GuiInventoryItem.h
+    game/hud/components/compound/GuiInventoryList.cpp
+    game/hud/components/compound/GuiInventoryList.h
+    game/hud/components/basic/GuiInventoryItem.cpp
+    game/hud/components/basic/GuiInventoryItem.h
     game/scene/world/InventoryList.cpp
     game/scene/world/InventoryList.h
     game/scene/world/ItemStack.h
     server/LocalServerInstance.cpp
     server/LocalServerInstance.h
-        game/hud/SerialGui.h
+    game/hud/SerialGui.h
     util/Voronoi3D.cpp
     util/Voronoi3D.h
     def/gen/BiomeDef.cpp
@@ -232,8 +232,8 @@ set(ZEPHA_SRC
     world/Dimension.cpp
     world/Dimension.h
     def/texture/RawTexData.h
-        game/hud/components/compound/GuiImageButton.cpp
-        game/hud/components/compound/GuiImageButton.h
+    game/hud/components/compound/GuiImageButton.cpp
+    game/hud/components/compound/GuiImageButton.h
     game/ClientState.cpp
     game/scene/menu/Subgame.cpp
     game/scene/menu/Subgame.h
@@ -247,30 +247,30 @@ set(ZEPHA_SRC
     game/hud/GameGuiBuilder.cpp
     game/hud/GameGuiBuilder.h
     lua/api/menu/mStartGame.h
-    lua/api/type/LuaInventoryList.cpp
-    lua/api/type/LuaInventoryList.h
-    lua/api/type/LuaInventory.cpp
-    lua/api/type/LuaInventory.h
+    lua/api/class/ServerLuaInventoryList.cpp
+    lua/api/class/ServerLuaInventoryList.h
+    lua/api/class/ServerLuaInventory.cpp
+    lua/api/class/ServerLuaInventory.h
     game/scene/world/Inventory.cpp
     game/scene/world/Inventory.h
-    lua/api/type/LuaItemStack.cpp
-    lua/api/type/LuaItemStack.h
+    lua/api/class/LuaItemStack.cpp
+    lua/api/class/LuaItemStack.h
     game/scene/world/ItemStack.cpp
-    lua/api/type/cLuaInventory.h
-    lua/api/type/cLuaItemStack.h
-        game/hud/components/basic/GuiModel.cpp
-        game/hud/components/basic/GuiModel.h
+    lua/api/usertype/cInventoryRef.h
+    lua/api/usertype/cItemStack.h
+    game/hud/components/basic/GuiModel.cpp
+    game/hud/components/basic/GuiModel.h
     server/world/ServerEntity.cpp
     server/world/ServerEntity.h
-    lua/api/type/ServerLuaEntity.cpp
-    lua/api/type/ServerLuaEntity.h
+    lua/api/class/ServerLuaEntity.cpp
+    lua/api/class/ServerLuaEntity.h
     game/scene/LuaErrorScene.cpp
     game/scene/LuaErrorScene.h
-        lua/api/type/sServerLuaEntity.h
+    lua/api/usertype/sLuaEntity.h
     util/net/Serializer.h
     util/net/Deserializer.h
-    lua/api/type/ServerLocalLuaEntity.cpp
-    lua/api/type/ServerLocalLuaEntity.h
+    lua/api/class/ServerLocalLuaEntity.cpp
+    lua/api/class/ServerLocalLuaEntity.h
     lua/api/modules/register_item.h
     lua/api/modules/register_biome.h
     lua/api/modules/delay.h
@@ -286,15 +286,33 @@ set(ZEPHA_SRC
     lua/register/RegisterBlocks.h
     lua/register/RegisterItems.h
     lua/register/RegisterKeybinds.h
-    lua/api/type/LocalLuaAnimationManager.cpp
-    lua/api/type/LocalLuaAnimationManager.h
-    lua/api/type/cLocalLuaAnimationManager.h
+    lua/api/class/LocalLuaAnimationManager.cpp
+    lua/api/class/LocalLuaAnimationManager.h
+    lua/api/usertype/cAnimationManager.h
     game/scene/world/Schematic.cpp
     game/scene/world/Schematic.h
     lua/VenusParser.cpp
     lua/VenusParser.h
     lua/ErrorFormatter.cpp
     lua/ErrorFormatter.h
-    util/RIE.h lua/api/type/ServerLuaPlayer.cpp lua/api/type/ServerLuaPlayer.h lua/api/type/sServerLuaPlayer.h lua/api/modules/register_on.h lua/api/functions/trigger_event.h lua/parser/ServerModHandler.cpp lua/parser/ServerModHandler.h lua/parser/LocalModHandler.cpp lua/parser/LocalModHandler.h)
+    util/RIE.h
+    lua/api/class/ServerLuaPlayer.cpp
+    lua/api/class/ServerLuaPlayer.h
+    lua/api/usertype/sServerPlayer.h
+    lua/api/modules/register_on.h
+    lua/api/functions/trigger_event.h
+    lua/parser/ServerModHandler.cpp
+    lua/parser/ServerModHandler.h
+    lua/parser/LocalModHandler.cpp
+    lua/parser/LocalModHandler.h
+    game/scene/net/NetPlayerField.h
+    game/scene/world/LocalInventoryRefs.cpp
+    game/scene/world/LocalInventoryRefs.h
+    game/scene/world/LocalInventory.cpp
+    game/scene/world/LocalInventory.h
+    lua/api/class/LocalLuaInventory.cpp
+    lua/api/class/LocalLuaInventory.h
+    lua/api/class/LocalLuaInventoryList.cpp
+    lua/api/class/LocalLuaInventoryList.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

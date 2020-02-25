@@ -4,6 +4,9 @@
 
 #include <iostream>
 #include "ServerClient.h"
+#include "../../util/net/Packet.h"
+#include "../../util/net/Serializer.h"
+#include "../../game/scene/net/NetPlayerField.h"
 
 ServerClient::ServerClient(ENetPeer *peer, ENetAddress address, DefinitionAtlas& defs) :
     peer(peer),
@@ -15,6 +18,16 @@ ServerClient::ServerClient(ENetPeer *peer, ENetAddress address, DefinitionAtlas&
 void ServerClient::setUsername(const std::string &name) {
     this->username = name;
 }
+
+void ServerClient::assertPos(glm::vec3 pos) {
+    setPos(pos);
+    Serializer()
+        .append(static_cast<unsigned int>(NetPlayerField::POSITION))
+        .append(pos)
+        .packet(PacketType::THIS_PLAYER_INFO)
+        .sendTo(peer, PacketChannel::PLAYER);
+}
+
 
 void ServerClient::setPos(glm::vec3 pos) {
     glm::vec3 lastMapBlock = Space::MapBlock::world::fromBlock(this->pos);
@@ -32,12 +45,30 @@ glm::vec3 ServerClient::getPos() {
     return pos;
 }
 
+void ServerClient::assertPitch(float pitch) {
+    setPitch(pitch);
+    Serializer()
+        .append(static_cast<unsigned int>(NetPlayerField::PITCH))
+        .append(pitch)
+        .packet(PacketType::THIS_PLAYER_INFO)
+        .sendTo(peer, PacketChannel::PLAYER);
+}
+
 void ServerClient::setPitch(float pitch) {
     this->pitch = pitch;
 }
 
 float ServerClient::getPitch() {
     return pitch;
+}
+
+void ServerClient::assertYaw(float yaw) {
+    setYaw(yaw);
+    Serializer()
+            .append(static_cast<unsigned int>(NetPlayerField::YAW))
+            .append(yaw)
+            .packet(PacketType::THIS_PLAYER_INFO)
+            .sendTo(peer, PacketChannel::PLAYER);
 }
 
 void ServerClient::setYaw(float yaw) {

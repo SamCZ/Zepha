@@ -6,6 +6,7 @@
 #include "../../util/net/Serializer.h"
 #include "../../util/net/NetHandler.h"
 #include "../../def/ServerGame.h"
+#include "../../game/scene/net/NetPlayerField.h"
 
 
 ClientList::ClientList(ServerGame& defs) :
@@ -45,10 +46,10 @@ void ClientList::createPlayer(std::shared_ptr<ServerClient> c) {
 
     Packet p(PacketType::THIS_PLAYER_INFO);
     p.data = Serializer()
+            .append<unsigned int>(static_cast<unsigned int>(NetPlayerField::ID))
             .append(c->cid)
+            .append<unsigned int>(static_cast<unsigned int>(NetPlayerField::POSITION))
             .append(c->getPos())
-            .append(c->getPitch())
-            .append(c->getYaw())
             .data;
 
     p.sendTo(c->peer, PacketChannel::ENTITY);

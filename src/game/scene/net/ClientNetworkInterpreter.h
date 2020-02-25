@@ -18,6 +18,8 @@ public:
     void receivedPacket(std::unique_ptr<Packet> ePacket);
 
     void setBlock(glm::ivec3 pos, unsigned int block);
+    void watchInv(const std::string& inv, const std::string& list);
+    void unwatchInv(const std::string& inv, const std::string& list);
 
     ~ClientNetworkInterpreter();
 

@@ -5,14 +5,13 @@
 #include "GameGui.h"
 #include "components/compound/GuiInventoryList.h"
 
-GameGui::GameGui(Inventory& inventory, InventoryList& hand, glm::vec2 bufferSize, ClientGame& defs, Renderer& renderer) :
+GameGui::GameGui(LocalInventoryRefs& refs, glm::vec2 bufferSize, ClientGame& defs, Renderer& renderer) :
     menuRoot(std::make_shared<GuiContainer>("__luaroot")),
     handList(std::make_shared<GuiInventoryList>("hand")),
-    builder(inventory, hand, defs, menuRoot),
-    inventory(inventory),
+    builder(refs, defs, menuRoot),
     renderer(renderer),
     win(bufferSize),
-    hand(hand),
+    refs(refs),
     defs(defs) {
 
     auto crosshair = std::make_shared<GuiRect>("crosshair");
@@ -26,7 +25,7 @@ GameGui::GameGui(Inventory& inventory, InventoryList& hand, glm::vec2 bufferSize
 
     add(menuRoot);
 
-    handList->create({3, 3}, {}, {}, hand, hand, defs);
+    handList->create({3, 3}, {}, {}, refs.getHand(), refs.getHand(), defs);
     add(handList);
 }
 

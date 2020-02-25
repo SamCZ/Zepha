@@ -5,7 +5,8 @@
 #pragma once
 
 #include "Dimension.h"
-#include "../lua/api/type/ServerLuaEntity.h"
+
+#include "../lua/api/class/ServerLuaEntity.h"
 
 class ServerClient;
 

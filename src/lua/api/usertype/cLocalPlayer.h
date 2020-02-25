@@ -5,7 +5,7 @@
 #pragma once
 
 #include <sol2/sol.hpp>
-#include "LocalLuaPlayer.h"
+#include "../class/LocalLuaPlayer.h"
 
 namespace ClientApi {
     void local_player(sol::state& lua) {
@@ -30,7 +30,7 @@ namespace ClientApi {
             "block_pos", sol::property(&LocalLuaPlayer::get_block_pos, &LocalLuaPlayer::set_pos),
             "vel", sol::property(&LocalLuaPlayer::get_vel, &LocalLuaPlayer::set_vel),
             "look_yaw", sol::property(&LocalLuaPlayer::get_look_yaw, &LocalLuaPlayer::set_look_yaw),
-            "look_yaw", sol::property(&LocalLuaPlayer::get_look_pitch, &LocalLuaPlayer::set_look_pitch),
+            "look_pitch", sol::property(&LocalLuaPlayer::get_look_pitch, &LocalLuaPlayer::set_look_pitch),
 
             "flying", sol::property(&LocalLuaPlayer::set_flying, &LocalLuaPlayer::get_flying),
 

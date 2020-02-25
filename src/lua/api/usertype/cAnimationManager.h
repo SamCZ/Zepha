@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include "LocalLuaAnimationManager.h"
+#include "../class/LocalLuaAnimationManager.h"
 #include <sol2/sol.hpp>
 
 namespace ClientApi {
     void animation_manager(sol::state& lua) {
-        lua.new_usertype<LocalLuaAnimationManager>("animation_manager",
+        lua.new_usertype<LocalLuaAnimationManager>("AnimationManager",
              "define", &LocalLuaAnimationManager::define,
              "set_anim", &LocalLuaAnimationManager::set_anim,
              "play", &LocalLuaAnimationManager::play,

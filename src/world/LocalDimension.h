@@ -5,8 +5,8 @@
 #pragma once
 
 #include "Dimension.h"
-#include "../lua/api/type/LocalLuaEntity.h"
-#include "../lua/api/type/ServerLocalLuaEntity.h"
+#include "../lua/api/class/LocalLuaEntity.h"
+#include "../lua/api/class/ServerLocalLuaEntity.h"
 #include "../game/entity/engine/PlayerEntity.h"
 #include "../game/scene/world/MeshGenStream.h"
 #include "../game/scene/world/graph/ChunkRenderElem.h"

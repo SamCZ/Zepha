@@ -5,19 +5,19 @@
 #include "GameScene.h"
 
 GameScene::GameScene(ClientState& state) : Scene(state),
-    defs(state.defs),
-    server(state.connection, defs, player),
-    world(defs, &playerPos, &server),
-
-    player(world, defs, state.renderer),
-    debugGui(state.renderer.window.getSize(), defs) {
+    game(state.defs),
+    refs(game.defs, net),
+    world(game, &playerPos, &net),
+    net(state.connection, game, player),
+    player(world, game, state.renderer, refs),
+    debugGui(state.renderer.window.getSize(), game) {
 
     state.renderer.setClearColor(148, 194, 240);
     state.renderer.window.lockMouse(true);
 
-    defs.init(world, player);
+    game.init(world, player);
     world.init();
-    server.init(&world);
+    net.init(&world);
 
     Packet r(PacketType::CONNECT_DATA_RECVD);
     r.sendTo(state.connection.getPeer(), PacketChannel::CONNECT);
@@ -28,9 +28,9 @@ GameScene::GameScene(ClientState& state) : Scene(state),
 }
 
 void GameScene::update() {
-    defs.update(state.deltaTime, state.renderer.window.keys);
-    defs.textures.update();
-    server.update();
+    game.update(state.deltaTime, state.renderer.window.keys);
+    game.textures.update();
+    net.update();
 
     Window& window = state.renderer.window;
 
@@ -40,11 +40,11 @@ void GameScene::update() {
 
     for (auto entity : entities) entity->update(state.deltaTime);
 
-    for (auto &chunkPacket : server.chunkPackets) world.loadChunkPacket(std::move(chunkPacket));
-    server.chunkPackets.clear();
+    for (auto &chunkPacket : net.chunkPackets) world.loadChunkPacket(std::move(chunkPacket));
+    net.chunkPackets.clear();
 
-    debugGui.update(player, world, defs, state.fps, world.getMeshChunkCount(), drawCalls, server.serverSideChunkGens, server.recvPackets);
-    server.recvPackets = 0;
+    debugGui.update(player, world, game, state.fps, world.getMeshChunkCount(), drawCalls, net.serverSideChunkGens, net.recvPackets);
+    net.recvPackets = 0;
     world.update(state.deltaTime);
 
     if (window.input.isKeyPressed(GLFW_KEY_F1)) {
@@ -64,7 +64,7 @@ void GameScene::draw() {
     Camera& camera = renderer.camera;
 
     renderer.beginChunkDeferredCalls();
-    renderer.enableTexture(&defs.textures.atlasTexture);
+    renderer.enableTexture(&game.textures.atlasTexture);
 
     drawCalls = world.renderChunks(renderer);
 
@@ -76,7 +76,7 @@ void GameScene::draw() {
 
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
-    renderer.enableTexture(&defs.textures.atlasTexture);
+    renderer.enableTexture(&game.textures.atlasTexture);
 
     player.drawViginette(renderer);
     debugGui.draw(renderer);

@@ -18,7 +18,7 @@
 
 class GameGui : public GuiContainer {
 public:
-    explicit GameGui(Inventory& inventory, InventoryList& hand, glm::vec2 bufferSize, ClientGame& defs, Renderer& renderer);
+    explicit GameGui(LocalInventoryRefs& refs, glm::vec2 bufferSize, ClientGame& defs, Renderer& renderer);
     void winResized(glm::ivec2 win);
 
     void update(double delta) override;
@@ -41,7 +41,6 @@ private:
     GuiContainer builtIn = {};
     GameGuiBuilder builder;
 
-    InventoryList& hand;
-    Inventory& inventory;
+    LocalInventoryRefs& refs;
 };
 

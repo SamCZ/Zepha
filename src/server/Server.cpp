@@ -106,7 +106,7 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
             std::cout << Log::err << "Invalid packet type (" << static_cast<int>(p.type) << ") recieved." << Log::endl;
             break;
         }
-        case PacketType::THIS_PLAYER_INFO: {
+        case PacketType::PLAYER_INFO: {
             Deserializer d(p.data);
             client.setPos(d.read<glm::vec3>());
             client.setPitch(d.read<float>());

@@ -13,5 +13,6 @@ enum class PacketChannel {
     ENTITY,
     CHUNK,
     BLOCK,
+    INVENTORY
 };
 

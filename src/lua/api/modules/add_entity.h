@@ -5,10 +5,13 @@
 #pragma once
 
 #include <sol2/sol.hpp>
-#include "../type/LocalLuaEntity.h"
+
+#include "../class/LocalLuaEntity.h"
+#include "../class/ServerLuaEntity.h"
 #include "../../../def/ServerGame.h"
 #include "../../../server/world/ServerWorld.h"
 #include "../../../game/scene/world/LocalWorld.h"
+#include "../../../server/world/ServerEntity.h"
 
 namespace Api {
     static int entities_ind = 0;

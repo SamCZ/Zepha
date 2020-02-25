@@ -12,11 +12,11 @@
 
 #include "ServerLuaParser.h"
 
-// Types
-#include "../api/type/sServerLuaPlayer.h"
-#include "../api/type/sServerLuaEntity.h"
-#include "../api/type/cLuaInventory.h"
-#include "../api/type/cLuaItemStack.h"
+// Usertypes
+#include "../api/usertype/sServerPlayer.h"
+#include "../api/usertype/sLuaEntity.h"
+#include "../api/usertype/sInventoryRef.h"
+#include "../api/usertype/cItemStack.h"
 
 // Modules
 #include "../api/modules/delay.h"
@@ -98,10 +98,10 @@ void ServerLuaParser::loadApi(ServerGame &defs, ServerWorld &world) {
     core["__builtin"] = lua.create_table();
 
     // Types
-    ServerApi::entity(lua);
+    ServerApi::entity       (lua);
     ServerApi::server_player(lua);
-    ClientApi::inventory(lua);
-    ClientApi::item_stack(lua);
+    ServerApi::inventory    (lua);
+    ClientApi::item_stack   (lua);
 
     core["server"] = true;
     core["players"] = lua.create_table();
@@ -143,7 +143,7 @@ sol::protected_function_result ServerLuaParser::errorCallback(lua_State*, sol::p
     sol::error err = errPfr;
     std::string errString = err.what();
 
-    std::string::size_type slash = errString.find('/');
+    std::string::size_type slash = errString.find_first_of("/");
     assert(slash != std::string::npos);
 
     std::string modString = errString.substr(0, slash);
@@ -161,12 +161,15 @@ sol::protected_function_result ServerLuaParser::errorCallback(lua_State*, sol::p
             for (auto& file : mod.files) {
                 if (file.path == fileName) {
                     std::cout << std::endl << ErrorFormatter::formatError(fileName, lineNum, errString, file.file) << std::endl;
-                    break;
+                    exit(1);
                 }
             }
             break;
         }
     }
+
+    std::cout << Log::err << "Zepha has encountered an error, and ErrorFormatter failed to format it:"
+              << std::endl << std::endl << errString << Log::endl;
 
     exit(1);
     return errPfr;
@@ -187,7 +190,7 @@ sol::protected_function_result ServerLuaParser::runFileSandboxed(const std::stri
                     env["_MODNAME"] = mod.config.name;
 
                     return lua.safe_script(f.file, env, std::bind(&ServerLuaParser::errorCallback, this,
-                            std::placeholders::_1, std::placeholders::_2), "@" + f.path, sol::load_mode::text);
+                            std::placeholders::_1, std::placeholders::_2), "@" + f.path);
                 }
             }
 

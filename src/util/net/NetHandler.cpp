@@ -14,7 +14,10 @@ NetHandler::NetHandler(const Address& hostAddress, int attempts, int timeout) {
 
 NetHandler::NetHandler(unsigned short port, short max_clients) {
     initServer(port, max_clients);
-    if (state == NetState::ENET_ERROR) exit(1);
+    if (state == NetState::ENET_ERROR) {
+        std::cout << Log::err << "Failed to initialize ENet." << Log::endl;
+        exit(1);
+    }
 }
 
 void NetHandler::initServer(unsigned short port, short max_clients) {

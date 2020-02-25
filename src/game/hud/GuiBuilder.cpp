@@ -117,7 +117,7 @@ void GuiBuilder::recursivelyCreate(std::vector<SerialGui::Elem> components, std:
         std::shared_ptr<GuiComponent> component = createComponent(data, bounds);
         if (component == nullptr) continue;
         parent->add(component);
-        recursivelyCreate(data.children, component, bounds);
+        recursivelyCreate(data.children, component, component->getScale());
     }
 }
 

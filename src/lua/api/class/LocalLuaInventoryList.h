@@ -1,18 +1,17 @@
 //
-// Created by aurailus on 2019-12-17.
+// Created by aurailus on 2020-02-24.
 //
 
 #pragma once
 
-#include "../../../game/scene/world/InventoryList.h"
-#include "LuaItemStack.h"
+#include "../../../game/scene/world/LocalInventoryList.h"
 
-class LuaInventoryList {
+class LocalLuaInventoryList {
 public:
-    LuaInventoryList(InventoryList& list) :
-        list(list) {}
+    LocalLuaInventoryList(LocalInventoryList& list) :
+    list(list) {}
 
-    InventoryList& list;
+    LocalInventoryList& list;
 
     int get_length();
     int get_width();
@@ -39,6 +38,6 @@ public:
 
     LuaItemStack remove_stack(unsigned short ind, unsigned short count);
 
-    void set_callback(InventoryList::Callback t, sol::function fun);
-    sol::function get_callback(InventoryList::Callback t);
+    void set_callback(LocalInventoryList::Callback t, sol::function fun);
+    sol::function get_callback(LocalInventoryList::Callback t);
 };

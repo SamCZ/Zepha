@@ -18,16 +18,16 @@ public:
 
     void cleanup() override;
 public:
-    ClientGame& defs;
+    ClientGame& game;
+
+    ClientNetworkInterpreter net;
+    LocalInventoryRefs refs;
+    LocalWorld world;
 
     glm::vec3 playerPos;
     Player player;
 
-    ClientNetworkInterpreter server;
-    LocalWorld world;
-
     std::vector<Drawable*> entities;
-
     DebugGui debugGui;
 
     int drawCalls = 0;

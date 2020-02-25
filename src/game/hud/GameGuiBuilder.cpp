@@ -23,7 +23,7 @@ std::shared_ptr<GuiComponent> GameGuiBuilder::createComponent(SerialGui::Elem &d
     switch (Util::hash(data.type.c_str())) {
         default: break;
         case Util::hash("inventory"): {
-            c = GuiInventoryList::fromSerialized(data, game, bounds, inventory, hand);
+            c = GuiInventoryList::fromSerialized(data, game, bounds, refs);
             break;
         }
     }

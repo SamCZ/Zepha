@@ -2,21 +2,11 @@
 // Created by aurailus on 11/01/19.
 //
 
-#include "../world/Player.h"
-#include "../../../util/net/NetHandler.h"
-#include "../../../util/net/Serializer.h"
-
 #include "ClientNetworkInterpreter.h"
 
-//#include <string>
-//#include <iostream>
-//#include <glm/vec3.hpp>
-//
-//#include "../../../util/Timer.h"
-//#include "../../../util/net/Packet.h"
-//#include "../../entity/engine/PlayerEntity.h"
-//#include "../../graph/drawable/DrawableGroup.h"
-//#include "../../../util/net/Address.h"
+#include "NetPlayerField.h"
+#include "../world/Player.h"
+#include "../../../util/net/NetHandler.h"
 
 ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, ClientGame &defs, Player& player) :
     world(nullptr),
@@ -61,7 +51,7 @@ void ClientNetworkInterpreter::update() {
     }
 
     //Send Player Position
-    Packet p(PacketType::THIS_PLAYER_INFO);
+    Packet p(PacketType::PLAYER_INFO);
     p.data = Serializer()
             .append(player.getPos())
             .append(player.getPitch())
@@ -69,15 +59,6 @@ void ClientNetworkInterpreter::update() {
             .data;
 
     p.sendTo(connection.getPeer(), PacketChannel::PLAYER);
-}
-
-void ClientNetworkInterpreter::setBlock(glm::ivec3 pos, unsigned int block) {
-    Packet p(PacketType::BLOCK_SET);
-    Serializer()
-        .append(pos)
-        .append(block)
-        .packet(PacketType::BLOCK_SET)
-        .sendTo(connection.getPeer(), PacketChannel::BLOCK);
 }
 
 void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
@@ -91,11 +72,28 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
         }
 
         case PacketType::THIS_PLAYER_INFO: {
-            id = d.read<unsigned int>();
 
-            player.setPos(d.read<glm::vec3>());
-            player.setPitch(d.read<float>());
-            player.setYaw(d.read<float>());
+            while (!d.atEnd()) {
+                switch (d.read<unsigned int>()) {
+                    case static_cast<unsigned int>(NetPlayerField::ID): {
+                        id = d.read<unsigned int>();
+                        break;
+                    }
+                    case static_cast<unsigned int>(NetPlayerField::POSITION): {
+                        player.setPos(d.read<glm::vec3>());
+                        break;
+                    }
+                    case static_cast<unsigned int>(NetPlayerField::PITCH): {
+                        player.setPitch(d.read<float>());
+                        break;
+                    }
+                    case static_cast<unsigned int>(NetPlayerField::YAW): {
+                        player.setYaw(d.read<float>());
+                        break;
+                    }
+                }
+            }
+
             break;
         }
 
@@ -144,6 +142,21 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
             break;
         }
     }
+}
+
+void ClientNetworkInterpreter::setBlock(glm::ivec3 pos, unsigned int block) {
+    Serializer().append(pos).append(block)
+        .packet(PacketType::BLOCK_SET).sendTo(connection.getPeer(), PacketChannel::BLOCK);
+}
+
+void ClientNetworkInterpreter::watchInv(const std::string& inv, const std::string& list) {
+    Serializer().append(inv).append(list)
+            .packet(PacketType::WATCH_INV).sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+}
+
+void ClientNetworkInterpreter::unwatchInv(const std::string& inv, const std::string& list) {
+    Serializer().append(inv).append(list)
+            .packet(PacketType::UNWATCH_INV).sendTo(connection.getPeer(), PacketChannel::INVENTORY);
 }
 
 ClientNetworkInterpreter::~ClientNetworkInterpreter() {

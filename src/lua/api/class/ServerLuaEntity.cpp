@@ -2,9 +2,6 @@
 // Created by aurailus on 2019-12-28.
 //
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "cppcoreguidelines-pro-type-static-cast-downcast"
-
 #include "ServerLuaEntity.h"
 
 void ServerLuaEntity::snap_pos(const sol::table &pos) {
@@ -95,5 +92,3 @@ void ServerLuaEntity::set_display_type(const std::string &type, const std::strin
         entity->setAppearance("model", arg, *arg2);
     }
 }
-
-#pragma clang diagnostic pop
