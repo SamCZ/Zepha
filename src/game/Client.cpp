@@ -41,13 +41,13 @@ void Client::loop() {
     }
 
     double now = glfwGetTime();
-    state.deltaTime = now - timeElapsed;
+    state.delta = now - timeElapsed;
     timeElapsed = now;
 
     glfwPollEvents();
 
     sceneManager.update();
-    renderer.update(state.deltaTime);
+    renderer.update(state.delta);
 
     state.fps = 1000.0 / (t.elapsedNs() / 1000000.0);
 }

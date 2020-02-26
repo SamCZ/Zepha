@@ -94,9 +94,10 @@ void Model::loadMeshAndBone(aiMesh *mesh, std::unique_ptr<EntityMesh>& target) {
         vertex.colorBlend = {1, 1, 1};
 
         assert(mesh->mMaterialIndex >= 0 && mesh->mMaterialIndex < textures.size());
-        auto& texture = textures[mesh->mMaterialIndex];
 
         if (mesh->mTextureCoords[0]) {
+            auto& texture = textures[mesh->mMaterialIndex];
+
             //Set texture coordinates
             vertex.useTex = true;
             vertex.colorData = {

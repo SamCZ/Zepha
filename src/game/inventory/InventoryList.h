@@ -7,14 +7,13 @@
 #include <list>
 #include <vector>
 #include <functional>
-
 #include "ItemStack.h"
 
-class LocalInventoryList {
+class InventoryList {
 public:
     enum class Callback { ALLOW_TAKE, ALLOW_PUT, ON_TAKE, ON_PUT };
 
-    LocalInventoryList(DefinitionAtlas& defs, std::string name, unsigned short size, unsigned short width);
+    InventoryList(DefinitionAtlas& defs, const std::string& name, unsigned short size, unsigned short width);
 
     unsigned short getLength();
     unsigned short getWidth();
@@ -28,7 +27,7 @@ public:
     ItemStack addStack(ItemStack stack, bool playerInitiated = false);
     // Returns how many of `stack`'s items fit, from 0 to stack.count.
     unsigned short stackFits(const ItemStack& stack);
-    // Attempts to remove the type and amount of items specified by `stack`. Returns actual ItemStack of what was removed.
+    // Attempts to remove the usertype and amount of items specified by `stack`. Returns actual ItemStack of what was removed.
     ItemStack takeStack(ItemStack request, bool playerInitiated = false);
 
     void setStack(unsigned short i, const ItemStack& stack);
@@ -44,8 +43,6 @@ public:
     DefinitionAtlas& defs;
 
 private:
-    bool initialized = false;
-
     void triggerCallback();
 
     std::vector<ItemStack> itemstacks {};

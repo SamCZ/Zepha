@@ -194,7 +194,7 @@ void MainMenuScene::positionElements() {
 
 void MainMenuScene::update() {
     state.defs.textures.update();
-    sandbox.update(state.deltaTime);
+    sandbox.update(state.delta);
 
     state.renderer.window.setCursorHand(components.mouseActivity(state.renderer.window.getMousePos()));
     if (state.renderer.window.input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT))

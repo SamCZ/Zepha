@@ -8,7 +8,7 @@ LuaItemStack::LuaItemStack(const ItemStack &stack, const DefinitionAtlas &defs) 
     name((stack.count == 0 ? "" : defs.fromId(stack.id).identifier)),
     count(stack.count) {}
 
-LuaItemStack::LuaItemStack(std::string name, unsigned short count) :
+LuaItemStack::LuaItemStack(const std::string& name, unsigned short count) :
     name(name), count(count) {}
 
 LuaItemStack::LuaItemStack(sol::table tbl) :

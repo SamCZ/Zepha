@@ -53,7 +53,6 @@ bool Collidable::collidesAt(glm::vec3& pos, float stepUpMax) {
     // Find the minimum vertical increase needed to step up
     float stepUpAmount = 0;
     if (stepUpMax > 0) {
-        SelectionBox collidableBox = {collisionBox.a + pos, collisionBox.b + pos};
         glm::vec3 offset {};
 
         offset.x = collisionBox.a.x;

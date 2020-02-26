@@ -25,11 +25,11 @@ public:
 
     Uniforms uniforms {};
 
-    unsigned int gBuffer;
-    unsigned int gPosition;
-    unsigned int gNormal;
-    unsigned int gColorSpec;
-    unsigned int rDepth;
+    unsigned int gBuffer = 0;
+    unsigned int gPosition = 0;
+    unsigned int gNormal = 0;
+    unsigned int gColorSpec = 0;
+    unsigned int rDepth = 0;
 
 private:
     glm::ivec2 windowSize {};

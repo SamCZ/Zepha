@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../../game/scene/world/InventoryList.h"
+#include "../../../game/inventory/InventoryList.h"
 #include "LuaItemStack.h"
 
 class ServerLuaInventoryList {

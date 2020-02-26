@@ -3,7 +3,7 @@
 //
 
 #include "ItemStack.h"
-#include "../../../lua/api/class/LuaItemStack.h"
+#include "../../lua/api/class/LuaItemStack.h"
 
 ItemStack::ItemStack(LuaItemStack &stack, const DefinitionAtlas &atlas) :
     id((stack.get_count() == 0) ? 0 : atlas.fromStr(stack.get_name()).index),

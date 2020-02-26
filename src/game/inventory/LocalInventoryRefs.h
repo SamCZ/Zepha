@@ -9,8 +9,8 @@
 
 #include "LocalInventory.h"
 #include "LocalInventoryList.h"
-#include "../net/ClientNetworkInterpreter.h"
-#include "../../../def/LocalDefinitionAtlas.h"
+#include "../scene/net/ClientNetworkInterpreter.h"
+#include "../../def/LocalDefinitionAtlas.h"
 
 class LocalInventoryRefs {
 public:

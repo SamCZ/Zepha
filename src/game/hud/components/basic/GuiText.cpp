@@ -32,7 +32,7 @@ std::shared_ptr<GuiText> GuiText::fromSerialized(SerialGui::Elem s, ClientGame &
     if (scale == glm::vec2{0, 0}) scale = {1, 1};
 
     pos -= offset * size;
-    size -= glm::vec2 {padding.y + padding.w, padding.x + padding.z};
+//    size -= glm::vec2 {padding.y + padding.w, padding.x + padding.z};
 
     glm::vec4 background_color = Util::hexToColorVec("#0000");
     if (s.tokens.count("background")) background_color = Util::hexToColorVec(s.tokens["background"]);

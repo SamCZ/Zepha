@@ -9,8 +9,8 @@
 #include <unordered_map>
 
 #include "../../util/Vec.h"
-#include "../../game/scene/world/InventoryList.h"
-#include "../../game/scene/world/Inventory.h"
+#include "../../game/inventory/InventoryList.h"
+#include "../../game/inventory/Inventory.h"
 
 class ServerClient {
 public:

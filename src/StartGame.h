@@ -101,7 +101,7 @@ int StartGame(int argc, char* argv[]) {
             break;
         }
         case Mode::SERVER: {
-            Server s(path, addr.port, subgame);
+            Server s(addr.port, subgame);
             break;
         }
     }

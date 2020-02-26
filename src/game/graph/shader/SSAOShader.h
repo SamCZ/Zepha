@@ -31,9 +31,9 @@ public:
     std::vector<glm::vec3> kernels {};
     std::vector<glm::vec3> noise {};
 
-    unsigned int tex;
-    unsigned int fbo;
-    unsigned int colorBuffer;
+    unsigned int tex = 0;
+    unsigned int fbo = 0;
+    unsigned int colorBuffer = 0;
 
 private:
     glm::ivec2 windowSize {};

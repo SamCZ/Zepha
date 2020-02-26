@@ -31,7 +31,7 @@ public:
     void setScale(float scale);
     float getScale();
 
-    void setAppearance(std::string displayMode, std::string displayArgument1, std::string displayArgument2);
+    void setAppearance(const std::string& displayMode, const std::string& displayArgument1, const std::string& displayArgument2);
 
     bool checkAndResetDirty();
     Packet createPacket(bool reliable = true);

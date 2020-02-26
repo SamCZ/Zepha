@@ -38,7 +38,7 @@
 #include "../api/functions/update_entities.h"
 
 
-void ServerLuaParser::init(ServerGame& defs, ServerWorld& world, std::string path) {
+void ServerLuaParser::init(ServerGame& defs, ServerWorld& world, const std::string& path) {
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
 
     loadApi(defs, world);

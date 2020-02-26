@@ -38,7 +38,7 @@ public:
     Input input;
     bool keys[1024] {};
 private:
-    GLFWwindow *mainWindow;
+    GLFWwindow *mainWindow = nullptr;
 
     glm::ivec2 win;
     glm::ivec2 center;

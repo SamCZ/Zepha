@@ -8,7 +8,6 @@ LocalInventoryRefs::LocalInventoryRefs(LocalDefinitionAtlas& defs, ClientNetwork
     defs(defs),
     net(net) {
 
-    std::cout << "Constructred default inv" << std::endl;
     inventories.insert({"current_player", std::make_shared<LocalInventory>(defs, "current_player")});
     inventories["current_player"]->createList("hand", 1, 1, true);
 }
@@ -17,8 +16,7 @@ void LocalInventoryRefs::update(double delta) {
     time += delta;
 
     for (auto mIt = inventories.begin(); mIt != inventories.end();) {
-        bool del = mIt->second->pruneLists(net, time);
-        if (del) mIt = inventories.erase(mIt);
+        if (mIt->second->pruneLists(net, time)) mIt = inventories.erase(mIt);
         else mIt++;
     }
 }

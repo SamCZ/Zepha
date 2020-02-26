@@ -8,13 +8,13 @@
 
 #include "Server.h"
 
-Server::Server(const std::string& path, unsigned short port, const std::string& subgame) :
-    defs(subgame, path),
-    clientList(defs),
-    world(10, defs, clientList),
+Server::Server(unsigned short port, const std::string& subgame) :
     port(port),
+    config(defs),
+    defs(subgame),
+    clientList(defs),
     handler(port, 32),
-    config(defs) {
+    world(10, defs, clientList) {
 
     defs.init(world);
     world.init();
@@ -137,6 +137,24 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
                     def.callbacks[Callback::PLACE](defs.parser.vecToTable(pos));
                 }
             }
+            break;
+        }
+        case PacketType::WATCH_INV: {
+            Deserializer d(p.data);
+
+//            std::string source = d.read<std::string>();
+//            std::string list = d.read<std::string>();
+
+//            std::cout << "watching " << source << ":" << list << std::endl;
+            break;
+        }
+        case PacketType::UNWATCH_INV: {
+            Deserializer d(p.data);
+
+//            std::string source = d.read<std::string>();
+//            std::string list = d.read<std::string>();
+
+//            std::cout << "unwatching " << source << ":" << list << std::endl;
             break;
         }
     }

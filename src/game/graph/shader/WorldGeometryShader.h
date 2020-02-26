@@ -4,8 +4,11 @@
 
 #pragma once
 
+#include <vector>
 #include <noise/noise.h>
+
 #include "Shader.h"
+
 #include "../Texture.h"
 
 class WorldGeometryShader : public Shader {
@@ -15,8 +18,6 @@ public:
 
     void windowResized(glm::ivec2 windowSize);
     void updateSwayMap(double delta);
-
-    ~WorldGeometryShader();
 
     struct Uniforms {
         GLint proj;
@@ -33,7 +34,7 @@ public:
     Texture swayTex;
     double swayOffset = 0;
     noise::module::Perlin swayNoise;
-    unsigned char* swayData = nullptr;
+    std::vector<unsigned char> swayData {};
 
     glm::ivec2 windowSize {};
     float bufferScale = 1;

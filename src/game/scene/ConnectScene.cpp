@@ -179,7 +179,7 @@ void ConnectScene::handleConnecting() {
         case ServerConnection::State::ATTEMPTING_CONNECT:
             connection.processConnecting();
 
-            dotsTime += state.deltaTime;
+            dotsTime += state.delta;
             if (dotsTime > 1) {
                 dotsTime -= 1;
                 statusText->setText(statusText->getText() + ".");

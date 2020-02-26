@@ -23,5 +23,5 @@ public:
     std::string desiredState = "this";
 
     double fps = 0;
-    double deltaTime = 0;
+    double delta = 0;
 };

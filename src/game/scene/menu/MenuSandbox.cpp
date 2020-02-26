@@ -52,7 +52,7 @@ void MenuSandbox::windowResized() {
     builder.build(win);
 }
 
-sol::protected_function_result MenuSandbox::DoFileSandboxed(std::string file) {
+sol::protected_function_result MenuSandbox::DoFileSandboxed(const std::string& file) {
     for (LuaModFile& f : mod.files) {
         if (f.path == file) {
 

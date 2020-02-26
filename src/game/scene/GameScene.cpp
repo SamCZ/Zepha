@@ -28,24 +28,25 @@ GameScene::GameScene(ClientState& state) : Scene(state),
 }
 
 void GameScene::update() {
-    game.update(state.deltaTime, state.renderer.window.keys);
+    game.update(state.delta, state.renderer.window.keys);
     game.textures.update();
+    refs.update(state.delta);
     net.update();
 
     Window& window = state.renderer.window;
 
     //Update Player
-    player.update(window.input, state.deltaTime, window.getDelta());
+    player.update(window.input, state.delta, window.getDelta());
     playerPos = player.getPos();
 
-    for (auto entity : entities) entity->update(state.deltaTime);
+    for (auto entity : entities) entity->update(state.delta);
 
     for (auto &chunkPacket : net.chunkPackets) world.loadChunkPacket(std::move(chunkPacket));
     net.chunkPackets.clear();
 
     debugGui.update(player, world, game, state.fps, world.getMeshChunkCount(), drawCalls, net.serverSideChunkGens, net.recvPackets);
     net.recvPackets = 0;
-    world.update(state.deltaTime);
+    world.update(state.delta);
 
     if (window.input.isKeyPressed(GLFW_KEY_F1)) {
         hudVisible = !hudVisible;

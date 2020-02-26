@@ -21,10 +21,10 @@ public:
 
     Uniforms uniforms {};
 
-    unsigned int fbo;
-    unsigned int colorBuffer;
+    unsigned int fbo = 0;
+    unsigned int colorBuffer = 0;
 
 private:
-    glm::ivec2 windowSize;
-    float bufferScale;
+    glm::ivec2 windowSize {};
+    float bufferScale = 1;
 };

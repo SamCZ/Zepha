@@ -6,9 +6,8 @@
 #include <glm/glm.hpp>
 
 Voronoi3D::Voronoi3D(unsigned short size) :
-    size(size) {
-
-    data = voronoi_data(size);
+    size(size),
+    data(voronoi_data(size)) {
 
     for (unsigned short i = 0; i < size; i++) {
         data[i].resize(size);
@@ -52,8 +51,6 @@ void Voronoi3D::setColorValues(const std::vector<glm::vec3>& values) {
 
 void Voronoi3D::generateImage(unsigned short depth) {
     auto colorData = new unsigned char[size * size * 3];
-
-    depth = depth;
 
     for (int i = 0; i < size * size; i++) {
         int x = i % size;

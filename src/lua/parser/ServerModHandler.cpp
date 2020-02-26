@@ -82,7 +82,7 @@ std::list<std::string> ServerModHandler::findModDirectories(const std::string& p
     return std::move(modDirs);
 }
 
-std::vector<LuaMod> ServerModHandler::initializeLuaMods(const std::list<std::string> modDirs) {
+std::vector<LuaMod> ServerModHandler::initializeLuaMods(const std::list<std::string>& modDirs) {
     using nlohmann::json;
 
     std::vector<LuaMod> mods {};
@@ -159,7 +159,7 @@ std::vector<LuaMod> ServerModHandler::initializeLuaMods(const std::list<std::str
                 try {
                     fileStr = VenusParser::parse(file, fileStr);
                 }
-                catch (std::runtime_error e) {
+                catch (const std::runtime_error& e) {
                     std::cout << Log::err << "Encountered a venus compilation err" << std::endl << e.what() << Log::endl;
                     exit(1);
                 }

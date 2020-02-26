@@ -17,7 +17,7 @@ public:
     const std::vector<LuaMod>& cGetMods() const;
 private:
     static std::list<std::string> findModDirectories(const std::string& path);
-    static std::vector<LuaMod> initializeLuaMods(const std::list<std::string> modDirs);
+    static std::vector<LuaMod> initializeLuaMods(const std::list<std::string>& modDirs);
     static void loadTextures(ServerGame &defs, const std::vector<LuaMod>& mods);
     static void loadModels(ServerGame &defs, const std::vector<LuaMod>& mods);
     static void organizeDependencies(std::vector<LuaMod>& mods);

@@ -46,9 +46,6 @@ void GuiLabelledGraph::pushValue(float value) {
     if (++ind >= 5) {
         ind = 0;
 
-        float val = 0;
-        for (float i : history) val += i / 5;
-
         std::string stringVal = (value == static_cast<int>(value))
                                 ? std::to_string(static_cast<int>(value))
                                 : Util::floatToString(value);

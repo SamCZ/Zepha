@@ -21,7 +21,7 @@ unsigned int Font::getCharWidth(char c) {
 }
 
 void Font::getCharWidths(TextureAtlas &atlas) {
-    const unsigned char* data = atlas.atlasData;
+    auto& data = atlas.atlasData;
 
     charWidths[0] = 2;
 

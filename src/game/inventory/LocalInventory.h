@@ -6,8 +6,8 @@
 
 
 #include "LocalInventoryList.h"
-#include "../../../def/DefinitionAtlas.h"
-#include "../net/ClientNetworkInterpreter.h"
+#include "../../def/DefinitionAtlas.h"
+#include "../scene/net/ClientNetworkInterpreter.h"
 
 class LocalInventory {
 public:

@@ -4,14 +4,14 @@
 
 #pragma once
 
-#include "../../../game/scene/world/ItemStack.h"
+#include "../../../game/inventory/ItemStack.h"
 #include "../../../def/DefinitionAtlas.h"
 
 class LuaItemStack {
 public:
     LuaItemStack() = default;
     LuaItemStack(const ItemStack& stack, const DefinitionAtlas& defs);
-    LuaItemStack(std::string name, unsigned short count);
+    LuaItemStack(const std::string& name, unsigned short count);
     LuaItemStack(sol::table tbl);
 
     std::string get_name();

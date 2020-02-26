@@ -88,7 +88,6 @@ void MapGen::buildDensityMap(MapGenJob* job, glm::ivec3 worldPos) {
     // TODO: This is... a travesty. Please stop doing this weird jank insertion into a
     // noisesample and create a proper constructor or *something*... could probs use a module owo
 
-    auto biome = biomes.getBiomeAt(job->temperature.get({}), job->humidity.get({}), job->roughness.get({}));
     auto terrain = NoiseSample({4, 4});
 
     float offsetH = 16.f / 4.f;

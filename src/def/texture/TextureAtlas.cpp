@@ -8,7 +8,7 @@
 TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) :
     pixelSize(width, (height == 0 ? width : height)),
     tileSize(pixelSize.x / 16, pixelSize.y / 16),
-    atlasData(new unsigned char[pixelSize.x * 4 * pixelSize.y]) {
+    atlasData(pixelSize.x * 4 * pixelSize.y) {
 
     maxTextureSlots = tileSize.x * tileSize.y;
 
@@ -21,9 +21,7 @@ TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) :
 //    std::cout << Log::info << "This GPU supports " << texUnits << " texture units." << Log::endl;
 
     empty = std::vector<bool>(tileSize.x * tileSize.y, true);
-    for (int i = 0; i < pixelSize.x * 4 * pixelSize.y; i++) atlasData[i] = 0;
-
-    atlasTexture.loadFromBytes(atlasData, pixelSize.x, pixelSize.y);
+    atlasTexture.loadFromBytes(&atlasData[0], pixelSize.x, pixelSize.y);
 
     createMissingImage();
 }
@@ -158,11 +156,6 @@ std::shared_ptr<AtlasRef> TextureAtlas::operator[](const std::string &name) {
 
     std::cout << Log::err << "Invalid texture name: \"" << name << "\"." << Log::endl;
     return textures["_missing"];
-}
-
-
-TextureAtlas::~TextureAtlas() {
-    delete[] atlasData;
 }
 
 std::shared_ptr<AtlasRef> TextureAtlas::generateTexture(std::string req) {

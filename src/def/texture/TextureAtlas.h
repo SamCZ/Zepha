@@ -22,25 +22,23 @@ class TextureAtlas {
 public:
     TextureAtlas() = default;
     explicit TextureAtlas(unsigned int width, unsigned int height = 0);
-    std::vector<std::shared_ptr<AtlasRef>> loadDirectory(const std::string& path, bool base = true, bool recursive = true);
-    std::shared_ptr<AtlasRef> loadImage(const std::string& path, const std::string& name, bool base = false);
 
     void update();
 
+    std::vector<std::shared_ptr<AtlasRef>> loadDirectory(const std::string& path, bool base = true, bool recursive = true);
+    std::shared_ptr<AtlasRef> loadImage(const std::string& path, const std::string& name, bool base = false);
+
     glm::vec4 sampleTexturePixel(const std::shared_ptr<AtlasRef>& atlasRef, glm::vec2 pixel);
+    std::shared_ptr<AtlasRef> operator[](const std::string& name);
 
     std::shared_ptr<AtlasRef> addImage(unsigned char *data, const std::string& name, bool base, int texWidth, int texHeight);
     std::shared_ptr<AtlasRef> generateCrackImage(const std::string &name, unsigned short crackLevel);
-
-    std::shared_ptr<AtlasRef> operator[](const std::string& name);
-
-    ~TextureAtlas();
 
     glm::ivec2 pixelSize {};
     glm::ivec2 tileSize {};
 
     Texture atlasTexture {};
-    unsigned char* atlasData = nullptr;
+    std::vector<unsigned char> atlasData;
 
     unsigned int textureSlotsUsed = 0;
     unsigned int maxTextureSlots = 0;

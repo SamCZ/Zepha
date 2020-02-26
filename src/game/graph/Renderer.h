@@ -45,9 +45,8 @@ public:
 private:
     void renderQuad();
 
-    unsigned int quadVAO = 0, quadVBO;
-
-    unsigned int sBuffer, sDepthMap;
+    unsigned int quadVAO = 0;
+    unsigned int quadVBO = 0;
 
     glm::vec4 clearColor {0, 0, 0, 1};
     Texture* activeTexture;

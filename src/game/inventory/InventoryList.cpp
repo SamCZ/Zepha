@@ -4,42 +4,40 @@
 
 #include <iostream>
 #include <algorithm>
+#include "InventoryList.h"
+#include "../../lua/api/class/LuaItemStack.h"
 
-#include "LocalInventoryList.h"
-
-#include "../../../lua/api/class/LuaItemStack.h"
-
-LocalInventoryList::LocalInventoryList(DefinitionAtlas& defs, std::string name, unsigned short size, unsigned short width) :
+InventoryList::InventoryList(DefinitionAtlas& defs, const std::string& name, unsigned short size, unsigned short width) :
     defs(defs),
     name(name),
     itemstacks(size),
     width(width) {}
 
 
-void LocalInventoryList::setGuiCallback(std::function<void()> cb) {
+void InventoryList::setGuiCallback(std::function<void()> cb) {
     this->guiCallback = cb;
 }
 
-void LocalInventoryList::setLuaCallback(LocalInventoryList::Callback type, sol::function cb) {
+void InventoryList::setLuaCallback(InventoryList::Callback type, sol::function cb) {
     luaCallbacks[static_cast<size_t>(type)] = cb;
 }
 
-sol::function LocalInventoryList::getLuaCallback(LocalInventoryList::Callback type) {
+sol::function InventoryList::getLuaCallback(InventoryList::Callback type) {
     return luaCallbacks[static_cast<size_t>(type)];
 }
 
-ItemStack LocalInventoryList::getStack(unsigned short i) {
+ItemStack InventoryList::getStack(unsigned short i) {
     return itemstacks[i];
 }
 
-void LocalInventoryList::setStack(unsigned short i, const ItemStack &stack) {
+void InventoryList::setStack(unsigned short i, const ItemStack &stack) {
     if (stack != getStack(i)) {
         itemstacks[i] = stack;
         triggerCallback();
     }
 }
 
-ItemStack LocalInventoryList::placeStack(unsigned short i, const ItemStack &stack, bool playerInitiated) {
+ItemStack InventoryList::placeStack(unsigned short i, const ItemStack &stack, bool playerInitiated) {
     auto otherStack = getStack(i);
 
     unsigned short allowedTake = otherStack.count;
@@ -104,7 +102,7 @@ ItemStack LocalInventoryList::placeStack(unsigned short i, const ItemStack &stac
     }
 }
 
-ItemStack LocalInventoryList::splitStack(unsigned short i, bool playerInitiated) {
+ItemStack InventoryList::splitStack(unsigned short i, bool playerInitiated) {
     auto stack = getStack(i);
 
     unsigned short allowedTake = stack.count;
@@ -122,7 +120,7 @@ ItemStack LocalInventoryList::splitStack(unsigned short i, bool playerInitiated)
     return {stack.id, takeCount};
 }
 
-ItemStack LocalInventoryList::addStack(ItemStack stack, bool playerInitiated) {
+ItemStack InventoryList::addStack(ItemStack stack, bool playerInitiated) {
     unsigned short maxStack = defs.fromId(stack.id).maxStackSize;
 
     unsigned short i = 0;
@@ -158,7 +156,7 @@ ItemStack LocalInventoryList::addStack(ItemStack stack, bool playerInitiated) {
     return stack;
 }
 
-unsigned short LocalInventoryList::stackFits(const ItemStack &stack) {
+unsigned short InventoryList::stackFits(const ItemStack &stack) {
     unsigned short maxStack = defs.fromId(stack.id).maxStackSize;
 
     unsigned short i = 0;
@@ -183,7 +181,7 @@ unsigned short LocalInventoryList::stackFits(const ItemStack &stack) {
     return fits;
 }
 
-ItemStack LocalInventoryList::takeStack(ItemStack request, bool playerInitiated) {
+ItemStack InventoryList::takeStack(ItemStack request, bool playerInitiated) {
     unsigned short i = 0;
     unsigned short to_remove = request.count;
 
@@ -208,7 +206,7 @@ ItemStack LocalInventoryList::takeStack(ItemStack request, bool playerInitiated)
     return request;
 }
 
-ItemStack LocalInventoryList::removeStack(unsigned short ind, unsigned short count) {
+ItemStack InventoryList::removeStack(unsigned short ind, unsigned short count) {
     auto stack = getStack(ind);
     if (count >= stack.count) {
         setStack(ind, {0, 0});
@@ -222,18 +220,18 @@ ItemStack LocalInventoryList::removeStack(unsigned short ind, unsigned short cou
     }
 }
 
-void LocalInventoryList::triggerCallback() {
+void InventoryList::triggerCallback() {
     if (guiCallback != nullptr) guiCallback();
 }
 
-unsigned short LocalInventoryList::getLength() {
+unsigned short InventoryList::getLength() {
     return itemstacks.size();
 }
 
-unsigned short LocalInventoryList::getWidth() {
+unsigned short InventoryList::getWidth() {
     return width;
 }
 
-std::string LocalInventoryList::getName() {
+std::string InventoryList::getName() {
     return name;
 }

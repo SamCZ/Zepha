@@ -4,10 +4,7 @@
 
 #include "FrustumAABB.h"
 
-FrustumAABB::FrustumAABB(glm::vec3 a, glm::vec3 s) {
-    corner = a;
-    size = s;
-}
+FrustumAABB::FrustumAABB(glm::vec3 a, glm::vec3 s) : corner(a), size(s) {}
 
 void FrustumAABB::set(glm::vec3 a, glm::vec3 s) {
     corner = a;

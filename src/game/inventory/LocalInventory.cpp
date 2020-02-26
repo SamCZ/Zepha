@@ -17,11 +17,11 @@ bool LocalInventory::pruneLists(ClientNetworkInterpreter &net, double time) {
     for (auto lIt = lists.begin(); lIt != lists.end();) {
         if (lIt->second.first != -1) {
             // Start the timeout for Inventories that aren't being used.
-            if (lIt->second.first == 0 && lIt->second.second.use_count() == 1) lIt->second.first = time + 60;
+            if (lIt->second.first == 0 && lIt->second.second.use_count() == 1) lIt->second.first = time + 15;
             // Remove the timeout for Inventories that are being used.
             else if (lIt->second.first != 0 && lIt->second.second.use_count() > 1) lIt->second.first = 0;
             // Delete InventoryLists that have passed their timeout.
-            else if (lIt->second.first <= time) {
+            else if (lIt->second.first != 0 && lIt->second.first <= time) {
                 net.unwatchInv(name, lIt->first);
                 lIt = lists.erase(lIt);
             }

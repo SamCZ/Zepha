@@ -5,7 +5,7 @@
 #pragma once
 
 #include <string>
-#include "../../../def/DefinitionAtlas.h"
+#include "../../def/DefinitionAtlas.h"
 
 class LuaItemStack;
 

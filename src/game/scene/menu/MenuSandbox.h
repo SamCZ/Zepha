@@ -26,7 +26,8 @@ private:
     void setup();
     void loadMod(const std::string& modPath);
 
-    sol::protected_function_result DoFileSandboxed(std::string file);
+    sol::protected_function_result DoFileSandboxed(const std::string& file);
+
     LuaMod mod {};
     std::vector<std::shared_ptr<AtlasRef>> modAssets {};
 

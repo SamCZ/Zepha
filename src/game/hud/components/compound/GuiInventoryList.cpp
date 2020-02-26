@@ -5,7 +5,7 @@
 #include "GuiInventoryList.h"
 
 #include "../basic/GuiInventoryItem.h"
-#include "../../../scene/world/LocalInventoryList.cpp"
+#include "../../../inventory/LocalInventoryList.cpp"
 #include "../../../../def/texture/Font.h"
 GuiInventoryList::GuiInventoryList(const std::string &key) : GuiContainer(key) {}
 
@@ -14,7 +14,7 @@ std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(SerialGui::El
 
     glm::vec2 pos     = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position", bounds);
     glm::vec2 offset  = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position_anchor");
-    glm::vec2 size    = SerialGui::deserializeToken<glm::vec2>(s.tokens, "size", bounds);
+//    glm::vec2 size    = SerialGui::deserializeToken<glm::vec2>(s.tokens, "size", bounds);
     glm::vec4 padding = SerialGui::deserializeToken<glm::vec4>(s.tokens, "padding", bounds);
     glm::vec2 slotspc = SerialGui::deserializeToken<glm::vec2>(s.tokens, "slot_spacing", bounds);
 
@@ -117,12 +117,11 @@ void GuiInventoryList::rightClick(bool down, glm::ivec2 pos) {
     slot.y = std::min(slot.y, list->getLength() / list->getWidth() - 1);
 
     unsigned short index = slot.x + slot.y * list->getWidth();
-
-    if (index < 0 || index >= list->getLength()) return;
+    if (index >= list->getLength()) return;
 
     if (down) {
         auto handStack = hand->getStack(0);
-        if (handStack.count <= 0) {
+        if (handStack.count == 0) {
             hand->setStack(0, list->splitStack(index, true));
         }
         else {

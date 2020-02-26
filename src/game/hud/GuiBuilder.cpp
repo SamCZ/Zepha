@@ -87,7 +87,7 @@ void GuiBuilder::deserialize(const std::string& menu) {
             }
             else {
                 component->children.push_back(std::move(g));
-                if (component != nullptr) stack.push_back(component);
+                stack.push_back(component);
                 component = &component->children[component->children.size() - 1];
             }
         }

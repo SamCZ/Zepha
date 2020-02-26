@@ -33,11 +33,7 @@ void ServerClient::setPos(glm::vec3 pos) {
     glm::vec3 lastMapBlock = Space::MapBlock::world::fromBlock(this->pos);
     glm::vec3 newMapBlock = Space::MapBlock::world::fromBlock(pos);
 
-    if (newMapBlock != lastMapBlock && !changedMapBlocks) {
-        lastMapBlock = newMapBlock;
-        changedMapBlocks = true;
-    }
-
+    if (newMapBlock != lastMapBlock && !changedMapBlocks) changedMapBlocks = true;
     this->pos = pos;
 }
 

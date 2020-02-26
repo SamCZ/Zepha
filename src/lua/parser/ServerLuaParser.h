@@ -13,7 +13,7 @@ class ServerWorld;
 
 class ServerLuaParser : public LuaParser {
 public:
-    void init(ServerGame& defs, ServerWorld& world, std::string rootPath);
+    void init(ServerGame& defs, ServerWorld& world, const std::string& rootPath);
     void update(double delta) override;
 
     void sendModsPacket(ENetPeer* peer) const;

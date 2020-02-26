@@ -213,9 +213,9 @@ set(ZEPHA_SRC
     game/hud/components/compound/GuiInventoryList.h
     game/hud/components/basic/GuiInventoryItem.cpp
     game/hud/components/basic/GuiInventoryItem.h
-    game/scene/world/InventoryList.cpp
-    game/scene/world/InventoryList.h
-    game/scene/world/ItemStack.h
+        game/inventory/InventoryList.cpp
+        game/inventory/InventoryList.h
+        game/inventory/ItemStack.h
     server/LocalServerInstance.cpp
     server/LocalServerInstance.h
     game/hud/SerialGui.h
@@ -251,11 +251,11 @@ set(ZEPHA_SRC
     lua/api/class/ServerLuaInventoryList.h
     lua/api/class/ServerLuaInventory.cpp
     lua/api/class/ServerLuaInventory.h
-    game/scene/world/Inventory.cpp
-    game/scene/world/Inventory.h
+        game/inventory/Inventory.cpp
+        game/inventory/Inventory.h
     lua/api/class/LuaItemStack.cpp
     lua/api/class/LuaItemStack.h
-    game/scene/world/ItemStack.cpp
+        game/inventory/ItemStack.cpp
     lua/api/usertype/cInventoryRef.h
     lua/api/usertype/cItemStack.h
     game/hud/components/basic/GuiModel.cpp
@@ -306,10 +306,10 @@ set(ZEPHA_SRC
     lua/parser/LocalModHandler.cpp
     lua/parser/LocalModHandler.h
     game/scene/net/NetPlayerField.h
-    game/scene/world/LocalInventoryRefs.cpp
-    game/scene/world/LocalInventoryRefs.h
-    game/scene/world/LocalInventory.cpp
-    game/scene/world/LocalInventory.h
+        game/inventory/LocalInventoryRefs.cpp
+        game/inventory/LocalInventoryRefs.h
+        game/inventory/LocalInventory.cpp
+        game/inventory/LocalInventory.h
     lua/api/class/LocalLuaInventory.cpp
     lua/api/class/LocalLuaInventory.h
     lua/api/class/LocalLuaInventoryList.cpp

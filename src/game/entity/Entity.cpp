@@ -6,9 +6,7 @@
 
 #include "Entity.h"
 
-Entity::Entity() {
-    model = std::make_unique<Model>();
-};
+Entity::Entity() : model(std::make_unique<Model>()) {}
 
 Entity::Entity(std::shared_ptr<Model> model) : animState(*model), model(model) {}
 

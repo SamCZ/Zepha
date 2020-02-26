@@ -15,13 +15,11 @@ class ClientList;
 
 class ServerGame {
 public:
-    ServerGame(const std::string& subgame, const std::string& execPath);
+    ServerGame(const std::string& subgame);
     void init(ServerWorld& world);
-
     void update(double delta, ClientList& clients);
 
-    ~ServerGame() = default;
-    std::string subgamePath = "";
+    std::string subgamePath;
 
     ServerDefinitionAtlas defs;
     ServerLuaParser       parser;

@@ -10,11 +10,11 @@
 #include "components/basic/GuiRect.h"
 #include "components/basic/GuiContainer.h"
 #include "../graph/drawable/DrawableGroup.h"
-#include "../scene/world/InventoryList.h"
+#include "../inventory/InventoryList.h"
 #include "../entity/Entity.h"
 #include "../../util/Util.h"
 #include "components/compound/GuiInventoryList.h"
-#include "../scene/world/Inventory.h"
+#include "../inventory/Inventory.h"
 
 class GameGui : public GuiContainer {
 public:

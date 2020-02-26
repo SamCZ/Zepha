@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../../game/scene/world/LocalInventoryList.h"
+#include "../../../game/inventory/LocalInventoryList.h"
 
 class LocalLuaInventoryList {
 public:

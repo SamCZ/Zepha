@@ -55,7 +55,7 @@ float ServerEntity::getScale() {
     return scale;
 }
 
-void ServerEntity::setAppearance(std::string displayMode, std::string displayArgument1, std::string displayArgument2) {
+void ServerEntity::setAppearance(const std::string& displayMode, const std::string& displayArgument1, const std::string& displayArgument2) {
     this->displayMode = displayMode;
     this->displayArgument1 = displayArgument1;
     this->displayArgument2 = displayArgument2;

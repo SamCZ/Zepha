@@ -9,9 +9,9 @@
 #include "../basic/GuiRect.h"
 #include "../../SerialGui.h"
 #include "../../../../def/ClientGame.h"
-#include "../../../scene/world/Inventory.h"
-#include "../../../scene/world/LocalInventoryList.h"
-#include "../../../scene/world/LocalInventoryRefs.h"
+#include "../../../inventory/Inventory.h"
+#include "../../../inventory/LocalInventoryList.h"
+#include "../../../inventory/LocalInventoryRefs.h"
 
 class GuiInventoryList : public GuiContainer {
 public:
@@ -38,5 +38,5 @@ private:
 
     std::shared_ptr<LocalInventoryList> list, hand;
     glm::ivec2 innerPadding;
-    ClientGame* defs;
+    ClientGame* defs = nullptr;
 };
