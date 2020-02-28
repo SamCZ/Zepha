@@ -65,5 +65,5 @@ std::string ServerLuaPlayer::get_address() {
 }
 
 ServerLuaInventory ServerLuaPlayer::get_inventory() {
-    return ServerLuaInventory(player.getInventory());
+    return ServerLuaInventory(*player.getInventory());
 }

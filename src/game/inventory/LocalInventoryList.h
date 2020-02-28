@@ -20,6 +20,8 @@ public:
     unsigned short getWidth();
     std::string getName();
 
+    void setData(unsigned int size, unsigned int width, std::vector<ItemStack> stacks);
+
     // Place the stack at i into the existing stack, returning overflow or other stack.
     ItemStack placeStack(unsigned short i, const ItemStack& stack, bool playerInitiated = false);
     // Split the stack at i and return half of it, rounded up

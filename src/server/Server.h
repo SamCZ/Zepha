@@ -9,6 +9,7 @@
 #include "config/ServerConfig.h"
 #include "../def/ServerGame.h"
 #include "../util/net/NetHandler.h"
+#include "../game/inventory/InventoryRefs.h"
 
 class ServerClient;
 class Packet;
@@ -31,6 +32,7 @@ private:
     NetHandler handler;
     ClientList clientList;
     ServerConfig config;
+    InventoryRefs refs;
 
     std::unordered_set<unsigned int> playersUpdated {};
 

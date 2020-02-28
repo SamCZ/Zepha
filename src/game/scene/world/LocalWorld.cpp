@@ -4,18 +4,19 @@
 
 #include "LocalWorld.h"
 
+#include "Player.h"
 #include "WorldInterpolationStream.h"
 #include "../net/ClientNetworkInterpreter.h"
 #include "../../entity/engine/BlockCrackEntity.h"
 #include "../../entity/engine/ParticleEntity.h"
 
-LocalWorld::LocalWorld(ClientGame& defs, glm::vec3* playerPos, ClientNetworkInterpreter* server) :
-    dimension(defs),
-    defs(defs),
-    server(server),
-    playerPos(playerPos) {}
+LocalWorld::LocalWorld(ClientGame& defs, ClientNetworkInterpreter* server) :
+        defs(defs),
+        net(server),
+        dimension(defs) {}
 
-void LocalWorld::init() {
+void LocalWorld::init(Player* player) {
+    this->player = player;
     delete worldGenStream;
     worldGenStream = new WorldInterpolationStream(55, defs);
 }
@@ -23,12 +24,12 @@ void LocalWorld::init() {
 void LocalWorld::update(double delta) {
     finishChunks();
     updateBlockDamages(delta);
-    dimension.update(delta, *playerPos);
+    dimension.update(delta, player->getPos());
     lastMeshUpdates = dimension.lastMeshUpdates;
 
     auto end = particles.begin();
     for (auto i = particles.begin(); i < particles.end(); i++) {
-        (*i)->update(delta, *playerPos);
+        (*i)->update(delta, player->getPos());
         if ((*i)->time > 1) {
             end = i;
             delete (*i);
@@ -67,7 +68,7 @@ void LocalWorld::localSetBlock(glm::ivec3 pos, unsigned int block) {
         }
     }
 
-    server->setBlock(pos, block);
+    net->setBlock(pos, block);
     dimension.setBlock(pos, block);
 }
 

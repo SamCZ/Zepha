@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "../../inventory/Inventory.h"
 #include "../../hud/GameGui.h"
 #include "../../entity/Collidable.h"
 #include "../../hud/GameGuiBuilder.h"

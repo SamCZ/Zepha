@@ -5,6 +5,7 @@
 #pragma once
 
 #include <vector>
+
 #include "ServerClient.h"
 #include "../../lua/parser/ServerLuaParser.h"
 
@@ -12,7 +13,7 @@ class ClientList {
 public:
     explicit ClientList(ServerGame& defs);
 
-    void handleConnect(ENetEvent e);
+    void handleConnect(ENetEvent e, InventoryRefs& refs);
     void handleDisconnect(ENetEvent e);
 
     void createPlayer(std::shared_ptr<ServerClient> c);

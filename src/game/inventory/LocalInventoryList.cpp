@@ -15,6 +15,11 @@ LocalInventoryList::LocalInventoryList(DefinitionAtlas& defs, const std::string&
     itemstacks(size),
     width(width) {}
 
+void LocalInventoryList::setData(unsigned int size, unsigned int width, std::vector<ItemStack> stacks) {
+    this->width = width;
+    this->itemstacks = stacks;
+    triggerCallback();
+}
 
 void LocalInventoryList::setGuiCallback(std::function<void()> cb) {
     this->guiCallback = cb;

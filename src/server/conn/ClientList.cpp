@@ -3,20 +3,20 @@
 //
 
 #include "ClientList.h"
+
+#include "../../def/ServerGame.h"
 #include "../../util/net/Serializer.h"
 #include "../../util/net/NetHandler.h"
-#include "../../def/ServerGame.h"
 #include "../../game/scene/net/NetPlayerField.h"
-
 
 ClientList::ClientList(ServerGame& defs) :
     defs(defs) {}
 
-void ClientList::handleConnect(ENetEvent e) {
+void ClientList::handleConnect(ENetEvent e, InventoryRefs& refs) {
     ENetPeer* peer = e.peer;
     ENetAddress& addr = peer->address;
 
-    auto client = std::make_shared<ServerClient>(peer, addr, defs.defs);
+    auto client = std::make_shared<ServerClient>(peer, addr, defs.defs, refs);
     clients.push_back(client);
     peer->data = client.get();
 
@@ -41,6 +41,8 @@ void ClientList::handleDisconnect(ENetEvent e) {
 void ClientList::createPlayer(std::shared_ptr<ServerClient> c) {
     c->hasPlayer = true;
     c->setUsername("TEMPORaRY");
+
+    c->getInventory()->createList("hand", 1, 1);
 
     defs.parser.playerConnected(c);
 

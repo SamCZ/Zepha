@@ -17,7 +17,11 @@ zepha.register_block("zeus:default:grass", {
         shovel = 1,
         pick = 2
     },
-    drop = "zeus:default:dirt"
+    drop = "zeus:default:dirt",
+    on_break = fn(pos) {
+        zepha.add_entity("zeus:default:dropped_item", vector.add(pos, v(0.5)),
+            {item = zepha.registered_blocks["zeus:default:grass"].drop});
+    }
 })
 
 zepha.register_block("zeus:default:grass_slab", {

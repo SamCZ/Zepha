@@ -9,16 +9,15 @@
 #include "../../../util/net/NetHandler.h"
 
 ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, ClientGame &defs, Player& player) :
-    world(nullptr),
     player(player),
     connection(connection),
     playerModel(std::make_shared<Model>()) {
-
     playerModel->fromSerialized(defs.models.models["zeus:default:player"], {defs.textures["zeus:default:player"]});
 }
 
-void ClientNetworkInterpreter::init(LocalWorld *world) {
+void ClientNetworkInterpreter::init(LocalWorld *world, std::function<void(std::unique_ptr<Packet>)> invCallback) {
     this->world = world;
+    this->onInvPacket = invCallback;
 }
 
 void ClientNetworkInterpreter::update() {
@@ -76,7 +75,7 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
             while (!d.atEnd()) {
                 switch (d.read<unsigned int>()) {
                     case static_cast<unsigned int>(NetPlayerField::ID): {
-                        id = d.read<unsigned int>();
+                        cid = d.read<unsigned int>();
                         break;
                     }
                     case static_cast<unsigned int>(NetPlayerField::POSITION): {
@@ -99,7 +98,7 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
 
         case PacketType::PLAYER_INFO: {
             unsigned int cid = d.read<unsigned int>();
-            if (cid == id) break;
+            if (this->cid == cid) break;
 
             bool found = false;
             for (auto& entity : world->dimension.playerEntities) {
@@ -133,12 +132,25 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
         }
 
         case PacketType::CHUNK: {
-            chunkPackets.push_back(std::move(p));
+            world->loadChunkPacket(std::move(p));
             break;
         }
 
         case PacketType::SERVER_INFO: {
             serverSideChunkGens = d.read<unsigned int>();
+            break;
+        }
+
+        case PacketType::INV_INVALID: {
+            std::string source = d.read<std::string>();
+            std::string list = d.read<std::string>();
+
+            std::cout << Log::err << "Invalid inventory " << source << ":" << list << " was requested by client." << Log::endl;
+            exit(1);
+        }
+
+        case PacketType::INVENTORY: {
+            onInvPacket(std::move(p));
             break;
         }
     }
@@ -157,8 +169,4 @@ void ClientNetworkInterpreter::watchInv(const std::string& inv, const std::strin
 void ClientNetworkInterpreter::unwatchInv(const std::string& inv, const std::string& list) {
     Serializer().append(inv).append(list)
             .packet(PacketType::UNWATCH_INV).sendTo(connection.getPeer(), PacketChannel::INVENTORY);
-}
-
-ClientNetworkInterpreter::~ClientNetworkInterpreter() {
-    connection.disconnect();
 }

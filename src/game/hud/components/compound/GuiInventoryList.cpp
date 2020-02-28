@@ -142,6 +142,11 @@ void GuiInventoryList::rightClick(bool down, glm::ivec2 pos) {
 }
 
 void GuiInventoryList::drawContents() {
+    this->hitbox = glm::ivec2 {
+            padding.x + list->getWidth() * (innerPadding.x*scale.x),
+            padding.y + (list->getLength() / list->getWidth()) * (innerPadding.y*scale.y)
+    };
+
     empty();
 
     auto fontRef = defs->textures["font"];

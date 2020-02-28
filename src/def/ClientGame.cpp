@@ -24,4 +24,5 @@ void ClientGame::init(LocalWorld &world, Player& player) {
 
 void ClientGame::update(double delta, bool* keys) {
     parser.update(delta, keys);
+    textures.update();
 }

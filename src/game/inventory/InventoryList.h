@@ -7,13 +7,19 @@
 #include <list>
 #include <vector>
 #include <functional>
+
 #include "ItemStack.h"
+
+class ClientList;
+class ServerClient;
+class Packet;
 
 class InventoryList {
 public:
     enum class Callback { ALLOW_TAKE, ALLOW_PUT, ON_TAKE, ON_PUT };
 
-    InventoryList(DefinitionAtlas& defs, const std::string& name, unsigned short size, unsigned short width);
+    InventoryList(DefinitionAtlas& defs, ClientList* list, const std::string& invName,
+            const std::string& name, unsigned short size, unsigned short width);
 
     unsigned short getLength();
     unsigned short getWidth();
@@ -36,19 +42,28 @@ public:
     // Removes up to count items from ind, returns the items removed
     ItemStack removeStack(unsigned short ind, unsigned short count);
 
-    void setGuiCallback(std::function<void()> cb);
+    bool addWatcher(unsigned int cid);
+    bool removeWatcher(unsigned int cid);
+
+    void sendAll();
+    void sendTo(std::shared_ptr<ServerClient> client);
+
     void setLuaCallback(Callback type, sol::function cb);
     sol::function getLuaCallback(Callback type);
 
     DefinitionAtlas& defs;
-
+    bool dirty = false;
 private:
-    void triggerCallback();
+    void setDirty();
+    Packet createPacket();
 
     std::vector<ItemStack> itemstacks {};
     unsigned short width = 0;
     std::string name;
+    std::string invName;
 
-    std::function<void()> guiCallback = nullptr;
     std::array<sol::function, 4> luaCallbacks = {};
+
+    ClientList* clients;
+    std::list<unsigned int> watchers;
 };

@@ -79,18 +79,21 @@ zepha.register_entity("zeus:default:dropped_item", {
 
         if (self.tick > 0.15) {
             self.tick = 0
-            if (zepha.client) { self:check_collect() }
+            self:check_collect()
         }
     },
     check_collect = fn(self) {
-        if (vector.distance(zepha.player.pos, self.object.pos) < 2) {
-            self.object.pos = vector.add(zepha.player.pos, v(0, 0.90, 0))
-            self.scooping = true
+        foreach p in zepha.players {
+            if (vector.distance(p.pos, self.object.pos) < 2) {
+                self.object.pos = vector.add(p.pos, v(0, 0.90, 0))
+                self.scooping = true
 
-            zepha.delay(() => {
-                zepha.remove_entity(self)
-                zepha.player:get_inventory():get_list("main"):add_stack({self.item, 1})
-            }, 2/20)
+
+                zepha.delay(() => {
+                    zepha.remove_entity(self)
+                    p:get_inventory():get_list("main"):add_stack({self.item, 1})
+                }, 2/20)
+            }
         }
     },
     on_serialize = fn(self) {

@@ -4,8 +4,17 @@
 
 #include "Inventory.h"
 
+void Inventory::sendDirtyLists() {
+    for (auto& list : lists) {
+        if (list.second->dirty) {
+            list.second->sendAll();
+            list.second->dirty = false;
+        }
+    }
+}
+
 void Inventory::createList(std::string name, unsigned short length, unsigned short width) {
-    lists.emplace(name, std::make_shared<InventoryList>(defs, name, length, width));
+    lists.emplace(name, std::make_shared<InventoryList>(defs, clients, this->name, name, length, width));
 }
 
 std::shared_ptr<InventoryList> Inventory::operator[](std::string name) {

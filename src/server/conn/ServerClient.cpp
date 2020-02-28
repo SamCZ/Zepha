@@ -3,17 +3,20 @@
 //
 
 #include <iostream>
+
 #include "ServerClient.h"
+
 #include "../../util/net/Packet.h"
 #include "../../util/net/Serializer.h"
+#include "../../game/inventory/InventoryRefs.h"
 #include "../../game/scene/net/NetPlayerField.h"
 
-ServerClient::ServerClient(ENetPeer *peer, ENetAddress address, DefinitionAtlas& defs) :
+ServerClient::ServerClient(ENetPeer *peer, ENetAddress address, DefinitionAtlas& defs, InventoryRefs& refs) :
     peer(peer),
     address(address),
     cid(peer->connectID),
-    hand(defs, "hand", 1, 1),
-    inventory(defs) {}
+    inventory(refs.createInv("player:" + std::to_string(cid))) {
+}
 
 void ServerClient::setUsername(const std::string &name) {
     this->username = name;
@@ -92,6 +95,6 @@ unsigned long long ServerClient::getMapBlockIntegrity(glm::ivec3 pos) {
     return 0;
 }
 
-Inventory &ServerClient::getInventory() {
+std::shared_ptr<Inventory> ServerClient::getInventory() {
     return inventory;
 }

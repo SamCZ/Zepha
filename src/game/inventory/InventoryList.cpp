@@ -4,19 +4,21 @@
 
 #include <iostream>
 #include <algorithm>
+
 #include "InventoryList.h"
+
+#include "../../util/net/Packet.h"
+#include "../../util/net/Serializer.h"
+#include "../../server/conn/ClientList.h"
 #include "../../lua/api/class/LuaItemStack.h"
 
-InventoryList::InventoryList(DefinitionAtlas& defs, const std::string& name, unsigned short size, unsigned short width) :
+InventoryList::InventoryList(DefinitionAtlas& defs, ClientList* list, const std::string& invName, const std::string& name, unsigned short size, unsigned short width) :
     defs(defs),
     name(name),
-    itemstacks(size),
-    width(width) {}
-
-
-void InventoryList::setGuiCallback(std::function<void()> cb) {
-    this->guiCallback = cb;
-}
+    width(width),
+    clients(list),
+    invName(invName),
+    itemstacks(size) {}
 
 void InventoryList::setLuaCallback(InventoryList::Callback type, sol::function cb) {
     luaCallbacks[static_cast<size_t>(type)] = cb;
@@ -33,7 +35,7 @@ ItemStack InventoryList::getStack(unsigned short i) {
 void InventoryList::setStack(unsigned short i, const ItemStack &stack) {
     if (stack != getStack(i)) {
         itemstacks[i] = stack;
-        triggerCallback();
+        setDirty();
     }
 }
 
@@ -128,7 +130,7 @@ ItemStack InventoryList::addStack(ItemStack stack, bool playerInitiated) {
         if (itemstacks[i].count == 0) {
             if (stack.count <= maxStack) {
                 itemstacks[i] = stack;
-                triggerCallback();
+                setDirty();
                 return ItemStack{};
             }
             else {
@@ -141,7 +143,7 @@ ItemStack InventoryList::addStack(ItemStack stack, bool playerInitiated) {
             unsigned int fits = maxStack - itemstacks[i].count;
             if (fits >= stack.count) {
                 itemstacks[i].count += stack.count;
-                triggerCallback();
+                setDirty();
                 return ItemStack {};
             }
             else {
@@ -152,7 +154,7 @@ ItemStack InventoryList::addStack(ItemStack stack, bool playerInitiated) {
         i++;
     }
 
-    triggerCallback();
+    setDirty();
     return stack;
 }
 
@@ -190,7 +192,7 @@ ItemStack InventoryList::takeStack(ItemStack request, bool playerInitiated) {
             unsigned int can_take = itemstacks[i].count;
             if (can_take >= to_remove) {
                 itemstacks[i].count -= to_remove;
-                triggerCallback();
+                setDirty();
                 return request;
             }
             else {
@@ -202,7 +204,7 @@ ItemStack InventoryList::takeStack(ItemStack request, bool playerInitiated) {
     }
 
     request.count = (request.count - to_remove);
-    triggerCallback();
+    setDirty();
     return request;
 }
 
@@ -220,8 +222,8 @@ ItemStack InventoryList::removeStack(unsigned short ind, unsigned short count) {
     }
 }
 
-void InventoryList::triggerCallback() {
-    if (guiCallback != nullptr) guiCallback();
+void InventoryList::setDirty() {
+    dirty = true;
 }
 
 unsigned short InventoryList::getLength() {
@@ -234,4 +236,61 @@ unsigned short InventoryList::getWidth() {
 
 std::string InventoryList::getName() {
     return name;
+}
+
+bool InventoryList::addWatcher(unsigned int cid) {
+    auto& client = clients->getClient(cid);
+    if (!client) return false;
+
+    for (const auto& i : watchers) if (i == cid) return false;
+    watchers.push_back(cid);
+
+    sendTo(client);
+}
+
+bool InventoryList::removeWatcher(unsigned int cid) {
+    for (auto it = watchers.cbegin(); it != watchers.cend();) {
+        if (*it == cid) {
+            watchers.erase(it);
+            return true;
+        }
+        it++;
+    }
+    return false;
+}
+
+Packet InventoryList::createPacket() {
+    Serializer s{};
+    s.append<std::string>(invName)
+     .append<std::string>(name)
+     .append<unsigned int>(itemstacks.size())
+     .append<unsigned int>(width);
+
+    for (auto& stack : itemstacks) {
+        s.append<unsigned short>(stack.count);
+        s.append<unsigned int>(stack.id);
+    }
+
+    return s.packet(PacketType::INVENTORY, false);
+}
+
+void InventoryList::sendTo(std::shared_ptr<ServerClient> client) {
+    if (!client) return;
+    auto p = createPacket();
+    p.sendTo(client->peer, PacketChannel::INVENTORY);
+}
+
+void InventoryList::sendAll() {
+    auto p = createPacket();
+
+    for (auto it = watchers.cbegin(); it != watchers.cend();) {
+        auto& client = clients->getClient(*it);
+        if (!client) {
+            it = watchers.erase(it);
+        }
+        else {
+            p.sendTo(client->peer, PacketChannel::INVENTORY);
+            it++;
+        }
+    }
 }

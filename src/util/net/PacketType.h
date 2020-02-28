@@ -23,7 +23,11 @@ enum class PacketType {
     CHUNK,
     BLOCK_SET,
     ENTITY_INFO,
+
+    // Inventory
     WATCH_INV,
-    UNWATCH_INV
+    UNWATCH_INV,
+    INV_INVALID,
+    INVENTORY
 };
 

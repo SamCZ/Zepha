@@ -4,9 +4,7 @@
 
 #pragma once
 
-#include <memory>
 #include <glm/vec3.hpp>
-#include "../../../world/Dimension.h"
 
 class World {
 public:

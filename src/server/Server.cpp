@@ -14,6 +14,7 @@ Server::Server(unsigned short port, const std::string& subgame) :
     defs(subgame),
     clientList(defs),
     handler(port, 32),
+    refs(defs.defs, &clientList),
     world(10, defs, clientList) {
 
     defs.init(world);
@@ -30,6 +31,7 @@ void Server::update() {
 
     world.update(0);
     defs.update(deltaTime, clientList);
+    refs.update();
 
     ENetEvent event;
     while (handler.update(&event) && loop.elapsedNs() < interval_ns) {
@@ -40,7 +42,7 @@ void Server::update() {
                 break;
             }
             case ENET_EVENT_TYPE_CONNECT: {
-                clientList.handleConnect(event);
+                clientList.handleConnect(event, refs);
                 break;
             }
             case ENET_EVENT_TYPE_DISCONNECT: {
@@ -142,19 +144,37 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
         case PacketType::WATCH_INV: {
             Deserializer d(p.data);
 
-//            std::string source = d.read<std::string>();
-//            std::string list = d.read<std::string>();
+            std::string source = d.read<std::string>();
+            std::string list = d.read<std::string>();
 
-//            std::cout << "watching " << source << ":" << list << std::endl;
+            // TODO: When inventory saving / loading is implemented there will need to be a cross-save identifier.
+            if (source == "current_player") source = "player:" + std::to_string(client.cid);
+
+            bool exists = refs.addWatcher(source, list, client.cid);
+            if (!exists) {
+                Serializer().append(source).append(list)
+                    .packet(PacketType::INV_INVALID).sendTo(client.peer, PacketChannel::INVENTORY);
+                break;
+            }
+
             break;
         }
         case PacketType::UNWATCH_INV: {
             Deserializer d(p.data);
 
-//            std::string source = d.read<std::string>();
-//            std::string list = d.read<std::string>();
+            std::string source = d.read<std::string>();
+            std::string list = d.read<std::string>();
 
-//            std::cout << "unwatching " << source << ":" << list << std::endl;
+            // TODO: When inventory saving / loading is implemented there will need to be a cross-save identifier.
+            if (source == "current_player") source = "player:" + std::to_string(client.cid);
+
+            bool exists = refs.removeWatcher(source, list, client.cid);
+            if (!exists) {
+                Serializer().append(source).append(list)
+                    .packet(PacketType::INV_INVALID).sendTo(client.peer, PacketChannel::INVENTORY);
+                break;
+            }
+
             break;
         }
     }

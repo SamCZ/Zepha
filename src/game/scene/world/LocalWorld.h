@@ -14,12 +14,13 @@ class WorldInterpolationStream;
 class BlockCrackEntity;
 class ParticleEntity;
 class Renderer;
+class Player;
 
 class LocalWorld : public World {
 public:
-    LocalWorld(ClientGame& defs, glm::vec3* playerPos, ClientNetworkInterpreter* server);
+    LocalWorld(ClientGame& defs, ClientNetworkInterpreter* net);
 
-    void init();
+    void init(Player* player);
     void update(double delta) override;
 
     void loadChunkPacket(std::unique_ptr<Packet> p);
@@ -47,11 +48,10 @@ private:
     void finishChunks();
     void updateBlockDamages(double delta);
 
-    glm::vec3* playerPos;
-
     std::vector<BlockCrackEntity*> crackedBlocks;
     std::vector<ParticleEntity*> particles;
 
-    ClientNetworkInterpreter* server = nullptr;
+    Player* player = nullptr;
+    ClientNetworkInterpreter* net = nullptr;
     WorldInterpolationStream* worldGenStream = nullptr;
 };

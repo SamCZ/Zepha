@@ -12,11 +12,13 @@
 #include "../../game/inventory/InventoryList.h"
 #include "../../game/inventory/Inventory.h"
 
+class InventoryRefs;
+
 class ServerClient {
 public:
     const static int CHUNK_SEND_RANGE = 32;
 
-    ServerClient(ENetPeer* peer, ENetAddress address, DefinitionAtlas& defs);
+    ServerClient(ENetPeer* peer, ENetAddress address, DefinitionAtlas& defs, InventoryRefs& refs);
 
     void setUsername(const std::string& name);
 
@@ -38,11 +40,11 @@ public:
     void setMapBlockIntegrity(glm::ivec3 pos, unsigned long long integrity);
     unsigned long long getMapBlockIntegrity(glm::ivec3 pos);
 
-    Inventory& getInventory();
+    std::shared_ptr<Inventory> getInventory();
 
     bool hasPlayer = false;
 
-    unsigned int cid;
+    unsigned int cid = 0;
     std::string username;
 
     ENetPeer* peer;
@@ -58,8 +60,7 @@ private:
 
     bool flying = false;
 
-    InventoryList hand;
-    Inventory inventory;
+    std::shared_ptr<Inventory> inventory;
 
     std::unordered_map<glm::ivec3, unsigned long long, Vec::ivec3> mapBlockIntegrity {};
 };

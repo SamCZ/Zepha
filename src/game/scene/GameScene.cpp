@@ -5,48 +5,43 @@
 #include "GameScene.h"
 
 GameScene::GameScene(ClientState& state) : Scene(state),
+    refs(game.defs),
     game(state.defs),
-    refs(game.defs, net),
-    world(game, &playerPos, &net),
+    world(game, &net),
     net(state.connection, game, player),
     player(world, game, state.renderer, refs),
     debugGui(state.renderer.window.getSize(), game) {
 
-    state.renderer.setClearColor(148, 194, 240);
-    state.renderer.window.lockMouse(true);
-
-    game.init(world, player);
-    world.init();
-    net.init(&world);
+    namespace ph = std::placeholders;
 
     Packet r(PacketType::CONNECT_DATA_RECVD);
     r.sendTo(state.connection.getPeer(), PacketChannel::CONNECT);
 
-    state.renderer.window.addResizeCallback("gamescene", [&](glm::ivec2 win) {
-        debugGui.bufferResized(win);
-    });
+    world.init(&player);
+    net.init(&world, std::bind(&LocalInventoryRefs::packetReceived, refs, ph::_1));
+    game.init(world, player);
+
+    refs.setWatchFunction(std::bind(&ClientNetworkInterpreter::watchInv, &net, ph::_1, ph::_2));
+
+    state.renderer.window.addResizeCallback("gamescene", std::bind(&DebugGui::bufferResized, debugGui, ph::_1));
+    state.renderer.setClearColor(148, 194, 240);
+    state.renderer.window.lockMouse(true);
 }
 
 void GameScene::update() {
-    game.update(state.delta, state.renderer.window.keys);
-    game.textures.update();
-    refs.update(state.delta);
-    net.update();
-
     Window& window = state.renderer.window;
 
-    //Update Player
     player.update(window.input, state.delta, window.getDelta());
-    playerPos = player.getPos();
+    game  .update(state.delta, state.renderer.window.keys);
+    refs  .update(state.delta, net);
+    net   .update();
 
     for (auto entity : entities) entity->update(state.delta);
 
-    for (auto &chunkPacket : net.chunkPackets) world.loadChunkPacket(std::move(chunkPacket));
-    net.chunkPackets.clear();
-
     debugGui.update(player, world, game, state.fps, world.getMeshChunkCount(), drawCalls, net.serverSideChunkGens, net.recvPackets);
-    net.recvPackets = 0;
     world.update(state.delta);
+    net.serverSideChunkGens = 0;
+    net.recvPackets = 0;
 
     if (window.input.isKeyPressed(GLFW_KEY_F1)) {
         hudVisible = !hudVisible;

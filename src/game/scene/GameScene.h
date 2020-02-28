@@ -20,16 +20,13 @@ public:
 public:
     ClientGame& game;
 
-    ClientNetworkInterpreter net;
     LocalInventoryRefs refs;
+    ClientNetworkInterpreter net;
     LocalWorld world;
-
-    glm::vec3 playerPos;
     Player player;
 
-    std::vector<Drawable*> entities;
     DebugGui debugGui;
-
+    std::vector<Drawable*> entities;
     int drawCalls = 0;
 
     bool debugVisible = true;
