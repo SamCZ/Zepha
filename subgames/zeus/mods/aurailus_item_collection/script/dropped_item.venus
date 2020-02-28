@@ -1,13 +1,13 @@
-fn collides(entity) {
+local fn collides(entity) {
     return zepha.get_block({
         x = math.floor(entity.pos.x),
         y = math.floor(entity.pos.y - 0.5),
         z = math.floor(entity.pos.z)}) ~= "air"
 }
 
-zepha.register_entity("zeus:default:dropped_item", {
+zepha.register_entity("@aurailus:item_collection:dropped_item", {
     display = "gameobject",
-    display_object = "zeus:default:stone",
+    display_object = "invalid",
 
     on_create = fn(self, static) {
         static = static or {}
@@ -88,10 +88,9 @@ zepha.register_entity("zeus:default:dropped_item", {
                 self.object.pos = vector.add(p.pos, v(0, 0.90, 0))
                 self.scooping = true
 
-
                 zepha.delay(() => {
-                    zepha.remove_entity(self)
                     p:get_inventory():get_list("main"):add_stack({self.item, 1})
+                    zepha.remove_entity(self)
                 }, 2/20)
             }
         }

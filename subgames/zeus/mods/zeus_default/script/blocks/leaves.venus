@@ -14,5 +14,5 @@ zepha.register_block("zeus:default:leaves", {
         hand = 1,
         axe = 0.2,
     },
-    drop = "zeus:materials:stick"
+    yields = "zeus:materials:stick"
 })

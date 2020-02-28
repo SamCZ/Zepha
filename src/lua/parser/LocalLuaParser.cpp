@@ -147,10 +147,17 @@ sol::protected_function_result LocalLuaParser::errorCallback(lua_State*, sol::pr
 
 sol::protected_function_result LocalLuaParser::runFileSandboxed(std::string file) {
     size_t modname_length = file.find('/');
+
+    if (modname_length == std::string::npos) {
+        std::cout << Log::err << "Filestring \"" + file + "\" is invalid." << Log::endl;
+        return nullptr;
+    }
+
     std::string modname = file.substr(0, modname_length);
 
     for (const LuaMod& mod : handler.cGetMods()) {
-        if (strncmp(mod.config.name.c_str(), modname.c_str(), modname_length) == 0) {
+        if (modname == mod.config.name) {
+
             for (const LuaModFile& f : mod.files) {
                 if (f.path == file) {
 

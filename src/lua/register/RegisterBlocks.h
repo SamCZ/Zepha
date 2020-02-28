@@ -242,6 +242,11 @@ namespace RegisterBlocks {
         return {model, farModel};
     }
 
+    static void addCallback(BlockDef* blockDef, sol::table& blockTable, const std::string& name, Callback enumType) {
+        auto cb = blockTable.get<sol::optional<sol::function>>(name);
+        if (cb) blockDef->callbacks.insert({enumType, *cb});
+    }
+
     static void registerBlocks(sol::table source, sol::table blockModels, DefinitionAtlas& defs, TextureAtlas* atlas) {
         // Parses through all of the zepha.registered_blocks and makes BlockDefs.
         for (auto blockRef : source) {
@@ -292,31 +297,25 @@ namespace RegisterBlocks {
             if (atlas) blockDef->createModel();
 
             // Bind Callbacks
-            auto on_place = blockTable.get<sol::optional<sol::function>>("on_place");
-            if (on_place) blockDef->callbacks.insert({Callback::PLACE, *on_place});
+            addCallback(blockDef, blockTable, "on_construct", Callback::CONSTRUCT);
+            addCallback(blockDef, blockTable, "after_construct", Callback::AFTER_CONSTRUCT);
 
-            auto on_place_client = blockTable.get<sol::optional<sol::function>>("on_place_client");
-            if (on_place_client) blockDef->callbacks.insert({Callback::PLACE_CLIENT, *on_place_client});
+            addCallback(blockDef, blockTable, "on_destruct", Callback::DESTRUCT);
+            addCallback(blockDef, blockTable, "after_destruct", Callback::AFTER_DESTRUCT);
 
-            auto on_break = blockTable.get<sol::optional<sol::function>>("on_break");
-            if (on_break) blockDef->callbacks.insert({Callback::BREAK, *on_break});
+            addCallback(blockDef, blockTable, "on_place", Callback::PLACE);
+            addCallback(blockDef, blockTable, "on_place_client", Callback::PLACE_CLIENT);
 
-            auto on_break_client = blockTable.get<sol::optional<sol::function>>("on_break_client");
-            if (on_break_client) blockDef->callbacks.insert({Callback::BREAK_CLIENT, *on_break_client});
+            addCallback(blockDef, blockTable, "after_place", Callback::AFTER_PLACE);
+            addCallback(blockDef, blockTable, "after_place_client", Callback::AFTER_PLACE_CLIENT);
 
-            auto on_construct = blockTable.get<sol::optional<sol::function>>("on_construct");
-            if (on_construct) blockDef->callbacks.insert({Callback::CONSTRUCT, *on_construct});
+            addCallback(blockDef, blockTable, "on_break", Callback::BREAK);
+            addCallback(blockDef, blockTable, "on_break_client", Callback::BREAK_CLIENT);
 
-            auto after_construct = blockTable.get<sol::optional<sol::function>>("after_construct");
-            if (after_construct) blockDef->callbacks.insert({Callback::AFTER_CONSTRUCT, *after_construct});
+            addCallback(blockDef, blockTable, "after_break", Callback::AFTER_BREAK);
+            addCallback(blockDef, blockTable, "after_break_client", Callback::AFTER_BREAK_CLIENT);
 
-            auto on_destruct = blockTable.get<sol::optional<sol::function>>("on_destruct");
-            if (on_destruct) blockDef->callbacks.insert({Callback::DESTRUCT, *on_destruct});
-
-            auto after_destruct = blockTable.get<sol::optional<sol::function>>("after_destruct");
-            if (after_destruct) blockDef->callbacks.insert({Callback::AFTER_DESTRUCT, *after_destruct});
-
-            // Add Block Definition to the Atlas
+            // Add Block Definition to the AtlasK
             defs.registerDef(blockDef);
         }
     }

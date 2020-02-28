@@ -1,0 +1,10 @@
+local get_yield = runfile("@aurailus:item_collection/get_yield")
+
+if (zepha.server) {
+    zepha.register_on("break", (pos) => {
+        local yields = get_yield(pos)
+        if (yields == nil) { return }
+
+        zepha.add_entity("@aurailus:item_collection:dropped_item", vector.add(pos, v(0.5)), { item = yields });
+    })
+}

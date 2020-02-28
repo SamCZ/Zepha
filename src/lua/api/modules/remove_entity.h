@@ -38,7 +38,6 @@ namespace Api {
             if (onDestruct) (*onDestruct)();
 
             core["entities"][(*object)->id] = sol::nil;
-            // TODO: Tell the client when entities are deleted.
             world.dimension.removeLuaEntity(*object);
         });
     }

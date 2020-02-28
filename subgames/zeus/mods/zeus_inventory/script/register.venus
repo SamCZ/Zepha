@@ -1,17 +1,15 @@
-zepha.register_on("player_join", (p) => {
+zepha.register_on("new_player", (p) => {
     ## Create the main inventory list
     local inv = p:get_inventory()
     local main = inv:add_list("main", 44, 11)
 
     ## Bind crafting
-
     local craft_input = inv:add_list("craft", 4, 2)
     local craft_output = inv:add_list("craft_result", 2, 2)
 
     crafting.bind(craft_input, craft_output)
 
     ## Make hot wheel
-
     local invs = {
         inv:add_list("hot_wheel_1", 5, 5),
         inv:add_list("hot_wheel_2", 5, 5),

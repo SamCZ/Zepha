@@ -158,7 +158,7 @@ void LocalDimension::removeLocalEntity(std::shared_ptr<LocalLuaEntity> &entity) 
     localEntityRefs.erase(entity->id);
 }
 
-void LocalDimension::handleServerEntity(const Packet& p) {
+void LocalDimension::serverEntityInfo(const Packet& p) {
     Deserializer d(p.data);
 
     auto id           = d.read<unsigned int>();
@@ -194,6 +194,14 @@ void LocalDimension::handleServerEntity(const Packet& p) {
         serverEntities.push_back(entity);
         serverEntityRefs.emplace(id, --serverEntities.end());
     }
+}
+
+void LocalDimension::serverEntityRemoved(unsigned int id) {
+    if (!serverEntityRefs.count(id)) return;
+    auto refIter = serverEntityRefs.at(id);
+
+    serverEntities.erase(refIter);
+    serverEntityRefs.erase(id);
 }
 
 int LocalDimension::getMeshChunkCount() {

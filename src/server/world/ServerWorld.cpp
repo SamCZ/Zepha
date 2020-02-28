@@ -103,6 +103,18 @@ void ServerWorld::update(double delta) {
             }
         }
     }
+
+    for (unsigned int entity : dimension.getRemovedEntities()) {
+        Packet p = Serializer()
+        .append<unsigned int>(entity)
+        .packet(PacketType::ENTITY_REMOVED);
+
+        for (auto& client : clientList.clients) {
+            if (client->hasPlayer) p.sendTo(client->peer, PacketChannel::ENTITY);
+        }
+    }
+
+    dimension.clearRemovedEntities();
 }
 
 void ServerWorld::changedChunks(ServerClient& client) {

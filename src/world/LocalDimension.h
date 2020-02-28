@@ -30,7 +30,8 @@ public:
     void addLocalEntity(std::shared_ptr<LocalLuaEntity>& entity);
     void removeLocalEntity(std::shared_ptr<LocalLuaEntity>& entity);
 
-    void handleServerEntity(const Packet& p);
+    void serverEntityInfo(const Packet& p);
+    void serverEntityRemoved(unsigned int id);
 
     int renderChunks(Renderer &renderer);
     void renderEntities(Renderer &renderer);

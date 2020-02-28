@@ -1,0 +1,10 @@
+return fn(pos) {
+    local def = zepha.registered_blocks[zepha.get_block(pos)]
+    if (def == nil) { return nil }
+    local yields = def.yields
+
+    if (type(yields) == "function") { yields = yields(pos) }
+    if (yields == nil or type(yields) ~= "string") { return nil }
+
+    return yields
+}

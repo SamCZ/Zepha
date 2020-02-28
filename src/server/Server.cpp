@@ -4,9 +4,10 @@
 
 #include <thread>
 
-#include "../util/Timer.h"
-
 #include "Server.h"
+
+#include "../util/Timer.h"
+#include "../lua/api/class/ServerLuaPlayer.h"
 
 Server::Server(unsigned short port, const std::string& subgame) :
     port(port),
@@ -125,19 +126,32 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
 
             unsigned int worldBlock = (block == DefinitionAtlas::AIR ? world.getBlock(pos) : 0);
 
+            if (block == DefinitionAtlas::AIR) {
+                auto def = defs.defs.blockFromId(worldBlock);
+                if (def.callbacks.count(Callback::BREAK))
+                    def.callbacks[Callback::BREAK](defs.parser.vecToTable(pos), ServerLuaPlayer(client));
+                defs.parser.core["__builtin"]["trigger_event"]("break", defs.parser.vecToTable(pos), ServerLuaPlayer(client));
+            }
+            else {
+                auto def = defs.defs.blockFromId(block);
+                if (def.callbacks.count(Callback::PLACE))
+                    def.callbacks[Callback::PLACE](defs.parser.vecToTable(pos), ServerLuaPlayer(client));
+                defs.parser.core["__builtin"]["trigger_event"]("place", defs.parser.vecToTable(pos), ServerLuaPlayer(client));
+            }
+
             world.setBlock(pos, block);
 
             if (block == DefinitionAtlas::AIR) {
                 auto def = defs.defs.blockFromId(worldBlock);
-                if (def.callbacks.count(Callback::BREAK)) {
-                    def.callbacks[Callback::BREAK](defs.parser.vecToTable(pos));
-                }
+                if (def.callbacks.count(Callback::AFTER_BREAK))
+                    def.callbacks[Callback::AFTER_BREAK](defs.parser.vecToTable(pos), ServerLuaPlayer(client));
+                defs.parser.core["__builtin"]["trigger_event"]("after_break", defs.parser.vecToTable(pos), ServerLuaPlayer(client));
             }
             else {
                 auto def = defs.defs.blockFromId(block);
-                if (def.callbacks.count(Callback::PLACE)) {
-                    def.callbacks[Callback::PLACE](defs.parser.vecToTable(pos));
-                }
+                if (def.callbacks.count(Callback::AFTER_PLACE))
+                    def.callbacks[Callback::AFTER_PLACE](defs.parser.vecToTable(pos), ServerLuaPlayer(client));
+                defs.parser.core["__builtin"]["trigger_event"]("after_place", defs.parser.vecToTable(pos), ServerLuaPlayer(client));
             }
             break;
         }

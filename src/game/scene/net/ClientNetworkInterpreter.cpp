@@ -71,7 +71,6 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
         }
 
         case PacketType::THIS_PLAYER_INFO: {
-
             while (!d.atEnd()) {
                 switch (d.read<unsigned int>()) {
                     case static_cast<unsigned int>(NetPlayerField::ID): {
@@ -92,10 +91,8 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
                     }
                 }
             }
-
             break;
         }
-
         case PacketType::PLAYER_INFO: {
             unsigned int cid = d.read<unsigned int>();
             if (this->cid == cid) break;
@@ -118,29 +115,28 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
             world->dimension.playerEntities.emplace_back(d.read<glm::vec3>(), cid, playerModel);
             break;
         }
-
         case PacketType::ENTITY_INFO: {
-            world->dimension.handleServerEntity(*p);
+            world->dimension.serverEntityInfo(*p);
             break;
         }
-
+        case PacketType::ENTITY_REMOVED: {
+            world->dimension.serverEntityRemoved(d.read<unsigned int>());
+            break;
+        }
         case PacketType::BLOCK_SET: {
             auto pos = d.read<glm::ivec3>();
             auto block = d.read<unsigned int>();
             world->setBlock(pos, block);
             break;
         }
-
         case PacketType::CHUNK: {
             world->loadChunkPacket(std::move(p));
             break;
         }
-
         case PacketType::SERVER_INFO: {
             serverSideChunkGens = d.read<unsigned int>();
             break;
         }
-
         case PacketType::INV_INVALID: {
             std::string source = d.read<std::string>();
             std::string list = d.read<std::string>();
@@ -148,7 +144,6 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
             std::cout << Log::err << "Invalid inventory " << source << ":" << list << " was requested by client." << Log::endl;
             exit(1);
         }
-
         case PacketType::INVENTORY: {
             onInvPacket(std::move(p));
             break;

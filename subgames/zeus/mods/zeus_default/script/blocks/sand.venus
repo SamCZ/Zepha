@@ -7,5 +7,5 @@ zepha.register_block("zeus:default:sand", {
         shovel = 1,
         pick = 2
     },
-    drop = "zeus:default:sand"
+    yields = "zeus:default:sand"
 })

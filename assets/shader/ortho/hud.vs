@@ -16,6 +16,7 @@ uniform mat4 uBones[MAX_BONES];
 
 out vec4  colorData;
 out vec3  colorBlend;
+out float normalShading;
 out float useTex;
 
 void main() {
@@ -28,7 +29,12 @@ void main() {
 
     boneTransform = (boneTransform * totalWeight) + (mat4(1.0) * (1 - totalWeight));
 
-//    normal = transpose(inverse(mat3(model))) * (boneTransform * vec4(normalize(aNormal), 0.0)).xyz;
+    if (aNormal == vec3(0, 0, 0)) normalShading = 1;
+    else {
+        vec3 normal = normalize(transpose(inverse(mat3(model))) * (boneTransform * vec4(normalize(aNormal), 0.0)).xyz);
+        normalShading = 1 + (normal.x * -normal.z * 0.15) - (normal.y * 0.18);
+    }
+
     gl_Position = ortho * model * boneTransform * vec4(aPos, 1);
     colorData = aColorData;
     colorBlend = aColorBlend;

@@ -58,6 +58,8 @@ void ServerDimension::removeLuaEntity(std::shared_ptr<ServerLuaEntity> &entity) 
     if (!luaEntityRefs.count(entity->id)) return;
     auto refIter = luaEntityRefs.at(entity->id);
 
+    removedEntities.push_back(entity->id);
+
     luaEntities.erase(refIter);
     luaEntityRefs.erase(entity->id);
 }
@@ -69,4 +71,12 @@ unsigned long long ServerDimension::getMapBlockIntegrity(glm::ivec3 mapBlock) {
 
 std::list<std::shared_ptr<ServerLuaEntity>> &ServerDimension::getLuaEntities() {
     return luaEntities;
+}
+
+const std::list<unsigned int> &ServerDimension::getRemovedEntities() const {
+    return removedEntities;
+}
+
+void ServerDimension::clearRemovedEntities() {
+    removedEntities.clear();
 }

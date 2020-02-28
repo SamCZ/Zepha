@@ -11,8 +11,6 @@ local blockTypes = {
     "zeus:default:dirt",
     "zeus:default:grass",
     "zeus:default:leaves",
-    "zeus:default:sand",
-    "zeus:default:sandstone",
     "zeus:default:tallgrass_5"
 }
 
@@ -32,12 +30,3 @@ zepha.register_keybind("zeus:default:open_chat", {
     default = zepha.keys.t,
     on_press = () => { print "Opened chat!" }
 })
-
-##if (zepha.server) {
-##    zepha.delay(() => {
-##        foreach player in zepha.players {
-##            player:get_inventory():get_list("main"):add_stack({"zeus:default:dirt", 1})
-##        }
-##        return true
-##    }, 1/20)
-##}

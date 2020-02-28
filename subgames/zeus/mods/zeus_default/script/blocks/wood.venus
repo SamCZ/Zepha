@@ -10,5 +10,5 @@ zepha.register_block("zeus:default:wood", {
         hand = 5,
         axe = 3,
     },
-    drop = "zeus:default:wood"
+    yields = "zeus:default:wood"
 })
