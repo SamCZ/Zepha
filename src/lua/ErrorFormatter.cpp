@@ -3,6 +3,7 @@
 //
 
 #include "ErrorFormatter.h"
+#include <algorithm>
 
 std::string ErrorFormatter::formatError(const std::string &fileName, int line, const std::string &stack,
                                         std::string file, bool ansiColors) {
@@ -28,7 +29,7 @@ std::string ErrorFormatter::formatError(const std::string &fileName, int line, c
     while (fileLines.back() == "") fileLines.pop_back();
 
     // Format and add lines to the stringstream
-    for (unsigned int i = std::max(0, line - 6); i < std::min(static_cast<int>(fileLines.size()), line + 5); i++) {
+    for (unsigned int i = (std::max)(0, line - 6); i < (std::min)(static_cast<int>(fileLines.size()), line + 5); i++) {
         for (unsigned int j = 0; j < 3 - std::to_string(i + 1).length(); j++) out << " ";
         out << red << (i+1 == line ? unbl : "") << (i+1) << (i+1 == line ? " # " : " | ") << fileLines[i] << endl;
     }

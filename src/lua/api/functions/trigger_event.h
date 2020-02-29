@@ -14,7 +14,7 @@ namespace Api {
 
                 for _, v in pairs(zepha.registered_callbacks[event]) do
                     if (type(v) == "function") then
-                        v(unpack(arg))
+                        v(...)
                     end
                 end
             end

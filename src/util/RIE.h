@@ -30,7 +30,18 @@ struct RIE {
         if (read(ind, data, dataLen) == val) return false;
 
         if (ind == 0) {
-            if (data[2] == ind + 1) {
+            if (data.size() == 0) {
+                data[0] = 0;
+                data[1] = val;
+                return true;
+            }
+            else if (data.size() == 2) {
+                data.push_back(1);
+                data.push_back(data[1]);
+                data[1] = val;
+                return true;
+            }
+            else if (data[2] == ind + 1) {
                 data[1] = val;
                 return true;
             }

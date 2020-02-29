@@ -49,9 +49,9 @@ void ClientList::createPlayer(std::shared_ptr<ServerClient> c) {
     Packet p(PacketType::THIS_PLAYER_INFO);
     p.data = Serializer()
             .append<unsigned int>(static_cast<unsigned int>(NetPlayerField::ID))
-            .append(c->cid)
+            .append<unsigned int>(c->cid)
             .append<unsigned int>(static_cast<unsigned int>(NetPlayerField::POSITION))
-            .append(c->getPos())
+            .append<glm::vec3>(c->getPos())
             .data;
 
     p.sendTo(c->peer, PacketChannel::ENTITY);

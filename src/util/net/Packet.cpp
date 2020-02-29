@@ -19,7 +19,7 @@ Packet::Packet(ENetPacket *packet) : reliable(true) {
 ENetPacket* Packet::toENetPacket() {
     std::string serialized = Serializer().append(static_cast<unsigned int>(type)).data + data;
 
-    ENetPacket* enet = enet_packet_create(serialized.data(), serialized.length() + 1, (reliable ? ENET_PACKET_FLAG_RELIABLE : 0));
+    ENetPacket* enet = enet_packet_create(serialized.data(), serialized.length(), (reliable ? ENET_PACKET_FLAG_RELIABLE : 0));
     return enet;
 }
 

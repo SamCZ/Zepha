@@ -43,7 +43,7 @@ struct BlockModel {
             {{0, 1, 1}, {}, {1, 0}, {1, 0}},
             {{0, 1, 0}, {}, {0, 0}, {0, 0}}};
         indices = {0, 1, 2, 2, 3, 0};
-        accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 2));
+        accessInd = (std::max)(0, (std::min)(static_cast<int>(textureRefs.size() - 1), 2));
         MeshPart leftMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
         blockModel.parts[static_cast<int>(Dir::LEFT)].push_back(leftMeshPart);
 
@@ -54,7 +54,7 @@ struct BlockModel {
             {{1, 0, 0}, {}, {0, 1}, {0, 1}},
             {{1, 1, 0}, {}, {0, 0}, {0, 0}}};
         indices = {0, 1, 2, 2, 3, 0};
-        accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 3));
+        accessInd = (std::max)(0, (std::min)(static_cast<int>(textureRefs.size() - 1), 3));
         MeshPart rightMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
         blockModel.parts[static_cast<int>(Dir::RIGHT)].push_back(rightMeshPart);
 
@@ -65,7 +65,7 @@ struct BlockModel {
             {{1, 1, 1}, {}, {1, 1}, {1, 1}},
             {{1, 1, 0}, {}, {1, 0}, {1, 0}}};
         indices = {0, 1, 2, 2, 3, 0};
-        accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 0));
+        accessInd = (std::max)(0, (std::min)(static_cast<int>(textureRefs.size() - 1), 0));
         MeshPart topMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
         blockModel.parts[static_cast<int>(Dir::TOP)].push_back(topMeshPart);
 
@@ -76,7 +76,7 @@ struct BlockModel {
             {{1, 0, 1}, {}, {1, 1}, {1, 1}},
             {{0, 0, 1}, {}, {0, 1}, {0, 1}}};
         indices = {0, 1, 2, 2, 3, 0};
-        accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 1));
+        accessInd = (std::max)(0, (std::min)(static_cast<int>(textureRefs.size() - 1), 1));
         MeshPart bottomMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
         blockModel.parts[static_cast<int>(Dir::BOTTOM)].push_back(bottomMeshPart);
 
@@ -87,7 +87,7 @@ struct BlockModel {
             {{1, 1, 1}, {}, {1, 0}, {1, 0}},
             {{0, 1, 1}, {}, {0, 0}, {0, 0}}};
         indices = {0, 1, 2, 2, 3, 0};
-        accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 4));
+        accessInd = (std::max)(0, (std::min)(static_cast<int>(textureRefs.size() - 1), 4));
         MeshPart frontMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
         blockModel.parts[static_cast<int>(Dir::FRONT)].push_back(frontMeshPart);
 
@@ -98,7 +98,7 @@ struct BlockModel {
             {{1, 1, 0}, {}, {1, 0}, {1, 0}},
             {{1, 0, 0}, {}, {1, 1}, {1, 1}}};
         indices = {0, 1, 2, 2, 3, 0};
-        accessInd = std::max(0, std::min(static_cast<int>(textureRefs.size() - 1), 5));
+        accessInd = (std::max)(0, (std::min)(static_cast<int>(textureRefs.size() - 1), 5));
         MeshPart backMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
         blockModel.parts[static_cast<int>(Dir::BACK)].push_back(backMeshPart);
 

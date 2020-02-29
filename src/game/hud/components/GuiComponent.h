@@ -31,8 +31,8 @@ public:
     virtual void update(double delta) override;
 
     bool mouseActivity(glm::ivec2 pos);
-    bool leftClickEvent(bool state, glm::ivec2 pos);
-    bool rightClickEvent(bool state, glm::ivec2 pos);
+    void leftClickEvent(bool state, glm::ivec2 pos);
+    void rightClickEvent(bool state, glm::ivec2 pos);
 
     virtual void setHoverCallback(const callback& hoverCallback);
     virtual void setLeftClickCallback(const callback& leftClickCallback);

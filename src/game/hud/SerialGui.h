@@ -11,6 +11,7 @@
 
 #include <cerrno>
 #include <cstdlib>
+#include <stdexcept>
 
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>

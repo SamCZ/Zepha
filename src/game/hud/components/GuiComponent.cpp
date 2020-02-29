@@ -131,11 +131,11 @@ void GuiComponent::update(double delta) {
     }
 }
 
-bool GuiComponent::leftClickEvent(bool state, glm::ivec2 pos) {
+void GuiComponent::leftClickEvent(bool state, glm::ivec2 pos) {
     clickEvent(true, state, pos);
 }
 
-bool GuiComponent::rightClickEvent(bool state, glm::ivec2 pos) {
+void GuiComponent::rightClickEvent(bool state, glm::ivec2 pos) {
     clickEvent(false, state, pos);
 }
 

@@ -31,7 +31,7 @@ bool LocalServerInstance::start() {
     return true;
 #else
     std::thread([&]() {
-       Server s(path.data(), port, subgame);
+       Server s(port, subgame);
     }).detach();
     return true;
 #endif

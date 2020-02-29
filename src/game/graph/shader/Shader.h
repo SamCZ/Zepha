@@ -38,7 +38,7 @@ private:
     std::string readFile(const std::string& fileLocation);
 
     void compileShader(const std::string& vertexSource, const std::string& fragmentSource);
-    void addShader(uint program, const std::string& shaderCode, GLenum shaderType);
+    void addShader(unsigned int program, const std::string& shaderCode, GLenum shaderType);
 
     void crashIfInactive();
 

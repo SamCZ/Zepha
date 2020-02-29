@@ -66,16 +66,16 @@ bool Collidable::collidesAt(glm::vec3& pos, float stepUpMax) {
 
                     if (def.solid)
                         for (auto &cBox : def.cBoxes)
-                            stepUpAmount = std::max(cBox.b.y + offsetPos.y - pos.y, stepUpAmount);
+                            stepUpAmount = (std::max)(cBox.b.y + offsetPos.y - pos.y, stepUpAmount);
 
                     if (offset.z == collisionBox.b.z) break;
-                    offset.z = std::min(std::floor(offset.z + 1), collisionBox.b.z);
+                    offset.z = (std::min)(std::floor(offset.z + 1), collisionBox.b.z);
                 }
                 if (offset.y == collisionBox.a.y + stepUpMax + 0.025f) break; // Hack for precision errors
-                offset.y = std::min(std::floor(offset.y + 1), collisionBox.a.y + stepUpMax + 0.025f);
+                offset.y = (std::min)(std::floor(offset.y + 1), collisionBox.a.y + stepUpMax + 0.025f);
             }
             if (offset.x == collisionBox.b.x) break;
-            offset.x = std::min(std::floor(offset.x + 1), collisionBox.b.x);
+            offset.x = (std::min)(std::floor(offset.x + 1), collisionBox.b.x);
         }
     }
 
@@ -107,13 +107,13 @@ bool Collidable::collidesAt(glm::vec3& pos, float stepUpMax) {
                 }
 
                 if (offset.z == collisionBox.b.z) break;
-                offset.z = std::min(std::floor(offset.z + 1), collisionBox.b.z);
+                offset.z = (std::min)(std::floor(offset.z + 1), collisionBox.b.z);
             }
             if (offset.y == collisionBox.b.y) break;
-            offset.y = std::min(std::floor(offset.y + 1), collisionBox.b.y);
+            offset.y = (std::min)(std::floor(offset.y + 1), collisionBox.b.y);
         }
         if (offset.x == collisionBox.b.x) break;
-        offset.x = std::min(std::floor(offset.x + 1), collisionBox.b.x);
+        offset.x = (std::min)(std::floor(offset.x + 1), collisionBox.b.x);
     }
 
     return false;

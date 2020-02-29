@@ -5,6 +5,9 @@
 #include "VenusParser.h"
 #include "ErrorFormatter.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 namespace {
 #ifdef _WIN32
     const static char* EXECUTABLE_NAME = "zepha-venus-win.exe";
@@ -16,12 +19,16 @@ namespace {
 }
 
 std::string VenusParser::parse(const std::string& fileName, const std::string& fileContents) {
+#ifdef _WIN32
+    const static std::string path = "zepha-venus\\" + std::string(EXECUTABLE_NAME);
+#else
     const static std::string path = "../zepha-venus/" + std::string(EXECUTABLE_NAME);
+#endif
 
     const static bool exists = cf_file_exists(path.data());
     if (!exists) throw std::runtime_error("Trying to compile a venus file when zepha-venus has not been built!");
 
-    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen((path + " " + fileName).data(), "r"), pclose);
+    std::unique_ptr<FILE, decltype(&_pclose)> pipe(_popen((path + " " + fileName).data(), "r"), _pclose);
     if (!pipe) throw std::runtime_error("popen() failed!");
 
     std::string result;
