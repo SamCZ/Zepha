@@ -5,7 +5,7 @@
 #include "LocalInventory.h"
 
 void LocalInventory::createList(std::string name, unsigned short length, unsigned short width, bool maintain) {
-    lists.insert({name, {(maintain ? -1 : 0), std::make_shared<LocalInventoryList>(defs, name, length, width)}});
+    lists.insert({name, {(maintain ? -1 : 0), std::make_shared<LocalInventoryList>(defs, this->name, name, length, width)}});
 }
 
 std::shared_ptr<LocalInventoryList> LocalInventory::operator[](std::string name) {

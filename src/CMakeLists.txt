@@ -313,6 +313,6 @@ set(ZEPHA_SRC
     lua/api/class/LocalLuaInventory.cpp
     lua/api/class/LocalLuaInventory.h
     lua/api/class/LocalLuaInventoryList.cpp
-    lua/api/class/LocalLuaInventoryList.h game/inventory/InventoryRefs.cpp game/inventory/InventoryRefs.h)
+    lua/api/class/LocalLuaInventoryList.h game/inventory/InventoryRefs.cpp game/inventory/InventoryRefs.h game/inventory/InventoryList.cpp game/inventory/InventoryList.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})
