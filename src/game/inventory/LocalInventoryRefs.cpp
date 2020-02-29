@@ -33,7 +33,7 @@ std::shared_ptr<LocalInventory> LocalInventoryRefs::getInv(const std::string& in
 std::shared_ptr<LocalInventoryList> LocalInventoryRefs::getList(const std::string& inv, const std::string& list) {
     if (!inventories.count(inv)) inventories.insert({inv, {}});
     if (inventories[inv]->operator[](list) == nullptr) {
-        inventories[inv]->createList(list, 1, 1);
+        inventories[inv]->createList(list, 0, 0);
         watchFn(inv, list);
     }
     return inventories[inv]->operator[](list);

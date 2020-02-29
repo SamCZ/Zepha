@@ -14,10 +14,10 @@ void Inventory::sendDirtyLists() {
 }
 
 void Inventory::createList(std::string name, unsigned short length, unsigned short width) {
-    lists.emplace(name, std::make_shared<InventoryList>(defs, clients, this->name, name, length, width));
+    lists.emplace(name, std::make_shared<ServerInventoryList>(defs, clients, this->name, name, length, width));
 }
 
-std::shared_ptr<InventoryList> Inventory::operator[](std::string name) {
+std::shared_ptr<ServerInventoryList> Inventory::operator[](std::string name) {
     if (lists.count(name)) return lists[name];
     else return nullptr;
 }

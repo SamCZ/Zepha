@@ -5,14 +5,14 @@
 #include <iostream>
 #include <algorithm>
 
-#include "InventoryList.h"
+#include "ServerInventoryList.h"
 
 #include "../../util/net/Packet.h"
 #include "../../util/net/Serializer.h"
 #include "../../server/conn/ClientList.h"
 #include "../../lua/api/class/LuaItemStack.h"
 
-InventoryList::InventoryList(DefinitionAtlas& defs, ClientList* list, const std::string& invName, const std::string& name, unsigned short size, unsigned short width) :
+ServerInventoryList::ServerInventoryList(DefinitionAtlas& defs, ClientList* list, const std::string& invName, const std::string& name, unsigned short size, unsigned short width) :
     defs(defs),
     name(name),
     width(width),
@@ -20,26 +20,26 @@ InventoryList::InventoryList(DefinitionAtlas& defs, ClientList* list, const std:
     invName(invName),
     itemstacks(size) {}
 
-void InventoryList::setLuaCallback(InventoryList::Callback type, sol::function cb) {
+void ServerInventoryList::setLuaCallback(ServerInventoryList::Callback type, sol::function cb) {
     luaCallbacks[static_cast<size_t>(type)] = cb;
 }
 
-sol::function InventoryList::getLuaCallback(InventoryList::Callback type) {
+sol::function ServerInventoryList::getLuaCallback(ServerInventoryList::Callback type) {
     return luaCallbacks[static_cast<size_t>(type)];
 }
 
-ItemStack InventoryList::getStack(unsigned short i) {
+ItemStack ServerInventoryList::getStack(unsigned short i) {
     return itemstacks[i];
 }
 
-void InventoryList::setStack(unsigned short i, const ItemStack &stack) {
+void ServerInventoryList::setStack(unsigned short i, const ItemStack &stack) {
     if (stack != getStack(i)) {
         itemstacks[i] = stack;
         setDirty();
     }
 }
 
-ItemStack InventoryList::placeStack(unsigned short i, const ItemStack &stack, bool playerInitiated) {
+ItemStack ServerInventoryList::placeStack(unsigned short i, const ItemStack &stack, bool playerInitiated) {
     auto otherStack = getStack(i);
 
     unsigned short allowedTake = otherStack.count;
@@ -104,7 +104,7 @@ ItemStack InventoryList::placeStack(unsigned short i, const ItemStack &stack, bo
     }
 }
 
-ItemStack InventoryList::splitStack(unsigned short i, bool playerInitiated) {
+ItemStack ServerInventoryList::splitStack(unsigned short i, bool playerInitiated) {
     auto stack = getStack(i);
 
     unsigned short allowedTake = stack.count;
@@ -122,7 +122,7 @@ ItemStack InventoryList::splitStack(unsigned short i, bool playerInitiated) {
     return {stack.id, takeCount};
 }
 
-ItemStack InventoryList::addStack(ItemStack stack, bool playerInitiated) {
+ItemStack ServerInventoryList::addStack(ItemStack stack, bool playerInitiated) {
     unsigned short maxStack = defs.fromId(stack.id).maxStackSize;
 
     unsigned short i = 0;
@@ -158,7 +158,7 @@ ItemStack InventoryList::addStack(ItemStack stack, bool playerInitiated) {
     return stack;
 }
 
-unsigned short InventoryList::stackFits(const ItemStack &stack) {
+unsigned short ServerInventoryList::stackFits(const ItemStack &stack) {
     unsigned short maxStack = defs.fromId(stack.id).maxStackSize;
 
     unsigned short i = 0;
@@ -183,7 +183,7 @@ unsigned short InventoryList::stackFits(const ItemStack &stack) {
     return fits;
 }
 
-ItemStack InventoryList::takeStack(ItemStack request, bool playerInitiated) {
+ItemStack ServerInventoryList::takeStack(ItemStack request, bool playerInitiated) {
     unsigned short i = 0;
     unsigned short to_remove = request.count;
 
@@ -208,7 +208,7 @@ ItemStack InventoryList::takeStack(ItemStack request, bool playerInitiated) {
     return request;
 }
 
-ItemStack InventoryList::removeStack(unsigned short ind, unsigned short count) {
+ItemStack ServerInventoryList::removeStack(unsigned short ind, unsigned short count) {
     auto stack = getStack(ind);
     if (count >= stack.count) {
         setStack(ind, {0, 0});
@@ -222,23 +222,23 @@ ItemStack InventoryList::removeStack(unsigned short ind, unsigned short count) {
     }
 }
 
-void InventoryList::setDirty() {
+void ServerInventoryList::setDirty() {
     dirty = true;
 }
 
-unsigned short InventoryList::getLength() {
+unsigned short ServerInventoryList::getLength() {
     return itemstacks.size();
 }
 
-unsigned short InventoryList::getWidth() {
+unsigned short ServerInventoryList::getWidth() {
     return width;
 }
 
-std::string InventoryList::getName() {
+std::string ServerInventoryList::getName() {
     return name;
 }
 
-bool InventoryList::addWatcher(unsigned int cid) {
+bool ServerInventoryList::addWatcher(unsigned int cid) {
     auto& client = clients->getClient(cid);
     if (!client) return false;
 
@@ -248,7 +248,7 @@ bool InventoryList::addWatcher(unsigned int cid) {
     sendTo(client);
 }
 
-bool InventoryList::removeWatcher(unsigned int cid) {
+bool ServerInventoryList::removeWatcher(unsigned int cid) {
     for (auto it = watchers.cbegin(); it != watchers.cend();) {
         if (*it == cid) {
             watchers.erase(it);
@@ -259,7 +259,7 @@ bool InventoryList::removeWatcher(unsigned int cid) {
     return false;
 }
 
-Packet InventoryList::createPacket() {
+Packet ServerInventoryList::createPacket() {
     Serializer s{};
     s.append<std::string>(invName)
      .append<std::string>(name)
@@ -274,13 +274,13 @@ Packet InventoryList::createPacket() {
     return s.packet(PacketType::INVENTORY, false);
 }
 
-void InventoryList::sendTo(std::shared_ptr<ServerClient> client) {
+void ServerInventoryList::sendTo(std::shared_ptr<ServerClient> client) {
     if (!client) return;
     auto p = createPacket();
     p.sendTo(client->peer, PacketChannel::INVENTORY);
 }
 
-void InventoryList::sendAll() {
+void ServerInventoryList::sendAll() {
     auto p = createPacket();
 
     for (auto it = watchers.cbegin(); it != watchers.cend();) {

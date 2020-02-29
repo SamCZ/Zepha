@@ -10,7 +10,7 @@
 #include "components/basic/GuiRect.h"
 #include "components/basic/GuiContainer.h"
 #include "../graph/drawable/DrawableGroup.h"
-#include "../inventory/InventoryList.h"
+#include "../inventory/ServerInventoryList.h"
 #include "../entity/Entity.h"
 #include "../../util/Util.h"
 #include "components/compound/GuiInventoryList.h"

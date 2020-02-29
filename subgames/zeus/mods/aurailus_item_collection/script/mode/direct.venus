@@ -5,6 +5,6 @@ if (zepha.server) {
         local yields = get_yield(pos)
         if (yields == nil) { return }
 
-        player.get_inventory():get_list("main"):add_stack({yields, 1})
+        player:get_inventory():get_list("main"):add_stack({yields, 1})
     })
 }

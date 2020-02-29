@@ -11,10 +11,10 @@
 namespace {
 #ifdef _WIN32
     const static char* EXECUTABLE_NAME = "zepha-venus-win.exe";
-#elif __APPLE__
-    const static char* EXECUTABLE_NAME = "zepha-venus-macos";
 #else
     const static char* EXECUTABLE_NAME = "zepha-venus-linux";
+    #define _popen popen
+    #define _pclose pclose
 #endif
 }
 

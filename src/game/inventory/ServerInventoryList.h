@@ -14,12 +14,12 @@ class ClientList;
 class ServerClient;
 class Packet;
 
-class InventoryList {
+class ServerInventoryList {
 public:
     enum class Callback { ALLOW_TAKE, ALLOW_PUT, ON_TAKE, ON_PUT };
 
-    InventoryList(DefinitionAtlas& defs, ClientList* list, const std::string& invName,
-            const std::string& name, unsigned short size, unsigned short width);
+    ServerInventoryList(DefinitionAtlas& defs, ClientList* list, const std::string& invName,
+                        const std::string& name, unsigned short size, unsigned short width);
 
     unsigned short getLength();
     unsigned short getWidth();

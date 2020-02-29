@@ -7,7 +7,7 @@
 #include <map>
 #include <string>
 #include <memory>
-#include "InventoryList.h"
+#include "ServerInventoryList.h"
 
 class ClientList;
 
@@ -18,12 +18,12 @@ public:
     void sendDirtyLists();
 
     void createList(std::string name, unsigned short length, unsigned short width);
-    std::shared_ptr<InventoryList> operator[](std::string name);
+    std::shared_ptr<ServerInventoryList> operator[](std::string name);
     void removeList(std::string name);
 
     DefinitionAtlas& defs;
     std::string name;
 private:
     ClientList* clients;
-    std::map<std::string, std::shared_ptr<InventoryList>> lists;
+    std::map<std::string, std::shared_ptr<ServerInventoryList>> lists;
 };

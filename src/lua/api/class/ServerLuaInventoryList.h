@@ -4,15 +4,15 @@
 
 #pragma once
 
-#include "../../../game/inventory/InventoryList.h"
+#include "../../../game/inventory/ServerInventoryList.h"
 #include "LuaItemStack.h"
 
 class ServerLuaInventoryList {
 public:
-    ServerLuaInventoryList(InventoryList& list) :
+    ServerLuaInventoryList(ServerInventoryList& list) :
         list(list) {}
 
-    InventoryList& list;
+    ServerInventoryList& list;
 
     int get_length();
     int get_width();
@@ -39,6 +39,6 @@ public:
 
     LuaItemStack remove_stack(unsigned short ind, unsigned short count);
 
-    void set_callback(InventoryList::Callback t, sol::function fun);
-    sol::function get_callback(InventoryList::Callback t);
+    void set_callback(ServerInventoryList::Callback t, sol::function fun);
+    sol::function get_callback(ServerInventoryList::Callback t);
 };

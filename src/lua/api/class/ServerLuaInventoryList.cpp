@@ -68,10 +68,10 @@ LuaItemStack ServerLuaInventoryList::remove_stack(unsigned short ind, unsigned s
     return LuaItemStack(list.removeStack(ind - 1, count), list.defs);
 }
 
-void ServerLuaInventoryList::set_callback(InventoryList::Callback t, sol::function fun) {
+void ServerLuaInventoryList::set_callback(ServerInventoryList::Callback t, sol::function fun) {
     list.setLuaCallback(t, fun);
 }
 
-sol::function ServerLuaInventoryList::get_callback(InventoryList::Callback t) {
+sol::function ServerLuaInventoryList::get_callback(ServerInventoryList::Callback t) {
     return list.getLuaCallback(t);
 }

@@ -15,7 +15,7 @@
 #include "components/basic/GuiGraph.h"
 #include "components/basic/GuiText.h"
 #include "components/basic/GuiContainer.h"
-#include "../inventory/InventoryList.h"
+#include "../inventory/ServerInventoryList.h"
 
 class DebugGui : public GuiContainer {
 public:

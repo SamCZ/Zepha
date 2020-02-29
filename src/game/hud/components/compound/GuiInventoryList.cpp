@@ -40,10 +40,10 @@ void GuiInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 inn
     this->scale = scale;
     this->padding = padding;
     this->innerPadding = innerPadding;
-    this->hitbox = glm::ivec2 {
+    this->hitbox = (list->getWidth() == 0 ? glm::ivec2 {} : glm::ivec2 {
         padding.x + list->getWidth() * (innerPadding.x*scale.x),
         padding.y + (list->getLength() / list->getWidth()) * (innerPadding.y*scale.y)
-    };
+    });
 
     drawContents();
     list->setGuiCallback(std::bind(&GuiInventoryList::drawContents, this));
@@ -94,7 +94,7 @@ void GuiInventoryList::hoverEvent(bool hovered, glm::ivec2 pos) {
 }
 
 void GuiInventoryList::leftClick(bool down, glm::ivec2 pos) {
-    if (!down) return;
+    if (!down || list->getWidth() == 0) return;
 
     pos += glm::ivec2(glm::vec2(this->padding.x, this->padding.y) * this->scale);
 
@@ -110,6 +110,8 @@ void GuiInventoryList::leftClick(bool down, glm::ivec2 pos) {
 }
 
 void GuiInventoryList::rightClick(bool down, glm::ivec2 pos) {
+    if (!down || list->getWidth() == 0) return;
+
     pos += glm::ivec2(glm::vec2(this->padding.x, this->padding.y) * this->scale);
 
     glm::ivec2 slot = pos / (glm::ivec2(this->scale) * this->innerPadding);
@@ -119,32 +121,32 @@ void GuiInventoryList::rightClick(bool down, glm::ivec2 pos) {
     unsigned short index = slot.x + slot.y * list->getWidth();
     if (index >= list->getLength()) return;
 
-    if (down) {
+    auto handStack = hand->getStack(0);
+    if (handStack.count == 0) {
+        hand->setStack(0, list->splitStack(index, true));
+    }
+    else {
         auto handStack = hand->getStack(0);
-        if (handStack.count == 0) {
-            hand->setStack(0, list->splitStack(index, true));
+        auto listStack = list->getStack(index);
+        if (listStack.id == 0 || listStack.id == handStack.id) {
+            auto overflow = list->placeStack(index, {handStack.id, 1}, true);
+            handStack.count -= 1;
+            if (handStack.count == 0) handStack.id = 0;
+            if (overflow.count != 0) handStack.count += overflow.count;
+            hand->setStack(0, handStack);
         }
         else {
-            auto handStack = hand->getStack(0);
-            auto listStack = list->getStack(index);
-            if (listStack.id == 0 || listStack.id == handStack.id) {
-                auto overflow = list->placeStack(index, {handStack.id, 1}, true);
-                handStack.count -= 1;
-                if (handStack.count == 0) handStack.id = 0;
-                if (overflow.count != 0) handStack.count += overflow.count;
-                hand->setStack(0, handStack);
-            }
-            else {
-                hand->setStack(0, list->placeStack(index, hand->getStack(0), true));
-            }
+            hand->setStack(0, list->placeStack(index, hand->getStack(0), true));
         }
     }
 }
 
 void GuiInventoryList::drawContents() {
+    if (list->getWidth() == 0) return;
+
     this->hitbox = glm::ivec2 {
-            padding.x + list->getWidth() * (innerPadding.x*scale.x),
-            padding.y + (list->getLength() / list->getWidth()) * (innerPadding.y*scale.y)
+        padding.x + list->getWidth() * (innerPadding.x*scale.x),
+        padding.y + (list->getLength() / list->getWidth()) * (innerPadding.y*scale.y)
     };
 
     empty();

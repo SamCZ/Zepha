@@ -9,7 +9,7 @@
 #include <unordered_map>
 
 #include "../../util/Vec.h"
-#include "../../game/inventory/InventoryList.h"
+#include "../../game/inventory/ServerInventoryList.h"
 #include "../../game/inventory/Inventory.h"
 
 class InventoryRefs;

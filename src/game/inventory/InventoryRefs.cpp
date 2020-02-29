@@ -4,7 +4,7 @@
 
 #include "InventoryRefs.h"
 
-#include "InventoryList.h"
+#include "ServerInventoryList.h"
 
 InventoryRefs::InventoryRefs(ServerDefinitionAtlas &defs, ClientList* clients) :
     defs(defs), clients(clients) {}
@@ -24,7 +24,7 @@ std::shared_ptr<Inventory> InventoryRefs::getInv(const std::string &inv) {
     return inventories[inv];
 }
 
-std::shared_ptr<InventoryList> InventoryRefs::getList(const std::string &inv, const std::string &list) {
+std::shared_ptr<ServerInventoryList> InventoryRefs::getList(const std::string &inv, const std::string &list) {
     if (!inventories.count(inv)) return nullptr;
     return inventories[inv]->operator[](list);
 }

@@ -46,8 +46,6 @@ public:
     DefinitionAtlas& defs;
 
 private:
-    bool initialized = false;
-
     void triggerCallback();
 
     std::vector<ItemStack> itemstacks {};

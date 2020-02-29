@@ -40,17 +40,17 @@ namespace ServerApi {
             "remove_stack", &ServerLuaInventoryList::remove_stack,
 
             "on_put", sol::property(
-                [](ServerLuaInventoryList l){ return l.get_callback(InventoryList::Callback::ON_PUT); },
-                [](ServerLuaInventoryList l, sol::function f){ l.set_callback(InventoryList::Callback::ON_PUT, f); }),
+                [](ServerLuaInventoryList l){ return l.get_callback(ServerInventoryList::Callback::ON_PUT); },
+                [](ServerLuaInventoryList l, sol::function f){ l.set_callback(ServerInventoryList::Callback::ON_PUT, f); }),
             "on_take", sol::property(
-                [](ServerLuaInventoryList l){ return l.get_callback(InventoryList::Callback::ON_TAKE); },
-                [](ServerLuaInventoryList l, sol::function f){ l.set_callback(InventoryList::Callback::ON_TAKE, f); }),
+                [](ServerLuaInventoryList l){ return l.get_callback(ServerInventoryList::Callback::ON_TAKE); },
+                [](ServerLuaInventoryList l, sol::function f){ l.set_callback(ServerInventoryList::Callback::ON_TAKE, f); }),
             "allow_put", sol::property(
-                [](ServerLuaInventoryList l){ return l.get_callback(InventoryList::Callback::ALLOW_PUT); },
-                [](ServerLuaInventoryList l, sol::function f){ l.set_callback(InventoryList::Callback::ALLOW_PUT, f); }),
+                [](ServerLuaInventoryList l){ return l.get_callback(ServerInventoryList::Callback::ALLOW_PUT); },
+                [](ServerLuaInventoryList l, sol::function f){ l.set_callback(ServerInventoryList::Callback::ALLOW_PUT, f); }),
             "allow_take", sol::property(
-                [](ServerLuaInventoryList l){ return l.get_callback(InventoryList::Callback::ALLOW_TAKE); },
-                [](ServerLuaInventoryList l, sol::function f){ l.set_callback(InventoryList::Callback::ALLOW_TAKE, f); })
+                [](ServerLuaInventoryList l){ return l.get_callback(ServerInventoryList::Callback::ALLOW_TAKE); },
+                [](ServerLuaInventoryList l, sol::function f){ l.set_callback(ServerInventoryList::Callback::ALLOW_TAKE, f); })
         );
     }
 }

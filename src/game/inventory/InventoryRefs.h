@@ -7,7 +7,7 @@
 #include "../../def/ServerDefinitionAtlas.h"
 #include "Inventory.h"
 
-class InventoryList;
+class ServerInventoryList;
 
 class InventoryRefs {
 public:
@@ -17,7 +17,7 @@ public:
 
     std::shared_ptr<Inventory> createInv(const std::string& inv);
     std::shared_ptr<Inventory> getInv(const std::string& inv);
-    std::shared_ptr<InventoryList> getList(const std::string& inv, const std::string& list);
+    std::shared_ptr<ServerInventoryList> getList(const std::string& inv, const std::string& list);
 
     bool addWatcher(const std::string& inv, const std::string& list, unsigned int cid);
     bool removeWatcher(const std::string& inv, const std::string& list, unsigned int cid);
