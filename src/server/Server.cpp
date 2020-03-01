@@ -155,7 +155,7 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
             }
             break;
         }
-        case PacketType::WATCH_INV: {
+        case PacketType::INV_WATCH: {
             Deserializer d(p.data);
 
             std::string source = d.read<std::string>();
@@ -173,7 +173,7 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
 
             break;
         }
-        case PacketType::UNWATCH_INV: {
+        case PacketType::INV_UNWATCH: {
             Deserializer d(p.data);
 
             std::string source = d.read<std::string>();
@@ -188,6 +188,23 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
                     .packet(PacketType::INV_INVALID).sendTo(client.peer, PacketChannel::INVENTORY);
                 break;
             }
+
+            break;
+        }
+        case PacketType::INV_INTERACT: {
+            Deserializer d(p.data);
+
+            unsigned short type = d.read<unsigned short>();
+
+            std::string source = d.read<std::string>();
+            std::string list = d.read<std::string>();
+            unsigned short ind = d.read<unsigned short>();
+
+            // TODO: When inventory saving / loading is implemented there will need to be a cross-save identifier.
+            if (source == "current_player") source = "player:" + std::to_string(client.cid);
+
+            if (type == 0) refs.primaryInteract(source, list, ind, client.cid);
+            else refs.secondaryInteract(source, list, ind, client.cid);
 
             break;
         }

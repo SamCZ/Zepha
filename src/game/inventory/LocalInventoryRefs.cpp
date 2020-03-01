@@ -6,15 +6,15 @@
 
 #include "../scene/net/ClientNetworkInterpreter.h"
 
-LocalInventoryRefs::LocalInventoryRefs(LocalDefinitionAtlas& defs) :
-    defs(defs) {
+LocalInventoryRefs::LocalInventoryRefs(LocalDefinitionAtlas& defs, ClientNetworkInterpreter& net) : defs(defs) {
+    namespace ph = std::placeholders;
 
-    inventories.insert({"current_player", std::make_shared<LocalInventory>(defs, "current_player")});
+    this->watchFn = std::bind(&ClientNetworkInterpreter::watchInv, &net, ph::_1, ph::_2);
+    this->primaryCallback = std::bind(&ClientNetworkInterpreter::primaryInteract, &net, ph::_1, ph::_2, ph::_3);
+    this->secondaryCallback = std::bind(&ClientNetworkInterpreter::secondaryInteract, &net, ph::_1, ph::_2, ph::_3);
+
+    inventories.insert({"current_player", std::make_shared<LocalInventory>(defs, "current_player", primaryCallback, secondaryCallback)});
     inventories["current_player"]->createList("hand", 1, 1, true);
-}
-
-void LocalInventoryRefs::setWatchFunction(std::function<void(std::string, std::string)> watchFn) {
-    this->watchFn = watchFn;
 }
 
 void LocalInventoryRefs::update(double delta, ClientNetworkInterpreter& net) {

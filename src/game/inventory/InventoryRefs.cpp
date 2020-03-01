@@ -44,3 +44,13 @@ bool InventoryRefs::removeWatcher(const std::string &inv, const std::string &lis
     inventories[inv]->operator[](list)->removeWatcher(cid);
     return true;
 }
+
+void InventoryRefs::primaryInteract(const std::string &inv, const std::string &list, unsigned short ind, unsigned int cid) {
+    std::cout << "primary interaction" << std::endl;
+    inventories[inv]->operator[](list)->primaryInteract(*inventories["player:" + std::to_string(cid)]->operator[]("hand"), ind);
+}
+
+void InventoryRefs::secondaryInteract(const std::string &inv, const std::string &list, unsigned short ind, unsigned int cid) {
+    std::cout << "secondary interaction" << std::endl;
+    inventories[inv]->operator[](list)->secondaryInteract(*inventories["player:" + std::to_string(cid)]->operator[]("hand"), ind);
+}

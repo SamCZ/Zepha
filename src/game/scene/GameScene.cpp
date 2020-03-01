@@ -5,9 +5,9 @@
 #include "GameScene.h"
 
 GameScene::GameScene(ClientState& state) : Scene(state),
-    refs(game.defs),
     game(state.defs),
     world(game, &net),
+    refs(game.defs, net),
     net(state.connection, game, player),
     player(world, game, state.renderer, refs),
     debugGui(state.renderer.window.getSize(), game) {
@@ -20,8 +20,6 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     world.init(&player);
     net.init(&world, std::bind(&LocalInventoryRefs::packetReceived, refs, ph::_1));
     game.init(world, player);
-
-    refs.setWatchFunction(std::bind(&ClientNetworkInterpreter::watchInv, &net, ph::_1, ph::_2));
 
     state.renderer.window.addResizeCallback("gamescene", std::bind(&DebugGui::bufferResized, debugGui, ph::_1));
     state.renderer.setClearColor(148, 194, 240);

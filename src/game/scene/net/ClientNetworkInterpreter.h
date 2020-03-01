@@ -20,6 +20,9 @@ public:
     void watchInv(const std::string& inv, const std::string& list);
     void unwatchInv(const std::string& inv, const std::string& list);
 
+    void primaryInteract(const std::string& inv, const std::string& list, unsigned short ind);
+    void secondaryInteract(const std::string& inv, const std::string& list, unsigned short ind);
+
     int recvPackets = 0;
     int serverSideChunkGens = 0;
 private:

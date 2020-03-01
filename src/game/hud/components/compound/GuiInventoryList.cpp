@@ -90,7 +90,7 @@ void GuiInventoryList::leftClick(bool down, glm::ivec2 pos) {
 
     if (index < 0 || index >= list->getLength()) return;
 
-    hand->setStack(0, list->placeStack(index, hand->getStack(0), true));
+    list->primaryInteract(*hand, index);
 }
 
 void GuiInventoryList::rightClick(bool down, glm::ivec2 pos) {
@@ -105,24 +105,7 @@ void GuiInventoryList::rightClick(bool down, glm::ivec2 pos) {
     unsigned short index = slot.x + slot.y * list->getWidth();
     if (index >= list->getLength()) return;
 
-    auto handStack = hand->getStack(0);
-    if (handStack.count == 0) {
-        hand->setStack(0, list->splitStack(index, true));
-    }
-    else {
-        auto handStack = hand->getStack(0);
-        auto listStack = list->getStack(index);
-        if (listStack.id == 0 || listStack.id == handStack.id) {
-            auto overflow = list->placeStack(index, {handStack.id, 1}, true);
-            handStack.count -= 1;
-            if (handStack.count == 0) handStack.id = 0;
-            if (overflow.count != 0) handStack.count += overflow.count;
-            hand->setStack(0, handStack);
-        }
-        else {
-            hand->setStack(0, list->placeStack(index, hand->getStack(0), true));
-        }
-    }
+    list->secondaryInteract(*hand, index);
 }
 
 void GuiInventoryList::drawContents() {

@@ -56,7 +56,7 @@ Packet ServerInventoryList::createPacket() {
         s.append<unsigned int>(stack.id);
     }
 
-    return s.packet(PacketType::INVENTORY, false);
+    return s.packet(PacketType::INV_DATA, false);
 }
 
 void ServerInventoryList::sendTo(std::shared_ptr<ServerClient> client) {

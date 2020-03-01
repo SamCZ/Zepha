@@ -144,7 +144,7 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
             std::cout << Log::err << "Invalid inventory " << source << ":" << list << " was requested by client." << Log::endl;
             exit(1);
         }
-        case PacketType::INVENTORY: {
+        case PacketType::INV_DATA: {
             onInvPacket(std::move(p));
             break;
         }
@@ -158,10 +158,20 @@ void ClientNetworkInterpreter::setBlock(glm::ivec3 pos, unsigned int block) {
 
 void ClientNetworkInterpreter::watchInv(const std::string& inv, const std::string& list) {
     Serializer().append(inv).append(list)
-            .packet(PacketType::WATCH_INV).sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+            .packet(PacketType::INV_WATCH).sendTo(connection.getPeer(), PacketChannel::INVENTORY);
 }
 
 void ClientNetworkInterpreter::unwatchInv(const std::string& inv, const std::string& list) {
     Serializer().append(inv).append(list)
-            .packet(PacketType::UNWATCH_INV).sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+            .packet(PacketType::INV_UNWATCH).sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+}
+
+void ClientNetworkInterpreter::primaryInteract(const std::string &inv, const std::string &list, unsigned short ind) {
+    Serializer().append<unsigned short>(0).append(inv).append(list).append<unsigned short>(ind)
+            .packet(PacketType::INV_INTERACT).sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+}
+
+void ClientNetworkInterpreter::secondaryInteract(const std::string &inv, const std::string &list, unsigned short ind) {
+    Serializer().append<unsigned short>(1).append(inv).append(list).append<unsigned short>(ind)
+            .packet(PacketType::INV_INTERACT).sendTo(connection.getPeer(), PacketChannel::INVENTORY);
 }

@@ -26,9 +26,10 @@ enum class PacketType {
     ENTITY_REMOVED,
 
     // Inventory
-    WATCH_INV,
-    UNWATCH_INV,
+    INV_WATCH,
+    INV_UNWATCH,
     INV_INVALID,
-    INVENTORY
+    INV_DATA,
+    INV_INTERACT
 };
 

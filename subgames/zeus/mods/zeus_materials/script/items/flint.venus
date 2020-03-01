@@ -4,3 +4,10 @@ zepha.register_item("zeus:materials:flint", {
         "zeus:materials:flint",
     }
 })
+
+crafting.register_recipe({
+    output = "zeus:materials:flint",
+    recipe = {
+        {"zeus:default:cobblestone"},
+    }
+})

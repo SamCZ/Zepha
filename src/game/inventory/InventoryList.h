@@ -39,6 +39,11 @@ public:
     // Removes up to count items from ind, returns the items removed
     virtual ItemStack removeStack(unsigned short ind, unsigned short count);
 
+    // Primary interaction - The action performed when left clicking an inventory slot.
+    virtual void primaryInteract(InventoryList& hand, unsigned short ind);
+    // Secondary interaction - The action performed when right clicking an inventory slot.
+    virtual void secondaryInteract(InventoryList& hand, unsigned short ind);
+
     ItemStack getStack(unsigned short i) const;
     void setStack(unsigned short i, const ItemStack& stack);
 

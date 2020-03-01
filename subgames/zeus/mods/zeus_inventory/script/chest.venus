@@ -17,7 +17,7 @@ zepha.register_keybind("zeus:inventory:open_inventory", {
                             position: 0px 50px
                             size: 218px 100px
                             padding: 20px 10px 8px 10px
-                            background: asset(zeus:inventory:inventory)
+                            background: zeus:inventory:inventory
 
                             inventory
                                 source: current_player
@@ -31,7 +31,7 @@ zepha.register_keybind("zeus:inventory:open_inventory", {
                             position: 0px -48px
                             size: 218px 100px
                             padding: 20px 10px 8px 10px
-                            background: asset(zeus:inventory:chest)
+                            background: zeus:inventory:chest
 
                             inventory
                                 source: current_player

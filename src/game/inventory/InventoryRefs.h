@@ -21,6 +21,9 @@ public:
 
     bool addWatcher(const std::string& inv, const std::string& list, unsigned int cid);
     bool removeWatcher(const std::string& inv, const std::string& list, unsigned int cid);
+
+    void primaryInteract(const std::string& inv, const std::string& list, unsigned short ind, unsigned int cid);
+    void secondaryInteract(const std::string& inv, const std::string& list, unsigned short ind, unsigned int cid);
 private:
     std::unordered_map<std::string, std::shared_ptr<Inventory>> inventories {};
 

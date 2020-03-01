@@ -203,6 +203,30 @@ ItemStack InventoryList::removeStack(unsigned short ind, unsigned short count) {
     }
 }
 
+void InventoryList::primaryInteract(InventoryList& hand, unsigned short ind) {
+    hand.setStack(0, placeStack(ind, hand.getStack(0), true));
+}
+
+void InventoryList::secondaryInteract(InventoryList &hand, unsigned short ind) {
+    auto handStack = hand.getStack(0);
+    if (handStack.count == 0) {
+        hand.setStack(0, splitStack(ind, true));
+    }
+    else {
+        auto listStack = getStack(ind);
+        if (listStack.id == 0 || listStack.id == handStack.id) {
+            auto overflow = placeStack(ind, {handStack.id, 1}, true);
+            handStack.count -= 1;
+            if (handStack.count == 0) handStack.id = 0;
+            if (overflow.count != 0) handStack.count += overflow.count;
+            hand.setStack(0, handStack);
+        }
+        else {
+            hand.setStack(0, placeStack(ind, hand.getStack(0), true));
+        }
+    }
+}
+
 ItemStack InventoryList::getStack(unsigned short i) const {
     return itemstacks[i];
 }

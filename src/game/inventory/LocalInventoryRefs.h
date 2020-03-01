@@ -13,9 +13,9 @@
 
 class LocalInventoryRefs {
 public:
-    LocalInventoryRefs(LocalDefinitionAtlas& defs);
+    typedef std::function<void(const std::string& inv, const std::string& list, unsigned short)> inv_callback_fn;
 
-    void setWatchFunction(std::function<void(std::string, std::string)> watchFn);
+    LocalInventoryRefs(LocalDefinitionAtlas& defs, ClientNetworkInterpreter& net);
 
     void update(double delta, ClientNetworkInterpreter& net);
     void packetReceived(std::unique_ptr<Packet> p);
@@ -27,6 +27,8 @@ private:
     std::unordered_map<std::string, std::shared_ptr<LocalInventory>> inventories {};
 
     std::function<void(std::string, std::string)> watchFn = nullptr;
+    inv_callback_fn primaryCallback = nullptr;
+    inv_callback_fn secondaryCallback = nullptr;
 
     LocalDefinitionAtlas& defs;
 

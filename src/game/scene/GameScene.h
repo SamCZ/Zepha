@@ -20,8 +20,8 @@ public:
 public:
     ClientGame& game;
 
-    LocalInventoryRefs refs;
     ClientNetworkInterpreter net;
+    LocalInventoryRefs refs;
     LocalWorld world;
     Player player;
 
