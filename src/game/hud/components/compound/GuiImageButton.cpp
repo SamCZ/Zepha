@@ -34,7 +34,7 @@ std::shared_ptr<GuiImageButton> GuiImageButton::fromSerialized(SerialGui::Elem s
 
     auto button = std::make_shared<GuiImageButton>(s.key);
     button->create(size, padding, game.textures[background], game.textures[background_hover]);
-    button->setHideOverflow(hideOverflow);
+    button->setOverflows(!hideOverflow);
     button->setPos(pos);
 
     if (content != "") {
@@ -55,14 +55,17 @@ void GuiImageButton::create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<
     this->hoverTexture = hoverTexture;
     GuiRect::create(scale, padding, texture);
 
-    setHoverCallback(nullptr);
+    setCallback(GuiComponent::CallbackType::HOVER, nullptr);
 }
 
-void GuiImageButton::setHoverCallback(const callback& hoverCallback) {
-    GuiComponent::setHoverCallback([&, hoverCallback](bool nowHovered, glm::ivec2 pos) {
-        if (hoverCallback) hoverCallback(nowHovered, pos);
-        if (nowHovered != hovered) this->rebuild(nowHovered);
-    });
+void GuiImageButton::setCallback(GuiComponent::CallbackType type, const GuiComponent::callback &cb) {
+    if (type == CallbackType::HOVER) {
+        GuiComponent::setCallback(type, [&, cb](bool nowHovered, glm::ivec2 pos) {
+            if (cb) cb(nowHovered, pos);
+            if (nowHovered != hovered) this->rebuild(nowHovered);
+        });
+    }
+    else GuiComponent::setCallback(type, cb);
 }
 
 void GuiImageButton::rebuild(bool hover) {

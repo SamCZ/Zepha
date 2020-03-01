@@ -50,7 +50,7 @@ MainMenuScene::MainMenuScene(ClientState& state) :
         closeButton->create({16 * GS, 16 * GS}, {},
                             state.defs.textures["crop(0, 0, 16, 16, menu_flag_quit)"],
                             state.defs.textures["crop(16, 0, 16, 16, menu_flag_quit)"]);
-        closeButton->setLeftClickCallback([](bool down, glm::ivec2) { if (down) exit(0); });
+        closeButton->setCallback(GuiComponent::CallbackType::PRIMARY, [](bool down, glm::ivec2) { if (down) exit(0); });
         navigationBar->get<GuiContainer>("navigationBarIcons")->add(closeButton);
 
         auto serversButton = std::make_shared<GuiImageButton>("serversButton");
@@ -65,7 +65,7 @@ MainMenuScene::MainMenuScene(ClientState& state) :
                               state.defs.textures["crop(0, 0, 16, 16, menu_flag_content)"],
                               state.defs.textures["crop(16, 0, 16, 16, menu_flag_content)"]);
         contentButton->setPos({GS + GS * 18, GS});
-        contentButton->setLeftClickCallback([&](bool down, glm::ivec2) { if (down) state.desiredState = "connect"; });
+        contentButton->setCallback(GuiComponent::CallbackType::PRIMARY, [&](bool down, glm::ivec2) { if (down) state.desiredState = "connect"; });
         navigationBarIcons->add(contentButton);
 
         auto divider = std::make_shared<GuiRect>("divider");
@@ -82,7 +82,7 @@ MainMenuScene::MainMenuScene(ClientState& state) :
                            state.defs.textures["crop(0, 0, 16, 16, " + subgame.iconRef->name + ")"],
                            state.defs.textures["crop(16, 0, 16, 16, " + subgame.iconRef->name + ")"]);
             button->setPos({GS * 7 + GS * 18 * (i + 2), GS});
-            button->setLeftClickCallback([&, i](bool down, glm::ivec2) {
+            button->setCallback(GuiComponent::CallbackType::PRIMARY, [&, i](bool down, glm::ivec2) {
                 if (down) {
                     selectedSubgame = &subgame;
                     sandbox.load(*selectedSubgame);

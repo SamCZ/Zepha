@@ -25,9 +25,7 @@ public:
     void create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding,
             std::shared_ptr<LocalInventoryList>  list, std::shared_ptr<LocalInventoryList>  hand, ClientGame& defs);
 
-    void setHoverCallback(const callback& hoverCallback) override;
-    void setLeftClickCallback(const callback& leftClickCallback) override;
-    void setRightClickCallback(const callback& rightClickCallback) override;
+    void setCallback(CallbackType type, const callback& cb) override;
 
     void hoverEvent(bool hovered, glm::ivec2 pos);
     void leftClick(bool down, glm::ivec2 pos);

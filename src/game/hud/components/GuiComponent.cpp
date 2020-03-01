@@ -8,54 +8,113 @@
 GuiComponent::GuiComponent(const std::string& key) :
     key(key) {}
 
-void GuiComponent::setScale(glm::vec2 scale) {
-    this->scale = scale;
-    entity.setScale({scale.x, scale.y, scale.x});
-}
-
-glm::vec2 GuiComponent::getScale() {
-    return scale;
-}
-
-void GuiComponent::setPadding(glm::vec4 padding) {
-    this->padding = padding;
-}
-
-glm::vec4 GuiComponent::getPadding() {
-    return padding;
-}
-
-void GuiComponent::setPos(glm::ivec2 pos) {
-    this->pos = pos;
-    if (parent != nullptr) {
-        glm::vec3 parentPos = parent->entity.getPos();
-        pos += glm::vec2 {parentPos.x, parentPos.y};
-        pos += glm::vec2 {parent->getPadding().w, parent->getPadding().x};
-    }
-    entity.setPos({pos.x, pos.y, depth});
+void GuiComponent::update(double delta) {
     for (const auto& child : children) {
-        child->updatePos();
+        child->update(delta);
     }
+}
+
+const std::string& GuiComponent::getKey() {
+    return key;
 }
 
 glm::ivec2 GuiComponent::getPos() {
     return pos;
 }
 
-void GuiComponent::setHideOverflow(bool hideOverflow) {
-    this->hideOverflow = hideOverflow;
+void GuiComponent::setPos(glm::ivec2 pos) {
+    this->pos = pos;
+
+    if (parent != nullptr) {
+        glm::vec3 parentPos = parent->entity.getPos();
+        pos += glm::vec2 {parentPos.x, parentPos.y};
+        pos += glm::vec2 {parent->getPadding().w, parent->getPadding().x};
+    }
+
+    entity.setPos({pos.x, pos.y, 0});
+
+    for (const auto& child : children) {
+        child->updatePos();
+    }
 }
 
-void GuiComponent::add(std::shared_ptr<GuiComponent> component) {
-    component->parent = this;
-    component->updatePos();
-    children.push_back(std::move(component));
+glm::vec2 GuiComponent::getScale() {
+    return scale;
+}
+
+void GuiComponent::setScale(glm::vec2 scale) {
+    this->scale = scale;
+    entity.setScale({scale.x, scale.y, scale.x});
+}
+
+glm::vec4 GuiComponent::getPadding() {
+    return padding;
+}
+
+void GuiComponent::setPadding(glm::vec4 padding) {
+    this->padding = padding;
+}
+
+void GuiComponent::setOverflows(bool overflows) {
+    this->overflows = overflows;
+}
+
+void GuiComponent::setVisible(bool visible) {
+    Drawable::setVisible(visible);
+    entity.setVisible(visible);
+    for (const auto& child : children) {
+        child->setVisible(visible);
+    }
+}
+
+void GuiComponent::setCallback(GuiComponent::CallbackType type, const callback& cb) {
+    callbacks[static_cast<unsigned int>(type)] = cb;
+}
+
+bool GuiComponent::mouseActivity(glm::ivec2 pos) {
+    bool isHovering = false;
+    for (auto& child : children) {
+        glm::ivec2 cp = pos - child->getPos() - glm::ivec2(child->getPadding().y, child->getPadding().x);
+        if (child->mouseActivity(cp)) isHovering = true;
+    }
+
+    auto& callback = callbacks[static_cast<unsigned int>(CallbackType::HOVER)];
+
+    if (pos.x >= 0 && pos.y >= 0 && pos.x <= hitbox.x && pos.y <= hitbox.y) {
+        if (callback) {
+            callback(true, pos);
+            hovered = true;
+            return true;
+        }
+        return isHovering;
+    }
+    else {
+        if (callback) {
+            callback(false, pos);
+            hovered = false;
+        }
+    }
+    return isHovering;
+}
+
+void GuiComponent::leftClickEvent(bool state, glm::ivec2 pos) {
+    clickEvent(true, state, pos);
+}
+
+void GuiComponent::rightClickEvent(bool state, glm::ivec2 pos) {
+    clickEvent(false, state, pos);
 }
 
 void GuiComponent::insert(unsigned int index, std::shared_ptr<GuiComponent> component) {
     component->parent = this;
     component->updatePos();
     children.insert(std::next(children.begin(), index), std::move(component));
+}
+
+void GuiComponent::add(std::shared_ptr<GuiComponent> component) {
+    component->parent = this;
+    component->updatePos();
+    children.push_back(std::move(component));
 }
 
 void GuiComponent::remove(const std::string& key) {
@@ -75,19 +134,27 @@ void GuiComponent::empty() {
 
 void GuiComponent::draw(Renderer& renderer) {
     entity.draw(renderer);
+
     for (const auto& child : children) {
-        renderer.setClipBounds(hideOverflow ? glm::vec4 {entity.getPos().x, entity.getPos().y,
-            entity.getPos().x + scale.x, entity.getPos().y + scale.y} : glm::vec4 {});
+        renderer.setClipBounds(overflows ? glm::vec4 {} : glm::vec4 {entity.getPos().x, entity.getPos().y,
+            entity.getPos().x + scale.x, entity.getPos().y + scale.y});
         child->draw(renderer);
     }
 }
 
-void GuiComponent::setVisible(bool visible) {
-    Drawable::setVisible(visible);
-    entity.setVisible(visible);
-    for (const auto& child : children) {
-        child->setVisible(visible);
+bool GuiComponent::clickEvent(bool left, bool state, glm::ivec2 pos) {
+    for (auto& child : children) {
+        glm::ivec2 cp = pos - child->getPos() - glm::ivec2(child->getPadding().y, child->getPadding().x);
+        if (child->clickEvent(left, state, cp)) return true;
     }
+
+    auto& callback = callbacks[static_cast<unsigned int>(left ? CallbackType::PRIMARY : CallbackType::SECONDARY)];
+
+    if (pos.x >= 0 && pos.y >= 0 && pos.x <= hitbox.x && pos.y <= hitbox.y && callback) {
+        callback(state, pos);
+        return true;
+    }
+    return false;
 }
 
 void GuiComponent::updatePos() {
@@ -97,78 +164,8 @@ void GuiComponent::updatePos() {
         realPos += glm::vec2 {parentPos.x, parentPos.y};
         realPos += glm::vec2 {parent->getPadding().w, parent->getPadding().x};
     }
-    entity.setPos({realPos.x, realPos.y, depth});
+    entity.setPos({realPos.x, realPos.y, 0});
     for (const auto& child : children) {
         child->updatePos();
     }
-}
-
-bool GuiComponent::mouseActivity(glm::ivec2 pos) {
-    bool isHovering = false;
-    for (auto child = children.rbegin(); child != children.rend(); ++child) {
-        if ((*child)->mouseActivity(pos - (*child)->getPos() - glm::ivec2((*child)->getPadding().y, (*child)->getPadding().x))) isHovering = true;
-    }
-    if (pos.x >= 0 && pos.y >= 0 && pos.x <= hitbox.x && pos.y <= hitbox.y) {
-        if (cbHover) {
-            cbHover(true, pos);
-            hovered = true;
-            return true;
-        }
-        return isHovering;
-    }
-    else {
-        if (cbHover) {
-            cbHover(false, pos);
-            hovered = false;
-        }
-    }
-    return isHovering;
-}
-
-void GuiComponent::update(double delta) {
-    for (const auto& child : children) {
-        child->update(delta);
-    }
-}
-
-void GuiComponent::leftClickEvent(bool state, glm::ivec2 pos) {
-    clickEvent(true, state, pos);
-}
-
-void GuiComponent::rightClickEvent(bool state, glm::ivec2 pos) {
-    clickEvent(false, state, pos);
-}
-
-void GuiComponent::setHoverCallback(const callback& hoverCallback) {
-    cbHover = hoverCallback;
-}
-
-void GuiComponent::setLeftClickCallback(const callback& leftClickCallback) {
-    cbLeftClick = leftClickCallback;
-}
-
-void GuiComponent::setRightClickCallback(const callback& rightClickCallback) {
-    cbRightClick = rightClickCallback;
-}
-
-void GuiComponent::setCallbacks(const callback &left, const callback &right, const callback &hover) {
-    setLeftClickCallback(left);
-    setRightClickCallback(right);
-    setHoverCallback(hover);
-}
-
-const std::string &GuiComponent::getKey() {
-    return key;
-}
-
-bool GuiComponent::clickEvent(bool left, bool state, glm::ivec2 pos) {
-    for (auto child = children.rbegin(); child != children.rend(); ++child) {
-        glm::ivec2 cp = pos - (*child)->getPos() - glm::ivec2((*child)->getPadding().y, (*child)->getPadding().x);
-        if ((*child)->clickEvent(left, state, cp)) return true;
-    }
-    if (pos.x >= 0 && pos.y >= 0 && pos.x <= hitbox.x && pos.y <= hitbox.y && (left ? cbLeftClick : cbRightClick)) {
-        (left ? cbLeftClick : cbRightClick)(state, pos);
-        return true;
-    }
-    return false;
 }

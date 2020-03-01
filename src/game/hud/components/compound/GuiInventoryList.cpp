@@ -49,31 +49,15 @@ void GuiInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 inn
     list->setGuiCallback(std::bind(&GuiInventoryList::drawContents, this));
 
     hoverRect->create({}, {}, {1, 1, 1, 0.1});
-
-    setCallbacks(
-            [=](bool down, glm::ivec2 pos) { this->leftClick(down, pos); },
-            nullptr,
-            [=](bool hovered, glm::ivec2 pos){this->hoverEvent(hovered, pos);});
 }
 
-void GuiInventoryList::setHoverCallback(const callback& hoverCallback) {
-    GuiComponent::setHoverCallback([&, hoverCallback](bool hovered, glm::ivec2 pos) {
-        if (hoverCallback) hoverCallback(hovered, pos);
-        this->hoverEvent(hovered, pos);
-    });
-}
+void GuiInventoryList::setCallback(CallbackType type, const callback& cb) {
+    GuiComponent::setCallback(type, [&, cb, type](bool down, glm::ivec2 pos) {
+        if (cb) cb(down, pos);
 
-void GuiInventoryList::setLeftClickCallback(const callback& leftClickCallback) {
-    GuiComponent::setLeftClickCallback([&, leftClickCallback](bool down, glm::ivec2 pos) {
-        if (leftClickCallback) leftClickCallback(down, pos);
-        this->leftClick(down, pos);
-    });
-}
-
-void GuiInventoryList::setRightClickCallback(const callback& rightClickCallback) {
-    GuiComponent::setRightClickCallback([&, rightClickCallback](bool down, glm::ivec2 pos) {
-        if (rightClickCallback) rightClickCallback(down, pos);
-        this->rightClick(down, pos);
+        if      (type == GuiComponent::CallbackType::PRIMARY  ) this->leftClick (down, pos);
+        else if (type == GuiComponent::CallbackType::SECONDARY) this->rightClick(down, pos);
+        else if (type == GuiComponent::CallbackType::HOVER    ) this->hoverEvent(down, pos);
     });
 }
 

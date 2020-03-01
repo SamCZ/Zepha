@@ -156,7 +156,11 @@ std::shared_ptr<GuiComponent> GuiBuilder::createComponent(SerialGui::Elem& data,
             break;
     }
 
-    if (c != nullptr) c->setCallbacks(cbLeftClick, cbRightClick, cbHover);
+    if (c != nullptr) {
+        c->setCallback(GuiComponent::CallbackType::PRIMARY, cbLeftClick);
+        c->setCallback(GuiComponent::CallbackType::SECONDARY, cbRightClick);
+        c->setCallback(GuiComponent::CallbackType::HOVER, cbHover);
+    }
     return c;
 }
 
