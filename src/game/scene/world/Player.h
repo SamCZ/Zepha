@@ -67,6 +67,7 @@ private:
 
     GameGui gameGui;
     Entity handModel;
+    Entity handItemModel;
     WireframeEntity wireframe;
 
     float yaw = 0;

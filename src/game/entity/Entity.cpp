@@ -129,15 +129,21 @@ glm::mat4 Entity::getModelMatrix() {
     glm::mat4 model = glm::mat4(1.0);
 
     model = glm::translate(model, visualPosition + visualVisualOffset);
-
-    model = glm::rotate(model, glm::radians(visualRotation.x), {1, 0, 0});
-    model = glm::rotate(model, glm::radians(visualRotation.y), {0, 1, 0});
-    model = glm::rotate(model, glm::radians(visualRotation.z), {0, 0, 1});
-
+    model = model * getRotationMatrix();
     model = glm::scale(model, visualScale);
 
     return model;
 }
+
+glm::mat4 Entity::getRotationMatrix() {
+    glm::mat4 parentMatrix = (parent != nullptr ? parent->getRotationMatrix() : glm::mat4(1.0f));
+    glm::mat4 rotMatrix = glm::mat4(1.0f);
+    rotMatrix = glm::rotate(rotMatrix, glm::radians(visualRotation.x), {1, 0, 0});
+    rotMatrix = glm::rotate(rotMatrix, glm::radians(visualRotation.y), {0, 1, 0});
+    rotMatrix = glm::rotate(rotMatrix, glm::radians(visualRotation.z), {0, 0, 1});
+    return parentMatrix * rotMatrix;
+}
+
 
 void Entity::cleanup() {
     model = nullptr;

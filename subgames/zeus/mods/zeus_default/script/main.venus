@@ -3,6 +3,7 @@ runfile(_PATH .. "entity/_index")
 
 local blockTypes = {
     "@aurailus:tnt:tnt",
+    "@aurailus:basictools:flint_pickaxe",
     "zeus:default:grass_slab",
     "zeus:kinetic:axle_0",
     "zeus:default:stone",

@@ -5,9 +5,10 @@
 #pragma once
 
 #include <vector>
+
 #include "../ItemDef.h"
+
 #include "../texture/AtlasRef.h"
-#include "../../game/entity/Model.h"
 
 class CraftItemDef : public ItemDef {
 public:
@@ -22,6 +23,4 @@ public:
 
     std::vector<std::string> textures {};
     std::vector<std::shared_ptr<AtlasRef>> textureRefs {};
-
-    std::shared_ptr<Model> entityModel = std::make_shared<Model>();
 };

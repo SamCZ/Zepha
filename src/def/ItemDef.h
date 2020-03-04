@@ -6,6 +6,8 @@
 
 #include <string>
 
+#include "../game/entity/Model.h"
+
 class ItemDef {
 public:
     enum class Type {
@@ -21,5 +23,7 @@ public:
     unsigned short maxStackSize;
 
     Type type = Type::INVALID;
+
+    std::shared_ptr<Model> entityModel = std::make_shared<Model>();
 };
 

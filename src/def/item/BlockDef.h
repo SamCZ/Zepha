@@ -6,11 +6,12 @@
 
 #include <string>
 #include <sol2/sol.hpp>
-#include "SelectionBox.h"
-#include "BlockModel.h"
+
 #include "../ItemDef.h"
+
+#include "BlockModel.h"
+#include "SelectionBox.h"
 #include "../../lua/Callback.h"
-#include "../../game/entity/Model.h"
 
 class BlockDef : public ItemDef {
 public:
@@ -31,7 +32,6 @@ public:
 
     std::vector<SelectionBox> sBoxes;
     std::vector<SelectionBox> cBoxes;
-    std::shared_ptr<Model> entityModel {};
 
     std::unordered_map<Callback, sol::function, Util::EnumClassHash> callbacks {};
 };

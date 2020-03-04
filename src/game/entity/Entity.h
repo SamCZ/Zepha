@@ -57,8 +57,11 @@ public:
     ~Entity() override;
 
     AnimationState animState {};
+
+    Entity* parent = nullptr;
 protected:
     glm::mat4 getModelMatrix();
+    glm::mat4 getRotationMatrix();
 
     glm::vec3 position {};
     glm::vec3 visualPosition {};

@@ -17,8 +17,9 @@ Player::Player(LocalWorld& world, ClientGame& defs, Renderer& renderer, LocalInv
 
 void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {
     if (activeBlock == -1) {
-        activeBlock = defs.defs.blockFromStr("zeus:default:stone").index;
-        handModel.setModel(defs.defs.blockFromId(activeBlock).entityModel);
+        activeBlock = defs.defs.fromStr("zeus:default:stone").index;
+        handItemModel.setModel(defs.defs.fromId(activeBlock).entityModel);
+        handItemModel.parent = &handModel;
     }
 
     gameGui.update(delta);
@@ -34,6 +35,7 @@ void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {
 }
 
 void Player::moveAndLook(Input &input, double delta, glm::vec2 mouseDelta) {
+
     //Position movement
     bool sprinting = input.isKeyDown(GLFW_KEY_LEFT_CONTROL);
 
@@ -105,6 +107,8 @@ void Player::updateCamera() {
     renderer.camera.setYaw(yaw);
     renderer.camera.setPitch(pitch);
 
+    auto type = defs.defs.fromId(activeBlock).type;
+
     glm::vec3 eyesPos = {pos.x, pos.y + EYE_HEIGHT, pos.z};
     renderer.camera.setPos(eyesPos);
 
@@ -117,13 +121,24 @@ void Player::updateCamera() {
 
     glm::vec3 right = glm::normalize(glm::cross(front, {0, 1, 0}));
     glm::vec3 up = glm::normalize(glm::cross(right, front));
-    glm::vec3 handPos = eyesPos + front * 0.25f + right * 0.25f + up * -0.2f;
+    glm::vec3 handPos = eyesPos + front * 0.25f + right * 0.25f + up * (type == ItemDef::Type::CRAFTITEM ? -0.15f : -0.2f);
 
     handModel.setRotateY(-yaw);
     handModel.setRotateZ(pitch);
 
-    handModel.setPos(handPos + vel * 0.1f);
-    handModel.setScale(0.12f);
+    if (type == ItemDef::Type::CRAFTITEM) {
+        handItemModel.setRotateX(45);
+        handItemModel.setRotateY(110);
+        handItemModel.setRotateZ(-25);
+    }
+    else {
+        handItemModel.setRotateX(0);
+        handItemModel.setRotateY(0);
+        handItemModel.setRotateZ(0);
+    }
+
+    handItemModel.setPos(handPos + vel * 0.1f);
+    handItemModel.setScale((type == ItemDef::Type::CRAFTITEM ? 0.2f : 0.12f));
 }
 
 void Player::findPointedThing(Input &input) {
@@ -256,8 +271,8 @@ LocalInventory& Player::getInventory() {
  */
 
 void Player::setActiveBlock(const std::string& block) {
-    activeBlock = defs.defs.blockFromStr(block).index;
-    handModel.setModel(defs.defs.blockFromStr(block).entityModel);
+    activeBlock = defs.defs.fromStr(block).index;
+    handItemModel.setModel(defs.defs.fromId(activeBlock).entityModel);
 }
 
 void Player::setMenu(const std::string& menu, const std::map<std::string, GuiBuilder::ComponentCallbacks>& callbacks) {
@@ -284,7 +299,8 @@ std::string Player::getMenuState() {
 
 void Player::draw(Renderer &renderer) {
     wireframe.draw(renderer);
-    handModel.draw(renderer);
+//    handModel.draw(renderer);
+    handItemModel.draw(renderer);
 }
 
 void Player::drawGUI(Renderer &renderer) {
