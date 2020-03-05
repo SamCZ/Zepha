@@ -12,7 +12,7 @@ Timer::Timer(const char* name) :
     name(name), hasName(true),
     start(std::chrono::high_resolution_clock::now()) {}
 
-long Timer::elapsedNs() {
+long Timer::elapsedNs() const {
     auto finish = std::chrono::high_resolution_clock::now();
     long elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start).count();
     return elapsed;

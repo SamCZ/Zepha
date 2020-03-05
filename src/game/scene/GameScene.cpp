@@ -72,9 +72,9 @@ void GameScene::draw() {
     renderer.beginGUIDrawCalls();
     renderer.enableTexture(&game.textures.atlasTexture);
 
-    player.drawViginette(renderer);
+    player.drawHud(renderer);
     debugGui.draw(renderer);
-    player.drawGUI(renderer);
+    player.drawMenu(renderer);
 
     renderer.swapBuffers();
 }

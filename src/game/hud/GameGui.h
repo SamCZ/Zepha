@@ -16,19 +16,21 @@
 #include "components/compound/GuiInventoryList.h"
 #include "../inventory/Inventory.h"
 
-class GameGui : public GuiContainer {
+class GameGui {
 public:
     explicit GameGui(LocalInventoryRefs& refs, glm::vec2 bufferSize, ClientGame& defs, Renderer& renderer);
     void winResized(glm::ivec2 win);
+    void update(double delta);
 
-    void update(double delta) override;
-    void setVisible(bool visible) override;
+    void setVisible(bool visible);
+    bool isVisible();
 
     void setMenu(const std::string& menu, const std::map<std::string, GuiBuilder::ComponentCallbacks>& callbacks);
     void closeMenu();
     const std::string& getMenuState();
 
-    void drawViginette(Renderer& renderer);
+    void drawHud(Renderer& renderer);
+    void drawMenu(Renderer& renderer);
 private:
     ClientGame& defs;
     Renderer& renderer;
@@ -36,10 +38,14 @@ private:
     glm::ivec2 win {};
     std::string menuState = "";
 
-    std::shared_ptr<GuiContainer> menuRoot = {};
-    std::shared_ptr<GuiInventoryList> handList = {};
-    GuiContainer builtIn = {};
-    GameGuiBuilder builder;
+    std::shared_ptr<GuiContainer> menuRoot = std::make_shared<GuiInventoryList>("menuRoot");
+    std::shared_ptr<GuiContainer> menuLuaRoot = std::make_shared<GuiInventoryList>("menuLuaRoot");
+    GameGuiBuilder menuBuilder;
+    std::shared_ptr<GuiContainer> hudRoot  = std::make_shared<GuiInventoryList>("hudRoot");
+    std::shared_ptr<GuiContainer> hudLuaRoot  = std::make_shared<GuiInventoryList>("hudLuaRoot");
+    GameGuiBuilder hudBuilder;
+
+    std::shared_ptr<GuiInventoryList> handList = std::make_shared<GuiInventoryList>("hand");
 
     LocalInventoryRefs& refs;
 };

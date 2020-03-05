@@ -101,7 +101,7 @@ namespace Util {
     static std::string getKeyStr(unsigned short key) {
         switch (key) {
             default: return "";
-            case 32: return " ";
+            case 32: return "space";
             case 39: return "'";
             case 44: return ",";
             case 45: return "-";

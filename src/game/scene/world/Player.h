@@ -49,8 +49,8 @@ public:
     void setGuiVisible(bool hudVisible);
 
     void draw(Renderer& renderer) override;
-    void drawGUI(Renderer& renderer);
-    void drawViginette(Renderer& renderer);
+    void drawHud(Renderer& renderer);
+    void drawMenu(Renderer& renderer);
 
     LocalInventory& getInventory();
     PointedThing& getPointedThing();

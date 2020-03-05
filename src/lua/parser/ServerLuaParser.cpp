@@ -32,6 +32,7 @@
 #include "../api/modules/remove_block.h"
 #include "../api/modules/add_entity.h"
 #include "../api/modules/remove_entity.h"
+#include "../api/modules/time.h"
 
 // Functions
 #include "../api/functions/trigger_event.h"
@@ -124,6 +125,8 @@ void ServerLuaParser::loadApi(ServerGame &defs, ServerWorld &world) {
 
     Api::add_entity_s    (lua, core, defs, world);
     Api::remove_entity_s (lua, core, defs, world);
+
+    Api::time(lua, core);
 
     // Functions
     Api::trigger_event (lua);

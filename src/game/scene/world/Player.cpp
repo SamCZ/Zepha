@@ -21,6 +21,7 @@ void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {
         handItemModel.setModel(defs.defs.fromId(activeBlock).entityModel);
         handItemModel.parent = &handModel;
     }
+    handItemModel.setVisible(gameGui.isVisible());
 
     gameGui.update(delta);
 
@@ -299,16 +300,15 @@ std::string Player::getMenuState() {
 
 void Player::draw(Renderer &renderer) {
     wireframe.draw(renderer);
-//    handModel.draw(renderer);
     handItemModel.draw(renderer);
 }
 
-void Player::drawGUI(Renderer &renderer) {
-    gameGui.draw(renderer);
+void Player::drawHud(Renderer &renderer) {
+    gameGui.drawHud(renderer);
 }
 
-void Player::drawViginette(Renderer &renderer) {
-    gameGui.drawViginette(renderer);
+void Player::drawMenu(Renderer &renderer) {
+    gameGui.drawMenu(renderer);
 }
 
 Player::~Player() {

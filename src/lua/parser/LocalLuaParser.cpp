@@ -30,6 +30,7 @@
 #include "../api/modules/add_entity.h"
 #include "../api/modules/remove_entity.h"
 #include "../api/modules/register_keybind.h"
+#include "../api/modules/time.h"
 
 // Functions
 #include "../api/functions/trigger_event.h"
@@ -93,6 +94,8 @@ void LocalLuaParser::loadApi(ClientGame &defs, LocalWorld &world, Player& player
 
     Api::add_entity_c    (lua, core, defs, world);
     Api::remove_entity_c (lua, core, defs, world);
+
+    Api::time(lua, core);
 
     // Functions
     Api::update_entities(lua);

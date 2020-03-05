@@ -12,7 +12,7 @@ public:
     explicit Timer();
     explicit Timer(const char* name);
 
-    long elapsedNs();
+    long elapsedNs() const;
 
     void printElapsedNs();
     void printElapsedMs();

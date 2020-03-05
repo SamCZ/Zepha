@@ -31,3 +31,25 @@ zepha.register_keybind("zeus:default:open_chat", {
     default = zepha.keys.t,
     on_press = () => { print "Opened chat!" }
 })
+
+## Flying toggles
+local fn toggleFlying() {
+    zepha.player.flying = not zepha.player.flying
+}
+
+zepha.register_keybind("zeus:default:toggle_flying", {
+    description = "Toggle Flying",
+    default = zepha.keys.f,
+    on_press = toggleFlying
+})
+
+local last_press = -100
+zepha.register_keybind("zeus:default:double_jump_fly", {
+    description = "Double Jump to Toggle Flying",
+    default = zepha.keys.space,
+    on_press = () => {
+        local press = zepha.time.s();
+        if (press - last_press < 0.25) { toggleFlying() }
+        last_press = press;
+    }
+})

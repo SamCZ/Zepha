@@ -71,6 +71,14 @@ void GuiComponent::setCallback(GuiComponent::CallbackType type, const callback& 
     callbacks[static_cast<unsigned int>(type)] = cb;
 }
 
+void GuiComponent::handleMouseInput(Window &window) {
+    window.setCursorHand(mouseActivity(window.getMousePos()));
+    if (window.input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT))   clickEvent(true, true, window.getMousePos());
+    if (window.input.isMouseReleased(GLFW_MOUSE_BUTTON_LEFT))  clickEvent(true, false, window.getMousePos());
+    if (window.input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT))  clickEvent(false, true, window.getMousePos());
+    if (window.input.isMouseReleased(GLFW_MOUSE_BUTTON_RIGHT)) clickEvent(false, false, window.getMousePos());
+}
+
 bool GuiComponent::mouseActivity(glm::ivec2 pos) {
     bool isHovering = false;
     for (auto& child : children) {
@@ -97,24 +105,18 @@ bool GuiComponent::mouseActivity(glm::ivec2 pos) {
     return isHovering;
 }
 
-void GuiComponent::leftClickEvent(bool state, glm::ivec2 pos) {
-    clickEvent(true, state, pos);
-}
-
-void GuiComponent::rightClickEvent(bool state, glm::ivec2 pos) {
-    clickEvent(false, state, pos);
-}
-
-void GuiComponent::insert(unsigned int index, std::shared_ptr<GuiComponent> component) {
+std::shared_ptr<GuiComponent> GuiComponent::insert(unsigned int index, std::shared_ptr<GuiComponent> component) {
     component->parent = this;
     component->updatePos();
     children.insert(std::next(children.begin(), index), std::move(component));
+    return component;
 }
 
-void GuiComponent::add(std::shared_ptr<GuiComponent> component) {
+std::shared_ptr<GuiComponent> GuiComponent::add(std::shared_ptr<GuiComponent> component) {
     component->parent = this;
     component->updatePos();
     children.push_back(std::move(component));
+    return component;
 }
 
 void GuiComponent::remove(const std::string& key) {

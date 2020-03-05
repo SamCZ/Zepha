@@ -32,10 +32,7 @@ public:
     void setVisible(bool visible) override;
 
     virtual void setCallback(CallbackType type, const callback& cb);
-
-    bool mouseActivity(glm::ivec2 pos);
-    void leftClickEvent(bool state, glm::ivec2 pos);
-    void rightClickEvent(bool state, glm::ivec2 pos);
+    void handleMouseInput(Window& window);
 
     template<class T> std::shared_ptr<T> get(const std::string &key) {
         for (auto &it : children) {
@@ -45,14 +42,15 @@ public:
         }
     };
 
-    void insert(unsigned int index, std::shared_ptr<GuiComponent> component);
-    void add(std::shared_ptr<GuiComponent> component);
+    std::shared_ptr<GuiComponent> insert(unsigned int index, std::shared_ptr<GuiComponent> component);
+    std::shared_ptr<GuiComponent> add(std::shared_ptr<GuiComponent> component);
 
     void remove(const std::string& key);
     void empty();
 
     void draw(Renderer& renderer) override;
 protected:
+    bool mouseActivity(glm::ivec2 pos);
     bool clickEvent(bool left, bool state, glm::ivec2 pos);
 
     std::string key = "";
