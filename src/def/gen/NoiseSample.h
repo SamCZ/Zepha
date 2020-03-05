@@ -9,20 +9,24 @@
 #include <noise/noise.h>
 #include <glm/glm.hpp>
 #include <glm/common.hpp>
+#include <functional>
 #include "../../util/Interp.h"
 
 class NoiseSample {
 public:
+    typedef std::function<float(glm::ivec3 pos)> fill_function;
+
     NoiseSample() = default;
-    explicit NoiseSample(glm::ivec2 precision);
-    NoiseSample(noise::module::Module& module, glm::vec3 pos, glm::ivec2 precision, bool flat = false);
 
-    void set(glm::ivec3 pos, float value);
-    float get(const glm::ivec3& pos);
+    void fill(const fill_function& fun, float precision);
+    void fill(const fill_function& fun, glm::ivec2 precision);
+
+    float get(glm::ivec3 localPos);
+    void  set(glm::ivec3 localPos, float value);
 private:
-    void reserveSpace();
+    void reserve();
 
-    glm::ivec2 prec {};
     std::vector<std::vector<std::vector<float>>> data {};
+    glm::ivec2 precision {};
 };
 

@@ -12,7 +12,9 @@
 struct BiomeDef {
     BiomeDef() = default;
     BiomeDef(const std::string& identifier, unsigned int index, float temperature, float humidity, float roughness,
-            unsigned int topBlock, unsigned int soilBlock, unsigned int rockBlock, const std::vector<noise::module::Module*>& modules, glm::vec3 biomeTint);
+            unsigned int topBlock, unsigned int soilBlock, unsigned int rockBlock,
+            const std::vector<noise::module::Module*>& heightmap, const std::vector<noise::module::Module*>& volume,
+            glm::vec3 biomeTint);
 
     std::string identifier = "";
     unsigned int index = 0;
@@ -25,7 +27,8 @@ struct BiomeDef {
     unsigned int soilBlock = 0;
     unsigned int rockBlock = 0;
 
-    std::vector<noise::module::Module*> modules;
+    std::vector<noise::module::Module*> heightmap;
+    std::vector<noise::module::Module*> volume;
 
     glm::vec3 biomeTint {};
 };

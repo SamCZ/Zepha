@@ -1,7 +1,8 @@
 local noise = {
-    module = "add",
-    sources = {
-        { ## Elevation
+    heightmap = {
+        module = "add",
+        sources = {{
+            ## Elevation
             module = "scale_bias",
             source = {
                 module = "perlin",
@@ -10,8 +11,8 @@ local noise = {
             },
             scale = 250,
             bias = -32
-        },
-        { ## Features
+        }, {
+            ## Features
             module = "scale_bias",
             source = {
                 module = "perlin",
@@ -20,7 +21,7 @@ local noise = {
             },
             scale = 6,
             bias = 6
-        }
+        }}
     }
 }
 

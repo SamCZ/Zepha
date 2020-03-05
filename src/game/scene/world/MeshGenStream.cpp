@@ -21,12 +21,11 @@ MeshGenStream::MeshGenStream(ClientGame &defs, LocalDimension &dimension) :
     offsetTurbulence.SetFrequency(4.0);
     offsetTurbulence.SetPower(0.125);
 
+    noiseSampler = { NoiseSample {}, NoiseSample {}, NoiseSample {} };
     //8 is just a random value to offset results
-    noiseSampler = {
-        NoiseSample {offsetTurbulence, {0, 0, 8}, {16, 16}},
-        NoiseSample {offsetTurbulence, {0, 8, 0}, {16, 16}},
-        NoiseSample {offsetTurbulence, {8, 0, 0}, {16, 16}}
-    };
+    noiseSampler[0].fill([&](glm::ivec3 pos) -> float { return offsetTurbulence.GetValue(pos.x + 8, pos.y, pos.z); }, {16, 16});
+    noiseSampler[1].fill([&](glm::ivec3 pos) -> float { return offsetTurbulence.GetValue(pos.x, pos.y + 8, pos.z); }, {16, 16});
+    noiseSampler[2].fill([&](glm::ivec3 pos) -> float { return offsetTurbulence.GetValue(pos.x, pos.y, pos.z + 8); }, {16, 16});
 
     threads.reserve(THREADS);
     for (int i = 0; i < THREADS; i++) {

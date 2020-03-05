@@ -282,9 +282,23 @@ namespace RegisterBiomes {
             auto biomeTint = biomeTable.get < sol::optional < std::string >> ("biome_tint");
             if (!biomeTint) throw identifier + "biome definitions require a biome_tint";
 
-            // Parse Noise params
-            std::vector<noise::module::Module*> modules;
-            parseNoise(modules, biomeTable.get<sol::table>("noise"));
+            // Get noise parameters
+            auto noiseList = biomeTable.get<sol::optional<sol::table>>("noise");
+            std::vector<noise::module::Module*> volumeModules, heightmapModules;
+
+            if (noiseList) {
+                if (noiseList->get<sol::optional<sol::table>>("heightmap"))
+                    parseNoise(heightmapModules, noiseList->get<sol::table>("heightmap"));
+                else heightmapModules.push_back(new noise::module::Const);
+
+                if (noiseList->get<sol::optional<sol::table>>("volume"))
+                    parseNoise(volumeModules, noiseList->get<sol::table>("volume"));
+                else volumeModules.push_back(new noise::module::Const);
+            }
+            else {
+                volumeModules.push_back(new noise::module::Const);
+                heightmapModules.push_back(new noise::module::Const);
+            }
 
             // Create biome definition
             BiomeDef* biomeDef = new BiomeDef(
@@ -293,7 +307,8 @@ namespace RegisterBiomes {
                     defs.blockFromStr(*bTop).index,
                     defs.blockFromStr(*bSoil).index,
                     defs.blockFromStr(*bRock).index,
-                    modules,
+                    heightmapModules,
+                    volumeModules,
                     glm::vec3(Util::hexToColorVec((*biomeTint)))
             );
 

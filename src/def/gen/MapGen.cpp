@@ -81,34 +81,31 @@ void MapGen::generateChunk(chunk_partials_map& chunks, glm::ivec3 worldPos) {
 }
 
 void MapGen::buildDensityMap(MapGenJob* job, glm::ivec3 worldPos) {
-    job->temperature = NoiseSample(temperature, {worldPos.x, 0, worldPos.z}, {4, 1}, true);
-    job->humidity    = NoiseSample(humidity,    {worldPos.x, 0, worldPos.z}, {4, 1}, true);
-    job->roughness   = NoiseSample(roughness,   {worldPos.x, 0, worldPos.z}, {4, 1}, true);
+    job->temperature = {}; job->humidity = {}; job->roughness = {};
 
-    // TODO: This is... a travesty. Please stop doing this weird jank insertion into a
-    // noisesample and create a proper constructor or *something*... could probs use a module owo
+    job->temperature.fill([&](glm::ivec3 pos) {
+        return temperature.GetValue(worldPos.x + pos.x / 16.f, 0, worldPos.z + pos.z / 16.f); }, 4);
+    job->humidity.fill([&](glm::ivec3 pos) {
+        return humidity.GetValue(worldPos.x + pos.x / 16.f, 0, worldPos.z + pos.z / 16.f); }, 4);
+    job->roughness.fill([&](glm::ivec3 pos) {
+        return roughness.GetValue(worldPos.x + pos.x / 16.f, 0, worldPos.z + pos.z / 16.f); }, 4);
 
-    auto terrain = NoiseSample({4, 4});
+    NoiseSample volume = {}, heightmap = {};
 
-    float offsetH = 16.f / 4.f;
-    float offsetV = 16.f / 4.f;
+    volume.fill([&](glm::ivec3 pos) {
+        auto& biome = biomes.getBiomeAt(job->temperature.get(pos), job->humidity.get(pos), job->roughness.get(pos));
+        return biome.volume[biome.volume.size() - 1]->GetValue(worldPos.x + pos.x / 16.f, worldPos.y + pos.y / 16.f, worldPos.z + pos.z / 16.f);
+    }, {4, 4});
 
-    for (int i = 0; i <= 4; i++) {
-        for (int j = 0; j <= 4; j++) {
-            for (int k = 0; k <= 4; k++) {
-                glm::vec3 localPos = {(offsetH * i) / 1.01f, (offsetV * j) / 1.01f, (offsetH * k) / 1.01f};
-                glm::vec3 pos = {(worldPos.x * 16 + offsetH * i) / 16.f, (worldPos.y * 16 + offsetV * j) / 16.f, (worldPos.z * 16 + offsetH * k) / 16.f};
-                auto& biome = biomes.getBiomeAt(job->temperature.get(localPos), job->humidity.get(localPos), job->roughness.get(localPos));
-                auto& mod = biome.modules[biome.modules.size() - 1];
-                terrain.set({i, j, k}, static_cast<float>(mod->GetValue(pos.x, pos.y, pos.z)));
-            }
-        }
-    }
+    heightmap.fill([&](glm::ivec3 pos) {
+        auto& biome = biomes.getBiomeAt(job->temperature.get(pos), job->humidity.get(pos), job->roughness.get(pos));
+        return biome.heightmap[biome.heightmap.size() - 1]->GetValue(worldPos.x + pos.x / 16.f, 0, worldPos.z + pos.z / 16.f);
+    }, 4);
 
 	glm::ivec3 lp;
 	for (int m = 0; m < 4096; m++) {
 		Vec::indAssignVec(m, lp);
-		job->density[m] = terrain.get(lp) - (lp.y + worldPos.y * 16);
+		job->density[m] = (volume.get(lp) + heightmap.get(lp)) - (lp.y + worldPos.y * 16);
 	}
 }
 
@@ -185,8 +182,6 @@ void MapGen::generateBlocks(chunk_partial& chunk) {
             chunk.second->biomes.emplace_back(m);
             chunk.second->biomes.emplace_back(biome.index);
         }
-
-//        if (chunk.second->blocks[ind] != DefinitionAtlas::INVALID) continue;
 
         int d = std::floor(chunk.first->depth[m]);
         unsigned int targetBlock
