@@ -27,7 +27,7 @@ zepha.register_entity("@aurailus:item_collection:dropped_item", {
         local x = math.sin(angle) * amp
         local z = math.cos(angle) * amp
 
-        self.vel = static.vel or v(x, -85, z)
+        self.vel = static.vel or V(x, -85, z)
 
         if (not zepha.registered_blocks[self.item]) {
             self.object.scale = 1/2
@@ -62,15 +62,15 @@ zepha.register_entity("@aurailus:item_collection:dropped_item", {
                 interval = -1/16
             }
 
-            self.object.pos = vector.add(self.object.pos, v(0, interval, 0))
+            self.object.pos += V(0, interval, 0)
             iter += 0.25
         }
 
-        self.object.pos = vector.add(self.object.pos, vector.multiply(v(self.vel.x, 0, self.vel.z), delta))
+        self.object.pos += V(self.vel.x, 0, self.vel.z) * delta
         self.vel.x *= 0.6
         self.vel.z *= 0.6
 
-        self.object.visual_offset = v(0, math.sin(self.time * 2) / 8, 0)
+        self.object.visual_offset = V(0, math.sin(self.time * 2) / 8, 0)
 
         if (collides(self.object)) {
             self.vel.y = 0
@@ -85,7 +85,7 @@ zepha.register_entity("@aurailus:item_collection:dropped_item", {
     check_collect = fn(self) {
         foreach p in zepha.players {
             if (vector.distance(p.pos, self.object.pos) < 2) {
-                self.object.pos = vector.add(p.pos, v(0, 0.90, 0))
+                self.object.pos = p.pos + V(0, 0.90, 0)
                 self.scooping = true
 
                 zepha.delay(() => {

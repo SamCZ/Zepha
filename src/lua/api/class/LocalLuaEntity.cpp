@@ -5,16 +5,16 @@
 #include "LocalLuaEntity.h"
 
 void LocalLuaEntity::snap_pos(const sol::table &pos) {
-    entity->setPos({pos["x"], pos["y"], pos["z"]});
+    entity->setPos({pos[1], pos[2], pos[3]});
 }
 
 void LocalLuaEntity::set_pos(const sol::table &pos) {
-    entity->interpPos({pos["x"], pos["y"], pos["z"]});
+    entity->interpPos({pos[1], pos[2], pos[3]});
 }
 
 sol::table LocalLuaEntity::get_pos(sol::this_state s) {
     glm::vec3 pos = entity->getPos();
-    return sol::state_view(s).create_table_with("x", pos.x, "y", pos.y, "z", pos.z);
+    return LuaParser::luaVec(sol::state_view(s), pos);
 }
 
 void LocalLuaEntity::snap_visual_offset(const sol::table &vs) {
@@ -22,12 +22,12 @@ void LocalLuaEntity::snap_visual_offset(const sol::table &vs) {
 }
 
 void LocalLuaEntity::set_visual_offset(const sol::table &pos) {
-    entity->interpVisualOffset({pos["x"], pos["y"], pos["z"]});
+    entity->interpVisualOffset({pos[1], pos[2], pos[3]});
 }
 
 sol::table LocalLuaEntity::get_visual_offset(sol::this_state s) {
     glm::vec3 v = entity->getVisualOffset();
-    return sol::state_view(s).create_table_with("x", v.x, "y", v.y, "z", v.z);
+    return LuaParser::luaVec(sol::state_view(s), v);
 }
 
 void LocalLuaEntity::snap_pitch(float rot) {

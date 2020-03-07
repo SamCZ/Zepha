@@ -20,11 +20,16 @@ public:
 
     void playerConnected(std::shared_ptr<ServerClient> client);
     void playerDisconnected(std::shared_ptr<ServerClient> client);
+
+    template<typename... Args> void safe_function(sol::protected_function f, Args... args) {
+        auto res = f(args...);
+        if (!res.valid()) errorCallback(res);
+    }
 private:
     void loadApi(ServerGame& defs, ServerWorld& world);
     void registerDefs(ServerGame &defs);
 
-    sol::protected_function_result errorCallback(lua_State*, sol::protected_function_result errPfr);
+    sol::protected_function_result errorCallback(sol::protected_function_result errPfr);
     sol::protected_function_result runFileSandboxed(const std::string& file);
 
     ServerModHandler handler;

@@ -11,13 +11,12 @@ zepha.register_entity("zeus:default:test", {
 ##        self.object.scale = 1/4
     },
     on_update = fn(self, delta) {
-        self.object.pos = vector.add(vector.multiply(v(0.6 * math.sin(math.rad(self.object.yaw)), 0,
-            0.6 * math.cos(math.rad(self.object.yaw))), delta), self.object.pos)
+        self.object.pos = self.object.pos +
+            V(0.6 * math.sin(math.rad(self.object.yaw)), 0, 0.6 * math.cos(math.rad(self.object.yaw))) * delta
         self.object.yaw += 50 * delta
     }
 })
 
 if (zepha.server) {
-    local entity = zepha.add_entity("zeus:default:test", v(0, 0, 0))
-    ##zepha.delay(() => { zepha.remove_entity(entity) }, 10)
+    local entity = zepha.add_entity("zeus:default:test", V(0, 0, 0))
 }

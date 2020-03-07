@@ -49,10 +49,10 @@ void LocalLuaParser::update(double delta, bool* keys) {
     LuaParser::update(delta);
 
     this->delta += delta;
-    while (this->delta > double(UPDATE_STEP)) {
+    while (this->delta > static_cast<double>(UPDATE_STEP)) {
         manager.triggerKeybinds();
-        core["__builtin"]["update_entities"](double(UPDATE_STEP));
-        this->delta -= double(UPDATE_STEP);
+        safe_function(core["__builtin"]["update_entities"], static_cast<double>(UPDATE_STEP));
+        this->delta -= static_cast<double>(UPDATE_STEP);
     }
 
     manager.update(keys);
@@ -69,11 +69,11 @@ void LocalLuaParser::loadApi(ClientGame &defs, LocalWorld &world, Player& player
     core["__builtin"] = lua.create_table();
 
     // Types
-    ClientApi::entity           (lua);
-    ClientApi::animation_manager(lua);
-    ClientApi::local_player     (lua);
-    ClientApi::inventory        (lua);
-    ClientApi::item_stack       (lua);
+    ClientApi::entity            (lua);
+    ClientApi::animation_manager (lua);
+    ClientApi::local_player      (lua);
+    ClientApi::inventory         (lua);
+    ClientApi::item_stack        (lua);
 
     core["client"] = true;
     core["player"] = LocalLuaPlayer(player);
@@ -112,7 +112,7 @@ void LocalLuaParser::registerDefs(ClientGame &defs) {
     RegisterKeybinds::client(core, manager);
 }
 
-sol::protected_function_result LocalLuaParser::errorCallback(lua_State*, sol::protected_function_result errPfr) {
+sol::protected_function_result LocalLuaParser::errorCallback(sol::protected_function_result errPfr) {
     sol::error err = errPfr;
     std::string errString = err.what();
 
@@ -170,7 +170,7 @@ sol::protected_function_result LocalLuaParser::runFileSandboxed(std::string file
                     env["_MODNAME"] = mod.config.name;
 
                     return lua.safe_script(f.file, env, std::bind(&LocalLuaParser::errorCallback, this,
-                            std::placeholders::_1, std::placeholders::_2), "@" + f.path, sol::load_mode::text);
+                            std::placeholders::_2), "@" + f.path, sol::load_mode::text);
                 }
             }
 

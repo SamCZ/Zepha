@@ -3,20 +3,22 @@
 //
 
 #include "ServerLuaPlayer.h"
+
+#include "../../LuaParser.h"
 #include "../../../util/net/NetHandler.h"
 
 void ServerLuaPlayer::set_pos(const sol::table &pos) {
-    player.assertPos({pos["x"], pos["y"], pos["z"]});
+    player.assertPos({pos[1], pos[2], pos[3]});
 }
 
 sol::table ServerLuaPlayer::get_pos(sol::this_state s) {
     glm::vec3 pos = player.getPos();
-    return sol::state_view(s).create_table_with("x", pos.x, "y", pos.y, "z", pos.z);
+    return LuaParser::luaVec(sol::state_view(s), pos);
 }
 
 sol::table ServerLuaPlayer::get_block_pos(sol::this_state s) {
     glm::vec3 pos = glm::floor(player.getPos());
-    return sol::state_view(s).create_table_with("x", pos.x, "y", pos.y, "z", pos.z);
+    return LuaParser::luaVec(sol::state_view(s), pos);
 }
 
 //void ServerLuaPlayer::set_vel(const sol::table &vel) {

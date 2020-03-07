@@ -22,6 +22,10 @@ void LuaParser::update(double delta) {
     }
 }
 
-sol::table LuaParser::vecToTable(glm::vec3 vec) {
-    return lua.create_table_with("x", vec.x, "y", vec.y, "z", vec.z);
+sol::table LuaParser::luaVec(glm::vec3 vec) {
+    return lua["vector"]["new"](vec.x, vec.y, vec.z);
+}
+
+sol::table LuaParser::luaVec(sol::state_view s, glm::vec3 vec) {
+    return s["vector"]["new"](vec.x, vec.y, vec.z);
 }

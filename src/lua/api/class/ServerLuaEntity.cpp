@@ -5,29 +5,29 @@
 #include "ServerLuaEntity.h"
 
 void ServerLuaEntity::snap_pos(const sol::table &pos) {
-    entity->setPos({pos["x"], pos["y"], pos["z"]});
+    entity->setPos({pos[1], pos[2], pos[3]});
 }
 
 void ServerLuaEntity::set_pos(const sol::table &pos) {
-    entity->setPos({pos["x"], pos["y"], pos["z"]});
+    entity->setPos({pos[1], pos[2], pos[3]});
 }
 
 sol::table ServerLuaEntity::get_pos(sol::this_state s) {
     glm::vec3 pos = entity->getPos();
-    return sol::state_view(s).create_table_with("x", pos.x, "y", pos.y, "z", pos.z);
+    return LuaParser::luaVec(sol::state_view(s), pos);
 }
 
 void ServerLuaEntity::snap_visual_offset(const sol::table &vs) {
-    entity->setVisualOffset({vs["x"], vs["y"], vs["z"]});
+    entity->setVisualOffset({vs[1], vs[2], vs[3]});
 }
 
 void ServerLuaEntity::set_visual_offset(const sol::table &pos) {
-    entity->setVisualOffset({pos["x"], pos["y"], pos["z"]});
+    entity->setVisualOffset({pos[1], pos[2], pos[3]});
 }
 
 sol::table ServerLuaEntity::get_visual_offset(sol::this_state s) {
     glm::vec3 v = entity->getVisualOffset();
-    return sol::state_view(s).create_table_with("x", v.x, "y", v.y, "z", v.z);
+    return LuaParser::luaVec(sol::state_view(s), v);
 }
 
 void ServerLuaEntity::snap_pitch(float rot) {

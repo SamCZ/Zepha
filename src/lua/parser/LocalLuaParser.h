@@ -19,11 +19,16 @@ public:
     void update(double delta, bool* keys);
 
     LocalModHandler& getHandler();
+
+    template<typename... Args> void safe_function(sol::protected_function f, Args... args) {
+        auto res = f(args...);
+        if (!res.valid()) errorCallback(res);
+    }
 private:
     void loadApi(ClientGame& defs, LocalWorld& world, Player& player);
     void registerDefs(ClientGame &defs);
 
-    sol::protected_function_result errorCallback(lua_State*, sol::protected_function_result errPfr);
+    sol::protected_function_result errorCallback(sol::protected_function_result errPfr);
     sol::protected_function_result runFileSandboxed(std::string file);
 
     LuaInputManager manager;

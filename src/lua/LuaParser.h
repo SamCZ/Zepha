@@ -32,7 +32,8 @@ public:
 
     virtual void update(double delta);
 
-    sol::table vecToTable(glm::vec3 vec);
+    sol::table luaVec(glm::vec3 vec);
+    static sol::table luaVec(sol::state_view s, glm::vec3 vec);
 
     sol::state lua;
     sol::table core;

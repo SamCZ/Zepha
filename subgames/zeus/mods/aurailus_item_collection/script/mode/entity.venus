@@ -5,6 +5,6 @@ if (zepha.server) {
         local yields = get_yield(pos)
         if (yields == nil) { return }
 
-        zepha.add_entity("@aurailus:item_collection:dropped_item", vector.add(pos, v(0.5)), { item = yields });
+        zepha.add_entity("@aurailus:item_collection:dropped_item", pos + 0.5, { item = yields });
     })
 }

@@ -57,9 +57,9 @@ void ServerLuaParser::update(double delta) {
     LuaParser::update(delta);
 
     this->delta += delta;
-    while (this->delta > double(UPDATE_STEP)) {
-        core["__builtin"]["update_entities"](double(UPDATE_STEP));
-        this->delta -= double(UPDATE_STEP);
+    while (this->delta > static_cast<double>(UPDATE_STEP)) {
+        safe_function(core["__builtin"]["update_entities"], static_cast<double>(UPDATE_STEP));
+        this->delta -= static_cast<double>(UPDATE_STEP);
     }
 }
 
@@ -76,15 +76,17 @@ void ServerLuaParser::playerConnected(std::shared_ptr<ServerClient> client) {
     auto players = core.get<sol::table>("players");
     players.add(ServerLuaPlayer(*client));
 
-    core["__builtin"]["trigger_event"]("new_player", players[players.size()]);
-    core["__builtin"]["trigger_event"]("player_join", players[players.size()]);
+    ServerLuaPlayer& player = players[players.size()];
+
+    safe_function(core["__builtin"]["trigger_event"], "new_player", player);
+    safe_function(core["__builtin"]["trigger_event"], "player_join", player);
 }
 
 void ServerLuaParser::playerDisconnected(std::shared_ptr<ServerClient> client) {
     for (auto& pair : core.get<sol::table>("players")) {
         ServerLuaPlayer& p = pair.second.as<ServerLuaPlayer>();
         if (p.cid == client->cid) {
-            core["__builtin"]["trigger_event"]("player_disconnect", p);
+            safe_function(core["__builtin"]["trigger_event"], "player_disconnect", p);
 
             p.is_player = false;
             core.get<sol::table>("players")[pair.first] = sol::nil;
@@ -100,10 +102,10 @@ void ServerLuaParser::loadApi(ServerGame &defs, ServerWorld &world) {
     core["__builtin"] = lua.create_table();
 
     // Types
-    ServerApi::entity       (lua);
-    ServerApi::server_player(lua);
-    ServerApi::inventory    (lua);
-    ClientApi::item_stack   (lua);
+    ServerApi::entity        (lua);
+    ServerApi::server_player (lua);
+    ServerApi::inventory     (lua);
+    ClientApi::item_stack    (lua);
 
     core["server"] = true;
     core["players"] = lua.create_table();
@@ -143,7 +145,7 @@ void ServerLuaParser::registerDefs(ServerGame &defs) {
     RegisterBiomes::server(core, defs);
 }
 
-sol::protected_function_result ServerLuaParser::errorCallback(lua_State*, sol::protected_function_result errPfr) {
+sol::protected_function_result ServerLuaParser::errorCallback(sol::protected_function_result errPfr) {
     sol::error err = errPfr;
     std::string errString = err.what();
 
@@ -200,8 +202,7 @@ sol::protected_function_result ServerLuaParser::runFileSandboxed(const std::stri
                     env["_FILE"] = f.path;
                     env["_MODNAME"] = mod.config.name;
 
-                    return lua.safe_script(f.file, env, std::bind(&ServerLuaParser::errorCallback, this,
-                            std::placeholders::_1, std::placeholders::_2), "@" + f.path);
+                    return lua.safe_script(f.file, env, std::bind(&ServerLuaParser::errorCallback, this, std::placeholders::_2), "@" + f.path);
                 }
             }
 
