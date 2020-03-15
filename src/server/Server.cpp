@@ -8,6 +8,7 @@
 
 #include "../util/Timer.h"
 #include "../lua/api/class/ServerLuaPlayer.h"
+#include "../util/net/PacketView.h"
 
 Server::Server(unsigned short port, const std::string& subgame) :
     port(port),
@@ -27,7 +28,7 @@ Server::Server(unsigned short port, const std::string& subgame) :
 }
 
 void Server::update() {
-    const static long interval_ns = static_cast<long>((1000 / 20.f) * 1000000L);
+    const static long interval_ns = static_cast<long>((1000 / 60.f) * 1000000L);
     Timer loop("");
 
     world.update(0);
@@ -51,7 +52,7 @@ void Server::update() {
                 break;
             }
             case ENET_EVENT_TYPE_RECEIVE: {
-                Packet p(event.packet);
+                PacketView p(event.packet);
                 ServerClient* client = static_cast<ServerClient*>(event.peer->data);
 
                 if (client->hasPlayer) {
@@ -74,8 +75,6 @@ void Server::update() {
                 break;
             }
         }
-
-        enet_packet_destroy(event.packet);
     }
 
     for (auto& cid : playersUpdated) {
@@ -103,26 +102,23 @@ void Server::update() {
     elapsedSeconds += deltaTime;
 }
 
-void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
+void Server::handlePlayerPacket(ServerClient& client, PacketView& p) {
     switch (p.type) {
         default: {
             std::cout << Log::err << "Invalid packet type (" << static_cast<int>(p.type) << ") recieved." << Log::endl;
             break;
         }
         case PacketType::PLAYER_INFO: {
-            Deserializer d(p.data);
-            client.setPos(d.read<glm::vec3>());
-            client.setPitch(d.read<float>());
-            client.setYaw(d.read<float>());
+            client.setPos(p.d.read<glm::vec3>());
+            client.setPitch(p.d.read<float>());
+            client.setYaw(p.d.read<float>());
 
             playersUpdated.emplace(client.cid);
             break;
         }
         case PacketType::BLOCK_SET: {
-            Deserializer d(p.data);
-
-            glm::ivec3 pos = d.read<glm::ivec3>();
-            unsigned int block = d.read<unsigned int>();
+            glm::ivec3 pos = p.d.read<glm::ivec3>();
+            unsigned int block = p.d.read<unsigned int>();
 
             unsigned int worldBlock = (block == DefinitionAtlas::AIR ? world.getBlock(pos) : 0);
 
@@ -152,10 +148,8 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
             break;
         }
         case PacketType::INV_WATCH: {
-            Deserializer d(p.data);
-
-            std::string source = d.read<std::string>();
-            std::string list = d.read<std::string>();
+            std::string source = p.d.read<std::string>();
+            std::string list = p.d.read<std::string>();
 
             // TODO: When inventory saving / loading is implemented there will need to be a cross-save identifier.
             if (source == "current_player") source = "player:" + std::to_string(client.cid);
@@ -170,7 +164,7 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
             break;
         }
         case PacketType::INV_UNWATCH: {
-            Deserializer d(p.data);
+            Deserializer d(p.d.data);
 
             std::string source = d.read<std::string>();
             std::string list = d.read<std::string>();
@@ -188,7 +182,7 @@ void Server::handlePlayerPacket(ServerClient &client, Packet& p) {
             break;
         }
         case PacketType::INV_INTERACT: {
-            Deserializer d(p.data);
+            Deserializer d(p.d.data);
 
             unsigned short type = d.read<unsigned short>();
 

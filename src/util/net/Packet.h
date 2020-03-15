@@ -6,9 +6,7 @@
 
 #pragma once
 
-#include <vector>
 #include <string>
-#include <iostream>
 #include <enet/enet.h>
 
 #include "PacketType.h"
@@ -18,7 +16,6 @@ class Packet {
 public:
     Packet() = default;
     explicit Packet(PacketType type, bool reliable = true);
-    explicit Packet(ENetPacket* packet);
 
     ENetPacket* toENetPacket();
     void sendTo(ENetPeer* peer, PacketChannel channel);

@@ -131,7 +131,7 @@ void ServerLuaParser::loadApi(ServerGame &defs, ServerWorld &world) {
     Api::time(lua, core);
 
     // Functions
-    Api::trigger_event (lua);
+    Api::trigger_event  (lua);
     Api::update_entities(lua);
 
     // Create sandboxed runfile()

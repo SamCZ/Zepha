@@ -158,17 +158,15 @@ void LocalDimension::removeLocalEntity(std::shared_ptr<LocalLuaEntity> &entity) 
     localEntityRefs.erase(entity->id);
 }
 
-void LocalDimension::serverEntityInfo(const Packet& p) {
-    Deserializer d(p.data);
-
-    auto id           = d.read<unsigned int>();
-    auto position     = d.read<glm::vec3>();
-    auto visualOffset = d.read<glm::vec3>();
-    auto rotation     = d.read<glm::vec3>();
-    auto scale        = d.read<float>();
-    auto displayMode  = d.read<std::string>();
-    auto displayArg1  = d.read<std::string>();
-    auto displayArg2  = d.read<std::string>();
+void LocalDimension::serverEntityInfo(PacketView& p) {
+    auto id           = p.d.read<unsigned int>();
+    auto position     = p.d.read<glm::vec3>();
+    auto visualOffset = p.d.read<glm::vec3>();
+    auto rotation     = p.d.read<glm::vec3>();
+    auto scale        = p.d.read<float>();
+    auto displayMode  = p.d.read<std::string>();
+    auto displayArg1  = p.d.read<std::string>();
+    auto displayArg2  = p.d.read<std::string>();
 
     if (serverEntityRefs.count(id)) {
         auto& luaEntity = *serverEntityRefs.at(id)->get();

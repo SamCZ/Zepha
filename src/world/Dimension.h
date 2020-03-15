@@ -5,8 +5,8 @@
 #pragma once
 
 #include <memory>
-#include <glm/glm.hpp>
-#include <unordered_map>
+
+#include "../util/Vec.h"
 #include "region/Region.h"
 
 class Dimension {

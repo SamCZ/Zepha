@@ -4,30 +4,28 @@
 
 #pragma once
 
-
-#include <glm/vec3.hpp>
 #include <thread>
-#include <unordered_set>
+
+#include "../../../def/ClientGame.h"
 #include "../../../world/chunk/BlockChunk.h"
-#include "../../../def/gen/MapGen.h"
 
 class WorldInterpolationStream {
 public:
     static const int THREAD_QUEUE_SIZE = 128;
     static const int THREADS = 2;
 
-    WorldInterpolationStream(unsigned int seed,  ClientGame& defs);
+    WorldInterpolationStream(unsigned int seed, ClientGame& defs);
     ~WorldInterpolationStream();
 
     //Add `p` to the pre-thread queue.
-    bool pushBack(std::unique_ptr<Packet> p);
+    bool pushBack(std::unique_ptr<PacketView> p);
 
     //Will return a vector of BlockChunk pointers containing finished chunks.
     //Frees up the threads and starts new tasks.
     std::vector<std::shared_ptr<BlockChunk>> update();
 
     struct Unit {
-        std::unique_ptr<Packet> packet;
+        std::unique_ptr<PacketView> packet;
         BlockChunk* chunk = nullptr;
 
         bool unlocked = true;
@@ -50,6 +48,6 @@ private:
     static void threadFunction(Thread* thread);
 
 //    MapGen gen;
-    std::vector<std::unique_ptr<Packet>> queuedTasks;
+    std::vector<std::unique_ptr<PacketView>> queuedTasks;
 };
 

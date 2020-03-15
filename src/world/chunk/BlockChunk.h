@@ -5,17 +5,14 @@
 #pragma once
 
 #include <vector>
-#include <iostream>
 #include <glm/vec3.hpp>
-#include "../../util/Log.h"
-#include "../../util/Vec.h"
+
 #include "../../util/RIE.h"
-#include "../../util/Util.h"
+#include "../../util/Space.h"
 #include "../../util/net/Packet.h"
 #include "../../def/gen/BiomeAtlas.h"
 #include "../../def/DefinitionAtlas.h"
-#include "../../util/net/Serializer.h"
-#include "../../util/net/Deserializer.h"
+#include "../../util/net/PacketView.h"
 
 class BlockChunk {
 public:
@@ -47,7 +44,7 @@ public:
     const std::vector<unsigned short>& cGetBiomes() const;
 
     Packet serialize();
-    void deserialize(Packet& packet);
+    void deserialize(PacketView& packet);
 
     bool shouldHaveMesh = true;
     bool dirty = true;

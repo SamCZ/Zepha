@@ -4,53 +4,71 @@
 -- Vector metatable
 -- A metatable to be assigned to vectors which applies mathematic operators
 local vector_mt = {
-  __is_vector = true,
+    __is_vector = true,
 
-  __index = function(tbl, key)
-      if key == "x" then return rawget(tbl, 1) end
-      if key == "y" then return rawget(tbl, 2) end
-      if key == "z" then return rawget(tbl, 3) end
+    -- Value manipulation functions
+    __index = function(tbl, key)
+        if key == "x" then return rawget(tbl, 1) end
+        if key == "y" then return rawget(tbl, 2) end
+        if key == "z" then return rawget(tbl, 3) end
 
-      local val = rawget(tbl, key)
-      if val == nil then val = rawget(getmetatable(tbl), key) end
-      return val
-  end,
-  __newindex = function(tbl, key, val)
-      if     key == "x" or key == 0 then rawset(tbl, 1, val)
-      elseif key == "y" or key == 1 then rawset(tbl, 2, val)
-      elseif key == "z" or key == 2 then rawset(tbl, 3, val) end
-  end,
-  __tostring = function(tbl)
-      return table.concat({
+        local val = rawget(tbl, key)
+        if val == nil then val = rawget(getmetatable(tbl), key) end
+        return val
+    end,
+    __newindex = function(tbl, key, val)
+        if     key == "x" or key == 0 then rawset(tbl, 1, val)
+        elseif key == "y" or key == 1 then rawset(tbl, 2, val)
+        elseif key == "z" or key == 2 then rawset(tbl, 3, val) end
+    end,
+    __tostring = function(tbl)
+        return table.concat({
           "{ ",
           tostring(tbl[1]), ", ",
           tostring(tbl[2]), ", ",
           tostring(tbl[3]), " }"
-      })
-  end,
-  __eq = function(tbl, o)
-      return vector.equal(tbl, o)
-  end,
+        })
+    end,
+    __eq = function(tbl, o)
+        return vector.equal(tbl, o)
+    end,
 
-  __unm = function(tbl)
-      return vector.negative(tbl)
-  end,
-  __add = function(tbl, o)
-      return vector.add(tbl, o)
-  end,
-  __sub = function(tbl, o)
-      return vector.subtract(tbl, o)
-  end,
-  __mul = function(tbl, o)
-      return vector.multiply(tbl, o)
-  end,
-  __pow = function(tbl, power)
-      local curr = tbl
-      for i = 1, power - 1 do
-          curr = curr * tbl
-      end
-      return curr
-  end,
+    -- Arithmetic functions
+    __unm = function(tbl)
+        return vector.negative(tbl)
+    end,
+    __add = function(tbl, o)
+        return vector.add(tbl, o)
+    end,
+    __sub = function(tbl, o)
+        return vector.subtract(tbl, o)
+    end,
+    __mul = function(tbl, o)
+        return vector.multiply(tbl, o)
+    end,
+    __pow = function(tbl, power)
+        return vector.pow(tbl, o)
+    end,
+
+    -- Higher level methods
+    abs = function(tbl)
+        return vector.abs(tbl)
+    end,
+    round = function(tbl)
+        return vector.round(tbl)
+    end,
+    floor = function(tbl)
+        return vector.floor(tbl)
+    end,
+    ceil = function(tbl)
+        return vector.ceil(tbl)
+    end,
+    distance_squared = function(tbl, o)
+        return vector.distance_squared(tbl, o)
+    end,
+    distance = function(tbl, o)
+        return vector.distance(tbl, o)
+    end
 }
 
 -- create_vector
@@ -127,6 +145,15 @@ vector.multiply = function(v1, m)
     end
 end
 
+-- vector.pow
+-- Return v to the power of p
+vector.pow = function(v, m)
+   if not check_vector(v) then return end
+   local res = create_vector(rawget(v, 1), rawget(v, 2), rawget(v, 3))
+   for i = 1, power - 1 do res = res * v end
+   return res
+end
+
 -- vector.equal
 -- Return a boolean indicating if v1 == v2
 vector.equal = function(v1, v2)
@@ -157,7 +184,7 @@ end
 
 -- vector.ceil
 -- Ceil each vector value to the highest integer
-vector.floor = function(v)
+vector.ceil = function(v)
     if not check_vector(v) then return end
     return create_vector(math.ceil(rawget(v, 1)), math.ceil(rawget(v, 2)), math.ceil(rawget(v, 3)))
 end

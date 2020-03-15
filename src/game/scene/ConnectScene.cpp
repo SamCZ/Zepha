@@ -3,8 +3,12 @@
 //
 
 #include <gzip/decompress.hpp>
+
 #include "ConnectScene.h"
+
 #include "../../server/asset/AssetType.h"
+#include "../hud/components/basic/GuiText.h"
+#include "../hud/components/basic/GuiRect.h"
 
 ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
     connection(state.connection) {
@@ -52,14 +56,13 @@ void ConnectScene::update() {
 
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
-                Packet p(e.packet);
-                Deserializer d(p.data);
+                PacketView p(e.packet);
 
                 if (p.type == PacketType::BLOCK_IDENTIFIER_LIST) {
                     auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received block index-identifier table.\n");
 
-                    state.defs.defs.setIdentifiers(d.read<std::vector<std::string>>());
+                    state.defs.defs.setIdentifiers(p.d.read<std::vector<std::string>>());
 
                     Packet resp(PacketType::BIOME_IDENTIFIER_LIST);
                     resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
@@ -68,7 +71,7 @@ void ConnectScene::update() {
                     auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received biome index-identifier table.\nDownloading mods...\n");
 
-                    state.defs.biomes.setIdentifiers(d.read<std::vector<std::string>>());
+                    state.defs.biomes.setIdentifiers(p.d.read<std::vector<std::string>>());
 
                     connectState = State::MODS;
                     Packet resp(PacketType::MODS);
@@ -82,8 +85,7 @@ void ConnectScene::update() {
             components.get<GuiRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.4, 32});
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
-                Packet p(e.packet);
-                Deserializer d(p.data);
+                PacketView p(e.packet);
 
                 auto statusText = components.get<GuiText>("statusText");
 
@@ -93,7 +95,7 @@ void ConnectScene::update() {
                     state.defs.parser.getHandler().addLuaMod(std::move(luaMod));
                 }
                 else if (p.type == PacketType::MOD_ORDER) {
-                    state.defs.parser.getHandler().setModsOrder(d.read<std::vector<std::string>>());
+                    state.defs.parser.getHandler().setModsOrder(p.d.read<std::vector<std::string>>());
 
                     statusText->setText(statusText->getText() + "Done downloading mods.\nReceived the mods order.\nDownloading media...\n");
 
@@ -110,23 +112,22 @@ void ConnectScene::update() {
 
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
-                Packet p(e.packet);
-                Deserializer d(p.data);
+                PacketView p(e.packet);
 
                 auto statusText = components.get<GuiText>("statusText");
 
                 if (p.type == PacketType::MEDIA) {
-                    AssetType t = static_cast<AssetType>(d.read<int>());
+                    AssetType t = static_cast<AssetType>(p.d.read<int>());
                     unsigned int count = 0;
 
                     while (t != AssetType::END) {
-                        std::string assetName = d.read<std::string>();
+                        std::string assetName = p.d.read<std::string>();
 
                         if (t == AssetType::TEXTURE) {
-                            int width = d.read<unsigned int>();
-                            int height = d.read<unsigned int>();
+                            int width = p.d.read<unsigned int>();
+                            int height = p.d.read<unsigned int>();
 
-                            std::string data = d.read<std::string>();
+                            std::string data = p.d.read<std::string>();
                             std::string uncompressed = gzip::decompress(data.data(), data.length());
 
                             state.defs.textures.addImage(
@@ -134,13 +135,13 @@ void ConnectScene::update() {
                                     assetName, true, width, height);
                         }
                         else if (t == AssetType::MODEL) {
-                            std::string format = d.read<std::string>();
-                            std::string data = d.read<std::string>();
+                            std::string format = p.d.read<std::string>();
+                            std::string data = p.d.read<std::string>();
 
                             state.defs.models.models.insert({assetName, SerializedModel{assetName, data, format}});
                         }
 
-                        t = static_cast<AssetType>(d.read<int>());
+                        t = static_cast<AssetType>(p.d.read<int>());
                         count++;
                     }
 

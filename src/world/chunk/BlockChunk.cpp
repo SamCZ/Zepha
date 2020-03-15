@@ -2,11 +2,14 @@
 // Created by aurailus on 14/12/18.
 //
 
-#include "BlockChunk.h"
-
 #include <gzip/compress.hpp>
 #include <gzip/decompress.hpp>
 #include <gzip/utils.hpp>
+
+#include "BlockChunk.h"
+
+#include "../../util/net/Serializer.h"
+#include "../../util/net/PacketView.h"
 
 BlockChunk::BlockChunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes) :
     BlockChunk(blocks, biomes, {0, 0, 0}) {}
@@ -59,19 +62,18 @@ Packet BlockChunk::serialize() {
     return s.packet(PacketType::CHUNK);
 }
 
-void BlockChunk::deserialize(Packet& packet) {
-    Deserializer d(packet.data);
+void BlockChunk::deserialize(PacketView& packet) {
 
-    pos = d.read<glm::ivec3>();
+    pos = packet.d.read<glm::ivec3>();
 
-    auto gzip = d.read<std::string>();
+    auto gzip = packet.d.read<std::string>();
     if (!gzip::is_compressed(gzip.data(), gzip.length())) throw "Invalid Blocks GZip Data.";
     gzip = gzip::decompress(gzip.data(), gzip.length());
 
     blocks = Deserializer(gzip).read<std::vector<unsigned int>>();
     calcNonAirBlocks();
 
-    gzip = d.read<std::string>();
+    gzip = packet.d.read<std::string>();
     if (!gzip::is_compressed(gzip.data(), gzip.length())) throw "Invalid Biomes GZip Data.";
     gzip = gzip::decompress(gzip.data(), gzip.length());
 

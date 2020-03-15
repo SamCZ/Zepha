@@ -4,14 +4,8 @@
 
 #pragma once
 
-
-#include <glm/vec3.hpp>
-#include <vector>
-#include <noise/noise.h>
-
 #include "MapGenJob.h"
-#include "BiomeAtlas.h"
-#include "../ClientGame.h"
+#include "../../util/Vec.h"
 #include "../../world/chunk/BlockChunk.h"
 
 using namespace noise;

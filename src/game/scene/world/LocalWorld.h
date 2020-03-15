@@ -23,7 +23,7 @@ public:
     void init(Player* player);
     void update(double delta) override;
 
-    void loadChunkPacket(std::unique_ptr<Packet> p);
+    void loadChunkPacket(std::unique_ptr<PacketView> p);
     void commitChunk(std::shared_ptr<BlockChunk> chunk);
 
     unsigned int getBlock(glm::ivec3 pos) override;

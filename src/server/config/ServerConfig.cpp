@@ -4,6 +4,10 @@
 
 #include "ServerConfig.h"
 
+#include "../asset/AssetType.h"
+#include "../../util/net/PacketView.h"
+#include "../../util/net/Serializer.h"
+
 ServerConfig::ServerConfig(ServerGame &defs) : defs(defs) {}
 
 void ServerConfig::init() {
@@ -18,7 +22,7 @@ void ServerConfig::init() {
     }
 }
 
-bool ServerConfig::handlePacket(ServerClient& client, Packet& r) {
+bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
     switch (r.type) {
         default: break;
         case PacketType::CONNECT_DATA_RECVD: {

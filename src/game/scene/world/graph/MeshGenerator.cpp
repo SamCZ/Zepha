@@ -4,10 +4,13 @@
 
 #include <vector>
 #include <glm/gtx/normal.hpp>
+
+#include "MeshGenerator.h"
+
 #include "../MeshDetails.h"
+#include "../../../../util/Vec.h"
 #include "../../../../util/Timer.h"
 #include "../../../../world/chunk/BlockChunk.h"
-#include "MeshGenerator.h"
 
 MeshGenerator::MeshGenerator(MeshDetails* meshDetails, ClientGame& defs, std::shared_ptr<BlockChunk> chunk,
                              std::array<std::shared_ptr<BlockChunk>, 6> adjacent,

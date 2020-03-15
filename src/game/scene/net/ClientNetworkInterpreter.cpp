@@ -7,6 +7,8 @@
 #include "NetPlayerField.h"
 #include "../world/Player.h"
 #include "../../../util/net/NetHandler.h"
+#include "../../../util/net/PacketView.h"
+#include "../../../util/net/Serializer.h"
 
 ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, ClientGame &defs, Player& player) :
     player(player),
@@ -15,7 +17,7 @@ ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection,
     playerModel->fromSerialized(defs.models.models["zeus:default:player"], {defs.textures["zeus:default:player"]});
 }
 
-void ClientNetworkInterpreter::init(LocalWorld *world, std::function<void(std::unique_ptr<Packet>)> invCallback) {
+void ClientNetworkInterpreter::init(LocalWorld *world, std::function<void(std::unique_ptr<PacketView>)> invCallback) {
     this->world = world;
     this->onInvPacket = invCallback;
 }
@@ -36,9 +38,8 @@ void ClientNetworkInterpreter::update() {
                 break;
             }
             case ENET_EVENT_TYPE_RECEIVE: {
-                std::unique_ptr<Packet> p = std::make_unique<Packet>(event.packet);
+                std::unique_ptr<PacketView> p = std::make_unique<PacketView>(event.packet);
                 receivedPacket(std::move(p));
-                enet_packet_destroy(event.packet);
                 break;
             }
             case ENET_EVENT_TYPE_DISCONNECT: {
@@ -60,9 +61,7 @@ void ClientNetworkInterpreter::update() {
     p.sendTo(connection.getPeer(), PacketChannel::PLAYER);
 }
 
-void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
-    Deserializer d(p->data);
-
+void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
     switch (p->type) {
         default: {
             std::cout << Log::err << "Received unknown packet of type " << static_cast<int>(p->type)
@@ -71,22 +70,22 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
         }
 
         case PacketType::THIS_PLAYER_INFO: {
-            while (!d.atEnd()) {
-                switch (d.read<unsigned int>()) {
+            while (!p->d.atEnd()) {
+                switch (p->d.read<unsigned int>()) {
                     case static_cast<unsigned int>(NetPlayerField::ID): {
-                        cid = d.read<unsigned int>();
+                        cid = p->d.read<unsigned int>();
                         break;
                     }
                     case static_cast<unsigned int>(NetPlayerField::POSITION): {
-                        player.setPos(d.read<glm::vec3>());
+                        player.setPos(p->d.read<glm::vec3>());
                         break;
                     }
                     case static_cast<unsigned int>(NetPlayerField::PITCH): {
-                        player.setPitch(d.read<float>());
+                        player.setPitch(p->d.read<float>());
                         break;
                     }
                     case static_cast<unsigned int>(NetPlayerField::YAW): {
-                        player.setYaw(d.read<float>());
+                        player.setYaw(p->d.read<float>());
                         break;
                     }
                 }
@@ -94,16 +93,16 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
             break;
         }
         case PacketType::PLAYER_INFO: {
-            unsigned int cid = d.read<unsigned int>();
+            unsigned int cid = p->d.read<unsigned int>();
             if (this->cid == cid) break;
 
             bool found = false;
             for (auto& entity : world->dimension.playerEntities) {
                 if (entity.getCid() == cid) {
                     // Update an existing PlayerEntity
-                    entity.interpPos(d.read<glm::vec3>());
-                    entity.interpRotateZ(-d.read<float>() + 90);
-                    entity.interpRotateY(-d.read<float>() + 90);
+                    entity.interpPos(p->d.read<glm::vec3>());
+                    entity.interpRotateZ(-p->d.read<float>() + 90);
+                    entity.interpRotateY(-p->d.read<float>() + 90);
 
                     found = true;
                     break;
@@ -112,7 +111,7 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
             if (found) break;
 
             // Instantiate a new PlayerEntity
-            world->dimension.playerEntities.emplace_back(d.read<glm::vec3>(), cid, playerModel);
+            world->dimension.playerEntities.emplace_back(p->d.read<glm::vec3>(), cid, playerModel);
             break;
         }
         case PacketType::ENTITY_INFO: {
@@ -120,12 +119,12 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
             break;
         }
         case PacketType::ENTITY_REMOVED: {
-            world->dimension.serverEntityRemoved(d.read<unsigned int>());
+            world->dimension.serverEntityRemoved(p->d.read<unsigned int>());
             break;
         }
         case PacketType::BLOCK_SET: {
-            auto pos = d.read<glm::ivec3>();
-            auto block = d.read<unsigned int>();
+            auto pos = p->d.read<glm::ivec3>();
+            auto block = p->d.read<unsigned int>();
             world->setBlock(pos, block);
             break;
         }
@@ -134,12 +133,12 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<Packet> p) {
             break;
         }
         case PacketType::SERVER_INFO: {
-            serverSideChunkGens = d.read<unsigned int>();
+            serverSideChunkGens = p->d.read<unsigned int>();
             break;
         }
         case PacketType::INV_INVALID: {
-            std::string source = d.read<std::string>();
-            std::string list = d.read<std::string>();
+            std::string source = p->d.read<std::string>();
+            std::string list = p->d.read<std::string>();
 
             std::cout << Log::err << "Invalid inventory " << source << ":" << list << " was requested by client." << Log::endl;
             exit(1);

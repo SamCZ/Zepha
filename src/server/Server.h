@@ -19,7 +19,7 @@ public:
     explicit Server(unsigned short port, const std::string& subgame);
 
     void update();
-    void handlePlayerPacket(ServerClient& client, Packet& p);
+    void handlePlayerPacket(ServerClient& client, PacketView& p);
 
     void cleanup();
 

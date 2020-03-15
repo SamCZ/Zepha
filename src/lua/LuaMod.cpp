@@ -2,14 +2,16 @@
 // Created by aurailus on 05/08/19.
 //
 
-#include "LuaMod.h"
-#include "../util/net/Deserializer.h"
 #include <gzip/decompress.hpp>
 
-LuaMod LuaMod::fromPacket(const Packet& p) {
+#include "LuaMod.h"
+
+#include "../util/net/PacketView.h"
+
+LuaMod LuaMod::fromPacket(PacketView& p) {
     LuaMod luaMod {};
 
-    auto serialized = Deserializer(p.data).read<std::string>();
+    auto serialized = p.d.read<std::string>();
     std::string mod = gzip::decompress(serialized.c_str(), serialized.length());
     luaMod.serialized = serialized;
 

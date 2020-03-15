@@ -6,9 +6,8 @@
 
 #include "Player.h"
 #include "WorldInterpolationStream.h"
-#include "../net/ClientNetworkInterpreter.h"
-#include "../../entity/engine/BlockCrackEntity.h"
 #include "../../entity/engine/ParticleEntity.h"
+#include "../../entity/engine/BlockCrackEntity.h"
 
 LocalWorld::LocalWorld(ClientGame& defs, ClientNetworkInterpreter* server) :
         defs(defs),
@@ -38,7 +37,7 @@ void LocalWorld::update(double delta) {
     if (end != particles.begin()) particles.erase(particles.begin(), end + 1);
 }
 
-void LocalWorld::loadChunkPacket(std::unique_ptr<Packet> p) {
+void LocalWorld::loadChunkPacket(std::unique_ptr<PacketView> p) {
     worldGenStream->pushBack(std::move(p));
 }
 

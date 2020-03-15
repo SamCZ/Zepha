@@ -12,7 +12,7 @@ public:
     ClientNetworkInterpreter(ServerConnection& connection, ClientGame& defs, Player& player);
     ClientNetworkInterpreter(const ClientNetworkInterpreter& other) = default;
 
-    void init(LocalWorld* world, std::function<void(std::unique_ptr<Packet>)> invCallback);
+    void init(LocalWorld* world, std::function<void(std::unique_ptr<PacketView>)> invCallback);
     void update();
 
     // Functions to be called by outside of ClientNetworkInterpreter
@@ -26,7 +26,7 @@ public:
     int recvPackets = 0;
     int serverSideChunkGens = 0;
 private:
-    void receivedPacket(std::unique_ptr<Packet> ePacket);
+    void receivedPacket(std::unique_ptr<PacketView> ePacket);
 
     int cid = 0;
     Player& player;
@@ -35,6 +35,6 @@ private:
     LocalWorld* world = nullptr;
     std::shared_ptr<Model> playerModel;
 
-    std::function<void(std::unique_ptr<Packet>)> onInvPacket;
+    std::function<void(std::unique_ptr<PacketView>)> onInvPacket;
 };
 

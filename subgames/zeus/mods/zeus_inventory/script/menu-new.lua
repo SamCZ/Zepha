@@ -1,4 +1,4 @@
-local formspec = zepha.create_menu(function()
+local menu = zepha.create_menu(function()
     return Gui.Body {
         background = "#0003",
 
@@ -118,7 +118,7 @@ zepha.register_keybind("zeus:inventory:open_inventory", {
     default = zepha.keys.e,
     on_press = function()
         if (zepha.player.menu_state == "") then
-            zepha.player:open_menu(formspec)
+            zepha.player:open_menu(menu)
         else
             zepha.player:close_menu()
         end

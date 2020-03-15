@@ -1,10 +1,10 @@
 zepha.register_item("zeus:materials:stick", {
     name = "Stick",
     textures = {
-        "zeus:materials:stick_0",
-        "zeus:materials:stick_1",
-        "zeus:materials:stick_2",
-        "zeus:materials:stick_3"
+        "zeus:materials:stick_outlined",
+##        "zeus:materials:stick_1_outlined",
+##        "zeus:materials:stick_2_outlined",
+##        "zeus:materials:stick_3_outlined"
     },
     groups = {
         stick = 1,

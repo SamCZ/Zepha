@@ -5,6 +5,7 @@
 #include "LocalInventoryRefs.h"
 
 #include "../scene/net/ClientNetworkInterpreter.h"
+#include "../../util/net/PacketView.h"
 
 LocalInventoryRefs::LocalInventoryRefs(LocalDefinitionAtlas& defs, ClientNetworkInterpreter& net) : defs(defs) {
     namespace ph = std::placeholders;
@@ -43,25 +44,23 @@ std::shared_ptr<LocalInventoryList> LocalInventoryRefs::getHand() {
     return inventories["current_player"]->operator[]("hand");
 }
 
-void LocalInventoryRefs::packetReceived(std::unique_ptr<Packet> p) {
-    Deserializer d(p->data);
-
-    std::string source = d.read<std::string>();
-    std::string list = d.read<std::string>();
+void LocalInventoryRefs::packetReceived(std::unique_ptr<PacketView> p) {
+    std::string source = p->d.read<std::string>();
+    std::string list = p->d.read<std::string>();
     if (strncmp(source.data(), "player:", 7) == 0) source = "current_player";
 
     if (!inventories.count(source)) return;
     if (!inventories[source]->operator[](list)) return;
 
-    unsigned int size = d.read<unsigned int>();
-    unsigned int width = d.read<unsigned int>();
+    unsigned int size = p->d.read<unsigned int>();
+    unsigned int width = p->d.read<unsigned int>();
 
     std::vector<ItemStack> stacks {};
     stacks.reserve(size);
 
-    while (!d.atEnd()) {
-        unsigned short count = d.read<unsigned short>();
-        unsigned int id = d.read<unsigned int>();
+    while (!p->d.atEnd()) {
+        unsigned short count = p->d.read<unsigned short>();
+        unsigned int id = p->d.read<unsigned int>();
         stacks.push_back({id, count});
     }
 

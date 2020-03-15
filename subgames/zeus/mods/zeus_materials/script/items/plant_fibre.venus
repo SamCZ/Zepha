@@ -1,7 +1,7 @@
 zepha.register_item("zeus:materials:plant_fibre", {
     name = "Plant Fibre",
     textures = {
-        "zeus:materials:plant_fibre"
+        "zeus:materials:plant_fibre_outlined"
     },
      groups = {
          organic = 1,

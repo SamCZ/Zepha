@@ -18,7 +18,7 @@ public:
     LocalInventoryRefs(LocalDefinitionAtlas& defs, ClientNetworkInterpreter& net);
 
     void update(double delta, ClientNetworkInterpreter& net);
-    void packetReceived(std::unique_ptr<Packet> p);
+    void packetReceived(std::unique_ptr<PacketView> p);
 
     std::shared_ptr<LocalInventory> getInv(const std::string& inv);
     std::shared_ptr<LocalInventoryList> getList(const std::string& inv, const std::string& list);

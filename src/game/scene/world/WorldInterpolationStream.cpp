@@ -15,7 +15,7 @@ WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, ClientGame
     }
 }
 
-bool WorldInterpolationStream::pushBack(std::unique_ptr<Packet> p) {
+bool WorldInterpolationStream::pushBack(std::unique_ptr<PacketView> p) {
     queuedTasks.push_back(std::move(p));
 	return true;
 }

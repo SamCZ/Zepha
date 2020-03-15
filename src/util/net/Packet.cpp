@@ -9,13 +9,6 @@
 
 Packet::Packet(PacketType type, bool reliable) : type(type), reliable(reliable) {}
 
-Packet::Packet(ENetPacket *packet) : reliable(true) {
-    std::string packetData(packet->data, packet->data + packet->dataLength);
-    this->type = static_cast<PacketType>(Deserializer(packetData).read<unsigned int>());
-
-    this->data = packetData.substr(4, packetData.length() - 4);
-}
-
 ENetPacket* Packet::toENetPacket() {
     std::string serialized = Serializer().append(static_cast<unsigned int>(type)).data + data;
 

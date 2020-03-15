@@ -5,9 +5,11 @@
 #pragma once
 
 #include <vector>
+
 #include "LuaModFile.h"
 #include "LuaModConfig.h"
-#include "../util/net/Packet.h"
+
+class PacketView;
 
 class LuaMod {
 public:
@@ -16,5 +18,5 @@ public:
     std::string modPath;
     std::string serialized;
 
-    static LuaMod fromPacket(const Packet& p);
+    static LuaMod fromPacket(PacketView& p);
 };

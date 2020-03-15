@@ -11,7 +11,8 @@
 
 class Deserializer {
 public:
-    Deserializer(const std::string& data) : data(data) {};
+    Deserializer(const std::string& data) : data(&data[0]), len(data.length()) {};
+    Deserializer(const char* start, size_t len) : data(start), len(len) {};
 
     template <typename T> inline T read() {};
     template <typename T> inline Deserializer& read(T& ref) {
@@ -20,10 +21,11 @@ public:
     };
 
     bool atEnd() {
-        return ind >= data.length();
+        return ind >= len;
     };
 
-    const std::string& data;
+    const char* data;
+    size_t len;
     size_t ind = 0;
 
 private:
@@ -84,7 +86,7 @@ template <> inline std::string Deserializer::read<std::string>() {
     unsigned int len = read<unsigned int>();
     size_t i = ind;
     ind += len;
-    return data.substr(i, len);
+    return std::string(&data[i], len);
 }
 
 template <> inline glm::vec2 Deserializer::read<glm::vec2>() {

@@ -4,11 +4,9 @@
 
 #pragma once
 
-#include "../conn/ServerClient.h"
-#include "../asset/AssetType.h"
 #include "../../def/ServerGame.h"
-#include "../../util/net/Packet.h"
-#include "../../util/net/Serializer.h"
+
+class ServerClient;
 
 class ServerConfig {
 public:
@@ -17,7 +15,7 @@ public:
     void init();
 
     //Bool: Create player
-    bool handlePacket(ServerClient &client, Packet& p);
+    bool handlePacket(ServerClient &client, PacketView& p);
 private:
     ServerGame& defs;
     std::vector<std::string> blockIdentifierList {};
