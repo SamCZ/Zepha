@@ -14,14 +14,7 @@
 #pragma clang diagnostic pop
 
 #include "StartGame.h"
-#include "util/Any.h"
 
 int main(int argc, char* argv[]) {
-//    return StartGame(argc, argv);
-
-    auto a = Any::from<std::string>({"wee"});
-    auto b = Any(a);
-    b.set<int>(57);
-
-    std::cout << a.get<std::string>() << ", " << b.get_or<std::string>("fuck that") << std::endl;
+    return StartGame(argc, argv);
 }
