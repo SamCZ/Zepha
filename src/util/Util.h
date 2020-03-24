@@ -31,9 +31,15 @@ namespace Util {
         return floatToString((float)val);
     }
 
+    static std::string vecToString(glm::ivec3 vec) {
+        std::ostringstream out;
+        out << vec.x << ", " << vec.y << ", " << vec.z;
+        return out.str();
+    }
+
     static std::string vecToString(glm::vec3 vec) {
         std::ostringstream out;
-        out << (int)vec.x << ", " << (int)vec.y << ", " << (int)vec.z;
+        out << vec.x << ", " << vec.y << ", " << vec.z;
         return out.str();
     }
 

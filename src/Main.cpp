@@ -19,9 +19,9 @@
 int main(int argc, char* argv[]) {
 //    return StartGame(argc, argv);
 
-    Any a(new std::string("whee"));
-    Any b(new int(125));
+    auto a = Any::from<std::string>({"wee"});
+    auto b = Any(a);
+    b.set<int>(57);
 
-    std::cout << *a.get<std::string>() << std::endl;
-    std::cout << *b.get<int>() << std::endl;
+    std::cout << a.get<std::string>() << ", " << b.get_or<std::string>("fuck that") << std::endl;
 }

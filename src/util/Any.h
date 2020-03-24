@@ -9,34 +9,43 @@
 class Any {
 public:
     Any() = default;
-    template <typename T> Any(T* val) {
-        set<T>(val);
+
+    template <typename T> static Any from(const T& val) {
+        Any a;
+        a.set<T>(val);
+        return a;
     }
 
-    template <typename T> void set(T* val) {
+    template <typename T> void set(const T& val) noexcept {
+        data = std::make_shared<T>(std::move(val));
         type = typeid(T).hash_code();
-        hasData = true;
-        data = val;
     }
 
-    template <typename T> T* get() {
-        if (!hasData || type != typeid(T).hash_code()) return nullptr;
-        return static_cast<T*>(data);
+    template<typename T> const T& get() const {
+        if (empty()) throw std::logic_error("Tried to get empty Any.");
+        else if (type != typeid(T).hash_code()) throw std::logic_error("Any is not of type specified.");
+        return *std::static_pointer_cast<T>(data);
     }
 
-    bool empty() {
-        return !hasData;
+    template<typename T> const T& get_or(const T& other) const noexcept {
+        try { return get<T>(); }
+        catch (...) { return other; }
     }
 
-    template <typename T> void erase() {
-        if (!hasData) return;
-        hasData = false;
-        delete static_cast<T*>(data);
+    template <typename T> const bool is() const noexcept {
+        return typeid(T).hash_code() == type;
+    }
+
+    bool const empty() const noexcept {
+        return !data;
+    }
+
+    void reset() noexcept {
+        data = nullptr;
         type = 0;
     }
 
 private:
     std::size_t type = 0;
-    bool hasData = false;
-    void* data = nullptr;
+    std::shared_ptr<void> data = nullptr;
 };
