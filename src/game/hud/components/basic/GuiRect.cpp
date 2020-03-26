@@ -10,22 +10,21 @@
 
 GuiRect::GuiRect(const std::string &key) : GuiComponent(key) {}
 
-std::shared_ptr<GuiRect> GuiRect::fromSerialized(SerialGui::Elem s, ClientGame& game, glm::ivec2 bounds) {
-    glm::vec2 pos     = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position", bounds);
-    glm::vec2 offset  = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position_anchor");
-    glm::vec2 size    = SerialGui::deserializeToken<glm::vec2>(s.tokens, "size", bounds);
-    glm::vec4 padding = SerialGui::deserializeToken<glm::vec4>(s.tokens, "padding", bounds);
+std::shared_ptr<GuiRect> GuiRect::fromSerialized(const SerialGui::Element& elem, TextureAtlas& textures, glm::ivec2 bounds) {
+    glm::vec2 pos     = SerialGui::get<glm::vec2>(elem, "position", bounds);
+    glm::vec2 offset  = SerialGui::get<glm::vec2>(elem, "position_anchor");
+    glm::vec2 size    = SerialGui::get<glm::vec2>(elem, "size", bounds);
+    glm::vec4 padding = SerialGui::get<glm::vec4>(elem, "padding", bounds);
 
     pos -= offset * size;
     size -= glm::vec2 {padding.y + padding.w, padding.x + padding.z};
 
-    std::string background = s.tokens["background"];
+    std::string background = elem.get_or<std::string>("background", "");
+    bool hideOverflow = elem.get_or<std::string>("overflow", "visible") == "hidden";
 
-    bool hideOverflow = s.tokens["overflow"] == "hidden";
-
-    auto rect = std::make_shared<GuiRect>(s.key);
+    auto rect = std::make_shared<GuiRect>(elem.key);
     if (background[0] == '#') rect->create(size, padding, Util::hexToColorVec(background));
-    else if (background.size() > 0) rect->create(size, padding, game.textures[background]);
+    else if (background.size() > 0) rect->create(size, padding, textures[background]);
     else rect->create(size, padding, glm::vec4 {});
     rect->setOverflows(!hideOverflow);
     rect->setPos(pos);

@@ -320,6 +320,6 @@ set(ZEPHA_SRC
 	game/inventory/InventoryList.h 
 	lua/api/modules/time.h 
 	util/net/PacketView.cpp 
-	util/net/PacketView.h)
+	util/net/PacketView.h lua/api/modules/create_structure.h util/Any.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

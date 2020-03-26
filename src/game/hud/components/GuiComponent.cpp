@@ -171,3 +171,7 @@ void GuiComponent::updatePos() {
         child->updatePos();
     }
 }
+
+std::list<std::shared_ptr<GuiComponent>> GuiComponent::getChildren() {
+    return children;
+}

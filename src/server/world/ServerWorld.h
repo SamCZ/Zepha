@@ -5,6 +5,7 @@
 #pragma once
 
 #include <unordered_set>
+
 #include "WorldGenStream.h"
 #include "../conn/ClientList.h"
 #include "../../def/ServerGame.h"

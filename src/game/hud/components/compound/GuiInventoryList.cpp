@@ -9,20 +9,20 @@
 #include "../../../../def/texture/Font.h"
 GuiInventoryList::GuiInventoryList(const std::string &key) : GuiContainer(key) {}
 
-std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(SerialGui::Elem s, ClientGame &game,
+std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(SerialGui::Element elem, ClientGame &game,
         glm::ivec2 bounds, LocalInventoryRefs& refs) {
 
-    glm::vec2 pos     = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position", bounds);
-    glm::vec2 offset  = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position_anchor");
+    glm::vec2 pos     = SerialGui::get<glm::vec2>(elem, "position", bounds);
+    glm::vec2 offset  = SerialGui::get<glm::vec2>(elem, "position_anchor");
 //    glm::vec2 size    = SerialGui::deserializeToken<glm::vec2>(s.tokens, "size", bounds);
-    glm::vec4 padding = SerialGui::deserializeToken<glm::vec4>(s.tokens, "padding", bounds);
-    glm::vec2 slotspc = SerialGui::deserializeToken<glm::vec2>(s.tokens, "slot_spacing", bounds);
+    glm::vec4 padding = SerialGui::get<glm::vec4>(elem, "padding", bounds);
+    glm::vec2 slotspc = SerialGui::get<glm::vec2>(elem, "slot_spacing", bounds);
 
-    std::string source = s.tokens["source"];
-    std::string list   = s.tokens["list"];
+    std::string source = elem.get_or<std::string>("source", "");
+    std::string list   = elem.get_or<std::string>("list", "");
 
     auto invList = refs.getList(source, list);
-    auto inv = std::make_shared<GuiInventoryList>(s.key);
+    auto inv = std::make_shared<GuiInventoryList>(elem.key);
 
     inv->create(glm::vec2(SerialGui::SCALE_MODIFIER), padding * SerialGui::SCALE_MODIFIER,
             slotspc * SerialGui::SCALE_MODIFIER, invList, refs.getHand(), game);

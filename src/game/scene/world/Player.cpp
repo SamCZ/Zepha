@@ -276,8 +276,8 @@ void Player::setActiveBlock(const std::string& block) {
     handItemModel.setModel(defs.defs.fromId(activeBlock).entityModel);
 }
 
-void Player::setMenu(const std::string& menu, const std::map<std::string, GuiBuilder::ComponentCallbacks>& callbacks) {
-    gameGui.setMenu(menu, callbacks);
+void Player::buildMenu(sol::state_view state, sol::table menu) {
+    gameGui.buildMenu(state, menu);
     renderer.window.lockMouse(false);
 }
 
@@ -290,8 +290,8 @@ void Player::setGuiVisible(bool hudVisible) {
     gameGui.setVisible(hudVisible);
 }
 
-std::string Player::getMenuState() {
-    return gameGui.getMenuState();
+bool Player::isInMenu() {
+    return gameGui.isInMenu();
 }
 
 /*

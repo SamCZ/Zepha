@@ -6,14 +6,18 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include <glm/glm.hpp>
 #include <noise/module/modulebase.h>
+
+#include "../../game/scene/world/Schematic.h"
 
 struct BiomeDef {
     BiomeDef() = default;
     BiomeDef(const std::string& identifier, unsigned int index, float temperature, float humidity, float roughness,
             unsigned int topBlock, unsigned int soilBlock, unsigned int rockBlock,
             const std::vector<noise::module::Module*>& heightmap, const std::vector<noise::module::Module*>& volume,
+            const std::vector<std::shared_ptr<Schematic>> schematics,
             glm::vec3 biomeTint);
 
     std::string identifier = "";
@@ -29,6 +33,8 @@ struct BiomeDef {
 
     std::vector<noise::module::Module*> heightmap;
     std::vector<noise::module::Module*> volume;
+
+    std::vector<std::shared_ptr<Schematic>> schematics;
 
     glm::vec3 biomeTint {};
 };

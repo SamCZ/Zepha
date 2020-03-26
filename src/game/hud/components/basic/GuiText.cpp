@@ -23,32 +23,22 @@ void GuiText::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 bgcolor, glm:
     setText("");
 }
 
-std::shared_ptr<GuiText> GuiText::fromSerialized(SerialGui::Elem s, ClientGame &game, glm::ivec2 bounds) {
-    glm::vec2 pos     = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position", bounds);
-    glm::vec2 offset  = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position_anchor");
-    glm::vec2 size    = SerialGui::deserializeToken<glm::vec2>(s.tokens, "size", bounds);
-    glm::vec4 padding = SerialGui::deserializeToken<glm::vec4>(s.tokens, "padding", bounds);
-    glm::vec2 scale =   SerialGui::deserializeToken<glm::vec2>(s.tokens, "scale");
+std::shared_ptr<GuiText> GuiText::fromSerialized(const SerialGui::Element& elem, TextureAtlas& textures, glm::ivec2 bounds) {
+    glm::vec2 pos     = SerialGui::get<glm::vec2>(elem, "position", bounds);
+    glm::vec2 offset  = SerialGui::get<glm::vec2>(elem, "position_anchor");
+    glm::vec2 size    = SerialGui::get<glm::vec2>(elem, "size", bounds);
+    glm::vec4 padding = SerialGui::get<glm::vec4>(elem, "padding", bounds);
+    glm::vec2 scale   = SerialGui::get<glm::vec2>(elem, "scale");
     if (scale == glm::vec2{0, 0}) scale = {1, 1};
 
     pos -= offset * size;
-//    size -= glm::vec2 {padding.y + padding.w, padding.x + padding.z};
 
-    glm::vec4 background_color = Util::hexToColorVec("#0000");
-    if (s.tokens.count("background")) background_color = Util::hexToColorVec(s.tokens["background"]);
-    glm::vec4 color = Util::hexToColorVec("#fff");
-    if (s.tokens.count("color")) color = Util::hexToColorVec(s.tokens["color"]);
+    glm::vec4 background_color = Util::hexToColorVec(elem.get_or<std::string>("background", "#0000"));
+    glm::vec4 color = Util::hexToColorVec(elem.get_or<std::string>("color", "#fff"));
+    std::string content = elem.get_or<std::string>("content", "");
 
-    std::string content = "";
-    if (s.tokens.count("content") && s.tokens["content"].length() >= 2) content = s.tokens["content"].substr(1, s.tokens["content"].size() - 2);
-    std::string::size_type off = 0;
-    while ((off = content.find("\\n", off)) != std::string::npos) {
-        content.replace(off, 2, "\n");
-        off += 1;
-    }
-
-    auto text = std::make_shared<GuiText>(s.key);
-    text->create(scale * SerialGui::SCALE_MODIFIER, padding, background_color, color, {game.textures, game.textures["font"]});
+    auto text = std::make_shared<GuiText>(elem.key);
+    text->create(scale * SerialGui::SCALE_MODIFIER, padding, background_color, color, {textures, textures["font"]});
     text->setText(content);
     text->setPos(pos);
 

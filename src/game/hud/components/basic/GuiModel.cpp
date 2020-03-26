@@ -5,23 +5,24 @@
 #include "GuiModel.h"
 
 #include "../../../../def/ClientGame.h"
+#include "../../../../def/model/ModelStore.h"
 
 GuiModel::GuiModel(const std::string &key) : GuiComponent(key) {}
 
-std::shared_ptr<GuiModel> GuiModel::fromSerialized(SerialGui::Elem s, ClientGame &game, glm::ivec2 bounds) {
-    glm::vec2 pos        = SerialGui::deserializeToken<glm::vec2>(s.tokens, "position", bounds);
-    glm::vec2 scale      = SerialGui::deserializeToken<glm::vec2>(s.tokens, "scale");
-    glm::vec2 anim_range = SerialGui::deserializeToken<glm::vec2>(s.tokens, "anim_range");
+std::shared_ptr<GuiModel> GuiModel::fromSerialized(const SerialGui::Element& elem, TextureAtlas& textures, ModelStore& models, glm::ivec2 bounds) {
+    glm::vec2 pos        = SerialGui::get<glm::vec2>(elem, "position", bounds);
+    glm::vec2 scale      = SerialGui::get<glm::vec2>(elem, "scale");
+    glm::vec2 anim_range = SerialGui::get<glm::vec2>(elem, "anim_range");
     if (scale == glm::vec2{0, 0}) scale = {1, 1};
 
-    std::string type    = s.tokens.count("type") ? s.tokens["type"] : "model";
-    std::string source  = s.tokens["source"];
-    std::string texture = s.tokens["texture"];
+    std::string type    = elem.get_or<std::string>("type", "model");
+    std::string source  = elem.get_or<std::string>("source", "");
+    std::string texture = elem.get_or<std::string>("texture", "");
 
     auto m = std::make_shared<Model>();
-    if (type == "model") m->fromSerialized(game.models.models[source], {game.textures[texture]});
+    if (type == "model") m->fromSerialized(models.models[source], {textures[texture]});
 
-    auto model = std::make_shared<GuiModel>(s.key);
+    auto model = std::make_shared<GuiModel>(elem.key);
     model->create(scale, m);
     model->setPos(pos);
 

@@ -25,9 +25,9 @@ public:
     void setVisible(bool visible);
     bool isVisible();
 
-    void setMenu(const std::string& menu, const std::map<std::string, GuiBuilder::ComponentCallbacks>& callbacks);
+    void buildMenu(sol::state_view state, sol::table menu);
+    const bool isInMenu() const;
     void closeMenu();
-    const std::string& getMenuState();
 
     void drawHud(Renderer& renderer);
     void drawMenu(Renderer& renderer);
@@ -36,7 +36,7 @@ private:
     Renderer& renderer;
 
     glm::ivec2 win {};
-    std::string menuState = "";
+    bool inMenu = false;
 
     std::shared_ptr<GuiContainer> menuRoot = std::make_shared<GuiInventoryList>("menuRoot");
     std::shared_ptr<GuiContainer> menuLuaRoot = std::make_shared<GuiInventoryList>("menuLuaRoot");

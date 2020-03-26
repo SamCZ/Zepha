@@ -44,19 +44,19 @@ void GameGui::winResized(glm::ivec2 win) {
     menuBuilder.build(win);
 }
 
-void GameGui::setMenu(const std::string& menu, const std::map<std::string, GuiBuilder::ComponentCallbacks>& callbacks) {
-    menuState = "menu"; //TODO: Implement the menu state properly
-    menuBuilder.setGui(menu, callbacks);
+void GameGui::buildMenu(sol::state_view state, sol::table menu) {
+    menuBuilder.setGuiTable(state, menu);
     menuBuilder.build(win);
+    inMenu = true;
 }
 
 void GameGui::closeMenu() {
     menuBuilder.clear();
-    menuState = "";
+    inMenu = false;
 }
 
-const std::string &GameGui::getMenuState() {
-    return menuState;
+const bool GameGui::isInMenu() const {
+    return inMenu;
 }
 
 void GameGui::setVisible(bool visible) {

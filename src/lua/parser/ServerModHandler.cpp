@@ -41,7 +41,7 @@ const std::vector<LuaMod>& ServerModHandler::cGetMods() const {
 }
 
 std::list<std::string> ServerModHandler::findModDirectories(const std::string& path) {
-    std::list<std::string> modDirs {};
+    std::list<std::string> modDirs {path + "/../../../assets/base"};
     std::list<std::string> dirsToScan {path};
 
     cf_dir_t dir;

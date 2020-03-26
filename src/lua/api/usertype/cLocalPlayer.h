@@ -23,7 +23,7 @@ namespace ClientApi {
             "get_inventory", &LocalLuaPlayer::get_inventory,
             "set_selected_block", &LocalLuaPlayer::set_selected_block,
 
-            "open_menu", &LocalLuaPlayer::open_menu,
+            "show_menu", &LocalLuaPlayer::show_menu,
             "close_menu", &LocalLuaPlayer::close_menu,
 
             "pos", sol::property(&LocalLuaPlayer::get_pos, &LocalLuaPlayer::set_pos),
@@ -34,7 +34,7 @@ namespace ClientApi {
 
             "flying", sol::property(&LocalLuaPlayer::set_flying, &LocalLuaPlayer::get_flying),
 
-            "menu_state", sol::property(&LocalLuaPlayer::get_menu_state)
+            "in_menu", sol::property(&LocalLuaPlayer::is_in_menu)
         );
     }
 }

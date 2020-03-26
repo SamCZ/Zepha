@@ -2,36 +2,34 @@
 // Created by aurailus on 2019-12-12.
 //
 
+#include <array>
+
 #include "GameGuiBuilder.h"
 
 #include "components/compound/GuiInventoryList.h"
 
-std::shared_ptr<GuiComponent> GameGuiBuilder::createComponent(SerialGui::Elem &data, glm::ivec2 bounds) {
-    auto c = GuiBuilder::createComponent(data, bounds);
+std::shared_ptr<GuiComponent> GameGuiBuilder::createComponent(const SerialGui::Element& elem, glm::ivec2 bounds) {
+    auto c = GuiBuilder::createComponent(elem, bounds);
     if (c != nullptr) return c;
 
-    GuiComponent::callback cbLeftClick = nullptr;
-    GuiComponent::callback cbRightClick = nullptr;
-    GuiComponent::callback cbHover = nullptr;
-
-    if (callbacks.count(data.key)) {
-        cbLeftClick = callbacks[data.key].left;
-        cbRightClick = callbacks[data.key].right;
-        cbHover = callbacks[data.key].hover;
-    }
-
-    switch (Util::hash(data.type.c_str())) {
+    switch (Util::hash(elem.type.c_str())) {
         default: break;
-        case Util::hash("inventory"): {
-            c = GuiInventoryList::fromSerialized(data, game, bounds, refs);
+        case Util::hash("inventory_list"): {
+            c = GuiInventoryList::fromSerialized(elem, defs, bounds, refs);
             break;
         }
     }
 
-    if (c != nullptr) {
-        c->setCallback(GuiComponent::CallbackType::PRIMARY, cbLeftClick);
-        c->setCallback(GuiComponent::CallbackType::SECONDARY, cbRightClick);
-        c->setCallback(GuiComponent::CallbackType::HOVER, cbHover);
-    }
+    if (!c) return nullptr;
+
+    if (elem.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::PRIMARY)])
+        c->setCallback(GuiComponent::CallbackType::PRIMARY, elem.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::PRIMARY)]);
+
+    if (elem.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::SECONDARY)])
+        c->setCallback(GuiComponent::CallbackType::SECONDARY, elem.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::SECONDARY)]);
+
+    if (elem.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::HOVER)])
+        c->setCallback(GuiComponent::CallbackType::HOVER, elem.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::HOVER)]);
+
     return c;
 }

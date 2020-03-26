@@ -5,23 +5,26 @@
 #include "BiomeDef.h"
 
 BiomeDef::BiomeDef(
-        const std::string& identifier, unsigned int index, float temperature, float humidity, float roughness,
-        unsigned int topBlock, unsigned int soilBlock, unsigned int rockBlock,
-        const std::vector<noise::module::Module*>& heightmap, const std::vector<noise::module::Module*>& volume,
-        glm::vec3 biomeTint) :
+    const std::string& identifier, unsigned int index, float temperature, float humidity, float roughness,
+    unsigned int topBlock, unsigned int soilBlock, unsigned int rockBlock,
+    const std::vector<noise::module::Module*>& heightmap, const std::vector<noise::module::Module*>& volume,
+    const std::vector<std::shared_ptr<Schematic>> schematics,
+    glm::vec3 biomeTint) :
 
-        identifier(identifier),
-        index(index),
+    identifier(identifier),
+    index(index),
 
-        temperature(temperature),
-        humidity(humidity),
-        roughness(roughness),
+    temperature(temperature),
+    humidity(humidity),
+    roughness(roughness),
 
-        topBlock(topBlock),
-        soilBlock(soilBlock),
-        rockBlock(rockBlock),
+    topBlock(topBlock),
+    soilBlock(soilBlock),
+    rockBlock(rockBlock),
 
-        heightmap(heightmap),
-        volume(volume),
+    heightmap(heightmap),
+    volume(volume),
 
-        biomeTint(biomeTint) {}
+    schematics(schematics),
+
+    biomeTint(biomeTint) {}

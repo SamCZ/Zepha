@@ -300,6 +300,11 @@ namespace RegisterBiomes {
                 heightmapModules.push_back(new noise::module::Const);
             }
 
+            std::vector<std::shared_ptr<Schematic>> schematics {};
+            if (biomeTable.get<sol::optional<sol::table>>("structures"))
+                for (auto s : biomeTable.get<sol::table>("structures"))
+                    schematics.push_back(s.second.as<std::shared_ptr<Schematic>>());
+
             // Create biome definition
             BiomeDef* biomeDef = new BiomeDef(
                     identifier, biomes.size(),
@@ -309,6 +314,7 @@ namespace RegisterBiomes {
                     defs.blockFromStr(*bRock).index,
                     heightmapModules,
                     volumeModules,
+                    schematics,
                     glm::vec3(Util::hexToColorVec((*biomeTint)))
             );
 

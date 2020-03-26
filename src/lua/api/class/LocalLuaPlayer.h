@@ -29,9 +29,9 @@ public:
     void set_look_pitch(float rot);
     float get_look_pitch();
 
-    std::string get_menu_state();
+    bool is_in_menu();
     void close_menu();
-    void open_menu(sol::this_state s, std::string menu, sol::optional<sol::table> callbacks);
+    void show_menu(sol::this_state s, sol::table menu);
 
     LocalLuaInventory get_inventory();
 

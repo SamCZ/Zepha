@@ -7,44 +7,49 @@
 #include "../../../lua/api/menu/mDelay.h"
 #include "../../../lua/api/menu/mSetGui.h"
 #include "../../../lua/api/menu/mStartGame.h"
+#include "../../../lua/ErrorFormatter.h"
 
 MenuSandbox::MenuSandbox(glm::ivec2 &win, ClientState& state, std::shared_ptr<GuiContainer> container) :
-        win(win),
-        state(state),
-        container(container),
-        builder(state.defs, container) {}
+    win(win),
+    state(state),
+    container(container),
+    builder(state.defs.textures, state.defs.models, container) {}
 
-void MenuSandbox::setup() {
+void MenuSandbox::reset() {
+    builder.clear(true);
     delayed_functions.clear();
     core = {};
+    mod = {};
     lua = sol::state {};
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
 
+    loadApi();
+}
+
+void MenuSandbox::loadApi() {
     //Create Zepha Table
     core = lua.create_table();
     lua["zepha"] = core;
+    core["__builtin"] = lua.create_table();
 
-    //Sandbox the dofile function
+    MenuApi::delay      (core, delayed_functions);
+    MenuApi::set_gui    (builder, win, lua, core);
+    MenuApi::start_game (state, core);
+
+    // Create sandboxed runfile()
     lua["dofile"] = lua["loadfile"] = sol::nil;
-    lua.set_function("runfile", &MenuSandbox::DoFileSandboxed, this);
-
-    MenuApi::delay(core, delayed_functions);
-    MenuApi::set_gui(builder, win, lua, core);
-    MenuApi::start_game(state, core);
+    lua.set_function("runfile", &MenuSandbox::runFileSandboxed, this);
 }
 
 void MenuSandbox::load(const Subgame& subgame) {
-    builder.clear();
-    setup();
+    reset();
 
     try {
-        loadMod(subgame.subgamePath + "/menu");
-        DoFileSandboxed("init");
+        loadAndRunMod(subgame.subgamePath + "/../../assets/base");
+        loadAndRunMod(subgame.subgamePath + "/menu");
     }
     catch (const std::string& e) {
-        std::cout << Log::err <<
-            "Encountered an error loading menu mod for subgame '" + subgame.config.name + "':\n\t"
-            << e << Log::endl;
+        std::cout << Log::err << "Encountered an error loading menu mod for subgame '" + subgame.config.name + "':\n\t" << e << Log::endl;
     }
 }
 
@@ -52,32 +57,24 @@ void MenuSandbox::windowResized() {
     builder.build(win);
 }
 
-sol::protected_function_result MenuSandbox::DoFileSandboxed(const std::string& file) {
+sol::protected_function_result MenuSandbox::runFileSandboxed(const std::string& file) {
     for (LuaModFile& f : mod.files) {
         if (f.path == file) {
-
             sol::environment env(lua, sol::create, lua.globals());
             env["_PATH"] = f.path.substr(0, f.path.find_last_of('/') + 1);
             env["_FILE"] = f.path;
             env["_MODNAME"] = mod.config.name;
 
-            auto pfr = lua.safe_script(f.file, env, [&](lua_State*, sol::protected_function_result errPfr) {
-                sol::error err = errPfr;
-                std::cout << Log::err << file << " returned an error: " << err.what() << Log::endl;
-                return errPfr;
-            }, "@" + f.path, sol::load_mode::text);
-
-            return pfr;
+            return lua.safe_script(f.file, env, std::bind(&MenuSandbox::errorCallback, this,
+                    std::placeholders::_2), "@" + f.path, sol::load_mode::text);
         }
     }
-
-    throw std::string("Error executing file '" + file + "', file not found.");
 }
 
-void MenuSandbox::loadMod(const std::string &modPath) {
+void MenuSandbox::loadAndRunMod(const std::string &modPath) {
     if (!cf_file_exists(modPath.data())) throw std::string("Directory not found.");
 
-    mod = LuaMod {};
+    LuaMod mod;
     std::string root = modPath + "/script";
 
     std::list<std::string> dirsToScan {root};
@@ -133,4 +130,33 @@ void MenuSandbox::loadMod(const std::string &modPath) {
     if (cf_file_exists(texPath.data())) {
         this->modAssets = state.defs.textures.loadDirectory(texPath, false, true);
     }
+
+    this->mod = mod;
+    runFileSandboxed("main");
+}
+
+sol::protected_function_result MenuSandbox::errorCallback(sol::protected_function_result errPfr) {
+    sol::error err = errPfr;
+    std::string errString = err.what();
+
+    try {
+        std::string::size_type lineNumStart = errString.find(':');
+        assert(lineNumStart != std::string::npos);
+        std::string::size_type lineNumEnd = errString.find(':', lineNumStart + 1);
+        assert(lineNumEnd != std::string::npos);
+
+        std::string fileName = errString.substr(0, lineNumStart);
+        int lineNum = std::stoi(errString.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1));
+
+        for (LuaModFile &f : mod.files) {
+            if (f.path == fileName) {
+                std::cout << std::endl << ErrorFormatter::formatError(fileName, lineNum, errString, f.file) << std::endl;
+                exit(1);
+            }
+        }
+    }
+    catch (...) {
+        std::cout << std::endl << Log::err << errString << Log::endl;
+    }
+    exit(1);
 }

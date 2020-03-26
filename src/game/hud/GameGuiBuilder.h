@@ -12,9 +12,10 @@
 class GameGuiBuilder : public GuiBuilder {
 public:
     GameGuiBuilder(LocalInventoryRefs& refs, ClientGame& defs, std::shared_ptr<GuiContainer> root) :
-        refs(refs), GuiBuilder(defs, root) {};
+        defs(defs), refs(refs), GuiBuilder(defs.textures, defs.models, root) {};
 
-    std::shared_ptr<GuiComponent> createComponent(SerialGui::Elem& data, glm::ivec2 bounds) override;
+    std::shared_ptr<GuiComponent> createComponent(const SerialGui::Element& elem, glm::ivec2 bounds) override;
 private:
     LocalInventoryRefs& refs;
+    ClientGame& defs;
 };

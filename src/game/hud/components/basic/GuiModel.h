@@ -11,13 +11,14 @@
 #include "../../SerialGui.h"
 
 class ClientGame;
+class ModelStore;
 
 class GuiModel : public GuiComponent {
 public:
     GuiModel() = default;
     GuiModel(const std::string& key);
 
-    static std::shared_ptr<GuiModel> fromSerialized(SerialGui::Elem s, ClientGame& game, glm::ivec2 bounds);
+    static std::shared_ptr<GuiModel> fromSerialized(const SerialGui::Element& elem, TextureAtlas& textures, ModelStore& models, glm::ivec2 bounds);
 
     void create(glm::vec2 scale, std::shared_ptr<Model> model);
     void update(double delta) override;

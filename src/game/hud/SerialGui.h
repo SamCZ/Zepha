@@ -15,13 +15,42 @@
 
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
+#include <sol2/sol.hpp>
+#include "../../util/Any.h"
+
+#include <iostream>
 
 namespace SerialGui {
-    struct Elem {
+    class Element {
+    public:
+        Element(const std::string& type, const std::string& key) : type(type), key(key) {};
+
         std::string type;
         std::string key;
-        std::map<std::string, std::string> tokens;
-        std::vector<SerialGui::Elem> children;
+
+        void addTrait(const std::string& key, const Any& any) {
+            traits.emplace(key, any);
+        }
+
+        template <typename T> const T& get(const std::string& key) const {
+            if (!traits.count(key)) throw std::logic_error("Key missing from table");
+            return traits.at(key).get<T>();
+        }
+
+        template <typename T> const T& get_or(const std::string& key, const T& other) const noexcept {
+            if (!traits.count(key)) return other;
+            return traits.at(key).get_or<T>(other);
+        }
+
+        template <typename T> const bool has(const std::string& key) const noexcept {
+            if (!traits.count(key)) return false;
+            return traits.at(key).is<T>();
+        }
+
+        std::array<std::function<void(bool, glm::ivec2)>, 3> callbacks = {{nullptr, nullptr, nullptr}};
+        std::vector<SerialGui::Element> children {};
+    private:
+        std::map<std::string, Any> traits {};
     };
 
     const float SCALE_MODIFIER = 3;
@@ -51,46 +80,43 @@ namespace SerialGui {
             return std::move(vec);
         }
 
-        static double toDouble(const std::string& input, unsigned int multiple) {
+        static double toDouble(const std::string& input) {
             char* e;
             errno = 0;
-
-            if (input.find("px") == input.length() - 2) {
-                double v = round(std::strtod(input.substr(0, input.find("px")).c_str(), &e));
-                if (*e != '\0' || errno != 0) throw std::runtime_error("error decoding num from string");
-                return v * SCALE_MODIFIER;
-            }
 
             if (input.find('%') == input.length() - 1) {
                 double v = std::strtod(input.substr(0, input.find("%")).c_str(), &e) / 100;
                 if (*e != '\0' || errno != 0) throw std::runtime_error("error decoding num from string");
-
-                if (!multiple) return v;
-                return round(v * multiple / SCALE_MODIFIER) * SCALE_MODIFIER;
+                return v - 10.f; // Percentages are going to be stored in negatives. Ew.
             }
 
-            double v = std::strtod(input.c_str(), &e);
+            double v = round(std::strtod(input.c_str(), &e));
             if (*e != '\0' || errno != 0) throw std::runtime_error("error decoding num from string");
             return v;
         }
+
+        static double convertNum(float input, unsigned int multiple) {
+            if (input >= -20 && input < 0) {
+                if (!multiple) return input + 10;
+                else return (((input + 10) * multiple / SCALE_MODIFIER) * SCALE_MODIFIER);
+            }
+
+            return input * SCALE_MODIFIER;
+        }
     }
 
-    template <typename T> static T deserialize(const std::string& in, glm::ivec2 multiple = {}) {};
+    template <typename T> static T calcNumbers(const T in, glm::ivec2 multiple = {}) {};
 
-    template <typename T> static T deserializeToken(const std::map<std::string, std::string>& tokens,
-            const std::string& req, glm::ivec2 multiple = {}) {
-        if (!tokens.count(req)) return T{};
-        return deserialize<T>(tokens.at(req), multiple);
+    template <typename T> static T get(const SerialGui::Element& elem, const std::string& req, glm::ivec2 multiple = {}) {
+        if (!elem.has<T>(req)) return T{};
+        return calcNumbers<T>(elem.get<T>(req), multiple);
     }
 
-    template <> glm::vec2 deserialize<glm::vec2>(const std::string& in, glm::ivec2 multiple) {
-        auto tokens = split(in, 2);
-        return {toDouble(tokens[0], multiple.x), toDouble(tokens[1], multiple.y)};
+    template <> glm::vec2 calcNumbers<glm::vec2>(const glm::vec2 in, glm::ivec2 multiple) {
+        return {convertNum(in.x, multiple.x), convertNum(in.y, multiple.y)};
     }
 
-    template <> glm::vec4 deserialize<glm::vec4>(const std::string& in, glm::ivec2 multiple) {
-        auto tokens = split(in, 4);
-        return {toDouble(tokens[0], multiple.x), toDouble(tokens[1], multiple.y),
-                toDouble(tokens[2], multiple.x), toDouble(tokens[3], multiple.y)};
+    template <> glm::vec4 calcNumbers<glm::vec4>(const glm::vec4 in, glm::ivec2 multiple) {
+        return {convertNum(in.x, multiple.x), convertNum(in.y, multiple.y), convertNum(in.z, multiple.x), convertNum(in.w, multiple.y)};
     }
 };

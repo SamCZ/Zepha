@@ -206,16 +206,16 @@ void MapGen::generateStructures(chunk_partials_map& chunks, chunk_partial& chunk
     std::default_random_engine generator(chunk.second->pos.x + chunk.second->pos.y * 30 + chunk.second->pos.z * 3.5);
     std::uniform_real_distribution<float> distribution(0, 1);
 
-    unsigned int cWood = defs.blockFromStr("zeus:default:wood").index;
-    unsigned int cLeaves = defs.blockFromStr("zeus:default:leaves").index;
-    unsigned int cAir = DefinitionAtlas::INVALID;
+//    unsigned int cWood = defs.blockFromStr("zeus:default:wood").index;
+//    unsigned int cLeaves = defs.blockFromStr("zeus:default:leaves").index;
+//    unsigned int cAir = DefinitionAtlas::INVALID;
 
-    Schematic c {};
-    c.dimensions = {3, 3, 3};
-    c.origin = {1, 0, 1};
-    c.blocks = { cAir, cAir, cAir, cAir, cLeaves, cAir, cAir, cAir, cAir,
-                 cAir, cWood, cAir, cLeaves, cWood, cLeaves, cAir, cLeaves, cAir,
-                 cAir, cAir, cAir, cAir, cLeaves, cAir, cAir, cAir, cAir };
+//    Schematic c {};
+//    c.dimensions = {3, 3, 3};
+//    c.origin = {1, 0, 1};
+//    c.blocks = { cAir, cAir, cAir, cAir, cLeaves, cAir, cAir, cAir, cAir,
+//                 cAir, cWood, cAir, cLeaves, cWood, cLeaves, cAir, cLeaves, cAir,
+//                 cAir, cAir, cAir, cAir, cLeaves, cAir, cAir, cAir, cAir };
 
     glm::ivec3 wp = chunk.second->pos;
     glm::ivec3 lp;
@@ -234,9 +234,15 @@ void MapGen::generateStructures(chunk_partials_map& chunks, chunk_partial& chunk
                     glm::ivec3 off = {};
                     glm::ivec3 p = wp * 16 + lp;
 
-                    for (unsigned int j = 0; j < c.length(); j++) {
-                        c.assignOffset(j, off);
-                        setBlock(p + off - c.origin, c.blocks[j], chunks);
+                    auto biome = biomes.biomeFromId(chunk.second->getBiome(ind));
+                    auto schematic = biome.schematics.size() > 0 ? biome.schematics[0] : nullptr;
+
+                    if (schematic != nullptr) {
+                        if (!schematic->processed) schematic->process(defs);
+                        for (unsigned int j = 0; j < schematic->length(); j++) {
+                            schematic->assignOffset(j, off);
+                            setBlock(p + off - schematic->origin, schematic->blocks[j], chunks);
+                        }
                     }
                 }
             }

@@ -28,7 +28,7 @@ local noise = {
 zepha.register_biome("zeus:mapgen:plains", {
     environment = {
         temperature = 15/100,
-        humidity = 80/100,
+        humidity = 60/100,
         roughness = 20/100,
     },
     blocks = {
@@ -37,5 +37,8 @@ zepha.register_biome("zeus:mapgen:plains", {
         rock = "zeus:default:stone"
     },
     biome_tint = "#aaed45",
-    noise = noise
+    noise = noise,
+    structures = {
+        tree
+    }
 })

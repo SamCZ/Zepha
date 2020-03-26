@@ -23,15 +23,19 @@ public:
 
     using LuaParser::update;
 private:
-    void setup();
-    void loadMod(const std::string& modPath);
+    void reset();
+    void loadApi();
+    void executeMods();
+    void loadAndRunMod(const std::string& modPath);
 
-    sol::protected_function_result DoFileSandboxed(const std::string& file);
+    sol::protected_function_result runFileSandboxed(const std::string& file);
+    sol::protected_function_result errorCallback(sol::protected_function_result errPfr);
 
     LuaMod mod {};
     std::vector<std::shared_ptr<AtlasRef>> modAssets {};
 
     std::shared_ptr<GuiContainer> container = nullptr;
+
     ClientState& state;
     GuiBuilder builder;
     glm::ivec2& win;

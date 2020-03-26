@@ -14,21 +14,23 @@ class GuiBuilder {
 public:
     struct ComponentCallbacks { GuiComponent::callback left {}, right {}, hover {}; };
 
-    GuiBuilder(ClientGame& defs, std::shared_ptr<GuiContainer> root);
-    void setGui(const std::string& menu, const std::map<std::string, ComponentCallbacks>& callbacks = {});
-    void clear(bool clrCallbacks = true);
+    GuiBuilder(TextureAtlas& textures, ModelStore& models, std::shared_ptr<GuiContainer> root);
+    void setGuiTable(sol::state_view state, const sol::table menu);
     void build(glm::ivec2 winBounds);
+    void clear(bool deleteRoot = true);
 
     ~GuiBuilder();
-
 protected:
-    void deserialize(const std::string& menu);
-    void recursivelyCreate(std::vector<SerialGui::Elem> components, std::shared_ptr<GuiComponent> parent, glm::ivec2 bounds);
-    virtual std::shared_ptr<GuiComponent> createComponent(SerialGui::Elem& component, glm::ivec2 bounds);
+    SerialGui::Element rDeserialize(sol::state_view state, sol::table menu);
+    void rCreate(const SerialGui::Element& element, std::shared_ptr<GuiComponent> parent, glm::ivec2 bounds);
+    static void rClearCallbacks(std::shared_ptr<GuiComponent> component);
+    virtual std::shared_ptr<GuiComponent> createComponent(const SerialGui::Element& elem, glm::ivec2 bounds);
 
-    std::map<std::string, ComponentCallbacks> callbacks;
+    TextureAtlas& textures;
+    ModelStore& models;
 
-    ClientGame& game;
-    std::shared_ptr<GuiContainer> root;
-    std::vector<SerialGui::Elem> components {};
+    std::shared_ptr<GuiContainer> root = nullptr;
+
+    SerialGui::Element serialized = {"", ""};
+    unsigned int keyInd = 0;
 };

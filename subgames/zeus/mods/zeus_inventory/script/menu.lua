@@ -3,7 +3,7 @@ local menu = zepha.create_menu(function()
         background = "#0003",
 
         callbacks = {
-            primary = zepha.player:close_menu
+            primary = function() zepha.player:close_menu() end,
         },
 
         Gui.Rect {
@@ -70,7 +70,6 @@ local menu = zepha.create_menu(function()
                 size = { 214, 67 },
                 background = "zeus:inventory:inventory_wheel",
 
-                children = {
                 Gui.InventoryList {
                     position = { 9, 1 },
                     slot_spacing = { 2, 2 },
@@ -112,15 +111,14 @@ local menu = zepha.create_menu(function()
     }
 end)
 
--- Register the inventory menu and keybind
 zepha.register_keybind("zeus:inventory:open_inventory", {
     description = "Open Inventory",
     default = zepha.keys.e,
     on_press = function()
-        if (zepha.player.menu_state == "") then
-            zepha.player:open_menu(menu)
+        if not zepha.player.in_menu then
+            zepha.player:show_menu(menu)
         else
             zepha.player:close_menu()
         end
-    }
+    end
 })

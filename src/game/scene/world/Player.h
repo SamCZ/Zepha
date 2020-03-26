@@ -43,9 +43,9 @@ public:
 
     void setActiveBlock(const std::string& block);
 
-    void setMenu(const std::string& menu, const std::map<std::string, GuiBuilder::ComponentCallbacks>& callbacks);
-    std::string getMenuState();
+    void buildMenu(sol::state_view state, sol::table menu);
     void closeMenu();
+    bool isInMenu();
     void setGuiVisible(bool hudVisible);
 
     void draw(Renderer& renderer) override;

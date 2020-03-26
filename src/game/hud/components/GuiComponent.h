@@ -45,6 +45,8 @@ public:
     std::shared_ptr<GuiComponent> insert(unsigned int index, std::shared_ptr<GuiComponent> component);
     std::shared_ptr<GuiComponent> add(std::shared_ptr<GuiComponent> component);
 
+    std::list<std::shared_ptr<GuiComponent>> getChildren();
+
     void remove(const std::string& key);
     void empty();
 
