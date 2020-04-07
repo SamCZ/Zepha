@@ -38,7 +38,7 @@ void LocalWorld::update(double delta) {
 }
 
 void LocalWorld::loadChunkPacket(std::unique_ptr<PacketView> p) {
-    worldGenStream->pushBack(std::move(p));
+    worldGenStream->queuePacket(std::move(p));
 }
 
 void LocalWorld::commitChunk(std::shared_ptr<BlockChunk> c) {
@@ -162,7 +162,7 @@ void LocalWorld::finishChunks() {
     auto finishedChunks = worldGenStream->update();
 
     lastGenUpdates = 0;
-    for (const auto &chunk : finishedChunks) {
+    for (const auto &chunk : *finishedChunks) {
         commitChunk(chunk);
         lastGenUpdates++;
     }

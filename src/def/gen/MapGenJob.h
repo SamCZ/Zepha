@@ -5,13 +5,11 @@
 #pragma once
 
 #include <array>
-#include <vector>
-#include <memory>
 #include <glm/vec3.hpp>
 #include "NoiseSample.h"
-#include "../../util/Space.h"
 
-struct MapGenJob {
+class MapGenJob {
+public:
     std::array<float, 4096> density {};
     std::array<float, 4096> depth {};
 

@@ -2,16 +2,13 @@
 // Created by aurailus on 05/03/19.
 //
 
-#include <algorithm>
 #include <glm/glm.hpp>
 #include <unordered_map>
 
-#include "WorldGenStream.h"
-#include "../conn/ServerClient.h"
-#include "../../world/chunk/BlockChunk.h"
-#include "../../util/Vec.h"
-
 #include "ServerWorld.h"
+
+#include "ServerGenStream.h"
+#include "../conn/ServerClient.h"
 
 ServerWorld::ServerWorld(unsigned int seed, ServerGame& defs, ClientList& clients) :
     clientList(clients),
@@ -37,22 +34,11 @@ ServerWorld::ServerWorld(unsigned int seed, ServerGame& defs, ClientList& client
 }
 
 void ServerWorld::init() {
-    genStream = std::make_unique<WorldGenStream>(seed, defs);
+    genStream = std::make_unique<ServerGenStream>(seed, defs);
 }
 
 void ServerWorld::update(double delta) {
     dimension.update(clientList.clients);
-
-    while (!generateQueueList.empty()) {
-        auto it = generateQueueList.begin();
-        glm::vec3 pos = *it;
-
-        if (genStream->tryToQueue(pos)) {
-            generateQueueList.erase(it);
-            generateQueueMap.erase(pos);
-        }
-        else break;
-    }
 
     auto finished = genStream->update();
     generatedChunks = static_cast<int>(finished->size());
@@ -147,11 +133,9 @@ void ServerWorld::changedChunks(ServerClient& client) {
 }
 
 bool ServerWorld::generateMapBlock(glm::ivec3 pos) {
-    if(!generateQueueMap.count(pos) && (!dimension.getMapBlock(pos) || !dimension.getMapBlock(pos)->generated)) {
-        generateQueueMap.insert(pos);
-        generateQueueList.push_back(pos);
-        return true;
-    }
+    if(!dimension.getMapBlock(pos) || !dimension.getMapBlock(pos)->generated)
+        return genStream->queue(pos);
+
     return false;
 }
 

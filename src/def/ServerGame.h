@@ -15,7 +15,7 @@ class ClientList;
 
 class ServerGame {
 public:
-    ServerGame(const std::string& subgame);
+    ServerGame(const std::string& subgame, unsigned int seed);
     void init(ServerWorld& world);
     void update(double delta, ClientList& clients);
 

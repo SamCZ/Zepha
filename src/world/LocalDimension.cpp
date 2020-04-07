@@ -73,7 +73,7 @@ void LocalDimension::finishMeshes() {
     lastMeshUpdates = 0;
     auto finishedMeshes = meshGenStream->update();
 
-    for (MeshDetails* meshDetails : finishedMeshes) {
+    for (ChunkMeshDetails* meshDetails : finishedMeshes) {
 
         if (!meshDetails->vertices.empty()) {
             auto meshChunk = std::make_shared<MeshChunk>();

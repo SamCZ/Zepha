@@ -27,6 +27,9 @@ public:
 private:
     bool alive = true;
 
+    unsigned int seed = 0;
+    unsigned short port = 0;
+
     ServerGame defs;
     ServerWorld world;
     NetHandler handler;
@@ -38,7 +41,5 @@ private:
 
     double elapsedSeconds = 0;
     double deltaTime = 0;
-
-    unsigned short port = 0;
 };
 

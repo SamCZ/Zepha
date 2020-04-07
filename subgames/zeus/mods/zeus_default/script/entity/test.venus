@@ -17,6 +17,6 @@ zepha.register_entity("zeus:default:test", {
     }
 })
 
-if (zepha.server) {
-    local entity = zepha.add_entity("zeus:default:test", V(0, 0, 0))
-}
+##if (zepha.server) {
+##    local entity = zepha.add_entity("zeus:default:test", V(0, 0, 0))
+##}

@@ -11,13 +11,14 @@
 #include "../util/net/PacketView.h"
 
 Server::Server(unsigned short port, const std::string& subgame) :
+    seed(27),
     port(port),
     config(defs),
-    defs(subgame),
+    defs(subgame, seed),
     clientList(defs),
     handler(port, 32),
     refs(defs.defs, &clientList),
-    world(10, defs, clientList) {
+    world(seed, defs, clientList) {
 
     defs.init(world);
     world.init();

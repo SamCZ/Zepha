@@ -29,11 +29,11 @@ namespace Vec {
             glm::ivec3 {0, 0, 1}, glm::ivec3 {0, 0, -1}
     };
 
-    static inline void indAssignVec(int ind, glm::ivec3& vec) {
-        vec.z = ind / (16 * 16);
-        ind -= ((int)vec.z * 16 * 16);
-        vec.y = ind / 16;
-        vec.x = ind % 16;
+    static inline void indAssignVec(int ind, glm::ivec3& vec, unsigned int wid = 16) {
+        vec.z = ind / (wid * wid);
+        ind -= ((int)vec.z * wid * wid);
+        vec.y = ind / wid;
+        vec.x = ind % wid;
     }
 };
 

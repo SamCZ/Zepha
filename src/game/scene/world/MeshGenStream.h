@@ -8,8 +8,8 @@
 #include <glm/vec3.hpp>
 #include <thread>
 #include <unordered_set>
-#include "MeshDetails.h"
-#include "graph/MeshGenerator.h"
+#include "ChunkMeshDetails.h"
+#include "graph/ChunkMeshGenerator.h"
 #include "../../../world/chunk/BlockChunk.h"
 #include "../../../def/LocalDefinitionAtlas.h"
 #include "../../../util/Vec.h"
@@ -23,7 +23,7 @@ public:
     static const int THREADS = 2;
     static const int TOTAL_QUEUE_SIZE = THREADS * THREAD_QUEUE_SIZE;
 
-    explicit MeshGenStream(ClientGame& defs, LocalDimension& dimension);
+    explicit MeshGenStream(ClientGame& game, LocalDimension& dimension);
     ~MeshGenStream();
 
     bool spaceInQueue();
@@ -34,13 +34,13 @@ public:
 
     //Will return a vector of MeshDetails pointers containing finished meshes.
     //Frees up the threads and starts new tasks.
-    std::vector<MeshDetails*> update();
+    std::vector<ChunkMeshDetails*> update();
 
     struct Unit {
         std::shared_ptr<BlockChunk> thisChunk = nullptr;
         std::array<std::shared_ptr<BlockChunk>, 6> adjacentChunks {};
 
-        MeshDetails* meshDetails = new MeshDetails();
+        ChunkMeshDetails* meshDetails = new ChunkMeshDetails();
 
         bool busy = false;
     };
@@ -48,7 +48,7 @@ public:
     struct Thread {
         explicit Thread(ClientGame &defs, std::array<NoiseSample, 3>& offsetSampler);
 
-        ClientGame &defs;
+        ClientGame &game;
         std::array<NoiseSample, 3>& offsetSamplers;
 
         std::thread thread {};
@@ -62,7 +62,7 @@ private:
     static void threadFunction(Thread* thread);
 
     LocalDimension& dimension;
-    ClientGame& defs;
+    ClientGame& game;
 
     std::array<NoiseSample, 3> noiseSampler;
     std::vector<glm::vec3> queuedTasks;

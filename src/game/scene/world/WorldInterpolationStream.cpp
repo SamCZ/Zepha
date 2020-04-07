@@ -4,40 +4,66 @@
 
 #include "WorldInterpolationStream.h"
 
-WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, ClientGame& defs) {
-//    gen(seed, defs.defs) {
-    queuedTasks.reserve(1024);
+#include "../../../def/ClientGame.h"
+
+WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, ClientGame& game) :
+    props(std::make_shared<MapGenProps>(seed)),
+    gen(seed, game.defs, game.biomes, props) {
 
     threads.reserve(THREADS);
-    for (int i = 0; i < THREADS; i++) {
-//        threads.emplace_back(&gen);
-        threads.emplace_back();
+    for (int i = 0; i < THREADS; i++) threads.emplace_back(&gen);
+}
+
+void WorldInterpolationStream::queuePacket(std::unique_ptr<PacketView> p) {
+    queuedPacketTasks.push_back(std::move(p));
+}
+
+bool WorldInterpolationStream::queuePosition(glm::vec3 pos){
+    if (!queuedInterpMap.count(pos)) {
+        queuedInterpTasks.push_back(pos);
+        queuedInterpMap.insert(pos);
+        return true;
     }
+    return false;
 }
 
-bool WorldInterpolationStream::pushBack(std::unique_ptr<PacketView> p) {
-    queuedTasks.push_back(std::move(p));
-	return true;
-}
-
-std::vector<std::shared_ptr<BlockChunk>> WorldInterpolationStream::update() {
-    std::vector<std::shared_ptr<BlockChunk>> finishedChunks;
+std::unique_ptr<std::vector<std::shared_ptr<BlockChunk>>> WorldInterpolationStream::update() {
+    auto finishedChunks = std::make_unique<std::vector<std::shared_ptr<BlockChunk>>>();
+    auto finishedMapBlocks = std::make_unique<std::vector<std::shared_ptr<MeshFarMap>>>();
 
     for (auto& t : threads) {
         for (auto& u : t.tasks) {
-            if (!u.unlocked) continue;
+            if (u.locked) continue;
 
             if (u.chunk != nullptr) {
-                finishedChunks.push_back(std::shared_ptr<BlockChunk>(u.chunk));
+                finishedChunks->push_back(u.chunk);
                 u.chunk = nullptr;
+                u.job = JobType::EMPTY;
+            }
+            else if (u.mapblock != nullptr) {
+                finishedMapBlocks->push_back(u.mapblock);
+                u.mapblock = nullptr;
+                u.job = JobType::EMPTY;
             }
 
-            if (!queuedTasks.empty()) {
-                auto it = queuedTasks.begin();
-                u.packet = std::move(*it);
-                queuedTasks.erase(it);
-                //Lock it to allow the thread to edit it.
-                u.unlocked = false;
+            if (!queuedPacketTasks.empty()) {
+                auto it = queuedPacketTasks.begin();
+                auto packet = std::move(*it);
+                queuedPacketTasks.erase(it);
+
+                u.job = JobType::PACKET;
+                u.packet = std::move(packet);
+                u.locked = true;
+            }
+            else if (!queuedInterpTasks.empty()) {
+                auto it = queuedInterpTasks.begin();
+                glm::vec3 pos = *it;
+                queuedInterpTasks.erase(it);
+                queuedInterpMap.erase(pos);
+
+                u.job = JobType::FARMAP;
+                u.mapBlockPos = pos;
+                u.locked = true;
             }
         }
     }
@@ -45,41 +71,36 @@ std::vector<std::shared_ptr<BlockChunk>> WorldInterpolationStream::update() {
     return finishedChunks;
 }
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-WorldInterpolationStream::Thread::Thread() {
-//WorldInterpolationStream::Thread::Thread(MapGen *gen) : gen(gen) {
+WorldInterpolationStream::Thread::Thread(MapGen *gen) : gen(gen) {
     thread = std::thread(WorldInterpolationStream::threadFunction, this);
+    thread.detach();
 }
-#pragma clang diagnostic pop
 
 void WorldInterpolationStream::threadFunction(WorldInterpolationStream::Thread *thread) {
+    while (!thread->kill) {
 
-    while (thread->keepAlive) {
-
-        bool noJobs = true;
-
-        for (Unit& u : thread->tasks) {
-            if (!u.unlocked) {
-                noJobs = false;
-
-                u.chunk = new BlockChunk;
-                u.chunk->deserialize(*u.packet);
-
-                u.unlocked = true;
-                break;
+        bool empty = true;
+        for (Job& u : thread->tasks) {
+            if (u.locked) {
+                if (u.job == JobType::PACKET) {
+                    empty = false;
+                    u.chunk = std::make_shared<BlockChunk>();
+                    u.chunk->deserialize(*u.packet);
+                    u.locked = false;
+                    break;
+                }
+                else if (u.job == JobType::FARMAP) {
+                    std::cout << "Farmap no exist yet" << std::endl;
+                }
             }
         }
-
-        if (noJobs) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        }
+        if (empty) std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 
 WorldInterpolationStream::~WorldInterpolationStream() {
     for (auto& t : threads) {
-        t.keepAlive = false;
+        t.kill = true;
         t.thread.join();
     }
 }

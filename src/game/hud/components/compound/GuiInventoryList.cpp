@@ -142,5 +142,5 @@ void GuiInventoryList::drawContents() {
 }
 
 GuiInventoryList::~GuiInventoryList() {
-    list->setGuiCallback(nullptr);
+    if (list != nullptr) list->setGuiCallback(nullptr);
 }

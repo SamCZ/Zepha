@@ -5,8 +5,9 @@
 #include "ServerGame.h"
 #include "../server/conn/ClientList.h"
 
-ServerGame::ServerGame(const std::string& subgame) :
-    subgamePath("subgames/" + subgame + "/") {
+ServerGame::ServerGame(const std::string& subgame, unsigned int seed) :
+    subgamePath("subgames/" + subgame + "/"),
+    biomes(seed) {
 
     if (subgame.empty()) {
         std::cout << Log::err << "No subgame specified." << Log::endl;

@@ -17,7 +17,7 @@ public:
     //Bool: Create player
     bool handlePacket(ServerClient &client, PacketView& p);
 private:
-    ServerGame& defs;
+    ServerGame& game;
     std::vector<std::string> blockIdentifierList {};
     std::vector<std::string> biomeIdentifierList {};
 };

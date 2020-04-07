@@ -51,6 +51,27 @@ void ConnectScene::update() {
             handleConnecting();
             break;
 
+        case State::PROPERTIES: {
+            components.get<GuiRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.1, 32});
+
+            ENetEvent e;
+            if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
+                PacketView p(e.packet);
+
+                if (p.type == PacketType::SERVER_INFO) {
+                    auto statusText = components.get<GuiText>("statusText");
+                    statusText->setText(statusText->getText() + "Received server properties.\n");
+
+                    state.seed = p.d.read<unsigned int>();
+
+                    connectState = State::IDENTIFIER_LIST;
+                    Packet resp(PacketType::BLOCK_IDENTIFIER_LIST);
+                    resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
+                }
+            }
+            break;
+        }
+
         case State::IDENTIFIER_LIST: {
             components.get<GuiRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.2, 32});
 
@@ -161,7 +182,7 @@ void ConnectScene::update() {
 }
 
 void ConnectScene::handleConnecting() {
-    Packet resp(PacketType::BLOCK_IDENTIFIER_LIST);
+    Packet resp(PacketType::SERVER_INFO);
     auto statusText = components.get<GuiText>("statusText");
 
     switch (connection.getConnectionStatus()) {
@@ -189,7 +210,7 @@ void ConnectScene::handleConnecting() {
             break;
 
         case ServerConnection::State::CONNECTED:
-            connectState = State::IDENTIFIER_LIST;
+            connectState = State::PROPERTIES;
             statusText->setText(statusText->getText() + " Connected!~\n");
 
             resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);

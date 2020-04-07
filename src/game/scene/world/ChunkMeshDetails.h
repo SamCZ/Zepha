@@ -8,7 +8,7 @@
 #include <glm/vec3.hpp>
 #include "../../graph/meshtypes/ChunkMesh.h"
 
-struct MeshDetails {
+struct ChunkMeshDetails {
     std::vector<ChunkVertex> vertices;
     std::vector<unsigned int> indices;
 

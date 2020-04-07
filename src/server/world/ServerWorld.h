@@ -6,7 +6,7 @@
 
 #include <unordered_set>
 
-#include "WorldGenStream.h"
+#include "ServerGenStream.h"
 #include "../conn/ClientList.h"
 #include "../../def/ServerGame.h"
 #include "../../game/scene/world/World.h"
@@ -36,10 +36,7 @@ private:
 
     static bool isInBounds(glm::ivec3 pos, std::pair<glm::ivec3, glm::ivec3>& bounds);
 
-    std::unique_ptr<WorldGenStream> genStream = nullptr;
-
-    std::unordered_set<glm::vec3, Vec::vec3> generateQueueMap;
-    std::vector<glm::vec3> generateQueueList;
+    std::unique_ptr<ServerGenStream> genStream = nullptr;
 
     unsigned int seed;
     ServerGame& defs;

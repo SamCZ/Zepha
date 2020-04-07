@@ -10,9 +10,9 @@ set(ZEPHA_SRC
 	game/graph/Camera.cpp 
 	game/graph/Camera.h 
 	game/graph/Texture.cpp 
-	game/graph/Texture.h 
-	game/scene/world/graph/MeshGenerator.cpp 
-	game/scene/world/graph/MeshGenerator.h 
+	game/graph/Texture.h
+        game/scene/world/graph/ChunkMeshGenerator.cpp
+        game/scene/world/graph/ChunkMeshGenerator.h
 	util/Timer.cpp 
 	util/Timer.h 
 	def/LocalDefinitionAtlas.cpp 
@@ -81,9 +81,9 @@ set(ZEPHA_SRC
 	game/graph/frustum/FrustumAABB.cpp 
 	game/graph/frustum/FrustumAABB.h 
 	server/world/ServerWorld.cpp 
-	server/world/ServerWorld.h 
-	server/world/WorldGenStream.cpp 
-	server/world/WorldGenStream.h 
+	server/world/ServerWorld.h
+        server/world/ServerGenStream.cpp
+        server/world/ServerGenStream.h
 	game/scene/world/WorldInterpolationStream.cpp 
 	game/scene/world/WorldInterpolationStream.h 
 	util/Space.h 
@@ -143,8 +143,8 @@ set(ZEPHA_SRC
 	game/scene/ConnectScene.h 
 	util/net/Address.h 
 	game/scene/net/ServerConnection.cpp 
-	game/scene/net/ServerConnection.h 
-	game/scene/world/MeshDetails.h 
+	game/scene/net/ServerConnection.h
+		game/scene/world/ChunkMeshDetails.h
 	game/hud/components/GuiComponent.cpp 
 	game/hud/components/GuiComponent.h 
 	game/hud/components/basic/GuiContainer.cpp 
@@ -320,6 +320,6 @@ set(ZEPHA_SRC
 	game/inventory/InventoryList.h 
 	lua/api/modules/time.h 
 	util/net/PacketView.cpp 
-	util/net/PacketView.h lua/api/modules/create_structure.h util/Any.h)
+	util/net/PacketView.h lua/api/modules/create_structure.h util/Any.h game/scene/world/graph/MeshFarMap.cpp game/scene/world/graph/MeshFarMap.h def/gen/MapGenProps.cpp def/gen/MapGenProps.h def/gen/FarMapGen.cpp def/gen/FarMapGen.h def/gen/FarMapJob.h game/scene/world/graph/FarMeshGenerator.cpp game/scene/world/graph/FarMeshGenerator.h game/scene/world/FarMapMeshDetails.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

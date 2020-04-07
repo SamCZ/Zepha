@@ -8,41 +8,11 @@
 #include <random>
 #include <cmath>
 
-MapGen::MapGen(unsigned int seed, DefinitionAtlas& defs, BiomeAtlas& biomes) :
+MapGen::MapGen(unsigned int seed, DefinitionAtlas& defs, BiomeAtlas& biomes, std::shared_ptr<MapGenProps> props) :
     seed(seed),
     defs(defs),
-    biomes(biomes) {
-
-	temperatureBase.SetSeed(seed);
-	temperatureBase.SetFrequency(0.02);
-	temperatureBase.SetOctaveCount(4);
-	temperatureTurbulence.SetSourceModule(0, temperatureBase);
-	temperatureTurbulence.SetRoughness(4);
-	temperatureTurbulence.SetFrequency(0.2);
-	temperature.SetSourceModule(0, temperatureTurbulence);
-	temperature.SetScale(0.35);
-	temperature.SetBias(0.25);
-
-	humidityBase.SetSeed(seed + 5);
-	humidityBase.SetFrequency(0.02);
-	humidityBase.SetOctaveCount(4);
-    humidityTurbulence.SetSourceModule(0, humidityBase);
-    humidityTurbulence.SetRoughness(4);
-    humidityTurbulence.SetFrequency(0.2);
-	humidity.SetSourceModule(0, humidityTurbulence);
-	humidity.SetScale(0.5);
-	humidity.SetBias(0.5);
-
-	roughnessBase.SetSeed(seed + 10);
-	roughnessBase.SetFrequency(0.02);
-	roughnessBase.SetOctaveCount(4);
-    roughnessTurbulence.SetSourceModule(0, roughnessBase);
-    roughnessTurbulence.SetRoughness(4);
-    roughnessTurbulence.SetFrequency(0.2);
-	roughness.SetSourceModule(0, roughnessTurbulence);
-	roughness.SetScale(0.5);
-	roughness.SetBias(0.5);
-}
+    props(props),
+    biomes(biomes) {}
 
 MapGen::chunk_partials_map MapGen::generateMapBlock(glm::ivec3 mbPos) {
 	chunk_partials_map chunks {};
@@ -84,11 +54,11 @@ void MapGen::buildDensityMap(MapGenJob* job, glm::ivec3 worldPos) {
     job->temperature = {}; job->humidity = {}; job->roughness = {};
 
     job->temperature.fill([&](glm::ivec3 pos) {
-        return temperature.GetValue(worldPos.x + pos.x / 16.f, 0, worldPos.z + pos.z / 16.f); }, 4);
+        return props->temperature.GetValue(worldPos.x + pos.x / 16.f, 0, worldPos.z + pos.z / 16.f); }, 4);
     job->humidity.fill([&](glm::ivec3 pos) {
-        return humidity.GetValue(worldPos.x + pos.x / 16.f, 0, worldPos.z + pos.z / 16.f); }, 4);
+        return props->humidity.GetValue(worldPos.x + pos.x / 16.f, 0, worldPos.z + pos.z / 16.f); }, 4);
     job->roughness.fill([&](glm::ivec3 pos) {
-        return roughness.GetValue(worldPos.x + pos.x / 16.f, 0, worldPos.z + pos.z / 16.f); }, 4);
+        return props->roughness.GetValue(worldPos.x + pos.x / 16.f, 0, worldPos.z + pos.z / 16.f); }, 4);
 
     NoiseSample volume = {}, heightmap = {};
 

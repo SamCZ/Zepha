@@ -9,7 +9,8 @@
 
 class ServerBiomeAtlas : public BiomeAtlas {
 public:
-    ServerBiomeAtlas();
+    ServerBiomeAtlas(unsigned int seed);
     void registerBiome(BiomeDef* def) override;
 
+    unsigned int seed;
 };

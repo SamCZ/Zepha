@@ -20,6 +20,8 @@ public:
     ServerConnection connection {};
     ClientGame defs;
 
+    unsigned int seed = 0;
+
     std::string desiredState = "this";
 
     double fps = 0;

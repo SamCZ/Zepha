@@ -5,17 +5,16 @@
 #pragma once
 
 #include "MapGenJob.h"
+#include "MapGenProps.h"
 #include "../../util/Vec.h"
 #include "../../world/chunk/BlockChunk.h"
-
-using namespace noise;
 
 class MapGen {
 public:
     typedef std::pair<MapGenJob*, BlockChunk*> chunk_partial;
     typedef std::unordered_map<glm::ivec3, chunk_partial, Vec::ivec3> chunk_partials_map;
 
-	MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeAtlas& biome);
+	MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeAtlas& biome, std::shared_ptr<MapGenProps> props);
     chunk_partials_map generateMapBlock(glm::ivec3 mbPos);
 
     // Combine two chunk partials, or a chunk and a chunk partial.
@@ -43,15 +42,5 @@ private:
 	DefinitionAtlas& defs;
 	BiomeAtlas& biomes;
 
-    module::Perlin temperatureBase;
-    module::Turbulence temperatureTurbulence;
-	module::ScaleBias temperature;
-
-	module::Perlin humidityBase;
-    module::Turbulence humidityTurbulence;
-	module::ScaleBias humidity;
-
-	module::Perlin roughnessBase;
-    module::Turbulence roughnessTurbulence;
-	module::ScaleBias roughness;
+    std::shared_ptr<MapGenProps> props;
 };

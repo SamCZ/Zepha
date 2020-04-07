@@ -4,10 +4,11 @@
 
 #pragma once
 
-#include "LocalDefinitionAtlas.h"
-#include "gen/LocalBiomeAtlas.h"
+#include "gen/MapGenProps.h"
 #include "model/ModelStore.h"
+#include "gen/LocalBiomeAtlas.h"
 #include "texture/TextureAtlas.h"
+#include "LocalDefinitionAtlas.h"
 #include "../lua/parser/LocalLuaParser.h"
 
 class ClientGame {

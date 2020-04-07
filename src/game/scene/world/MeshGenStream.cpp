@@ -6,8 +6,8 @@
 
 #include "../../../world/LocalDimension.h"
 
-MeshGenStream::MeshGenStream(ClientGame &defs, LocalDimension &dimension) :
-    defs(defs),
+MeshGenStream::MeshGenStream(ClientGame& game, LocalDimension &dimension) :
+    game(game),
     dimension(dimension) {
 
     queuedTasks.reserve(static_cast<unsigned long>(TOTAL_QUEUE_SIZE));
@@ -28,18 +28,14 @@ MeshGenStream::MeshGenStream(ClientGame &defs, LocalDimension &dimension) :
     noiseSampler[2].fill([&](glm::ivec3 pos) -> float { return offsetTurbulence.GetValue(pos.x, pos.y, pos.z + 8); }, {16, 16});
 
     threads.reserve(THREADS);
-    for (int i = 0; i < THREADS; i++) {
-        threads.emplace_back(defs, noiseSampler);
-    }
+    for (int i = 0; i < THREADS; i++) threads.emplace_back(game, noiseSampler);
 }
 
 MeshGenStream::Thread::Thread(ClientGame &defs, std::array<NoiseSample, 3>& offsetSamplers) :
-    defs(defs), offsetSamplers(offsetSamplers) {
-    thread = std::thread(MeshGenStream::threadFunction, this);
-}
+    game(defs), offsetSamplers(offsetSamplers), thread(MeshGenStream::threadFunction, this) {}
 
-std::vector<MeshDetails*> MeshGenStream::update() {
-    std::vector<MeshDetails*> finishedChunks;
+std::vector<ChunkMeshDetails*> MeshGenStream::update() {
+    std::vector<ChunkMeshDetails*> finishedChunks;
 
     for (Thread& t : threads) {
         for (Unit& u : t.tasks) {
@@ -48,7 +44,7 @@ std::vector<MeshDetails*> MeshGenStream::update() {
             if (u.thisChunk != nullptr) {
                 u.thisChunk = nullptr;
                 finishedChunks.push_back(u.meshDetails);
-                u.meshDetails = new MeshDetails();
+                u.meshDetails = new ChunkMeshDetails();
             }
 
             if (!queuedTasks.empty()) {
@@ -83,12 +79,11 @@ void MeshGenStream::threadFunction(MeshGenStream::Thread *thread) {
     while (thread->keepAlive) {
         bool hasNoTasks = true;
 
-        for (Unit& u : thread->tasks) {
+        for (auto i = 0; i < thread->tasks.size(); i++) {
+            auto& u = thread->tasks[i];
             if (!u.busy) continue;
 
-//            bool hi = glm::distance(glm::vec3{0, 0, 0}, glm::vec3(u.thisChunk->pos)) < 8;
-
-            MeshGenerator m(u.meshDetails, thread->defs, u.thisChunk, u.adjacentChunks, thread->offsetSamplers, true);
+            ChunkMeshGenerator m(u.meshDetails, thread->game.defs, thread->game.biomes, u.thisChunk, u.adjacentChunks, thread->offsetSamplers);
             hasNoTasks = false;
             u.busy = false;
         }
