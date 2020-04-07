@@ -25,7 +25,7 @@ public:
 
     void setFrame(double frame);
     double getFrame();
-    std::tuple<unsigned int, unsigned int> getBounds();
+    glm::ivec2 getBounds();
 
 private:
     std::map<std::string, AnimationSegment> animations;

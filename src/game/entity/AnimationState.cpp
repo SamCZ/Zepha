@@ -63,6 +63,6 @@ double AnimationState::getFrame() {
     return currentFrame;
 }
 
-std::tuple<unsigned int, unsigned int> AnimationState::getBounds() {
-    return std::make_tuple(startFrame, endFrame);
+glm::ivec2 AnimationState::getBounds() {
+    return {startFrame, endFrame};
 }

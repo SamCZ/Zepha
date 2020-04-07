@@ -30,12 +30,8 @@ zepha.register_entity("zeus:default:rabbit", {
             }
 
             if (self.targeting) {
-                self.object.pos = v(
-                    self.object.pos.x + 0.08 * math.sin(math.rad(self.object.yaw)),
-                    self.object.pos.y,
-                    self.object.pos.z + 0.08 * math.cos(math.rad(self.object.yaw))
-                )
-
+                self.object.pos = self.object.pos +
+                    V(0.08 * math.sin(math.rad(self.object.yaw)), 0, 0.08 * math.cos(math.rad(self.object.yaw)))
                 self.object.yaw = math.deg(math.atan2(zepha.player.pos.x - self.object.pos.x, zepha.player.pos.z - self.object.pos.z))
             }
         }
@@ -49,12 +45,8 @@ zepha.register_entity("zeus:default:rabbit", {
             }
 
             if (self.targeting) {
-                self.object.pos = v(
-                    self.object.pos.x + 0.08 * math.sin(math.rad(self.object.yaw)),
-                    self.object.pos.y,
-                    self.object.pos.z + 0.08 * math.cos(math.rad(self.object.yaw))
-                )
-
+                self.object.pos = self.object.pos +
+                    V(0.08 * math.sin(math.rad(self.object.yaw)), 0, 0.08 * math.cos(math.rad(self.object.yaw)))
                 self.object.yaw = math.deg(math.atan2(zepha.player.pos.x - self.object.pos.x, zepha.player.pos.z - self.object.pos.z)) + 180
             }
             else {
