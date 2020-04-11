@@ -1,4 +1,4 @@
-local menu = zepha.create_menu(function()
+local menu = zepha.build_gui(function()
      return Gui.Body {
          background = "#214a21",
 

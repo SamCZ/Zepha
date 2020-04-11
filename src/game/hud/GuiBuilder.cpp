@@ -120,22 +120,22 @@ std::shared_ptr<GuiComponent> GuiBuilder::createComponent(const SerialGui::Eleme
 
     switch (Util::hash(elem.type.c_str())) {
         default: break;
-        case Util::hash("body"): {
+        case Util::hash("Body"): {
             auto body = GuiRect::fromSerialized(elem, textures, bounds);
             body->setScale(bounds);
             c = body;
             break;
         }
-        case Util::hash("rect"):
+        case Util::hash("Rect"):
             c = GuiRect::fromSerialized(elem, textures, bounds);
             break;
-        case Util::hash("button"):
+        case Util::hash("Button"):
             c = GuiImageButton::fromSerialized(elem, textures, bounds);
             break;
-        case Util::hash("text"):
+        case Util::hash("Text"):
             c = GuiText::fromSerialized(elem, textures, bounds);
             break;
-        case Util::hash("model"):
+        case Util::hash("Model"):
             c = GuiModel::fromSerialized(elem, textures, models, bounds);
             break;
     }

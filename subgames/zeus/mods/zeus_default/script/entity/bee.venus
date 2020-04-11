@@ -1,5 +1,3 @@
-local friendly = false
-
 zepha.register_entity("zeus:default:bee", {
     display = "model",
     display_object = "zeus:default:bee",
@@ -13,6 +11,7 @@ zepha.register_entity("zeus:default:bee", {
 
         self.object.anims:set_anim("fly"):play()
     },
+
     on_update = (self, delta) => {
         self.object.pos = self.object.pos +
             V(0.03 * math.sin(math.rad(self.object.yaw + 90)), 0, 0.03 * math.cos(math.rad(self.object.yaw + 90)))

@@ -1,4 +1,4 @@
-zepha.set_gui(zepha.create_menu(function()
+zepha.set_gui(zepha.build_gui(function()
     return Gui.Body {
         background = "#124778",
 
