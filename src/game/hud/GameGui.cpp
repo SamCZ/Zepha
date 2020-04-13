@@ -45,7 +45,7 @@ void GameGui::winResized(glm::ivec2 win) {
 }
 
 void GameGui::buildMenu(sol::state_view state, sol::table menu) {
-    menuBuilder.setGuiTable(state, menu);
+//    menuBuilder.setGuiTable(state, menu);
     menuBuilder.build(win);
     inMenu = true;
 }

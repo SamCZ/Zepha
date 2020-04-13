@@ -20,9 +20,7 @@ zepha.set_gui(zepha.build_gui(function()
                 key = "buttonPlay",
 
                 callbacks = {
-                    primary = function()
-                        zepha.start_game_local()
-                    end
+                    primary = function() zepha.start_game_local() end
                 },
 
                 position = { 6, 50 },
@@ -36,9 +34,7 @@ zepha.set_gui(zepha.build_gui(function()
                 key = "buttonServers",
 
                 callbacks = {
-                    primary = function()
-                        zepha.start_game()
-                    end
+                    primary = function() zepha.start_game() end
                 },
 
                 position = { 6, 74 },

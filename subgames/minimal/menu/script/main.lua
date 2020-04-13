@@ -1,6 +1,7 @@
 local menu = zepha.build_gui(function()
     return Gui.Body {
-        background = "#214a21",
+--         background = "#214a21",
+        background = "#334",
 
         Gui.Text {
             position = { 4, 4 },
@@ -33,6 +34,14 @@ menu(function(e)
         color = "#0fc",
         content = "Magic phones"
     })
+end)
+
+menu:append(function()
+    return Gui.Text {
+        position = { 300, 32 },
+        color = "#f39",
+        content = "AAAAAA"
+    }
 end)
 
 zepha.set_gui(menu)

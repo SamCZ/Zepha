@@ -13,19 +13,17 @@
 GuiBuilder::GuiBuilder(TextureAtlas& textures, ModelStore& models, std::shared_ptr<GuiContainer> root) :
         textures(textures), models(models), root(root) {}
 
-void GuiBuilder::setGuiTable(sol::state_view state, sol::table menu) {
+void GuiBuilder::setGuiRoot(sol::state_view state, LocalGuiElement& menu) {
     keyInd = 0;
-    serialized = rDeserialize(state, menu);
+    serialized = recursivelyDeserialize(state, menu);
 }
 
-SerialGui::Element GuiBuilder::rDeserialize(sol::state_view state, sol::table menu) {
-    std::string type = menu.get<std::string>("type");
-    std::string key = (menu.get<sol::optional<std::string>>("key") ? menu.get<std::string>("key") : "__UNKEYED_COMPONENT_" + std::to_string(keyInd++));
+SerialGui::Element GuiBuilder::recursivelyDeserialize(sol::state_view state, LocalGuiElement& elem) {
+    std::string key = (elem.key.size() ? elem.key : "__UNKEYED_COMPONENT_" + std::to_string(keyInd++));
+    SerialGui::Element element(elem.type, key);
 
-    SerialGui::Element element(type, key);
-
-    for (auto trait : menu.get<sol::table>("traits")) {
-        auto key = trait.first.as<std::string>();
+    for (const auto& trait : elem.traits) {
+        auto key = trait.first;
         if (trait.second.is<std::string>()) {
             element.addTrait(key, Any::from<std::string>(trait.second.as<std::string>()));
         }
@@ -63,55 +61,49 @@ SerialGui::Element GuiBuilder::rDeserialize(sol::state_view state, sol::table me
         }
     }
 
-    auto callbacks = menu.get<sol::optional<sol::table>>("callbacks");
-    if (callbacks) {
-        if (callbacks->get<sol::optional<sol::function>>("primary"))
-            element.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::PRIMARY)] = [=](bool down, glm::ivec2 pos) {
-                callbacks->get<sol::function>("primary")(down, LuaParser::luaVec(state, {pos.x, pos.y, 0})); };
+    if (elem.callbacks.count("primary"))
+        element.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::PRIMARY)] = [=](bool down, glm::ivec2 pos) {
+            elem.callbacks.at("primary")(down, LuaParser::luaVec(state, {pos.x, pos.y, 0})); };
 
-        if (callbacks->get<sol::optional<sol::function>>("secondary"))
-            element.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::SECONDARY)] = [=](bool down, glm::ivec2 pos) {
-                callbacks->get<sol::function>("secondary")(down, LuaParser::luaVec(state, {pos.x, pos.y, 0})); };
+    if (elem.callbacks.count("secondary"))
+        element.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::SECONDARY)] = [=](bool down, glm::ivec2 pos) {
+            elem.callbacks.at("secondary")(down, LuaParser::luaVec(state, {pos.x, pos.y, 0})); };
 
-        if (callbacks->get<sol::optional<sol::function>>("hover"))
-            element.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::HOVER)] = [=](bool down, glm::ivec2 pos) {
-                callbacks->get<sol::function>("hover")(down, LuaParser::luaVec(state, {pos.x, pos.y, 0})); };
-    }
+    if (elem.callbacks.count("secondary"))
+        element.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::HOVER)] = [=](bool down, glm::ivec2 pos) {
+            elem.callbacks.at("hover")(down, LuaParser::luaVec(state, {pos.x, pos.y, 0})); };
 
-
-    auto children = menu.get<sol::optional<sol::table>>("children");
-    if (children) for (auto& pair : *children) element.children.push_back(rDeserialize(state, pair.second.as<sol::table>()));
-
+    for (auto& child : elem.children) element.children.push_back(recursivelyDeserialize(state, child));
     return element;
 }
 
 void GuiBuilder::build(glm::ivec2 winBounds) {
     clear(false);
     if (serialized.type != "")
-        rCreate(serialized, root, winBounds);
+        recursivelyCreate(serialized, root, winBounds);
 }
 
 void GuiBuilder::clear(bool deleteRoot) {
-    rClearCallbacks(root);
+    recursivelyClearCallbacks(root);
     root->empty();
     if (deleteRoot) serialized = {"", ""};
 }
 
-void GuiBuilder::rCreate(const SerialGui::Element& element, std::shared_ptr<GuiComponent> parent, glm::ivec2 bounds) {
+void GuiBuilder::recursivelyCreate(const SerialGui::Element& element, std::shared_ptr<GuiComponent> parent, glm::ivec2 bounds) {
     auto component = createComponent(element, bounds);
     if (!component) throw std::runtime_error("GuiBuilder failed to create component: " + element.key);
     parent->add(component);
 
-    for (auto& child : element.children) rCreate(child, component, component->getScale());
+    for (auto& child : element.children) recursivelyCreate(child, component, component->getScale());
 }
 
-void GuiBuilder::rClearCallbacks(std::shared_ptr<GuiComponent> component) {
+void GuiBuilder::recursivelyClearCallbacks(std::shared_ptr<GuiComponent> component) {
     component->setCallback(GuiComponent::CallbackType::PRIMARY, nullptr);
     component->setCallback(GuiComponent::CallbackType::SECONDARY, nullptr);
     component->setCallback(GuiComponent::CallbackType::HOVER, nullptr);
 
     for (auto& child : component->getChildren()) {
-        rClearCallbacks(child);
+        recursivelyClearCallbacks(child);
     }
 }
 

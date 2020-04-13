@@ -3,11 +3,13 @@
 //
 
 #include "MenuSandbox.h"
+#include "../../../lua/ErrorFormatter.h"
 
 #include "../../../lua/api/menu/mDelay.h"
 #include "../../../lua/api/menu/mSetGui.h"
 #include "../../../lua/api/menu/mStartGame.h"
-#include "../../../lua/ErrorFormatter.h"
+
+#include "../../../lua/api/usertype/cGuiElement.h"
 
 MenuSandbox::MenuSandbox(glm::ivec2 &win, ClientState& state, std::shared_ptr<GuiContainer> container) :
     win(win),
@@ -31,6 +33,8 @@ void MenuSandbox::loadApi() {
     core = lua.create_table();
     lua["zepha"] = core;
     core["__builtin"] = lua.create_table();
+
+    ClientApi::gui_element(lua);
 
     MenuApi::delay      (core, delayed_functions);
     MenuApi::set_gui    (builder, win, lua, core);

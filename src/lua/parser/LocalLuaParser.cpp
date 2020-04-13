@@ -11,6 +11,7 @@
 #include "LocalLuaParser.h"
 
 // Usertypes
+#include "../api/usertype/cGuiElement.h"
 #include "../api/usertype/cItemStack.h"
 #include "../api/usertype/cLocalPlayer.h"
 #include "../api/usertype/cLuaEntity.h"
@@ -75,6 +76,7 @@ void LocalLuaParser::loadApi(ClientGame &defs, LocalWorld &world, Player& player
     ClientApi::local_player      (lua);
     ClientApi::inventory         (lua);
     ClientApi::item_stack        (lua);
+    ClientApi::gui_element       (lua);
 
     core["client"] = true;
     core["player"] = LocalLuaPlayer(player);
