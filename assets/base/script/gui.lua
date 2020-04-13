@@ -22,49 +22,68 @@ elem_mt = {
         rawset(rawget(elem, "traits"), key, val)
     end,
 
-    get = function(tbl, key)
-        if type(key) == number then return rawget(tbl, "children")[key] end
+    __call = function(tbl, fn)
+        setfenv(fn, env)
+        return fn(tbl)
+    end,
 
+    find = function(tbl, key)
         for _,v in pairs(rawget(tbl, "children")) do
-            if v == key then return v end
+            if v.key == key then return v end
+            local c = v:find(key)
+            if c ~= nil then return c end
         end
     end,
 
     append = function(tbl, elem)
-        if type(elem) == "function" then elem = zepha.build_ui(elem) end
+        if type(elem) == "function" then elem = zepha.build_gui(elem) end
+        rawset(elem, "parent", tbl)
         table.insert(rawget(tbl, "children"), elem)
     end,
 
     prepend = function(tbl, elem)
-        if type(elem) == "function" then elem = zepha.build_ui(elem) end
-        table.insert(rawget(tbl, "children"), 0, elem)
+        if type(elem) == "function" then elem = zepha.build_gui(elem) end
+        rawset(elem, "parent", tbl)
+        table.insert(rawget(tbl, "children"), 1, elem)
     end,
+
+    remove = function(tbl)
+        if tbl.parent == nil then return end
+        local ind = 0
+        for k,v in pairs(tbl.parent.children) do
+            if v == tbl then ind = k end
+        end
+        if ind == 0 then return end
+        table.remove(tbl.parent.children, ind)
+        return tbl
+    end
 }
 
 -- create_element
 -- Build a GUI Element with the provided constructor data, apply the metatable.
 local function create_element(elem_type, data)
-    local element = {}
+    local element = {
+        type = elem_type,
+        key = "",
 
-    element.type = elem_type
-    element.children = {}
-    element.callbacks = {}
-    element.traits = {}
-    element.key = ""
+        parent = nil,
+        children = {},
+
+        callbacks = {},
+        traits = {}
+    }
+
+    setmetatable(element, elem_mt)
 
     for k, v in pairs(data) do
         if type(k) == "number" then
+            rawset(v, "parent", element)
             table.insert(element.children, v)
-        elseif k == "key" then
-            element.key = v
-        elseif k == "callbacks" then
-            element.callbacks = v
         else
-            element.traits[k] = v
+            element[k] = v
         end
     end
 
-    setmetatable(element, elem_mt)
     return element
 end
 
