@@ -8,7 +8,7 @@
 
 #include "components/compound/GuiInventoryList.h"
 
-std::shared_ptr<GuiComponent> GameGuiBuilder::createComponent(const SerialGui::Element& elem, glm::ivec2 bounds) {
+std::shared_ptr<GuiComponent> GameGuiBuilder::createComponent(const LuaGuiElement& elem, glm::ivec2 bounds) {
     auto c = GuiBuilder::createComponent(elem, bounds);
     if (c != nullptr) return c;
 
@@ -22,14 +22,14 @@ std::shared_ptr<GuiComponent> GameGuiBuilder::createComponent(const SerialGui::E
 
     if (!c) return nullptr;
 
-    if (elem.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::PRIMARY)])
-        c->setCallback(GuiComponent::CallbackType::PRIMARY, elem.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::PRIMARY)]);
+    if (elem.callbacks.count("primary")) c->setCallback(GuiComponent::CallbackType::PRIMARY, [=](bool b, glm::vec2 v) {
+            elem.callbacks.at("primary")(b, LuaParser::luaVec(elem.callbacks.at("primary").lua_state(), {v.x, v.y, 0})); });
 
-    if (elem.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::SECONDARY)])
-        c->setCallback(GuiComponent::CallbackType::SECONDARY, elem.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::SECONDARY)]);
+    if (elem.callbacks.count("secondary")) c->setCallback(GuiComponent::CallbackType::SECONDARY, [=](bool b, glm::vec2 v) {
+            elem.callbacks.at("secondary")(b, LuaParser::luaVec(elem.callbacks.at("secondary").lua_state(), {v.x, v.y, 0})); });
 
-    if (elem.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::HOVER)])
-        c->setCallback(GuiComponent::CallbackType::HOVER, elem.callbacks[static_cast<unsigned int>(GuiComponent::CallbackType::HOVER)]);
+    if (elem.callbacks.count("hover")) c->setCallback(GuiComponent::CallbackType::HOVER, [=](bool b, glm::vec2 v) {
+            elem.callbacks.at("hover")(b, LuaParser::luaVec(elem.callbacks.at("hover").lua_state(), {v.x, v.y, 0})); });
 
     return c;
 }

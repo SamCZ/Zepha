@@ -45,3 +45,13 @@ menu:append(function()
 end)
 
 zepha.set_gui(menu)
+
+zepha.delay(function()
+    menu(function()
+        menu:append(Gui.Rect {
+            position = {0, 0},
+            size = {32, 32},
+            background = "#f00"
+        })
+    end)
+end, 5)

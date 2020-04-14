@@ -9,7 +9,7 @@
 #include "../../../lua/api/menu/mSetGui.h"
 #include "../../../lua/api/menu/mStartGame.h"
 
-#include "../../../lua/api/usertype/cGuiElement.h"
+#include "../../../lua/api/class/LuaGuiElement.h"
 
 MenuSandbox::MenuSandbox(glm::ivec2 &win, ClientState& state, std::shared_ptr<GuiContainer> container) :
     win(win),

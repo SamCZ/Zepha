@@ -4,12 +4,9 @@
 
 #pragma once
 
-
-#include <memory>
-
 #include "../GuiComponent.h"
-#include "../../SerialGui.h"
 #include "../../../../def/texture/AtlasRef.h"
+#include "../../../../lua/api/class/LuaGuiElement.h"
 
 class ClientGame;
 
@@ -18,7 +15,7 @@ public:
     GuiRect() = default;
     GuiRect(const std::string& key);
 
-    static std::shared_ptr<GuiRect> fromSerialized(const SerialGui::Element& elem, TextureAtlas& textures, glm::ivec2 bounds);
+    static std::shared_ptr<GuiRect> fromSerialized(const LuaGuiElement& elem, TextureAtlas& textures, glm::ivec2 bounds);
 
     void create(glm::vec2 scale, glm::vec4 padding, glm::vec4 color);
     void create(glm::vec2 scale, glm::vec4 padding, glm::vec4 tl, glm::vec4 tr, glm::vec4 bl, glm::vec4 br);

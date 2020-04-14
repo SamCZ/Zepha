@@ -11,7 +11,7 @@
 #include "LocalLuaParser.h"
 
 // Usertypes
-#include "../api/usertype/cGuiElement.h"
+#include "../api/class/LuaGuiElement.h"
 #include "../api/usertype/cItemStack.h"
 #include "../api/usertype/cLocalPlayer.h"
 #include "../api/usertype/cLuaEntity.h"

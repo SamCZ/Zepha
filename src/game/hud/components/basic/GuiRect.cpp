@@ -10,7 +10,7 @@
 
 GuiRect::GuiRect(const std::string &key) : GuiComponent(key) {}
 
-std::shared_ptr<GuiRect> GuiRect::fromSerialized(const SerialGui::Element& elem, TextureAtlas& textures, glm::ivec2 bounds) {
+std::shared_ptr<GuiRect> GuiRect::fromSerialized(const LuaGuiElement& elem, TextureAtlas& textures, glm::ivec2 bounds) {
     glm::vec2 pos     = SerialGui::get<glm::vec2>(elem, "position", bounds);
     glm::vec2 offset  = SerialGui::get<glm::vec2>(elem, "position_anchor");
     glm::vec2 size    = SerialGui::get<glm::vec2>(elem, "size", bounds);

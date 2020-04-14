@@ -16,43 +16,11 @@
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 #include <sol2/sol.hpp>
-#include "../../util/Any.h"
 
-#include <iostream>
+#include "../../util/Any.h"
+#include "../../lua/api/class/LuaGuiElement.h"
 
 namespace SerialGui {
-    class Element {
-    public:
-        Element(const std::string& type, const std::string& key) : type(type), key(key) {};
-
-        std::string type;
-        std::string key;
-
-        void addTrait(const std::string& key, const Any& any) {
-            traits.emplace(key, any);
-        }
-
-        template <typename T> const T& get(const std::string& key) const {
-            if (!traits.count(key)) throw std::logic_error("Key missing from table");
-            return traits.at(key).get<T>();
-        }
-
-        template <typename T> const T& get_or(const std::string& key, const T& other) const noexcept {
-            if (!traits.count(key)) return other;
-            return traits.at(key).get_or<T>(other);
-        }
-
-        template <typename T> const bool has(const std::string& key) const noexcept {
-            if (!traits.count(key)) return false;
-            return traits.at(key).is<T>();
-        }
-
-        std::array<std::function<void(bool, glm::ivec2)>, 3> callbacks = {{nullptr, nullptr, nullptr}};
-        std::vector<SerialGui::Element> children {};
-    private:
-        std::map<std::string, Any> traits {};
-    };
-
     const float SCALE_MODIFIER = 3;
 
     namespace {
@@ -107,7 +75,7 @@ namespace SerialGui {
 
     template <typename T> static T calcNumbers(const T in, glm::ivec2 multiple = {}) {};
 
-    template <typename T> static T get(const SerialGui::Element& elem, const std::string& req, glm::ivec2 multiple = {}) {
+    template <typename T> static T get(const LuaGuiElement& elem, const std::string& req, glm::ivec2 multiple = {}) {
         if (!elem.has<T>(req)) return T{};
         return calcNumbers<T>(elem.get<T>(req), multiple);
     }

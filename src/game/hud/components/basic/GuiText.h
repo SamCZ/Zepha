@@ -17,7 +17,7 @@ public:
     GuiText() = default;
     explicit GuiText(const std::string& key);
 
-    static std::shared_ptr<GuiText> fromSerialized(const SerialGui::Element& elem, TextureAtlas& textures, glm::ivec2 bounds);
+    static std::shared_ptr<GuiText> fromSerialized(const LuaGuiElement& elem, TextureAtlas& textures, glm::ivec2 bounds);
 
     void create(glm::vec2 scale, glm::vec4 padding, glm::vec4 bgcolor, glm::vec4 color, Font font);
 

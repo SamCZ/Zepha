@@ -9,7 +9,7 @@
 
 GuiModel::GuiModel(const std::string &key) : GuiComponent(key) {}
 
-std::shared_ptr<GuiModel> GuiModel::fromSerialized(const SerialGui::Element& elem, TextureAtlas& textures, ModelStore& models, glm::ivec2 bounds) {
+std::shared_ptr<GuiModel> GuiModel::fromSerialized(const LuaGuiElement& elem, TextureAtlas& textures, ModelStore& models, glm::ivec2 bounds) {
     glm::vec2 pos        = SerialGui::get<glm::vec2>(elem, "position", bounds);
     glm::vec2 scale      = SerialGui::get<glm::vec2>(elem, "scale");
     glm::vec2 anim_range = SerialGui::get<glm::vec2>(elem, "anim_range");

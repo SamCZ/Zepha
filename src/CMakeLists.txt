@@ -320,6 +320,6 @@ set(ZEPHA_SRC
 	game/inventory/InventoryList.h 
 	lua/api/modules/time.h 
 	util/net/PacketView.cpp 
-	util/net/PacketView.h lua/api/modules/create_structure.h util/Any.h game/scene/world/graph/MeshFarMap.cpp game/scene/world/graph/MeshFarMap.h def/gen/MapGenProps.cpp def/gen/MapGenProps.h def/gen/FarMapGen.cpp def/gen/FarMapGen.h def/gen/FarMapJob.h game/scene/world/graph/FarMeshGenerator.cpp game/scene/world/graph/FarMeshGenerator.h game/scene/world/FarMapMeshDetails.h lua/api/usertype/cGuiElement.h lua/api/class/LocalGuiElement.cpp lua/api/class/LocalGuiElement.h)
+	util/net/PacketView.h lua/api/modules/create_structure.h util/Any.h game/scene/world/graph/MeshFarMap.cpp game/scene/world/graph/MeshFarMap.h def/gen/MapGenProps.cpp def/gen/MapGenProps.h def/gen/FarMapGen.cpp def/gen/FarMapGen.h def/gen/FarMapJob.h game/scene/world/graph/FarMeshGenerator.cpp game/scene/world/graph/FarMeshGenerator.h game/scene/world/FarMapMeshDetails.h lua/api/class/LuaGuiElement.cpp lua/api/class/LuaGuiElement.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

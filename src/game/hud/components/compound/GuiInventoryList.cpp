@@ -9,7 +9,7 @@
 #include "../../../../def/texture/Font.h"
 GuiInventoryList::GuiInventoryList(const std::string &key) : GuiContainer(key) {}
 
-std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(SerialGui::Element elem, ClientGame &game,
+std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(const LuaGuiElement& elem, ClientGame &game,
         glm::ivec2 bounds, LocalInventoryRefs& refs) {
 
     glm::vec2 pos     = SerialGui::get<glm::vec2>(elem, "position", bounds);

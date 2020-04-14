@@ -19,7 +19,7 @@ public:
     GuiInventoryList(const std::string& key);
     ~GuiInventoryList() override;
 
-    static std::shared_ptr<GuiInventoryList> fromSerialized(SerialGui::Element elem, ClientGame &game,
+    static std::shared_ptr<GuiInventoryList> fromSerialized(const LuaGuiElement& elem, ClientGame &game,
             glm::ivec2 bounds, LocalInventoryRefs& refs);
 
     void create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding,
