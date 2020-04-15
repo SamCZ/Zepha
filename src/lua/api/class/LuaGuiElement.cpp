@@ -8,16 +8,31 @@
 
 #include "../../../game/hud/SerialGui.h"
 
-LuaGuiElement::LuaGuiElement(const std::string& type, sol::table data) :
-    type(type) {
+//LuaGuiElement::LuaGuiElement(const std::string& type, sol::table data) :
+//        type(type) {
+//
+//    for (const auto& pair : data) {
+//        if (pair.first.is<float>()) {
+//            if (!pair.second.is<std::shared_ptr<LuaGuiElement>>()) throw std::runtime_error("Child is not a GuiElement.");
+//            children.push_back(pair.second.as<std::shared_ptr<LuaGuiElement>>());
+//        }
+//        else if (pair.first.is<std::string>()) set_trait(pair.first.as<std::string>(), pair.second);
+//    }
+//}
+
+std::shared_ptr<LuaGuiElement> LuaGuiElement::create(const std::string& type, sol::table data) {
+    auto elem = std::make_shared<LuaGuiElement>();
+    elem->type = type;
 
     for (const auto& pair : data) {
         if (pair.first.is<float>()) {
-            if (!pair.second.is<LuaGuiElement>()) throw std::runtime_error("Child is not a GuiElement.");
-            children.push_back(pair.second.as<LuaGuiElement>());
+            if (!pair.second.is<std::shared_ptr<LuaGuiElement>>()) throw std::runtime_error("Child is not a GuiElement.");
+            elem->children.push_back(pair.second.as<std::shared_ptr<LuaGuiElement>>());
         }
-        else if (pair.first.is<std::string>()) set_trait(pair.first.as<std::string>(), pair.second);
+        else if (pair.first.is<std::string>()) elem->set_trait(pair.first.as<std::string>(), pair.second);
     }
+
+    return elem;
 }
 
 sol::object LuaGuiElement::get_trait(sol::this_state s, const std::string& key) {
@@ -37,15 +52,8 @@ sol::object LuaGuiElement::set_trait(const std::string& key, sol::object val) {
         this->key = val.as<std::string>();
     }
     else {
-        if (val.is<sol::table>()) {
-            std::cout << key << "t: " << val.as<sol::table>().get<float>(1) << ", " << val.as<sol::table>().get<float>(2) << std::endl;
-        }
         traits.erase(key);
         traits.emplace(key, val);
-        if (val.is<sol::table>()) {
-            sol::table v = traits.at(key).as<sol::table>();
-            std::cout << key << "tv: " << v.get<float>(1) << ", " << v.get<float>(2) << std::endl;
-        }
     }
 
     if (updateFunction) updateFunction();
@@ -60,34 +68,42 @@ sol::object LuaGuiElement::call(sol::this_state s, sol::function fun) {
     return fun(this);
 }
 
-sol::object LuaGuiElement::find(sol::this_state s, const std::string& key) {
-    for (auto& child : children) {
-        if (child.key == key) return sol::make_object<LuaGuiElement>(s, child);
+sol::object LuaGuiElement::get_child(sol::this_state s, sol::object key) {
+    if (key.is<float>() && key.as<float>() <= children.size()) {
+        auto begin = children.begin();
+        std::advance(begin, key.as<float>() - 1);
+        return sol::make_object<std::shared_ptr<LuaGuiElement>>(s, *begin);
+    }
+    else if (key.is<std::string>()) {
+        for (auto &child : children) {
+            if (child->key == key.as<std::string>()) return sol::make_object<std::shared_ptr<LuaGuiElement>>(s, child);
+        }
+
+        for (auto &child : children) {
+            auto recurse = child->get_child(s, key);
+            if (recurse) return recurse;
+        }
     }
 
-    for (auto& child : children) {
-        auto recurse = child.find(s, key);
-        if (recurse) return recurse;
-    }
     return sol::nil;
 }
 
 void LuaGuiElement::append(sol::this_state s, sol::object elem) {
-    if (elem.is<LuaGuiElement>()) children.push_back(elem.as<LuaGuiElement>());
-    else if (elem.is<sol::function>()) children.push_back(call(s, elem.as<sol::function>()).as<LuaGuiElement>());
+    if (elem.is<LuaGuiElement>()) children.push_back(elem.as<std::shared_ptr<LuaGuiElement>>());
+    else if (elem.is<sol::function>()) children.push_back(call(s, elem.as<sol::function>()).as<std::shared_ptr<LuaGuiElement>>());
     else throw std::runtime_error("Append arg is not an element or a function to generate one.");
 
     if (updateFunction) updateFunction();
-    children.back().updateFunction = updateFunction;
+    children.back()->updateFunction = updateFunction;
 }
 
 void LuaGuiElement::prepend(sol::this_state s, sol::object elem) {
-    if (elem.is<LuaGuiElement>()) children.insert(children.begin(), elem.as<LuaGuiElement>());
-    else if (elem.is<sol::function>()) children.insert(children.begin(), call(s, elem.as<sol::function>()).as<LuaGuiElement>());
+    if (elem.is<LuaGuiElement>()) children.insert(children.begin(), elem.as<std::shared_ptr<LuaGuiElement>>());
+    else if (elem.is<sol::function>()) children.insert(children.begin(), call(s, elem.as<sol::function>()).as<std::shared_ptr<LuaGuiElement>>());
     else throw std::runtime_error("Append arg is not an element or a function to generate one.");
 
     if (updateFunction) updateFunction();
-    children.front().updateFunction = updateFunction;
+    children.front()->updateFunction = updateFunction;
 }
 
 void LuaGuiElement::remove(sol::optional<LuaGuiElement> elem) {
@@ -97,7 +113,7 @@ void LuaGuiElement::remove(sol::optional<LuaGuiElement> elem) {
     }
     else {
         for (const auto it = children.cbegin(); it != children.cend();) {
-            if (it->key == elem->key) {
+            if ((*it)->key == elem->key) {
                 children.erase(it);
                 if (updateFunction) updateFunction();
                 return;

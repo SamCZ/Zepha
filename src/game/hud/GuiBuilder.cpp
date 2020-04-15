@@ -13,8 +13,8 @@
 GuiBuilder::GuiBuilder(TextureAtlas& textures, ModelStore& models, std::shared_ptr<GuiContainer> root) :
     textures(textures), models(models), root(root) {}
 
-void GuiBuilder::setGuiRoot(LuaGuiElement& menu) {
-    elements = &menu;
+void GuiBuilder::setGuiRoot(std::shared_ptr<LuaGuiElement> menu) {
+    elements = menu;
 }
 
 void GuiBuilder::build(glm::ivec2 winBounds) {
@@ -34,16 +34,11 @@ void GuiBuilder::create(LuaGuiElement& element, std::shared_ptr<GuiComponent> pa
     if (!component) throw std::runtime_error("GuiBuilder failed to create component: " + element.key);
     parent->add(component);
 
-    for (auto& child : element.children) create(child, component, component->getScale());
+    for (auto& child : element.children) create(*child, component, component->getScale());
 }
 
 std::shared_ptr<GuiComponent> GuiBuilder::createComponent(LuaGuiElement& elem, glm::ivec2 bounds) {
     std::shared_ptr<GuiComponent> c = nullptr;
-
-    if (elem.key == "wee") {
-        auto a = elem.getAsAny("position");
-        std::cout << a.get<glm::vec2>().x << ", " << a.get<glm::vec2>().y << std::endl;
-    }
 
     switch (Util::hash(elem.type.c_str())) {
         default: break;
@@ -92,7 +87,6 @@ void GuiBuilder::clearCallbacks(std::shared_ptr<GuiComponent> component) {
 }
 
 void GuiBuilder::elementUpdated() {
-    std::cout << "rebuilding ui " << std::endl;
     build();
 }
 

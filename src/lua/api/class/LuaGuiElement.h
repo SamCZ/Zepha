@@ -11,14 +11,16 @@
 
 class LuaGuiElement {
 public:
-    LuaGuiElement(const std::string& type, sol::table data);
+    LuaGuiElement() = default;
 
     // Lua Functions and Properties
+    static std::shared_ptr<LuaGuiElement> create(const std::string& type, sol::table data);
+
     sol::object get_trait(sol::this_state s, const std::string& key);
     sol::object set_trait(const std::string& key, sol::object val);
 
     sol::object call(sol::this_state s, sol::function fun);
-    sol::object find(sol::this_state s, const std::string& key);
+    sol::object get_child(sol::this_state s, sol::object key);
 
     void append(sol::this_state s, sol::object elem);
     void prepend(sol::this_state s, sol::object elem);
@@ -27,7 +29,7 @@ public:
     std::string type {}, key {};
 
     LuaGuiElement* parent = nullptr;
-    std::list<LuaGuiElement> children {};
+    std::list<std::shared_ptr<LuaGuiElement>> children {};
 
     std::unordered_map<std::string, sol::function> callbacks {};
     std::unordered_map<std::string, sol::object> traits {};
@@ -54,14 +56,14 @@ public:
 namespace ClientApi {
     static void gui_element(sol::state& lua) {
         lua.new_usertype<LuaGuiElement>("GuiElement",
-            sol::constructors<LuaGuiElement(std::string, sol::object)>(),
+            sol::meta_function::construct, sol::factories(&LuaGuiElement::create),
 
             sol::meta_function::index, &LuaGuiElement::get_trait,
             sol::meta_function::new_index, &LuaGuiElement::set_trait,
 
             sol::meta_function::call, &LuaGuiElement::call,
 
-            "find", &LuaGuiElement::find,
+            "get", &LuaGuiElement::get_child,
             "append", &LuaGuiElement::append,
             "prepend", &LuaGuiElement::prepend,
             "remove", &LuaGuiElement::remove
