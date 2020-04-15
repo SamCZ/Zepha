@@ -1,4 +1,4 @@
-local menu = zepha.build_gui(function()
+local gui = zepha.build_gui(function()
     return Gui.Body {
 --         background = "#214a21",
         background = "#334",
@@ -9,10 +9,10 @@ local menu = zepha.build_gui(function()
         },
 
         Gui.Rect {
-             position = { 64, 64 },
-             size = { 128 * (16/9), 128 },
+            position = { 64, 64 },
+            size = { 128 * (16/9), 128 },
 
-             background = "zeus_background"
+            background = "zeus_background"
         },
 
         Gui.Rect {
@@ -24,34 +24,23 @@ local menu = zepha.build_gui(function()
             Gui.Text {
                 content = "What's the fuck is going on?"
             }
+        },
+
+        Gui.Rect {
+            position = { 0, 0 },
+            size = { 32, 32 },
+            background = "#f00",
+            key = "wee"
         }
     }
 end)
 
-menu(function(e)
-    e:append(Gui.Text {
-        position = { 300, 16 },
-        color = "#0fc",
-        content = "Magic phones"
-    })
-end)
+zepha.set_gui(gui)
 
-menu:append(function()
-    return Gui.Text {
-        position = { 300, 32 },
-        color = "#f39",
-        content = "AAAAAA"
-    }
-end)
-
-zepha.set_gui(menu)
+local menu = gui:find("wee")
 
 zepha.delay(function()
-    menu(function()
-        menu:append(Gui.Rect {
-            position = {0, 0},
-            size = {32, 32},
-            background = "#f00"
-        })
-    end)
-end, 5)
+    print("updating position")
+    menu.position = {menu.position[1] + 16, menu.position[2] + 16}
+    return true
+end, 1)

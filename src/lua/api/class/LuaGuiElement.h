@@ -47,6 +47,8 @@ public:
         Any a = getAsAny(key);
         return !a.empty() && a.is<T>();
     }
+
+    std::function<void()> updateFunction = nullptr;
 };
 
 namespace ClientApi {

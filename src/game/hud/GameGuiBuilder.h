@@ -14,7 +14,7 @@ public:
     GameGuiBuilder(LocalInventoryRefs& refs, ClientGame& defs, std::shared_ptr<GuiContainer> root) :
         defs(defs), refs(refs), GuiBuilder(defs.textures, defs.models, root) {};
 
-    std::shared_ptr<GuiComponent> createComponent(const LuaGuiElement& elem, glm::ivec2 bounds) override;
+    std::shared_ptr<GuiComponent> createComponent(LuaGuiElement& elem, glm::ivec2 bounds) override;
 private:
     LocalInventoryRefs& refs;
     ClientGame& defs;

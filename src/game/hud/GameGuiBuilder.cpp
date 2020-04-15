@@ -8,7 +8,7 @@
 
 #include "components/compound/GuiInventoryList.h"
 
-std::shared_ptr<GuiComponent> GameGuiBuilder::createComponent(const LuaGuiElement& elem, glm::ivec2 bounds) {
+std::shared_ptr<GuiComponent> GameGuiBuilder::createComponent(LuaGuiElement& elem, glm::ivec2 bounds) {
     auto c = GuiBuilder::createComponent(elem, bounds);
     if (c != nullptr) return c;
 

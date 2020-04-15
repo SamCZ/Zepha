@@ -11,43 +11,39 @@
 #include "components/compound/GuiImageButton.h"
 
 GuiBuilder::GuiBuilder(TextureAtlas& textures, ModelStore& models, std::shared_ptr<GuiContainer> root) :
-        textures(textures), models(models), root(root) {}
+    textures(textures), models(models), root(root) {}
 
-void GuiBuilder::setGuiRoot(sol::state_view state, LuaGuiElement& menu) {
+void GuiBuilder::setGuiRoot(LuaGuiElement& menu) {
     elements = &menu;
 }
 
 void GuiBuilder::build(glm::ivec2 winBounds) {
     clear(false);
-    if (elements) recursivelyCreate(*elements, root, winBounds);
+    if (winBounds != glm::ivec2 {}) this->winBounds = winBounds;
+    if (elements) create(*elements, root, this->winBounds);
 }
 
 void GuiBuilder::clear(bool deleteRoot) {
-    recursivelyClearCallbacks(root);
+    clearCallbacks(root);
     root->empty();
     if (deleteRoot) elements = nullptr;
 }
 
-void GuiBuilder::recursivelyCreate(const LuaGuiElement& element, std::shared_ptr<GuiComponent> parent, glm::ivec2 bounds) {
+void GuiBuilder::create(LuaGuiElement& element, std::shared_ptr<GuiComponent> parent, glm::ivec2 bounds) {
     auto component = createComponent(element, bounds);
     if (!component) throw std::runtime_error("GuiBuilder failed to create component: " + element.key);
     parent->add(component);
 
-    for (auto& child : element.children) recursivelyCreate(child, component, component->getScale());
+    for (auto& child : element.children) create(child, component, component->getScale());
 }
 
-void GuiBuilder::recursivelyClearCallbacks(std::shared_ptr<GuiComponent> component) {
-    component->setCallback(GuiComponent::CallbackType::PRIMARY, nullptr);
-    component->setCallback(GuiComponent::CallbackType::SECONDARY, nullptr);
-    component->setCallback(GuiComponent::CallbackType::HOVER, nullptr);
-
-    for (auto& child : component->getChildren()) {
-        recursivelyClearCallbacks(child);
-    }
-}
-
-std::shared_ptr<GuiComponent> GuiBuilder::createComponent(const LuaGuiElement& elem, glm::ivec2 bounds) {
+std::shared_ptr<GuiComponent> GuiBuilder::createComponent(LuaGuiElement& elem, glm::ivec2 bounds) {
     std::shared_ptr<GuiComponent> c = nullptr;
+
+    if (elem.key == "wee") {
+        auto a = elem.getAsAny("position");
+        std::cout << a.get<glm::vec2>().x << ", " << a.get<glm::vec2>().y << std::endl;
+    }
 
     switch (Util::hash(elem.type.c_str())) {
         default: break;
@@ -73,6 +69,8 @@ std::shared_ptr<GuiComponent> GuiBuilder::createComponent(const LuaGuiElement& e
 
     if (!c) return nullptr;
 
+    elem.updateFunction = std::bind(&GuiBuilder::elementUpdated, this);
+
     if (elem.callbacks.count("primary")) c->setCallback(GuiComponent::CallbackType::PRIMARY, [=](bool b, glm::vec2 v) {
         elem.callbacks.at("primary")(b, LuaParser::luaVec(elem.callbacks.at("primary").lua_state(), {v.x, v.y, 0})); });
 
@@ -83,6 +81,19 @@ std::shared_ptr<GuiComponent> GuiBuilder::createComponent(const LuaGuiElement& e
         elem.callbacks.at("hover")(b, LuaParser::luaVec(elem.callbacks.at("hover").lua_state(), {v.x, v.y, 0})); });
 
     return c;
+}
+
+void GuiBuilder::clearCallbacks(std::shared_ptr<GuiComponent> component) {
+    component->setCallback(GuiComponent::CallbackType::PRIMARY, nullptr);
+    component->setCallback(GuiComponent::CallbackType::SECONDARY, nullptr);
+    component->setCallback(GuiComponent::CallbackType::HOVER, nullptr);
+
+    for (auto& child : component->getChildren()) clearCallbacks(child);
+}
+
+void GuiBuilder::elementUpdated() {
+    std::cout << "rebuilding ui " << std::endl;
+    build();
 }
 
 GuiBuilder::~GuiBuilder() {

@@ -6,7 +6,6 @@
 
 #include "../../SerialGui.h"
 #include "../../../../util/Util.h"
-#include "../../../../def/ClientGame.h"
 
 GuiRect::GuiRect(const std::string &key) : GuiComponent(key) {}
 

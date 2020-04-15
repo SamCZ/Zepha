@@ -24,7 +24,7 @@ sol::object LuaGuiElement::get_trait(sol::this_state s, const std::string& key) 
     if (key == "key") return sol::make_object<std::string>(s, this->key);
     if (key == "type") return sol::make_object<std::string>(s, this->type);
 
-    if (traits.count(key)) return traits[key];
+    if (traits.count(key)) return traits.at(key);
     return sol::nil;
 }
 
@@ -32,12 +32,23 @@ sol::object LuaGuiElement::set_trait(const std::string& key, sol::object val) {
     if (key == "callbacks") {
         callbacks.clear();
         for (auto pair : val.as<sol::table>()) callbacks[pair.first.as<std::string>()] = pair.second.as<sol::function>();
-        return val;
+    }
+    else if (key == "key") {
+        this->key = val.as<std::string>();
+    }
+    else {
+        if (val.is<sol::table>()) {
+            std::cout << key << "t: " << val.as<sol::table>().get<float>(1) << ", " << val.as<sol::table>().get<float>(2) << std::endl;
+        }
+        traits.erase(key);
+        traits.emplace(key, val);
+        if (val.is<sol::table>()) {
+            sol::table v = traits.at(key).as<sol::table>();
+            std::cout << key << "tv: " << v.get<float>(1) << ", " << v.get<float>(2) << std::endl;
+        }
     }
 
-//    if ((!traits.count(key) || traits.at(key) != val) && updateFunction) updateFunction(id);
-
-    traits[key] = val;
+    if (updateFunction) updateFunction();
     return val;
 }
 
@@ -50,7 +61,10 @@ sol::object LuaGuiElement::call(sol::this_state s, sol::function fun) {
 }
 
 sol::object LuaGuiElement::find(sol::this_state s, const std::string& key) {
-    for (auto& child : children) if (child.key == key) return sol::make_object<LuaGuiElement>(s, child);
+    for (auto& child : children) {
+        if (child.key == key) return sol::make_object<LuaGuiElement>(s, child);
+    }
+
     for (auto& child : children) {
         auto recurse = child.find(s, key);
         if (recurse) return recurse;
@@ -63,7 +77,8 @@ void LuaGuiElement::append(sol::this_state s, sol::object elem) {
     else if (elem.is<sol::function>()) children.push_back(call(s, elem.as<sol::function>()).as<LuaGuiElement>());
     else throw std::runtime_error("Append arg is not an element or a function to generate one.");
 
-//    if (updateFunction) updateFunction(id);
+    if (updateFunction) updateFunction();
+    children.back().updateFunction = updateFunction;
 }
 
 void LuaGuiElement::prepend(sol::this_state s, sol::object elem) {
@@ -71,7 +86,8 @@ void LuaGuiElement::prepend(sol::this_state s, sol::object elem) {
     else if (elem.is<sol::function>()) children.insert(children.begin(), call(s, elem.as<sol::function>()).as<LuaGuiElement>());
     else throw std::runtime_error("Append arg is not an element or a function to generate one.");
 
-//    if (updateFunction) updateFunction(id);
+    if (updateFunction) updateFunction();
+    children.front().updateFunction = updateFunction;
 }
 
 void LuaGuiElement::remove(sol::optional<LuaGuiElement> elem) {
@@ -83,7 +99,7 @@ void LuaGuiElement::remove(sol::optional<LuaGuiElement> elem) {
         for (const auto it = children.cbegin(); it != children.cend();) {
             if (it->key == elem->key) {
                 children.erase(it);
-//                if (updateFunction) updateFunction(id);
+                if (updateFunction) updateFunction();
                 return;
             }
         }
