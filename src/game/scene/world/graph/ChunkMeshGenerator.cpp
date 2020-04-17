@@ -12,7 +12,8 @@
 #include "../../../../world/chunk/BlockChunk.h"
 
 ChunkMeshGenerator::ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefinitionAtlas& defs, LocalBiomeAtlas& biomes,
-                                       std::shared_ptr<BlockChunk> chunk, std::array<std::shared_ptr<BlockChunk>, 6> adjacent, std::array<NoiseSample, 3>& blockOffsets) :
+    std::shared_ptr<BlockChunk> chunk, std::array<std::shared_ptr<BlockChunk>, 6> adjacent,
+    std::array<NoiseSample, 3>& blockOffsets) :
 
     defs(defs),
     chunk(chunk),
@@ -102,19 +103,19 @@ void ChunkMeshGenerator::addFaces(const glm::vec3 &offset, const std::vector<Mes
             case ShaderMod::ROTATE_Z:
             case ShaderMod::SWAY_ATTACHED:
             case ShaderMod::SWAY_FULL_BLOCK:
-                modData = {Util::packFloat((offset - 8.f) / 8.f), mp.modValue, 0};
+                modData = { Util::packFloat((offset - 8.f) / 8.f), mp.modValue, 0 };
                 break;
         }
 
         for (const BlockModelVertex &vertex : mp.vertices) {
             meshDetails->vertices.push_back({
-                   vertex.pos + offset,
-                   vertex.tex,
-                   (mp.blendInd ? tint : glm::vec3 {1, 1, 1}),
-                   (mp.blendInd ? vertex.blendMask : glm::vec2 {-1, -1}),
-                   Util::packFloat(vertex.nml),
-                   static_cast<float>(mp.shaderMod),
-                   modData
+                vertex.pos + offset,
+                vertex.tex,
+                mp.blendInd ? tint : glm::vec3 {1, 1, 1},
+                mp.blendInd ? vertex.blendMask : glm::vec2 {-1, -1},
+                Util::packFloat(vertex.nml),
+                static_cast<float>(mp.shaderMod),
+                modData
             });
         }
 

@@ -19,13 +19,13 @@ public:
     MenuSandbox(glm::ivec2& win, ClientState& state, std::shared_ptr<GuiContainer> container);
     void load(const Subgame& subgame);
 
+    void update(double delta) override;
     void windowResized();
 
     using LuaParser::update;
 private:
     void reset();
     void loadApi();
-    void executeMods();
     void loadAndRunMod(const std::string& modPath);
 
     sol::protected_function_result runFileSandboxed(const std::string& file);

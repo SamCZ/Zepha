@@ -24,7 +24,7 @@ public:
 
     void append(sol::this_state s, sol::object elem);
     void prepend(sol::this_state s, sol::object elem);
-    void remove(sol::optional<LuaGuiElement> elem);
+    void remove(sol::this_state s, sol::object elem);
 
     std::string type {}, key {};
 

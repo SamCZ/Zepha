@@ -97,23 +97,18 @@ void DebugGui::update(Player& player, LocalWorld& world, ClientGame& defs, doubl
     { //Top-left Data
         glm::vec3 footPos = glm::floor(player.getPos()) - glm::vec3(0, 0.02, 0);
 
-        unsigned int blockID = world.getBlock(footPos);
-        std::string on = defs.defs.fromId(blockID).identifier;
-
         unsigned int biomeID = world.getBiome(glm::floor(player.getPos()));
         std::string biome = defs.biomes.biomeFromId(biomeID).identifier;
 
         glm::vec3 playerPos = glm::floor(player.getPos());
         glm::vec3 chunkPos = Space::Chunk::world::fromBlock(playerPos);
+        glm::vec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunkPos);
+        glm::vec3 regionPos = Space::Region::world::fromChunk(chunkPos);
 
         //Block Coordinates offset from respective container
         glm::vec3 posOffsetFromChunk  = Space::Block::relative::toChunk(playerPos);
         glm::vec3 posOffsetFromBlock  = Space::Block::relative::toMapBlock(playerPos);
         glm::vec3 posOffsetFromRegion = Space::Block::relative::toRegion(playerPos);
-
-        glm::vec3 chunkCoordinate = chunkPos;
-        glm::vec3 mapBlockCoordinate = Space::MapBlock::world::fromChunk(chunkPos);
-        glm::vec3 regionCoordinate = Space::Region::world::fromChunk(chunkPos);
 
         std::ostringstream str;
 
@@ -123,18 +118,13 @@ void DebugGui::update(Player& player, LocalWorld& world, ClientGame& defs, doubl
         str << " (" << floatVecToString(player.getPos()) << ")" << std::endl << std::endl;
 
         str << "Chunk: " << vecToString(posOffsetFromChunk) << " [" << vecToString(chunkPos) << "]" << std::endl;
-        str << "MapBlock: " << vecToString(posOffsetFromBlock) << std::endl;
-        str << "Region: " << vecToString(posOffsetFromRegion) << std::endl << std::endl;
-
-        str << "Ch: " << vecToString(chunkCoordinate) << ", ";
-        str << "Mb: " << vecToString(mapBlockCoordinate) << ", ";
-        str << "Rg: " << vecToString(regionCoordinate) << std::endl;
+        str << "MapBlock: " << vecToString(posOffsetFromBlock) << " [" << vecToString(mapBlockPos) << "]" << std::endl;
+        str << "Region: " << vecToString(posOffsetFromRegion) << " [" << vecToString(regionPos) << "]" << std::endl << std::endl;
 
         str << "Vel: " << floatVecToString(player.getVel()) << std::endl;
         str << "Yaw: " << floatToString(player.getYaw()) << ", ";
         str << "Pitch: " << floatToString(player.getPitch()) << std::endl << std::endl;
 
-        str << "Standing On: " << on << std::endl;
         str << "Biome: " << biome << std::endl << std::endl;
 
         str << "Texture Slots: " << defs.textures.textureSlotsUsed << " / " << defs.textures.maxTextureSlots

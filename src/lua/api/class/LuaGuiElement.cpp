@@ -8,18 +8,6 @@
 
 #include "../../../game/hud/SerialGui.h"
 
-//LuaGuiElement::LuaGuiElement(const std::string& type, sol::table data) :
-//        type(type) {
-//
-//    for (const auto& pair : data) {
-//        if (pair.first.is<float>()) {
-//            if (!pair.second.is<std::shared_ptr<LuaGuiElement>>()) throw std::runtime_error("Child is not a GuiElement.");
-//            children.push_back(pair.second.as<std::shared_ptr<LuaGuiElement>>());
-//        }
-//        else if (pair.first.is<std::string>()) set_trait(pair.first.as<std::string>(), pair.second);
-//    }
-//}
-
 std::shared_ptr<LuaGuiElement> LuaGuiElement::create(const std::string& type, sol::table data) {
     auto elem = std::make_shared<LuaGuiElement>();
     elem->type = type;
@@ -28,6 +16,7 @@ std::shared_ptr<LuaGuiElement> LuaGuiElement::create(const std::string& type, so
         if (pair.first.is<float>()) {
             if (!pair.second.is<std::shared_ptr<LuaGuiElement>>()) throw std::runtime_error("Child is not a GuiElement.");
             elem->children.push_back(pair.second.as<std::shared_ptr<LuaGuiElement>>());
+            elem->children.back()->parent = elem.get();
         }
         else if (pair.first.is<std::string>()) elem->set_trait(pair.first.as<std::string>(), pair.second);
     }
@@ -89,33 +78,45 @@ sol::object LuaGuiElement::get_child(sol::this_state s, sol::object key) {
 }
 
 void LuaGuiElement::append(sol::this_state s, sol::object elem) {
-    if (elem.is<LuaGuiElement>()) children.push_back(elem.as<std::shared_ptr<LuaGuiElement>>());
+    if (elem.is<std::shared_ptr<LuaGuiElement>>()) children.push_back(elem.as<std::shared_ptr<LuaGuiElement>>());
     else if (elem.is<sol::function>()) children.push_back(call(s, elem.as<sol::function>()).as<std::shared_ptr<LuaGuiElement>>());
     else throw std::runtime_error("Append arg is not an element or a function to generate one.");
 
     if (updateFunction) updateFunction();
     children.back()->updateFunction = updateFunction;
+    children.back()->parent = this;
 }
 
 void LuaGuiElement::prepend(sol::this_state s, sol::object elem) {
-    if (elem.is<LuaGuiElement>()) children.insert(children.begin(), elem.as<std::shared_ptr<LuaGuiElement>>());
+    if (elem.is<std::shared_ptr<LuaGuiElement>>()) children.insert(children.begin(), elem.as<std::shared_ptr<LuaGuiElement>>());
     else if (elem.is<sol::function>()) children.insert(children.begin(), call(s, elem.as<sol::function>()).as<std::shared_ptr<LuaGuiElement>>());
     else throw std::runtime_error("Append arg is not an element or a function to generate one.");
 
     if (updateFunction) updateFunction();
     children.front()->updateFunction = updateFunction;
+    children.front()->parent = this;
 }
 
-void LuaGuiElement::remove(sol::optional<LuaGuiElement> elem) {
+void LuaGuiElement::remove(sol::this_state s, sol::object elem) {
     if (!elem) {
-        if (parent != nullptr) parent->remove(sol::make_optional<LuaGuiElement>(*this));
+        if (parent != nullptr) parent->remove(s, sol::make_object<std::string>(s, key));
         else throw std::runtime_error("Tried to remove self from nil parent.");
     }
-    else {
-        for (const auto it = children.cbegin(); it != children.cend();) {
-            if ((*it)->key == elem->key) {
-                children.erase(it);
-                if (updateFunction) updateFunction();
+    else if (elem.is<std::string>()) {
+        auto child = this->get_child(s, sol::make_object<std::string>(s, elem.as<std::string>()));
+        if (!child) throw std::runtime_error("Can't find child of key " + elem.as<std::string>());
+        remove(s, child);
+    }
+    else if (elem.is<std::shared_ptr<LuaGuiElement>>()) {
+        auto parent = elem.as<std::shared_ptr<LuaGuiElement>>()->parent;
+
+        for (auto it = parent->children.cbegin(); it != parent->children.cend(); it++) {
+            if ((*it)->key == elem.as<std::shared_ptr<LuaGuiElement>>()->key) {
+                (*it)->parent = nullptr;
+                (*it)->updateFunction = nullptr;
+
+                parent->children.erase(it);
+                if (parent->updateFunction) parent->updateFunction();
                 return;
             }
         }

@@ -18,7 +18,8 @@ class BlockChunk;
 class ChunkMeshGenerator {
 public:
     ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefinitionAtlas& defs, LocalBiomeAtlas& biomes,
-                       std::shared_ptr<BlockChunk> chunk, std::array<std::shared_ptr<BlockChunk>, 6> adjacent, std::array<NoiseSample, 3>& blockOffsets);
+        std::shared_ptr<BlockChunk> chunk, std::array<std::shared_ptr<BlockChunk>, 6> adjacent,
+        std::array<NoiseSample, 3>& blockOffsets);
 private:
     BlockDef& getBlockAt(const glm::ivec3 &pos);
     void addFaces(const glm::vec3 &offset, const std::vector<MeshPart> &meshParts, const glm::vec3& tint);

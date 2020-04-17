@@ -47,6 +47,7 @@ public:
 
     struct Thread {
         explicit Thread(ClientGame &defs, std::array<NoiseSample, 3>& offsetSampler);
+        void exec();
 
         ClientGame &game;
         std::array<NoiseSample, 3>& offsetSamplers;
@@ -59,7 +60,6 @@ public:
 
     std::vector<Thread> threads;
 private:
-    static void threadFunction(Thread* thread);
 
     LocalDimension& dimension;
     ClientGame& game;

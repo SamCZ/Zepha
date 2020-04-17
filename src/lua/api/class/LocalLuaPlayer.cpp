@@ -47,8 +47,16 @@ bool LocalLuaPlayer::is_in_menu() {
     return player.isInMenu();
 }
 
-void LocalLuaPlayer::show_menu(sol::this_state s, sol::table menu) {
-    player.buildMenu(s, menu);
+void LocalLuaPlayer::show_menu(std::shared_ptr<LuaGuiElement> root) {
+    player.showMenu(root);
+}
+
+std::shared_ptr<LuaGuiElement> LocalLuaPlayer::get_hud() {
+    return player.getHud();
+}
+
+void LocalLuaPlayer::set_hud(std::shared_ptr<LuaGuiElement> hud) {
+    player.setHud(hud);
 }
 
 void LocalLuaPlayer::close_menu() {

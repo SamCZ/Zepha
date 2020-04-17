@@ -43,10 +43,14 @@ public:
 
     void setActiveBlock(const std::string& block);
 
-    void buildMenu(sol::state_view state, sol::table menu);
+    void showMenu(std::shared_ptr<LuaGuiElement> root);
     void closeMenu();
     bool isInMenu();
-    void setGuiVisible(bool hudVisible);
+
+    void setHud(std::shared_ptr<LuaGuiElement> hud);
+    std::shared_ptr<LuaGuiElement> getHud();
+
+    void setHudVisible(bool hudVisible);
 
     void draw(Renderer& renderer) override;
     void drawHud(Renderer& renderer);

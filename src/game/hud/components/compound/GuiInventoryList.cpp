@@ -48,6 +48,10 @@ void GuiInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 inn
     drawContents();
     list->setGuiCallback(std::bind(&GuiInventoryList::drawContents, this));
 
+    setCallback(CallbackType::PRIMARY, nullptr);
+    setCallback(CallbackType::SECONDARY, nullptr);
+    setCallback(CallbackType::HOVER, nullptr);
+
     hoverRect->create({}, {}, {1, 1, 1, 0.1});
 }
 

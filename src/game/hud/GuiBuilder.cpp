@@ -17,6 +17,13 @@ void GuiBuilder::setGuiRoot(std::shared_ptr<LuaGuiElement> menu) {
     elements = menu;
 }
 
+void GuiBuilder::update() {
+    if (dirty) {
+        build();
+        dirty = false;
+    }
+}
+
 void GuiBuilder::build(glm::ivec2 winBounds) {
     clear(false);
     if (winBounds != glm::ivec2 {}) this->winBounds = winBounds;
@@ -87,7 +94,7 @@ void GuiBuilder::clearCallbacks(std::shared_ptr<GuiComponent> component) {
 }
 
 void GuiBuilder::elementUpdated() {
-    build();
+    dirty = true;
 }
 
 GuiBuilder::~GuiBuilder() {

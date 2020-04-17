@@ -71,16 +71,15 @@ std::unique_ptr<std::vector<std::shared_ptr<BlockChunk>>> WorldInterpolationStre
     return finishedChunks;
 }
 
-WorldInterpolationStream::Thread::Thread(MapGen *gen) : gen(gen) {
-    thread = std::thread(WorldInterpolationStream::threadFunction, this);
+WorldInterpolationStream::Thread::Thread(MapGen *gen) : gen(gen),
+    thread(std::bind(&WorldInterpolationStream::Thread::exec, this)) {
     thread.detach();
 }
 
-void WorldInterpolationStream::threadFunction(WorldInterpolationStream::Thread *thread) {
-    while (!thread->kill) {
-
+void WorldInterpolationStream::Thread::exec() {
+    while (!kill) {
         bool empty = true;
-        for (Job& u : thread->tasks) {
+        for (Job& u : tasks) {
             if (u.locked) {
                 if (u.job == JobType::PACKET) {
                     empty = false;

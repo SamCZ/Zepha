@@ -51,19 +51,18 @@ std::unique_ptr<std::vector<std::shared_ptr<BlockChunk>>> ServerGenStream::updat
     return finishedChunks;
 }
 
-ServerGenStream::Thread::Thread(MapGen *gen) : gen(gen) {
-    thread = std::thread(ServerGenStream::threadFunction, this);
+ServerGenStream::Thread::Thread(MapGen *gen) : gen(gen),
+    thread(std::bind(&ServerGenStream::Thread::exec, this)) {
     thread.detach();
 }
 
-void ServerGenStream::threadFunction(ServerGenStream::Thread *thread) {
-    while (!thread->kill) {
-
+void ServerGenStream::Thread::exec() {
+    while (!kill) {
         bool empty = true;
-        for (Job& u : thread->tasks) {
+        for (Job& u : tasks) {
             if (u.locked) {
                 empty = false;
-                u.chunks = thread->gen->generateMapBlock(u.pos);
+                u.chunks = gen->generateMapBlock(u.pos);
                 u.locked = false;
                 break;
             }

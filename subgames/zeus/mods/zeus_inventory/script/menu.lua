@@ -51,17 +51,17 @@ local menu = zepha.build_gui(function()
                     key = "player_clamp",
 
                     position = { 41, -8 },
-                    size = { 32, 52 },
+                    size = { 34, 52 },
                     overflow = "hidden",
 
                     Gui.Model {
                         position = { 15, 52 },
-                        scale = { 86, 86 },
+                        scale = { 28, 28 },
 
                         type = "model",
                         source = "zeus:default:player",
                         texture = "zeus:default:player",
-                        anim_range = { 0, 300 }
+                        anim_range = { 0, 100 }
                     }
                 }
             },

@@ -22,6 +22,7 @@
 
 namespace SerialGui {
     const float SCALE_MODIFIER = 3;
+    const float PERCENT_DIFF = 10000;
 
     namespace {
         static std::vector<std::string> split(const std::string& value, unsigned int targetCount = 0) {
@@ -55,7 +56,7 @@ namespace SerialGui {
             if (input.find('%') == input.length() - 1) {
                 double v = std::strtod(input.substr(0, input.find("%")).c_str(), &e) / 100;
                 if (*e != '\0' || errno != 0) throw std::runtime_error("error decoding num from string");
-                return v - 10.f; // Percentages are going to be stored in negatives. Ew.
+                return v - PERCENT_DIFF; // Percentages are going to be stored in negatives. Ew.
             }
 
             double v = round(std::strtod(input.c_str(), &e));
@@ -64,9 +65,9 @@ namespace SerialGui {
         }
 
         static double convertNum(float input, unsigned int multiple) {
-            if (input >= -20 && input < 0) {
-                if (!multiple) return input + 10;
-                else return (((input + 10) * multiple / SCALE_MODIFIER) * SCALE_MODIFIER);
+            if (input >= -PERCENT_DIFF - 100 && input < -PERCENT_DIFF + 100) {
+                if (!multiple) return input + PERCENT_DIFF;
+                else return (((input + PERCENT_DIFF) * multiple / SCALE_MODIFIER) * SCALE_MODIFIER);
             }
 
             return input * SCALE_MODIFIER;

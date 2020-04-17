@@ -203,9 +203,8 @@ set(ZEPHA_SRC
 	lua/api/functions/update_entities.h 
 	lua/api/modules/register_keybind.h 
 	lua/LuaInputManager.cpp 
-	lua/LuaInputManager.h 
-	lua/api/usertype/cLocalPlayer.h 
-	lua/api/class/LocalLuaPlayer.cpp 
+	lua/LuaInputManager.h
+        lua/api/class/LocalLuaPlayer.cpp
 	lua/api/class/LocalLuaPlayer.h 
 	game/entity/Collidable.cpp 
 	game/entity/Collidable.h 

@@ -44,7 +44,7 @@ void GameScene::update() {
     if (window.input.isKeyPressed(GLFW_KEY_F1)) {
         hudVisible = !hudVisible;
         debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
-        player.setGuiVisible(hudVisible);
+        player.setHudVisible(hudVisible);
     }
 
     if (window.input.isKeyPressed(GLFW_KEY_F3)) {

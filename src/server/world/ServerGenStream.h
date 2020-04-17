@@ -37,15 +37,14 @@ private:
 
     struct Thread {
         explicit Thread(MapGen* gen);
+        void exec();
+
         std::thread thread;
         bool kill = false;
 
         MapGen* gen;
         std::vector<Job> tasks = std::vector<Job>(THREAD_QUEUE_SIZE);
     };
-
-    // Function that occurs on the threads.
-    static void threadFunction(Thread* thread);
 
     std::shared_ptr<MapGenProps> props;
     MapGen gen;

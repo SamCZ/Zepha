@@ -13,7 +13,7 @@
 // Usertypes
 #include "../api/class/LuaGuiElement.h"
 #include "../api/usertype/cItemStack.h"
-#include "../api/usertype/cLocalPlayer.h"
+#include "../api/class/LocalLuaPlayer.h"
 #include "../api/usertype/cLuaEntity.h"
 #include "../api/usertype/cInventoryRef.h"
 #include "../api/usertype/cAnimationManager.h"

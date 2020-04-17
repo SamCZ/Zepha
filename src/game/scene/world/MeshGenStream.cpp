@@ -31,9 +31,6 @@ MeshGenStream::MeshGenStream(ClientGame& game, LocalDimension &dimension) :
     for (int i = 0; i < THREADS; i++) threads.emplace_back(game, noiseSampler);
 }
 
-MeshGenStream::Thread::Thread(ClientGame &defs, std::array<NoiseSample, 3>& offsetSamplers) :
-    game(defs), offsetSamplers(offsetSamplers), thread(MeshGenStream::threadFunction, this) {}
-
 std::vector<ChunkMeshDetails*> MeshGenStream::update() {
     std::vector<ChunkMeshDetails*> finishedChunks;
 
@@ -75,15 +72,25 @@ std::vector<ChunkMeshDetails*> MeshGenStream::update() {
     return std::move(finishedChunks);
 }
 
-void MeshGenStream::threadFunction(MeshGenStream::Thread *thread) {
-    while (thread->keepAlive) {
+MeshGenStream::Thread::Thread(ClientGame &defs, std::array<NoiseSample, 3>& offsetSamplers) :
+    game(defs), offsetSamplers(offsetSamplers), thread(std::bind(&MeshGenStream::Thread::exec, this)) {
+    thread.detach();
+}
+
+void MeshGenStream::Thread::exec() {
+    while (keepAlive) {
         bool hasNoTasks = true;
 
-        for (auto i = 0; i < thread->tasks.size(); i++) {
-            auto& u = thread->tasks[i];
+        for (auto i = 0; i < tasks.size(); i++) {
+            auto& u = tasks[i];
             if (!u.busy) continue;
 
-            ChunkMeshGenerator m(u.meshDetails, thread->game.defs, thread->game.biomes, u.thisChunk, u.adjacentChunks, thread->offsetSamplers);
+            if (u.thisChunk == nullptr) {
+                std::cout << Util::vecToString(u.thisChunk->pos) << std::endl;
+                continue;
+            }
+
+            ChunkMeshGenerator m(u.meshDetails, game.defs, game.biomes, u.thisChunk, u.adjacentChunks, offsetSamplers);
             hasNoTasks = false;
             u.busy = false;
         }

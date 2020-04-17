@@ -17,6 +17,7 @@ public:
 
     GuiBuilder(TextureAtlas& textures, ModelStore& models, std::shared_ptr<GuiContainer> root);
     void setGuiRoot(std::shared_ptr<LuaGuiElement> menu);
+    void update();
     void build(glm::ivec2 winBounds = {});
     void clear(bool deleteRoot = true);
 
@@ -35,6 +36,8 @@ protected:
 
     std::shared_ptr<LuaGuiElement> elements = nullptr;
     unsigned int keyInd = 0;
+
+    bool dirty = false;
 
     glm::ivec2 winBounds {};
 };

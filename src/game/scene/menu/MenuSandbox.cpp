@@ -61,6 +61,11 @@ void MenuSandbox::windowResized() {
     builder.build(win);
 }
 
+void MenuSandbox::update(double delta) {
+    LuaParser::update(delta);
+    builder.update();
+}
+
 sol::protected_function_result MenuSandbox::runFileSandboxed(const std::string& file) {
     for (LuaModFile& f : mod.files) {
         if (f.path == file) {

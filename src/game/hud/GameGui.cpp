@@ -11,17 +11,11 @@ GameGui::GameGui(LocalInventoryRefs& refs, glm::vec2 bufferSize, ClientGame& def
     win(bufferSize),
     renderer(renderer),
 
-    hudBuilder(refs, defs, hudRoot),
-    menuBuilder(refs, defs, menuRoot) {
+    hudBuilder(refs, defs, hudLuaRoot),
+    menuBuilder(refs, defs, menuLuaRoot) {
 
-    auto crosshair = std::make_shared<GuiRect>("crosshair");
-    crosshair->create({22, 22}, {}, defs.textures["crosshair"]);
-    crosshair->setPos({bufferSize.x / 2 - 11, bufferSize.y / 2 - 9});
-    hudRoot->add(crosshair);
-
-    auto viginette = std::make_shared<GuiRect>("viginette");
-    viginette->create(bufferSize, {}, defs.textures["viginette"]);
-    hudRoot->add(viginette);
+    hudRoot->add(hudLuaRoot);
+    menuRoot->add(menuLuaRoot);
 
     handList->create({3, 3}, {}, {}, refs.getHand(), refs.getHand(), defs);
     menuRoot->add(handList);
@@ -30,6 +24,9 @@ GameGui::GameGui(LocalInventoryRefs& refs, glm::vec2 bufferSize, ClientGame& def
 void GameGui::update(double delta) {
     menuRoot->update(delta);
     hudRoot->update(delta);
+
+    hudBuilder.update();
+    menuBuilder.update();
 
     handList->setPos((renderer.window.getMousePos() - glm::ivec2(24)) / 3 * 3);
     menuRoot->handleMouseInput(renderer.window);
@@ -44,8 +41,8 @@ void GameGui::winResized(glm::ivec2 win) {
     menuBuilder.build(win);
 }
 
-void GameGui::buildMenu(sol::state_view state, sol::table menu) {
-//    menuBuilder.setGuiTable(state, menu);
+void GameGui::showMenu(std::shared_ptr<LuaGuiElement> root) {
+    menuBuilder.setGuiRoot(root);
     menuBuilder.build(win);
     inMenu = true;
 }
@@ -57,6 +54,16 @@ void GameGui::closeMenu() {
 
 const bool GameGui::isInMenu() const {
     return inMenu;
+}
+
+void GameGui::setHud(std::shared_ptr<LuaGuiElement> hud) {
+    this->hudRootElem = hud;
+    hudBuilder.setGuiRoot(hud);
+    hudBuilder.build(win);
+}
+
+std::shared_ptr<LuaGuiElement> GameGui::getHud() {
+    return hudRootElem;
 }
 
 void GameGui::setVisible(bool visible) {

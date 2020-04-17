@@ -25,9 +25,12 @@ public:
     void setVisible(bool visible);
     bool isVisible();
 
-    void buildMenu(sol::state_view state, sol::table menu);
-    const bool isInMenu() const;
+    void showMenu(std::shared_ptr<LuaGuiElement> root);
     void closeMenu();
+    const bool isInMenu() const;
+
+    void setHud(std::shared_ptr<LuaGuiElement> hud);
+    std::shared_ptr<LuaGuiElement> getHud();
 
     void drawHud(Renderer& renderer);
     void drawMenu(Renderer& renderer);
@@ -37,6 +40,8 @@ private:
 
     glm::ivec2 win {};
     bool inMenu = false;
+
+    std::shared_ptr<LuaGuiElement> hudRootElem = nullptr;
 
     std::shared_ptr<GuiContainer> menuRoot = std::make_shared<GuiInventoryList>("menuRoot");
     std::shared_ptr<GuiContainer> menuLuaRoot = std::make_shared<GuiInventoryList>("menuLuaRoot");
