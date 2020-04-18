@@ -53,11 +53,11 @@ private:
         explicit Thread(MapGen* gen);
         void exec();
 
-        std::thread thread;
-        bool kill = false;
-
         MapGen* gen;
         std::vector<Job> tasks = std::vector<Job>(THREAD_QUEUE_SIZE);
+
+        bool kill = false;
+        std::thread thread;
     };
 
     std::shared_ptr<MapGenProps> props;

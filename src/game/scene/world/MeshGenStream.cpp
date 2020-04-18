@@ -73,9 +73,7 @@ std::vector<ChunkMeshDetails*> MeshGenStream::update() {
 }
 
 MeshGenStream::Thread::Thread(ClientGame &defs, std::array<NoiseSample, 3>& offsetSamplers) :
-    game(defs), offsetSamplers(offsetSamplers), thread(std::bind(&MeshGenStream::Thread::exec, this)) {
-    thread.detach();
-}
+    game(defs), offsetSamplers(offsetSamplers), thread(std::bind(&MeshGenStream::Thread::exec, this)) {}
 
 void MeshGenStream::Thread::exec() {
     while (keepAlive) {

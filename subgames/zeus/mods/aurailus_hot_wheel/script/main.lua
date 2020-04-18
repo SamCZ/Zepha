@@ -17,13 +17,13 @@ root(function(e)
         size = { 68, 68 },
         background = "@aurailus:hot_wheel:hot_wheel_circle",
 
-        Gui.InventoryList {
-            position = { 1, 1 },
-            slot_spacing = { 2, 2 },
-            length = 1,
-            source = "current_player",
-            list = "main",
-        }
+--         Gui.InventoryList {
+--             position = { 7, 1 },
+--             slot_spacing = { 2, 2 },
+--             length = 1,
+--             source = "current_player",
+--             list = "main",
+--         }
     })
 
     e:append(Gui.Rect {
@@ -31,11 +31,5 @@ root(function(e)
         position = { 47, 13 },
         background = "@aurailus:hot_wheel:hot_wheel_line",
     })
-
---     e:append(Gui.Rect {
---         size = { 88, 28 },
---         position = { 52, 12 },
---         background = "@aurailus:hot_wheel:slots_expanded"
---     })
 
 end)

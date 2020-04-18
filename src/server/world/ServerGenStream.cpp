@@ -52,9 +52,7 @@ std::unique_ptr<std::vector<std::shared_ptr<BlockChunk>>> ServerGenStream::updat
 }
 
 ServerGenStream::Thread::Thread(MapGen *gen) : gen(gen),
-    thread(std::bind(&ServerGenStream::Thread::exec, this)) {
-    thread.detach();
-}
+    thread(std::bind(&ServerGenStream::Thread::exec, this)) {}
 
 void ServerGenStream::Thread::exec() {
     while (!kill) {

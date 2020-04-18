@@ -72,9 +72,7 @@ std::unique_ptr<std::vector<std::shared_ptr<BlockChunk>>> WorldInterpolationStre
 }
 
 WorldInterpolationStream::Thread::Thread(MapGen *gen) : gen(gen),
-    thread(std::bind(&WorldInterpolationStream::Thread::exec, this)) {
-    thread.detach();
-}
+    thread(std::bind(&WorldInterpolationStream::Thread::exec, this)) {}
 
 void WorldInterpolationStream::Thread::exec() {
     while (!kill) {

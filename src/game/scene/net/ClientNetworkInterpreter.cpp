@@ -161,16 +161,16 @@ void ClientNetworkInterpreter::watchInv(const std::string& inv, const std::strin
 }
 
 void ClientNetworkInterpreter::unwatchInv(const std::string& inv, const std::string& list) {
-    Serializer().append(inv).append(list)
-            .packet(PacketType::INV_UNWATCH).sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+    auto packet = Serializer().append(inv).append(list).packet(PacketType::INV_UNWATCH);
+    packet.sendTo(connection.getPeer(), PacketChannel::INVENTORY);
 }
 
 void ClientNetworkInterpreter::primaryInteract(const std::string &inv, const std::string &list, unsigned short ind) {
-    Serializer().append<unsigned short>(0).append(inv).append(list).append<unsigned short>(ind)
-            .packet(PacketType::INV_INTERACT).sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+    auto packet = Serializer().append<unsigned short>(0).append(inv).append(list).append<unsigned short>(ind).packet(PacketType::INV_INTERACT);
+    packet.sendTo(connection.getPeer(), PacketChannel::INVENTORY);
 }
 
 void ClientNetworkInterpreter::secondaryInteract(const std::string &inv, const std::string &list, unsigned short ind) {
-    Serializer().append<unsigned short>(1).append(inv).append(list).append<unsigned short>(ind)
-            .packet(PacketType::INV_INTERACT).sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+    auto packet = Serializer().append<unsigned short>(1).append(inv).append(list).append<unsigned short>(ind).packet(PacketType::INV_INTERACT);
+    packet.sendTo(connection.getPeer(), PacketChannel::INVENTORY);
 }

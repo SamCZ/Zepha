@@ -171,10 +171,8 @@ void Server::handlePlayerPacket(ServerClient& client, PacketView& p) {
             break;
         }
         case PacketType::INV_UNWATCH: {
-            Deserializer d(p.d.data);
-
-            std::string source = d.read<std::string>();
-            std::string list = d.read<std::string>();
+            std::string source = p.d.read<std::string>();
+            std::string list = p.d.read<std::string>();
 
             // TODO: When inventory saving / loading is implemented there will need to be a cross-save identifier.
             if (source == "current_player") source = "player:" + std::to_string(client.cid);
@@ -189,13 +187,12 @@ void Server::handlePlayerPacket(ServerClient& client, PacketView& p) {
             break;
         }
         case PacketType::INV_INTERACT: {
-            Deserializer d(p.d.data);
 
-            unsigned short type = d.read<unsigned short>();
+            unsigned short type = p.d.read<unsigned short>();
 
-            std::string source = d.read<std::string>();
-            std::string list = d.read<std::string>();
-            unsigned short ind = d.read<unsigned short>();
+            std::string source = p.d.read<std::string>();
+            std::string list = p.d.read<std::string>();
+            unsigned short ind = p.d.read<unsigned short>();
 
             // TODO: When inventory saving / loading is implemented there will need to be a cross-save identifier.
             if (source == "current_player") source = "player:" + std::to_string(client.cid);

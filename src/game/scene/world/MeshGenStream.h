@@ -51,11 +51,10 @@ public:
 
         ClientGame &game;
         std::array<NoiseSample, 3>& offsetSamplers;
-
-        std::thread thread {};
-        bool keepAlive = true;
-
         std::vector<Unit> tasks = std::vector<Unit>(THREAD_QUEUE_SIZE);
+
+        bool keepAlive = true;
+        std::thread thread {};
     };
 
     std::vector<Thread> threads;
