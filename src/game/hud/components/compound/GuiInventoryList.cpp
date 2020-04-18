@@ -5,8 +5,9 @@
 #include "GuiInventoryList.h"
 
 #include "../basic/GuiInventoryItem.h"
-#include "../../../inventory/LocalInventoryList.cpp"
 #include "../../../../def/texture/Font.h"
+#include "../../../inventory/LocalInventoryList.cpp"
+
 GuiInventoryList::GuiInventoryList(const std::string &key) : GuiContainer(key) {}
 
 std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(const LuaGuiElement& elem, ClientGame &game,
@@ -46,7 +47,8 @@ void GuiInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 inn
     });
 
     drawContents();
-    list->setGuiCallback(std::bind(&GuiInventoryList::drawContents, this));
+    myCallback = std::make_shared<std::function<void()>>(std::bind(&GuiInventoryList::drawContents, this));
+    list->addGuiCallback(myCallback);
 
     setCallback(CallbackType::PRIMARY, nullptr);
     setCallback(CallbackType::SECONDARY, nullptr);
@@ -146,5 +148,5 @@ void GuiInventoryList::drawContents() {
 }
 
 GuiInventoryList::~GuiInventoryList() {
-    if (list != nullptr) list->setGuiCallback(nullptr);
+    if (list != nullptr) list->removeGuiCallback(myCallback);
 }

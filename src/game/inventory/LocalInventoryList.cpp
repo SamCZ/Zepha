@@ -28,10 +28,22 @@ void LocalInventoryList::setData(unsigned int size, unsigned int width, std::vec
     manipulated();
 }
 
-void LocalInventoryList::setGuiCallback(std::function<void()> cb) {
-    this->guiCallback = cb;
+void LocalInventoryList::addGuiCallback(std::shared_ptr<std::function<void()>> cb) {
+    guiCallbacks.push_back(cb);
+}
+
+void LocalInventoryList::removeGuiCallback(std::shared_ptr<std::function<void()>> cb) {
+
+    for (auto it = guiCallbacks.begin(); it != guiCallbacks.end();) {
+        if (cb == (*it)) {
+            guiCallbacks.erase(it);
+            return;
+        }
+        it++;
+    }
+    std::cout << "Failed to remove callback" << std::endl;
 }
 
 void LocalInventoryList::manipulated() {
-    if (guiCallback != nullptr) guiCallback();
+    for (auto& cb : guiCallbacks) (*cb)();
 }

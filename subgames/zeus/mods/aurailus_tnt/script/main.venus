@@ -17,9 +17,8 @@ zepha.register_block("@aurailus:tnt:tnt", {
         for i = -amp, amp {
             for j = -amp, amp {
                 for k = -amp, amp {
-                    local offset = v(i, j, k)
-                    if (vector.distance(v(), offset) < amp) {
-                        zepha.set_block(vector.add(pos, offset), "air")
+                    if (V(i, j, k):distance(V()) < amp) {
+                        zepha.set_block(pos + offset, "air")
                     }
                 }
             }

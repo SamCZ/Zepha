@@ -17,13 +17,13 @@ root(function(e)
         size = { 68, 68 },
         background = "@aurailus:hot_wheel:hot_wheel_circle",
 
---         Gui.InventoryList {
---             position = { 7, 1 },
---             slot_spacing = { 2, 2 },
---             length = 1,
---             source = "current_player",
---             list = "main",
---         }
+        Gui.InventoryList {
+            position = { 7, 1 },
+            slot_spacing = { 2, 2 },
+            length = 1,
+            source = "current_player",
+            list = "main",
+        }
     })
 
     e:append(Gui.Rect {

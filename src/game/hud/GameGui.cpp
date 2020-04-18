@@ -34,11 +34,8 @@ void GameGui::update(double delta) {
 
 void GameGui::winResized(glm::ivec2 win) {
     this->win = win;
-
-    hudRoot->get<GuiRect>("crosshair")->setPos({win.x / 2 - 11, win.y / 2 - 9});
-    hudRoot->get<GuiRect>("viginette")->setScale(win);
-
     menuBuilder.build(win);
+    hudBuilder.build(win);
 }
 
 void GameGui::showMenu(std::shared_ptr<LuaGuiElement> root) {

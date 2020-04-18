@@ -33,6 +33,7 @@ public:
     void drawContents();
 private:
     std::shared_ptr<GuiRect> hoverRect = std::make_shared<GuiRect>("hover_rect");
+    std::shared_ptr<std::function<void()>> myCallback = nullptr;
 
     std::shared_ptr<LocalInventoryList> list, hand;
     glm::ivec2 innerPadding;
