@@ -2,6 +2,7 @@
 // Created by aurailus on 2020-04-12.
 //
 
+#include <iostream>
 #include <glm/vec2.hpp>
 
 #include "LuaGuiElement.h"
@@ -82,9 +83,8 @@ void LuaGuiElement::append(sol::this_state s, sol::object elem) {
     else if (elem.is<sol::function>()) children.push_back(call(s, elem.as<sol::function>()).as<std::shared_ptr<LuaGuiElement>>());
     else throw std::runtime_error("Append arg is not an element or a function to generate one.");
 
-    if (updateFunction) updateFunction();
-    children.back()->updateFunction = updateFunction;
     children.back()->parent = this;
+    if (updateFunction) updateFunction();
 }
 
 void LuaGuiElement::prepend(sol::this_state s, sol::object elem) {
@@ -92,9 +92,8 @@ void LuaGuiElement::prepend(sol::this_state s, sol::object elem) {
     else if (elem.is<sol::function>()) children.insert(children.begin(), call(s, elem.as<sol::function>()).as<std::shared_ptr<LuaGuiElement>>());
     else throw std::runtime_error("Append arg is not an element or a function to generate one.");
 
-    if (updateFunction) updateFunction();
-    children.front()->updateFunction = updateFunction;
     children.front()->parent = this;
+    if (updateFunction) updateFunction();
 }
 
 void LuaGuiElement::remove(sol::this_state s, sol::object elem) {
@@ -127,7 +126,8 @@ Any LuaGuiElement::getAsAny(const std::string &key) const noexcept {
     if (!traits.count(key)) return Any();
     auto object = traits.at(key);
 
-    if (object.is<std::string>()) return Any::from<std::string>(object.as<std::string>());
+    if (object.is<float>()) return Any::from<float>(object.as<float>());
+    else if (object.is<std::string>()) return Any::from<std::string>(object.as<std::string>());
     else if (object.is<sol::table>()) {
         auto table = object.as<sol::table>();
 

@@ -22,6 +22,8 @@ std::shared_ptr<GuiComponent> GameGuiBuilder::createComponent(LuaGuiElement& ele
 
     if (!c) return nullptr;
 
+    elem.updateFunction = std::bind(&GameGuiBuilder::elementUpdated, this);
+
     if (elem.callbacks.count("primary")) c->setCallback(GuiComponent::CallbackType::PRIMARY, [=](bool b, glm::vec2 v) {
             elem.callbacks.at("primary")(b, LuaParser::luaVec(elem.callbacks.at("primary").lua_state(), {v.x, v.y, 0})); });
 

@@ -9,14 +9,14 @@ zepha.register_on("new_player", (p) => {
 
     crafting.bind(craft_input, craft_output)
 
-    ## Make hot wheel
+    ## Get hot wheel
     local invs = {
-        inv:add_list("hot_wheel_1", 5, 5),
-        inv:add_list("hot_wheel_2", 5, 5),
-        inv:add_list("hot_wheel_3", 5, 5),
-        inv:add_list("hot_wheel_4", 5, 5),
-        inv:add_list("hot_wheel_5", 5, 5),
-        inv:add_list("hot_wheel_6", 5, 5)
+        inv:get_list("hot_wheel_1"),
+        inv:get_list("hot_wheel_2"),
+        inv:get_list("hot_wheel_3"),
+        inv:get_list("hot_wheel_4"),
+        inv:get_list("hot_wheel_5"),
+        inv:get_list("hot_wheel_6")
     }
 
     foreach inv in invs {

@@ -19,32 +19,38 @@ std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(const LuaGuiE
     glm::vec4 padding = SerialGui::get<glm::vec4>(elem, "padding", bounds);
     glm::vec2 slotspc = SerialGui::get<glm::vec2>(elem, "slot_spacing", bounds);
 
-    std::string source = elem.get_or<std::string>("source", "");
-    std::string list   = elem.get_or<std::string>("list", "");
+    std::string source    = elem.get_or<std::string>("source", "");
+    std::string list      = elem.get_or<std::string>("list", "");
+    unsigned short start  = static_cast<unsigned short>(elem.get_or<float>("start", 1) - 1);
+    unsigned short length = static_cast<unsigned short>(elem.get_or<float>("length", 0));
 
     auto invList = refs.getList(source, list);
     auto inv = std::make_shared<GuiInventoryList>(elem.key);
 
     inv->create(glm::vec2(SerialGui::SCALE_MODIFIER), padding * SerialGui::SCALE_MODIFIER,
-            slotspc * SerialGui::SCALE_MODIFIER, invList, refs.getHand(), game);
+            slotspc * SerialGui::SCALE_MODIFIER, invList, refs.getHand(), game, start, length);
     inv->setPos(pos);
 
     return inv;
 }
 
 void GuiInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding,
-        std::shared_ptr<LocalInventoryList> list, std::shared_ptr<LocalInventoryList> hand, ClientGame& defs) {
+    std::shared_ptr<LocalInventoryList> list, std::shared_ptr<LocalInventoryList> hand, ClientGame& defs,
+    unsigned short start, unsigned short length) {
+
     this->list = list;
     this->hand = hand;
     this->defs = &defs;
+
+    this->start = start;
+    this->length = length;
 
     this->scale = scale;
     this->padding = padding;
     this->innerPadding = innerPadding;
     this->hitbox = (list->getWidth() == 0 ? glm::ivec2 {} : glm::ivec2 {
         padding.x + list->getWidth() * (innerPadding.x*scale.x),
-        padding.y + (list->getLength() / list->getWidth()) * (innerPadding.y*scale.y)
-    });
+        padding.y + (list->getLength() / list->getWidth()) * (innerPadding.y*scale.y) });
 
     drawContents();
     myCallback = std::make_shared<std::function<void()>>(std::bind(&GuiInventoryList::drawContents, this));
@@ -116,6 +122,7 @@ void GuiInventoryList::rightClick(bool down, glm::ivec2 pos) {
 
 void GuiInventoryList::drawContents() {
     if (list->getWidth() == 0) return;
+    unsigned short length = this->length == 0 ? list->getLength() : this->length;
 
     this->hitbox = glm::ivec2 {
         padding.x + list->getWidth() * (innerPadding.x*scale.x),
@@ -129,12 +136,14 @@ void GuiInventoryList::drawContents() {
 
     for (unsigned short i = 0; i < list->getLength() / list->getWidth(); i++) {
         for (unsigned short j = 0; j < list->getWidth(); j++) {
+            unsigned short stackInd = j + i * list->getWidth();
+            if (stackInd >= length) break;
 //            auto bg = std::make_shared<GuiRect>("background_" + to_string(i) + "_" + to_string(j));
 //            bg->create(scale * 16.f, {}, {1, 0, 0, 0.3});
 //            add(bg);
 //            bg->setPos({padding.x + j * (16*scale.x+innerPadding.x/scale.x), padding.y + i * (16*scale.y+innerPadding.y/scale.y)});
 
-            auto stack = list->getStack(j + i * list->getWidth());
+            auto stack = list->getStack(stackInd);
             if (stack.id == 0) continue;
 
             auto item = std::make_shared<GuiInventoryItem>("item_" + std::to_string(i) + "_" + std::to_string(j));
