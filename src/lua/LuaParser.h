@@ -1,35 +1,18 @@
 //
+// The LuaParser superclass for both the Client and Server Parsers.
+// This contains some shared functions, structs, and variables used by both subclasses.
 // Created by aurailus on 11/06/19.
-// The Lua API superclass for both the client and the server.
-// This class contains platform agnostic functions and structures for both of the APIs.
-//
 //
 
 #pragma once
 
 #include <list>
-#include <iostream>
 #include <glm/vec3.hpp>
 #include <sol2/sol.hpp>
-
-#include "../util/Log.h"
 
 class LuaParser {
 public:
     constexpr static double UPDATE_STEP {1 / 60.0};
-
-//    static inline void override_panic(sol::optional<std::string> message) {
-//        std::cout << Log::err << "Zepha has panicked! Error:" << Log::endl;
-//        if (message) std::cout << Log::err << message.value() << Log::endl;
-//    }
-
-    struct DelayedFunction {
-        sol::function function;
-        std::vector<sol::object> args;
-        float timeout;
-        float initial_timeout;
-    };
-
     virtual void update(double delta);
 
     sol::table luaVec(glm::vec3 vec);
@@ -38,6 +21,12 @@ public:
     sol::state lua;
     sol::table core;
 
+    struct DelayedFunction {
+        sol::function function;
+        std::vector<sol::object> args;
+        float timeout;
+        float initial_timeout;
+    };
     std::list<DelayedFunction> delayed_functions;
 };
 

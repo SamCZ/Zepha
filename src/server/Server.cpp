@@ -125,32 +125,42 @@ void Server::handlePlayerPacket(ServerClient& client, PacketView& p) {
 
             if (block == DefinitionAtlas::AIR) {
                 auto def = defs.defs.blockFromId(worldBlock);
-                if (def.callbacks.count(Callback::BREAK)) def.callbacks[Callback::BREAK](defs.parser.luaVec(pos), ServerLuaPlayer(client));
-                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"], "break",
-                                          defs.parser.luaVec(pos), ServerLuaPlayer(client));
+                if (def.callbacks.count(Callback::BREAK)) {
+                    defs.parser.safe_function(def.callbacks[Callback::BREAK],
+                        defs.parser.luaVec(pos), ServerLuaPlayer(client));
+                }
+                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"],
+                    "break", defs.parser.luaVec(pos), ServerLuaPlayer(client));
             }
             else {
                 auto def = defs.defs.blockFromId(block);
-                if (def.callbacks.count(Callback::PLACE)) def.callbacks[Callback::PLACE](defs.parser.luaVec(pos), ServerLuaPlayer(client));
-                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"], "place",
-                                          defs.parser.luaVec(pos), ServerLuaPlayer(client));
+                if (def.callbacks.count(Callback::PLACE)) {
+                    defs.parser.safe_function(def.callbacks[Callback::PLACE],
+                        defs.parser.luaVec(pos), ServerLuaPlayer(client));
+                }
+                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"],
+                    "place", defs.parser.luaVec(pos), ServerLuaPlayer(client));
             }
 
             world.setBlock(pos, block);
 
             if (block == DefinitionAtlas::AIR) {
                 auto def = defs.defs.blockFromId(worldBlock);
-                if (def.callbacks.count(Callback::AFTER_BREAK)) def.callbacks[Callback::AFTER_BREAK](
-                            defs.parser.luaVec(pos), ServerLuaPlayer(client));
-                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"], "after_break",
-                                          defs.parser.luaVec(pos), ServerLuaPlayer(client));
+                if (def.callbacks.count(Callback::AFTER_BREAK)) {
+                    defs.parser.safe_function(def.callbacks[Callback::AFTER_BREAK],
+                        defs.parser.luaVec(pos), ServerLuaPlayer(client));
+                }
+                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"],
+                    "after_break", defs.parser.luaVec(pos), ServerLuaPlayer(client));
             }
             else {
                 auto def = defs.defs.blockFromId(block);
-                if (def.callbacks.count(Callback::AFTER_PLACE)) def.callbacks[Callback::AFTER_PLACE](
-                            defs.parser.luaVec(pos), ServerLuaPlayer(client));
-                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"], "after_place",
-                                          defs.parser.luaVec(pos), ServerLuaPlayer(client));
+                if (def.callbacks.count(Callback::AFTER_PLACE)) {
+                    defs.parser.safe_function(def.callbacks[Callback::AFTER_PLACE],
+                        defs.parser.luaVec(pos), ServerLuaPlayer(client));
+                }
+                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"],
+                    "after_place", defs.parser.luaVec(pos), ServerLuaPlayer(client));
             }
             break;
         }

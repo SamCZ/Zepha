@@ -28,7 +28,7 @@ zepha.register_entity("zeus:default:raven", {
         }
 
         if (self.targeting) {
-            self.object.pos = v(
+            self.object.pos = V(
                 self.object.pos.x + 0.08 * math.sin(math.rad(self.object.yaw)),
                 self.object.pos.y,
                 self.object.pos.z + 0.08 * math.cos(math.rad(self.object.yaw))
@@ -46,6 +46,6 @@ zepha.register_keybind("zeus:default:spawn_raven", {
     description = "Spawn Raven",
     default = zepha.keys.z,
     on_press = fn() {
-        zepha.add_entity("zeus:default:raven", vector.add(zepha.player.pos, v(0, 1.7, 0)))
+        zepha.add_entity("zeus:default:raven", vector.add(zepha.player.pos, V(0, 1.7, 0)))
     }
 })

@@ -72,11 +72,13 @@ void GuiComponent::setCallback(GuiComponent::CallbackType type, const callback& 
 }
 
 void GuiComponent::handleMouseInput(Window &window) {
-    window.setCursorHand(mouseActivity(window.getMousePos()));
-    if (window.input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT))   clickEvent(true, true, window.getMousePos());
-    if (window.input.isMouseReleased(GLFW_MOUSE_BUTTON_LEFT))  clickEvent(true, false, window.getMousePos());
-    if (window.input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT))  clickEvent(false, true, window.getMousePos());
-    if (window.input.isMouseReleased(GLFW_MOUSE_BUTTON_RIGHT)) clickEvent(false, false, window.getMousePos());
+    auto mousePos = window.input.mousePos();
+
+    window.setCursorHand(mouseActivity(mousePos));
+    if (window.input.mousePressed(GLFW_MOUSE_BUTTON_LEFT))   clickEvent(true,  true,  mousePos);
+    if (window.input.mouseReleased(GLFW_MOUSE_BUTTON_LEFT))  clickEvent(true,  false, mousePos);
+    if (window.input.mousePressed(GLFW_MOUSE_BUTTON_RIGHT))  clickEvent(false, true,  mousePos);
+    if (window.input.mouseReleased(GLFW_MOUSE_BUTTON_RIGHT)) clickEvent(false, false, mousePos);
 }
 
 bool GuiComponent::mouseActivity(glm::ivec2 pos) {

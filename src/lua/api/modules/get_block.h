@@ -5,6 +5,7 @@
 #pragma once
 
 #include <sol2/sol.hpp>
+
 #include "../../../def/DefinitionAtlas.h"
 #include "../../../game/scene/world/World.h"
 

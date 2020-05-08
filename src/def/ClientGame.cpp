@@ -4,7 +4,6 @@
 
 #include "ClientGame.h"
 
-//Note: This constructor is only for *uninitialized* LocalDef objects!
 ClientGame::ClientGame(const ClientGame &copy) : ClientGame(copy.tex_path) {}
 
 ClientGame::ClientGame(const std::string& path) :
@@ -18,11 +17,11 @@ ClientGame::ClientGame(const std::string& path) :
     textures.loadDirectory(tex_path);
 }
 
-void ClientGame::init(LocalWorld &world, Player& player) {
-    parser.init(*this, world, player);
+void ClientGame::init(LocalWorld &world, Player& player, ClientState& state) {
+    parser.init(*this, world, player, state);
 }
 
-void ClientGame::update(double delta, bool* keys) {
-    parser.update(delta, keys);
+void ClientGame::update(double delta) {
+    parser.update(delta);
     textures.update();
 }

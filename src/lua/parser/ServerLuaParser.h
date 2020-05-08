@@ -4,12 +4,15 @@
 
 #pragma once
 
-#include "ServerModHandler.h"
+#include <enet/enet.h>
+
 #include "../LuaParser.h"
-#include "../../server/conn/ServerClient.h"
+
+#include "ServerModHandler.h"
 
 class ServerGame;
 class ServerWorld;
+class ServerClient;
 
 class ServerLuaParser : public LuaParser {
 public:

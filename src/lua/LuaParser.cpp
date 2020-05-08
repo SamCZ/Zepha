@@ -5,7 +5,9 @@
 #include "LuaParser.h"
 
 void LuaParser::update(double delta) {
-    //Loop through and call delayed functions
+    // Execute delayed functions
+    // TODO: Experiment with storing delayed functions inside of Lua and test performance.
+
     auto it = delayed_functions.begin();
     while (it != delayed_functions.end()) {
         DelayedFunction& f = *it;

@@ -38,7 +38,7 @@ void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {
 void Player::moveAndLook(Input &input, double delta, glm::vec2 mouseDelta) {
 
     //Position movement
-    bool sprinting = input.isKeyDown(GLFW_KEY_LEFT_CONTROL);
+    bool sprinting = input.keyDown(GLFW_KEY_LEFT_CONTROL);
 
     double moveSpeed = BASE_MOVE_SPEED * delta * (sprinting ? 1.6 : 1);
     float friction = 0.3f;
@@ -48,7 +48,7 @@ void Player::moveAndLook(Input &input, double delta, glm::vec2 mouseDelta) {
         friction = 0.15f;
     }
     else {
-        if (input.isKeyDown(GLFW_KEY_SPACE) && isOnGround()) vel.y = JUMP_VEL;
+        if (input.keyDown(GLFW_KEY_SPACE) && isOnGround()) vel.y = JUMP_VEL;
     }
 
     //Calculate movement vector from camera angle.
@@ -58,14 +58,14 @@ void Player::moveAndLook(Input &input, double delta, glm::vec2 mouseDelta) {
 
     glm::vec3 mod {0, 0, 0};
 
-    if (input.isKeyDown(GLFW_KEY_W)) mod += frontFlat;
-    if (input.isKeyDown(GLFW_KEY_S)) mod -= frontFlat;
-    if (input.isKeyDown(GLFW_KEY_D)) mod += rightFlat;
-    if (input.isKeyDown(GLFW_KEY_A)) mod -= rightFlat;
+    if (input.keyDown(GLFW_KEY_W)) mod += frontFlat;
+    if (input.keyDown(GLFW_KEY_S)) mod -= frontFlat;
+    if (input.keyDown(GLFW_KEY_D)) mod += rightFlat;
+    if (input.keyDown(GLFW_KEY_A)) mod -= rightFlat;
 
     if (flying) {
-        if (input.isKeyDown(GLFW_KEY_SPACE)) mod.y += 1;
-        if (input.isKeyDown(GLFW_KEY_LEFT_SHIFT)) mod.y -= 1;
+        if (input.keyDown(GLFW_KEY_SPACE)) mod.y += 1;
+        if (input.keyDown(GLFW_KEY_LEFT_SHIFT)) mod.y -= 1;
     }
     else {
         if (!isOnGround()) vel.y = std::fmax(vel.y - 0.0085, -3);
@@ -195,7 +195,7 @@ void Player::updateWireframe() {
 
 void Player::breakBlock(Input& input, double delta) {
     if (pointedThing.thing == PointedThing::Thing::BLOCK) {
-        if (input.isMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
+        if (input.mouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
             if (breakInterval == 0) {
                 world.damageBlock(pointedThing.target.block.pos, BLOCK_DAMAGE);
             }
@@ -207,7 +207,7 @@ void Player::breakBlock(Input& input, double delta) {
             if (breakInterval > BLOCK_INTERVAL) breakInterval = 0;
         }
 
-        if (input.isMousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
+        if (input.mousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
             world.localSetBlock(pointedThing.target.block.pos + SelectionBox::faceToOffset(pointedThing.target.block.face), activeBlock);
         }
     }
@@ -278,12 +278,12 @@ void Player::setActiveBlock(const std::string& block) {
 
 void Player::showMenu(std::shared_ptr<LuaGuiElement> root) {
     gameGui.showMenu(root);
-    renderer.window.lockMouse(false);
+    renderer.window.input.lockMouse(false);
 }
 
 void Player::closeMenu() {
     gameGui.closeMenu();
-    renderer.window.lockMouse(true);
+    renderer.window.input.lockMouse(true);
 }
 
 bool Player::isInMenu() {

@@ -57,13 +57,13 @@ void LocalWorld::localSetBlock(glm::ivec3 pos, unsigned int block) {
     if (block == LocalDefinitionAtlas::AIR) {
         auto def = defs.defs.blockFromId(getBlock(pos));
         if (def.callbacks.count(Callback::BREAK_CLIENT)) {
-            def.callbacks[Callback::BREAK_CLIENT](defs.parser.luaVec(pos));
+            defs.parser.safe_function(def.callbacks[Callback::BREAK_CLIENT], defs.parser.luaVec(pos));
         }
     }
     else {
         auto def = defs.defs.blockFromId(block);
         if (def.callbacks.count(Callback::PLACE_CLIENT)) {
-            def.callbacks[Callback::PLACE_CLIENT](defs.parser.luaVec(pos));
+            defs.parser.safe_function(def.callbacks[Callback::PLACE_CLIENT], defs.parser.luaVec(pos));
         }
     }
 

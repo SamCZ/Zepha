@@ -2,13 +2,14 @@
 // Created by aurailus on 17/12/18.
 //
 
+#include "LocalLuaParser.h"
+
 #include "../ErrorFormatter.h"
 #include "../register/RegisterBlocks.h"
 #include "../register/RegisterItems.h"
 #include "../register/RegisterBiomes.h"
 #include "../register/RegisterKeybinds.h"
-
-#include "LocalLuaParser.h"
+#include "../../game/ClientState.h"
 
 // Usertypes
 #include "../api/class/LuaGuiElement.h"
@@ -38,26 +39,26 @@
 #include "../api/functions/trigger_event.h"
 #include "../api/functions/update_entities.h"
 
-void LocalLuaParser::init(ClientGame& defs, LocalWorld& world, Player& player) {
+LocalLuaParser::LocalLuaParser(): keybinds(this) {}
+
+void LocalLuaParser::init(ClientGame& defs, LocalWorld& world, Player& player, ClientState& state) {
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
 
     loadApi(defs, world, player);
     handler.executeMods(std::bind(&LocalLuaParser::runFileSandboxed, this, std::placeholders::_1));
+    state.renderer.window.input.setCallback(std::bind(&LuaKeybindHandler::keybindHandler, &keybinds, std::placeholders::_1, std::placeholders::_2));
 
     registerDefs(defs);
 }
 
-void LocalLuaParser::update(double delta, bool* keys) {
+void LocalLuaParser::update(double delta) {
     LuaParser::update(delta);
 
     this->delta += delta;
     while (this->delta > static_cast<double>(UPDATE_STEP)) {
-        manager.triggerKeybinds();
         safe_function(core["__builtin"]["update_entities"], static_cast<double>(UPDATE_STEP));
         this->delta -= static_cast<double>(UPDATE_STEP);
     }
-
-    manager.update(keys);
 }
 
 LocalModHandler& LocalLuaParser::getHandler() {
@@ -114,10 +115,10 @@ void LocalLuaParser::registerDefs(ClientGame &defs) {
     RegisterBlocks  ::client(core, defs);
     RegisterItems   ::client(core, defs);
     RegisterBiomes  ::client(core, defs);
-    RegisterKeybinds::client(core, manager);
+    RegisterKeybinds::client(core, keybinds);
 }
 
-sol::protected_function_result LocalLuaParser::errorCallback(sol::protected_function_result errPfr) {
+sol::protected_function_result LocalLuaParser::errorCallback(sol::protected_function_result errPfr) const {
     sol::error err = errPfr;
     std::string errString = err.what();
 

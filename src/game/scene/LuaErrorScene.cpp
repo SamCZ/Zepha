@@ -9,7 +9,7 @@
 
 LuaErrorScene::LuaErrorScene(ClientState &state, const std::string &err) : Scene(state), err(err) {
     state.renderer.setClearColor(0, 0, 0);
-    state.renderer.window.lockMouse(false);
+    state.renderer.window.input.lockMouse(false);
 
     Font f(state.defs.textures, state.defs.textures["font"]);
     glm::ivec2 win = state.renderer.window.getSize();

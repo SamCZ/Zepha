@@ -3,98 +3,69 @@
 //
 
 #include <iostream>
+
 #include "Window.h"
+
+#include "../../../util/Log.h"
 
 Window::Window() : Window({800, 600}) {};
 
 Window::Window(glm::ivec2 win) :
-    win(win),
-    center(win.x / 2, win.y / 2) {}
+    win(win), center(win.x / 2, win.y / 2) {
 
-int Window::initialize() {
-    //Initialize GLFW
     if (!glfwInit()) {
-        printf("GLFW init failed\n");
+        std::cout << Log::err << "Failed to initialize GLFW context." << Log::endl;
         glfwTerminate();
-        return 1;
+        exit(1);
     }
 
-    //Version 3.3
+    // Version 3.3
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
-    //Compatibility - No Backwards compat, only forwards
+    // Compatibility - No Backwards compat, only forwards
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    //Create the window
-    mainWindow = glfwCreateWindow(win.x, win.y, "Zepha", nullptr, nullptr);
-    handCursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
-
-    if (!mainWindow) {
-        printf("GLFW window failed\n");
+    // Create the window
+    if (!(mainWindow = glfwCreateWindow(win.x, win.y, "Zepha", nullptr, nullptr))) {
+        std::cout << Log::err << "Failed to initialize GLFW window." << Log::endl;
         glfwTerminate();
-        return 1;
+        exit(1);
     }
 
     glfwGetFramebufferSize(mainWindow, &win.x, &win.y);
-
-    //Set context for GLEW to our window
     glfwMakeContextCurrent(mainWindow);
-
-    //Allow modern extension features
     glewExperimental = GL_TRUE;
 
-    //Initialize GLEW
+    handCursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
+
+    // Initialize GLEW
     GLenum error;
     if ((error = glewInit()) != GLEW_OK) {
         printf("GLEW init failed.");
-        fprintf(stderr, "Error: %s\n", glewGetErrorString(error));
+        std::cout << Log::err << "GLEW Encountered a fatal error:\n" << glewGetErrorString(error) << Log::endl;
         glfwDestroyWindow(mainWindow);
         glfwTerminate();
-        return 1;
+        exit(1);
     }
 
     glEnable(GL_DEPTH_TEST);
-
-    //Setup viewport (draw) size
     glViewport(0, 0, win.x, win.y);
 
+    // Setup callbacks
     glfwSetWindowUserPointer(mainWindow, this);
-    glfwSetKeyCallback(mainWindow, handleKeys);
-    glfwSetWindowSizeCallback(mainWindow, handleResize);
-    glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    glfwSetScrollCallback(mainWindow, scrollCallback);
+    glfwSetWindowSizeCallback(mainWindow, resizeCallback);
 
+    glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     glfwMaximizeWindow(mainWindow);
 
-    return 0;
+    input.init(mainWindow, &this->win);
 }
 
 void Window::update() {
-    double mouseX, mouseY;
-    if (glfwGetWindowAttrib(mainWindow, GLFW_FOCUSED) == GL_FALSE) {
-        mouseIsLocked = false;
-        delta = {};
-    }
-    else {
-        glfwGetCursorPos(mainWindow, &mouseX, &mouseY);
-
-        if (!mouseIsLocked) {
-            if (!forceMouseUnlocked && input.isMousePressed(GLFW_MOUSE_BUTTON_LEFT)) {
-                glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-                glfwSetCursorPos(mainWindow, center.x, center.y);
-                mouseIsLocked = true;
-            }
-        }
-        else {
-            delta = {mouseX - center.x, center.y - mouseY};
-            glfwSetCursorPos(mainWindow, center.x, center.y);
-        }
-    }
-
-    input.update(keys);
-    input.updateLeftMouse(glfwGetMouseButton(mainWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS);
-    input.updateRightMouse(glfwGetMouseButton(mainWindow, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS);
+    input.update();
 }
 
 bool Window::shouldClose() {
@@ -117,58 +88,26 @@ glm::ivec2 Window::getSize() {
     return win;
 }
 
-glm::ivec2 Window::getMousePos() {
-    double xPos, yPos;
-    glfwGetCursorPos(mainWindow, &xPos, &yPos);
-    return glm::ivec2 {static_cast<int>(xPos), static_cast<int>(yPos)};
-}
-
-glm::vec2 Window::getDelta() {
-    return delta;
-}
-
-void Window::lockMouse(bool lock) {
-    forceMouseUnlocked = !lock;
-    mouseIsLocked = lock;
-    glfwSetCursorPos(mainWindow, center.x, center.y);
-    glfwSetInputMode(mainWindow, GLFW_CURSOR, (mouseIsLocked ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL));
-    delta = {};
-}
-
 void Window::setCursorHand(bool hand) {
     glfwSetCursor(mainWindow, hand ? handCursor : nullptr);
+}
+
+void Window::scrollCallback(GLFWwindow* window, double xO, double yO) {
+    auto w = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+}
+
+void Window::resizeCallback(GLFWwindow* window, int width, int height) {
+    auto w = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+    glfwGetFramebufferSize(window, &w->win.x, &w->win.y);
+    glViewport(0, 0, w->win.x, w->win.y);
+
+    w->center = glm::ivec2(w->win.x / 2, w->win.y / 2);
+    for (auto& cb : w->resizeCallbacks) cb.second(w->win);
 }
 
 Window::~Window() {
     glfwDestroyWindow(mainWindow);
     glfwTerminate();
-}
-
-void Window::handleKeys(GLFWwindow* glfwWindow, int key, int, int action, int) {
-    auto window = static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
-
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        glfwSetWindowShouldClose(glfwWindow, GL_TRUE);
-    }
-
-    if (key > 0 && key < 1024) {
-        if (action == GLFW_PRESS) {
-            window->keys[key] = true;
-        }
-        else if (action == GLFW_RELEASE) {
-            window->keys[key] = false;
-        }
-    }
-}
-
-void Window::handleResize(GLFWwindow *glfwWindow, int, int) {
-    auto window = static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow));
-
-    glfwGetFramebufferSize(glfwWindow, &window->win.x, &window->win.y);
-    glViewport(0, 0, window->win.x, window->win.y);
-
-    window->center.x = window->win.x / 2;
-    window->center.y = window->win.y / 2;
-
-    for (auto& cb : window->resizeCallbacks) cb.second(window->win);
 }

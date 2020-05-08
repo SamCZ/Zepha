@@ -5,6 +5,7 @@
 #include "ServerConfig.h"
 
 #include "../asset/AssetType.h"
+#include "../conn/ServerClient.h"
 #include "../../util/net/PacketView.h"
 #include "../../util/net/Serializer.h"
 

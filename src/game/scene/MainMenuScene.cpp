@@ -9,7 +9,7 @@ MainMenuScene::MainMenuScene(ClientState& state) :
     sandbox(sandboxArea, state, sandboxContainer) {
 
     state.renderer.setClearColor(0, 0, 0);
-    state.renderer.window.lockMouse(false);
+    state.renderer.window.input.lockMouse(false);
 
     Font f(state.defs.textures, state.defs.textures["font"]);
     win = state.renderer.window.getSize();

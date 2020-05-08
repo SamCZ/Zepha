@@ -5,12 +5,12 @@
 #include <gzip/compress.hpp>
 #include <enet/enet.h>
 
+#include "ServerLuaParser.h"
+
 #include "../ErrorFormatter.h"
 #include "../register/RegisterBlocks.h"
 #include "../register/RegisterItems.h"
 #include "../register/RegisterBiomes.h"
-
-#include "ServerLuaParser.h"
 
 // Usertypes
 #include "../api/usertype/sServerPlayer.h"

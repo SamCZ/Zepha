@@ -18,7 +18,6 @@ Renderer::Renderer(glm::ivec2 win) :
     blur  (win, 1),
     light (win, 2) {
 
-    window.initialize();
     camera.create(window.getSize().x, window.getSize().y, glm::vec3(0, 1, 0));
 
     ssao.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoCalc.fs");

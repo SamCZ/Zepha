@@ -1,5 +1,3 @@
-if zepha.client then return end
-
 zepha.register_on("new_player", function(p)
     local inv = p:get_inventory()
     inv:add_list("hot_wheel_1", 5, 5)

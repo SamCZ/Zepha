@@ -19,20 +19,20 @@ GameScene::GameScene(ClientState& state) : Scene(state),
 
     world.init(&player);
     net.init(&world, std::bind(&LocalInventoryRefs::packetReceived, refs, ph::_1));
-    game.init(world, player);
+    game.init(world, player, state);
 
     state.renderer.window.addResizeCallback("gamescene", std::bind(&DebugGui::bufferResized, debugGui, ph::_1));
     state.renderer.setClearColor(148, 194, 240);
-    state.renderer.window.lockMouse(true);
+    state.renderer.window.input.lockMouse(true);
 }
 
 void GameScene::update() {
     Window& window = state.renderer.window;
 
-    player.update(window.input, state.delta, window.getDelta());
-    game  .update(state.delta, state.renderer.window.keys);
-    refs  .update(state.delta, net);
-    net   .update();
+    player.update(window.input, state.delta, window.input.mouseDelta());
+    game.update(state.delta);
+    refs.update(state.delta, net);
+    net.update();
 
     for (auto entity : entities) entity->update(state.delta);
 
@@ -41,13 +41,13 @@ void GameScene::update() {
     net.serverSideChunkGens = 0;
     net.recvPackets = 0;
 
-    if (window.input.isKeyPressed(GLFW_KEY_F1)) {
+    if (window.input.keyPressed(GLFW_KEY_F1)) {
         hudVisible = !hudVisible;
         debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
         player.setHudVisible(hudVisible);
     }
 
-    if (window.input.isKeyPressed(GLFW_KEY_F3)) {
+    if (window.input.keyPressed(GLFW_KEY_F3)) {
         debugVisible = !debugVisible;
         debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
     }

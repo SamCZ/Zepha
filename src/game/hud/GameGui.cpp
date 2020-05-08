@@ -28,7 +28,7 @@ void GameGui::update(double delta) {
     hudBuilder.update();
     menuBuilder.update();
 
-    handList->setPos((renderer.window.getMousePos() - glm::ivec2(24)) / 3 * 3);
+    handList->setPos((renderer.window.input.mousePos() - glm::ivec2(24)) / 3 * 3);
     menuRoot->handleMouseInput(renderer.window);
 }
 

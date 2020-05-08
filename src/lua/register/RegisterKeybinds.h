@@ -10,7 +10,7 @@
 #include "../../def/gen/BiomeDef.h"
 
 namespace RegisterKeybinds {
-    static void registerKeybinds(sol::table source, LuaInputManager& manager) {
+    static void registerKeybinds(sol::table source, LuaKeybindHandler& keybinds) {
 
         // Register all of the items in the zepha.registered_keybinds table
         for (auto keybindRef : source) {
@@ -27,8 +27,8 @@ namespace RegisterKeybinds {
             auto onPress = keybindTbl.get<sol::optional<sol::function>>("on_press");
             auto onRelease = keybindTbl.get<sol::optional<sol::function>>("on_release");
 
-            if (onPress) manager.bindOnDown(def, *onPress);
-            if (onRelease) manager.bindOnUp(def, *onRelease);
+            if (onPress) keybinds.bindOnDown(def, *onPress);
+            if (onRelease) keybinds.bindOnUp(def, *onRelease);
         }
     }
 
@@ -36,7 +36,7 @@ namespace RegisterKeybinds {
 //        registerItems(core.get<sol::table>("registered_items"), defs.defs, nullptr);
 //    }
 
-    static void client(sol::table& core, LuaInputManager& manager) {
+    static void client(sol::table& core, LuaKeybindHandler& manager) {
         registerKeybinds(core.get<sol::table>("registered_keybinds"), manager);
     }
 };
