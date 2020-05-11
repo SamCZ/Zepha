@@ -1,0 +1,27 @@
+zepha.register_block("@aurailus:tnt:tnt", {
+    name = "TNT",
+    model = "base:block",
+    textures = {
+        "@aurailus:tnt:tnt_top",
+        "@aurailus:tnt:tnt_bottom",
+        "@aurailus:tnt:tnt_side"
+    },
+    toughness = {
+        hand = 3,
+        shovel = 1,
+        pick = 2
+    },
+    drop = "@aurailus:tnt:tnt",
+    on_break = fn(pos) {
+        local amp = 20
+        for i = -amp, amp {
+            for j = -amp, amp {
+                for k = -amp, amp {
+                    if (V(i, j, k):distance(V()) < amp) {
+                        zepha.set_block(pos + offset, "air")
+                    }
+                }
+            }
+        }
+    }
+})
