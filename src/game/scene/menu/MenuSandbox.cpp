@@ -3,21 +3,27 @@
 //
 
 #include "MenuSandbox.h"
-#include "../../../lua/ErrorFormatter.h"
 
+#include "../../../lua/ErrorFormatter.h"
+#include "../../hud/components/basic/GuiText.h"
+
+// Usertypes
+#include "../../../lua/api/class/LuaGuiElement.h"
+
+// Modules
 #include "../../../lua/api/menu/mDelay.h"
 #include "../../../lua/api/menu/mSetGui.h"
 #include "../../../lua/api/menu/mStartGame.h"
-
-#include "../../../lua/api/class/LuaGuiElement.h"
 
 MenuSandbox::MenuSandbox(glm::ivec2 &win, ClientState& state, std::shared_ptr<GuiContainer> container) :
     win(win),
     state(state),
     container(container),
-    builder(state.defs.textures, state.defs.models, container) {}
+    luaContainer(std::dynamic_pointer_cast<GuiContainer>(container->add(std::make_shared<GuiContainer>("__lua")))),
+    builder(state.defs.textures, state.defs.models, luaContainer) {}
 
 void MenuSandbox::reset() {
+    container->remove("error");
     builder.clear(true);
     delayed_functions.clear();
     core = {};
@@ -52,8 +58,8 @@ void MenuSandbox::load(const Subgame& subgame) {
         loadAndRunMod(subgame.subgamePath + "/../../assets/base");
         loadAndRunMod(subgame.subgamePath + "/menu");
     }
-    catch (const std::string& e) {
-        std::cout << Log::err << "Encountered an error loading menu mod for subgame '" + subgame.config.name + "':\n\t" << e << Log::endl;
+    catch (const std::runtime_error& e) {
+        showError(e.what(), subgame.config.name);
     }
 }
 
@@ -68,20 +74,20 @@ void MenuSandbox::update(double delta) {
 
 sol::protected_function_result MenuSandbox::runFileSandboxed(const std::string& file) {
     for (LuaModFile& f : mod.files) {
-        if (f.path == file) {
-            sol::environment env(lua, sol::create, lua.globals());
-            env["_PATH"] = f.path.substr(0, f.path.find_last_of('/') + 1);
-            env["_FILE"] = f.path;
-            env["_MODNAME"] = mod.config.name;
+        if (f.path != file) continue;
 
-            return lua.safe_script(f.file, env, std::bind(&MenuSandbox::errorCallback, this,
-                    std::placeholders::_2), "@" + f.path, sol::load_mode::text);
-        }
+        sol::environment env(lua, sol::create, lua.globals());
+        env["_PATH"] = f.path.substr(0, f.path.find_last_of('/') + 1);
+        env["_FILE"] = f.path;
+        env["_MODNAME"] = mod.config.name;
+
+        return lua.safe_script(f.file, env, std::bind(&MenuSandbox::errorCallback, this, std::placeholders::_2), "@" + f.path, sol::load_mode::text);
     }
+    throw std::runtime_error("Error opening \"" + file + "\", file not found.");
 }
 
 void MenuSandbox::loadAndRunMod(const std::string &modPath) {
-    if (!cf_file_exists(modPath.data())) throw std::string("Directory not found.");
+    if (!cf_file_exists(modPath.data())) throw std::runtime_error("Directory not found.");
 
     LuaMod mod;
     std::string root = modPath + "/script";
@@ -94,7 +100,7 @@ void MenuSandbox::loadAndRunMod(const std::string &modPath) {
         std::string dirStr = *dirsToScan.begin();
         dirsToScan.erase(dirsToScan.begin());
 
-        if (!cf_file_exists(dirStr.data())) throw std::string("Missing 'script' directory.");
+        if (!cf_file_exists(dirStr.data())) throw std::runtime_error("Missing 'script' directory.");
         cf_dir_open(&dir, dirStr.data());
 
         while (dir.has_next) {
@@ -123,7 +129,7 @@ void MenuSandbox::loadAndRunMod(const std::string &modPath) {
         std::string modPath = file;
 
         if (rootPos == std::string::npos)
-            throw std::string("Attempted to access file '") + file + "' which is outside of mod root '" + root + "'.";
+            throw std::runtime_error("Attempted to access file \"" + file + "\", which is outside of the mod root.");
 
         modPath.erase(rootPos, root.length() + 1);
         modPath.resize(modPath.size() - 4);
@@ -141,7 +147,27 @@ void MenuSandbox::loadAndRunMod(const std::string &modPath) {
     }
 
     this->mod = mod;
-    runFileSandboxed("main");
+    runFileSandboxed("init");
+}
+
+void MenuSandbox::showError(const std::string& what, const std::string& subgame) {
+    const std::string errPrefixText = "Encountered an error while loading the menu for " + subgame + " ;-;";
+    Font f(state.defs.textures, state.defs.textures["font"]);
+
+    auto errWrap = std::make_shared<GuiContainer>("error");
+    container->add(errWrap);
+
+    auto errPrefix = std::make_shared<GuiText>("error_text");
+    errPrefix->create({3, 3}, {}, {0.7, 0, 0.3, 1}, {1, 1, 1, 1}, f);
+    errPrefix->setText(errPrefixText);
+    errPrefix->setPos({8, 16});
+    errWrap->add(errPrefix);
+
+    auto errMsg = std::make_shared<GuiText>("error_text");
+    errMsg->create({3, 3}, {}, {}, {1, 0.5, 0.6, 1}, f);
+    errMsg->setText(what);
+    errMsg->setPos({8, 52});
+    errWrap->add(errMsg);
 }
 
 sol::protected_function_result MenuSandbox::errorCallback(sol::protected_function_result errPfr) {

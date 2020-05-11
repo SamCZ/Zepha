@@ -1,29 +1,89 @@
-local root = zepha.player:get_hud():get("hot_wheel_root")
-local lists = {
-    root:get("list_1"),
-    root:get("list_2"),
-    root:get("list_3"),
-    root:get("list_4"),
-    root:get("list_5"),
-    root:get("list_6")
-}
+local api = aurailus_hot_wheel
+local r = 6.28319 / 6
 
-local offset = 0
-local function select(n)
-    offset = n - 1
+local currentRotation = 0
+local desiredRotation = 0
 
-    for i,list in ipairs(lists) do
-        list.list = "hot_wheel_" .. tostring((i + offset - 1) % 6 + 1)
-    end
+local rotating = false
+local mod = false
 
-    root:get("numbers").background = "@aurailus:hot_wheel:circle_numbers_" .. (offset + 1)
-    zepha.player:set_selected_block(zepha.player:get_inventory():get_list("hot_wheel_" .. ((offset + 2) % 6 + 1)):get_stack(1).name)
+local slot = 1
+local item = 1
+
+local function position()
+    rotating = true
+    zepha.delay(function()
+        currentRotation = currentRotation + (desiredRotation - currentRotation) / 2
+
+        for i, list in ipairs(api.lists) do
+            list.position = { 32.5 + 22 * math.sin(currentRotation - (r * (i + 3))), 32.5 + 22 * math.cos(currentRotation - (r * (i + 3))) } end
+        for i, label in ipairs(api.labels) do
+            label.position = { 37 + 35 * math.sin(currentRotation - (r * (i + 3))), 36 + 35 * math.cos(currentRotation - (r * (i + 3))) } end
+
+        if currentRotation == desiredRotation then
+            rotating = false
+            return false
+        elseif math.abs(currentRotation - desiredRotation) < 0.033 then
+            currentRotation = desiredRotation
+            return true
+        else return true end
+    end, 1/60)
+end
+
+local function select_slot(n)
+    slot = n
+    local offset = n - 1
+    desiredRotation = offset * r
+
+    api.list_expanded.list = "hot_wheel_" .. n
+
+    for i, list in ipairs(api.lists) do list.visible = i ~= n end
+    for i, label in ipairs(api.labels) do label.visible = i ~= n end
+
+    zepha.player:set_selected_block(zepha.player:get_inventory():get_list("hot_wheel_" .. slot):get_stack(item).name)
+    if not rotating then position() end
+end
+
+local function select_item(n)
+    item = ((item + n) - 1) % 5 + 1
+    local offset = slot - 1
+    api.list_expanded_indicator.position = { 2 + 18 * (item - 1), 0 }
+
+    zepha.player:set_selected_block(zepha.player:get_inventory():get_list("hot_wheel_" .. slot):get_stack(item).name)
+end
+
+local function key(n)
+    select_slot(n)
+end
+
+local function scroll(n)
+    if mod then select_slot(((slot + n - 1) % 6) + 1)
+    else select_item(n) end
 end
 
 for i = 1, 6 do
     zepha.register_keybind("@aurailus:hot_wheel:select_slot_" .. i, {
         description = "Select Slot " .. i,
         default = zepha.keys[tostring(i)],
-        on_press = function() select(i) end
+        on_press = function() key(i) end
     })
 end
+
+zepha.register_keybind("@aurailus:hot_wheel:item_down", {
+    description = "Cycle Item Down",
+    default = zepha.keys.scrolldown,
+    on_press = function() scroll(1) end
+})
+
+zepha.register_keybind("@aurailus:hot_wheel:item_up", {
+    description = "Cycle Item Up",
+    default = zepha.keys.scrollup,
+    on_press = function() scroll(-1) end
+})
+
+zepha.register_keybind("@aurailus:hot_wheel:mod", {
+    description = "Modifier Key",
+    default = zepha.keys.leftshift,
+    on_press = function() mod = true end,
+    on_release = function() mod = false end
+})

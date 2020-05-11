@@ -35,7 +35,7 @@ private:
     GuiContainer components;
     std::shared_ptr<GuiContainer> branding = nullptr;
     std::shared_ptr<GuiContainer> navigationBar = nullptr;
-    std::shared_ptr<GuiContainer> sandboxContainer = std::make_shared<GuiContainer>("_sandbox");
+    std::shared_ptr<GuiContainer> menuContainer = std::make_shared<GuiContainer>("__menu");
 
     MenuSandbox sandbox;
 

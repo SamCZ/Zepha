@@ -107,6 +107,20 @@ namespace Util {
     static std::string getKeyStr(unsigned short key) {
         switch (key) {
             default: return "";
+
+            case 0: return "mouse0";
+            case 1: return "mouse1";
+            case 2: return "mouse2";
+            case 3: return "mouse3";
+            case 4: return "mouse4";
+            case 5: return "mouse5";
+            case 6: return "mouse6";
+            case 7: return "mouse7";
+            case 8: return "scrollup";
+            case 9: return "scrolldown";
+            case 10: return "scrollleft";
+            case 11: return "scrollright";
+
             case 32: return "space";
             case 39: return "'";
             case 44: return ",";
@@ -218,9 +232,9 @@ namespace Util {
             case 334: return "num+";
             case 335: return "numenter";
             case 336: return "num=";
-            case 341: return "leftshift";
-            case 342: return "leftctrl";
-            case 343: return "leftalt";
+            case 340: return "leftshift";
+            case 341: return "leftctrl";
+            case 342: return "leftalt";
             case 344: return "rightshift";
             case 345: return "rightctrl";
             case 346: return "rightalt";

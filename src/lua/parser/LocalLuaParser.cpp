@@ -154,34 +154,24 @@ sol::protected_function_result LocalLuaParser::errorCallback(sol::protected_func
     return errPfr;
 }
 
-sol::protected_function_result LocalLuaParser::runFileSandboxed(std::string file) {
+sol::protected_function_result LocalLuaParser::runFileSandboxed(const std::string& file) {
     size_t modname_length = file.find('/');
-
-    if (modname_length == std::string::npos) {
-        std::cout << Log::err << "Filestring \"" + file + "\" is invalid." << Log::endl;
-        return nullptr;
-    }
-
+    if (modname_length == std::string::npos) throw std::runtime_error("Error opening \"" + file + "\", specified file is invalid.");
     std::string modname = file.substr(0, modname_length);
 
     for (const LuaMod& mod : handler.cGetMods()) {
-        if (modname == mod.config.name) {
+        if (modname != mod.config.name) continue;
+        for (const LuaModFile& f : mod.files) {
+            if (f.path != file) continue;
 
-            for (const LuaModFile& f : mod.files) {
-                if (f.path == file) {
+            sol::environment env(lua, sol::create, lua.globals());
+            env["_PATH"] = f.path.substr(0, f.path.find_last_of('/') + 1);
+            env["_FILE"] = f.path;
+            env["_MODNAME"] = mod.config.name;
 
-                    sol::environment env(lua, sol::create, lua.globals());
-                    env["_PATH"] = f.path.substr(0, f.path.find_last_of('/') + 1);
-                    env["_FILE"] = f.path;
-                    env["_MODNAME"] = mod.config.name;
-
-                    return lua.safe_script(f.file, env, std::bind(&LocalLuaParser::errorCallback, this,
-                            std::placeholders::_2), "@" + f.path, sol::load_mode::text);
-                }
-            }
-
-            std::cout << Log::err << "Error opening \"" + file + "\", not found." << Log::endl;
-            break;
+            return lua.safe_script(f.file, env, std::bind(&LocalLuaParser::errorCallback, this, std::placeholders::_2), "@" + f.path, sol::load_mode::text);
         }
+        throw std::runtime_error("Error opening \"" + file + "\", file not found.");
     }
+    throw std::runtime_error("Error opening \"" + file + "\", mod not found.");
 }

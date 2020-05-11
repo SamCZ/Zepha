@@ -28,6 +28,8 @@ private:
     void loadApi();
     void loadAndRunMod(const std::string& modPath);
 
+    void showError(const std::string& what, const std::string& subgame);
+
     sol::protected_function_result runFileSandboxed(const std::string& file);
     sol::protected_function_result errorCallback(sol::protected_function_result errPfr);
 
@@ -35,8 +37,9 @@ private:
     std::vector<std::shared_ptr<AtlasRef>> modAssets {};
 
     std::shared_ptr<GuiContainer> container = nullptr;
+    std::shared_ptr<GuiContainer> luaContainer = nullptr;
+    GuiBuilder builder;
 
     ClientState& state;
-    GuiBuilder builder;
     glm::ivec2& win;
 };

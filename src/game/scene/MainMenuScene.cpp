@@ -6,7 +6,7 @@
 
 MainMenuScene::MainMenuScene(ClientState& state) :
     Scene(state),
-    sandbox(sandboxArea, state, sandboxContainer) {
+    sandbox(sandboxArea, state, menuContainer) {
 
     state.renderer.setClearColor(0, 0, 0);
     state.renderer.window.input.lockMouse(false);
@@ -15,7 +15,7 @@ MainMenuScene::MainMenuScene(ClientState& state) :
     win = state.renderer.window.getSize();
     sandboxArea = win - glm::ivec2(0, 18 * GS);
 
-    components.add(sandboxContainer);
+    components.add(menuContainer);
 
     branding = std::make_shared<GuiContainer>("zephaBranding");
     components.add(branding);

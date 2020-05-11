@@ -30,7 +30,7 @@ void GuiInventoryItem::create(glm::vec2 scale, unsigned short count, ItemDef& de
 
         auto item = std::make_shared<GuiModel>("item");
         item->create(scale * 10.5f, model);
-        item->setPos(glm::vec2{7.75, 7.75} * scale);
+        item->setPos(glm::vec2{8, 8} * scale);
 
         item->setRotationX(180.f - 30.f);
         item->setRotationY(45.f);

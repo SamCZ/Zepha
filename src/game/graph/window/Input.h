@@ -30,6 +30,7 @@ public:
 private:
     void updateMouse(int key);
     static void keyCallback(GLFWwindow* window, int key, int code, int action, int mode);
+    static void scrollCallback(GLFWwindow* window, double, double yO);
 
     GLFWwindow* window = nullptr;
     glm::ivec2* winDimensions = nullptr;

@@ -32,7 +32,7 @@ private:
     void registerDefs(ClientGame &defs);
 
     sol::protected_function_result errorCallback(sol::protected_function_result errPfr) const;
-    sol::protected_function_result runFileSandboxed(std::string file);
+    sol::protected_function_result runFileSandboxed(const std::string& file);
 
     LuaKeybindHandler keybinds;
     LocalModHandler handler;

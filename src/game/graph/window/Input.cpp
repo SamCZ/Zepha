@@ -21,6 +21,7 @@ void Input::init(GLFWwindow *window, glm::ivec2* winDimensions) {
     this->window = window;
     this->winDimensions = winDimensions;
     glfwSetKeyCallback(window, keyCallback);
+    glfwSetScrollCallback(window, scrollCallback);
 }
 
 void Input::setCallback(std::function<void(bool, int)> callback) {
@@ -53,6 +54,10 @@ void Input::update() {
     for (auto& s : mouseState) {
         s.pressed = false;
         s.released = false;
+    }
+
+    for (int i = 0; i < 12; i++) {
+        keysNew[i] = false;
     }
 
     updateMouse(0);
@@ -119,9 +124,31 @@ void Input::updateMouse(int button) {
 void Input::keyCallback(GLFWwindow* window, int key, int code, int action, int mode) {
     auto w = static_cast<Window*>(glfwGetWindowUserPointer(window));
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) glfwSetWindowShouldClose(window, GL_TRUE);
-    if (key > 0 && key < 1024) {
+    if (key >= 32 && key < 1024) {
         if (action == GLFW_PRESS) w->input.keysNew[key] = true;
         else if (action == GLFW_RELEASE) w->input.keysNew[key] = false;
+    }
+}
+
+void Input::scrollCallback(GLFWwindow *window, double xO, double yO) {
+    auto w = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+    if (xO > 0) {
+        //Right
+        w->input.keysNew[11] = true;
+    }
+    else if (xO < 0) {
+        // Left
+        w->input.keysNew[10] = true;
+    }
+
+    if (yO > 0) {
+        // Up
+        w->input.keysNew[8] = true;
+    }
+    else if (yO < 0) {
+        // Down
+        w->input.keysNew[9] = true;
     }
 }
 

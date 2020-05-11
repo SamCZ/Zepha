@@ -15,13 +15,13 @@ void LocalModHandler::setModsOrder(const std::vector<std::string>& order) {
 void LocalModHandler::executeMods(std::function<void(std::string)> run) {
     for (std::string& modName : modsOrder) {
         if (modName == "base") {
-            run(modName + "/main");
+            run(modName + "/init");
             break;
         }
     }
 
     for (std::string& modName : modsOrder) {
-        if (modName != "base") run(modName + "/main");
+        if (modName != "base") run(modName + "/init");
     }
 }
 

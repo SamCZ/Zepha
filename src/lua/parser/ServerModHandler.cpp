@@ -26,13 +26,13 @@ void ServerModHandler::loadMods(ServerGame& defs, const std::string &path) {
 void ServerModHandler::executeMods(std::function<void(std::string)> run) {
     for (LuaMod& mod : mods) {
         if (mod.config.name == "base") {
-            run(mod.config.name + "/main");
+            run(mod.config.name + "/init");
             break;
         }
     }
 
     for (LuaMod& mod : mods) {
-        if (mod.config.name != "base") run(mod.config.name + "/main");
+        if (mod.config.name != "base") run(mod.config.name + "/init");
     }
 }
 

@@ -127,6 +127,7 @@ Any LuaGuiElement::getAsAny(const std::string &key) const noexcept {
     auto object = traits.at(key);
 
     if (object.is<float>()) return Any::from<float>(object.as<float>());
+    else if (object.is<bool>()) return Any::from<bool>(object.as<bool>());
     else if (object.is<std::string>()) return Any::from<std::string>(object.as<std::string>());
     else if (object.is<sol::table>()) {
         auto table = object.as<sol::table>();
@@ -162,4 +163,5 @@ Any LuaGuiElement::getAsAny(const std::string &key) const noexcept {
             return Any::from<glm::vec4>(values);
         }
     }
+    else throw "Invalid type requested in getAsAny";
 }

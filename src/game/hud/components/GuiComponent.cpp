@@ -117,7 +117,7 @@ std::shared_ptr<GuiComponent> GuiComponent::insert(unsigned int index, std::shar
 std::shared_ptr<GuiComponent> GuiComponent::add(std::shared_ptr<GuiComponent> component) {
     component->parent = this;
     component->updatePos();
-    children.push_back(std::move(component));
+    children.push_back(component);
     return component;
 }
 

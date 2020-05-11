@@ -37,11 +37,12 @@ void GuiBuilder::clear(bool deleteRoot) {
 }
 
 void GuiBuilder::create(LuaGuiElement& element, std::shared_ptr<GuiComponent> parent, glm::ivec2 bounds) {
-    auto component = createComponent(element, bounds);
-    if (!component) throw std::runtime_error("GuiBuilder failed to create component: " + element.key);
-    parent->add(component);
-
-    for (auto& child : element.children) create(*child, component, component->getScale());
+    if (element.get_or<bool>("visible", true)) {
+        auto component = createComponent(element, bounds);
+        if (!component) throw std::runtime_error("GuiBuilder failed to create component: " + element.key);
+        parent->add(component);
+        for (auto &child : element.children) create(*child, component, component->getScale());
+    }
 }
 
 std::shared_ptr<GuiComponent> GuiBuilder::createComponent(LuaGuiElement& elem, glm::ivec2 bounds) {
