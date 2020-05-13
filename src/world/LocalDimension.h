@@ -5,10 +5,11 @@
 #pragma once
 
 #include "Dimension.h"
+
 #include "../lua/api/class/LocalLuaEntity.h"
-#include "../lua/api/class/ServerLocalLuaEntity.h"
-#include "../game/entity/engine/PlayerEntity.h"
 #include "../game/scene/world/MeshGenStream.h"
+#include "../game/entity/engine/PlayerEntity.h"
+#include "../lua/api/class/ServerLocalLuaEntity.h"
 #include "../game/scene/world/graph/ChunkRenderElem.h"
 
 class MeshChunk;
@@ -18,7 +19,7 @@ public:
     const static int MB_STORE_H = 6;
     const static int MB_STORE_V = 4;
 
-    explicit LocalDimension(ClientGame& defs);
+    explicit LocalDimension(ClientGame& game);
     void update(double delta, glm::vec3 playerPos);
 
     void setChunk(std::shared_ptr<BlockChunk> chunk) override;
@@ -50,7 +51,7 @@ private:
     void attemptMeshChunk(const std::shared_ptr<BlockChunk>& chunk, bool updateAdjacents = true);
     bool getAdjacentExists(glm::vec3 pos, bool updateAdjacents);
 
-    ClientGame& defs;
+    ClientGame& game;
 
     std::unique_ptr<MeshGenStream> meshGenStream = nullptr;
     std::vector<glm::vec3> pendingMesh {};

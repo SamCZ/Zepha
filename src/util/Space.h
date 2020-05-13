@@ -41,17 +41,17 @@ namespace Space {
 
     namespace Region {
         namespace world {
-            // Get a Region engine position from a MapBlock's engine position.
+            // Get a Region engine position from a MapBlock's world position.
             static inline glm::ivec3 fromMapBlock(const glm::ivec3& mapBlock) {
                 return sectionFromGlobal(mapBlock, REGION_SIZE);
             }
 
-            // Get a Region engine position from a Chunk's engine position.
+            // Get a Region engine position from a Chunk's world position.
             static inline glm::ivec3 fromChunk(const glm::ivec3 &chunk) {
                 return sectionFromGlobal(chunk, REGION_CHUNK_LENGTH);
             }
 
-            // Get a Region engine position from a Block's engine position.
+            // Get a Region engine position from a Block's world position.
             static inline glm::ivec3 fromBlock(const glm::ivec3 &chunk) {
                 return sectionFromGlobal(chunk, REGION_BLOCK_LENGTH);
             }
@@ -60,25 +60,25 @@ namespace Space {
 
     namespace MapBlock {
         namespace relative {
-            // Get a MapBlock's relative position in its Region from its engine position.
+            // Get a MapBlock's relative position in its Region from its world position.
             static inline glm::ivec3 toRegion(const glm::ivec3& pos) {
                 return localFromGlobal(pos, MAPBLOCK_SIZE);
             }
         }
 
         namespace world {
-            // Get a MapBlock engine position from a Chunk's engine position.
+            // Get a MapBlock engine position from a Chunk's world position.
             static inline glm::ivec3 fromChunk(const glm::ivec3 &chunk) {
                 return sectionFromGlobal(chunk, MAPBLOCK_SIZE);
             }
 
-            // Get a MapBlock engine position from a Block's engine position.
+            // Get a MapBlock engine position from a Block's world position.
             static inline glm::ivec3 fromBlock(const glm::ivec3 &vec) {
                 return sectionFromGlobal(vec, MAPBLOCK_BLOCK_LENGTH);
             }
         }
 
-        // Get the index of a MapBlock within its Region from its local or engine position.
+        // Get the index of a MapBlock within its Region from its local or world position.
         static inline unsigned int index(const glm::ivec3& vec) {
             glm::ivec3 local = MapBlock::relative::toRegion(vec);
             unsigned int ind = static_cast<unsigned int>(local.x + REGION_SIZE * (local.y + REGION_SIZE * local.z));
@@ -88,25 +88,25 @@ namespace Space {
 
     namespace Chunk {
         namespace relative {
-            // Get a Chunk's relative position in its MapBlock from its engine position.
+            // Get a Chunk's relative position in its MapBlock from its world position.
             static inline glm::ivec3 toMapBlock(const glm::ivec3& pos) {
                 return localFromGlobal(pos, MAPBLOCK_CHUNK_LENGTH);
             }
 
-            // Get a Chunk's relative position in its Region from its engine position.
+            // Get a Chunk's relative position in its Region from its world position.
             static inline glm::ivec3 toRegion(const glm::ivec3& pos) {
                 return localFromGlobal(pos, REGION_CHUNK_LENGTH);
             }
         }
 
         namespace world {
-            // Get a Chunk engine position from a Block's engine position.
+            // Get a Chunk engine position from a Block's world position.
             static inline glm::ivec3 fromBlock(const glm::ivec3& pos) {
                 return sectionFromGlobal(pos, CHUNK_BLOCK_LENGTH);
             }
         }
 
-        // Get the index of a Chunk within its MapBlock from its local or engine position.
+        // Get the index of a Chunk within its MapBlock from its local or world position.
         static inline unsigned int index(const glm::ivec3& vec) {
             glm::ivec3 local = Chunk::relative::toMapBlock(vec);
             return static_cast<unsigned int>(local.x + MAPBLOCK_SIZE * (local.y + MAPBLOCK_SIZE * local.z));
@@ -115,26 +115,38 @@ namespace Space {
 
     namespace Block {
         namespace relative {
-            // Get a Block's relative position to its Chunk from its engine position.
+            // Get a Block's relative position to its Chunk from its world position.
             static inline glm::ivec3 toChunk(const glm::ivec3& pos) {
                 return localFromGlobal(pos, CHUNK_BLOCK_LENGTH);
             }
 
-            // Get a Block's relative position to its MapBlock from its engine position.
+            // Get a Block's relative position to its MapBlock from its world position.
             static inline glm::ivec3 toMapBlock(const glm::ivec3& pos) {
                 return localFromGlobal(pos, MAPBLOCK_BLOCK_LENGTH);
             }
 
-            // Get a Block's relative position in its Region from its engine position.
+            // Get a Block's relative position in its Region from its world position.
             static inline glm::ivec3 toRegion(const glm::ivec3& pos) {
                 return localFromGlobal(pos, REGION_BLOCK_LENGTH);
             }
         }
 
-        // Get the index of a Block within its Chunk from its local or engine position.
+        // Get the index of a Block within its Chunk from its local or world position.
         static inline unsigned int index(const glm::ivec3& vec) {
             glm::ivec3 local = Block::relative::toChunk(vec);
             return static_cast<unsigned int>(local.x + CHUNK_SIZE * (local.y + CHUNK_SIZE * local.z));
+        }
+
+        // Return a local vector of an index within it's chunk.
+        static inline glm::ivec3 fromIndex(unsigned int ind) {
+            glm::ivec3 vec {};
+
+            vec.z = ind / (CHUNK_SIZE * CHUNK_SIZE);
+            ind -= (static_cast<int>(vec.z) * CHUNK_SIZE * CHUNK_SIZE);
+            vec.y = ind / CHUNK_SIZE;
+            vec.x = ind % CHUNK_SIZE;
+
+            return vec;
         }
     }
 }

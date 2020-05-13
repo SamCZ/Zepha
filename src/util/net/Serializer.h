@@ -132,6 +132,20 @@ template <> inline Serializer& Serializer::append<std::vector<unsigned short>>(c
     return *this;
 }
 
+template <> inline Serializer& Serializer::append<std::vector<char>>(const std::vector<char>& elem) {
+    data.reserve(data.length() + elem.size() + 4);
+    append<unsigned int>(elem.size());
+    data += std::string { reinterpret_cast<const char*>(&elem[0]), elem.size() };
+    return *this;
+}
+
+template <> inline Serializer& Serializer::append<std::vector<unsigned char>>(const std::vector<unsigned char>& elem) {
+    data.reserve(data.length() + elem.size() + 4);
+    append<unsigned int>(elem.size());
+    data += std::string { reinterpret_cast<const char*>(&elem[0]), elem.size() };
+    return *this;
+}
+
 template <> inline Serializer& Serializer::append<std::vector<float>>(const std::vector<float>& elem) {
     data.reserve(data.length() + elem.size() * 4 + 4);
     append<unsigned int>(elem.size());

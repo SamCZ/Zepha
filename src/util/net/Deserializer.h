@@ -147,6 +147,20 @@ template <> inline std::vector<unsigned short> Deserializer::read<std::vector<un
             reinterpret_cast<const unsigned short*>(&data[ind + len * 2]));
 }
 
+template <> inline std::vector<char> Deserializer::read<std::vector<char>>() {
+    unsigned int len = read<unsigned int>();
+    return std::vector<char>(
+            reinterpret_cast<const char*>(&data[ind]),
+            reinterpret_cast<const char*>(&data[ind + len]));
+}
+
+template <> inline std::vector<unsigned char> Deserializer::read<std::vector<unsigned char>>() {
+    unsigned int len = read<unsigned int>();
+    return std::vector<unsigned char>(
+            reinterpret_cast<const unsigned char*>(&data[ind]),
+            reinterpret_cast<const unsigned char*>(&data[ind + len]));
+}
+
 template <> inline std::vector<float> Deserializer::read<std::vector<float>>() {
     unsigned int len = read<unsigned int>();
     return std::vector<float>(

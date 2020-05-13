@@ -2,11 +2,9 @@
 // Created by aurailus on 25/11/18.
 //
 
-#include "ChunkMesh.h"
+#include <vector>
 
-ChunkMesh::ChunkMesh(const ChunkMesh &o) {
-    throw "Copy constructor for ChunkMesh is not supported! Throwing.";
-}
+#include "ChunkMesh.h"
 
 void ChunkMesh::create(const std::vector<ChunkVertex>& vertices, const std::vector<unsigned int>& indices) {
     indCount = static_cast<GLsizei>(indices.size());
@@ -21,6 +19,7 @@ void ChunkMesh::create(const std::vector<ChunkVertex>& vertices, const std::vect
     createVertexAttrib(idx++, 3, GL_FLOAT, STRIDE_OFFSET_CHUNK(blendColor));
     createVertexAttrib(idx++, 2, GL_FLOAT, STRIDE_OFFSET_CHUNK(blendMaskCoords));
     createVertexAttrib(idx++, 1, GL_FLOAT, STRIDE_OFFSET_CHUNK(normal));
+    createVertexAttrib(idx++, 4, GL_FLOAT, STRIDE_OFFSET_CHUNK(light));
     createVertexAttrib(idx++, 1, GL_FLOAT, STRIDE_OFFSET_CHUNK(shaderMod));
     createVertexAttrib(idx  , 3, GL_FLOAT, STRIDE_OFFSET_CHUNK(modValues));
 

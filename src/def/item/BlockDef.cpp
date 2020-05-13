@@ -4,20 +4,25 @@
 
 #include "BlockDef.h"
 
-BlockDef::BlockDef(const std::string &identifier, const std::string& name, unsigned short maxStackSize,
-        const BlockModel &model, const BlockModel& farModel, bool solid, const std::vector<SelectionBox>& sBoxes,
-        const std::vector<SelectionBox>& cBoxes) :
-    BlockDef(identifier, 0, name, maxStackSize, model, farModel, solid, sBoxes, cBoxes) {}
-
-BlockDef::BlockDef(const std::string& identifier, unsigned int index, const std::string& name,
-        unsigned short maxStackSize, const BlockModel& model, const BlockModel& farModel, bool solid,
-        const std::vector<SelectionBox>& sBoxes, const std::vector<SelectionBox>& cBoxes) :
+BlockDef::BlockDef(
+    const std::string& identifier,
+    const std::string& name,
+    unsigned short maxStackSize,
+    const BlockModel& model,
+    const BlockModel& farModel,
+    bool solid,
+    glm::ivec3 lightSource,
+    const std::vector<SelectionBox>& sBoxes,
+    const std::vector<SelectionBox>& cBoxes,
+    unsigned int index) :
 
     ItemDef {identifier, name, index, maxStackSize, ItemDef::Type::BLOCK},
+
     model(model),
     farModel(farModel),
     culls(model.culls),
     solid(solid),
+    lightSource(lightSource),
     sBoxes(sBoxes),
     cBoxes(cBoxes) {}
 

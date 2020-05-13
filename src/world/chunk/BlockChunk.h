@@ -35,10 +35,14 @@ public:
     inline unsigned short getBiome(const glm::ivec3& pos) const;
 
     inline void setSunlight(unsigned int ind, unsigned char val);
-    inline void setBlocklight(unsigned int ind, unsigned char val);
+    inline void setBlockLight(unsigned int ind, glm::ivec3 light);
+    inline void setBlockLight(unsigned int ind, unsigned char channel, unsigned char light);
 
-    inline int getSunlight(unsigned int ind);
-    inline int getBlocklight(unsigned int ind);
+    inline unsigned char getSunlight(unsigned int ind);
+    inline glm::ivec3 getBlockLight(unsigned int ind);
+    inline unsigned char getBlockLight(unsigned int ind, unsigned char channel);
+
+    inline glm::vec4 getLightVec(unsigned int ind);
 
     const std::vector<unsigned int>& cGetBlocks() const;
     const std::vector<unsigned short>& cGetBiomes() const;
@@ -53,9 +57,16 @@ public:
 
     glm::ivec3 pos;
 private:
+    struct light_bits {
+        // 16 bits - 1 short
+        unsigned char r: 5;
+        unsigned char g: 5;
+        unsigned char b: 5, :1;
+    };
+
     std::vector<unsigned int> blocks {};
     std::vector<unsigned short> biomes {};
-    std::array<unsigned char, 4096> lighting {};
+    std::array <light_bits, 4096> light {};
 
     bool empty = true;
     bool partial = false;
@@ -100,17 +111,34 @@ inline unsigned short BlockChunk::getBiome(const glm::ivec3& pos) const {
 }
 
 inline void BlockChunk::setSunlight(unsigned int ind, unsigned char val) {
-    lighting[ind] = (lighting[ind] & 0xF) | (val << 4);
 }
 
-inline void BlockChunk::setBlocklight(unsigned int ind, unsigned char val) {
-    lighting[ind] = (lighting[ind] & 0xF0) | val;
+inline void BlockChunk::setBlockLight(unsigned int ind, glm::ivec3 l) {
+    light[ind].r = l.x;
+    light[ind].g = l.y;
+    light[ind].b = l.z;
 }
 
-inline int BlockChunk::getSunlight(unsigned int ind) {
-    return (lighting[ind] >> 4) & 0xF;
+inline void BlockChunk::setBlockLight(unsigned int ind, unsigned char channel, unsigned char l){
+    channel == 0 ? light[ind].r = l :
+    channel == 1 ? light[ind].g = l :
+                   light[ind].b = l;
 }
 
-inline int BlockChunk::getBlocklight(unsigned int ind) {
-    return (lighting[ind]) & 0xF;
+inline unsigned char BlockChunk::getSunlight(unsigned int ind) {
+    return 15;
+}
+
+inline glm::ivec3 BlockChunk::getBlockLight(unsigned int ind) {
+    return { light[ind].r, light[ind].g, light[ind].b };
+}
+
+inline unsigned char BlockChunk::getBlockLight(unsigned int ind, unsigned char channel) {
+    return channel == 0 ? light[ind].r :
+           channel == 1 ? light[ind].g :
+           light[ind].b;
+}
+
+inline glm::vec4 BlockChunk::getLightVec(unsigned int ind) {
+    return glm::vec4 { light[ind].r, light[ind].g, light[ind].b, getSunlight(ind) };
 }

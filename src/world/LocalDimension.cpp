@@ -6,7 +6,9 @@
 
 #include "../game/scene/world/graph/MeshChunk.h"
 
-LocalDimension::LocalDimension(ClientGame &defs) : defs(defs), meshGenStream(std::make_unique<MeshGenStream>(defs, *this)) {}
+LocalDimension::LocalDimension(ClientGame &game) : Dimension(game.defs),
+    meshGenStream(std::make_unique<MeshGenStream>(game, *this)),
+    game(game) {}
 
 void LocalDimension::update(double delta, glm::vec3 playerPos) {
     finishMeshes();
@@ -182,7 +184,7 @@ void LocalDimension::serverEntityInfo(PacketView& p) {
         luaEntity.setDisplayType(displayMode, displayArg1, displayArg2);
     }
     else {
-        auto entity = std::make_shared<ServerLocalLuaEntity>(id, defs, displayMode, displayArg1, displayArg2);
+        auto entity = std::make_shared<ServerLocalLuaEntity>(id, game, displayMode, displayArg1, displayArg2);
         entity->entity->setPos(position);
         entity->entity->setVisualOffset(visualOffset);
         entity->entity->interpRotateX(rotation.x);

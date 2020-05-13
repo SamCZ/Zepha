@@ -6,5 +6,6 @@ zepha.register_block("zeus:default:cobblestone", {
         hand = 14,
         pick = 3
     },
-    yields = "zeus:default:cobblestone"
+    yields = "zeus:default:cobblestone",
+    light_source = { 31, 16, 4 },
 })

@@ -265,6 +265,16 @@ namespace RegisterBlocks {
             bool solid = blockTable.get_or("solid", true);
             auto maxStack = blockTable.get_or("stack", 64);
 
+            glm::vec3 lightSource {};
+            if (blockTable.get<sol::optional<sol::table>>("light_source")) {
+                auto light = blockTable.get<sol::table>("light_source");
+                lightSource = { light[1], light[2], light[3] };
+            }
+            else if (blockTable.get_or<float>("light_source", -1) != -1) {
+                auto light = blockTable.get<float>("light_source");
+                lightSource = { light, light, light };
+            }
+
             // Parse through selection boxes and collision boxes
             auto selectionOpt = blockTable.get<sol::optional<sol::table>>("selection_box");
             auto collisionOpt = blockTable.get<sol::optional<sol::table>>("collision_box");
@@ -283,14 +293,15 @@ namespace RegisterBlocks {
             std::pair<BlockModel, BlockModel> models = createBlockModel(blockTable, blockModels, atlas);
 
             BlockDef *blockDef = new BlockDef(
-                    identifier,
-                    defs.size(),
-                    *nameOpt,
-                    maxStack,
-                    models.first, models.second,
-                    solid,
-                    std::move(selectionBoxes),
-                    std::move(collisionBoxes)
+                identifier,
+                *nameOpt,
+                maxStack,
+                models.first, models.second,
+                solid,
+                lightSource,
+                std::move(selectionBoxes),
+                std::move(collisionBoxes),
+                defs.size() // Index
             );
 
             // Create entity model

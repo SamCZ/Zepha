@@ -7,13 +7,14 @@
 
 #include "ServerWorld.h"
 
-#include "ServerGenStream.h"
+#include "../conn/ClientList.h"
 #include "../conn/ServerClient.h"
 
-ServerWorld::ServerWorld(unsigned int seed, ServerGame& defs, ClientList& clients) :
+ServerWorld::ServerWorld(unsigned int seed, ServerGame& game, ClientList& clients) :
     clientList(clients),
+    dimension(game),
     seed(seed),
-    defs(defs) {
+    game(game) {
 
     //Pregenerate chunk generation order
     generateOrder.reserve(MB_GEN_H * 2 * MB_GEN_H * 2 * MB_GEN_V * 2);
@@ -34,7 +35,7 @@ ServerWorld::ServerWorld(unsigned int seed, ServerGame& defs, ClientList& client
 }
 
 void ServerWorld::init() {
-    genStream = std::make_unique<ServerGenStream>(seed, defs);
+    genStream = std::make_unique<ServerGenStream>(seed, game);
 }
 
 void ServerWorld::update(double delta) {
@@ -170,26 +171,21 @@ void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
     auto oldBlock = getBlock(pos);
 
     if (block == DefinitionAtlas::AIR) {
-        auto def = defs.defs.blockFromId(oldBlock);
+        auto def = game.defs.blockFromId(oldBlock);
         if (def.callbacks.count(Callback::DESTRUCT)) {
-            def.callbacks[Callback::DESTRUCT](defs.parser.luaVec(pos));
+            def.callbacks[Callback::DESTRUCT](game.parser.luaVec(pos));
         }
     }
     else {
-        auto def = defs.defs.blockFromId(block);
+        auto def = game.defs.blockFromId(block);
         if (def.callbacks.count(Callback::CONSTRUCT)) {
-            def.callbacks[Callback::CONSTRUCT](defs.parser.luaVec(pos));
+            def.callbacks[Callback::CONSTRUCT](game.parser.luaVec(pos));
         }
     }
 
     dimension.setBlock(pos, block);
 
-    Packet b(PacketType::BLOCK_SET);
-    b.data = Serializer()
-            .append(pos)
-            .append(block)
-            .data;
-
+    Packet b = Serializer().append(pos).append(block).packet(PacketType::BLOCK_SET);
     auto chunkPos = Space::Chunk::world::fromBlock(pos);
 
     for (auto &client : clientList.clients) {
@@ -207,15 +203,15 @@ void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
     }
 
     if (block == DefinitionAtlas::AIR) {
-        auto def = defs.defs.blockFromId(oldBlock);
+        auto def = game.defs.blockFromId(oldBlock);
         if (def.callbacks.count(Callback::AFTER_DESTRUCT)) {
-            def.callbacks[Callback::AFTER_DESTRUCT](defs.parser.luaVec(pos));
+            def.callbacks[Callback::AFTER_DESTRUCT](game.parser.luaVec(pos));
         }
     }
     else {
-        auto def = defs.defs.blockFromId(block);
+        auto def = game.defs.blockFromId(block);
         if (def.callbacks.count(Callback::AFTER_CONSTRUCT)) {
-            def.callbacks[Callback::AFTER_CONSTRUCT](defs.parser.luaVec(pos));
+            def.callbacks[Callback::AFTER_CONSTRUCT](game.parser.luaVec(pos));
         }
     }
 }

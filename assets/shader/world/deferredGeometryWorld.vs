@@ -1,28 +1,31 @@
 #version 330 core
 
 #define TAU 6.28318530718
+#define MAX_BLOCKLIGHT 31
+#define MAX_SUNLIGHT 15
 
 layout (location = 0) in vec3  aPos;
 layout (location = 1) in vec2  aTexCoords;
 layout (location = 2) in vec3  aBlend;
 layout (location = 3) in vec2  aBlendMaskCoords;
 layout (location = 4) in float aNormal;
-layout (location = 5) in float aShaderMod;
-layout (location = 6) in vec3  aModValues;
+layout (location = 5) in vec4  aLight;
+layout (location = 6) in float aShaderMod;
+layout (location = 7) in vec3  aModValues;
 
 uniform mat4 model;
 uniform mat4 projection;
 uniform mat4 view;
 
 uniform sampler2D swayTex;
-
 uniform float time;
 
-out vec2  texCoords;
-out vec2  blendMaskCoords;
-out vec3  blend;
-out vec3  fragPos;
-out vec3  normal;
+out vec2 texCoords;
+out vec2 blendMaskCoords;
+out vec3 blend;
+out vec3 fragPos;
+out vec3 normal;
+out vec3 light;
 
 vec3 unpackFloat(float src) {
     return vec3(fract(src) * 2.0f - 1.0f, fract(src * 256.f) * 2.0f - 1.0f, fract(src * 65536.f) * 2.0f - 1.0f);
@@ -88,6 +91,12 @@ void main() {
         }
     }
 
+
+    float sunlightIntensity = aLight.w * clamp(sin(time * 10.5) + 0.25, 0, 1) / MAX_SUNLIGHT;
+    vec3 blockLightColor = (aLight.xyz / MAX_BLOCKLIGHT) * vec3(1 + sunlightIntensity / 4);
+    vec3 sunlightColor = clamp(sunlightIntensity * 1.25 * vec3(1, 0.8, 0.9), 0, 1);
+    vec3 resultantLight = vec3(max(sunlightColor.x, blockLightColor.x), max(sunlightColor.y, blockLightColor.y), max(sunlightColor.z, blockLightColor.z));
+
     vec4 worldPos = model * pos;
 
     fragPos = (view * worldPos).xyz;
@@ -95,6 +104,6 @@ void main() {
     blendMaskCoords = aBlendMaskCoords;
     blend = aBlend;
     normal = nml.xyz;
-
+    light = resultantLight;
     gl_Position = projection * view * worldPos;
 }

@@ -12,7 +12,7 @@ class ServerClient;
 
 class ServerDimension : public Dimension {
 public:
-    ServerDimension() = default;
+    ServerDimension(ServerGame& game);
 
     void update(const std::vector<std::shared_ptr<ServerClient>>& clients);
 
@@ -27,6 +27,8 @@ public:
     const std::list<unsigned int>& getRemovedEntities() const;
     void clearRemovedEntities();
 private:
+    ServerGame& game;
+
     typedef std::list<std::shared_ptr<ServerLuaEntity>>::iterator luaent_ref;
 
     std::unordered_map<unsigned int, luaent_ref> luaEntityRefs {};

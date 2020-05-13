@@ -64,21 +64,28 @@ ChunkMeshGenerator::ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefin
             }
         }
 
-        if (!getBlockAt({off.x - 1, off.y, off.z}).culls) addFaces(vis, model.parts[static_cast<int>(Dir::XNEG)], biomeTint);
-        if (!getBlockAt({off.x + 1, off.y, off.z}).culls) addFaces(vis, model.parts[static_cast<int>(Dir::XPOS)], biomeTint);
-        if (!getBlockAt({off.x, off.y - 1, off.z}).culls) addFaces(vis, model.parts[static_cast<int>(Dir::YNEG)], biomeTint);
-        if (!getBlockAt({off.x, off.y + 1, off.z}).culls) addFaces(vis, model.parts[static_cast<int>(Dir::YPOS)], biomeTint);
-        if (!getBlockAt({off.x, off.y, off.z - 1}).culls) addFaces(vis, model.parts[static_cast<int>(Dir::ZNEG)], biomeTint);
-        if (!getBlockAt({off.x, off.y, off.z + 1}).culls) addFaces(vis, model.parts[static_cast<int>(Dir::ZPOS)], biomeTint);
+        glm::ivec3 pos {};
+        pos = { off.x - 1, off.y, off.z };
+        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(Dir::XNEG)], biomeTint, getLightAt(pos));
+        pos = { off.x + 1, off.y, off.z };
+        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(Dir::XPOS)], biomeTint, getLightAt(pos));
+        pos = { off.x, off.y - 1, off.z };
+        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(Dir::YNEG)], biomeTint, getLightAt(pos));
+        pos = { off.x, off.y + 1, off.z };
+        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(Dir::YPOS)], biomeTint, getLightAt(pos));
+        pos = { off.x, off.y, off.z - 1 };
+        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(Dir::ZNEG)], biomeTint, getLightAt(pos));
+        pos = { off.x, off.y, off.z + 1 };
+        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(Dir::ZPOS)], biomeTint, getLightAt(pos));
 
-        addFaces(vis, model.parts[static_cast<int>(Dir::NO_CULL)], biomeTint);
+        addFaces(vis, model.parts[static_cast<int>(Dir::NO_CULL)], biomeTint, getLightAt(vis));
     }
 
     meshDetails->vertices.shrink_to_fit();
     meshDetails->indices.shrink_to_fit();
 }
 
-BlockDef& ChunkMeshGenerator::getBlockAt(const glm::ivec3 &pos) {
+BlockDef& ChunkMeshGenerator::getBlockAt(const glm::ivec3& pos) {
     if (pos.x == 16) return defs.blockFromId(adjacent[0]->getBlock(pos - glm::ivec3 {16, 0, 0}));
     if (pos.x == -1) return defs.blockFromId(adjacent[1]->getBlock(pos + glm::ivec3 {16, 0, 0}));
 
@@ -91,7 +98,20 @@ BlockDef& ChunkMeshGenerator::getBlockAt(const glm::ivec3 &pos) {
     return defs.blockFromId(chunk->getBlock(pos));
 }
 
-void ChunkMeshGenerator::addFaces(const glm::vec3 &offset, const std::vector<MeshPart> &meshParts, const glm::vec3& tint) {
+glm::vec4 ChunkMeshGenerator::getLightAt(const glm::ivec3& pos) {
+    if (pos.x == 16) return adjacent[0]->getLightVec(Space::Block::index(pos - glm::ivec3 {16, 0, 0}));
+    if (pos.x == -1) return adjacent[1]->getLightVec(Space::Block::index(pos + glm::ivec3 {16, 0, 0}));
+
+    if (pos.y == 16) return adjacent[2]->getLightVec(Space::Block::index(pos - glm::ivec3 {0, 16, 0}));
+    if (pos.y == -1) return adjacent[3]->getLightVec(Space::Block::index(pos + glm::ivec3 {0, 16, 0}));
+
+    if (pos.z == 16) return adjacent[4]->getLightVec(Space::Block::index(pos - glm::ivec3 {0, 0, 16}));
+    if (pos.z == -1) return adjacent[5]->getLightVec(Space::Block::index(pos + glm::ivec3 {0, 0, 16}));
+
+    return chunk->getLightVec(Space::Block::index(pos));
+}
+
+void ChunkMeshGenerator::addFaces(const glm::vec3 &offset, const std::vector<MeshPart> &meshParts, const glm::vec3& tint, glm::vec4 light) {
     for (const MeshPart& mp : meshParts) {
         glm::vec3 modData = {};
 
@@ -114,6 +134,7 @@ void ChunkMeshGenerator::addFaces(const glm::vec3 &offset, const std::vector<Mes
                 mp.blendInd ? tint : glm::vec3 {1, 1, 1},
                 mp.blendInd ? vertex.blendMask : glm::vec2 {-1, -1},
                 Util::packFloat(vertex.nml),
+                light,
                 static_cast<float>(mp.shaderMod),
                 modData
             });

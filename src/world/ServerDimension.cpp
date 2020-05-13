@@ -2,10 +2,13 @@
 // Created by aurailus on 01/10/19.
 //
 
+#include "ServerDimension.h"
+
 #include "../def/gen/MapGen.h"
 #include "../server/conn/ServerClient.h"
 #include "../server/world/ServerWorld.h"
-#include "ServerDimension.h"
+
+ServerDimension::ServerDimension(ServerGame &game) : Dimension(game.defs), game(game) {}
 
 void ServerDimension::update(const std::vector<std::shared_ptr<ServerClient>> &clients) {
     for (const auto& region : regions) {

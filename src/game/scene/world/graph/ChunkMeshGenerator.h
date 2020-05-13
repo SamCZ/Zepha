@@ -21,8 +21,10 @@ public:
         std::shared_ptr<BlockChunk> chunk, std::array<std::shared_ptr<BlockChunk>, 6> adjacent,
         std::array<NoiseSample, 3>& blockOffsets);
 private:
-    BlockDef& getBlockAt(const glm::ivec3 &pos);
-    void addFaces(const glm::vec3 &offset, const std::vector<MeshPart> &meshParts, const glm::vec3& tint);
+    inline BlockDef& getBlockAt(const glm::ivec3& pos);
+    inline glm::vec4 getLightAt(const glm::ivec3& pos);
+
+    void addFaces(const glm::vec3 &offset, const std::vector<MeshPart> &meshParts, const glm::vec3& tint, glm::vec4 light);
 
     LocalDefinitionAtlas& defs;
     LocalBiomeAtlas& biomes;
