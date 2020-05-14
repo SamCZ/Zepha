@@ -16,19 +16,33 @@ ServerWorld::ServerWorld(unsigned int seed, ServerGame& game, ClientList& client
     seed(seed),
     game(game) {
 
-    //Pregenerate chunk generation order
-    generateOrder.reserve(MB_GEN_H * 2 * MB_GEN_H * 2 * MB_GEN_V * 2);
+    generateOrder.reserve(MB_GEN_H * 2 + 1 * MB_GEN_H * 2 + 1 * MB_GEN_V * 2 + 1);
+    std::unordered_set<glm::ivec3, Vec::ivec3> found {};
+    std::queue<glm::ivec3> queue {};
 
-    for (int i = 0; i <= MB_GEN_H; i++) {
-        for (int j = 0; j <= i; j++) {
-            for (int k = -MB_GEN_V; k <= MB_GEN_V; k++) {
-                for (int l = -1; l <= 1; l += 2) {
-                    for (int m = -1; m <= 1; m += 2) {
-                        for (int n = 0; n <= 1; n++) {
-                            generateOrder.emplace_back((n ? l*i : m*j), k, (n ? m*j : l*i));
-                        }
-                    }
-                }
+    queue.emplace(0, 0, 0);
+    found.emplace(0, 0, 0);
+
+    const std::vector<glm::ivec3> dirs {
+            glm::ivec3 {1, 0, 0}, glm::ivec3 {-1, 0, 0},
+            glm::ivec3 {0, 1, 0}, glm::ivec3 {0, -1, 0},
+            glm::ivec3 {0, 0, 1}, glm::ivec3 {0, 0, -1}};
+
+    while (!queue.empty()) {
+        glm::ivec3 pos = queue.front();
+        queue.pop();
+
+        generateOrder.push_back(pos);
+
+        for (auto dir : dirs) {
+            glm::ivec3 offset = pos + dir;
+            if (offset.x < -MB_GEN_H || offset.x > MB_GEN_H ||
+                offset.y < -MB_GEN_V || offset.y > MB_GEN_V ||
+                offset.z < -MB_GEN_H || offset.z > MB_GEN_H ||
+                found.count(offset)) continue;
+            else {
+                found.insert(offset);
+                queue.push(offset);
             }
         }
     }

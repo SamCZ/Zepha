@@ -216,28 +216,37 @@ bool LocalDimension::setBlock(glm::ivec3 pos, unsigned int block) {
     auto chunk = getChunk(chunkPos);
 
     chunk->dirty = true;
+
+    auto lp = Space::Block::relative::toChunk(pos);
+    auto cp = Space::Chunk::world::fromBlock(pos);
+
+    if (lp.x == 15 && getChunk(cp + glm::ivec3 {1, 0, 0})) getChunk(cp + glm::ivec3 {1, 0, 0})->dirty = true;
+    else if (lp.x == 0 && getChunk(cp + glm::ivec3 {-1, 0, 0})) getChunk(cp + glm::ivec3 {-1, 0, 0})->dirty = true;
+    if (lp.y == 15 && getChunk(cp + glm::ivec3 {0, 1, 0})) getChunk(cp + glm::ivec3 {0, 1, 0})->dirty = true;
+    else if (lp.y == 0 && getChunk(cp + glm::ivec3 {0, -1, 0})) getChunk(cp + glm::ivec3 {0, -1, 0})->dirty = true;
+    if (lp.z == 15 && getChunk(cp + glm::ivec3 {0, 0, 1})) getChunk(cp + glm::ivec3 {0, 0, 1})->dirty = true;
+    else if (lp.z == 0 && getChunk(cp + glm::ivec3 {0, 0, -1})) getChunk(cp + glm::ivec3 {0, 0, -1})->dirty = true;
+
     attemptMeshChunk(chunk);
     return true;
 }
 
 void LocalDimension::attemptMeshChunk(const std::shared_ptr<BlockChunk>& chunk, bool updateAdjacents) {
-//    if (!chunk->dirty) return; //TODO
-    auto dirs = Vec::cardinalVectors;
-    bool allExists = true;
-    for (auto dir : dirs) {
-        if (!getAdjacentExists(chunk->pos + dir, updateAdjacents)) {
-            allExists = false;
-        }
-    }
+    static const std::vector<glm::ivec3> dirs {
+            glm::ivec3 {1, 0, 0}, glm::ivec3 {-1, 0, 0},
+            glm::ivec3 {0, 1, 0}, glm::ivec3 {0, -1, 0},
+            glm::ivec3 {0, 0, 1}, glm::ivec3 {0, 0, -1}};
 
-    if (allExists) {
-        if (chunk->shouldHaveMesh) {
-            pendingMesh.push_back(chunk->pos);
-        }
-        else removeMeshChunk(chunk->pos);
+    bool renderable = true;
+    for (auto dir : dirs) if (!getAdjacentExists(chunk->pos + dir, updateAdjacents)) renderable = false;
+    if (!renderable) return;
 
-        chunk->dirty = false; //TODO: Make dirty work
-    }
+    if (!chunk->dirty) return;
+    if (!chunk->shouldHaveMesh) removeMeshChunk(chunk->pos);
+
+
+    pendingMesh.push_back(chunk->pos);
+    chunk->dirty = false;
 }
 
 bool LocalDimension::getAdjacentExists(glm::vec3 pos, bool updateAdjacents) {
@@ -245,4 +254,16 @@ bool LocalDimension::getAdjacentExists(glm::vec3 pos, bool updateAdjacents) {
     if (chunk == nullptr) return false;
     if (updateAdjacents) attemptMeshChunk(chunk, false);
     return true;
+}
+
+std::unordered_set<glm::ivec3, Vec::ivec3> LocalDimension::propogateAddNodes() {
+    auto updated = Dimension::propogateAddNodes();
+    for (auto& update : updated) attemptMeshChunk(getChunk(update));
+    return {};
+}
+
+std::unordered_set<glm::ivec3, Vec::ivec3> LocalDimension::propogateRemoveNodes() {
+    auto updated = Dimension::propogateRemoveNodes();
+    for (auto& update : updated) attemptMeshChunk(getChunk(update));
+    return {};
 }

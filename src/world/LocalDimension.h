@@ -40,6 +40,11 @@ public:
 
     int lastMeshUpdates = 0;
     std::vector<PlayerEntity> playerEntities;
+
+protected:
+    std::unordered_set<glm::ivec3, Vec::ivec3> propogateAddNodes() override;
+    std::unordered_set<glm::ivec3, Vec::ivec3> propogateRemoveNodes() override;
+
 private:
     typedef std::list<std::shared_ptr<ChunkRenderElem>>::iterator chunk_ref;
     typedef std::list<std::shared_ptr<LocalLuaEntity>>::iterator local_ent_ref;

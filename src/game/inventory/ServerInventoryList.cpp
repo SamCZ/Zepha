@@ -14,11 +14,10 @@
 
 ServerInventoryList::ServerInventoryList(DefinitionAtlas& defs, ClientList* list,
     const std::string& invName, const std::string& listName, unsigned short size, unsigned short width) :
-
     InventoryList(defs, invName, listName, size, width),
     clients(list) {}
 
-void ServerInventoryList::manipulated(){
+void ServerInventoryList::manipulated() {
     dirty = true;
 }
 

@@ -100,7 +100,7 @@ namespace Space {
         }
 
         namespace world {
-            // Get a Chunk engine position from a Block's world position.
+            // Get a Chunk world position from a Block's world position.
             static inline glm::ivec3 fromBlock(const glm::ivec3& pos) {
                 return sectionFromGlobal(pos, CHUNK_BLOCK_LENGTH);
             }

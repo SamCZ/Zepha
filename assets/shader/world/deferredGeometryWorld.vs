@@ -92,12 +92,15 @@ void main() {
     }
 
 
-    float sunlightIntensity = aLight.w * clamp(sin(time * 10.5) + 0.25, 0, 1) / MAX_SUNLIGHT;
+    float sunlightIntensity = 1;
+//    float sunlightIntensity = aLight.w * clamp(sin(time / 2.5) + 0.25, 0, 1) / MAX_SUNLIGHT;
     vec3 blockLightColor = (aLight.xyz / MAX_BLOCKLIGHT) * vec3(1 + sunlightIntensity / 4);
-    vec3 sunlightColor = clamp(sunlightIntensity * 1.25 * vec3(1, 0.8, 0.9), 0, 1);
+    vec3 sunlightColor = clamp(sunlightIntensity * 1.25 * vec3(1, 0.9, 0.75), 0, 1);
     vec3 resultantLight = vec3(max(sunlightColor.x, blockLightColor.x), max(sunlightColor.y, blockLightColor.y), max(sunlightColor.z, blockLightColor.z));
 
     vec4 worldPos = model * pos;
+//    worldPos.y -= pow(length(view * worldPos * 0.125) - 0.125, 2);
+    worldPos.y -= pow(length(view * worldPos * 0.025) - 0, 2);
 
     fragPos = (view * worldPos).xyz;
     texCoords = aTexCoords;

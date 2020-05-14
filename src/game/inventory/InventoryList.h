@@ -18,9 +18,8 @@ public:
         ON_PUT
     };
 
-    InventoryList(DefinitionAtlas& defs) : defs(defs) {};
-    InventoryList(DefinitionAtlas& defs, const std::string& invName, const std::string& listName, unsigned short size, unsigned short width) :
-        defs(defs), invName(invName), listName(listName), width(width), itemstacks(size) {};
+    InventoryList(DefinitionAtlas& defs);
+    InventoryList(DefinitionAtlas& defs, const std::string& invName, const std::string& listName, unsigned short size, unsigned short width);
 
     unsigned short getLength() const;
     unsigned short getWidth() const;
@@ -54,6 +53,7 @@ public:
 
 protected:
     virtual void manipulated() = 0;
+    void initialize();
 
     std::string invName {}, listName {};
     unsigned short width = 0;

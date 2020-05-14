@@ -120,8 +120,8 @@ inline void BlockChunk::setBlockLight(unsigned int ind, glm::ivec3 l) {
 }
 
 inline void BlockChunk::setBlockLight(unsigned int ind, unsigned char channel, unsigned char l){
-    channel == 0 ? light[ind].r = l :
-    channel == 1 ? light[ind].g = l :
+    channel == 0 ? light[ind].r = l:
+    channel == 1 ? light[ind].g = l:
                    light[ind].b = l;
 }
 
@@ -134,9 +134,9 @@ inline glm::ivec3 BlockChunk::getBlockLight(unsigned int ind) {
 }
 
 inline unsigned char BlockChunk::getBlockLight(unsigned int ind, unsigned char channel) {
-    return channel == 0 ? light[ind].r :
-           channel == 1 ? light[ind].g :
-           light[ind].b;
+    return channel == 0 ? light[ind].r:
+           channel == 1 ? light[ind].g:
+                          light[ind].b;
 }
 
 inline glm::vec4 BlockChunk::getLightVec(unsigned int ind) {

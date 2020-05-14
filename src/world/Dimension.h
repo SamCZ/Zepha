@@ -7,6 +7,7 @@
 #include <queue>
 #include <array>
 #include <memory>
+#include <unordered_set>
 
 #include "../util/Vec.h"
 #include "region/Region.h"
@@ -33,6 +34,8 @@ protected:
     block_region_map regions;
     DefinitionAtlas& defs;
 
+    virtual std::unordered_set<glm::ivec3, Vec::ivec3> propogateAddNodes();
+    virtual std::unordered_set<glm::ivec3, Vec::ivec3> propogateRemoveNodes();
 private:
     inline std::shared_ptr<Region> getOrCreateRegion(glm::ivec3 pos);
     inline std::shared_ptr<MapBlock> getOrCreateMapBlock(glm::ivec3 mapBlockPosition);
@@ -42,9 +45,6 @@ private:
     inline glm::ivec3 getBlockLight(glm::ivec3 worldPos, BlockChunk* chunk = nullptr);
     inline void addLight(glm::ivec3 pos, glm::ivec3 light);
     inline void removeLight(glm::ivec3 pos);
-
-    void propogateAddNodes(unsigned char channel);
-    void propogateRemoveNodes(unsigned char channel);
 
     struct LightAddNode {
         LightAddNode(unsigned short index, BlockChunk* chunk) : index(index), chunk(chunk) {};

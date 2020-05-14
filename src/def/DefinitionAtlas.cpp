@@ -14,6 +14,7 @@ ItemDef& DefinitionAtlas::fromId(unsigned int id) const {
 }
 
 ItemDef &DefinitionAtlas::fromStr(const std::string& identifier) const {
+    if (identifier == "") return *defs.at(AIR);
     if (defTable.count(identifier) <= 0) {
         std::cout << Log::err << "Undefined identifier \"" << identifier << "\" requested, returning invalid." << Log::endl;
         return *defs.at(INVALID);

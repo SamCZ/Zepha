@@ -15,6 +15,6 @@ public:
     DefinitionAtlas& defs;
 
 //    LocalLuaInventoryList add_list(std::string name, int size, int width);
-    LocalLuaInventoryList get_list(std::string name);
+    sol::object get_list(sol::this_state s, std::string name);
 //    void remove_list(std::string name);
 };

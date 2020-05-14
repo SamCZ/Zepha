@@ -7,27 +7,23 @@
 #include "../../../util/Ray.h"
 
 Player::Player(LocalWorld& world, ClientGame& defs, Renderer& renderer, LocalInventoryRefs& refs) :
-    Collidable(world, defs, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
+        Collidable(world, defs, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
 
-    refs(refs),
-    defs(defs),
-    renderer(renderer),
-    wireframe({}, 0.01, {1, 1, 1}),
-    gameGui(refs, renderer.window.getSize(), defs, renderer) {}
-
-void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {
-    if (activeBlock == -1) {
-        activeBlock = defs.defs.fromStr("zeus:default:stone").index;
-        handItemModel.setModel(defs.defs.fromId(activeBlock).entityModel);
-        handItemModel.parent = &handModel;
-    }
-    handItemModel.setVisible(gameGui.isVisible());
-
-    gameGui.update(delta);
+        refs(refs),
+        game(defs),
+        renderer(renderer),
+        wireframe({}, 0.01, {1, 1, 1}),
+        gameGui(refs, renderer.window.getSize(), defs, renderer) {
+    handItemModel.parent = &handModel;
 
     renderer.window.addResizeCallback("player", [&](glm::ivec2 win) {
         gameGui.winResized(win);
     });
+}
+
+void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {
+    gameGui.update(delta);
+    handItemModel.setVisible(gameGui.isVisible());
 
     moveAndLook(input, delta, mouseDelta);
     findPointedThing(input);
@@ -108,7 +104,7 @@ void Player::updateCamera() {
     renderer.camera.setYaw(yaw);
     renderer.camera.setPitch(pitch);
 
-    auto type = defs.defs.fromId(activeBlock).type;
+    auto type = game.defs.fromId(activeBlock).type;
 
     glm::vec3 eyesPos = {pos.x, pos.y + EYE_HEIGHT, pos.z};
     renderer.camera.setPos(eyesPos);
@@ -159,7 +155,7 @@ void Player::findPointedThing(Input &input) {
         if (blockChunk == nullptr) continue;
 
         unsigned int blockID = blockChunk->getBlock(Space::Block::relative::toChunk(roundedPos));
-        auto& boxes = defs.defs.blockFromId(blockID).sBoxes;
+        auto& boxes = game.defs.blockFromId(blockID).sBoxes;
 
         for (auto& sBox : boxes) {
             auto face = sBox.intersects(rayEnd, roundedPos);
@@ -181,7 +177,7 @@ void Player::updateWireframe() {
         wireframe.setVisible(false);
     }
     else if (pointedThing.thing == PointedThing::Thing::BLOCK) {
-        auto& boxes = defs.defs.blockFromId(pointedThing.target.block.blockId).sBoxes;
+        auto& boxes = game.defs.blockFromId(pointedThing.target.block.blockId).sBoxes;
         float distance = glm::distance(pos, glm::vec3(pointedThing.target.block.pos) + glm::vec3(0.5));
 
         wireframe.updateMesh(boxes, 0.002f + distance * 0.0014f);
@@ -207,7 +203,7 @@ void Player::breakBlock(Input& input, double delta) {
             if (breakInterval > BLOCK_INTERVAL) breakInterval = 0;
         }
 
-        if (input.mousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
+        if (input.mousePressed(GLFW_MOUSE_BUTTON_RIGHT) && activeBlock != DefinitionAtlas::AIR) {
             world.localSetBlock(pointedThing.target.block.pos + SelectionBox::faceToOffset(pointedThing.target.block.face), activeBlock);
         }
     }
@@ -272,8 +268,8 @@ LocalInventory& Player::getInventory() {
  */
 
 void Player::setActiveBlock(const std::string& block) {
-    activeBlock = defs.defs.fromStr(block).index;
-    handItemModel.setModel(defs.defs.fromId(activeBlock).entityModel);
+    activeBlock = game.defs.fromStr(block).index;
+    handItemModel.setModel(game.defs.fromId(activeBlock).entityModel);
 }
 
 void Player::showMenu(std::shared_ptr<LuaGuiElement> root) {

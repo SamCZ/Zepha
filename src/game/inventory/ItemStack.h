@@ -18,6 +18,6 @@ public:
     bool operator!=(const ItemStack& b) const;
     bool operator==(const ItemStack& b) const;
 
-    unsigned int id = 0;
+    unsigned int id = DefinitionAtlas::AIR;
     unsigned short count = 0;
 };

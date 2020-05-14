@@ -6,6 +6,24 @@
 
 #include "../../lua/api/class/LuaItemStack.h"
 
+InventoryList::InventoryList(DefinitionAtlas &defs) : defs(defs) {
+    initialize();
+}
+
+InventoryList::InventoryList(DefinitionAtlas &defs, const std::string &invName, const std::string &listName,
+    unsigned short size, unsigned short width) :
+    listName(listName),
+    itemstacks(size),
+    invName(invName),
+    width(width),
+    defs(defs) {
+    initialize();
+}
+
+void InventoryList::initialize() {
+    for (unsigned int i = 0; i < itemstacks.size(); i++) itemstacks[i] = {};
+}
+
 unsigned short InventoryList::getLength() const {
     return itemstacks.size();
 }
@@ -38,7 +56,7 @@ ItemStack InventoryList::placeStack(unsigned short i, const ItemStack &stack, bo
     sol::function on_take = luaCallbacks[static_cast<int>(Callback::ON_TAKE)];
 
     if (stack.count == 0) {
-        if (allowedTake == otherStack.count) setStack(i, {});
+        if (allowedTake == otherStack.count) setStack(i, {DefinitionAtlas::AIR, 0});
         else setStack(i, {otherStack.id, static_cast<unsigned short>(otherStack.count - allowedTake)});
         if (allowedTake > 0 && on_take) on_take(i+1, LuaItemStack(otherStack, defs));
         return {otherStack.id, allowedTake};
@@ -192,7 +210,7 @@ ItemStack InventoryList::takeStack(ItemStack request, bool playerInitiated) {
 ItemStack InventoryList::removeStack(unsigned short ind, unsigned short count) {
     auto stack = getStack(ind);
     if (count >= stack.count) {
-        setStack(ind, {0, 0});
+        setStack(ind, {DefinitionAtlas::AIR, 0});
         return stack;
     }
     else {

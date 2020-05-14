@@ -5,6 +5,7 @@
 #pragma once
 
 #include "../../../game/inventory/Inventory.h"
+
 #include "ServerLuaInventoryList.h"
 
 class ServerLuaInventory {
@@ -14,7 +15,7 @@ public:
     Inventory& inventory;
     DefinitionAtlas& defs;
 
-    ServerLuaInventoryList add_list(std::string name, int size, int width);
-    ServerLuaInventoryList get_list(std::string name);
+    sol::object add_list(sol::this_state s, std::string name, int size, int width);
+    sol::object get_list(sol::this_state s, std::string name);
     void remove_list(std::string name);
 };

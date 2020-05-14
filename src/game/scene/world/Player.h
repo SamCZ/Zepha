@@ -65,7 +65,7 @@ private:
     void updateWireframe();
     void breakBlock(Input& input, double delta);
 
-    ClientGame& defs;
+    ClientGame& game;
     Renderer& renderer;
     LocalInventoryRefs& refs;
 
@@ -78,7 +78,7 @@ private:
     float pitch = 0;
     bool flying = false;
 
-    unsigned int activeBlock = -1;
+    unsigned int activeBlock = DefinitionAtlas::AIR;
     PointedThing pointedThing;
     double breakInterval = 0;
 };

@@ -40,7 +40,8 @@ local function select_slot(n)
     for i, list in ipairs(api.lists) do list.visible = i ~= n end
     for i, label in ipairs(api.labels) do label.visible = i ~= n end
 
-    zepha.player:set_selected_block(zepha.player:get_inventory():get_list("hot_wheel_" .. slot):get_stack(item).name)
+    local inv = zepha.player:get_inventory():get_list("hot_wheel_" .. slot)
+    if inv then zepha.player:set_selected_block(inv:get_stack(item).name) end
     if not rotating then position() end
 end
 
@@ -49,8 +50,12 @@ local function select_item(n)
     local offset = slot - 1
     api.list_expanded_indicator.position = { 2 + 18 * (item - 1), 0 }
 
-    zepha.player:set_selected_block(zepha.player:get_inventory():get_list("hot_wheel_" .. slot):get_stack(item).name)
+    local inv = zepha.player:get_inventory():get_list("hot_wheel_" .. slot)
+    if inv then zepha.player:set_selected_block(inv:get_stack(item).name) end
 end
+
+select_slot(1)
+select_item(0)
 
 local function key(n)
     select_slot(n)
