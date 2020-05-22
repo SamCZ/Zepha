@@ -2,11 +2,12 @@
 // Created by aurailus on 28/01/19.
 //
 
-#include "MapGen.h"
-#include "NoiseSample.h"
-#include "../../game/scene/world/Schematic.h"
 #include <random>
 #include <cmath>
+
+#include "MapGen.h"
+
+#include "NoiseSample.h"
 
 MapGen::MapGen(unsigned int seed, DefinitionAtlas& defs, BiomeAtlas& biomes, std::shared_ptr<MapGenProps> props) :
     seed(seed),
@@ -25,6 +26,8 @@ MapGen::chunk_partials_map MapGen::generateMapBlock(glm::ivec3 mbPos) {
 			}
 		}
 	}
+
+    generateSunlight(chunks, mbPos);
 
 	for (auto& chunk : chunks) {
 	    // Delete MapGenJobs
@@ -122,9 +125,8 @@ void MapGen::buildElevationMap(chunk_partials_map& chunks, chunk_partial& chunk)
 }
 
 void MapGen::generateBlocks(chunk_partial& chunk) {
-    glm::ivec3 lp {};
-
-    auto dupe = std::make_unique<BlockChunk>(*chunk.second);
+    std::unique_ptr<BlockChunk> dupe = nullptr;
+    if (chunk.second->partial) dupe = std::make_unique<BlockChunk>(*chunk.second);
 
     chunk.second->blocks = {};
     chunk.second->biomes = {};
@@ -133,7 +135,7 @@ void MapGen::generateBlocks(chunk_partial& chunk) {
     for (unsigned short x = 0; x < 16; x++) {
         biomeArray[x] = {};
         for (unsigned short z = 0; z < 16; z++) {
-            lp = {x, 0, z};
+            glm::ivec3 lp = {x, 0, z};
             biomeArray[x][z] = biomes.getBiomeAt(
                     chunk.first->temperature.get(lp),
                     chunk.first->humidity.get(lp),
@@ -142,7 +144,7 @@ void MapGen::generateBlocks(chunk_partial& chunk) {
     }
 
     for (unsigned short m = 0; m < 4096; m++) {
-        Vec::indAssignVec(m, lp);
+        glm::ivec3 lp = Space::Block::fromIndex(m);
         auto& biome = biomes.biomeFromId(biomeArray[lp.x][lp.z]);
 
         unsigned int storedBlock = (chunk.second->blocks.size() <= 0 ? -1 : chunk.second->blocks[chunk.second->blocks.size() - 1]);
@@ -166,7 +168,7 @@ void MapGen::generateBlocks(chunk_partial& chunk) {
         }
     }
 
-    if (dupe->partial) for (unsigned short i = 0; i < 4096; i++) {
+    if (dupe) for (unsigned short i = 0; i < 4096; i++) {
         unsigned int b = dupe->getBlock(i);
         if (b != DefinitionAtlas::INVALID) chunk.second->setBlock(i, b);
     }
@@ -175,17 +177,6 @@ void MapGen::generateBlocks(chunk_partial& chunk) {
 void MapGen::generateStructures(chunk_partials_map& chunks, chunk_partial& chunk) {
     std::default_random_engine generator(chunk.second->pos.x + chunk.second->pos.y * 30 + chunk.second->pos.z * 3.5);
     std::uniform_real_distribution<float> distribution(0, 1);
-
-//    unsigned int cWood = defs.blockFromStr("zeus:default:wood").index;
-//    unsigned int cLeaves = defs.blockFromStr("zeus:default:leaves").index;
-//    unsigned int cAir = DefinitionAtlas::INVALID;
-
-//    Schematic c {};
-//    c.dimensions = {3, 3, 3};
-//    c.origin = {1, 0, 1};
-//    c.blocks = { cAir, cAir, cAir, cAir, cLeaves, cAir, cAir, cAir, cAir,
-//                 cAir, cWood, cAir, cLeaves, cWood, cLeaves, cAir, cLeaves, cAir,
-//                 cAir, cAir, cAir, cAir, cLeaves, cAir, cAir, cAir, cAir };
 
     glm::ivec3 wp = chunk.second->pos;
     glm::ivec3 lp;
@@ -217,6 +208,89 @@ void MapGen::generateStructures(chunk_partials_map& chunks, chunk_partial& chunk
                 }
             }
         }
+    }
+}
+
+void MapGen::generateSunlight(MapGen::chunk_partials_map &chunks, glm::ivec3 mbPos) {
+    std::queue<SunlightNode> sunlightQueue;
+
+    glm::ivec3 c {};
+    for (c.x = 0; c.x < 4; c.x++) {
+        for (c.z = 0; c.z < 4; c.z++) {
+            c.y = 3;
+            BlockChunk* chunk = chunks[mbPos * 4 + c].second;
+
+            glm::ivec3 b {};
+            for (b.x = 0; b.x < 16; b.x++) {
+                for (b.z = 0; b.z < 16; b.z++) {
+                    b.y = 15;
+
+                    while (true) {
+                        unsigned int ind =  Space::Block::index(b);
+                        if (defs.blockFromId(chunk->getBlock(ind)).lightPropagates) {
+                            chunk->setSunlight(ind, 15);
+
+//                            const static std::array<glm::ivec3, 4> checks {
+//                                glm::ivec3 {-1, 0, 0}, glm::ivec3 {1, 0, 0}, glm::ivec3 {0, 0, -1}, glm::ivec3 {0, 0, 1}};
+
+                            sunlightQueue.emplace(ind, chunk);
+                        }
+                        else {
+                            c.y = 3;
+                            chunk = chunks[mbPos * 4 + c].second;
+                            break;
+                        }
+
+                        b.y--;
+                        if (b.y < 0) {
+                            b.y = 15;
+                            c.y = c.y ? c.y - 1 : 3;
+                            if (c.y == 3) break;
+                            chunk = chunks[mbPos * 4 + c].second;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    propogateSunlightNodes(chunks, sunlightQueue);
+}
+
+bool MapGen::containsWorldPos(BlockChunk *chunk, glm::ivec3 pos) {
+    return chunk && Space::Chunk::world::fromBlock(pos) == chunk->pos;
+}
+
+void MapGen::propogateSunlightNodes(MapGen::chunk_partials_map &chunks, std::queue<SunlightNode> &queue) {
+    while (!queue.empty()) {
+        SunlightNode& node = queue.front();
+
+        unsigned char lightLevel = node.chunk->getSunlight(node.index);
+        glm::ivec3 worldPos = node.chunk->pos * 16 + Space::Block::fromIndex(node.index);
+
+        const static std::array<glm::ivec3, 6> checks = { glm::ivec3 {-1, 0, 0}, {1, 0, 0}, {0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1} };
+        for (const auto& i : checks) {
+            glm::ivec3 check = worldPos + i;
+
+            BlockChunk* chunk;
+            if (containsWorldPos(node.chunk, check)) chunk = node.chunk;
+            else {
+                glm::ivec3 worldPos = Space::Chunk::world::fromBlock(check);
+                if (!chunks.count(worldPos)) continue;
+                chunk = chunks[worldPos].second;
+                if (!chunk) continue;
+            }
+
+            auto ind = Space::Block::index(check);
+            if (defs.blockFromId(chunk->getBlock(ind)).lightPropagates && chunk->getSunlight(ind) + 2 <= lightLevel) {
+                int subtract = 1;
+                if (lightLevel == 15 && i == checks[2]) subtract = 0;
+                chunk->setSunlight(ind, lightLevel - subtract);
+                queue.emplace(ind, chunk);
+            }
+        }
+
+        queue.pop();
     }
 }
 

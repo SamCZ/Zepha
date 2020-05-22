@@ -23,16 +23,16 @@ bool ServerGenStream::queue(glm::vec3 pos) {
     return false;
 }
 
-std::unique_ptr<std::vector<std::shared_ptr<BlockChunk>>> ServerGenStream::update() {
-    auto finishedChunks = std::make_unique<std::vector<std::shared_ptr<BlockChunk>>>();
+std::unique_ptr<std::vector<ServerGenStream::FinishedBlockJob>> ServerGenStream::update() {
+    auto finishedChunks = std::make_unique<std::vector<FinishedBlockJob>>();
 
     for (auto& t : threads) {
         for (auto& u : t.tasks) {
             if (u.locked) continue;
 
             if (!u.chunks.empty()) {
-                for (auto chunk : u.chunks)
-                    finishedChunks->push_back(std::shared_ptr<BlockChunk>(chunk.second.second));
+                finishedChunks->push_back({u.pos, {}});
+                for (auto chunk : u.chunks) finishedChunks->back().chunks.push_back(std::shared_ptr<BlockChunk>(chunk.second.second));
                 u.chunks.clear();
             }
 

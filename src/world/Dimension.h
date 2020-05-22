@@ -29,6 +29,8 @@ public:
     unsigned int getBlock(glm::ivec3 pos);
     virtual bool setBlock(glm::ivec3 pos, unsigned int block);
 
+    void createSunlight(glm::ivec3 pos);
+    void propogateLight();
 protected:
     typedef std::unordered_map<glm::ivec3, std::shared_ptr<Region>, Vec::ivec3> block_region_map;
     block_region_map regions;
@@ -41,8 +43,8 @@ private:
     inline std::shared_ptr<MapBlock> getOrCreateMapBlock(glm::ivec3 mapBlockPosition);
 
     static inline bool containsWorldPos(BlockChunk* chunk, glm::ivec3 pos);
+    inline glm::ivec4 getLight(glm::ivec3 worldPos, BlockChunk* chunk = nullptr);
 
-    inline glm::ivec3 getBlockLight(glm::ivec3 worldPos, BlockChunk* chunk = nullptr);
     inline void addLight(glm::ivec3 pos, glm::ivec3 light);
     inline void removeLight(glm::ivec3 pos);
 
@@ -59,6 +61,7 @@ private:
         BlockChunk* chunk;
     };
 
-    std::array<std::queue<LightAddNode>, 3> lightAddQueue;
-    std::array<std::queue<LightRemoveNode>, 3> lightRemoveQueue;
+    static constexpr unsigned char SUNLIGHT_CHANNEL = 3;
+    std::array<std::queue<LightAddNode>, 4> lightAddQueue;
+    std::array<std::queue<LightRemoveNode>, 4> lightRemoveQueue;
 };

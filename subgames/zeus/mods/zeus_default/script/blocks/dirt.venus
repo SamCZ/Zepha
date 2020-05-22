@@ -7,6 +7,6 @@ zepha.register_block("zeus:default:dirt", {
         shovel = 1,
         pick = 2
     },
-    light_source = { 0, 0, 31 },
+    light_source = { 0, 16, 31 },
     yields = "zeus:default:dirt"
 })

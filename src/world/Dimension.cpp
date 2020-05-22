@@ -60,9 +60,9 @@ bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {
 
     chunk->setBlock(Space::Block::relative::toChunk(pos), block);
 
-    glm::ivec3 oldLight = chunk->getBlockLight(Space::Block::index(pos));
+    glm::ivec4 oldLight = chunk->getLight(Space::Block::index(pos));
     glm::ivec3 newLight = defs.blockFromId(block).lightSource;
-    if (oldLight != newLight) {
+    if (oldLight.x != newLight.x || oldLight.y != newLight.y || oldLight.z != newLight.z) {
         if (abs(oldLight.x) + abs(oldLight.y) + abs(oldLight.z) != 0) removeLight(pos);
         if (abs(newLight.x) + abs(newLight.y) + abs(newLight.z) != 0) addLight(pos, newLight);
     }
@@ -84,6 +84,42 @@ std::shared_ptr<MapBlock> Dimension::getOrCreateMapBlock(glm::ivec3 mapBlockPosi
     return (*region)[index];
 }
 
+//
+// Light related functions.
+//
+
+void Dimension::createSunlight(glm::ivec3 pos) {
+//    auto chunk = getChunk(pos);
+//    auto top = getChunk(pos + glm::ivec3 {0, 1, 0});
+//    if (top) {
+//        for (unsigned int i = 0; i < 256; i++) {
+//            unsigned int ind = Space::Block::index(glm::ivec3 {i / 16, 0, i % 16});
+//            auto light = top->getSunlight(ind);
+//            if (light != 0) {
+//                lightAddQueue[SUNLIGHT_CHANNEL].emplace(ind, top.get());
+//                if (light == 15) for (int j = 15; j >= 0; j--) {
+//                    unsigned int ind = Space::Block::index({i / 16, j, i % 16});
+//                    if (!defs.blockFromId(chunk->getBlock(ind)).solid) {
+//                        chunk->setSunlight(ind, 15);
+//                        lightAddQueue[SUNLIGHT_CHANNEL].emplace(ind, chunk.get());
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    else {
+//        for (unsigned int i = 0; i < 256; i++) {
+//            for (unsigned int j = 15; j >= 0; j--) {
+//                auto index = Space::Block::index(glm::ivec3{i / 16, j, i % 16});
+//                if (defs.blockFromId(chunk->getBlock(index)).solid) continue;
+//                chunk->setSunlight(index, 15);
+//                lightAddQueue[SUNLIGHT_CHANNEL].emplace(index, chunk.get());
+//            }
+//        }
+//    }
+}
+
+
 // Returns true if the provided pos references a block within chunk, otherwise returns false.
 bool Dimension::containsWorldPos(BlockChunk *chunk, glm::ivec3 pos) {
     return chunk && Space::Chunk::world::fromBlock(pos) == chunk->pos;
@@ -91,10 +127,10 @@ bool Dimension::containsWorldPos(BlockChunk *chunk, glm::ivec3 pos) {
 
 // Get the BlockLight of a block. This function can be accelerated
 // by providing a chunk that might contain the world position.
-glm::ivec3 Dimension::getBlockLight(glm::ivec3 worldPos, BlockChunk *chunk) {
-    if (containsWorldPos(chunk, worldPos)) return chunk->getBlockLight(Space::Block::index(worldPos));
+glm::ivec4 Dimension::getLight(glm::ivec3 worldPos, BlockChunk *chunk) {
+    if (containsWorldPos(chunk, worldPos)) return chunk->getLight(Space::Block::index(worldPos));
     auto oChunk = getChunk(Space::Chunk::world::fromBlock(worldPos)).get();
-    return (oChunk ? oChunk->getBlockLight(Space::Block::index(worldPos)) : glm::ivec3 {});
+    return (oChunk ? oChunk->getLight(Space::Block::index(worldPos)) : glm::ivec4 {});
 }
 
 void Dimension::addLight(glm::ivec3 pos, glm::ivec3 light) {
@@ -110,7 +146,7 @@ void Dimension::addLight(glm::ivec3 pos, glm::ivec3 light) {
 
 void Dimension::removeLight(glm::ivec3 pos) {
     auto startChunk = getChunk(Space::Chunk::world::fromBlock(pos));
-    glm::ivec3 val = startChunk->getBlockLight(Space::Block::index(pos));
+    glm::ivec4 val = startChunk->getLight(Space::Block::index(pos));
 
     startChunk->setBlockLight(Space::Block::index(pos), {});
     lightRemoveQueue[0].emplace(Space::Block::index(pos), val.x, startChunk.get());
@@ -122,17 +158,17 @@ void Dimension::removeLight(glm::ivec3 pos) {
 std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
     std::unordered_set<glm::ivec3, Vec::ivec3> chunksUpdated {};
 
-    for (unsigned int channel = 0; channel < 3; channel++) {
+    for (unsigned int channel = 0; channel < SUNLIGHT_CHANNEL; channel++) {
         while (!lightAddQueue[channel].empty()) {
             LightAddNode& node = lightAddQueue[channel].front();
 
-            unsigned char lightLevel = node.chunk->getBlockLight(node.index, channel);
+            unsigned char lightLevel = node.chunk->getLight(node.index, channel);
             glm::ivec3 worldPos = node.chunk->pos * 16 + Space::Block::fromIndex(node.index);
 
             const static std::array<glm::ivec3, 6> checks = { glm::ivec3 {-1, 0, 0}, {1, 0, 0}, {0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1} };
             for (const auto& i : checks) {
                 glm::ivec3 check = worldPos + i;
-                if (!defs.blockFromId(getBlock(check)).solid && getBlockLight(check, node.chunk)[channel] + 2 <= lightLevel) {
+                if (defs.blockFromId(getBlock(check)).lightPropagates && getLight(check, node.chunk)[channel] + 2 <= lightLevel) {
                     BlockChunk* chunk;
                     if (containsWorldPos(node.chunk, check)) chunk = node.chunk;
                     else {
@@ -141,12 +177,41 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
                         chunksUpdated.insert(chunk->pos);
                         chunk->dirty = true;
                     }
-                    chunk->setBlockLight(Space::Block::index(check), channel, lightLevel - 1);
+
+                    chunk->setLight(Space::Block::index(check), channel, lightLevel - 1);
                     lightAddQueue[channel].emplace(Space::Block::index(check), chunk);
                 }
             }
             lightAddQueue[channel].pop();
         }
+    }
+
+    while (!lightAddQueue[SUNLIGHT_CHANNEL].empty()) {
+        LightAddNode& node = lightAddQueue[SUNLIGHT_CHANNEL].front();
+
+        unsigned char lightLevel = node.chunk->getSunlight(node.index);
+        glm::ivec3 worldPos = node.chunk->pos * 16 + Space::Block::fromIndex(node.index);
+
+        const static std::array<glm::ivec3, 6> checks = { glm::ivec3 {-1, 0, 0}, {1, 0, 0}, {0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1} };
+        for (const auto& i : checks) {
+            glm::ivec3 check = worldPos + i;
+            if (defs.blockFromId(getBlock(check)).lightPropagates && getLight(check, node.chunk)[SUNLIGHT_CHANNEL] + 2 <= lightLevel) {
+                BlockChunk* chunk;
+                if (containsWorldPos(node.chunk, check)) chunk = node.chunk;
+                else {
+                    chunk = getChunk(Space::Chunk::world::fromBlock(check)).get();
+                    if (!chunk) continue;
+                    chunksUpdated.insert(chunk->pos);
+                    chunk->dirty = true;
+                }
+
+                int subtract = 1;
+                if (lightLevel == 15 && i == checks[2]) subtract = 0;
+                chunk->setLight(Space::Block::index(check), SUNLIGHT_CHANNEL, lightLevel - subtract);
+                lightAddQueue[SUNLIGHT_CHANNEL].emplace(Space::Block::index(check), chunk);
+            }
+        }
+        lightAddQueue[SUNLIGHT_CHANNEL].pop();
     }
 
     return chunksUpdated;
@@ -155,7 +220,7 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
 std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
     std::unordered_set<glm::ivec3, Vec::ivec3> chunksUpdated {};
 
-    for (unsigned int channel = 0; channel < 3; channel++) {
+    for (unsigned int channel = 0; channel < SUNLIGHT_CHANNEL; channel++) {
         while (!lightRemoveQueue[channel].empty()) {
             LightRemoveNode& node = lightRemoveQueue[channel].front();
 
@@ -164,7 +229,7 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
             const static std::array<glm::ivec3, 6> checks = { glm::ivec3 {-1, 0, 0}, {1, 0, 0}, {0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1} };
             for (const auto& i : checks) {
                 glm::ivec3 check = worldPos + i;
-                unsigned char checkLight = getBlockLight(check, node.chunk)[channel];
+                unsigned char checkLight = getLight(check, node.chunk)[channel];
 
                 if (checkLight != 0 && checkLight < node.value) {
                     BlockChunk* chunk;
@@ -177,7 +242,7 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
                     }
 
                     auto blockLight = defs.blockFromId(chunk->getBlock(Space::Block::index(check))).lightSource[channel];
-                    chunk->setBlockLight(Space::Block::index(check), channel, blockLight);
+                    chunk->setLight(Space::Block::index(check), channel, blockLight);
                     if (blockLight) lightAddQueue[channel].emplace(Space::Block::index(check), chunk);
                     lightRemoveQueue[channel].emplace(Space::Block::index(check), checkLight, chunk);
                 }
@@ -193,4 +258,9 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
 
     propogateAddNodes();
     return chunksUpdated;
+}
+
+void Dimension::propogateLight() {
+    propogateRemoveNodes();
+    propogateAddNodes();
 }

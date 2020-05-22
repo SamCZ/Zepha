@@ -9,6 +9,7 @@
 
 #include "../conn/ClientList.h"
 #include "../conn/ServerClient.h"
+#include "../../util/Timer.h"
 
 ServerWorld::ServerWorld(unsigned int seed, ServerGame& game, ClientList& clients) :
     clientList(clients),
@@ -58,13 +59,19 @@ void ServerWorld::update(double delta) {
     auto finished = genStream->update();
     generatedChunks = static_cast<int>(finished->size());
 
-    for (const auto& chunk : *finished) {
-        dimension.setChunk(chunk);
+    for (auto& mb : *finished) {
+        Timer t("finishing mapblock");
 
-        glm::ivec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunk->pos);
-        if (chunk->generated) dimension.getMapBlock(mapBlockPos)->generated = true;
-        unsigned long long mapBlockIntegrity = dimension.getMapBlockIntegrity(mapBlockPos);
+        for (const auto& chunk : mb.chunks) {
+            dimension.setChunk(chunk);
+//            dimension.createSunlight(chunk->pos);
+        }
 
+//        dimension.propogateLight();
+        dimension.getMapBlock(mb.pos)->generated = true;
+        t.printElapsedMs();
+
+        unsigned long long mapBlockIntegrity = dimension.getMapBlockIntegrity(mb.pos);
         for (auto& client : clientList.clients) {
             if (client->hasPlayer) {
                 auto playerMapBlock = Space::MapBlock::world::fromBlock(client->getPos());
@@ -73,13 +80,18 @@ void ServerWorld::update(double delta) {
                         {playerMapBlock.x - MB_GEN_H, playerMapBlock.y - MB_GEN_V, playerMapBlock.z - MB_GEN_H},
                         {playerMapBlock.x + MB_GEN_H, playerMapBlock.y + MB_GEN_V, playerMapBlock.z + MB_GEN_H}};
 
-                if (isInBounds(mapBlockPos, bounds) && client->getMapBlockIntegrity(mapBlockPos) < mapBlockIntegrity) {
-                    client->setMapBlockIntegrity(mapBlockPos, mapBlockIntegrity);
-                    sendChunk(chunk->pos, *client);
+                if (isInBounds(mb.pos, bounds) && client->getMapBlockIntegrity(mb.pos) < mapBlockIntegrity) {
+                    client->setMapBlockIntegrity(mb.pos, mapBlockIntegrity);
+
+                    //TODO: Replace with sendMapBlock
+                    for (int i = 0; i < 64; i++) {
+                        sendChunk(dimension.getMapBlock(mb.pos)->operator[](i)->pos, *client);
+                    }
                 }
             }
         }
     }
+
 
     // Send the # of generated chunks to the client (debug),
     // and trigger new chunks to be generated if a player has changed MapBlocks.

@@ -99,16 +99,16 @@ BlockDef& ChunkMeshGenerator::getBlockAt(const glm::ivec3& pos) {
 }
 
 glm::vec4 ChunkMeshGenerator::getLightAt(const glm::ivec3& pos) {
-    if (pos.x == 16) return adjacent[0]->getLightVec(Space::Block::index(pos - glm::ivec3 {16, 0, 0}));
-    if (pos.x == -1) return adjacent[1]->getLightVec(Space::Block::index(pos + glm::ivec3 {16, 0, 0}));
+    if (pos.x == 16) return adjacent[0]->getLight(Space::Block::index(pos - glm::ivec3 {16, 0, 0}));
+    if (pos.x == -1) return adjacent[1]->getLight(Space::Block::index(pos + glm::ivec3 {16, 0, 0}));
 
-    if (pos.y == 16) return adjacent[2]->getLightVec(Space::Block::index(pos - glm::ivec3 {0, 16, 0}));
-    if (pos.y == -1) return adjacent[3]->getLightVec(Space::Block::index(pos + glm::ivec3 {0, 16, 0}));
+    if (pos.y == 16) return adjacent[2]->getLight(Space::Block::index(pos - glm::ivec3 {0, 16, 0}));
+    if (pos.y == -1) return adjacent[3]->getLight(Space::Block::index(pos + glm::ivec3 {0, 16, 0}));
 
-    if (pos.z == 16) return adjacent[4]->getLightVec(Space::Block::index(pos - glm::ivec3 {0, 0, 16}));
-    if (pos.z == -1) return adjacent[5]->getLightVec(Space::Block::index(pos + glm::ivec3 {0, 0, 16}));
+    if (pos.z == 16) return adjacent[4]->getLight(Space::Block::index(pos - glm::ivec3 {0, 0, 16}));
+    if (pos.z == -1) return adjacent[5]->getLight(Space::Block::index(pos + glm::ivec3 {0, 0, 16}));
 
-    return chunk->getLightVec(Space::Block::index(pos));
+    return chunk->getLight(Space::Block::index(pos));
 }
 
 void ChunkMeshGenerator::addFaces(const glm::vec3 &offset, const std::vector<MeshPart> &meshParts, const glm::vec3& tint, glm::vec4 light) {
@@ -134,7 +134,7 @@ void ChunkMeshGenerator::addFaces(const glm::vec3 &offset, const std::vector<Mes
                 mp.blendInd ? tint : glm::vec3 {1, 1, 1},
                 mp.blendInd ? vertex.blendMask : glm::vec2 {-1, -1},
                 Util::packFloat(vertex.nml),
-                light,
+                glm::vec4(light),
                 static_cast<float>(mp.shaderMod),
                 modData
             });

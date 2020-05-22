@@ -23,6 +23,7 @@ public:
         const BlockModel& farModel,
         bool solid,
         glm::ivec3 lightSource,
+        bool lightPropagates,
         const std::vector<SelectionBox>& sBoxes,
         const std::vector<SelectionBox>& cBoxes,
         unsigned int index = 0
@@ -35,6 +36,7 @@ public:
 
     bool culls = false;
     bool solid = false;
+    bool lightPropagates = false;
 
     glm::ivec3 lightSource;
 

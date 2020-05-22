@@ -19,7 +19,7 @@ BlockChunk::BlockChunk(const std::vector<unsigned int>& blocks, const std::vecto
     biomes(std::move(biomes)),
     pos(pos),
     generated(true) {
-    memset(light.data(), 0, sizeof(light));
+    memset(blocklight.data(), 0, sizeof(blocklight));
     calcNonAirBlocks();
 }
 
@@ -61,11 +61,12 @@ Packet BlockChunk::serialize() {
     s.append<std::string>(gzip::compress(temp.data(), temp.size()));
 
     std::vector<unsigned char> lights {};
-    lights.resize(4096 * 3);
+    lights.resize(4096 * 4);
     for (unsigned short i = 0; i < 4096; i++) {
-        lights[i * 3] = this->light[i].r;
-        lights[i * 3 + 1] = this->light[i].g;
-        lights[i * 3 + 2] = this->light[i].b;
+        lights[i * 4]     = blocklight[i].r;
+        lights[i * 4 + 1] = blocklight[i].g;
+        lights[i * 4 + 2] = blocklight[i].b;
+        lights[i * 4 + 3] = getSunlight(i);
     }
     temp = Serializer().append(lights).data;
     s.append<std::string>(gzip::compress(temp.data(), temp.size()));
@@ -96,9 +97,10 @@ void BlockChunk::deserialize(PacketView& packet) {
 
     auto lightsVec = Deserializer(gzip).read<std::vector<unsigned char>>();
     for (unsigned int i = 0; i < 4096; i++) {
-        light[i].r = lightsVec[i * 3];
-        light[i].g = lightsVec[i * 3 + 1];
-        light[i].b = lightsVec[i * 3 + 2];
+        blocklight[i].r = lightsVec[i * 4];
+        blocklight[i].g = lightsVec[i * 4 + 1];
+        blocklight[i].b = lightsVec[i * 4 + 2];
+        setSunlight(i, lightsVec[i * 4 + 3]);
     }
 
 }

@@ -19,7 +19,7 @@ local noise = {
                 frequency = 0.2,
                 octaves = 3,
             },
-            scale = 6,
+            scale = 12,
             bias = 6
         }}
     }

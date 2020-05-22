@@ -111,6 +111,18 @@ namespace Space {
             glm::ivec3 local = Chunk::relative::toMapBlock(vec);
             return static_cast<unsigned int>(local.x + MAPBLOCK_SIZE * (local.y + MAPBLOCK_SIZE * local.z));
         }
+
+        // Return a local vector of an chunk within its mapblock.
+        static inline glm::ivec3 fromIndex(unsigned int ind) {
+            glm::ivec3 vec {};
+
+            vec.y = ind / (MAPBLOCK_SIZE * MAPBLOCK_SIZE);
+            ind -= (static_cast<int>(vec.y) * MAPBLOCK_SIZE * MAPBLOCK_SIZE);
+            vec.z = ind / MAPBLOCK_SIZE;
+            vec.x = ind % MAPBLOCK_SIZE;
+
+            return vec;
+        }
     }
 
     namespace Block {
@@ -134,16 +146,16 @@ namespace Space {
         // Get the index of a Block within its Chunk from its local or world position.
         static inline unsigned int index(const glm::ivec3& vec) {
             glm::ivec3 local = Block::relative::toChunk(vec);
-            return static_cast<unsigned int>(local.x + CHUNK_SIZE * (local.y + CHUNK_SIZE * local.z));
+            return static_cast<unsigned int>(local.x + CHUNK_SIZE * (local.z + CHUNK_SIZE * local.y));
         }
 
-        // Return a local vector of an index within it's chunk.
+        // Return a local vector of an block within its chunk.
         static inline glm::ivec3 fromIndex(unsigned int ind) {
             glm::ivec3 vec {};
 
-            vec.z = ind / (CHUNK_SIZE * CHUNK_SIZE);
-            ind -= (static_cast<int>(vec.z) * CHUNK_SIZE * CHUNK_SIZE);
-            vec.y = ind / CHUNK_SIZE;
+            vec.y = ind / (CHUNK_SIZE * CHUNK_SIZE);
+            ind -= (static_cast<int>(vec.y) * CHUNK_SIZE * CHUNK_SIZE);
+            vec.z = ind / CHUNK_SIZE;
             vec.x = ind % CHUNK_SIZE;
 
             return vec;

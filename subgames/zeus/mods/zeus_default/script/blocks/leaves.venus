@@ -1,6 +1,7 @@
 zepha.register_block("zeus:default:leaves", {
     visible = true,
     culls = false,
+    light_propagates = true,
     name = "Leaves",
     model = "base:leaf_like",
     textures = {

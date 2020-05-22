@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <queue>
+
 #include "MapGenJob.h"
 #include "MapGenProps.h"
 #include "../../util/Vec.h"
@@ -21,6 +23,12 @@ public:
     // If both are partials `b` takes preference, if one is a fully generated chunk the partial takes preference.
     static std::shared_ptr<BlockChunk> combinePartials(std::shared_ptr<BlockChunk> a, std::shared_ptr<BlockChunk> b);
 private:
+    struct SunlightNode {
+        SunlightNode(unsigned short index, BlockChunk* chunk) : index(index), chunk(chunk) {};
+        unsigned short index;
+        BlockChunk* chunk;
+    };
+
     // Generate a chunk at `worldPos`, and place it and any partials in `chunks`.
 	void generateChunk(chunk_partials_map& chunks, glm::ivec3 worldPos);
 
@@ -33,6 +41,11 @@ private:
 	// Generate blocks and structures on a chunk, respectively. generateStructures can create partials.
 	void generateBlocks(chunk_partial& chunk);
 	void generateStructures(chunk_partials_map& chunks, chunk_partial& chunk);
+
+	// Generate sunlight on the mapgen threads to speed up perf
+    void generateSunlight(chunk_partials_map& chunks, glm::ivec3 mbPos);
+    bool containsWorldPos(BlockChunk *chunk, glm::ivec3 pos);
+    void propogateSunlightNodes(chunk_partials_map& chunks, std::queue<SunlightNode>& queue);
 
 	// Place block in the `chunks` array, creates a partial if necessary.
     static void setBlock(glm::ivec3 worldPos, unsigned int block, chunk_partials_map& chunks);

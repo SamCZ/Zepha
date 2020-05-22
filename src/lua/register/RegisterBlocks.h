@@ -263,6 +263,7 @@ namespace RegisterBlocks {
             if (!nameOpt) throw identifier + " is missing name property!";
 
             bool solid = blockTable.get_or("solid", true);
+            bool lightPropagates = blockTable.get_or("light_propagates", false);
             auto maxStack = blockTable.get_or("stack", 64);
 
             glm::vec3 lightSource {};
@@ -299,6 +300,7 @@ namespace RegisterBlocks {
                 models.first, models.second,
                 solid,
                 lightSource,
+                lightPropagates,
                 std::move(selectionBoxes),
                 std::move(collisionBoxes),
                 defs.size() // Index
