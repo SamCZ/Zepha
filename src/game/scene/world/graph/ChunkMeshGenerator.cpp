@@ -86,27 +86,27 @@ ChunkMeshGenerator::ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefin
 }
 
 BlockDef& ChunkMeshGenerator::getBlockAt(const glm::ivec3& pos) {
-    if (pos.x == 16) return defs.blockFromId(adjacent[0]->getBlock(pos - glm::ivec3 {16, 0, 0}));
-    if (pos.x == -1) return defs.blockFromId(adjacent[1]->getBlock(pos + glm::ivec3 {16, 0, 0}));
+    if (pos.x == -1) return defs.blockFromId(adjacent[0]->getBlock(pos + glm::ivec3 {16, 0, 0}));
+    if (pos.x == 16) return defs.blockFromId(adjacent[1]->getBlock(pos - glm::ivec3 {16, 0, 0}));
 
-    if (pos.y == 16) return defs.blockFromId(adjacent[2]->getBlock(pos - glm::ivec3 {0, 16, 0}));
-    if (pos.y == -1) return defs.blockFromId(adjacent[3]->getBlock(pos + glm::ivec3 {0, 16, 0}));
+    if (pos.y == -1) return defs.blockFromId(adjacent[2]->getBlock(pos + glm::ivec3 {0, 16, 0}));
+    if (pos.y == 16) return defs.blockFromId(adjacent[3]->getBlock(pos - glm::ivec3 {0, 16, 0}));
 
-    if (pos.z == 16) return defs.blockFromId(adjacent[4]->getBlock(pos - glm::ivec3 {0, 0, 16}));
-    if (pos.z == -1) return defs.blockFromId(adjacent[5]->getBlock(pos + glm::ivec3 {0, 0, 16}));
+    if (pos.z == -1) return defs.blockFromId(adjacent[4]->getBlock(pos + glm::ivec3 {0, 0, 16}));
+    if (pos.z == 16) return defs.blockFromId(adjacent[5]->getBlock(pos - glm::ivec3 {0, 0, 16}));
 
     return defs.blockFromId(chunk->getBlock(pos));
 }
 
 glm::vec4 ChunkMeshGenerator::getLightAt(const glm::ivec3& pos) {
-    if (pos.x == 16) return adjacent[0]->getLight(Space::Block::index(pos - glm::ivec3 {16, 0, 0}));
-    if (pos.x == -1) return adjacent[1]->getLight(Space::Block::index(pos + glm::ivec3 {16, 0, 0}));
+    if (pos.x == -1) return adjacent[0]->getLight(Space::Block::index(pos + glm::ivec3 {16, 0, 0}));
+    if (pos.x == 16) return adjacent[1]->getLight(Space::Block::index(pos - glm::ivec3 {16, 0, 0}));
 
-    if (pos.y == 16) return adjacent[2]->getLight(Space::Block::index(pos - glm::ivec3 {0, 16, 0}));
-    if (pos.y == -1) return adjacent[3]->getLight(Space::Block::index(pos + glm::ivec3 {0, 16, 0}));
+    if (pos.y == -1) return adjacent[2]->getLight(Space::Block::index(pos + glm::ivec3 {0, 16, 0}));
+    if (pos.y == 16) return adjacent[3]->getLight(Space::Block::index(pos - glm::ivec3 {0, 16, 0}));
 
-    if (pos.z == 16) return adjacent[4]->getLight(Space::Block::index(pos - glm::ivec3 {0, 0, 16}));
-    if (pos.z == -1) return adjacent[5]->getLight(Space::Block::index(pos + glm::ivec3 {0, 0, 16}));
+    if (pos.z == -1) return adjacent[4]->getLight(Space::Block::index(pos + glm::ivec3 {0, 0, 16}));
+    if (pos.z == 16) return adjacent[5]->getLight(Space::Block::index(pos - glm::ivec3 {0, 0, 16}));
 
     return chunk->getLight(Space::Block::index(pos));
 }
