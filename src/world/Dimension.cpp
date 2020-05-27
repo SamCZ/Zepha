@@ -1,133 +1,28 @@
 //
-// Created by aurailus on 2019-11-20.
+// Created by aurailus on 2020-05-26.
 //
 
 #include "Dimension.h"
 
-Dimension::Dimension(DefinitionAtlas &defs) : defs(defs) {}
+void Dimension::calculateEdgeLight(glm::ivec3 mbPos) {
+    for (auto i = 0; i < 64; i++) {
+        glm::ivec3 l = Space::Chunk::fromIndex(i);
+        glm::ivec3 chunkPos = mbPos * 4 + l;
 
-std::shared_ptr<Region> Dimension::getRegion(glm::ivec3 regionPosition) {
-    if (!regions.count(regionPosition)) return nullptr;
-    return regions[regionPosition];
+        auto edges = std::array<bool, 6> { l.x == 0, l.y == 0, l.z == 0,
+                                           l.x == Space::MAPBLOCK_SIZE, l.y == Space::MAPBLOCK_SIZE, l.z == Space::MAPBLOCK_SIZE};
+
+        if (edges[1]) {
+            for (unsigned int j = 0; j < 64; j++) {
+                for (unsigned int k = 0; k < 64; k++) {
+
+                }
+            }
+        }
+    }
 }
 
-void Dimension::removeRegion(glm::ivec3 pos) {
-    regions.erase(pos);
-}
-
-std::shared_ptr<MapBlock> Dimension::getMapBlock(glm::ivec3 mapBlockPosition) {
-    auto region = getRegion(Space::Region::world::fromMapBlock(mapBlockPosition));
-    if (!region) return nullptr;
-    return (*region)[Space::MapBlock::index(mapBlockPosition)];
-}
-
-void Dimension::removeMapBlock(glm::ivec3 pos) {
-    auto region = getRegion(Space::Region::world::fromMapBlock(pos));
-    if (!region) return;
-    auto ind = Space::MapBlock::index(pos);
-    region->remove(ind);
-    if (region->count == 0) removeRegion(Space::Region::world::fromMapBlock(pos));
-}
-
-std::shared_ptr<BlockChunk> Dimension::getChunk(glm::ivec3 chunkPosition) {
-    auto mapBlock = getMapBlock(Space::MapBlock::world::fromChunk(chunkPosition));
-    if (!mapBlock) return nullptr;
-    return (*mapBlock)[Space::Chunk::index(chunkPosition)];
-}
-
-void Dimension::setChunk(std::shared_ptr<BlockChunk> chunk) {
-    auto mapBlock = getOrCreateMapBlock(Space::MapBlock::world::fromChunk(chunk->pos));
-    (*mapBlock).set(Space::Chunk::index(chunk->pos), chunk);
-}
-
-void Dimension::removeChunk(glm::ivec3 pos){
-    auto mapBlock = getMapBlock(Space::MapBlock::world::fromChunk(pos));
-    if (!mapBlock) return;
-    auto ind = Space::Chunk::index(pos);
-    mapBlock->remove(ind);
-    if (mapBlock->count == 0) removeMapBlock(Space::MapBlock::world::fromChunk(pos));
-}
-
-unsigned int Dimension::getBlock(glm::ivec3 pos) {
-    auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
-    if (chunk) return chunk->getBlock(Space::Block::relative::toChunk(pos));
-    return 0;
-}
-
-bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {
-    auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
-    if (!chunk) return false;
-
-    chunk->setBlock(Space::Block::relative::toChunk(pos), block);
-
-    // Remove light when placing solid blocks.
-    glm::ivec4 oldLight = chunk->getLight(Space::Block::index(pos));
-    if (!def.lightPropagates && oldLight.x + oldLight.y + oldLight.z != 0) removeLight(pos);
-
-    // Add light when placing light emitting blocks.
-    glm::ivec3 newLight = def.lightSource;
-    if (newLight.x > oldLight.x || newLight.y > oldLight.y || newLight.z > oldLight.z) addLight(pos, newLight);
-
-    // Reflow light when a transparent block is placed.
-    if (def.lightPropagates) reflowLight(pos);
-
-    // Block sunlight when a solid block is placed.
-    if (!def.lightPropagates && getLight(pos, chunk.get()).w != 0) blockSunlight(pos);
-
-    return true;
-}
-
-std::shared_ptr<Region> Dimension::getOrCreateRegion(glm::ivec3 pos) {
-    if (regions[pos]) return regions[pos];
-    regions[pos] = std::make_shared<Region>(pos);
-    return regions[pos];
-}
-
-std::shared_ptr<MapBlock> Dimension::getOrCreateMapBlock(glm::ivec3 mapBlockPosition) {
-    auto region = getOrCreateRegion(Space::Region::world::fromMapBlock(mapBlockPosition));
-    unsigned int index = Space::MapBlock::index(mapBlockPosition);
-
-    if ((*region)[index] != nullptr) return (*region)[index];
-    (*region).set(index, std::make_shared<MapBlock>(mapBlockPosition));
-    return (*region)[index];
-}
-
-//
-// Light related functions.
-//
-
-void Dimension::createSunlight(glm::ivec3 pos) {
-//    auto chunk = getChunk(pos);
-//    auto top = getChunk(pos + glm::ivec3 {0, 1, 0});
-//    if (top) {
-//        for (unsigned int i = 0; i < 256; i++) {
-//            unsigned int ind = Space::Block::index(glm::ivec3 {i / 16, 0, i % 16});
-//            auto light = top->getSunlight(ind);
-//            if (light != 0) {
-//                lightAddQueue[SUNLIGHT_CHANNEL].emplace(ind, top.get());
-//                if (light == 15) for (int j = 15; j >= 0; j--) {
-//                    unsigned int ind = Space::Block::index({i / 16, j, i % 16});
-//                    if (!defs.blockFromId(chunk->getBlock(ind)).solid) {
-//                        chunk->setSunlight(ind, 15);
-//                        lightAddQueue[SUNLIGHT_CHANNEL].emplace(ind, chunk.get());
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    else {
-//        for (unsigned int i = 0; i < 256; i++) {
-//            for (unsigned int j = 15; j >= 0; j--) {
-//                auto index = Space::Block::index(glm::ivec3{i / 16, j, i % 16});
-//                if (defs.blockFromId(chunk->getBlock(index)).solid) continue;
-//                chunk->setSunlight(index, 15);
-//                lightAddQueue[SUNLIGHT_CHANNEL].emplace(index, chunk.get());
-//            }
-//        }
-//    }
-}
-
-void Dimension::blockSunlight(glm::ivec3 pos) {
+void Dimension::reflowSunlightAroundSolid(glm::ivec3 pos) {
     auto startChunk = getChunk(Space::Chunk::world::fromBlock(pos));
     auto ind = Space::Block::index(pos);
     unsigned int light = startChunk->getSunlight(ind);
@@ -136,39 +31,66 @@ void Dimension::blockSunlight(glm::ivec3 pos) {
     propogateRemoveNodes();
 }
 
-// Returns true if the provided pos references a block within chunk, otherwise returns false.
 bool Dimension::containsWorldPos(BlockChunk *chunk, glm::ivec3 pos) {
     return chunk && Space::Chunk::world::fromBlock(pos) == chunk->pos;
 }
 
-// Get the BlockLight of a block. This function can be accelerated
-// by providing a chunk that might contain the world position.
 glm::ivec4 Dimension::getLight(glm::ivec3 worldPos, BlockChunk *chunk) {
     if (containsWorldPos(chunk, worldPos)) return chunk->getLight(Space::Block::index(worldPos));
     auto oChunk = getChunk(Space::Chunk::world::fromBlock(worldPos)).get();
     return (oChunk ? oChunk->getLight(Space::Block::index(worldPos)) : glm::ivec4 {});
 }
 
-void Dimension::addLight(glm::ivec3 pos, glm::ivec3 light) {
+void Dimension::addBlockLight(glm::ivec3 pos, glm::ivec3 light) {
     auto startChunk = getChunk(Space::Chunk::world::fromBlock(pos));
-    auto index = Space::Block::index(pos);
+    auto ind = Space::Block::index(pos);
 
-    startChunk->setBlockLight(index, light);
-    lightAddQueue[0].emplace(index, startChunk.get());
-    lightAddQueue[1].emplace(index, startChunk.get());
-    lightAddQueue[2].emplace(index, startChunk.get());
+    startChunk->setBlockLight(ind, light);
+    lightAddQueue[0].emplace(ind, startChunk.get());
+    lightAddQueue[1].emplace(ind, startChunk.get());
+    lightAddQueue[2].emplace(ind, startChunk.get());
     propogateAddNodes();
 }
 
-void Dimension::removeLight(glm::ivec3 pos) {
+void Dimension::removeBlockLight(glm::ivec3 pos) {
     auto startChunk = getChunk(Space::Chunk::world::fromBlock(pos));
-    glm::ivec4 val = startChunk->getLight(Space::Block::index(pos));
+    auto ind = Space::Block::index(pos);
+
+    glm::ivec4 val = startChunk->getLight(ind);
 
     startChunk->setBlockLight(Space::Block::index(pos), {});
-    lightRemoveQueue[0].emplace(Space::Block::index(pos), val.x, startChunk.get());
-    lightRemoveQueue[1].emplace(Space::Block::index(pos), val.y, startChunk.get());
-    lightRemoveQueue[2].emplace(Space::Block::index(pos), val.z, startChunk.get());
+    lightRemoveQueue[0].emplace(ind, val.x, startChunk.get());
+    lightRemoveQueue[1].emplace(ind, val.y, startChunk.get());
+    lightRemoveQueue[2].emplace(ind, val.z, startChunk.get());
     propogateRemoveNodes();
+}
+
+void Dimension::reflowLightAroundTransparent(glm::ivec3 pos) {
+    glm::ivec4 placeLight {};
+    const static std::array<glm::ivec3, 6> checks = { glm::ivec3 {-1, 0, 0}, {1, 0, 0}, {0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1} };
+
+    auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
+    auto ind = Space::Block::index(pos);
+    if (!chunk) return;
+
+    for (const auto& i : checks) {
+        glm::ivec3 check = pos + i;
+        auto adjLight = getLight(check, chunk.get());
+        placeLight.x = fmax(placeLight.x, adjLight.x - 1);
+        placeLight.y = fmax(placeLight.y, adjLight.y - 1);
+        placeLight.z = fmax(placeLight.z, adjLight.z - 1);
+        placeLight.w = fmax(placeLight.w, adjLight.w - (i.y == 1 ? 0 : 1));
+    }
+
+    chunk->setBlockLight(ind, {placeLight.x, placeLight.y, placeLight.z});
+    chunk->setSunlight(ind, placeLight.w);
+
+    lightAddQueue[0].emplace(ind, chunk.get());
+    lightAddQueue[1].emplace(ind, chunk.get());
+    lightAddQueue[2].emplace(ind, chunk.get());
+    lightAddQueue[3].emplace(ind, chunk.get());
+
+    propogateAddNodes();
 }
 
 std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
@@ -249,7 +171,25 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
     return chunksUpdated;
 }
 
-void Dimension::propogateLight() {
-    propogateRemoveNodes();
-    propogateAddNodes();
+bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {
+    if (!DimensionBase::setBlock(pos, block)) return false;
+
+    auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
+    auto &def = defs.blockFromId(block);
+
+    // Remove light when placing solid blocks.
+    glm::ivec4 oldLight = chunk->getLight(Space::Block::index(pos));
+    if (!def.lightPropagates && oldLight.x + oldLight.y + oldLight.z != 0) removeBlockLight(pos);
+
+    // Add light when placing light emitting blocks.
+    glm::ivec3 newLight = def.lightSource;
+    if (newLight.x > oldLight.x || newLight.y > oldLight.y || newLight.z > oldLight.z) addBlockLight(pos, newLight);
+
+    // Reflow light when a transparent block is placed.
+    if (def.lightPropagates) reflowLightAroundTransparent(pos);
+
+    // Block sunlight when a solid block is placed.
+    if (!def.lightPropagates && getLight(pos, chunk.get()).w != 0) reflowSunlightAroundSolid(pos);
+
+    return true;
 }

@@ -227,9 +227,9 @@ set(ZEPHA_SRC
 	def/gen/ServerBiomeAtlas.cpp 
 	def/gen/ServerBiomeAtlas.h 
 	def/gen/LocalBiomeAtlas.cpp 
-	def/gen/LocalBiomeAtlas.h 
-	world/Dimension.cpp 
-	world/Dimension.h 
+	def/gen/LocalBiomeAtlas.h
+		world/DimensionBase.cpp
+		world/DimensionBase.h
 	def/texture/RawTexData.h 
 	game/hud/components/compound/GuiImageButton.cpp 
 	game/hud/components/compound/GuiImageButton.h 
@@ -333,6 +333,6 @@ set(ZEPHA_SRC
 	game/scene/world/graph/FarMeshGenerator.h
 	game/scene/world/FarMapMeshDetails.h
 	lua/api/class/LuaGuiElement.cpp
-	lua/api/class/LuaGuiElement.h)
+	lua/api/class/LuaGuiElement.h world/Dimension.cpp world/Dimension.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

@@ -20,7 +20,6 @@ void LocalDimension::update(double delta, glm::vec3 playerPos) {
 
     auto clientMapBlock = Space::MapBlock::world::fromBlock(playerPos);
 
-
     for (auto it = regions.cbegin(); it != regions.cend();) {
         bool remove = false;
         for (unsigned short m = 0; m < 64; m++) {
@@ -34,7 +33,6 @@ void LocalDimension::update(double delta, glm::vec3 playerPos) {
                 for (unsigned short c = 0; c < 64; c++) {
                     auto chunk = mapBlock->operator[](c);
                     if (!chunk) continue;
-
                     removeMeshChunk(chunk->pos);
                 }
 
@@ -48,27 +46,6 @@ void LocalDimension::update(double delta, glm::vec3 playerPos) {
         }
         if (!remove) it++;
     }
-
-//    for (const auto& region : regions) {
-//        for (unsigned short i = 0; i < 64; i++) {
-//            auto mapBlock = region.second->operator[](i);
-//            if (mapBlock == nullptr) continue;
-//
-//            if (abs(clientMapBlock.x - mapBlock->pos.x) > LocalDimension::MB_STORE_H + 1
-//             || abs(clientMapBlock.y - mapBlock->pos.y) > LocalDimension::MB_STORE_V + 1
-//             || abs(clientMapBlock.z - mapBlock->pos.z) > LocalDimension::MB_STORE_H + 1) {
-//
-//                for (unsigned short j = 0; j < 64; j++) {
-//                    auto chunk = mapBlock->operator[](j);
-//                    if (chunk == nullptr) continue;
-//                    removeMeshChunk(chunk->pos);
-//                }
-//
-//                removeMapBlock(mapBlock->pos);
-//                if (region.second->count == 0) break;
-//            }
-//        }
-//    }
 }
 
 void LocalDimension::finishMeshes() {
