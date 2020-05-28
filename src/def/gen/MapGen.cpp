@@ -245,8 +245,8 @@ void MapGen::generateSunlight(MapGen::chunk_partials_map &chunks, glm::ivec3 mbP
                         if (b.y < 0) {
                             b.y = 15;
                             c.y = c.y ? c.y - 1 : 3;
-                            if (c.y == 3) break;
                             chunk = chunks[mbPos * 4 + c].second;
+                            if (c.y == 3) break;
                         }
                     }
                 }
@@ -268,8 +268,7 @@ void MapGen::propogateSunlightNodes(MapGen::chunk_partials_map &chunks, std::que
         unsigned char lightLevel = node.chunk->getSunlight(node.index);
         glm::ivec3 worldPos = node.chunk->pos * 16 + Space::Block::fromIndex(node.index);
 
-        const static std::array<glm::ivec3, 6> checks = { glm::ivec3 {-1, 0, 0}, {1, 0, 0}, {0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1} };
-        for (const auto& i : checks) {
+        for (const auto& i : Vec::adj) {
             glm::ivec3 check = worldPos + i;
 
             BlockChunk* chunk;
@@ -283,9 +282,7 @@ void MapGen::propogateSunlightNodes(MapGen::chunk_partials_map &chunks, std::que
 
             auto ind = Space::Block::index(check);
             if (defs.blockFromId(chunk->getBlock(ind)).lightPropagates && chunk->getSunlight(ind) + 2 <= lightLevel) {
-                int subtract = 1;
-                if (lightLevel == 15 && i == checks[2]) subtract = 0;
-                chunk->setSunlight(ind, lightLevel - subtract);
+                chunk->setSunlight(ind, lightLevel - static_cast<int>(!(lightLevel == 15 && i.y == -1)));
                 queue.emplace(ind, chunk);
             }
         }

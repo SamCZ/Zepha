@@ -95,7 +95,7 @@ void main() {
     float sunlightIntensity = 1;
 //    float sunlightIntensity = aLight.w * clamp(sin(time / 2.5) + 0.25, 0, 1) / MAX_SUNLIGHT;
     vec3 blockLightColor = (aLight.xyz / MAX_BLOCKLIGHT) * vec3(1 + sunlightIntensity / 4);
-    vec3 sunlightColor = clamp(sunlightIntensity * 1.25 * vec3(1, 0.9, 0.75) * (aLight.w / 16.0), 0, 1);
+    vec3 sunlightColor = clamp(sunlightIntensity * 1.25 * vec3(1, 1, 1) * (aLight.w / 15.0), 0, 1);
     vec3 resultantLight = vec3(max(sunlightColor.x, blockLightColor.x), max(sunlightColor.y, blockLightColor.y), max(sunlightColor.z, blockLightColor.z));
 
     vec4 worldPos = model * pos;
