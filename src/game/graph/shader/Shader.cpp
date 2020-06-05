@@ -10,19 +10,13 @@
 
 #include "../../../util/Log.h"
 
-void Shader::createFromString(std::string& vertexSource, std::string& fragmentSource) {
+void Shader::createFromString(std::string& vertexSource, std::string& fragmentSource, const std::string& geoSource) {
     compileShader(vertexSource, fragmentSource);
 }
 
-void Shader::createFromFile(const std::string& vertexFile, const std::string& fragmentFile) {
-    this->vertexFile = vertexFile;
-    this->fragmentFile = fragmentFile;
-
-    std::string vertexSource = readFile(vertexFile);
-    std::string fragmentSource = readFile(fragmentFile);
-
-    compileShader(vertexSource, fragmentSource);
-
+void Shader::createFromFile(const std::string& vertexFile, const std::string& fragmentFile, const std::string& geoFile) {
+    compileShader(readFile(vertexFile), readFile(fragmentFile),
+        geoFile == "" ? "" : readFile(geoFile));
     postCreate();
 }
 
@@ -58,41 +52,41 @@ GLint Shader::get(const std::string &name) {
 }
 
 void Shader::set(int loc, unsigned int val) {
-    crashIfInactive();
+    checkActive();
     glUniform1ui(loc, val);
 }
 
 void Shader::set(int loc, int val) {
-    crashIfInactive();
+    checkActive();
     glUniform1i(loc, val);
 }
 
 void Shader::set(int loc, float val) {
-    crashIfInactive();
+    checkActive();
     glUniform1f(loc, val);
 }
 
 void Shader::set(int loc, glm::vec3 val) {
-    crashIfInactive();
+    checkActive();
     glUniform3f(loc, val.x, val.y, val.z);
 }
 
 void Shader::set(int loc, glm::vec4 val) {
-    crashIfInactive();
+    checkActive();
     glUniform4f(loc, val.x, val.y, val.z, val.w);
 }
 
 void Shader::set(int loc, glm::mat4 val) {
-    crashIfInactive();
+    checkActive();
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(val));
 }
 
 void Shader::setArr(int loc, unsigned int count, glm::mat4 &start) {
-    crashIfInactive();
+    checkActive();
     glUniformMatrix4fv(loc, count, GL_FALSE, glm::value_ptr(start));
 }
 
-void Shader::compileShader(const std::string& vertexSource, const std::string& fragmentSource) {
+void Shader::compileShader(const std::string& vertexSource, const std::string& fragmentSource, const std::string& geoSource) {
     shaderID = glCreateProgram();
 
     if (!shaderID) {
@@ -102,6 +96,7 @@ void Shader::compileShader(const std::string& vertexSource, const std::string& f
 
     addShader(shaderID, vertexSource, GL_VERTEX_SHADER);
     addShader(shaderID, fragmentSource, GL_FRAGMENT_SHADER);
+    if (geoSource != "") addShader(shaderID, geoSource, GL_GEOMETRY_SHADER);
 
     GLint result = 0;
     GLchar eLog[1024] = { 0 };
@@ -140,11 +135,11 @@ void Shader::addShader(GLuint program, const std::string& shaderCode, GLenum sha
     glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
 
     if (!result) {
-        std::string& shaderName = (shaderType == GL_VERTEX_SHADER) ? vertexFile : fragmentFile;
+        std::string shaderTypeName = (shaderType == GL_VERTEX_SHADER) ? "vertex" : (shaderType == GL_FRAGMENT_SHADER) ? "fragment" : "geometry";
 
         glGetShaderInfoLog(shader, sizeof(eLog), nullptr, eLog);
-        std::cout << Log::err << "-- Error compiling '" << shaderName << "' --\n" << eLog << Log::endl
-                  << Log::err << shaderCode << std::endl;
+        std::cout << Log::err << "Error compiling the " << shaderTypeName << " shader:\n" << eLog
+            << Log::endl << Log::err << shaderCode << std::endl;
         return;
     }
 
@@ -156,16 +151,11 @@ Shader::~Shader() {
 }
 
 void Shader::cleanup() {
-    if (shaderID != 0) {
-        glDeleteProgram(shaderID);
-    }
+    if (shaderID != 0) glDeleteProgram(shaderID);
 }
 
-void Shader::crashIfInactive() {
+void Shader::checkActive() {
     int cProgram;
     glGetIntegerv(GL_CURRENT_PROGRAM, &cProgram);
-    if (cProgram != shaderID) {
-        std::cout << Log::err << "-- Attempted action on inactive shader! --" << Log::endl;
-        throw std::exception();
-    }
+    if (cProgram != shaderID) throw std::runtime_error("Attempted to set a uniform on an inactive shader!");
 }

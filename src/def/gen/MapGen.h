@@ -44,7 +44,7 @@ private:
 
 	// Generate sunlight on the mapgen threads to speed up perf
     void generateSunlight(chunk_partials_map& chunks, glm::ivec3 mbPos);
-    bool containsWorldPos(BlockChunk *chunk, glm::ivec3 pos);
+    static bool containsWorldPos(BlockChunk *chunk, glm::ivec3 pos);
     void propogateSunlightNodes(chunk_partials_map& chunks, std::queue<SunlightNode>& queue);
 
 	// Place block in the `chunks` array, creates a partial if necessary.

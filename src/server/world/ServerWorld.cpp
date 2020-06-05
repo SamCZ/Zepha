@@ -60,16 +60,9 @@ void ServerWorld::update(double delta) {
     generatedChunks = static_cast<int>(finished->size());
 
     for (auto& mb : *finished) {
-        Timer t("finishing mapblock");
-
-        for (const auto& chunk : mb.chunks) {
-            dimension.setChunk(chunk);
-//            dimension.createSunlight(chunk->pos);
-        }
-
-//        dimension.propogateLight();
+        for (const auto& chunk : mb.chunks) dimension.setChunk(chunk);
+        dimension.calculateEdgeLight(mb.pos);
         dimension.getMapBlock(mb.pos)->generated = true;
-        t.printElapsedMs();
 
         unsigned long long mapBlockIntegrity = dimension.getMapBlockIntegrity(mb.pos);
         for (auto& client : clientList.clients) {

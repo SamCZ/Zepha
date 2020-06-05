@@ -5,15 +5,15 @@
 #pragma once
 
 
-#include <glm/vec3.hpp>
 #include <thread>
+#include <glm/vec3.hpp>
 #include <unordered_set>
+
 #include "ChunkMeshDetails.h"
-#include "graph/ChunkMeshGenerator.h"
-#include "../../../world/chunk/BlockChunk.h"
-#include "../../../def/LocalDefinitionAtlas.h"
 #include "../../../util/Vec.h"
 #include "../../../def/ClientGame.h"
+#include "../../../def/gen/NoiseSample.h"
+#include "../../../world/chunk/BlockChunk.h"
 
 class LocalDimension;
 
@@ -27,10 +27,10 @@ public:
     ~MeshGenStream();
 
     bool spaceInQueue();
-    bool isQueued(glm::vec3 pos);
+    bool isQueued(glm::ivec3 pos);
     //Attempt to add `pos` to the pre-thread queue.
     //Will return a boolean stating if there is more space left in the queue.
-    bool tryToQueue(glm::vec3 pos);
+    bool tryToQueue(glm::ivec3 pos);
 
     //Will return a vector of MeshDetails pointers containing finished meshes.
     //Frees up the threads and starts new tasks.
@@ -64,7 +64,7 @@ private:
     ClientGame& game;
 
     std::array<NoiseSample, 3> noiseSampler;
-    std::vector<glm::vec3> queuedTasks;
+    std::vector<glm::ivec3> queuedTasks;
     std::unordered_set<glm::vec3, Vec::vec3> queuedMap;
 };
 

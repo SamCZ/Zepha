@@ -229,10 +229,6 @@ void MapGen::generateSunlight(MapGen::chunk_partials_map &chunks, glm::ivec3 mbP
                         unsigned int ind =  Space::Block::index(b);
                         if (defs.blockFromId(chunk->getBlock(ind)).lightPropagates) {
                             chunk->setSunlight(ind, 15);
-
-//                            const static std::array<glm::ivec3, 4> checks {
-//                                glm::ivec3 {-1, 0, 0}, glm::ivec3 {1, 0, 0}, glm::ivec3 {0, 0, -1}, glm::ivec3 {0, 0, 1}};
-
                             sunlightQueue.emplace(ind, chunk);
                         }
                         else {

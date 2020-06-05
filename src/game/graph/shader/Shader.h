@@ -11,8 +11,8 @@
 
 class Shader {
 public:
-    void createFromString(std::string& vertexSource, std::string& fragmentSource);
-    void createFromFile(const std::string& vertexFile, const std::string& fragmentFile);
+    void createFromString(std::string& vertexSource, std::string& fragmentSource, const std::string& geoSource = "");
+    void createFromFile(const std::string& vertexFile, const std::string& fragmentFile, const std::string& geoFile = "");
 
     virtual void postCreate() {};
 
@@ -35,15 +35,13 @@ public:
     ~Shader();
 
 private:
-    std::string readFile(const std::string& fileLocation);
+    static std::string readFile(const std::string& fileLocation);
 
-    void compileShader(const std::string& vertexSource, const std::string& fragmentSource);
-    void addShader(unsigned int program, const std::string& shaderCode, GLenum shaderType);
+    void compileShader(const std::string& vertexSource, const std::string& fragmentSource, const std::string& geoSource = "");
+    static void addShader(unsigned int program, const std::string& shaderCode, GLenum shaderType);
 
-    void crashIfInactive();
+    void checkActive();
 
     unsigned int shaderID = 0;
-    std::string vertexFile {};
-    std::string fragmentFile {};
 };
 

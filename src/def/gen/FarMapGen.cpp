@@ -44,10 +44,8 @@ void FarMapGen::buildDensityMap(FarMapJob *job, glm::ivec3 mbPos) {
     int sampleWid = 64 / job->downScale;
     float factor = (job->downScale == 2 ? 0.5f : job->downScale == 4 ? 1 : 2);
 
-    glm::ivec3 lp;
     for (int m = 0; m < pow(sampleWid, 3); m++) {
-        Vec::indAssignVec(m, lp, sampleWid);
-
+        glm::ivec3 lp = Space::Block::fromIndex(m);
         job->density[m] = (volume.get(glm::vec3(lp) * factor) + heightmap.get(glm::vec3(lp) * factor)) - (static_cast<float>(lp.y) * factor + mbPos.y * 64);
     }
 }

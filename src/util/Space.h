@@ -109,7 +109,7 @@ namespace Space {
         // Get the index of a Chunk within its MapBlock from its local or world position.
         static inline unsigned int index(const glm::ivec3& vec) {
             glm::ivec3 local = Chunk::relative::toMapBlock(vec);
-            return static_cast<unsigned int>(local.x + MAPBLOCK_SIZE * (local.y + MAPBLOCK_SIZE * local.z));
+            return static_cast<unsigned int>(local.x + MAPBLOCK_SIZE * (local.z + MAPBLOCK_SIZE * local.y));
         }
 
         // Return a local vector of an chunk within its mapblock.

@@ -4,6 +4,7 @@
 
 #include "MeshGenStream.h"
 
+#include "graph/ChunkMeshGenerator.h"
 #include "../../../world/LocalDimension.h"
 
 MeshGenStream::MeshGenStream(ClientGame& game, LocalDimension &dimension) :
@@ -45,7 +46,7 @@ std::vector<ChunkMeshDetails*> MeshGenStream::update() {
             }
 
             if (!queuedTasks.empty()) {
-                glm::vec3 pos = *queuedTasks.begin();
+                glm::ivec3 pos = *queuedTasks.begin();
                 queuedTasks.erase(queuedTasks.begin());
                 queuedMap.erase(pos);
 
@@ -56,7 +57,7 @@ std::vector<ChunkMeshDetails*> MeshGenStream::update() {
                 u.thisChunk = std::shared_ptr<BlockChunk>(chunk);
 
                 int ind = 0;
-                for (glm::vec3 dir : Vec::cardinalVectors) {
+                for (const glm::ivec3& dir : Vec::adj) {
                     std::shared_ptr<BlockChunk> adjacent = dimension.getChunk(pos + dir);
                     u.adjacentChunks[ind++] = std::shared_ptr<BlockChunk>(adjacent);
                     if (adjacent == nullptr) goto breakAddTask;
@@ -101,11 +102,11 @@ bool MeshGenStream::spaceInQueue() {
     return queuedTasks.size() < TOTAL_QUEUE_SIZE;
 }
 
-bool MeshGenStream::isQueued(glm::vec3 pos) {
-    return (bool) queuedMap.count(pos);
+bool MeshGenStream::isQueued(glm::ivec3 pos) {
+    return static_cast<bool>(queuedMap.count(pos));
 }
 
-bool MeshGenStream::tryToQueue(glm::vec3 pos) {
+bool MeshGenStream::tryToQueue(glm::ivec3 pos) {
     unsigned long sizeOfQueue = queuedTasks.size();
 
     if (sizeOfQueue < TOTAL_QUEUE_SIZE && !queuedMap.count(pos)) {
