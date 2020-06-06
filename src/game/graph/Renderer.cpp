@@ -23,8 +23,8 @@ Renderer::Renderer(glm::ivec2 win) :
     ssao.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoCalc.fs");
     blur.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoBlur.fs");
     light.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/deferredLighting.fs");
-    world.createFromFile("./assets/shader/world/deferredGeometryWorld.vs", "./assets/shader/world/deferredGeometryWorld.fs", "./assets/shader/world/deferredGeometryWorld.gs");
-    entity.createFromFile("./assets/shader/world/deferredGeometryEntity.vs", "./assets/shader/world/deferredGeometryEntity.fs");
+    world.createFromFile("./assets/shader/world/world.vs", "./assets/shader/world/world.fs", "./assets/shader/world/world.gs");
+    entity.createFromFile("./assets/shader/world/entity.vs", "./assets/shader/world/entity.fs");
 
     guiShader = Shader();
     guiShader.createFromFile("./assets/shader/ortho/hud.vs", "./assets/shader/ortho/hud.fs");
