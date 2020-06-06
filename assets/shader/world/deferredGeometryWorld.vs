@@ -14,11 +14,6 @@ layout (location = 5) in vec4  aLight;
 layout (location = 6) in float aShaderMod;
 layout (location = 7) in vec3  aModValues;
 
-struct SHADER_MOD {
-    float type;
-    vec3 values;
-};
-
 out VS_OUT {
     vec3 pos;
     vec3 normal;
@@ -28,7 +23,8 @@ out VS_OUT {
     vec3 blend;
     vec3 light;
 
-    SHADER_MOD mod;
+    float modType;
+    vec3 modValues;
 } vs_out;
 
 vec3 unpackFloat(float src) { return vec3(fract(src) * 2.0f - 1.0f, fract(src * 256.f) * 2.0f - 1.0f, fract(src * 65536.f) * 2.0f - 1.0f); }
@@ -48,5 +44,6 @@ void main() {
     vs_out.blend = aBlend;
     vs_out.light = light;
 
-    vs_out.mod = SHADER_MOD(aShaderMod, aModValues);
+    vs_out.modType = aShaderMod;
+    vs_out.modValues = aModValues;
 }
