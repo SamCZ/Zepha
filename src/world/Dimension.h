@@ -37,7 +37,7 @@ private:
     inline void removeBlockLight(glm::ivec3 pos);
 
     // Special methods to recalculate lights after world manipulation.
-    inline void reflowLightAroundTransparent(glm::ivec3 pos);
+    inline void reflowLightThroughTransparent(glm::ivec3 pos);
     inline void reflowSunlightAroundSolid(glm::ivec3 pos);
 
     struct LightAddNode {

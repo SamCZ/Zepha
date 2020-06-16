@@ -19,6 +19,8 @@ zepha.register_on("new_player", (p) => {
         inv:get_list("hot_wheel_6")
     }
 
+    invs[1]:add_stack({"zeus:default:light", 1})
+
     foreach inv in invs {
         inv.allow_take = fn() {
             return 0

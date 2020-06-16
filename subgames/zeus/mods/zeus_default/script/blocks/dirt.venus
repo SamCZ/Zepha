@@ -8,6 +8,4 @@ zepha.register_block("zeus:default:dirt", {
         pick = 2
     },
     yields = "zeus:default:dirt",
-    light_source = { 30, 5, 5 },
-    light_propagates = true,
 })

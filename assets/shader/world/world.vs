@@ -30,7 +30,6 @@ out VS_OUT {
 vec3 unpackFloat(float src) { return vec3(fract(src) * 2.0f - 1.0f, fract(src * 256.f) * 2.0f - 1.0f, fract(src * 65536.f) * 2.0f - 1.0f); }
 
 void main() {
-
     float sunlightIntensity = 1;
     vec3 blockLightColor = (aLight.xyz / MAX_BLOCKLIGHT) * vec3(1 + sunlightIntensity / 4);
     vec3 sunlightColor = clamp(sunlightIntensity * 1.25 * vec3(1, 1, 1) * (aLight.w / 15.0), 0, 1);

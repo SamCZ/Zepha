@@ -10,73 +10,68 @@ bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {
     auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
     auto &def = defs.blockFromId(block);
 
-    // Remove light when placing solid blocks.
     glm::ivec4 oldLight = chunk->getLight(Space::Block::index(pos));
-    if (!def.lightPropagates && oldLight.x + oldLight.y + oldLight.z != 0) removeBlockLight(pos);
-
-    // Add light when placing light emitting blocks.
     glm::ivec3 newLight = def.lightSource;
-    if (newLight.x > oldLight.x || newLight.y > oldLight.y || newLight.z > oldLight.z) addBlockLight(pos, newLight);
 
-    // Reflow light when a transparent block is placed.
-    if (def.lightPropagates) reflowLightAroundTransparent(pos);
+    if (oldLight.x + oldLight.y + oldLight.z != 0) removeBlockLight(pos);
+    if (newLight.x + newLight.y + newLight.z != 0) addBlockLight(pos, newLight);
 
-    // Block sunlight when a solid block is placed.
+    if (def.lightPropagates) reflowLightThroughTransparent(pos);
     if (!def.lightPropagates && getLight(pos, chunk.get()).w != 0) reflowSunlightAroundSolid(pos);
 
     return true;
 }
 
 void Dimension::calculateEdgeLight(glm::ivec3 mbPos) {
-    for (auto i = 0; i < 64; i++) {
-        glm::ivec3 l = Space::Chunk::fromIndex(i);
-        glm::ivec3 chunkPos = mbPos * 4 + l;
-
-        auto edges = std::array<bool, 6> { l.x == 0, l.y == 0, l.z == 0,
-            l.x == Space::MAPBLOCK_SIZE - 1, l.y == Space::MAPBLOCK_SIZE - 1, l.z == Space::MAPBLOCK_SIZE - 1};
-
-        // Pull light from above
-        if (edges[4]) {
-            if (!getChunk(chunkPos + glm::ivec3 {0, 1, 0})) continue;
-            auto chunk = getChunk(chunkPos).get();
-
-            for (unsigned int j = 0; j < 16; j++) {
-                for (unsigned int k = 0; k < 16; k++) {
-                    glm::ivec3 belowPos = chunkPos * 16 + glm::ivec3 {j, 15, k};
-                    glm::ivec3 abovePos = belowPos + glm::ivec3 {0, 1, 0};
-
-                    unsigned int lightAbove = getLight(abovePos).w;
-                    unsigned int lightBelow = getLight(belowPos).w;
-                    if (lightBelow > lightAbove) {
-                        unsigned int ind = Space::Block::index(belowPos);
-                        lightRemoveQueue[SUNLIGHT_CHANNEL].emplace(ind, lightBelow, chunk);
-                        chunk->setSunlight(ind, 0);
-                    }
-                }
-            }
-        }
-
-        // Push light below
-        if (edges[1]) {
-            auto belowChunk = getChunk(chunkPos + glm::ivec3 {0, -1, 0}).get();
-            if (!belowChunk) continue;
-
-            for (unsigned int j = 0; j < 16; j++) {
-                for (unsigned int k = 0; k < 16; k++) {
-                    glm::ivec3 abovePos = chunkPos * 16 + glm::ivec3 {j, 0, k};
-                    glm::ivec3 belowPos = abovePos + glm::ivec3 {0, -1, 0};
-
-                    unsigned int lightAbove = getLight(abovePos).w;
-                    unsigned int lightBelow = getLight(belowPos).w;
-                    if (lightBelow > lightAbove) {
-                        unsigned int ind = Space::Block::index(belowPos);
-                        lightRemoveQueue[SUNLIGHT_CHANNEL].emplace(ind, lightBelow, belowChunk);
-                        belowChunk->setSunlight(ind, 0);
-                    }
-                }
-            }
-        }
-    }
+//    for (auto i = 0; i < 64; i++) {
+//        glm::ivec3 l = Space::Chunk::fromIndex(i);
+//        glm::ivec3 chunkPos = mbPos * 4 + l;
+//
+//        auto edges = std::array<bool, 6> { l.x == 0, l.y == 0, l.z == 0,
+//            l.x == Space::MAPBLOCK_SIZE - 1, l.y == Space::MAPBLOCK_SIZE - 1, l.z == Space::MAPBLOCK_SIZE - 1};
+//
+//        // Pull light from above
+//        if (edges[4]) {
+//            if (!getChunk(chunkPos + glm::ivec3 {0, 1, 0})) continue;
+//            auto chunk = getChunk(chunkPos).get();
+//
+//            for (unsigned int j = 0; j < 16; j++) {
+//                for (unsigned int k = 0; k < 16; k++) {
+//                    glm::ivec3 belowPos = chunkPos * 16 + glm::ivec3 {j, 15, k};
+//                    glm::ivec3 abovePos = belowPos + glm::ivec3 {0, 1, 0};
+//
+//                    unsigned int lightAbove = getLight(abovePos).w;
+//                    unsigned int lightBelow = getLight(belowPos).w;
+//                    if (lightBelow > lightAbove) {
+//                        unsigned int ind = Space::Block::index(belowPos);
+//                        lightRemoveQueue[SUNLIGHT_CHANNEL].emplace(ind, lightBelow, chunk);
+//                        chunk->setSunlight(ind, 0);
+//                    }
+//                }
+//            }
+//        }
+//
+//        // Push light below
+//        if (edges[1]) {
+//            auto belowChunk = getChunk(chunkPos + glm::ivec3 {0, -1, 0}).get();
+//            if (!belowChunk) continue;
+//
+//            for (unsigned int j = 0; j < 16; j++) {
+//                for (unsigned int k = 0; k < 16; k++) {
+//                    glm::ivec3 abovePos = chunkPos * 16 + glm::ivec3 {j, 0, k};
+//                    glm::ivec3 belowPos = abovePos + glm::ivec3 {0, -1, 0};
+//
+//                    unsigned int lightAbove = getLight(abovePos).w;
+//                    unsigned int lightBelow = getLight(belowPos).w;
+//                    if (lightBelow > lightAbove) {
+//                        unsigned int ind = Space::Block::index(belowPos);
+//                        lightRemoveQueue[SUNLIGHT_CHANNEL].emplace(ind, lightBelow, belowChunk);
+//                        belowChunk->setSunlight(ind, 0);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     propogateRemoveNodes();
 }
@@ -102,7 +97,7 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
                     chunk->dirty = true;
                 }
 
-                bool sunDown = channel == SUNLIGHT_CHANNEL && lightLevel == 15 && i.y == -1;
+                bool sunDown = (channel == SUNLIGHT_CHANNEL && lightLevel == 15 && i.y == -1);
                 if (defs.blockFromId(chunk->getBlock(ind)).lightPropagates && (sunDown || chunk->getLight(ind, channel) + 2 <= lightLevel)) {
                     int subtract = sunDown ? 0 : 1;
                     chunk->setLight(ind, channel, lightLevel - subtract);
@@ -138,9 +133,9 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
                 }
 
                 unsigned char checkLight = chunk->getLight(ind, channel);
-                if (checkLight != 0 && (checkLight < node.value || (i.y == -1 && node.value == 15))) {
-                    unsigned int replaceLight = channel == SUNLIGHT_CHANNEL ? 0 :
-                        defs.blockFromId(chunk->getBlock(Space::Block::index(check))).lightSource[channel];
+                if (checkLight != 0 && (checkLight < node.value || (channel == SUNLIGHT_CHANNEL && i.y == -1 && node.value == 15))) {
+                    unsigned int replaceLight = (channel == SUNLIGHT_CHANNEL ? 0 :
+                        defs.blockFromId(chunk->getBlock(Space::Block::index(check))).lightSource[channel]);
                     chunk->setLight(ind, channel, replaceLight);
 
                     if (replaceLight) lightAddQueue[channel].emplace(ind, chunk);
@@ -195,7 +190,7 @@ void Dimension::removeBlockLight(glm::ivec3 pos) {
     propogateRemoveNodes();
 }
 
-void Dimension::reflowLightAroundTransparent(glm::ivec3 pos) {
+void Dimension::reflowLightThroughTransparent(glm::ivec3 pos) {
     glm::ivec4 placeLight {};
     const static std::array<glm::ivec3, 6> checks = { glm::ivec3 {-1, 0, 0}, {1, 0, 0}, {0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1} };
 
