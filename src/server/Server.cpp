@@ -11,7 +11,7 @@
 #include "../util/net/PacketView.h"
 
 Server::Server(unsigned short port, const std::string& subgame) :
-    seed(27),
+    seed(69),
     port(port),
     config(defs),
     defs(subgame, seed),

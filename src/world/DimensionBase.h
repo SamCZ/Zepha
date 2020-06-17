@@ -21,6 +21,8 @@ public:
     std::shared_ptr<MapBlock> getMapBlock(glm::ivec3 mapBlockPosition);
     virtual void removeMapBlock(glm::ivec3 pos);
 
+    bool mapBlockGenerated(glm::ivec3 mapBlockPosition);
+
     std::shared_ptr<BlockChunk> getChunk(glm::ivec3 chunkPosition);
     virtual void setChunk(std::shared_ptr<BlockChunk> chunk);
     virtual void removeChunk(glm::ivec3 pos);

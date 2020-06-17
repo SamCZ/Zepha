@@ -29,6 +29,11 @@ void DimensionBase::removeMapBlock(glm::ivec3 pos) {
     if (region->count == 0) removeRegion(Space::Region::world::fromMapBlock(pos));
 }
 
+bool DimensionBase::mapBlockGenerated(glm::ivec3 mapBlockPosition) {
+    auto mb = getMapBlock(mapBlockPosition);
+    return mb && mb->generated;
+}
+
 std::shared_ptr<BlockChunk> DimensionBase::getChunk(glm::ivec3 chunkPosition) {
     auto mapBlock = getMapBlock(Space::MapBlock::world::fromChunk(chunkPosition));
     if (!mapBlock) return nullptr;

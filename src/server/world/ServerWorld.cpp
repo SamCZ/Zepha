@@ -59,32 +59,33 @@ void ServerWorld::update(double delta) {
     auto finished = genStream->update();
     generatedChunks = static_cast<int>(finished->size());
 
+    std::unordered_set<glm::ivec3, Vec::ivec3> changed {};
+
     for (auto& mb : *finished) {
-        for (const auto& chunk : mb.chunks) dimension.setChunk(chunk);
-        dimension.calculateEdgeLight(mb.pos);
-        dimension.getMapBlock(mb.pos)->generated = true;
-
-        unsigned long long mapBlockIntegrity = dimension.getMapBlockIntegrity(mb.pos);
-        for (auto& client : clientList.clients) {
-            if (client->hasPlayer) {
-                auto playerMapBlock = Space::MapBlock::world::fromBlock(client->getPos());
-
-                std::pair<glm::ivec3, glm::ivec3> bounds = {
-                        {playerMapBlock.x - MB_GEN_H, playerMapBlock.y - MB_GEN_V, playerMapBlock.z - MB_GEN_H},
-                        {playerMapBlock.x + MB_GEN_H, playerMapBlock.y + MB_GEN_V, playerMapBlock.z + MB_GEN_H}};
-
-                if (isInBounds(mb.pos, bounds) && client->getMapBlockIntegrity(mb.pos) < mapBlockIntegrity) {
-                    client->setMapBlockIntegrity(mb.pos, mapBlockIntegrity);
-
-                    //TODO: Replace with sendMapBlock
-                    for (int i = 0; i < 64; i++) {
-                        sendChunk(dimension.getMapBlock(mb.pos)->operator[](i)->pos, *client);
-                    }
-                }
-            }
+        for (const auto& chunk : mb.chunks) {
+            changed.insert(chunk->pos);
+            dimension.setChunk(chunk);
         }
+
+        auto resend = dimension.calculateEdgeLight(mb.pos);
+        changed.insert(resend.begin(), resend.end());
+
+        dimension.getMapBlock(mb.pos)->generated = true;
     }
 
+    for (auto& chunk : changed) {
+        for (auto& client : clientList.clients) {
+            if (!client->hasPlayer) continue;
+
+            auto myChunk = Space::Chunk::world::fromBlock(client->getPos());
+
+            std::pair<glm::ivec3, glm::ivec3> bounds = {
+                {myChunk.x - CHUNK_SEND_H, myChunk.y - CHUNK_SEND_V, myChunk.z - CHUNK_SEND_H},
+                {myChunk.x + CHUNK_SEND_H, myChunk.y + CHUNK_SEND_V, myChunk.z + CHUNK_SEND_H}};
+
+            if (isInBounds(chunk, bounds)) sendChunk(dimension.getChunk(chunk), *client);
+        }
+    }
 
     // Send the # of generated chunks to the client (debug),
     // and trigger new chunks to be generated if a player has changed MapBlocks.
@@ -135,7 +136,7 @@ void ServerWorld::changedChunks(ServerClient& client) {
     unsigned int mapBlocksGenerating = 0;
 
     for (const auto &c : generateOrder) {
-        glm::vec3 mapBlockPos = mapBlock + c;
+        glm::ivec3 mapBlockPos = mapBlock + c;
         if (!isInBounds(mapBlockPos, oldBounds)) {
             auto existing = dimension.getMapBlock(mapBlockPos);
             if (existing != nullptr && existing->generated) {

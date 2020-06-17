@@ -14,6 +14,8 @@
 
 class Dimension : public DimensionBase {
 public:
+    typedef std::unordered_set<glm::ivec3, Vec::ivec3> relitChunks;
+
     Dimension(DefinitionAtlas& defs) : DimensionBase(defs) {}
 
     // Override setBlock to update lighting.
@@ -21,24 +23,27 @@ public:
 
     // Calculate light propogation around MapBlock edges,
     // Called after a new mapblock is inserted into the dimension.
-    void calculateEdgeLight(glm::ivec3 mbPos);
+    relitChunks calculateEdgeLight(glm::ivec3 mbPos);
 
 protected:
-    virtual std::unordered_set<glm::ivec3, Vec::ivec3> propogateAddNodes();
-    virtual std::unordered_set<glm::ivec3, Vec::ivec3> propogateRemoveNodes();
+    virtual relitChunks propogateAddNodes();
+    virtual relitChunks propogateRemoveNodes();
 
 private:
-    // Helper methods to speed up light propagation.
+    // Lighting functions
+
     static inline bool containsWorldPos(BlockChunk* chunk, glm::ivec3 pos);
     inline glm::ivec4 getLight(glm::ivec3 worldPos, BlockChunk* chunk = nullptr);
 
-    // Add and remove block light sources.
+    void calculateHorizontalEdge(std::shared_ptr<BlockChunk> a, std::shared_ptr<BlockChunk> b);
+    void calculateVerticalEdge(std::shared_ptr<BlockChunk> above, std::shared_ptr<BlockChunk> below);
+
     inline void addBlockLight(glm::ivec3 pos, glm::ivec3 light);
     inline void removeBlockLight(glm::ivec3 pos);
 
-    // Special methods to recalculate lights after world manipulation.
-    inline void reflowLightThroughTransparent(glm::ivec3 pos);
-    inline void reflowSunlightAroundSolid(glm::ivec3 pos);
+    inline void reflowLight(glm::ivec3 pos);
+    inline void removeSunlight(glm::ivec3 pos);
+    inline void setSunlight(glm::ivec3 pos, unsigned char level);
 
     struct LightAddNode {
         LightAddNode(unsigned short index, BlockChunk* chunk) : index(index), chunk(chunk) {};
