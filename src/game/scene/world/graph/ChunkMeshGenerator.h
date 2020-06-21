@@ -13,12 +13,12 @@
 #include "../../../../def/gen/NoiseSample.h"
 
 class ChunkMeshDetails;
-class BlockChunk;
+class Chunk;
 
 class ChunkMeshGenerator {
 public:
     ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefinitionAtlas& defs, LocalBiomeAtlas& biomes,
-        std::shared_ptr<BlockChunk> chunk, std::array<std::shared_ptr<BlockChunk>, 6> adjacent,
+        std::shared_ptr<Chunk> chunk, std::array<std::shared_ptr<Chunk>, 6> adjacent,
         std::array<NoiseSample, 3>& blockOffsets);
 private:
     inline BlockDef& getBlockAt(const glm::ivec3& pos);
@@ -32,6 +32,6 @@ private:
     unsigned int indOffset = 0;
     ChunkMeshDetails* meshDetails;
 
-    std::shared_ptr<BlockChunk> chunk;
-    std::array<std::shared_ptr<BlockChunk>, 6> adjacent;
+    std::shared_ptr<Chunk> chunk;
+    std::array<std::shared_ptr<Chunk>, 6> adjacent;
 };

@@ -36,15 +36,17 @@ public:
 
     // C++ Functions and Properties
     Any getAsAny(const std::string& key) const;
+
     template <typename T> const T& get(const std::string& key) const {
-        Any a = getAsAny(key);
-        return a.get<T>();
+        return getAsAny(key).get<T>();
     }
+
     template <typename T> const T& get_or(const std::string& key, const T& other) const noexcept {
         Any a = getAsAny(key);
         if (a.empty() || !a.is<T>()) return other;
         return a.get<T>();
     }
+
     template <typename T> const bool has(const std::string& key) const noexcept {
         Any a = getAsAny(key);
         return !a.empty() && a.is<T>();

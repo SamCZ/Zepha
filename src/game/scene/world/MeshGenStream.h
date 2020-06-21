@@ -13,7 +13,7 @@
 #include "../../../util/Vec.h"
 #include "../../../def/ClientGame.h"
 #include "../../../def/gen/NoiseSample.h"
-#include "../../../world/chunk/BlockChunk.h"
+#include "../../../world/chunk/Chunk.h"
 
 class LocalDimension;
 
@@ -37,8 +37,8 @@ public:
     std::vector<ChunkMeshDetails*> update();
 
     struct Unit {
-        std::shared_ptr<BlockChunk> thisChunk = nullptr;
-        std::array<std::shared_ptr<BlockChunk>, 6> adjacentChunks {};
+        std::shared_ptr<Chunk> thisChunk = nullptr;
+        std::array<std::shared_ptr<Chunk>, 6> adjacentChunks {};
 
         ChunkMeshDetails* meshDetails = new ChunkMeshDetails();
 

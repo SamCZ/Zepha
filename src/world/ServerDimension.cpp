@@ -42,9 +42,9 @@ bool ServerDimension::setBlock(glm::ivec3 pos, unsigned int block) {
     return true;
 }
 
-void ServerDimension::setChunk(std::shared_ptr<BlockChunk> chunk) {
+void ServerDimension::setChunk(std::shared_ptr<Chunk> chunk) {
     // Combine partials if there are any
-    std::shared_ptr<BlockChunk> existing = getChunk(chunk->pos);
+    std::shared_ptr<Chunk> existing = getChunk(chunk->pos);
     if (existing != nullptr) chunk = MapGen::combinePartials(chunk, existing);
 
     Dimension::setChunk(chunk);

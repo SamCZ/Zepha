@@ -6,27 +6,23 @@
 #include <gzip/decompress.hpp>
 #include <gzip/utils.hpp>
 
-#include "BlockChunk.h"
+#include "Chunk.h"
 
 #include "../../util/net/Serializer.h"
 #include "../../util/net/PacketView.h"
 
-BlockChunk::BlockChunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes) :
-    BlockChunk(blocks, biomes, {0, 0, 0}) {}
+Chunk::Chunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes) :
+    Chunk(blocks, biomes, {0, 0, 0}) {}
 
-BlockChunk::BlockChunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes, glm::ivec3 pos) :
-    blocks(std::move(blocks)),
-    biomes(std::move(biomes)),
-    pos(pos),
-    generated(true) {
-    memset(blocklight.data(), 0, sizeof(blocklight));
-    calcNonAirBlocks();
+Chunk::Chunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes, glm::ivec3 pos) :
+    blocks(std::move(blocks)), biomes(std::move(biomes)),
+    generated(true), pos(pos) {
+    recalculateRenderableBlocks();
 }
 
-bool BlockChunk::setBlock(unsigned int ind, unsigned int blk) {
+bool Chunk::setBlock(unsigned int ind, unsigned int blk) {
     if (!RIE::write(ind, blk, blocks, 4096)) return false;
 
-    // Mesh emptiness manipulation
     if (blk == DefinitionAtlas::AIR) {
         if ((nonAirBlocks = fmax(nonAirBlocks - 1, 0)) == 0) {
             empty = true;
@@ -42,15 +38,15 @@ bool BlockChunk::setBlock(unsigned int ind, unsigned int blk) {
     return true;
 }
 
-const std::vector<unsigned int> &BlockChunk::cGetBlocks() const {
+const std::vector<unsigned int> &Chunk::cGetBlocks() const {
     return blocks;
 }
 
-const std::vector<unsigned short> &BlockChunk::cGetBiomes() const {
+const std::vector<unsigned short> &Chunk::cGetBiomes() const {
     return biomes;
 }
 
-Packet BlockChunk::serialize() {
+Packet Chunk::serialize() {
     Serializer s;
     s.append(pos);
 
@@ -74,7 +70,7 @@ Packet BlockChunk::serialize() {
     return s.packet(PacketType::CHUNK);
 }
 
-void BlockChunk::deserialize(PacketView& packet) {
+void Chunk::deserialize(PacketView& packet) {
 
     pos = packet.d.read<glm::ivec3>();
 
@@ -83,7 +79,7 @@ void BlockChunk::deserialize(PacketView& packet) {
     gzip = gzip::decompress(gzip.data(), gzip.length());
 
     blocks = Deserializer(gzip).read<std::vector<unsigned int>>();
-    calcNonAirBlocks();
+    recalculateRenderableBlocks();
 
     gzip = packet.d.read<std::string>();
     if (!gzip::is_compressed(gzip.data(), gzip.length())) throw "Invalid Biomes GZip Data.";
@@ -102,10 +98,9 @@ void BlockChunk::deserialize(PacketView& packet) {
         blocklight[i].b = lightsVec[i * 4 + 2];
         setSunlight(i, lightsVec[i * 4 + 3]);
     }
-
 }
 
-void BlockChunk::calcNonAirBlocks() {
+void Chunk::recalculateRenderableBlocks() {
     nonAirBlocks = 0;
     empty = true;
 
@@ -121,9 +116,4 @@ void BlockChunk::calcNonAirBlocks() {
     }
 
     shouldHaveMesh = !empty;
-}
-
-void BlockChunk::initializeEmpty() {
-    blocks = {0, 0};
-    biomes = {0, 0};
 }

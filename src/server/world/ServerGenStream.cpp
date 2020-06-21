@@ -32,7 +32,7 @@ std::unique_ptr<std::vector<ServerGenStream::FinishedBlockJob>> ServerGenStream:
 
             if (!u.chunks.empty()) {
                 finishedChunks->push_back({u.pos, {}});
-                for (auto chunk : u.chunks) finishedChunks->back().chunks.push_back(std::shared_ptr<BlockChunk>(chunk.second.second));
+                for (auto chunk : u.chunks) finishedChunks->back().chunks.push_back(std::shared_ptr<Chunk>(chunk.second.second));
                 u.chunks.clear();
             }
 

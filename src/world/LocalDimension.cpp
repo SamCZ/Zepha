@@ -103,7 +103,7 @@ void LocalDimension::renderEntities(Renderer &renderer) {
     for (auto& entity : playerEntities) entity.draw(renderer);
 }
 
-void LocalDimension::setChunk(std::shared_ptr<BlockChunk> chunk) {
+void LocalDimension::setChunk(std::shared_ptr<Chunk> chunk) {
     Dimension::setChunk(chunk);
     attemptMeshChunk(chunk);
 }
@@ -208,7 +208,7 @@ bool LocalDimension::setBlock(glm::ivec3 pos, unsigned int block) {
     return true;
 }
 
-void LocalDimension::attemptMeshChunk(const std::shared_ptr<BlockChunk>& chunk, bool updateAdjacents) {
+void LocalDimension::attemptMeshChunk(const std::shared_ptr<Chunk>& chunk, bool updateAdjacents) {
     static const std::vector<glm::ivec3> dirs {
             glm::ivec3 {1, 0, 0}, glm::ivec3 {-1, 0, 0},
             glm::ivec3 {0, 1, 0}, glm::ivec3 {0, -1, 0},

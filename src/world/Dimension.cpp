@@ -63,7 +63,7 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
             for (const auto& i : Vec::adj) {
                 glm::ivec3 check = worldPos + i;
                 unsigned int ind = Space::Block::index(check);
-                BlockChunk* chunk;
+                Chunk* chunk;
                 if (containsWorldPos(node.chunk, check)) chunk = node.chunk;
                 else {
                     chunk = getChunk(Space::Chunk::world::fromBlock(check)).get();
@@ -98,7 +98,7 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
             for (const auto& i : Vec::adj) {
                 glm::ivec3 check = worldPos + i;
                 unsigned int ind = Space::Block::index(check);
-                BlockChunk* chunk;
+                Chunk* chunk;
                 if (containsWorldPos(node.chunk, check)) chunk = node.chunk;
                 else {
                     chunk = getChunk(Space::Chunk::world::fromBlock(check)).get();
@@ -133,17 +133,17 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
     return chunksUpdated;
 }
 
-bool Dimension::containsWorldPos(BlockChunk *chunk, glm::ivec3 pos) {
+bool Dimension::containsWorldPos(Chunk *chunk, glm::ivec3 pos) {
     return chunk && Space::Chunk::world::fromBlock(pos) == chunk->pos;
 }
 
-glm::ivec4 Dimension::getLight(glm::ivec3 worldPos, BlockChunk *chunk) {
+glm::ivec4 Dimension::getLight(glm::ivec3 worldPos, Chunk *chunk) {
     if (containsWorldPos(chunk, worldPos)) return chunk->getLight(Space::Block::index(worldPos));
     auto oChunk = getChunk(Space::Chunk::world::fromBlock(worldPos)).get();
     return (oChunk ? oChunk->getLight(Space::Block::index(worldPos)) : glm::ivec4 {});
 }
 
-void Dimension::calculateHorizontalEdge(std::shared_ptr<BlockChunk> a, std::shared_ptr<BlockChunk> b) {
+void Dimension::calculateHorizontalEdge(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b) {
     for (unsigned int j = 0; j < 256; j++) {
         glm::ivec3 diff = a->pos - b->pos;
 
@@ -154,21 +154,21 @@ void Dimension::calculateHorizontalEdge(std::shared_ptr<BlockChunk> a, std::shar
             (diff.x == 0 ? j % 16 : diff.x == 1 ? 15 : 0), j / 16,
             (diff.z == 0 ? j % 16 : diff.z == 1 ? 15 : 0) };
 
-        auto lightA = a->getSunlight(Space::Block::index(aPos));
-        auto lightB = b->getSunlight(Space::Block::index(bPos));
+        auto lightA = a->getLight(Space::Block::index(aPos), 3);
+        auto lightB = b->getLight(Space::Block::index(bPos), 3);
 
         if (lightA > lightB + 1) setAndReflowSunlight(b->pos * 16 + bPos, lightA - 1);
         else if (lightB > lightA + 1) setAndReflowSunlight(a->pos * 16 + aPos, lightB - 1);
     }
 }
 
-void Dimension::calculateVerticalEdge(std::shared_ptr<BlockChunk> above, std::shared_ptr<BlockChunk> below) {
+void Dimension::calculateVerticalEdge(std::shared_ptr<Chunk> above, std::shared_ptr<Chunk> below) {
     for (unsigned int j = 0; j < 256; j++) {
         unsigned int xx = j / 16;
         unsigned int zz = j % 16;
 
-        auto lightAbove = above->getSunlight(Space::Block::index({xx, 0, zz}));
-        auto lightBelow = below->getSunlight(Space::Block::index({xx, 15, zz}));
+        auto lightAbove = above->getLight(Space::Block::index({xx, 0, zz}), 3);
+        auto lightBelow = below->getLight(Space::Block::index({xx, 15, zz}), 3);
 
         if (lightBelow > lightAbove) removeSunlight(below->pos * 16 + glm::ivec3{xx, 15, zz});
     }
@@ -178,7 +178,10 @@ void Dimension::addBlockLight(glm::ivec3 pos, glm::ivec3 light) {
     auto startChunk = getChunk(Space::Chunk::world::fromBlock(pos));
     auto ind = Space::Block::index(pos);
 
-    startChunk->setBlockLight(ind, light);
+    startChunk->setLight(ind, 0, light.x);
+    startChunk->setLight(ind, 1, light.y);
+    startChunk->setLight(ind, 2, light.z);
+
     lightAddQueue[0].emplace(ind, startChunk.get());
     lightAddQueue[1].emplace(ind, startChunk.get());
     lightAddQueue[2].emplace(ind, startChunk.get());
@@ -186,11 +189,13 @@ void Dimension::addBlockLight(glm::ivec3 pos, glm::ivec3 light) {
 
 void Dimension::removeBlockLight(glm::ivec3 pos) {
     auto startChunk = getChunk(Space::Chunk::world::fromBlock(pos));
-    auto ind = Space::Block::index(pos);
-
+    unsigned int ind = Space::Block::index(pos);
     glm::ivec4 val = startChunk->getLight(ind);
 
-    startChunk->setBlockLight(Space::Block::index(pos), {});
+    startChunk->setLight(ind, 0, 0);
+    startChunk->setLight(ind, 1, 0);
+    startChunk->setLight(ind, 2, 0);
+
     lightRemoveQueue[0].emplace(ind, val.x, startChunk.get());
     lightRemoveQueue[1].emplace(ind, val.y, startChunk.get());
     lightRemoveQueue[2].emplace(ind, val.z, startChunk.get());
@@ -213,8 +218,7 @@ void Dimension::reflowLight(glm::ivec3 pos) {
         placeLight.w = fmax(placeLight.w, adjLight.w - (i.y == 1 ? 0 : 1));
     }
 
-    chunk->setBlockLight(ind, {placeLight.x, placeLight.y, placeLight.z});
-    chunk->setSunlight(ind, placeLight.w);
+    chunk->setLight(ind, placeLight);
 
     lightAddQueue[0].emplace(ind, chunk.get());
     lightAddQueue[1].emplace(ind, chunk.get());
@@ -225,9 +229,9 @@ void Dimension::reflowLight(glm::ivec3 pos) {
 void Dimension::removeSunlight(glm::ivec3 pos) {
     auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
     unsigned int ind = Space::Block::index(pos);
-    unsigned int light = chunk->getSunlight(ind);
+    unsigned int light = chunk->getLight(ind, 3);
 
-    chunk->setSunlight(ind, 0);
+    chunk->setLight(ind, 3, 0);
     lightRemoveQueue[SUNLIGHT_CHANNEL].emplace(ind, light, chunk.get());
 }
 
@@ -235,6 +239,6 @@ void Dimension::setAndReflowSunlight(glm::ivec3 pos, unsigned char level) {
     auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
     unsigned int ind = Space::Block::index(pos);
 
-    chunk->setSunlight(ind, level);
+    chunk->setLight(ind, 3, level);
     lightAddQueue[SUNLIGHT_CHANNEL].emplace(ind, chunk.get());
 }

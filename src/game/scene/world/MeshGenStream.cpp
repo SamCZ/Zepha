@@ -51,15 +51,15 @@ std::vector<ChunkMeshDetails*> MeshGenStream::update() {
                 queuedMap.erase(pos);
 
                 u.meshDetails->pos = pos;
-                std::shared_ptr<BlockChunk> chunk = dimension.getChunk(pos);
+                std::shared_ptr<Chunk> chunk = dimension.getChunk(pos);
                 if (chunk == nullptr) goto breakAddTask;
 
-                u.thisChunk = std::shared_ptr<BlockChunk>(chunk);
+                u.thisChunk = std::shared_ptr<Chunk>(chunk);
 
                 int ind = 0;
                 for (const glm::ivec3& dir : Vec::adj) {
-                    std::shared_ptr<BlockChunk> adjacent = dimension.getChunk(pos + dir);
-                    u.adjacentChunks[ind++] = std::shared_ptr<BlockChunk>(adjacent);
+                    std::shared_ptr<Chunk> adjacent = dimension.getChunk(pos + dir);
+                    u.adjacentChunks[ind++] = std::shared_ptr<Chunk>(adjacent);
                     if (adjacent == nullptr) goto breakAddTask;
                 }
 

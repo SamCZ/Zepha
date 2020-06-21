@@ -9,7 +9,7 @@
 #include <memory>
 
 #include "../util/Vec.h"
-#include "region/Region.h"
+#include "chunk/Region.h"
 
 class DimensionBase {
 public:
@@ -23,8 +23,8 @@ public:
 
     bool mapBlockGenerated(glm::ivec3 mapBlockPosition);
 
-    std::shared_ptr<BlockChunk> getChunk(glm::ivec3 chunkPosition);
-    virtual void setChunk(std::shared_ptr<BlockChunk> chunk);
+    std::shared_ptr<Chunk> getChunk(glm::ivec3 chunkPosition);
+    virtual void setChunk(std::shared_ptr<Chunk> chunk);
     virtual void removeChunk(glm::ivec3 pos);
 
     unsigned int getBlock(glm::ivec3 pos);

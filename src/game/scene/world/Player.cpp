@@ -140,7 +140,7 @@ void Player::updateCamera() {
 
 void Player::findPointedThing(Input &input) {
     glm::ivec3 chunkPos = {};
-    std::shared_ptr<BlockChunk> blockChunk = nullptr;
+    std::shared_ptr<Chunk> blockChunk = nullptr;
 
     for (Ray ray(this); ray.getLength() < LOOK_DISTANCE; ray.step(LOOK_PRECISION)) {
         glm::vec3 rayEnd = ray.getEnd();

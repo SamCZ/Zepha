@@ -32,11 +32,11 @@ protected:
 private:
     // Lighting functions
 
-    static inline bool containsWorldPos(BlockChunk* chunk, glm::ivec3 pos);
-    inline glm::ivec4 getLight(glm::ivec3 worldPos, BlockChunk* chunk = nullptr);
+    static inline bool containsWorldPos(Chunk* chunk, glm::ivec3 pos);
+    inline glm::ivec4 getLight(glm::ivec3 worldPos, Chunk* chunk = nullptr);
 
-    void calculateHorizontalEdge(std::shared_ptr<BlockChunk> a, std::shared_ptr<BlockChunk> b);
-    void calculateVerticalEdge(std::shared_ptr<BlockChunk> above, std::shared_ptr<BlockChunk> below);
+    void calculateHorizontalEdge(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b);
+    void calculateVerticalEdge(std::shared_ptr<Chunk> above, std::shared_ptr<Chunk> below);
 
     inline void addBlockLight(glm::ivec3 pos, glm::ivec3 light);
     inline void removeBlockLight(glm::ivec3 pos);
@@ -46,12 +46,12 @@ private:
     inline void setAndReflowSunlight(glm::ivec3 pos, unsigned char level);
 
     struct LightAddNode {
-        LightAddNode(unsigned short index, BlockChunk* chunk) : index(index), chunk(chunk) {};
-        unsigned short index; BlockChunk* chunk;
+        LightAddNode(unsigned short index, Chunk* chunk) : index(index), chunk(chunk) {};
+        unsigned short index; Chunk* chunk;
     };
     struct LightRemoveNode {
-        LightRemoveNode(unsigned short index, unsigned short value, BlockChunk* chunk) : index(index), value(value), chunk(chunk) {};
-        unsigned short index, value; BlockChunk* chunk;
+        LightRemoveNode(unsigned short index, unsigned short value, Chunk* chunk) : index(index), value(value), chunk(chunk) {};
+        unsigned short index, value; Chunk* chunk;
     };
 
     static constexpr unsigned char SUNLIGHT_CHANNEL = 3;

@@ -10,7 +10,7 @@
 
 #include "graph/MeshFarMap.h"
 #include "../../../def/gen/MapGen.h"
-#include "../../../world/chunk/BlockChunk.h"
+#include "../../../world/chunk/Chunk.h"
 
 class ClientGame;
 
@@ -28,7 +28,7 @@ public:
     bool queuePosition(glm::vec3 pos);
     // Returns a vector of BlockChunks that have finished processing,
     // and gives the threads new data to work with.
-    std::unique_ptr<std::vector<std::shared_ptr<BlockChunk>>> update();
+    std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> update();
 
 private:
     enum class JobType {
@@ -42,7 +42,7 @@ private:
         JobType job = JobType::EMPTY;
 
         std::unique_ptr<PacketView> packet = nullptr;
-        std::shared_ptr<BlockChunk> chunk = nullptr;
+        std::shared_ptr<Chunk> chunk = nullptr;
 
         std::shared_ptr<MeshFarMap> mapblock = nullptr;
         glm::vec3 mapBlockPos = {0, 0, 0};

@@ -21,27 +21,26 @@ public:
 
     template <typename T, typename T_ = T> void set(T_&& val) {
         isEmpty = false;
-//        if (sizeof(T) < STACK_SIZE) {
-//            data.h = nullptr;
-//            new(data.s) T(std::forward<T_>(val));
-//            stack_destructor = std::bind(&Any::delete_stack<T>, this);
-//            type = typeid(T).hash_code();
-//        }
-//        else {
+        if (sizeof(T) < STACK_SIZE) {
+            data.h = nullptr;
+            new(data.s) T(std::forward<T_>(val));
+            stack_destructor = std::bind(&Any::delete_stack<T>, this);
+            type = typeid(T).hash_code();
+        }
+        else {
             if (stack_destructor) stack_destructor();
             data.h = std::make_shared<T>(std::forward<T_>(val));
             stack_destructor = nullptr;
             type = typeid(T).hash_code();
-//        }
+        }
     }
 
     template<typename T> const T& get() const {
         if (empty()) throw std::logic_error("Tried to get empty Any.");
         if (type != typeid(T).hash_code()) throw std::logic_error("Any is not of type specified.");
 
-//        if (sizeof(T) < STACK_SIZE) return *reinterpret_cast<T*>(const_cast<char*>(data.s));
-//        else
-            return *std::static_pointer_cast<T>(data.h);
+        if (sizeof(T) < STACK_SIZE) return *reinterpret_cast<T*>(const_cast<char*>(data.s));
+        else return *std::static_pointer_cast<T>(data.h);
     }
 
     template<typename T> const T& get_or(const T& other) const noexcept {
@@ -66,12 +65,13 @@ public:
     }
 
     ~Any() {
-        if (stack_destructor) stack_destructor();
+//        if (stack_destructor) stack_destructor();
     }
 
 private:
     template <typename T> void delete_stack() {
         reinterpret_cast<T*>(data.s)->~T();
+        memset(data.s, 0, STACK_SIZE);
         stack_destructor = nullptr;
         type = 0;
     }

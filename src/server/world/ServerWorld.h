@@ -30,7 +30,7 @@ private:
     bool generateMapBlock(glm::ivec3 pos);
 
     void sendChunk(const glm::ivec3& pos, ServerClient& client);
-    static void sendChunk(const std::shared_ptr<BlockChunk>& chunk, ServerClient& client);
+    static void sendChunk(const std::shared_ptr<Chunk>& chunk, ServerClient& client);
     void sendMapBlock(const glm::ivec3& pos, ServerClient& client);
 
     static bool isInBounds(glm::ivec3 pos, std::pair<glm::ivec3, glm::ivec3>& bounds);

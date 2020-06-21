@@ -11,11 +11,11 @@ MapBlock::MapBlock(glm::ivec3 pos) :
     for(unsigned short i = 0; i < 64; i++) blockChunks[i] = nullptr;
 }
 
-std::shared_ptr<BlockChunk> MapBlock::operator[](unsigned short index) {
+std::shared_ptr<Chunk> MapBlock::operator[](unsigned short index) {
     return blockChunks[index];
 }
 
-void MapBlock::set(unsigned short index, std::shared_ptr<BlockChunk> chunk) {
+void MapBlock::set(unsigned short index, std::shared_ptr<Chunk> chunk) {
     if (blockChunks[index] == nullptr) count++;
     blockChunks[index] = chunk;
 }

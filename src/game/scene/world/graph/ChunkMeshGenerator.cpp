@@ -9,10 +9,10 @@
 
 #include "../ChunkMeshDetails.h"
 #include "../../../../util/Vec.h"
-#include "../../../../world/chunk/BlockChunk.h"
+#include "../../../../world/chunk/Chunk.h"
 
 ChunkMeshGenerator::ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefinitionAtlas& defs, LocalBiomeAtlas& biomes,
-    std::shared_ptr<BlockChunk> chunk, std::array<std::shared_ptr<BlockChunk>, 6> adjacent,
+    std::shared_ptr<Chunk> chunk, std::array<std::shared_ptr<Chunk>, 6> adjacent,
     std::array<NoiseSample, 3>& blockOffsets) :
 
     defs(defs),

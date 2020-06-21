@@ -39,7 +39,7 @@ MapGen::chunk_partials_map MapGen::generateMapBlock(glm::ivec3 mbPos) {
 }
 
 void MapGen::generateChunk(chunk_partials_map& chunks, glm::ivec3 worldPos) {
-    if (chunks.count(worldPos) == 0) chunks.insert(std::pair<glm::ivec3, chunk_partial>{worldPos, {new MapGenJob(), new BlockChunk()}});
+    if (chunks.count(worldPos) == 0) chunks.insert(std::pair<glm::ivec3, chunk_partial>{worldPos, {new MapGenJob(), new Chunk()}});
     auto& chunk = chunks.at(worldPos);
 	chunk.second->pos = worldPos;
 
@@ -49,7 +49,7 @@ void MapGen::generateChunk(chunk_partials_map& chunks, glm::ivec3 worldPos) {
     generateBlocks(chunk);
     generateStructures(chunks, chunk);
 
-    chunk.second->calcNonAirBlocks();
+    chunk.second->recalculateRenderableBlocks();
     chunk.second->generated = true;
 }
 
@@ -125,8 +125,8 @@ void MapGen::buildElevationMap(chunk_partials_map& chunks, chunk_partial& chunk)
 }
 
 void MapGen::generateBlocks(chunk_partial& chunk) {
-    std::unique_ptr<BlockChunk> dupe = nullptr;
-    if (chunk.second->partial) dupe = std::make_unique<BlockChunk>(*chunk.second);
+    std::unique_ptr<Chunk> dupe = nullptr;
+    if (chunk.second->partial) dupe = std::make_unique<Chunk>(*chunk.second);
 
     chunk.second->blocks = {};
     chunk.second->biomes = {};
@@ -218,7 +218,7 @@ void MapGen::generateSunlight(MapGen::chunk_partials_map &chunks, glm::ivec3 mbP
     for (c.x = 0; c.x < 4; c.x++) {
         for (c.z = 0; c.z < 4; c.z++) {
             c.y = 3;
-            BlockChunk* chunk = chunks[mbPos * 4 + c].second;
+            Chunk* chunk = chunks[mbPos * 4 + c].second;
 
             glm::ivec3 b {};
             for (b.x = 0; b.x < 16; b.x++) {
@@ -228,7 +228,7 @@ void MapGen::generateSunlight(MapGen::chunk_partials_map &chunks, glm::ivec3 mbP
                     while (true) {
                         unsigned int ind =  Space::Block::index(b);
                         if (defs.blockFromId(chunk->getBlock(ind)).lightPropagates) {
-                            chunk->setSunlight(ind, 15);
+                            chunk->setLight(ind, 3, 15);
                             sunlightQueue.emplace(ind, chunk);
                         }
                         else {
@@ -253,7 +253,7 @@ void MapGen::generateSunlight(MapGen::chunk_partials_map &chunks, glm::ivec3 mbP
     propogateSunlightNodes(chunks, sunlightQueue);
 }
 
-bool MapGen::containsWorldPos(BlockChunk *chunk, glm::ivec3 pos) {
+bool MapGen::containsWorldPos(Chunk *chunk, glm::ivec3 pos) {
     return chunk && Space::Chunk::world::fromBlock(pos) == chunk->pos;
 }
 
@@ -261,13 +261,13 @@ void MapGen::propogateSunlightNodes(MapGen::chunk_partials_map &chunks, std::que
     while (!queue.empty()) {
         SunlightNode& node = queue.front();
 
-        unsigned char lightLevel = node.chunk->getSunlight(node.index);
+        unsigned char lightLevel = node.chunk->getLight(node.index, 3);
         glm::ivec3 worldPos = node.chunk->pos * 16 + Space::Block::fromIndex(node.index);
 
         for (const auto& i : Vec::adj) {
             glm::ivec3 check = worldPos + i;
 
-            BlockChunk* chunk;
+            Chunk* chunk;
             if (containsWorldPos(node.chunk, check)) chunk = node.chunk;
             else {
                 glm::ivec3 worldPos = Space::Chunk::world::fromBlock(check);
@@ -277,8 +277,8 @@ void MapGen::propogateSunlightNodes(MapGen::chunk_partials_map &chunks, std::que
             }
 
             auto ind = Space::Block::index(check);
-            if (defs.blockFromId(chunk->getBlock(ind)).lightPropagates && chunk->getSunlight(ind) + 2 <= lightLevel) {
-                chunk->setSunlight(ind, lightLevel - static_cast<int>(!(lightLevel == 15 && i.y == -1)));
+            if (defs.blockFromId(chunk->getBlock(ind)).lightPropagates && chunk->getLight(ind, 3) + 2 <= lightLevel) {
+                chunk->setLight(ind, 3, lightLevel - static_cast<int>(!(lightLevel == 15 && i.y == -1)));
                 queue.emplace(ind, chunk);
             }
         }
@@ -291,12 +291,11 @@ void MapGen::setBlock(glm::ivec3 worldPos, unsigned int block, MapGen::chunk_par
     if (block == DefinitionAtlas::INVALID) return;
 
     glm::ivec3 chunkPos = Space::Chunk::world::fromBlock(worldPos);
-    BlockChunk* chunk = nullptr;
+    Chunk* chunk = nullptr;
 
     if (chunks.count(chunkPos)) chunk = chunks.at(chunkPos).second;
     else {
-        chunk = new BlockChunk();
-        chunk->initializeEmpty();
+        chunk = new Chunk();
         chunk->pos = chunkPos;
         chunk->partial = true;
         chunks.insert(std::pair<glm::ivec3, chunk_partial>{chunkPos, {new MapGenJob(), chunk}});
@@ -306,9 +305,9 @@ void MapGen::setBlock(glm::ivec3 worldPos, unsigned int block, MapGen::chunk_par
     if (chunk->getBlock(index) <= DefinitionAtlas::AIR) chunk->setBlock(index, block);
 }
 
-std::shared_ptr<BlockChunk> MapGen::combinePartials(std::shared_ptr<BlockChunk> a, std::shared_ptr<BlockChunk> b) {
-    std::shared_ptr<BlockChunk> src;
-    std::shared_ptr<BlockChunk> res;
+std::shared_ptr<Chunk> MapGen::combinePartials(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b) {
+    std::shared_ptr<Chunk> src;
+    std::shared_ptr<Chunk> res;
 
     if (a->generated) {
         res = a;
@@ -325,6 +324,6 @@ std::shared_ptr<BlockChunk> MapGen::combinePartials(std::shared_ptr<BlockChunk> 
 
     res->generated = src->generated || res->generated;
     res->partial = !res->generated;
-    res->calcNonAirBlocks();
+    res->recalculateRenderableBlocks();
     return res;
 }

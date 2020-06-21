@@ -9,11 +9,11 @@
 #include "MapGenJob.h"
 #include "MapGenProps.h"
 #include "../../util/Vec.h"
-#include "../../world/chunk/BlockChunk.h"
+#include "../../world/chunk/Chunk.h"
 
 class MapGen {
 public:
-    typedef std::pair<MapGenJob*, BlockChunk*> chunk_partial;
+    typedef std::pair<MapGenJob*, Chunk*> chunk_partial;
     typedef std::unordered_map<glm::ivec3, chunk_partial, Vec::ivec3> chunk_partials_map;
 
 	MapGen(unsigned int seed, DefinitionAtlas& atlas, BiomeAtlas& biome, std::shared_ptr<MapGenProps> props);
@@ -21,12 +21,12 @@ public:
 
     // Combine two chunk partials, or a chunk and a chunk partial.
     // If both are partials `b` takes preference, if one is a fully generated chunk the partial takes preference.
-    static std::shared_ptr<BlockChunk> combinePartials(std::shared_ptr<BlockChunk> a, std::shared_ptr<BlockChunk> b);
+    static std::shared_ptr<Chunk> combinePartials(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b);
 private:
     struct SunlightNode {
-        SunlightNode(unsigned short index, BlockChunk* chunk) : index(index), chunk(chunk) {};
+        SunlightNode(unsigned short index, Chunk* chunk) : index(index), chunk(chunk) {};
         unsigned short index;
-        BlockChunk* chunk;
+        Chunk* chunk;
     };
 
     // Generate a chunk at `worldPos`, and place it and any partials in `chunks`.
@@ -44,7 +44,7 @@ private:
 
 	// Generate sunlight on the mapgen threads to speed up perf
     void generateSunlight(chunk_partials_map& chunks, glm::ivec3 mbPos);
-    static bool containsWorldPos(BlockChunk *chunk, glm::ivec3 pos);
+    static bool containsWorldPos(Chunk *chunk, glm::ivec3 pos);
     void propogateSunlightNodes(chunk_partials_map& chunks, std::queue<SunlightNode>& queue);
 
 	// Place block in the `chunks` array, creates a partial if necessary.

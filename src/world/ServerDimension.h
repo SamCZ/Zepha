@@ -16,7 +16,7 @@ public:
 
     void update(const std::vector<std::shared_ptr<ServerClient>>& clients);
 
-    void setChunk(std::shared_ptr<BlockChunk> chunk) override;
+    void setChunk(std::shared_ptr<Chunk> chunk) override;
     bool setBlock(glm::ivec3 pos, unsigned int block) override;
 
     void addLuaEntity(std::shared_ptr<ServerLuaEntity>& entity);

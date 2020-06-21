@@ -34,13 +34,13 @@ bool DimensionBase::mapBlockGenerated(glm::ivec3 mapBlockPosition) {
     return mb && mb->generated;
 }
 
-std::shared_ptr<BlockChunk> DimensionBase::getChunk(glm::ivec3 chunkPosition) {
+std::shared_ptr<Chunk> DimensionBase::getChunk(glm::ivec3 chunkPosition) {
     auto mapBlock = getMapBlock(Space::MapBlock::world::fromChunk(chunkPosition));
     if (!mapBlock) return nullptr;
     return (*mapBlock)[Space::Chunk::index(chunkPosition)];
 }
 
-void DimensionBase::setChunk(std::shared_ptr<BlockChunk> chunk) {
+void DimensionBase::setChunk(std::shared_ptr<Chunk> chunk) {
     auto mapBlock = getOrCreateMapBlock(Space::MapBlock::world::fromChunk(chunk->pos));
     (*mapBlock).set(Space::Chunk::index(chunk->pos), chunk);
 }

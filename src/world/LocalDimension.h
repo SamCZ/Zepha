@@ -22,7 +22,7 @@ public:
     explicit LocalDimension(ClientGame& game);
     void update(double delta, glm::vec3 playerPos);
 
-    void setChunk(std::shared_ptr<BlockChunk> chunk) override;
+    void setChunk(std::shared_ptr<Chunk> chunk) override;
     bool setBlock(glm::ivec3 pos, unsigned int block) override;
 
     void setMeshChunk(std::shared_ptr<MeshChunk> chunk);
@@ -53,7 +53,7 @@ private:
     void finishMeshes();
     void queueMeshes();
 
-    void attemptMeshChunk(const std::shared_ptr<BlockChunk>& chunk, bool updateAdjacents = true);
+    void attemptMeshChunk(const std::shared_ptr<Chunk>& chunk, bool updateAdjacents = true);
     bool getAdjacentExists(glm::vec3 pos, bool updateAdjacents);
 
     ClientGame& game;

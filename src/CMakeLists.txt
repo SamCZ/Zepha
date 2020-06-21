@@ -22,9 +22,9 @@ set(ZEPHA_SRC
 	def/item/ShaderMod.h 
 	def/item/BlockModelVertex.h 
 	game/scene/world/LocalWorld.cpp 
-	game/scene/world/LocalWorld.h 
-	world/chunk/BlockChunk.cpp 
-	world/chunk/BlockChunk.h 
+	game/scene/world/LocalWorld.h
+		world/chunk/Chunk.cpp
+		world/chunk/Chunk.h
 	game/scene/world/graph/MeshChunk.cpp 
 	game/scene/world/graph/MeshChunk.h 
 	game/scene/GameScene.cpp 
@@ -91,8 +91,8 @@ set(ZEPHA_SRC
 	game/scene/world/MeshGenStream.h 
 	util/Vec.h 
 	world/LocalDimension.cpp 
-	world/LocalDimension.h 
-	world/region/Region.h 
+	world/LocalDimension.h
+		world/chunk/Region.h
 	game/entity/engine/WireframeEntity.cpp 
 	game/entity/engine/WireframeEntity.h 
 	def/item/SelectionBox.h 
@@ -105,12 +105,12 @@ set(ZEPHA_SRC
 	game/entity/engine/BlockCrackEntity.h 
 	def/texture/TextureAtlas.cpp 
 	def/texture/TextureAtlas.h 
-	def/texture/AtlasRef.h 
-	world/region/MapBlock.h 
+	def/texture/AtlasRef.h
+		world/chunk/MapBlock.h
 	def/ClientGame.cpp 
-	def/ClientGame.h 
-	world/region/Region.cpp 
-	world/region/MapBlock.cpp 
+	def/ClientGame.h
+		world/chunk/Region.cpp
+		world/chunk/MapBlock.cpp
 	util/Util.h 
 	world/block/PointedThing.h 
 	game/hud/components/compound/GuiLabelledGraph.cpp 

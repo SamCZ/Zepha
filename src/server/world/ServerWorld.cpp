@@ -160,7 +160,7 @@ bool ServerWorld::generateMapBlock(glm::ivec3 pos) {
     return false;
 }
 
-void ServerWorld::sendChunk(const std::shared_ptr<BlockChunk>& chunk, ServerClient &peer) {
+void ServerWorld::sendChunk(const std::shared_ptr<Chunk>& chunk, ServerClient &peer) {
     if (chunk == nullptr || !chunk->generated) return;
 
     Packet r = chunk->serialize();

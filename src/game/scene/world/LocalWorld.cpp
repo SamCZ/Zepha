@@ -41,7 +41,7 @@ void LocalWorld::loadChunkPacket(std::unique_ptr<PacketView> p) {
     worldGenStream->queuePacket(std::move(p));
 }
 
-void LocalWorld::commitChunk(std::shared_ptr<BlockChunk> c) {
+void LocalWorld::commitChunk(std::shared_ptr<Chunk> c) {
     dimension.setChunk(std::move(c));
 }
 
@@ -104,7 +104,7 @@ unsigned short LocalWorld::getBiome(glm::vec3 pos) {
     return BiomeAtlas::INVALID;
 }
 
-std::shared_ptr<BlockChunk> LocalWorld::getChunk(glm::ivec3 pos) {
+std::shared_ptr<Chunk> LocalWorld::getChunk(glm::ivec3 pos) {
     return dimension.getChunk(pos);
 }
 

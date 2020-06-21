@@ -9,7 +9,7 @@
 
 #include "../FarMapMeshDetails.h"
 #include "../../../../util/Vec.h"
-#include "../../../../world/chunk/BlockChunk.h"
+#include "../../../../world/chunk/Chunk.h"
 
 //FarMeshGenerator::FarMeshGenerator(LocalDefinitionAtlas& defs, LocalBiomeAtlas& biomes,
 //    std::vector<unsigned int>& blocks, unsigned int width) :

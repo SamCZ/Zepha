@@ -27,8 +27,8 @@ bool WorldInterpolationStream::queuePosition(glm::vec3 pos){
     return false;
 }
 
-std::unique_ptr<std::vector<std::shared_ptr<BlockChunk>>> WorldInterpolationStream::update() {
-    auto finishedChunks = std::make_unique<std::vector<std::shared_ptr<BlockChunk>>>();
+std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> WorldInterpolationStream::update() {
+    auto finishedChunks = std::make_unique<std::vector<std::shared_ptr<Chunk>>>();
     auto finishedMapBlocks = std::make_unique<std::vector<std::shared_ptr<MeshFarMap>>>();
 
     for (auto& t : threads) {
@@ -81,7 +81,7 @@ void WorldInterpolationStream::Thread::exec() {
             if (u.locked) {
                 if (u.job == JobType::PACKET) {
                     empty = false;
-                    u.chunk = std::make_shared<BlockChunk>();
+                    u.chunk = std::make_shared<Chunk>();
                     u.chunk->deserialize(*u.packet);
                     u.locked = false;
                     break;

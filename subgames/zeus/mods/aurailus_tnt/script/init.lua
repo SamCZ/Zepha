@@ -17,7 +17,7 @@ zepha.register_block("@aurailus:tnt:tnt", {
         for i = -amp, amp do
             for j = -amp, amp do
                 for k = -amp, amp do
-                    if V{i, j, k}:distance(V{}) < amp then
+                    if V{i, j, k}:distance(V()) < amp then
                         zepha.set_block(pos + offset, "air")
                     end
                 end

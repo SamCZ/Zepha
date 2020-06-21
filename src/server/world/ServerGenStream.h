@@ -20,7 +20,7 @@ public:
 
     struct FinishedBlockJob {
         glm::ivec3 pos;
-        std::vector<std::shared_ptr<BlockChunk>> chunks;
+        std::vector<std::shared_ptr<Chunk>> chunks;
     };
 
     explicit ServerGenStream(unsigned int seed, ServerGame& game);
