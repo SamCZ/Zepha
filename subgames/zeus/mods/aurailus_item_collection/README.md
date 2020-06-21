@@ -33,7 +33,7 @@ yields = "zeus:default:dirt"
 
 Drop four dirt blocks:
 ```
-yields = "zeus_default:dirt 4"
+yields = "zeus:default:dirt 4"
 ```
 
 Drop a dirt block 50% of the time:
