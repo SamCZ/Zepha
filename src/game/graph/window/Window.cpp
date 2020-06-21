@@ -93,7 +93,7 @@ void Window::setCursorHand(bool hand) {
 }
 
 void Window::scrollCallback(GLFWwindow* window, double xO, double yO) {
-    auto w = static_cast<Window*>(glfwGetWindowUserPointer(window));
+//    auto w = static_cast<Window*>(glfwGetWindowUserPointer(window));
 
 }
 

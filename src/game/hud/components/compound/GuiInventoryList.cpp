@@ -14,7 +14,7 @@ std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(const LuaGuiE
         glm::ivec2 bounds, LocalInventoryRefs& refs) {
 
     glm::vec2 pos     = SerialGui::get<glm::vec2>(elem, "position", bounds);
-    glm::vec2 offset  = SerialGui::get<glm::vec2>(elem, "position_anchor");
+//    glm::vec2 offset  = SerialGui::get<glm::vec2>(elem, "position_anchor");
 //    glm::vec2 size    = SerialGui::deserializeToken<glm::vec2>(s.tokens, "size", bounds);
     glm::vec4 padding = SerialGui::get<glm::vec4>(elem, "padding", bounds);
     glm::vec2 slotspc = SerialGui::get<glm::vec2>(elem, "slot_spacing", bounds);
@@ -100,7 +100,7 @@ void GuiInventoryList::leftClick(bool down, glm::ivec2 pos) {
 
     unsigned short index = slot.x + slot.y * list->getWidth();
 
-    if (index < 0 || index >= list->getLength()) return;
+    if (index >= list->getLength()) return;
 
     list->primaryInteract(*hand, index);
 }

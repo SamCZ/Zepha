@@ -55,8 +55,8 @@ DebugGui::DebugGui(glm::vec2 bufferSize, ClientGame& defs) :
 }
 
 void DebugGui::positionElements(glm::vec2 bufferSize) {
-    auto bufferWidth  = (int)bufferSize.x;
-    auto bufferHeight = (int)bufferSize.y;
+    auto bufferWidth  = static_cast<int>(bufferSize.x);
+    auto bufferHeight = static_cast<int>(bufferSize.y);
 
     get<GuiText>("crosshairText")->setPos({bufferWidth / 2 + 22, bufferHeight / 2 - 7});
     get<GuiText>("dataText")->setPos({10, 10});
@@ -95,8 +95,6 @@ void DebugGui::update(Player& player, LocalWorld& world, ClientGame& defs, doubl
     }
 
     { //Top-left Data
-        glm::vec3 footPos = glm::floor(player.getPos()) - glm::vec3(0, 0.02, 0);
-
         unsigned int biomeID = world.getBiome(glm::floor(player.getPos()));
         std::string biome = defs.biomes.biomeFromId(biomeID).identifier;
 
