@@ -1,30 +1,3 @@
-local noise = {
-    heightmap = {
-        module = "add",
-        sources = {{
-            ## Elevation
-            module = "scale_bias",
-            source = {
-                module = "perlin",
-                frequency = 0.002,
-                octaves = 8
-            },
-            scale = 250,
-            bias = -32
-        }, {
-            ## Features
-            module = "scale_bias",
-            source = {
-                module = "perlin",
-                frequency = 0.2,
-                octaves = 3,
-            },
-            scale = 12,
-            bias = 6
-        }}
-    }
-}
-
 local woo = "zeus:default:wood"
 local lea = "zeus:default:leaves"
 local inv = "invalid"
@@ -48,7 +21,7 @@ local shrub_layer_2 = {
 }
 
 local shrub = zepha.create_structure({
-    origin = V(1, 1, 1),
+    origin = V{1, 1, 1},
     schematic = {
         shrub_layer_0,
         shrub_layer_1,
@@ -62,7 +35,7 @@ local noise = {
         sources = {{
             module = "add",
             sources = {{
-                ## Voronoi
+                -- Voronoi
                 module = "scale_bias",
                 source = {
                     module = "voronoi",
@@ -72,7 +45,7 @@ local noise = {
                 scale = 8,
                 bias = -32
             }, {
-                ## Features
+                -- Features
                 module = "scale_bias",
                 source = {
                     module = "perlin",
@@ -82,7 +55,7 @@ local noise = {
                 scale = 3
             }}
         }, {
-            ## Variation
+            -- Variation
             module = "scale_bias",
             source = {
                 module = "perlin",
@@ -105,7 +78,7 @@ zepha.register_biome("zeus:mapgen:highlands", {
         soil = "zeus:default:dirt",
         rock = "zeus:default:stone"
     },
-    biome_tint = "#e6fa61",
+    biome_tint = "#c2fa61",
     noise = noise,
     structures = {
         shrub

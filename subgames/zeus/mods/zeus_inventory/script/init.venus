@@ -1,2 +1,0 @@
-if (zepha.server) { runfile(_PATH .. "register") }
-if (zepha.client) { runfile(_PATH .. "menu") }

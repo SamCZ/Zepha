@@ -1,4 +1,4 @@
-for i = 1, 5, 1 {
+for i = 1, 5, 1 do
     zepha.register_block("zeus:default:tallgrass_" .. i, {
         culls = false,
         solid = false,
@@ -14,10 +14,8 @@ for i = 1, 5, 1 {
         toughness = {
             hand = 0
         },
-        yields = fn(pos) {
-            if (math.random() > 0.8) {
-                return "zeus:materials:plant_fibre"
-            }
-        }
+        yields = function(pos)
+            if math.random() > 0.8 then return "zeus:materials:plant_fibre" end
+        end
     })
-}
+end

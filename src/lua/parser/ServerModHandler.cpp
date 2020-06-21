@@ -6,7 +6,6 @@
 #include <json/json.hpp>
 #include <gzip/compress.hpp>
 
-#include "../VenusParser.h"
 #include "../../def/ServerGame.h"
 #include "../../util/net/Serializer.h"
 
@@ -108,15 +107,11 @@ std::vector<LuaMod> ServerModHandler::initializeLuaMods(const std::list<std::str
                     if (scannedFile.is_dir) dirsToScan.emplace_back(scannedFile.path);
                     else {
                         char *dot = strrchr(scannedFile.path, '.');
-                        if (dot && (strncmp(dot, ".lua", 4) == 0 || strncmp(dot, ".venus", 6) == 0)) {
-                            luaFiles.emplace_back(scannedFile.path);
-                        }
+                        if (dot && (strncmp(dot, ".lua", 4) == 0)) luaFiles.emplace_back(scannedFile.path);
                     }
                 }
-
                 cf_dir_next(&dir);
             }
-
             cf_dir_close(&dir);
         }
 
@@ -151,28 +146,13 @@ std::vector<LuaMod> ServerModHandler::initializeLuaMods(const std::list<std::str
 
             modPath.erase(rootPos, root.length());
             modPath.insert(0, conf.name);
-
-            const static std::string venusSubstr = ".venus";
-            if (std::equal(venusSubstr.rbegin(), venusSubstr.rend(), file.rbegin())) {
-                modPath.resize(modPath.size() - 6);
-
-                try {
-                    fileStr = VenusParser::parse(file, fileStr);
-                }
-                catch (const std::runtime_error& e) {
-                    std::cout << Log::err << "Encountered a venus compilation err" << std::endl << e.what() << Log::endl;
-                    exit(1);
-                }
-            }
-            else modPath.resize(modPath.size() - 4);
+            modPath.resize(modPath.size() - 4);
 
             LuaModFile f {modPath, fileStr};
             mod.files.push_back(f);
         }
-
         mods.push_back(mod);
     }
-
     return mods;
 }
 

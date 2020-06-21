@@ -46,6 +46,9 @@ local vector_mt = {
     __mul = function(tbl, o)
         return vector.multiply(tbl, o)
     end,
+    __div = function(tbl, o)
+        return vector.divide(tbl, o)
+    end,
     __pow = function(tbl, power)
         return vector.pow(tbl, o)
     end,
@@ -142,6 +145,17 @@ vector.multiply = function(v1, m)
         return create_vector(rawget(v1, 1) * rawget(m, 1), rawget(v1, 2) * rawget(m, 2), rawget(v1, 3) * rawget(m, 3))
     elseif type(m) == "number" then
         return create_vector(rawget(v1, 1) * m, rawget(v1, 2) * m, rawget(v1, 3) * m)
+    end
+end
+
+-- vector.divide
+-- Divice v1 by a vector or number
+vector.divide = function(v1, m)
+    if not check_vector(v1) then return end
+    if check_vector(m) then
+        return create_vector(rawget(v1, 1) / rawget(m, 1), rawget(v1, 2) / rawget(m, 2), rawget(v1, 3) / rawget(m, 3))
+    elseif type(m) == "number" then
+        return create_vector(rawget(v1, 1) / m, rawget(v1, 2) / m, rawget(v1, 3) / m)
     end
 end
 

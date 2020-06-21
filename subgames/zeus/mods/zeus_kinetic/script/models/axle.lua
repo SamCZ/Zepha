@@ -1,11 +1,11 @@
-fn create_model_def(speed) {
+local function create_model_def(speed)
     local mod = ""
-    if (speed > 0) { mod = "rotate_x" }
+    if speed > 0 then mod = "rotate_x" end
 
     return {
         parts = {
             {
-                face = "left", ## Small part 1
+                face = "left", -- Small part 1
                 tex = 3,
                 points = {
                     0, 7/16, 7/16, 0, 2/10,
@@ -18,7 +18,7 @@ fn create_model_def(speed) {
                     speed = speed
                 }
             }, {
-                face = "right", ## Small part 2
+                face = "right", -- Small part 2
                 tex = 4,
                 points = {
                     1, 9/16, 9/16, 2/16, 2/10,
@@ -31,7 +31,7 @@ fn create_model_def(speed) {
                     speed = speed
                 }
             }, {
-                face = "nocull", ## Top
+                face = "nocull", -- Top
                 tex = 1,
                 points = {
                     0, 9/16, 7/16, 0, 2/10,
@@ -44,7 +44,7 @@ fn create_model_def(speed) {
                     speed = speed
                 }
             }, {
-                face = "nocull", ## Bottom
+                face = "nocull", -- Bottom
                 tex = 2,
                 points = {
                     0, 7/16, 7/16, 0, 6/10,
@@ -57,7 +57,7 @@ fn create_model_def(speed) {
                     speed = speed
                 }
             }, {
-                face = "nocull", ## Front
+                face = "nocull", -- Front
                 tex = 5,
                 points = {
                     0, 7/16, 9/16, 0, 8/10,
@@ -70,7 +70,7 @@ fn create_model_def(speed) {
                     speed = speed
                 }
             }, {
-                face = "nocull", ## Back
+                face = "nocull", -- Back
                 tex = 6,
                 points = {
                     0, 7/16, 7/16, 0, 4/10,
@@ -85,7 +85,7 @@ fn create_model_def(speed) {
             }
         }
     }
-}
+end
 
 zepha.register_blockmodel("zeus:kinetic:axle_0", create_model_def(0));
 zepha.register_blockmodel("zeus:kinetic:axle_1", create_model_def(0.5));

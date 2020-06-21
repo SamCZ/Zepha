@@ -289,10 +289,8 @@ set(ZEPHA_SRC
 	lua/api/class/LocalLuaAnimationManager.h 
 	lua/api/usertype/cAnimationManager.h 
 	game/scene/world/Schematic.cpp 
-	game/scene/world/Schematic.h 
-	lua/VenusParser.cpp 
-	lua/VenusParser.h 
-	lua/ErrorFormatter.cpp 
+	game/scene/world/Schematic.h
+		lua/ErrorFormatter.cpp
 	lua/ErrorFormatter.h 
 	util/RIE.h 
 	lua/api/class/ServerLuaPlayer.cpp 

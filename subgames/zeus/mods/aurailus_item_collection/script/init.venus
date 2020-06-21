@@ -1,9 +1,0 @@
-runfile("@aurailus:item_collection/dropped_item")
-
-local DROP_ENTITY = true
-if (DROP_ENTITY) {
-    runfile("@aurailus:item_collection/mode/entity")
-}
-else {
-    runfile("@aurailus:item_collection/mode/direct")
-}

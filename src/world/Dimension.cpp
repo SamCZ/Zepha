@@ -157,8 +157,8 @@ void Dimension::calculateHorizontalEdge(std::shared_ptr<BlockChunk> a, std::shar
         auto lightA = a->getSunlight(Space::Block::index(aPos));
         auto lightB = b->getSunlight(Space::Block::index(bPos));
 
-        if (lightA > lightB + 1) setSunlight(b->pos * 16 + bPos, lightA - 1);
-        else if (lightB > lightA + 1) setSunlight(a->pos * 16 + aPos, lightB - 1);
+        if (lightA > lightB + 1) setAndReflowSunlight(b->pos * 16 + bPos, lightA - 1);
+        else if (lightB > lightA + 1) setAndReflowSunlight(a->pos * 16 + aPos, lightB - 1);
     }
 }
 
@@ -231,7 +231,7 @@ void Dimension::removeSunlight(glm::ivec3 pos) {
     lightRemoveQueue[SUNLIGHT_CHANNEL].emplace(ind, light, chunk.get());
 }
 
-void Dimension::setSunlight(glm::ivec3 pos, unsigned char level) {
+void Dimension::setAndReflowSunlight(glm::ivec3 pos, unsigned char level) {
     auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
     unsigned int ind = Space::Block::index(pos);
 

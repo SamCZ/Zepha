@@ -10,23 +10,23 @@ zepha.register_block('zeus:kinetic:axle_0', {
         {0, 6/16, 6/16, 1, 10/16, 10/16}
     },
     drop = "zeus:kinetic:axle_0",
-    on_place = fn(pos) {
-        for i = 0, 9 {
+    on_place = function(pos)
+        for i = 0, 9 do
             pos.x = pos.x + 1
             zepha.set_block(pos, "zeus:kinetic:axle_0")
-        }
-    },
-    on_place_client = fn(pos) {
-        for i = 0, 9 {
+        end
+    end,
+    on_place_client = function(pos)
+        for i = 0, 9 do
             pos.x = pos.x + 1
             zepha.set_block(pos, "zeus:kinetic:axle_0")
-        }
-    },
-    on_construct = fn(pos) {
-        zepha.delay(() => {
+        end
+    end,
+    on_construct = function(pos)
+        zepha.delay(function()
             zepha.set_block(pos, "zeus:kinetic:axle_1")
-        }, 4)
-    }
+        end, 4)
+    end
 })
 
 zepha.register_block('zeus:kinetic:axle_1', {
@@ -40,11 +40,11 @@ zepha.register_block('zeus:kinetic:axle_1', {
     collision_box = {
         {0, 6/16, 6/16, 1, 10/16, 10/16}
     },
-    on_construct = fn(pos) {
-        zepha.delay(() => {
+    on_construct = function(pos)
+        zepha.delay(function()
             zepha.set_block(pos, "zeus:kinetic:axle_2")
-        }, 4)
-    }
+        end, 4)
+    end
 })
 
 zepha.register_block('zeus:kinetic:axle_2', {
@@ -58,11 +58,11 @@ zepha.register_block('zeus:kinetic:axle_2', {
     collision_box = {
         {0, 6/16, 6/16, 1, 10/16, 10/16}
     },
-    on_construct = fn(pos) {
-        zepha.delay(() => {
+    on_construct = function(pos)
+        zepha.delay(function()
             zepha.set_block(pos, "zeus:kinetic:axle_3")
-        }, 4)
-    }
+        end, 4)
+    end
 })
 
 zepha.register_block('zeus:kinetic:axle_3', {
@@ -76,9 +76,9 @@ zepha.register_block('zeus:kinetic:axle_3', {
     collision_box = {
         {0, 6/16, 6/16, 1, 10/16, 10/16}
     },
-    on_construct = fn(pos) {
-        zepha.delay(() => {
+    on_construct = function(pos)
+        zepha.delay(function()
             zepha.set_block(pos, "zeus:kinetic:axle_0")
-        }, 4)
-    }
+        end, 4)
+    end
 })

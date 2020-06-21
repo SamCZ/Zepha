@@ -1,9 +1,9 @@
-## Register the inventory menu and keybind
+-- Register the inventory menu and keybind
 zepha.register_keybind("zeus:inventory:open_inventory", {
     description = "Open Inventory",
     default = zepha.keys.e,
-    on_press = () => {
-        if (zepha.player.menu_state == "") {
+    on_press = function()
+        if zepha.player.menu_state == "" do
             zepha.player:open_menu([[
                 body[body]
                     background: #0003
@@ -43,9 +43,6 @@ zepha.register_keybind("zeus:inventory:open_inventory", {
                     end
                 end
             ]])
-        }
-        else {
-            zepha.player:close_menu()
-        }
+        else zepha.player:close_menu() end
     }
 })

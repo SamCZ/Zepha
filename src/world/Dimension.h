@@ -43,7 +43,7 @@ private:
 
     inline void reflowLight(glm::ivec3 pos);
     inline void removeSunlight(glm::ivec3 pos);
-    inline void setSunlight(glm::ivec3 pos, unsigned char level);
+    inline void setAndReflowSunlight(glm::ivec3 pos, unsigned char level);
 
     struct LightAddNode {
         LightAddNode(unsigned short index, BlockChunk* chunk) : index(index), chunk(chunk) {};

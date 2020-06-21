@@ -17,14 +17,10 @@ zepha.register_block("zeus:default:grass", {
         shovel = 1,
         pick = 2
     },
-    yields = fn() {
-        if (math.random() >= 0.5) {
-            return "zeus:default:dirt"
-        }
-        else {
-            return "zeus:materials:plant_fibre"
-        }
-    }
+    yields = function()
+        if math.random() >= 0.5 then return "zeus:default:dirt"
+        else return "zeus:materials:plant_fibre" end
+    end
 })
 
 zepha.register_block("zeus:default:grass_slab", {

@@ -5,7 +5,7 @@ zepha.register_entity("zeus:default:rabbit", {
     display_object = "zeus:default:rabbit",
     display_texture = "zeus:default:rabbit",
 
-    on_create = fn(self) {
+    on_create = function(self)
         self.object:set_scale(1/16)
 
         self.object.anims:define({
@@ -16,58 +16,56 @@ zepha.register_entity("zeus:default:rabbit", {
         })
 
         self.object.anims:set_anim("run"):play()
-    },
-    on_update = fn(self, delta) {
+    end,
+    on_update = function(self, delta)
         local dist = vector.distance(zepha.player.pos, self.object.pos)
 
-        if (friendly) {
-            if (dist > 3 and dist < 7 and not self.targeting) {
+        if friendly then
+            if dist > 3 and dist < 7 and not self.targeting then
                 self.targeting = true
                 self.object.anims:set_anim("run"):play()
-            elseif (dist < 2 or dist > 7 and self.targeting) {
+            elseif dist < 2 or dist > 7 and self.targeting then
                 self.targeting = false
                 self.object.anims:set_anim("idle"):play()
-            }
+            end
 
-            if (self.targeting) {
+            if self.targeting then
                 self.object.pos = self.object.pos +
                     V(0.08 * math.sin(math.rad(self.object.yaw)), 0, 0.08 * math.cos(math.rad(self.object.yaw)))
                 self.object.yaw = math.deg(math.atan2(zepha.player.pos.x - self.object.pos.x, zepha.player.pos.z - self.object.pos.z))
-            }
-        }
-        else {
-            if (dist < 5 and not self.targeting) {
+            end
+        else
+            if dist < 5 and not self.targeting then
                 self.targeting = true
                 self.object.anims:set_anim("run"):play()
-            elseif (dist > 6 and self.targeting) {
+            elseif dist > 6 and self.targeting then
                 self.targeting = false
                 self.object.anims:set_anim("idle"):play()
-            }
+            end
 
-            if (self.targeting) {
+            if self.targeting then
                 self.object.pos = self.object.pos +
                     V(0.08 * math.sin(math.rad(self.object.yaw)), 0, 0.08 * math.cos(math.rad(self.object.yaw)))
                 self.object.yaw = math.deg(math.atan2(zepha.player.pos.x - self.object.pos.x, zepha.player.pos.z - self.object.pos.z)) + 180
-            }
-            else {
+            else
                 self.object.yaw = math.deg(math.atan2(zepha.player.pos.x - self.object.pos.x, zepha.player.pos.z - self.object.pos.z))
-            }
-        }
-    }
+            end
+        end
+    end
 })
 
 zepha.register_keybind("zeus:default:spawn_rabbit", {
     description = "Spawn Rabbit",
     default = zepha.keys.y,
-    on_press = fn() {
+    on_press = function()
         zepha.add_entity("zeus:default:rabbit", zepha.player.pos)
-    }
+    end
 })
 
 zepha.register_keybind("zeus:default:change_rabbit_behavior", {
     description = "Change rabbit behavior",
     default = zepha.keys.u,
-    on_press = fn() {
+    on_press = function()
         friendly = not friendly
-    }
+    end
 })

@@ -9,9 +9,9 @@ local flowers = {
     "yellow_dandelion"
 }
 
-local tchelper = (first, rest) => { return first:upper()..rest:lower() }
+local tchelper = function(first, rest) return first:upper()..rest:lower() end
 
-foreach flower in flowers {
+for _,flower in pairs(flowers) do
     local name = flower:gsub("_", " "):gsub("(%a)([%w_']*)", tchelper)
 
     zepha.register_block("zeus:flowers:flower_" .. flower, {
@@ -30,4 +30,4 @@ foreach flower in flowers {
             hand = 0
         }
     })
-}
+end

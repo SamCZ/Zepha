@@ -6,12 +6,8 @@ zepha.register_block("zeus:default:stone", {
         hand = 14,
         pick = 3
     },
-    yields = fn() {
-        if (math.random() >= 0.5) {
-            return "zeus:default:cobblestone"
-        }
-        else {
-            return "zeus:materials:rock"
-        }
-    }
+    yields = function()
+        if math.random() >= 0.5 then return "zeus:default:cobblestone"
+        else return "zeus:materials:rock" end
+    end
 })
