@@ -122,7 +122,7 @@ void LuaGuiElement::remove(sol::this_state s, sol::object elem) {
     }
 }
 
-Any LuaGuiElement::getAsAny(const std::string &key) const noexcept {
+Any LuaGuiElement::getAsAny(const std::string &key) const {
     if (!traits.count(key)) return Any();
     auto object = traits.at(key);
 

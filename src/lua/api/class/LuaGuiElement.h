@@ -35,7 +35,7 @@ public:
     std::unordered_map<std::string, sol::object> traits {};
 
     // C++ Functions and Properties
-    Any getAsAny(const std::string& key) const noexcept;
+    Any getAsAny(const std::string& key) const;
     template <typename T> const T& get(const std::string& key) const {
         Any a = getAsAny(key);
         return a.get<T>();
