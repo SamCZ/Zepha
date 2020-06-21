@@ -64,9 +64,7 @@ bool DimensionBase::setBlock(glm::ivec3 pos, unsigned int block) {
     if (!chunk) return false;
 
     auto &def = defs.blockFromId(block);
-    chunk->setBlock(Space::Block::relative::toChunk(pos), block);
-
-    return true;
+    return chunk->setBlock(Space::Block::relative::toChunk(pos), block);
 }
 
 std::shared_ptr<Region> DimensionBase::getOrCreateRegion(glm::ivec3 pos) {
