@@ -13,7 +13,7 @@
 
 class ServerWorld : public World {
 public:
-    const static int MB_GEN_H = 2, MB_GEN_V = 2;
+    const static int MB_GEN_H = 3, MB_GEN_V = 3;
     const static int CHUNK_SEND_H = 8, CHUNK_SEND_V = 8;
 
     explicit ServerWorld(unsigned int seed, ServerGame& game, ClientList& clients);
@@ -26,14 +26,14 @@ public:
 
     ServerDimension dimension;
 private:
-    void changedChunks(ServerClient& client);
-    bool generateMapBlock(glm::ivec3 pos);
-
-    void sendChunk(const glm::ivec3& pos, ServerClient& client);
-    static void sendChunk(const std::shared_ptr<Chunk>& chunk, ServerClient& client);
-    void sendMapBlock(const glm::ivec3& pos, ServerClient& client);
-
+    void changedMapBlocks(ServerClient& client);
     static bool isInBounds(glm::ivec3 pos, std::pair<glm::ivec3, glm::ivec3>& bounds);
+
+    void generateMapBlocks(ServerClient& client);
+    bool generateMapBlock(glm::ivec3 pos);
+    void sendChunksToPlayer(ServerClient& client);
+
+    static void sendChunk(const std::shared_ptr<Chunk>& chunk, ServerClient& client);
 
     std::unique_ptr<ServerGenStream> genStream = nullptr;
 
@@ -42,8 +42,6 @@ private:
     ClientList& clientList;
 
     unsigned int generatedChunks = 0;
-
-    //Static vector of chunks to place around players
     std::vector<glm::ivec3> generateOrder;
 };
 

@@ -51,7 +51,7 @@ public:
     ENetAddress address;
 
     bool changedMapBlocks = true;
-    glm::vec3 lastPos {-10000000, -10000000, -10000000};
+    glm::vec3 lastPos = glm::vec3(INFINITY);
 
 private:
     glm::vec3 pos {};

@@ -96,7 +96,7 @@ void ServerWorld::update(double delta) {
         if (client->hasPlayer) {
             r.sendTo(client->peer, PacketChannel::SERVER);
 
-            if (client->changedMapBlocks) changedChunks(*client);
+            if (client->changedMapBlocks) changedMapBlocks(*client);
         }
     }
 
@@ -124,40 +124,52 @@ void ServerWorld::update(double delta) {
     dimension.clearRemovedEntities();
 }
 
-void ServerWorld::changedChunks(ServerClient& client) {
-    auto mapBlock = Space::MapBlock::world::fromBlock(client.getPos());
-    auto lastMapBlock = Space::MapBlock::world::fromBlock(client.lastPos);
-
-    std::pair<glm::ivec3, glm::ivec3> oldBounds = {
-            {lastMapBlock.x - MB_GEN_H, lastMapBlock.y - MB_GEN_V, lastMapBlock.z - MB_GEN_H},
-            {lastMapBlock.x + MB_GEN_H, lastMapBlock.y + MB_GEN_V, lastMapBlock.z + MB_GEN_H}};
-
-    unsigned int mapBlocksExisting = 0;
-    unsigned int mapBlocksGenerating = 0;
-
-    for (const auto &c : generateOrder) {
-        glm::ivec3 mapBlockPos = mapBlock + c;
-        if (!isInBounds(mapBlockPos, oldBounds)) {
-            auto existing = dimension.getMapBlock(mapBlockPos);
-            if (existing != nullptr && existing->generated) {
-                mapBlocksExisting++;
-                sendMapBlock(mapBlockPos, client);
-            }
-            else {
-                mapBlocksGenerating += generateMapBlock(mapBlockPos);
-            }
-        }
-    }
-
-    std::cout << "Generating " << mapBlocksGenerating << " blocks, sending " << mapBlocksExisting << " existing blocks." << std::endl;
+void ServerWorld::changedMapBlocks(ServerClient& client) {
+    generateMapBlocks(client);
+    sendChunksToPlayer(client);
     client.changedMapBlocks = false;
 }
 
-bool ServerWorld::generateMapBlock(glm::ivec3 pos) {
-    if(!dimension.getMapBlock(pos) || !dimension.getMapBlock(pos)->generated)
-        return genStream->queue(pos);
+void ServerWorld::generateMapBlocks(ServerClient& client) {
+    unsigned int generating = 0;
+    glm::ivec3 playerMapBlock = Space::MapBlock::world::fromBlock(client.getPos());
 
+    for (const auto &c : generateOrder) {
+        glm::ivec3 mapBlockPos = playerMapBlock + c;
+        auto existing = dimension.getMapBlock(mapBlockPos);
+        if (existing && existing->generated) continue;
+        else generating += generateMapBlock(mapBlockPos);
+    }
+
+    std::cout << "Player moved, generating " << generating << " MapBlocks." << std::endl;
+}
+
+bool ServerWorld::generateMapBlock(glm::ivec3 pos) {
+    if(!dimension.getMapBlock(pos) || !dimension.getMapBlock(pos)->generated) return genStream->queue(pos);
     return false;
+}
+
+void ServerWorld::sendChunksToPlayer(ServerClient& client) {
+    glm::ivec3 playerChunk = Space::Chunk::world::fromBlock(client.getPos());
+    std::pair<glm::ivec3, glm::ivec3> bounds = {
+        {playerChunk.x - CHUNK_SEND_H, playerChunk.y - CHUNK_SEND_V, playerChunk.z - CHUNK_SEND_H},
+        {playerChunk.x + CHUNK_SEND_H, playerChunk.y + CHUNK_SEND_V, playerChunk.z + CHUNK_SEND_H}};
+
+    glm::ivec3 lastPlayerChunk = Space::Chunk::world::fromBlock(client.lastPos);
+    std::pair<glm::ivec3, glm::ivec3> oldBounds = {
+        {lastPlayerChunk.x - CHUNK_SEND_H, lastPlayerChunk.y - CHUNK_SEND_V, lastPlayerChunk.z - CHUNK_SEND_H},
+        {lastPlayerChunk.x + CHUNK_SEND_H, lastPlayerChunk.y + CHUNK_SEND_V, lastPlayerChunk.z + CHUNK_SEND_H}};
+
+    for (int i = bounds.first.x; i < bounds.second.x; i++) {
+        for (int j = bounds.first.y; j < bounds.second.y; j++) {
+            for (int k = bounds.first.z; k < bounds.second.z; k++) {
+                glm::ivec3 chunkPos {i, j, k};
+                if (isInBounds(chunkPos, oldBounds)) continue;
+                auto chunk = dimension.getChunk(chunkPos);
+                if (chunk) sendChunk(chunk, client);
+            }
+        }
+    }
 }
 
 void ServerWorld::sendChunk(const std::shared_ptr<Chunk>& chunk, ServerClient &peer) {
@@ -165,22 +177,6 @@ void ServerWorld::sendChunk(const std::shared_ptr<Chunk>& chunk, ServerClient &p
 
     Packet r = chunk->serialize();
     r.sendTo(peer.peer, PacketChannel::CHUNK);
-}
-
-void ServerWorld::sendChunk(const glm::ivec3& pos, ServerClient &peer) {
-    sendChunk(dimension.getChunk(pos), peer);
-}
-
-void ServerWorld::sendMapBlock(const glm::ivec3& pos, ServerClient &peer) {
-    unsigned long long mapBlockIntegrity = dimension.getMapBlockIntegrity(pos);
-    if (peer.getMapBlockIntegrity(pos) < mapBlockIntegrity) {
-        auto mapBlock = dimension.getMapBlock(pos);
-        assert(mapBlock != nullptr);
-
-        for (unsigned short i = 0; i < 64; i++) {
-            if ((*mapBlock)[i] != nullptr) sendChunk((*mapBlock)[i], peer);
-        }
-    }
 }
 
 unsigned int ServerWorld::getBlock(glm::ivec3 pos) {
@@ -210,29 +206,25 @@ void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
 
     for (auto &client : clientList.clients) {
         if (client->hasPlayer) {
-            auto mapBlock = Space::MapBlock::world::fromBlock(client->getPos());
-
+            glm::ivec3 mapBlock = Space::MapBlock::world::fromBlock(client->getPos());
             std::pair<glm::ivec3, glm::ivec3> bounds = {
-                    {mapBlock.x - MB_GEN_H, mapBlock.y - MB_GEN_V, mapBlock.z - MB_GEN_H},
-                    {mapBlock.x + MB_GEN_H, mapBlock.y + MB_GEN_V, mapBlock.z + MB_GEN_H}};
+                {mapBlock.x - MB_GEN_H, mapBlock.y - MB_GEN_V, mapBlock.z - MB_GEN_H},
+                {mapBlock.x + MB_GEN_H, mapBlock.y + MB_GEN_V, mapBlock.z + MB_GEN_H}};
 
-            if (isInBounds(Space::MapBlock::world::fromChunk(chunkPos), bounds)) {
+            if (isInBounds(Space::MapBlock::world::fromChunk(chunkPos), bounds))
                 b.sendTo(client->peer, PacketChannel::BLOCK);
-            }
         }
     }
 
     if (block == DefinitionAtlas::AIR) {
         auto def = game.defs.blockFromId(oldBlock);
-        if (def.callbacks.count(Callback::AFTER_DESTRUCT)) {
+        if (def.callbacks.count(Callback::AFTER_DESTRUCT))
             def.callbacks[Callback::AFTER_DESTRUCT](game.parser.luaVec(pos));
-        }
     }
     else {
         auto def = game.defs.blockFromId(block);
-        if (def.callbacks.count(Callback::AFTER_CONSTRUCT)) {
+        if (def.callbacks.count(Callback::AFTER_CONSTRUCT))
             def.callbacks[Callback::AFTER_CONSTRUCT](game.parser.luaVec(pos));
-        }
     }
 }
 
