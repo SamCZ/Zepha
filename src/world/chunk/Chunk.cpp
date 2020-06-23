@@ -47,15 +47,6 @@ const std::vector<unsigned short> &Chunk::cGetBiomes() const {
 }
 
 Packet Chunk::serialize() {
-    Serializer s;
-    s.append(pos);
-
-    std::string temp = Serializer().append(blocks).data;
-    s.append<std::string>(gzip::compress(temp.data(), temp.size()));
-
-    temp = Serializer().append(biomes).data;
-    s.append<std::string>(gzip::compress(temp.data(), temp.size()));
-
     std::vector<unsigned char> lights {};
     lights.resize(4096 * 4);
     for (unsigned short i = 0; i < 4096; i++) {
@@ -64,40 +55,35 @@ Packet Chunk::serialize() {
         lights[i * 4 + 2] = blocklight[i].b;
         lights[i * 4 + 3] = getSunlight(i);
     }
-    temp = Serializer().append(lights).data;
+
+    Serializer s;
+    std::string temp = Serializer().append(pos).append(blocks).append(biomes).append(lights).data;
     s.append<std::string>(gzip::compress(temp.data(), temp.size()));
+
+    std::cout << s.data.length() << std::endl;
 
     return s.packet(PacketType::CHUNK);
 }
 
 void Chunk::deserialize(PacketView& packet) {
+//    pos = packet.d.read<glm::ivec3>();
 
-    pos = packet.d.read<glm::ivec3>();
+    std::string gzipped = packet.d.read<std::string>();
+    if (!gzip::is_compressed(gzipped.data(), gzipped.length())) throw "Invalid Blocks GZip Data.";
+    auto light = Deserializer(gzip::decompress(gzipped.data(), gzipped.length()))
+        .read<glm::ivec3>(pos)
+        .read<std::vector<unsigned int>>(blocks)
+        .read<std::vector<unsigned short>>(biomes)
+        .read<std::vector<unsigned char>>();
 
-    auto gzip = packet.d.read<std::string>();
-    if (!gzip::is_compressed(gzip.data(), gzip.length())) throw "Invalid Blocks GZip Data.";
-    gzip = gzip::decompress(gzip.data(), gzip.length());
-
-    blocks = Deserializer(gzip).read<std::vector<unsigned int>>();
-    recalculateRenderableBlocks();
-
-    gzip = packet.d.read<std::string>();
-    if (!gzip::is_compressed(gzip.data(), gzip.length())) throw "Invalid Biomes GZip Data.";
-    gzip = gzip::decompress(gzip.data(), gzip.length());
-
-    biomes = Deserializer(gzip).read<std::vector<unsigned short>>();
-
-    gzip = packet.d.read<std::string>();
-    if (!gzip::is_compressed(gzip.data(), gzip.length())) throw "Invalid Light GZip Data.";
-    gzip = gzip::decompress(gzip.data(), gzip.length());
-
-    auto lightsVec = Deserializer(gzip).read<std::vector<unsigned char>>();
     for (unsigned int i = 0; i < 4096; i++) {
-        blocklight[i].r = lightsVec[i * 4];
-        blocklight[i].g = lightsVec[i * 4 + 1];
-        blocklight[i].b = lightsVec[i * 4 + 2];
-        setSunlight(i, lightsVec[i * 4 + 3]);
+        blocklight[i].r = light[i * 4];
+        blocklight[i].g = light[i * 4 + 1];
+        blocklight[i].b = light[i * 4 + 2];
+        setSunlight(i,    light[i * 4 + 3]);
     }
+
+    recalculateRenderableBlocks();
 }
 
 void Chunk::recalculateRenderableBlocks() {

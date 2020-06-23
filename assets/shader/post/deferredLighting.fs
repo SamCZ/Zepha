@@ -20,7 +20,7 @@ void main() {
     float ssao  = texture(ssaoSampler, texCoords).r;
 
     //Shade based on Normals
-    float shading = (0.8 + abs(normal.x) * 0.15) + (normal.y * 0.15) + 0.2;
+    float shading = (0.95 + abs(normal.x) * 0.1) + (normal.y * 0.15);
     color *= vec3(shading);
 
     vec3 lighting = color;

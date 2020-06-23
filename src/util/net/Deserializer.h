@@ -121,51 +121,65 @@ template <> inline glm::ivec3 Deserializer::read<glm::ivec3>() {
 
 template <> inline std::vector<int> Deserializer::read<std::vector<int>>() {
     unsigned int len = read<unsigned int>();
+    auto oldInd = ind;
+    ind += len * 4;
     return std::vector<int>(
-            reinterpret_cast<const int*>(&data[ind]),
-            reinterpret_cast<const int*>(&data[ind + len * 4]));
+            reinterpret_cast<const int*>(&data[oldInd]),
+            reinterpret_cast<const int*>(&data[ind]));
 }
 
 template <> inline std::vector<unsigned int> Deserializer::read<std::vector<unsigned int>>() {
     unsigned int len = read<unsigned int>();
+    auto oldInd = ind;
+    ind += len * 4;
     return std::vector<unsigned int>(
-            reinterpret_cast<const unsigned int*>(&data[ind]),
-            reinterpret_cast<const unsigned int*>(&data[ind + len * 4]));
+            reinterpret_cast<const unsigned int*>(&data[oldInd]),
+            reinterpret_cast<const unsigned int*>(&data[ind]));
 }
 
 template <> inline std::vector<short> Deserializer::read<std::vector<short>>() {
     unsigned int len = read<unsigned int>();
+    auto oldInd = ind;
+    ind += len * 2;
     return std::vector<short>(
-            reinterpret_cast<const short*>(&data[ind]),
-            reinterpret_cast<const short*>(&data[ind + len * 2]));
+            reinterpret_cast<const short*>(&data[oldInd]),
+            reinterpret_cast<const short*>(&data[ind]));
 }
 
 template <> inline std::vector<unsigned short> Deserializer::read<std::vector<unsigned short>>() {
     unsigned int len = read<unsigned int>();
+    auto oldInd = ind;
+    ind += len * 2;
     return std::vector<unsigned short>(
-            reinterpret_cast<const unsigned short*>(&data[ind]),
-            reinterpret_cast<const unsigned short*>(&data[ind + len * 2]));
+            reinterpret_cast<const unsigned short*>(&data[oldInd]),
+            reinterpret_cast<const unsigned short*>(&data[ind]));
 }
 
 template <> inline std::vector<char> Deserializer::read<std::vector<char>>() {
     unsigned int len = read<unsigned int>();
+    auto oldInd = ind;
+    ind += len;
     return std::vector<char>(
-            reinterpret_cast<const char*>(&data[ind]),
-            reinterpret_cast<const char*>(&data[ind + len]));
+            reinterpret_cast<const char*>(&data[oldInd]),
+            reinterpret_cast<const char*>(&data[ind]));
 }
 
 template <> inline std::vector<unsigned char> Deserializer::read<std::vector<unsigned char>>() {
     unsigned int len = read<unsigned int>();
+    auto oldInd = ind;
+    ind += len;
     return std::vector<unsigned char>(
-            reinterpret_cast<const unsigned char*>(&data[ind]),
-            reinterpret_cast<const unsigned char*>(&data[ind + len]));
+            reinterpret_cast<const unsigned char*>(&data[oldInd]),
+            reinterpret_cast<const unsigned char*>(&data[ind]));
 }
 
 template <> inline std::vector<float> Deserializer::read<std::vector<float>>() {
     unsigned int len = read<unsigned int>();
+    auto oldInd = ind;
+    ind += len * 4;
     return std::vector<float>(
-            reinterpret_cast<const float*>(&data[ind]),
-            reinterpret_cast<const float*>(&data[ind + len * 4]));
+            reinterpret_cast<const float*>(&data[oldInd]),
+            reinterpret_cast<const float*>(&data[ind]));
 }
 
 template <> inline std::vector<std::string> Deserializer::read<std::vector<std::string>>() {

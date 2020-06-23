@@ -10,44 +10,43 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
 TEST_CASE("Chunk", "[engine]") {
-//    SECTION("Lighting") {
-//        Chunk b;
-//
-//        b.setSunlight(1, 4);
-//        b.setSunlight(2, 1);
-//        b.setSunlight(3, 11);
-//        b.setSunlight(4, 5);
-//        b.setSunlight(100, 15);
-//        b.setSunlight(3000, 0);
-//
-//        b.setBlocklight(1, 4);
-//        b.setBlocklight(2, 1);
-//        b.setBlocklight(3, 11);
-//        b.setBlocklight(4, 5);
-//        b.setBlocklight(100, 15);
-//        b.setBlocklight(3000, 0);
-//
-//        SECTION("Sunlight") {
-//            REQUIRE(b.getSunlight(1) == 4);
-//            REQUIRE(b.getSunlight(2) == 1);
-//            REQUIRE(b.getSunlight(3) == 11);
-//            REQUIRE(b.getSunlight(4) == 5);
-//            REQUIRE(b.getSunlight(100) == 15);
-//            REQUIRE(b.getSunlight(3000) == 0);
-//        }
-//
-//        SECTION("Blocklight") {
-//            REQUIRE(b.getBlocklight(1) == 4);
-//            REQUIRE(b.getBlocklight(2) == 1);
-//            REQUIRE(b.getBlocklight(3) == 11);
-//            REQUIRE(b.getBlocklight(4) == 5);
-//            REQUIRE(b.getBlocklight(100) == 15);
-//            REQUIRE(b.getBlocklight(3000) == 0);
-//        }
-//    }
+    SECTION("Lighting") {
+        Chunk b;
+
+        b.setLight(1, 3, 4);
+        b.setLight(2, 3, 1);
+        b.setLight(3, 3, 11);
+        b.setLight(4, 3, 5);
+        b.setLight(100, 3, 15);
+        b.setLight(3000, 3, 0);
+
+        b.setLight(1, 0, 4);
+        b.setLight(2, 0, 1);
+        b.setLight(3, 1, 11);
+        b.setLight(4, 1, 5);
+        b.setLight(100, 2, 15);
+        b.setLight(3000, 2, 0);
+
+        SECTION("Sunlight") {
+            REQUIRE(b.getLight(1, 3) == 4);
+            REQUIRE(b.getLight(2, 3) == 1);
+            REQUIRE(b.getLight(3, 3) == 11);
+            REQUIRE(b.getLight(4, 3) == 5);
+            REQUIRE(b.getLight(100, 3) == 15);
+            REQUIRE(b.getLight(3000, 3) == 0);
+        }
+
+        SECTION("Blocklight") {
+            REQUIRE(b.getLight(1, 0) == 4);
+            REQUIRE(b.getLight(2, 0) == 1);
+            REQUIRE(b.getLight(3, 1) == 11);
+            REQUIRE(b.getLight(4, 1) == 5);
+            REQUIRE(b.getLight(100, 2) == 15);
+            REQUIRE(b.getLight(3000, 2) == 0);
+        }
+    }
 
     SECTION("Blocks") {
-
         SECTION("Exact index = 0, strip one after") {
             Chunk b {{0, 1, 1, 0}, {}};
 
