@@ -16,7 +16,7 @@ find_path(LUA_HEADERS lua.hpp
         /usr/local/include/lua5.1)
 find_path(ASSIMP_HEADERS assimp/Importer.hpp)
 find_path(ENET_HEADERS enet/enet.h)
-find_path(NOISE_HEADERS noise/noise.h)
+find_path(NOISE_HEADERS libnoise/noise.h)
 find_path(GLM_HEADERS glm/glm.hpp)
 find_path(PTHREAD_HEADERS pthread.h)
 
