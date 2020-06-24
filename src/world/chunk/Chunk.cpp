@@ -22,19 +22,11 @@ Chunk::Chunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned
 
 bool Chunk::setBlock(unsigned int ind, unsigned int blk) {
     if (!RIE::write(ind, blk, blocks, 4096)) return false;
-
-    if (blk == DefinitionAtlas::AIR) {
-        if ((nonAirBlocks = fmax(nonAirBlocks - 1, 0)) == 0) {
-            empty = true;
-            shouldHaveMesh = false;
-        }
+    if (blk == DefinitionAtlas::AIR && !(renderableBlocks = std::max(renderableBlocks - 1, 0))) shouldRender = false;
+    else if (blk != DefinitionAtlas::AIR && getBlock(ind) == DefinitionAtlas::AIR) {
+        shouldRender = true;
+        renderableBlocks++;
     }
-    else if (getBlock(ind) == DefinitionAtlas::AIR) {
-        shouldHaveMesh = true;
-        empty = false;
-        nonAirBlocks++;
-    }
-
     return true;
 }
 
@@ -100,16 +92,16 @@ void Chunk::deserialize(PacketView& packet) {
 }
 
 void Chunk::recalculateRenderableBlocks() {
-    shouldHaveMesh = false;
-    nonAirBlocks = 0;
+    shouldRender = false;
+    renderableBlocks = 0;
 
     for (unsigned int i = 0; i < blocks.size(); i += 2) {
         unsigned int nInd = (i == blocks.size() - 2 ? 4095 : blocks[i + 2]);
         unsigned int cInd = blocks[i];
 
         if (blocks[i + 1] > DefinitionAtlas::AIR) {
-            nonAirBlocks += nInd - cInd;
-            shouldHaveMesh = true;
+            renderableBlocks += nInd - cInd;
+            shouldRender = true;
         }
     }
 }

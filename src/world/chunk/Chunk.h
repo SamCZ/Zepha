@@ -68,7 +68,7 @@ public:
     bool generated = false;
 
     bool dirty = true;
-    bool shouldHaveMesh = true;
+    bool shouldRender = true;
 
     glm::ivec3 pos;
 
@@ -79,8 +79,7 @@ private:
     std::array<SunLight, 2048> sunLight {};
     std::array<BlockLight, 4096> blockLight {};
 
-    bool empty = true;
-    unsigned short nonAirBlocks = 0;
+    unsigned short renderableBlocks = 0;
 
     inline unsigned char getSunlight(unsigned int ind);
     inline void setSunlight(unsigned int ind, unsigned char val);

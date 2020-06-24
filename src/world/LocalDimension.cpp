@@ -219,7 +219,7 @@ void LocalDimension::attemptMeshChunk(const std::shared_ptr<Chunk>& chunk, bool 
     if (!renderable) return;
 
     if (!chunk->dirty) return;
-    if (!chunk->shouldHaveMesh) removeMeshChunk(chunk->pos);
+    if (!chunk->shouldRender) removeMeshChunk(chunk->pos);
 
 
     pendingMesh.push_back(chunk->pos);
