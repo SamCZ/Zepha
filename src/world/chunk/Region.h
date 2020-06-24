@@ -8,7 +8,7 @@
 #include <memory>
 #include <glm/vec3.hpp>
 
-#include "MapBlock.h"
+class MapBlock;
 
 class Region {
 public:

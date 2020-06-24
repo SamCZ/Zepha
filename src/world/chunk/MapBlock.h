@@ -8,7 +8,7 @@
 #include <memory>
 #include <glm/vec3.hpp>
 
-#include "Chunk.h"
+class Chunk;
 
 class MapBlock {
 public:

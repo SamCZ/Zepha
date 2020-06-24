@@ -32,7 +32,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize, ClientGame& defs) :
     add(meshGraph);
 
     auto genGraph = std::make_shared<GuiLabelledGraph>("genGraph");
-    genGraph->create({244, 64}, {}, "Gen", 120, 256, genericHistogramRef, f);
+    genGraph->create({244, 64}, {}, "Gen", 120, 16, genericHistogramRef, f);
     add(genGraph);
 
     auto packetGraph = std::make_shared<GuiLabelledGraph>("packetGraph");

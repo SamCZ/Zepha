@@ -10,7 +10,6 @@
 
 #include "../../util/RIE.h"
 #include "../../util/Space.h"
-#include "../../util/net/Packet.h"
 #include "../../def/gen/BiomeAtlas.h"
 #include "../../def/DefinitionAtlas.h"
 #include "../../util/net/PacketView.h"
@@ -59,7 +58,7 @@ public:
     inline unsigned char getLight(unsigned int ind, unsigned char channel);
     inline void setLight(unsigned int ind, unsigned char channel, unsigned char light);
 
-    Packet serialize();
+    std::string serialize();
     void deserialize(PacketView& packet);
 
     void recalculateRenderableBlocks();

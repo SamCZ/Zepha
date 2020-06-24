@@ -38,7 +38,7 @@ const std::vector<unsigned short> &Chunk::cGetBiomes() const {
     return biomes;
 }
 
-Packet Chunk::serialize() {
+std::string Chunk::serialize() {
     std::vector<unsigned short> blockLight = std::vector<unsigned short>(4096);
     std::vector<unsigned char> sunLight = std::vector<unsigned char>(2048);
 
@@ -58,9 +58,7 @@ Packet Chunk::serialize() {
     std::string temp = Serializer().append(pos).append(blocks).append(biomes).append(blockLight).append(sunLight).data;
     s.append<std::string>(gzip::compress(temp.data(), temp.size()));
 
-    std::cout << s.data.length() << std::endl;
-
-    return s.packet(PacketType::CHUNK);
+    return s.data;
 }
 
 void Chunk::deserialize(PacketView& packet) {

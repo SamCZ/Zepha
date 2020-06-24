@@ -58,6 +58,14 @@ sol::object LuaGuiElement::call(sol::this_state s, sol::function fun) {
     return fun(this);
 }
 
+sol::object LuaGuiElement::pcall(sol::this_state s, sol::protected_function fun) {
+    sol::table tbl = sol::state_view(s)["zepha"]["__builtin"]["gui_env"];
+    sol::environment env(s, sol::create, tbl);
+
+    sol::set_environment(env, fun);
+    return fun(this);
+}
+
 sol::object LuaGuiElement::get_child(sol::this_state s, sol::object key) {
     if (key.is<float>() && key.as<float>() <= children.size()) {
         auto begin = children.begin();

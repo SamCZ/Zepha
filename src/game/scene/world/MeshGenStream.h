@@ -4,16 +4,16 @@
 
 #pragma once
 
-
 #include <thread>
 #include <glm/vec3.hpp>
 #include <unordered_set>
 
-#include "ChunkMeshDetails.h"
 #include "../../../util/Vec.h"
 #include "../../../def/ClientGame.h"
 #include "../../../def/gen/NoiseSample.h"
-#include "../../../world/chunk/Chunk.h"
+
+class Chunk;
+class ChunkMeshDetails;
 
 class LocalDimension;
 
@@ -37,10 +37,12 @@ public:
     std::vector<ChunkMeshDetails*> update();
 
     struct Unit {
+        Unit();
+
         std::shared_ptr<Chunk> thisChunk = nullptr;
         std::array<std::shared_ptr<Chunk>, 6> adjacentChunks {};
 
-        ChunkMeshDetails* meshDetails = new ChunkMeshDetails();
+        ChunkMeshDetails* meshDetails;
 
         bool busy = false;
     };

@@ -4,7 +4,9 @@
 
 #include "MeshGenStream.h"
 
+#include "ChunkMeshDetails.h"
 #include "graph/ChunkMeshGenerator.h"
+#include "../../../world/chunk/Chunk.h"
 #include "../../../world/LocalDimension.h"
 
 MeshGenStream::MeshGenStream(ClientGame& game, LocalDimension &dimension) :
@@ -71,6 +73,10 @@ std::vector<ChunkMeshDetails*> MeshGenStream::update() {
     }
 
     return std::move(finishedChunks);
+}
+
+MeshGenStream::Unit::Unit() {
+    meshDetails = new ChunkMeshDetails();
 }
 
 MeshGenStream::Thread::Thread(ClientGame &defs, std::array<NoiseSample, 3>& offsetSamplers) :

@@ -4,6 +4,8 @@
 
 #include "Dimension.h"
 
+#include "chunk/Chunk.h"
+
 bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {
     if (!DimensionBase::setBlock(pos, block)) return false;
 

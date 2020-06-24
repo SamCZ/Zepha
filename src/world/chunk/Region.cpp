@@ -4,7 +4,7 @@
 
 #include "Region.h"
 
-#include "../../util/Space.h"
+#include "MapBlock.h"
 
 Region::Region(glm::ivec3 pos) :
     pos(pos) {

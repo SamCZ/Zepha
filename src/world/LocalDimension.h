@@ -4,15 +4,19 @@
 
 #pragma once
 
+#include <list>
+
 #include "Dimension.h"
 
-#include "../lua/api/class/LocalLuaEntity.h"
-#include "../game/scene/world/MeshGenStream.h"
+#include "../def/ClientGame.h"
 #include "../game/entity/engine/PlayerEntity.h"
-#include "../lua/api/class/ServerLocalLuaEntity.h"
-#include "../game/scene/world/graph/ChunkRenderElem.h"
 
+class Renderer;
 class MeshChunk;
+class MeshGenStream;
+class ChunkRenderElem;
+class LocalLuaEntity;
+class ServerLocalLuaEntity;
 
 class LocalDimension : public Dimension {
 public:
@@ -58,7 +62,7 @@ private:
 
     ClientGame& game;
 
-    std::unique_ptr<MeshGenStream> meshGenStream = nullptr;
+    std::shared_ptr<MeshGenStream> meshGenStream;
     std::vector<glm::vec3> pendingMesh {};
 
     std::unordered_map<unsigned int, local_ent_ref> localEntityRefs {};

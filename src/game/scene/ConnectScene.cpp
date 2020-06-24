@@ -6,6 +6,9 @@
 
 #include "ConnectScene.h"
 
+#include "../../util/net/Packet.h"
+#include "../../util/net/PacketType.h"
+#include "../../util/net/PacketView.h"
 #include "../../server/asset/AssetType.h"
 #include "../hud/components/basic/GuiText.h"
 #include "../hud/components/basic/GuiRect.h"

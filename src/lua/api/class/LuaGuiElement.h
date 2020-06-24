@@ -20,6 +20,7 @@ public:
     sol::object set_trait(const std::string& key, sol::object val);
 
     sol::object call(sol::this_state s, sol::function fun);
+    sol::object pcall(sol::this_state s, sol::protected_function fun);
     sol::object get_child(sol::this_state s, sol::object key);
 
     void append(sol::this_state s, sol::object elem);
@@ -63,7 +64,7 @@ namespace ClientApi {
             sol::meta_function::index, &LuaGuiElement::get_trait,
             sol::meta_function::new_index, &LuaGuiElement::set_trait,
 
-            sol::meta_function::call, &LuaGuiElement::call,
+            sol::meta_function::call, sol::overload(&LuaGuiElement::call, &LuaGuiElement::pcall),
 
             "get", &LuaGuiElement::get_child,
             "append", &LuaGuiElement::append,

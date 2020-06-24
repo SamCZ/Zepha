@@ -7,9 +7,10 @@
 
 #include "ServerWorld.h"
 
+#include "ServerGenStream.h"
 #include "../conn/ClientList.h"
 #include "../conn/ServerClient.h"
-#include "../../util/Timer.h"
+#include "../../world/chunk/MapBlock.h"
 
 ServerWorld::ServerWorld(unsigned int seed, ServerGame& game, ClientList& clients) :
     clientList(clients),
@@ -57,7 +58,7 @@ void ServerWorld::update(double delta) {
     dimension.update(clientList.clients);
 
     auto finished = genStream->update();
-    generatedChunks = static_cast<int>(finished->size());
+    generatedMapBlocks = static_cast<int>(finished->size());
 
     std::unordered_set<glm::ivec3, Vec::ivec3> changed {};
 
@@ -90,7 +91,7 @@ void ServerWorld::update(double delta) {
     // Send the # of generated chunks to the client (debug),
     // and trigger new chunks to be generated if a player has changed MapBlocks.
     Packet r(PacketType::SERVER_INFO);
-    r.data = Serializer().append(generatedChunks).data;
+    r.data = Serializer().append(generatedMapBlocks).data;
 
     for (auto& client : clientList.clients) {
         if (client->hasPlayer) {
@@ -175,7 +176,8 @@ void ServerWorld::sendChunksToPlayer(ServerClient& client) {
 void ServerWorld::sendChunk(const std::shared_ptr<Chunk>& chunk, ServerClient &peer) {
     if (chunk == nullptr || !chunk->generated) return;
 
-    Packet r = chunk->serialize();
+    Packet r(PacketType::CHUNK);
+    r.data = chunk->serialize();
     r.sendTo(peer.peer, PacketChannel::CHUNK);
 }
 

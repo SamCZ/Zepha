@@ -4,6 +4,9 @@
 
 #include "GameScene.h"
 
+#include "../../util/net/Packet.h"
+#include "../../util/net/PacketView.h"
+
 GameScene::GameScene(ClientState& state) : Scene(state),
     game(state.defs),
     world(game, &net),

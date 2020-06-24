@@ -4,6 +4,8 @@
 
 #include "ServerDimension.h"
 
+#include "chunk/Region.h"
+#include "chunk/MapBlock.h"
 #include "../def/gen/MapGen.h"
 #include "../server/conn/ServerClient.h"
 #include "../server/world/ServerWorld.h"

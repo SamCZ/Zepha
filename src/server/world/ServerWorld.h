@@ -8,13 +8,17 @@
 
 #include "../../game/scene/world/World.h"
 
-#include "ServerGenStream.h"
 #include "../../world/ServerDimension.h"
+
+class ServerGame;
+class ClientList;
+class ServerClient;
+class ServerGenStream;
 
 class ServerWorld : public World {
 public:
-    const static int MB_GEN_H = 3, MB_GEN_V = 3;
-    const static int CHUNK_SEND_H = 8, CHUNK_SEND_V = 8;
+    const static int MB_GEN_H = 4, MB_GEN_V = 4;
+    const static int CHUNK_SEND_H = 10, CHUNK_SEND_V = 10;
 
     explicit ServerWorld(unsigned int seed, ServerGame& game, ClientList& clients);
 
@@ -35,13 +39,13 @@ private:
 
     static void sendChunk(const std::shared_ptr<Chunk>& chunk, ServerClient& client);
 
-    std::unique_ptr<ServerGenStream> genStream = nullptr;
+    std::shared_ptr<ServerGenStream> genStream = nullptr;
 
     unsigned int seed;
     ServerGame& game;
     ClientList& clientList;
 
-    unsigned int generatedChunks = 0;
+    unsigned int generatedMapBlocks = 0;
     std::vector<glm::ivec3> generateOrder;
 };
 

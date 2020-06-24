@@ -4,6 +4,11 @@
 
 #include "DimensionBase.h"
 
+#include "chunk/Chunk.h"
+#include "chunk/Region.h"
+#include "chunk/MapBlock.h"
+#include "../def/DefinitionAtlas.h"
+
 DimensionBase::DimensionBase(DefinitionAtlas &defs) : defs(defs) {}
 
 std::shared_ptr<Region> DimensionBase::getRegion(glm::ivec3 regionPosition) {

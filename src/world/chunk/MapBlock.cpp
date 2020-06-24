@@ -4,7 +4,7 @@
 
 #include "MapBlock.h"
 
-#include "../../util/Space.h"
+#include "Chunk.h"
 
 MapBlock::MapBlock(glm::ivec3 pos) :
     pos(pos) {

@@ -7,9 +7,14 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 
 #include "../util/Vec.h"
-#include "chunk/Region.h"
+
+class Chunk;
+class Region;
+class MapBlock;
+class DefinitionAtlas;
 
 class DimensionBase {
 public:

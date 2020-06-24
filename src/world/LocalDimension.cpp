@@ -4,10 +4,17 @@
 
 #include "LocalDimension.h"
 
+#include "../world/chunk/Chunk.h"
+#include "../world/chunk/Region.h"
+#include "../world/chunk/MapBlock.h"
+#include "../lua/api/class/LocalLuaEntity.h"
+#include "../game/scene/world/MeshGenStream.h"
 #include "../game/scene/world/graph/MeshChunk.h"
+#include "../game/scene/world/ChunkMeshDetails.h"
+#include "../lua/api/class/ServerLocalLuaEntity.h"
 
 LocalDimension::LocalDimension(ClientGame &game) : Dimension(game.defs),
-    meshGenStream(std::make_unique<MeshGenStream>(game, *this)),
+    meshGenStream(std::make_shared<MeshGenStream>(game, *this)),
     game(game) {}
 
 void LocalDimension::update(double delta, glm::vec3 playerPos) {

@@ -5,15 +5,16 @@
 #include "Player.h"
 
 #include "../../../util/Ray.h"
+#include "../../../world/chunk/Chunk.h"
 
 Player::Player(LocalWorld& world, ClientGame& defs, Renderer& renderer, LocalInventoryRefs& refs) :
-        Collidable(world, defs, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
+    Collidable(world, defs, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
 
-        refs(refs),
-        game(defs),
-        renderer(renderer),
-        wireframe({}, 0.01, {1, 1, 1}),
-        gameGui(refs, renderer.window.getSize(), defs, renderer) {
+    refs(refs),
+    game(defs),
+    renderer(renderer),
+    wireframe({}, 0.01, {1, 1, 1}),
+    gameGui(refs, renderer.window.getSize(), defs, renderer) {
     handItemModel.parent = &handModel;
 
     renderer.window.addResizeCallback("player", [&](glm::ivec2 win) {

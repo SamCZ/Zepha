@@ -4,12 +4,16 @@
 
 #pragma once
 
-#include "../../hud/GameGui.h"
 #include "../../entity/Collidable.h"
-#include "../../hud/GameGuiBuilder.h"
 #include "../../graph/drawable/Drawable.h"
+
+#include "../../hud/GameGui.h"
 #include "../../../world/block/PointedThing.h"
 #include "../../entity/engine/WireframeEntity.h"
+
+class LuaGuiElement;
+class LocalInventory;
+class LocalInventoryRefs;
 
 class Player : Collidable, public Drawable {
 public:
