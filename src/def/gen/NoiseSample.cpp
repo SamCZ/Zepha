@@ -3,6 +3,9 @@
 //
 #include "NoiseSample.h"
 
+#include <glm/glm.hpp>
+#include "../../util/Interp.h"
+
 void NoiseSample::fill(const NoiseSample::fill_function &fun, float precision) {
     fill(fun, {precision, 1});
 }

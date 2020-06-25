@@ -5,11 +5,17 @@
 #pragma once
 
 #include <queue>
+#include <memory>
+#include <glm/vec3.hpp>
+#include <unordered_map>
 
-#include "MapGenJob.h"
-#include "MapGenProps.h"
+class Chunk;
+class MapGenJob;
+class BiomeAtlas;
+class MapGenProps;
+class DefinitionAtlas;
+
 #include "../../util/Vec.h"
-#include "../../world/chunk/Chunk.h"
 
 class MapGen {
 public:

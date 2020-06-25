@@ -8,8 +8,9 @@
 
 #include "Chunk.h"
 
+#include "../../def/DefinitionAtlas.h"
 #include "../../util/net/Serializer.h"
-#include "../../util/net/PacketView.h"
+#include "../../util/net/Deserializer.h"
 
 Chunk::Chunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes) :
     Chunk(blocks, biomes, {0, 0, 0}) {}
@@ -61,8 +62,8 @@ std::string Chunk::serialize() {
     return s.data;
 }
 
-void Chunk::deserialize(PacketView& packet) {
-    std::string gzipped = packet.d.read<std::string>();
+void Chunk::deserialize(Deserializer& d) {
+    std::string gzipped = d.read<std::string>();
     if (!gzip::is_compressed(gzipped.data(), gzipped.length())) throw "Invalid Blocks GZip Data.";
 
     std::vector<unsigned char> sunLight {};

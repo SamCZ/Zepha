@@ -6,13 +6,19 @@
 
 #include <list>
 #include <thread>
+#include <vector>
+#include <memory>
+#include <glm/vec3.hpp>
 #include <unordered_set>
 
 #include "graph/MeshFarMap.h"
 #include "../../../def/gen/MapGen.h"
-#include "../../../world/chunk/Chunk.h"
+#include "../../../util/net/PacketView.h"
 
+class Chunk;
+class MapGen;
 class ClientGame;
+class MapGenProps;
 
 class WorldInterpolationStream {
 public:
@@ -60,8 +66,8 @@ private:
         std::thread thread;
     };
 
+    MapGen* gen;
     std::shared_ptr<MapGenProps> props;
-    MapGen gen;
 
     std::vector<Thread> threads;
     std::list<std::unique_ptr<PacketView>> queuedPacketTasks;

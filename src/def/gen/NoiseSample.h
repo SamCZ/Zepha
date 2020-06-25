@@ -5,12 +5,9 @@
 #pragma once
 
 #include <vector>
-#include <iostream>
-#include <noise/noise.h>
-#include <glm/glm.hpp>
-#include <glm/common.hpp>
 #include <functional>
-#include "../../util/Interp.h"
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 
 class NoiseSample {
 public:

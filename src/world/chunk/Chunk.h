@@ -5,14 +5,14 @@
 
 #pragma once
 
+#include <array>
 #include <vector>
 #include <glm/vec3.hpp>
 
 #include "../../util/RIE.h"
 #include "../../util/Space.h"
-#include "../../def/gen/BiomeAtlas.h"
-#include "../../def/DefinitionAtlas.h"
-#include "../../util/net/PacketView.h"
+
+class Deserializer;
 
 class Chunk {
 public:
@@ -59,7 +59,7 @@ public:
     inline void setLight(unsigned int ind, unsigned char channel, unsigned char light);
 
     std::string serialize();
-    void deserialize(PacketView& packet);
+    void deserialize(Deserializer& d);
 
     void recalculateRenderableBlocks();
 
@@ -85,7 +85,7 @@ private:
 };
 
 inline unsigned int Chunk::getBlock(const glm::ivec3& pos) const {
-    if (pos.x > 15 || pos.x < 0 || pos.y > 15 || pos.y < 0 || pos.z > 15 || pos.z < 0) return DefinitionAtlas::INVALID;
+    if (pos.x > 15 || pos.x < 0 || pos.y > 15 || pos.y < 0 || pos.z > 15 || pos.z < 0) return 0; // Invalid
     return getBlock(Space::Block::index(pos));
 }
 
@@ -95,12 +95,12 @@ inline bool Chunk::setBlock(const glm::ivec3& pos, unsigned int blk) {
 }
 
 inline unsigned int Chunk::getBlock(unsigned int ind) const {
-    if (ind >= 4096) return DefinitionAtlas::INVALID;
+    if (ind >= 4096) return 0; // Invalid
     return RIE::read<unsigned int>(ind, blocks, 4096);
 }
 
 inline unsigned short Chunk::getBiome(unsigned int ind) const {
-    if (ind >= 4096) return BiomeAtlas::INVALID;
+    if (ind >= 4096) return 0; // Invalid
     return RIE::read<unsigned short>(ind, biomes, 4096);
 }
 
@@ -109,7 +109,7 @@ inline bool Chunk::setBiome(unsigned int ind, unsigned short bio) {
 }
 
 inline unsigned short Chunk::getBiome(const glm::ivec3& pos) const {
-    if (pos.x > 15 || pos.x < 0 || pos.y > 15 || pos.y < 0 || pos.z > 15 || pos.z < 0) return BiomeAtlas::INVALID;
+    if (pos.x > 15 || pos.x < 0 || pos.y > 15 || pos.y < 0 || pos.z > 15 || pos.z < 0) return 0; // Invalid
     return getBiome(Space::Block::index(pos));
 }
 

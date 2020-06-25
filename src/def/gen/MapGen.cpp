@@ -7,7 +7,12 @@
 
 #include "MapGen.h"
 
+#include "BiomeAtlas.h"
+#include "MapGenJob.h"
+#include "MapGenProps.h"
 #include "NoiseSample.h"
+#include "../DefinitionAtlas.h"
+#include "../../world/chunk/Chunk.h"
 
 MapGen::MapGen(unsigned int seed, DefinitionAtlas& defs, BiomeAtlas& biomes, std::shared_ptr<MapGenProps> props) :
     seed(seed),

@@ -5,13 +5,16 @@
 #include "WorldInterpolationStream.h"
 
 #include "../../../def/ClientGame.h"
+#include "../../../def/gen/MapGen.h"
+#include "../../../world/chunk/Chunk.h"
+#include "../../../util/net/PacketView.h"
 
 WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, ClientGame& game) :
     props(std::make_shared<MapGenProps>(seed)),
-    gen(seed, game.defs, game.biomes, props) {
+    gen(new MapGen(seed, game.defs, game.biomes, props)) {
 
     threads.reserve(THREADS);
-    for (int i = 0; i < THREADS; i++) threads.emplace_back(&gen);
+    for (int i = 0; i < THREADS; i++) threads.emplace_back(gen);
 }
 
 void WorldInterpolationStream::queuePacket(std::unique_ptr<PacketView> p) {
@@ -71,7 +74,7 @@ std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> WorldInterpolationStream::u
     return finishedChunks;
 }
 
-WorldInterpolationStream::Thread::Thread(MapGen *gen) : gen(gen),
+WorldInterpolationStream::Thread::Thread(MapGen* gen) : gen(gen),
     thread(std::bind(&WorldInterpolationStream::Thread::exec, this)) {}
 
 void WorldInterpolationStream::Thread::exec() {
@@ -82,7 +85,7 @@ void WorldInterpolationStream::Thread::exec() {
                 if (u.job == JobType::PACKET) {
                     empty = false;
                     u.chunk = std::make_shared<Chunk>();
-                    u.chunk->deserialize(*u.packet);
+                    u.chunk->deserialize(u.packet->d);
                     u.locked = false;
                     break;
                 }

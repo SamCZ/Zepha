@@ -5,6 +5,7 @@
 #include "Dimension.h"
 
 #include "chunk/Chunk.h"
+#include "../def/DefinitionAtlas.h"
 
 bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {
     if (!DimensionBase::setBlock(pos, block)) return false;
@@ -44,10 +45,10 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::calculateEdgeLight(glm::iv
         else if (ypos && l.y == 3) calculateVerticalEdge(getChunk(chunkPos + glm::ivec3 {0, 1, 0}), self);
 
         if (xpos && l.x == 3) calculateHorizontalEdge(self, getChunk(chunkPos + glm::ivec3 {1, 0, 0}));
-        if (xneg && l.x == 0) calculateHorizontalEdge(self, getChunk(chunkPos + glm::ivec3 {-1, 0, 0}));
+        else if (xneg && l.x == 0) calculateHorizontalEdge(self, getChunk(chunkPos + glm::ivec3 {-1, 0, 0}));
 
         if (zpos && l.z == 3) calculateHorizontalEdge(self, getChunk(chunkPos + glm::ivec3 {0, 0, 1}));
-        if (zneg && l.z == 0) calculateHorizontalEdge(self, getChunk(chunkPos + glm::ivec3 {0, 0, -1}));
+        else if (zneg && l.z == 0) calculateHorizontalEdge(self, getChunk(chunkPos + glm::ivec3 {0, 0, -1}));
     }
 
     return propogateRemoveNodes();

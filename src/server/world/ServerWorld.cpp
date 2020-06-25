@@ -10,6 +10,7 @@
 #include "ServerGenStream.h"
 #include "../conn/ClientList.h"
 #include "../conn/ServerClient.h"
+#include "../../world/chunk/Chunk.h"
 #include "../../world/chunk/MapBlock.h"
 
 ServerWorld::ServerWorld(unsigned int seed, ServerGame& game, ClientList& clients) :

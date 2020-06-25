@@ -6,6 +6,7 @@
 
 #include "Player.h"
 #include "WorldInterpolationStream.h"
+#include "../../../world/chunk/Chunk.h"
 #include "../../entity/engine/ParticleEntity.h"
 #include "../../entity/engine/BlockCrackEntity.h"
 
