@@ -21,7 +21,7 @@ Server::Server(unsigned short port, const std::string& subgame) :
     world(seed, defs, clientList) {
 
     defs.init(world);
-    world.init();
+    world.init("world");
     config.init();
 
     std::cout << Log::info << "Server started successfully, listening for clients." << Log::endl;

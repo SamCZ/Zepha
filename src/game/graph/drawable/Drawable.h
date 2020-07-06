@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../Renderer.h"
+class Renderer;
 
 class Drawable {
 public:

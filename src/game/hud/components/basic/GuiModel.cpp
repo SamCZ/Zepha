@@ -4,6 +4,8 @@
 
 #include "GuiModel.h"
 
+#include "../../SerialGui.h"
+#include "../../../graph/Renderer.h"
 #include "../../../../def/ClientGame.h"
 #include "../../../../def/model/ModelStore.h"
 

@@ -5,16 +5,7 @@
 #pragma once
 
 #include "GameGuiBuilder.h"
-#include "SerialGui.h"
-#include "components/basic/GuiText.h"
-#include "components/basic/GuiRect.h"
-#include "components/basic/GuiContainer.h"
-#include "../graph/drawable/DrawableGroup.h"
-#include "../inventory/ServerInventoryList.h"
-#include "../entity/Entity.h"
-#include "../../util/Util.h"
 #include "components/compound/GuiInventoryList.h"
-#include "../inventory/Inventory.h"
 
 class GameGui {
 public:

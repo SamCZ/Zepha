@@ -5,6 +5,7 @@
 #include "Player.h"
 
 #include "../../../util/Ray.h"
+#include "../../graph/Renderer.h"
 #include "../../../world/chunk/Chunk.h"
 
 Player::Player(LocalWorld& world, ClientGame& defs, Renderer& renderer, LocalInventoryRefs& refs) :
@@ -141,19 +142,22 @@ void Player::updateCamera() {
 
 void Player::findPointedThing(Input &input) {
     glm::ivec3 chunkPos = {};
+
+    std::unique_lock<std::mutex> lock {};
     std::shared_ptr<Chunk> blockChunk = nullptr;
 
     for (Ray ray(this); ray.getLength() < LOOK_DISTANCE; ray.step(LOOK_PRECISION)) {
         glm::vec3 rayEnd = ray.getEnd();
         glm::ivec3 roundedPos = glm::floor(rayEnd);
 
-        auto currChunkPos = Space::Chunk::world::fromBlock(roundedPos);
-        if (glm::ivec3(currChunkPos) != chunkPos || blockChunk == nullptr) {
+        glm::ivec3 currChunkPos = Space::Chunk::world::fromBlock(roundedPos);
+        if (currChunkPos != chunkPos || blockChunk == nullptr) {
             chunkPos = currChunkPos;
             blockChunk = world.getChunk(chunkPos);
-        }
+            if (blockChunk == nullptr) continue;
 
-        if (blockChunk == nullptr) continue;
+            lock = blockChunk->aquireLock();
+        }
 
         unsigned int blockID = blockChunk->getBlock(Space::Block::relative::toChunk(roundedPos));
         auto& boxes = game.defs.blockFromId(blockID).sBoxes;

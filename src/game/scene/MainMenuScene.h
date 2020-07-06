@@ -5,13 +5,12 @@
 #pragma once
 
 #include <json/json.hpp>
-#include "../../game/ClientState.h"
+
 #include "../../game/graph/scene/Scene.h"
-#include "../hud/components/basic/GuiText.h"
-#include "../hud/components/basic/GuiContainer.h"
-#include "../hud/components/compound/GuiImageButton.h"
-#include "menu/Subgame.h"
+
 #include "menu/MenuSandbox.h"
+
+class ClientState;
 
 using nlohmann::json;
 

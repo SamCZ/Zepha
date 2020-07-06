@@ -90,11 +90,6 @@ void MeshGenStream::Thread::exec() {
             auto& u = tasks[i];
             if (!u.busy) continue;
 
-            if (u.thisChunk == nullptr) {
-                std::cout << Util::vecToString(u.thisChunk->pos) << std::endl;
-                continue;
-            }
-
             ChunkMeshGenerator m(u.meshDetails, game.defs, game.biomes, u.thisChunk, u.adjacentChunks, offsetSamplers);
             hasNoTasks = false;
             u.busy = false;

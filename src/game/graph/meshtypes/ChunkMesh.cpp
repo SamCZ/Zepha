@@ -2,9 +2,9 @@
 // Created by aurailus on 25/11/18.
 //
 
-#include <vector>
-
 #include "ChunkMesh.h"
+
+#include "ChunkVertex.h"
 
 void ChunkMesh::create(const std::vector<ChunkVertex>& vertices, const std::vector<unsigned int>& indices) {
     indCount = static_cast<GLsizei>(indices.size());

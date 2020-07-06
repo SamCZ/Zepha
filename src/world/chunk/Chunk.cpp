@@ -21,6 +21,18 @@ Chunk::Chunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned
     recalculateRenderableBlocks();
 }
 
+Chunk::Chunk(const Chunk& o) :
+    partial(o.partial),
+    generated(o.generated),
+    dirty(o.dirty),
+    shouldRender(o.shouldRender),
+    pos(o.pos),
+    blocks(o.blocks),
+    biomes(o.biomes),
+    blockLight(o.blockLight),
+    sunLight(o.sunLight),
+    renderableBlocks(o.renderableBlocks) {}
+
 bool Chunk::setBlock(unsigned int ind, unsigned int blk) {
     if (!RIE::write(ind, blk, blocks, 4096)) return false;
     if (blk == DefinitionAtlas::AIR && !(renderableBlocks = std::max(renderableBlocks - 1, 0))) shouldRender = false;
@@ -64,7 +76,7 @@ std::string Chunk::serialize() {
 
 void Chunk::deserialize(Deserializer& d) {
     std::string gzipped = d.read<std::string>();
-    if (!gzip::is_compressed(gzipped.data(), gzipped.length())) throw "Invalid Blocks GZip Data.";
+    if (!gzip::is_compressed(gzipped.data(), gzipped.length())) throw "Chunk contains invalid gzipped data.";
 
     std::vector<unsigned char> sunLight {};
     std::vector<unsigned short> blockLight {};

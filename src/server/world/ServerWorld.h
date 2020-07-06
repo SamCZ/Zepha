@@ -13,6 +13,7 @@
 class ServerGame;
 class ClientList;
 class ServerClient;
+class FileManipulator;
 class ServerGenStream;
 
 class ServerWorld : public World {
@@ -22,7 +23,7 @@ public:
 
     explicit ServerWorld(unsigned int seed, ServerGame& game, ClientList& clients);
 
-    void init();
+    void init(const std::string& worldDir);
     void update(double delta) override;
 
     unsigned int getBlock(glm::ivec3 pos) override;
@@ -44,6 +45,9 @@ private:
     unsigned int seed;
     ServerGame& game;
     ClientList& clientList;
+    
+    std::string worldDir;
+    std::shared_ptr<FileManipulator> fileManip;
 
     unsigned int generatedMapBlocks = 0;
     std::vector<glm::ivec3> generateOrder;

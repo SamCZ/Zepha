@@ -7,11 +7,10 @@
 #include <string>
 
 #include "GuiContainer.h"
-#include "../../../../def/ItemDef.h"
-#include "../../SerialGui.h"
 
 class ClientGame;
 class ModelStore;
+class LuaGuiElement;
 
 class GuiModel : public GuiComponent {
 public:

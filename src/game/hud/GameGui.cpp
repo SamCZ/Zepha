@@ -3,7 +3,8 @@
 //
 
 #include "GameGui.h"
-#include "components/compound/GuiInventoryList.h"
+
+#include "../graph/Renderer.h"
 
 GameGui::GameGui(LocalInventoryRefs& refs, glm::vec2 bufferSize, ClientGame& defs, Renderer& renderer) :
     refs(refs),

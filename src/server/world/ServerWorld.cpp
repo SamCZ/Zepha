@@ -12,6 +12,7 @@
 #include "../conn/ServerClient.h"
 #include "../../world/chunk/Chunk.h"
 #include "../../world/chunk/MapBlock.h"
+#include "../../world/fs/FileManipulator.h"
 
 ServerWorld::ServerWorld(unsigned int seed, ServerGame& game, ClientList& clients) :
     clientList(clients),
@@ -51,8 +52,11 @@ ServerWorld::ServerWorld(unsigned int seed, ServerGame& game, ClientList& client
     }
 }
 
-void ServerWorld::init() {
+void ServerWorld::init(const std::string& worldDir) {
     genStream = std::make_unique<ServerGenStream>(seed, game);
+    fileManip = std::make_shared<FileManipulator>("worlds/" + worldDir + "/");
+
+    generateMapBlock({0, 0, 0});
 }
 
 void ServerWorld::update(double delta) {
@@ -67,6 +71,7 @@ void ServerWorld::update(double delta) {
         for (const auto& chunk : mb.chunks) {
             changed.insert(chunk->pos);
             dimension.setChunk(chunk);
+//            fileManip->commitChunk(*chunk);
         }
 
         auto resend = dimension.calculateEdgeLight(mb.pos);
@@ -178,7 +183,11 @@ void ServerWorld::sendChunk(const std::shared_ptr<Chunk>& chunk, ServerClient &p
     if (chunk == nullptr || !chunk->generated) return;
 
     Packet r(PacketType::CHUNK);
+
+    auto l = chunk->aquireLock();
     r.data = chunk->serialize();
+    l.release();
+
     r.sendTo(peer.peer, PacketChannel::CHUNK);
 }
 

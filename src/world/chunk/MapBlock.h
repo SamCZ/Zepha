@@ -1,4 +1,5 @@
 //
+// The MapBlock class, contains 64 Chunks in a 4^3 cube.
 // Created by aurailus on 18/04/19.
 //
 

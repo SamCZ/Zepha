@@ -66,8 +66,8 @@ private:
         std::thread thread;
     };
 
-    MapGen* gen;
     std::shared_ptr<MapGenProps> props;
+    MapGen* gen;
 
     std::vector<Thread> threads;
     std::list<std::unique_ptr<PacketView>> queuedPacketTasks;

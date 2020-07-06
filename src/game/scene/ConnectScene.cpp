@@ -6,6 +6,7 @@
 
 #include "ConnectScene.h"
 
+#include "../graph/Renderer.h"
 #include "../../util/net/Packet.h"
 #include "../../util/net/PacketType.h"
 #include "../../util/net/PacketView.h"

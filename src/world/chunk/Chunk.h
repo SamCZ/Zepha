@@ -8,6 +8,7 @@
 #include <array>
 #include <vector>
 #include <glm/vec3.hpp>
+#include <mutex>
 
 #include "../../util/RIE.h"
 #include "../../util/Space.h"
@@ -36,6 +37,9 @@ public:
     Chunk() = default;
     explicit Chunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes);
     Chunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes, glm::ivec3 pos);
+    Chunk(const Chunk& o);
+
+    inline std::unique_lock<std::mutex> aquireLock();
 
     inline unsigned int getBlock(unsigned int ind) const;
     bool setBlock(unsigned int ind, unsigned int blk);
@@ -72,6 +76,8 @@ public:
     glm::ivec3 pos;
 
 private:
+    std::mutex m;
+
     std::vector<unsigned int> blocks {0, 0};
     std::vector<unsigned short> biomes {0, 0};
 
@@ -83,6 +89,11 @@ private:
     inline unsigned char getSunlight(unsigned int ind);
     inline void setSunlight(unsigned int ind, unsigned char val);
 };
+
+std::unique_lock<std::mutex> Chunk::aquireLock() {
+    std::unique_lock<std::mutex> lock(m, std::defer_lock);
+    return std::move(lock);
+}
 
 inline unsigned int Chunk::getBlock(const glm::ivec3& pos) const {
     if (pos.x > 15 || pos.x < 0 || pos.y > 15 || pos.y < 0 || pos.z > 15 || pos.z < 0) return 0; // Invalid

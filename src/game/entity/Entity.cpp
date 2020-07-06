@@ -6,6 +6,8 @@
 
 #include "Entity.h"
 
+#include "../graph/Renderer.h"
+
 Entity::Entity() : model(std::make_unique<Model>()) {}
 
 Entity::Entity(std::shared_ptr<Model> model) : animState(*model), model(model) {}

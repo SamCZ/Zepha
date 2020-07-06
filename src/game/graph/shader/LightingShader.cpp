@@ -14,12 +14,14 @@ void LightingShader::postCreate() {
     uniforms.gPosition   = get("gPosition");
     uniforms.gNormal     = get("gNormal");
     uniforms.gColorSpec  = get("gColorSpec");
+    uniforms.ssaoSampler = get("ssaoSampler");
     uniforms.camPosition = get("camPosition");
 
     use();
     set(uniforms.gPosition, 0);
     set(uniforms.gNormal, 1);
     set(uniforms.gColorSpec, 2);
+    set(uniforms.ssaoSampler, 3);
 
     glGenFramebuffers(1, &gBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);

@@ -10,6 +10,8 @@
 
 #include "../../entity/Entity.h"
 
+class Window;
+
 class GuiComponent : public Drawable {
 public:
     enum class CallbackType { PRIMARY, SECONDARY, HOVER };

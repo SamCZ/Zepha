@@ -5,7 +5,9 @@
 #pragma once
 
 #include <string>
+
 #include "../graph/scene/Scene.h"
+
 #include "../hud/components/basic/GuiContainer.h"
 
 class LuaErrorScene : public Scene {

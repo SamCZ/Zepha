@@ -19,6 +19,7 @@ public:
         GLint gPosition;
         GLint gNormal;
         GLint gColorSpec;
+        GLint ssaoSampler;
 
         GLint camPosition;
     };

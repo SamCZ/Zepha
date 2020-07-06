@@ -2,10 +2,16 @@
 // Created by aurailus on 15/12/18.
 //
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "MeshChunk.h"
 
+#include "../../../graph/Renderer.h"
+#include "../../../graph/meshtypes/ChunkMesh.h"
+
 void MeshChunk::create(std::vector<ChunkVertex> &vertices, std::vector<unsigned int> &indices) {
-    this->mesh = std::make_unique<ChunkMesh>();
+    this->mesh = std::make_shared<ChunkMesh>();
     mesh->create(vertices, indices);
 }
 

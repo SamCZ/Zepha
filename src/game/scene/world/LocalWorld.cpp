@@ -101,6 +101,7 @@ unsigned short LocalWorld::getBiome(glm::vec3 pos) {
     auto local = Space::Block::relative::toChunk(pos);
 
     auto chunk = getChunk(chunkPos);
+    auto l = chunk->aquireLock();
     if (chunk != nullptr) return chunk->getBiome(local);
     return BiomeAtlas::INVALID;
 }

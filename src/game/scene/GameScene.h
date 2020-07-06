@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "world/Player.h"
-#include "../ClientState.h"
-#include "../hud/DebugGui.h"
 #include "../graph/scene/Scene.h"
+
+#include "world/Player.h"
+#include "../hud/DebugGui.h"
 
 class GameScene : public Scene {
 public:

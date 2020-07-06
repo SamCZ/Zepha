@@ -4,6 +4,10 @@
 
 #include "MainMenuScene.h"
 
+#include "../graph/Renderer.h"
+#include "../hud/components/basic/GuiText.h"
+#include "../hud/components/compound/GuiImageButton.h"
+
 MainMenuScene::MainMenuScene(ClientState& state) :
     Scene(state),
     sandbox(sandboxArea, state, menuContainer) {

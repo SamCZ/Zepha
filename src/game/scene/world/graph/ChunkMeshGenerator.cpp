@@ -10,6 +10,10 @@
 #include "../ChunkMeshDetails.h"
 #include "../../../../util/Vec.h"
 #include "../../../../world/chunk/Chunk.h"
+#include "../../../../def/item/BlockModel.h"
+#include "../../../../def/gen/NoiseSample.h"
+#include "../../../../def/gen/LocalBiomeAtlas.h"
+#include "../../../../def/LocalDefinitionAtlas.h"
 
 ChunkMeshGenerator::ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefinitionAtlas& defs, LocalBiomeAtlas& biomes,
     std::shared_ptr<Chunk> chunk, std::array<std::shared_ptr<Chunk>, 6> adjacent,
@@ -23,6 +27,11 @@ ChunkMeshGenerator::ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefin
 
     meshDetails->vertices.reserve(5000);
     meshDetails->indices.reserve(7000);
+
+    // Lock the related chunks
+    std::array<std::unique_lock<std::mutex>, 7> locks;
+    locks[0] = std::move(chunk->aquireLock());
+    for (unsigned int i = 0; i < 6; i++) locks[i+1] = std::move(adjacent[i]->aquireLock());
 
     const auto& blockData = chunk->cGetBlocks();
     const auto& biomeData = chunk->cGetBiomes();

@@ -4,6 +4,12 @@
 
 #include "Client.h"
 
+#include "../util/Timer.h"
+#include "scene/GameScene.h"
+#include "scene/ConnectScene.h"
+#include "scene/MainMenuScene.h"
+#include "scene/LuaErrorScene.h"
+
 Client::Client(const std::string& path, const Address &addr, glm::ivec2 dims) :
     state(path.substr(0, path.find_last_of('/') + 1), renderer),
     renderer(dims),

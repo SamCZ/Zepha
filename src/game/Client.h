@@ -7,11 +7,6 @@
 #include "ClientState.h"
 #include "graph/Renderer.h"
 #include "graph/scene/SceneManager.h"
-#include "scene/MainMenuScene.h"
-#include "scene/ConnectScene.h"
-#include "scene/GameScene.h"
-#include "scene/LuaErrorScene.h"
-#include "../util/Timer.h"
 #include "../server/LocalServerInstance.h"
 
 class Client {

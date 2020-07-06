@@ -60,13 +60,16 @@ void DimensionBase::removeChunk(glm::ivec3 pos){
 
 unsigned int DimensionBase::getBlock(glm::ivec3 pos) {
     auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
-    if (chunk) return chunk->getBlock(Space::Block::relative::toChunk(pos));
-    return 0;
+    if (!chunk) return 0;
+    auto l = chunk->aquireLock();
+
+    return chunk->getBlock(Space::Block::relative::toChunk(pos));
 }
 
 bool DimensionBase::setBlock(glm::ivec3 pos, unsigned int block) {
     auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
     if (!chunk) return false;
+    auto l = chunk->aquireLock();
 
     auto &def = defs.blockFromId(block);
     return chunk->setBlock(Space::Block::relative::toChunk(pos), block);

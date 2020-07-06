@@ -8,9 +8,10 @@
 #include "../../graph/drawable/Drawable.h"
 
 #include "../../hud/GameGui.h"
-#include "../../../world/block/PointedThing.h"
+#include "../../../world/PointedThing.h"
 #include "../../entity/engine/WireframeEntity.h"
 
+class Input;
 class LuaGuiElement;
 class LocalInventory;
 class LocalInventoryRefs;

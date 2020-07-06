@@ -3,6 +3,8 @@
 //
 
 #include "LuaErrorScene.h"
+
+#include "../graph/Renderer.h"
 #include "../../def/texture/Font.h"
 #include "../hud/components/basic/GuiRect.h"
 #include "../hud/components/basic/GuiText.h"

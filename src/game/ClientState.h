@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "graph/Renderer.h"
-#include "scene/net/ClientNetworkInterpreter.h"
 #include "../def/ClientGame.h"
 #include "scene/net/ServerConnection.h"
+
+class Renderer;
 
 class ClientState {
 public:

@@ -6,6 +6,7 @@
 
 #include "../world/chunk/Chunk.h"
 #include "../world/chunk/Region.h"
+#include "../game/graph/Renderer.h"
 #include "../util/net/PacketView.h"
 #include "../world/chunk/MapBlock.h"
 #include "../lua/api/class/LocalLuaEntity.h"

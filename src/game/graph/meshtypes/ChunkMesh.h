@@ -4,13 +4,17 @@
 
 #pragma once
 
+#include <vector>
+#include <stdexcept>
+
 #include "Mesh.h"
-#include "ChunkVertex.h"
+
+class ChunkVertex;
 
 class ChunkMesh : public Mesh {
 public:
     ChunkMesh() = default;
-    ChunkMesh(const ChunkMesh& o) { assert(false); };
+    ChunkMesh(const ChunkMesh& o) { throw std::runtime_error("No copy constructor for ChunkMeshes"); };
 
     void create(const std::vector<ChunkVertex>& vertices, const std::vector<unsigned int>& indices);
 

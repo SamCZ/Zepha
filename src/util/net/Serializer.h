@@ -63,6 +63,16 @@ template <> inline Serializer& Serializer::append<unsigned short>(const unsigned
     return *this;
 }
 
+template <> inline Serializer& Serializer::append<char>(const char& elem) {
+    data += elem;
+    return *this;
+}
+
+template <> inline Serializer& Serializer::append<unsigned char>(const unsigned char& elem) {
+    data += elem;
+    return *this;
+}
+
 template <> inline Serializer& Serializer::append<float>(const float& elem) {
     float_union cv = { elem };
     data += cv.bytes[0];

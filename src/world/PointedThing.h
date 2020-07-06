@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "../../def/item/BlockDef.h"
-#include "../../def/ClientGame.h"
+#include "../def/item/BlockDef.h"
+#include "../def/ClientGame.h"
 
 class PointedThing {
 public:

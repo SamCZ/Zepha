@@ -5,11 +5,12 @@
 #include "LocalLuaParser.h"
 
 #include "../ErrorFormatter.h"
+#include "../../game/ClientState.h"
+#include "../../game/graph/Renderer.h"
 #include "../register/RegisterBlocks.h"
 #include "../register/RegisterItems.h"
 #include "../register/RegisterBiomes.h"
 #include "../register/RegisterKeybinds.h"
-#include "../../game/ClientState.h"
 
 // Usertypes
 #include "../api/class/LuaGuiElement.h"

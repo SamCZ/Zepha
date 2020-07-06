@@ -4,6 +4,7 @@
 
 #include "GameScene.h"
 
+#include "../graph/Renderer.h"
 #include "../../util/net/Packet.h"
 #include "../../util/net/PacketView.h"
 

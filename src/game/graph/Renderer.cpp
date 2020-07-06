@@ -141,11 +141,13 @@ void Renderer::endDeferredCalls() {
     light.set(light.uniforms.camPosition, camera.getPos());
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, blur.colorBuffer);
+    glBindTexture(GL_TEXTURE_2D, light.gPosition);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, light.gNormal);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, light.gColorSpec);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, blur.colorBuffer);
 
     glEnable(GL_BLEND);
     renderQuad();

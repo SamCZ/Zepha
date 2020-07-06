@@ -3,7 +3,10 @@
 //
 
 #include <utility>
+
 #include "GuiComponent.h"
+
+#include "../../graph/Renderer.h"
 
 GuiComponent::GuiComponent(const std::string& key) :
     key(key) {}

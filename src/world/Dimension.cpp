@@ -8,9 +8,12 @@
 #include "../def/DefinitionAtlas.h"
 
 bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {
+    auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
+    if (!chunk) return false;
+    auto l = chunk->aquireLock();
+
     if (!DimensionBase::setBlock(pos, block)) return false;
 
-    auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
     auto &def = defs.blockFromId(block);
 
     glm::ivec4 oldLight = chunk->getLight(Space::Block::index(pos));
@@ -21,6 +24,8 @@ bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {
 
     if (def.lightPropagates) reflowLight(pos);
     if (!def.lightPropagates && getLight(pos, chunk.get()).w != 0) removeSunlight(pos);
+
+    l.release();
 
     propogateRemoveNodes();
 
@@ -55,11 +60,19 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::calculateEdgeLight(glm::iv
 }
 
 std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
+    std::vector<std::unique_lock<std::mutex>> collectedLocks;
     std::unordered_set<glm::ivec3, Vec::ivec3> chunksUpdated {};
 
     for (unsigned int channel = 0; channel < lightAddQueue.size(); channel++) {
         while (!lightAddQueue[channel].empty()) {
             LightAddNode& node = lightAddQueue[channel].front();
+
+            Chunk* chunk = node.chunk;
+            if (!chunksUpdated.count(chunk->pos)) {
+                chunksUpdated.insert(chunk->pos);
+                collectedLocks.push_back(std::move(chunk->aquireLock()));
+            }
+
             unsigned char lightLevel = node.chunk->getLight(node.index, channel);
             glm::ivec3 worldPos = node.chunk->pos * 16 + Space::Block::fromIndex(node.index);
 
@@ -71,8 +84,11 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
                 else {
                     chunk = getChunk(Space::Chunk::world::fromBlock(check)).get();
                     if (!chunk) continue;
-                    chunksUpdated.insert(chunk->pos);
-                    chunk->dirty = true;
+                    if (!chunksUpdated.count(chunk->pos)) {
+                        chunksUpdated.insert(chunk->pos);
+                        collectedLocks.push_back(std::move(chunk->aquireLock()));
+                        chunk->dirty = true;
+                    }
                 }
 
                 bool sunDown = (channel == SUNLIGHT_CHANNEL && lightLevel == 15 && i.y == -1);
@@ -91,6 +107,7 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
 }
 
 std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
+    std::vector<std::unique_lock<std::mutex>> collectedLocks;
     std::unordered_set<glm::ivec3, Vec::ivec3> chunksUpdated {};
 
     for (unsigned int channel = 0; channel < lightRemoveQueue.size(); channel++) {
@@ -106,8 +123,11 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
                 else {
                     chunk = getChunk(Space::Chunk::world::fromBlock(check)).get();
                     if (!chunk) continue;
-                    chunksUpdated.insert(chunk->pos);
-                    chunk->dirty = true;
+                    if (!chunksUpdated.count(chunk->pos)) {
+                        chunksUpdated.insert(chunk->pos);
+                        collectedLocks.push_back(std::move(chunk->aquireLock()));
+                        chunk->dirty = true;
+                    }
                 }
 
                 unsigned char checkLight = chunk->getLight(ind, channel);
@@ -147,6 +167,9 @@ glm::ivec4 Dimension::getLight(glm::ivec3 worldPos, Chunk *chunk) {
 }
 
 void Dimension::calculateHorizontalEdge(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b) {
+    auto l1 = a->aquireLock();
+    auto l2 = b->aquireLock();
+
     for (unsigned int j = 0; j < 256; j++) {
         glm::ivec3 diff = a->pos - b->pos;
 
@@ -166,6 +189,9 @@ void Dimension::calculateHorizontalEdge(std::shared_ptr<Chunk> a, std::shared_pt
 }
 
 void Dimension::calculateVerticalEdge(std::shared_ptr<Chunk> above, std::shared_ptr<Chunk> below) {
+    auto l1 = above->aquireLock();
+    auto l2 = below->aquireLock();
+
     for (unsigned int j = 0; j < 256; j++) {
         unsigned int xx = j / 16;
         unsigned int zz = j % 16;

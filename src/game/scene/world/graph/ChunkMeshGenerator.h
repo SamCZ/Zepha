@@ -4,15 +4,16 @@
 
 #pragma once
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedMacroInspection"
 #define GLM_ENABLE_EXPERIMENTAL
-#pragma clang diagnostic pop
 
-#include "../../../../def/ClientGame.h"
-#include "../../../../def/gen/NoiseSample.h"
+#include <memory>
 
+class LocalDefinitionAtlas;
 class ChunkMeshDetails;
+class LocalBiomeAtlas;
+class NoiseSample;
+class BlockDef;
+class MeshPart;
 class Chunk;
 
 class ChunkMeshGenerator {

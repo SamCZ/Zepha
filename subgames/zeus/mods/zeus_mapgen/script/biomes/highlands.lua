@@ -1,31 +1,39 @@
-local woo = "zeus:default:wood"
-local lea = "zeus:default:leaves"
-local inv = "invalid"
+-- local woo = "zeus:default:wood"
+-- local lea = "zeus:default:leaves"
+-- local inv = "invalid"
+--
+-- local shrub_layer_0 = {
+--     { inv, inv, inv },
+--     { inv, woo, inv },
+--     { inv, inv, inv }
+-- }
+--
+-- local shrub_layer_1 = {
+--     { inv, lea, inv },
+--     { lea, woo, lea },
+--     { inv, lea, inv }
+-- }
+--
+-- local shrub_layer_2 = {
+--     { inv, inv, inv },
+--     { inv, lea, inv },
+--     { inv, inv, inv }
+-- }
+--
+-- local shrub = zepha.create_structure({
+--     origin = V{1, 1, 1},
+--     schematic = {
+--         shrub_layer_0,
+--         shrub_layer_1,
+--         shrub_layer_2,
+--     }
+-- })
 
-local shrub_layer_0 = {
-    { inv, inv, inv },
-    { inv, woo, inv },
-    { inv, inv, inv }
-}
-
-local shrub_layer_1 = {
-    { inv, lea, inv },
-    { lea, woo, lea },
-    { inv, lea, inv }
-}
-
-local shrub_layer_2 = {
-    { inv, inv, inv },
-    { inv, lea, inv },
-    { inv, inv, inv }
-}
 
 local shrub = zepha.create_structure({
-    origin = V{1, 1, 1},
+    origin = V{},
     schematic = {
-        shrub_layer_0,
-        shrub_layer_1,
-        shrub_layer_2,
+        {{"zeus:default:tallgrass_4"}}
     }
 })
 

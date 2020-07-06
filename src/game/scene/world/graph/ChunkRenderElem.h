@@ -5,7 +5,8 @@
 #pragma once
 
 #include <glm/vec3.hpp>
-#include "../../../graph/Renderer.h"
+
+class Renderer;
 
 struct ChunkRenderElem {
     virtual void draw(Renderer& renderer) = 0;

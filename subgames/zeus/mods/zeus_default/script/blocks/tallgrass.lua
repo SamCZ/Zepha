@@ -4,6 +4,7 @@ for i = 1, 5, 1 do
         solid = false,
         name = "Tall Grass",
         model = "base:cross_plant",
+        light_propagates = true,
         textures = {
             "tint(0, zeus:default:tallgrass_"..i..")"
         },
