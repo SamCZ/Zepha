@@ -41,8 +41,8 @@ Window::Window(glm::ivec2 win) :
     if ((error = glewInit()) != GLEW_OK) {
         glfwTerminate();
         glfwDestroyWindow(mainWindow);
-        throw std::runtime_error("GLEW Fatal error.");
         printf("%s", reinterpret_cast<const char *>(glewGetErrorString(error)));
+        throw std::runtime_error("GLEW Fatal error.");
     }
 
     glEnable(GL_DEPTH_TEST);
