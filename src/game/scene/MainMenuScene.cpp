@@ -159,9 +159,9 @@ void MainMenuScene::findSubgames() {
             if (!j.is_object())
                 throw std::string(subgameFolder.name) + "/conf.json is not a valid JSON object.";
             if (!j["name"].is_string() || j["name"] == "")
-                throw "The 'name' property in " + std::string(subgameFolder.name) + "/conf.json is missing or invalid.";
+                throw std::runtime_error("The 'name' property in " + std::string(subgameFolder.name) + "/conf.json is missing or invalid.");
             if (!j["version"].is_string() || j["version"] == "")
-                throw "The 'version' property in " + std::string(subgameFolder.name) + "/conf.json is missing or invalid.";
+                throw std::runtime_error("The 'version' property in " + std::string(subgameFolder.name) + "/conf.json is missing or invalid.");
 
             std::string name = j["name"];
             std::string description = (j["description"].is_string() ? j["description"] : "");
