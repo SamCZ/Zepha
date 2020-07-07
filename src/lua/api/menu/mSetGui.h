@@ -5,8 +5,10 @@
 #pragma once
 
 #include <sol2/sol.hpp>
-#include "../class/LuaGuiElement.h"
+
 #include "../../../game/hud/GuiBuilder.h"
+
+class LuaGuiElement;
 
 namespace MenuApi {
     void set_gui(GuiBuilder& builder, glm::ivec2& win, sol::state& lua, sol::table& core) {

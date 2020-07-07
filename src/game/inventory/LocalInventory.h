@@ -4,10 +4,13 @@
 
 #pragma once
 
+#include <memory>
+#include <functional>
+#include <unordered_map>
 
-#include "LocalInventoryList.h"
-#include "../../def/DefinitionAtlas.h"
-#include "../scene/net/ClientNetworkInterpreter.h"
+class DefinitionAtlas;
+class LocalInventoryList;
+class ClientNetworkInterpreter;
 
 class LocalInventory {
 public:

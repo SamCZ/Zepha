@@ -5,9 +5,10 @@
 #pragma once
 
 #include <array>
-#include <glm/vec3.hpp>
 #include <cstddef>
 #include <functional>
+#include <glm/vec3.hpp>
+
 #include "Space.h"
 
 namespace Vec {

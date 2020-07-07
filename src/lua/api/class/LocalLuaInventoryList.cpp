@@ -5,6 +5,8 @@
 #include "LocalLuaInventoryList.h"
 
 #include "LuaItemStack.h"
+#include "../../../def/ItemDef.h"
+#include "../../../def/DefinitionAtlas.h"
 
 int LocalLuaInventoryList::get_length() {
     return list.getLength();

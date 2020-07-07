@@ -6,9 +6,11 @@
 
 #include "Dimension.h"
 
-#include "../lua/api/class/ServerLuaEntity.h"
+#include <list>
 
+class ServerGame;
 class ServerClient;
+class ServerLuaEntity;
 
 class ServerDimension : public Dimension {
 public:

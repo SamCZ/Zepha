@@ -1,6 +1,6 @@
 //
-// Packet implentation for easy manipulation. Can be converted into an ENet packet, or deserialized from one.
-//
+// Packet implentation for easy manipulation.
+// Can be converted into an ENet packet, or deserialized from one.
 // Created by aurailus on 10/01/19.
 //
 

@@ -2,7 +2,12 @@
 // Created by aurailus on 2019-10-19.
 //
 
+#include <glm/glm.hpp>
+
 #include "LocalLuaPlayer.h"
+
+#include "../../LuaParser.h"
+#include "../../../game/scene/world/Player.h"
 
 void LocalLuaPlayer::set_pos(const sol::table &pos) {
     player.setPos({pos[1], pos[2], pos[3]});

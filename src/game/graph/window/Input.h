@@ -5,8 +5,8 @@
 #pragma once
 
 #include <array>
-#include <glm/vec2.hpp>
 #include <functional>
+#include <glm/vec2.hpp>
 
 class Input {
 public:

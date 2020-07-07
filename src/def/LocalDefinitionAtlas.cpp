@@ -4,6 +4,9 @@
 
 #include "LocalDefinitionAtlas.h"
 
+#include "item/BlockDef.h"
+#include "texture/TextureAtlas.h"
+
 LocalDefinitionAtlas::LocalDefinitionAtlas(TextureAtlas& atlas) {
     //Invalid Node
     BlockModel invalidModel = BlockModel::createCube({atlas["_missing"]}, {}, {});
@@ -26,10 +29,7 @@ void LocalDefinitionAtlas::setIdentifiers(const std::vector<std::string>& identi
 }
 
 void LocalDefinitionAtlas::registerDef(ItemDef* def) {
-    if (!defTable.count(def->identifier)) {
-        std::cout << Log::err << "Client/Server block identifier desync: " + def->identifier + ". Exiting." << Log::endl;
-        exit(1);
-    }
+    if (!defTable.count(def->identifier)) throw std::runtime_error("Client/Server definition desync: " + def->identifier + ".");
     def->index = defTable[def->identifier];
     defs[def->index] = def;
 }

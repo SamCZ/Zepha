@@ -2,7 +2,12 @@
 // Created by aurailus on 02/12/18.
 //
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/normal.hpp>
+
 #include "MeshPart.h"
+
+#include "../texture/AtlasRef.h";
 
 MeshPart::MeshPart(const std::vector<BlockModelVertex>& vertices, const std::vector<unsigned int>& indices,
         std::shared_ptr<AtlasRef> texture, unsigned int blendInd, std::shared_ptr<AtlasRef> blendMask) :

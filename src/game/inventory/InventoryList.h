@@ -5,9 +5,11 @@
 #pragma once
 
 #include <string>
+#include <sol2/sol.hpp>
+
 #include "ItemStack.h"
 
-#include "../../def/DefinitionAtlas.h"
+class DefinitionAtlas;
 
 class InventoryList {
 public:

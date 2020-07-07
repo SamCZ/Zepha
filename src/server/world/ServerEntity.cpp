@@ -4,6 +4,8 @@
 
 #include "ServerEntity.h"
 
+#include "../../util/net/Serializer.h"
+
 void ServerEntity::setPos(glm::vec3 position) {
     this->position = position;
     this->dirty = true;

@@ -9,10 +9,10 @@
 #include <unordered_set>
 
 #include "../../../util/Vec.h"
-#include "../../../def/ClientGame.h"
 #include "../../../def/gen/NoiseSample.h"
 
 class Chunk;
+class ClientGame;
 class ChunkMeshDetails;
 
 class LocalDimension;

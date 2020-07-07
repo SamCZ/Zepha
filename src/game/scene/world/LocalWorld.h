@@ -7,12 +7,12 @@
 #include "World.h"
 
 #include "../../../world/LocalDimension.h"
-#include "../../../def/ClientGame.h"
 
 class ClientNetworkInterpreter;
 class WorldInterpolationStream;
 class BlockCrackEntity;
 class ParticleEntity;
+class ClientGame;
 class Renderer;
 class Player;
 

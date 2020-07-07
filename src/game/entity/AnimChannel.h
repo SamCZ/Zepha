@@ -5,9 +5,9 @@
 #pragma once
 
 #include <string>
-#include <assimp/quaternion.h>
-#include <glm/vec3.hpp>
 #include <vector>
+#include <glm/vec3.hpp>
+#include <assimp/quaternion.h>
 
 class AnimChannel {
 public:

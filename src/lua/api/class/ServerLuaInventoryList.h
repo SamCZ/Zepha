@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "../../../game/inventory/ServerInventoryList.h"
 #include "LuaItemStack.h"
+#include "../../../game/inventory/ServerInventoryList.h"
 
 class ServerLuaInventoryList {
 public:

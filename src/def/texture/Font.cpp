@@ -2,7 +2,12 @@
 // Created by aurailus on 13/08/19.
 //
 
+#include <cmath>
+
 #include "Font.h"
+
+#include "AtlasRef.h"
+#include "TextureAtlas.h"
 
 Font::Font(TextureAtlas& atlas, std::shared_ptr<AtlasRef> tex) :
     fontTex(std::move(tex)),
@@ -13,10 +18,7 @@ Font::Font(TextureAtlas& atlas, std::shared_ptr<AtlasRef> tex) :
 
 unsigned int Font::getCharWidth(char c) {
     unsigned int index = static_cast<unsigned int>(c) - 32;
-    if (index >= amountOfChars) {
-        std::cout << Log::err << "Invalid char index!" << std::endl;
-        return 0;
-    }
+    if (index >= amountOfChars) throw "Invalid char index.";
     return charWidths[index];
 }
 
@@ -55,20 +57,15 @@ void Font::getCharWidths(TextureAtlas &atlas) {
 
 glm::vec4 Font::getCharUVs(char c) {
     unsigned int index = static_cast<unsigned int>(c) - 32;
-    if (index >= amountOfChars) {
-        std::cout << Log::err << "Invalid char index!" << std::endl;
-        return {};
-    }
+    if (index >= amountOfChars) throw "Invalid char index.";
 
-    glm::vec4 uv;
-
-    glm::vec2 charPos = {((index % 18) * charWidth),
-                         (std::floor(index / 18) * charHeight)};
-
-    uv.x = fontTex->uv.x + (charPos.x) / atlasSize.x;
-    uv.y = fontTex->uv.y + (charPos.y) / atlasSize.y;
-    uv.z = fontTex->uv.x + (charPos.x + getCharWidth(c) + 1) / atlasSize.x;
-    uv.w = fontTex->uv.y + (charPos.y + charHeight) / atlasSize.y;
+    glm::vec2 charPos = {(index % 18) * charWidth, std::floor(index / 18) * charHeight};
+    glm::vec4 uv = {
+        fontTex->uv.x + (charPos.x) / atlasSize.x,
+        fontTex->uv.y + (charPos.y) / atlasSize.y,
+        fontTex->uv.x + (charPos.x + getCharWidth(c) + 1) / atlasSize.x,
+        fontTex->uv.y + (charPos.y + charHeight) / atlasSize.y
+    };
 
     return uv;
 }

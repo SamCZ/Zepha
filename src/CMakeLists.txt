@@ -233,9 +233,8 @@ set(ZEPHA_SRC
 	def/texture/RawTexData.h 
 	game/hud/components/compound/GuiImageButton.cpp 
 	game/hud/components/compound/GuiImageButton.h 
-	game/ClientState.cpp 
-	game/scene/menu/Subgame.cpp 
-	game/scene/menu/Subgame.h 
+	game/ClientState.cpp
+		game/scene/menu/Subgame.h
 	game/scene/menu/SubgameConfig.h 
 	game/scene/menu/MenuSandbox.cpp 
 	game/scene/menu/MenuSandbox.h 
@@ -320,17 +319,9 @@ set(ZEPHA_SRC
 	util/net/PacketView.h
 	lua/api/modules/create_structure.h
 	util/Any.h
-	game/scene/world/graph/MeshFarMap.cpp
-	game/scene/world/graph/MeshFarMap.h
-	def/gen/MapGenProps.cpp
+		def/gen/MapGenProps.cpp
 	def/gen/MapGenProps.h
-	def/gen/FarMapGen.cpp
-	def/gen/FarMapGen.h
-	def/gen/FarMapJob.h
-	game/scene/world/graph/FarMeshGenerator.cpp
-	game/scene/world/graph/FarMeshGenerator.h
-	game/scene/world/FarMapMeshDetails.h
-	lua/api/class/LuaGuiElement.cpp
-	lua/api/class/LuaGuiElement.h world/Dimension.cpp world/Dimension.h world/fs/FileManipulator.cpp world/fs/FileManipulator.h)
+		lua/api/class/LuaGuiElement.cpp
+	lua/api/class/LuaGuiElement.h world/Dimension.cpp world/Dimension.h world/fs/FileManipulator.cpp world/fs/FileManipulator.h def/item/BlockModel.cpp)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

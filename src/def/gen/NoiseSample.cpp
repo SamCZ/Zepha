@@ -1,9 +1,11 @@
 //
 // Created by aurailus on 15/02/19.
 //
-#include "NoiseSample.h"
 
 #include <glm/glm.hpp>
+
+#include "NoiseSample.h"
+
 #include "../../util/Interp.h"
 
 void NoiseSample::fill(const NoiseSample::fill_function &fun, float precision) {

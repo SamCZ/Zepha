@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include "../../../game/entity/Entity.h"
 #include <sol2/sol.hpp>
+
+class Entity;
 
 class LocalLuaAnimationManager {
 public:

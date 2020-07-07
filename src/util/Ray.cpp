@@ -2,7 +2,11 @@
 // Created by aurailus on 30/12/18.
 //
 
+#include <glm/glm.hpp>
+
 #include "Ray.h"
+
+#include "../game/scene/world/Player.h"
 
 Ray::Ray(glm::vec3 pos, float yaw, float pitch) {
     this->start = pos;

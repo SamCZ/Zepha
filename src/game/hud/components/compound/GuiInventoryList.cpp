@@ -4,9 +4,14 @@
 
 #include "GuiInventoryList.h"
 
+#include "../../SerialGui.h"
+#include "../basic/GuiRect.h"
 #include "../basic/GuiInventoryItem.h"
+#include "../../../../def/ClientGame.h"
 #include "../../../../def/texture/Font.h"
-#include "../../../inventory/LocalInventoryList.cpp"
+#include "../../../inventory/LocalInventoryList.h"
+#include "../../../inventory/LocalInventoryRefs.h"
+#include "../../../inventory/LocalInventoryList.h"
 
 GuiInventoryList::GuiInventoryList(const std::string &key) : GuiContainer(key) {}
 

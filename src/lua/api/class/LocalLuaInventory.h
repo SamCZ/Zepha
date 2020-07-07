@@ -4,7 +4,8 @@
 
 #pragma once
 
-#include "LocalLuaInventoryList.h"
+#include <sol2/sol.hpp>
+
 #include "../../../game/inventory/LocalInventory.h"
 
 class LocalLuaInventory {
@@ -14,7 +15,5 @@ public:
     LocalInventory& inventory;
     DefinitionAtlas& defs;
 
-//    LocalLuaInventoryList add_list(std::string name, int size, int width);
     sol::object get_list(sol::this_state s, std::string name);
-//    void remove_list(std::string name);
 };

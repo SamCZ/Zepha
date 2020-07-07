@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "../../def/ServerDefinitionAtlas.h"
 #include "Inventory.h"
 
 class ServerInventoryList;
+class ServerDefinitionAtlas;
 
 class InventoryRefs {
 public:

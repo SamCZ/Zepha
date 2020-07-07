@@ -4,9 +4,10 @@
 
 #pragma once
 
-#include "../../LuaParser.h"
-#include <sol2/sol.hpp>
 #include <list>
+#include <sol2/sol.hpp>
+
+#include "../../LuaParser.h"
 
 namespace MenuApi {
     void delay(sol::table &core, std::list<LuaParser::DelayedFunction> &funcs) {

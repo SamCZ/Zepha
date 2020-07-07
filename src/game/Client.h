@@ -6,8 +6,10 @@
 
 #include "ClientState.h"
 #include "graph/Renderer.h"
+#include "../util/net/Address.h"
 #include "graph/scene/SceneManager.h"
-#include "../server/LocalServerInstance.h"
+
+class LocalServerInstance;
 
 class Client {
 public:
@@ -22,7 +24,7 @@ private:
     ClientState state;
     SceneManager sceneManager;
 
-    std::unique_ptr<LocalServerInstance> localServer = nullptr;
+    std::shared_ptr<LocalServerInstance> localServer = nullptr;
 
     double timeElapsed = 0.0f;
 };

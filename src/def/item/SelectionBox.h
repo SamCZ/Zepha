@@ -6,10 +6,6 @@
 
 #pragma once
 
-#include <iostream>
-#include <glm/vec3.hpp>
-#include <glm/glm.hpp>
-#include "../../util/Util.h"
 #include "../../util/Dir.h"
 
 class SelectionBox {

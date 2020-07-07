@@ -2,7 +2,14 @@
 // Created by aurailus on 2020-01-07.
 //
 
+#include <cstring>
+
 #include "ServerLocalLuaEntity.h"
+
+#include "../../../def/ItemDef.h"
+#include "../../../def/item/BlockDef.h"
+#include "../../../def/item/CraftItemDef.h"
+#include "../../../def/ClientGame.h"
 
 ServerLocalLuaEntity::ServerLocalLuaEntity(unsigned int id, ClientGame &defs, const std::string &appearance,
     const std::string &arg1, const std::string &arg2) :

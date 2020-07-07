@@ -6,8 +6,6 @@
 
 #include "../../../game/inventory/Inventory.h"
 
-#include "ServerLuaInventoryList.h"
-
 class ServerLuaInventory {
 public:
     ServerLuaInventory(Inventory& inventory) : inventory(inventory), defs(inventory.defs) {}

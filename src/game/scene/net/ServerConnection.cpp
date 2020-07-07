@@ -2,9 +2,13 @@
 // Created by aurailus on 21/07/19.
 //
 
-#include <thread>
+#include <chrono>
+#include <iostream>
+
 #include "ServerConnection.h"
+
 #include "../../../util/Log.h"
+#include "../../../util/net/Address.h"
 #include "../../../util/net/NetHandler.h"
 
 void ServerConnection::attemptConnect(Address addr) {

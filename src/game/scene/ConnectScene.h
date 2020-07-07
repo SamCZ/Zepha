@@ -5,7 +5,11 @@
 #pragma once
 
 #include "../graph/scene/Scene.h"
+
 #include "../hud/components/basic/GuiContainer.h"
+
+class ServerConnection;
+class Address;
 
 class ConnectScene : public Scene {
 public:

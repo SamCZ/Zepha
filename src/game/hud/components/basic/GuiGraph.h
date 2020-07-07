@@ -4,9 +4,9 @@
 
 #pragma once
 
-
 #include "../GuiComponent.h"
-#include "../../../../def/texture/AtlasRef.h"
+
+class AtlasRef;
 
 class GuiGraph : public GuiComponent {
 public:

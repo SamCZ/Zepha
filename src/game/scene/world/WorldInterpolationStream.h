@@ -11,14 +11,13 @@
 #include <glm/vec3.hpp>
 #include <unordered_set>
 
-#include "graph/MeshFarMap.h"
-#include "../../../def/gen/MapGen.h"
-#include "../../../util/net/PacketView.h"
+#include "../../../util/Vec.h"
 
 class Chunk;
 class MapGen;
 class ClientGame;
 class MapGenProps;
+class PacketView;
 
 class WorldInterpolationStream {
 public:
@@ -26,7 +25,6 @@ public:
     static const int THREAD_QUEUE_SIZE = 32;
 
     WorldInterpolationStream(unsigned int seed, ClientGame& game);
-    ~WorldInterpolationStream();
 
     // Queue parsing of packet `p`.
     void queuePacket(std::unique_ptr<PacketView> p);
@@ -36,6 +34,7 @@ public:
     // and gives the threads new data to work with.
     std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> update();
 
+    ~WorldInterpolationStream();
 private:
     enum class JobType {
         EMPTY,
@@ -47,10 +46,10 @@ private:
         bool locked = false;
         JobType job = JobType::EMPTY;
 
-        std::unique_ptr<PacketView> packet = nullptr;
+        std::shared_ptr<PacketView> packet = nullptr;
         std::shared_ptr<Chunk> chunk = nullptr;
 
-        std::shared_ptr<MeshFarMap> mapblock = nullptr;
+//        std::shared_ptr<MeshFarMap> mapblock = nullptr;
         glm::vec3 mapBlockPos = {0, 0, 0};
 
     };

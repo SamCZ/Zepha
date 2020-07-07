@@ -2,18 +2,15 @@
 // Created by aurailus on 15/05/19.
 //
 
-#include <cmath>
-#include <random>
+#include <glm/glm.hpp>
+
 #include "ParticleEntity.h"
+
+#include "../../../def/item/BlockDef.h"
+#include "../../../def/texture/AtlasRef.h"
 
 ParticleEntity::ParticleEntity(glm::vec3 pos, BlockDef &block) {
     setPos(pos + glm::vec3(.5,.3,.5));
-
-//    setPos(getPos() + glm::vec3(
-//            (static_cast<float>(rand()) / static_cast<float>(RAND_MAX / 2) - 1) / 3.f,
-//            (static_cast<float>(rand()) / static_cast<float>(RAND_MAX / 2) - 1) / 3.f,
-//            (static_cast<float>(rand()) / static_cast<float>(RAND_MAX / 2) - 1) / 3.f
-//    ));
 
     std::set<std::shared_ptr<AtlasRef>>& textureRefs = block.model.textureRefs;
     auto it = textureRefs.cbegin();

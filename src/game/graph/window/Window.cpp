@@ -2,8 +2,6 @@
 // Created by aurailus on 26/11/18.
 //
 
-#include <iostream>
-
 #include "Window.h"
 
 #include "../../../util/Log.h"
@@ -14,9 +12,8 @@ Window::Window(glm::ivec2 win) :
     win(win), center(win.x / 2, win.y / 2) {
 
     if (!glfwInit()) {
-        std::cout << Log::err << "Failed to initialize GLFW context." << Log::endl;
         glfwTerminate();
-        exit(1);
+        throw std::runtime_error("Failed to initialize GLFW context.");
     }
 
     // Version 3.3
@@ -29,9 +26,8 @@ Window::Window(glm::ivec2 win) :
 
     // Create the window
     if (!(mainWindow = glfwCreateWindow(win.x, win.y, "Zepha", nullptr, nullptr))) {
-        std::cout << Log::err << "Failed to initialize GLFW window." << Log::endl;
         glfwTerminate();
-        exit(1);
+        throw std::runtime_error("Failed to initialize GLFW window.");
     }
 
     glfwGetFramebufferSize(mainWindow, &win.x, &win.y);
@@ -43,11 +39,10 @@ Window::Window(glm::ivec2 win) :
     // Initialize GLEW
     GLenum error;
     if ((error = glewInit()) != GLEW_OK) {
-        printf("GLEW init failed.");
-        std::cout << Log::err << "GLEW Encountered a fatal error:\n" << glewGetErrorString(error) << Log::endl;
-        glfwDestroyWindow(mainWindow);
         glfwTerminate();
-        exit(1);
+        glfwDestroyWindow(mainWindow);
+        throw std::runtime_error("GLEW Fatal error.");
+        printf("%s", reinterpret_cast<const char *>(glewGetErrorString(error)));
     }
 
     glEnable(GL_DEPTH_TEST);

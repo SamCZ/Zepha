@@ -4,7 +4,6 @@
 
 #pragma once
 
-
 #include "../GuiComponent.h"
 
 class GuiContainer : public GuiComponent {

@@ -4,6 +4,10 @@
 
 #include "ServerLuaEntity.h"
 
+#include "../../LuaParser.h"
+#include "../../../def/ItemDef.h"
+#include "../../../def/ServerGame.h"
+
 void ServerLuaEntity::snap_pos(const sol::table &pos) {
     entity->setPos({pos[1], pos[2], pos[3]});
 }

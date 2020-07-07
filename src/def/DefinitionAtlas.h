@@ -5,9 +5,12 @@
 #pragma once
 
 #include <string>
-#include "item/BlockDef.h"
-#include "ItemDef.h"
-#include "item/CraftItemDef.h"
+#include <vector>
+#include <unordered_map>
+
+class ItemDef;
+class BlockDef;
+class CraftItemDef;
 
 class DefinitionAtlas {
 public:

@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include "Scene.h"
 #include <memory>
+
+#include "Scene.h"
 
 class SceneManager {
 public:

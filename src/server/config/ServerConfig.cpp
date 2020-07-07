@@ -4,8 +4,10 @@
 
 #include "ServerConfig.h"
 
+#include "../../def/ItemDef.h"
 #include "../asset/AssetType.h"
 #include "../conn/ServerClient.h"
+#include "../../def/gen/BiomeDef.h"
 #include "../../util/net/PacketView.h"
 #include "../../util/net/Serializer.h"
 

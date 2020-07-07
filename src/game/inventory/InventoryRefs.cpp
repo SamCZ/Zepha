@@ -5,6 +5,7 @@
 #include "InventoryRefs.h"
 
 #include "ServerInventoryList.h"
+#include "../../def/ServerDefinitionAtlas.h"
 
 InventoryRefs::InventoryRefs(ServerDefinitionAtlas &defs, ClientList* clients) :
     defs(defs), clients(clients) {}

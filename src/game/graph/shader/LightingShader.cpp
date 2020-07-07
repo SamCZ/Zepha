@@ -2,9 +2,9 @@
 // Created by aurailus on 24/09/19.
 //
 
-#include "LightingShader.h"
+#include <stdexcept>
 
-#include "../../../util/Log.h"
+#include "LightingShader.h"
 
 LightingShader::LightingShader(glm::ivec2 windowSize, float bufferScale) : Shader(),
     windowSize(windowSize),
@@ -60,9 +60,8 @@ void LightingShader::postCreate() {
 
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            std::cout << Log::err << "Lighting framebuffer incomplete!" << std::endl;
-        }
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            throw std::runtime_error("Lighting framebuffer incomplete.");
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -94,7 +93,7 @@ void LightingShader::windowResized(glm::ivec2 windowSize) {
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            std::cout << Log::err << "-- Lighting framebuffer incomplete! --" << std::endl;
+            throw std::runtime_error("Lighting framebuffer incomplete.");
         }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

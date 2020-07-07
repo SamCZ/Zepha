@@ -4,6 +4,8 @@
 
 #include "ServerBiomeAtlas.h"
 
+#include "BiomeDef.h"
+
 ServerBiomeAtlas::ServerBiomeAtlas(unsigned int seed) :
     seed(seed) {
     //Invalid Biome

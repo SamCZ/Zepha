@@ -3,8 +3,16 @@
 //
 
 #include "DebugGui.h"
+
+
+#include "../../def/ClientGame.h"
+#include "../scene/world/Player.h"
 #include "../../def/texture/Font.h"
-#include "components/compound/GuiInventoryList.h"
+#include "../../def/gen/BiomeDef.h"
+#include "../../def/item/BlockDef.h"
+#include "components/basic/GuiText.h"
+#include "../scene/world/LocalWorld.h"
+#include "components/compound/GuiLabelledGraph.h"
 
 DebugGui::DebugGui(glm::vec2 bufferSize, ClientGame& defs) :
     displayMode(0) {

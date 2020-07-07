@@ -7,7 +7,6 @@
 #include <list>
 #include <thread>
 #include <unordered_set>
-#include <glm/vec3.hpp>
 
 #include "../../def/gen/MapGen.h"
 

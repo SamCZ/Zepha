@@ -5,12 +5,11 @@
 #pragma once
 
 #include <string>
-#include <iostream>
 #include <enet/enet.h>
-#include "PacketChannel.h"
-#include "../Log.h"
+
 #include "NetState.h"
-#include "Address.h"
+
+class Address;
 
 class NetHandler {
 public:

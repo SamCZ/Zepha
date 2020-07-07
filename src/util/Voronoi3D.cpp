@@ -2,8 +2,11 @@
 // Created by aurailus on 2019-11-12.
 //
 
-#include "Voronoi3D.h"
+#include <string>
 #include <glm/glm.hpp>
+#include <stb_image/stb_image_write.h>
+
+#include "Voronoi3D.h"
 
 Voronoi3D::Voronoi3D(unsigned short size) :
     size(size),
@@ -49,22 +52,22 @@ void Voronoi3D::setColorValues(const std::vector<glm::vec3>& values) {
     colorValues = values;
 }
 
-void Voronoi3D::generateImage(unsigned short depth) {
-    auto colorData = new unsigned char[size * size * 3];
-
-    for (int i = 0; i < size * size; i++) {
-        int x = i % size;
-        int y = i / size;
-
-        unsigned short point = data[x][y][depth];
-        auto color = colorValues[point];
-
-        colorData[i * 3 + 0] = static_cast<int>(color.x * 255.f);
-        colorData[i * 3 + 1] = static_cast<int>(color.y * 255.f);
-        colorData[i * 3 + 2] = static_cast<int>(color.z * 255.f);
-    }
-
-    std::string name = "voronoi_";
-    name += std::to_string(depth) + ".jpg";
-    stbi_write_jpg(name.data(), size, size, 3, colorData, 100);
-}
+//void Voronoi3D::generateImage(unsigned short depth) {
+//    auto colorData = new unsigned char[size * size * 3];
+//
+//    for (int i = 0; i < size * size; i++) {
+//        int x = i % size;
+//        int y = i / size;
+//
+//        unsigned short point = data[x][y][depth];
+//        auto color = colorValues[point];
+//
+//        colorData[i * 3 + 0] = static_cast<int>(color.x * 255.f);
+//        colorData[i * 3 + 1] = static_cast<int>(color.y * 255.f);
+//        colorData[i * 3 + 2] = static_cast<int>(color.z * 255.f);
+//    }
+//
+//    std::string name = "voronoi_";
+//    name += std::to_string(depth) + ".jpg";
+//    stbi_write_jpg(name.data(), size, size, 3, colorData, 100);
+//}

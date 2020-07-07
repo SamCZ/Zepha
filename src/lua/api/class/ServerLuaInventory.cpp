@@ -4,6 +4,8 @@
 
 #include "ServerLuaInventory.h"
 
+#include "ServerLuaInventoryList.h"
+
 sol::object ServerLuaInventory::add_list(sol::this_state s, std::string name, int size, int width) {
     inventory.createList(name, size, width);
     return sol::make_object<ServerLuaInventoryList>(s, ServerLuaInventoryList(*inventory[name]));

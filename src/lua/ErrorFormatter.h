@@ -5,9 +5,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
-#include <sstream>
-#include "../util/Log.h"
 
 class ErrorFormatter {
 public:

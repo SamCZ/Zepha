@@ -5,8 +5,11 @@
 #pragma once
 
 #include <memory>
-#include "AtlasRef.h"
-#include "../ClientGame.h"
+#include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
+
+class AtlasRef;
+class TextureAtlas;
 
 class Font {
 public:

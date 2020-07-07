@@ -4,6 +4,7 @@
 
 #include "LuaErrorScene.h"
 
+#include "../ClientState.h"
 #include "../graph/Renderer.h"
 #include "../../def/texture/Font.h"
 #include "../hud/components/basic/GuiRect.h"

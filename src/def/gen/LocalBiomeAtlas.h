@@ -4,15 +4,11 @@
 
 #pragma once
 
-#include <string>
-#include "BiomeDef.h"
 #include "BiomeAtlas.h"
-#include "../../util/Log.h"
 
 class LocalBiomeAtlas : public BiomeAtlas {
 public:
     LocalBiomeAtlas();
     void registerBiome(BiomeDef* def) override;
-
     void setIdentifiers(const std::vector<std::string>& identifiers);
 };

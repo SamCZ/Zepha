@@ -3,7 +3,18 @@
 // Created by aurailus on 22/08/19.
 //
 
+#include <iostream>
+#include <glm/glm.hpp>
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "Model.h"
+
+#include "../../util/Log.h"
+#include "../../util/Mat4Conv.h"
+#include "../../def/texture/AtlasRef.h"
+#include "../../def/model/SerializedModel.h"
 
 void Model::fromMesh(std::unique_ptr<EntityMesh> mesh) {
     meshes.clear();

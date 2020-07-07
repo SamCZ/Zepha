@@ -4,10 +4,6 @@
 
 #pragma once
 
-
-#include <glm/vec4.hpp>
-#include <string>
-
 struct AtlasRef {
     int tileX = 0;
     int tileY = 0;

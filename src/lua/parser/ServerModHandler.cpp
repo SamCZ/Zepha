@@ -5,6 +5,8 @@
 #include <fstream>
 #include <json/json.hpp>
 #include <gzip/compress.hpp>
+#include <stb_image/stb_image.h>
+#include <cute_files/cute_files.h>
 
 #include "../../def/ServerGame.h"
 #include "../../util/net/Serializer.h"

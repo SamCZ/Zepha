@@ -3,6 +3,9 @@
 //
 
 #include "ItemStack.h"
+
+#include "../../def/ItemDef.h"
+#include "../../def/DefinitionAtlas.h"
 #include "../../lua/api/class/LuaItemStack.h"
 
 ItemStack::ItemStack(LuaItemStack &stack, const DefinitionAtlas &atlas) :

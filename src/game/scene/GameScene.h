@@ -7,7 +7,13 @@
 #include "../graph/scene/Scene.h"
 
 #include "world/Player.h"
+#include "world/LocalWorld.h"
+#include "net/ClientNetworkInterpreter.h"
+#include "../inventory/LocalInventoryRefs.h"
 #include "../hud/DebugGui.h"
+
+class ClientGame;
+class Drawable;
 
 class GameScene : public Scene {
 public:

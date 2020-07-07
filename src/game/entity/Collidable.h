@@ -4,7 +4,12 @@
 
 #pragma once
 
-#include "../scene/world/LocalWorld.h"
+#include <glm/vec3.hpp>
+
+#include "../../def/item/SelectionBox.h"
+
+class LocalWorld;
+class ClientGame;
 
 class Collidable {
 public:

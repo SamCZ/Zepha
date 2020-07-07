@@ -2,8 +2,16 @@
 // Created by aurailus on 16/04/19.
 //
 
-#include "TextureAtlas.h"
+#include <cmath>
+#include <iostream>
+#include <algorithm>
 #include <stb_image/stb_image.h>
+#include <cute_files/cute_files.h>
+
+#include "TextureAtlas.h"
+
+#include "AtlasRef.h"
+#include "../../util/Log.h"
 
 TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) :
     pixelSize(width, (height == 0 ? width : height)),
@@ -104,11 +112,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::addImage(unsigned char *data, const std:
         ref->tileHeight = tileHeight;
 
         auto space = findImageSpace(tileWidth, tileHeight);
-
-        if (space.x < 0) {
-            std::cout << Log::err << "Failed to find space in dynamic defs." << Log::endl;
-            return nullptr;
-        }
+        if (space.x < 0) throw std::runtime_error("Failed to find space in the dynamic definition atlas.");
 
         textureSlotsUsed += tileWidth * tileHeight;
 
@@ -154,7 +158,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::operator[](const std::string &name) {
     std::shared_ptr<AtlasRef> gen = generateTexture(name);
     if (gen) return gen;
 
-    std::cout << Log::err << "Invalid texture name: \"" << name << "\"." << Log::endl;
+    throw std::runtime_error("Invalid texture name " + name + ".");
     return textures["_missing"];
 }
 
@@ -163,8 +167,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::generateTexture(std::string req) {
 
     if (req.find_first_of('(') != std::string::npos) {
         if (req.find_last_of(')') == std::string::npos) {
-            std::cout << Log::err << "Mismatched braces." << Log::endl;
-            return nullptr;
+            throw "Miasmatched braces.";
         }
 
         std::string::size_type paramsBegin = req.find_first_of('(');
@@ -182,7 +185,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::generateTexture(std::string req) {
         params.push_back(paramsString);
 
         if (paramName == "crop") {
-            if (params.size() != 5) std::cout << Log::err << "crop needs 5 params." << Log::endl;
+            if (params.size() != 5) throw std::runtime_error("crop() requires 5 parameters.");
             glm::ivec4 loc = {atof(params[0].data()), atof(params[1].data()), atof(params[2].data()), atof(params[3].data())};
             std::shared_ptr<AtlasRef> src = operator[](params[4]);
 
@@ -190,7 +193,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::generateTexture(std::string req) {
             return addImage(data, req, false, loc.z, loc.w);
         }
         else {
-            std::cout << Log::err << "Invalid param." << Log::endl;
+            throw std::runtime_error("Invalid parameter.");
             return nullptr;
         }
     }

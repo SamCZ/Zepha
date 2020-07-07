@@ -5,7 +5,9 @@
 #pragma once
 
 #include <vector>
+
 #include "Mesh.h"
+
 #include "EntityVertex.h"
 
 class EntityMesh : public Mesh {

@@ -2,19 +2,25 @@
 // Created by aurailus on 11/01/19.
 //
 
+#include <iostream>
+
 #include "ClientNetworkInterpreter.h"
 
 #include "NetPlayerField.h"
 #include "../world/Player.h"
-#include "../../../util/net/NetHandler.h"
+#include "ServerConnection.h"
+#include "../../../util/Log.h"
+#include "../../entity/Model.h"
+#include "../world/LocalWorld.h"
 #include "../../../util/net/PacketView.h"
 #include "../../../util/net/Serializer.h"
+#include "../../../util/net/NetHandler.h"
 
 ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, ClientGame &defs, Player& player) :
     player(player),
     connection(connection),
     playerModel(std::make_shared<Model>()) {
-    playerModel->fromSerialized(defs.models.models["zeus:default:player"], {defs.textures["zeus:default:player"]});
+    playerModel->fromSerialized(defs.models.models["zeus:default:player"], { defs.textures["zeus:default:player"] });
 }
 
 void ClientNetworkInterpreter::init(LocalWorld *world, std::function<void(std::unique_ptr<PacketView>)> invCallback) {

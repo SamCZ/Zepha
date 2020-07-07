@@ -4,7 +4,6 @@
 
 #pragma once
 
-
 #include <tgmath.h>
 #include <glm/glm.hpp>
 #include <glm/common.hpp>

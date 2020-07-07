@@ -4,6 +4,9 @@
 
 #include "ServerLuaInventoryList.h"
 
+#include "../../../def/ItemDef.h"
+#include "../../../def/DefinitionAtlas.h"
+
 int ServerLuaInventoryList::get_length() {
     return list.getLength();
 }

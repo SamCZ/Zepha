@@ -15,7 +15,7 @@ MapGenProps::MapGenProps(unsigned int seed) : seed(seed) {
     temperature.SetScale(0.35);
     temperature.SetBias(0.25);
 
-    humidityBase.SetSeed(seed + 5);
+    humidityBase.SetSeed(seed + 1);
     humidityBase.SetFrequency(0.02);
     humidityBase.SetOctaveCount(4);
     humidityTurbulence.SetSourceModule(0, humidityBase);
@@ -25,7 +25,7 @@ MapGenProps::MapGenProps(unsigned int seed) : seed(seed) {
     humidity.SetScale(0.5);
     humidity.SetBias(0.5);
 
-    roughnessBase.SetSeed(seed + 10);
+    roughnessBase.SetSeed(seed - 1);
     roughnessBase.SetFrequency(0.02);
     roughnessBase.SetOctaveCount(4);
     roughnessTurbulence.SetSourceModule(0, roughnessBase);

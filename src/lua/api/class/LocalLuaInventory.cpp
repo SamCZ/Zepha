@@ -4,6 +4,8 @@
 
 #include "LocalLuaInventory.h"
 
+#include "LocalLuaInventoryList.h"
+
 sol::object LocalLuaInventory::get_list(sol::this_state s, std::string name) {
     auto inv = inventory[name];
     if (!inv) return sol::nil;

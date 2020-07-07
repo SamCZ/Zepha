@@ -4,8 +4,11 @@
 
 #include "GuiImageButton.h"
 
-#include "../../../../def/ClientGame.h"
+#include "../../SerialGui.h"
 #include "../basic/GuiText.h"
+#include "../../../entity/Model.h"
+#include "../../../../def/ClientGame.h"
+#include "../../../../def/texture/AtlasRef.h"
 
 GuiImageButton::GuiImageButton(const std::string &key) : GuiRect(key) {}
 

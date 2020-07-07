@@ -3,7 +3,13 @@
 //
 
 #include <sstream>
+#include <iostream>
+#include <stdexcept>
+
 #include "NetHandler.h"
+
+#include "Address.h"
+#include "../Log.h"
 
 NetHandler::NetHandler(const Address& hostAddress) : NetHandler(std::move(hostAddress), 3, 3) {}
 
@@ -14,19 +20,15 @@ NetHandler::NetHandler(const Address& hostAddress, int attempts, int timeout) {
 
 NetHandler::NetHandler(unsigned short port, short max_clients) {
     initServer(port, max_clients);
-    if (state == NetState::ENET_ERROR) {
-        std::cout << Log::err << "Failed to initialize ENet." << Log::endl;
-        exit(1);
-    }
+    if (state == NetState::ENET_ERROR) throw std::runtime_error("Failed to initialize ENet.");
 }
 
 void NetHandler::initServer(unsigned short port, short max_clients) {
     state = NetState::HOST;
 
     if (enet_initialize() != 0) {
-        std::cout << Log::err << "Failed to initialize enet." << Log::endl;
         state = NetState::ENET_ERROR;
-        return;
+        throw std::runtime_error("Failed to initialize ENet.");
     }
 
     address.host = ENET_HOST_ANY;
@@ -36,9 +38,8 @@ void NetHandler::initServer(unsigned short port, short max_clients) {
     peer = nullptr;
 
     if (host == nullptr) {
-        std::cout << Log::err << "Failed to create host. Is another application already using port " << address.port << "?" << Log::endl;
         state = NetState::ENET_ERROR;
-        return;
+        throw std::runtime_error("Failed to create ENet host at port " + std::to_string(address.port) + ".");
     }
 
     std::cout << Log::info << "Starting Zepha Server on port " << address.port << "." << Log::endl;

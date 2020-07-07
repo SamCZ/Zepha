@@ -4,9 +4,7 @@
 
 #pragma once
 
-#include <memory>
 #include "../Entity.h"
-#include "../../../def/texture/AtlasRef.h"
 
 class PlayerEntity : public Entity {
 public:

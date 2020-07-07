@@ -4,10 +4,10 @@
 
 #pragma once
 
-
-#include <enet/enet.h>
 #include <chrono>
-#include "../../../util/net/Address.h"
+#include <enet/enet.h>
+
+class Address;
 
 class ServerConnection {
 public:

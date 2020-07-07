@@ -4,9 +4,12 @@
 
 #pragma once
 
+#include <iostream>
+
+#include "util/Log.h"
+#include "util/Util.h"
 #include "game/Client.h"
 #include "server/Server.h"
-#include "util/Log.h"
 
 enum class Mode { INVALID, CLIENT, SERVER };
 
@@ -20,13 +23,13 @@ std::map<std::string, std::string> parseArgs(int argc, char* argv[]) {
         std::string first = (equals == -1) ? arg : arg.substr(0, equals);
 
         if (args.count(first)) {
-            std::cerr << "Duplicate argument '" << first << "'" << std::endl;
+            std::cout << Log::err << "Duplicate argument '" << first << "'" << Log::endl;
             exit(1);
         }
         if (equals == -1) args.emplace(first, "");
         else {
             if (equals == arg.length() - 1) {
-                std::cerr << "Empty argument '" << first << "'" << std::endl;
+                std::cout << Log::err << "Empty argument '" << first << "'" << Log::endl;
                 exit(1);
             }
             args.emplace(first, arg.substr(equals + 1, arg.length()));

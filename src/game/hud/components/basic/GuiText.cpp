@@ -6,6 +6,13 @@
 
 #include "GuiText.h"
 
+#include "../../SerialGui.h"
+#include "../../../../util/Util.h"
+#include "../../../entity/Model.h"
+#include "../../../entity/AnimationSegment.h"
+#include "../../../../def/texture/AtlasRef.h"
+#include "../../../../def/texture/TextureAtlas.h"
+
 GuiText::GuiText(const std::string &key) : GuiComponent(key) {}
 
 void GuiText::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 bgcolor, glm::vec4 color, Font font) {

@@ -2,7 +2,12 @@
 // Created by aurailus on 10/06/19.
 //
 
+#include <iostream>
+#include <cute_files/cute_files.h>
+
 #include "ServerGame.h"
+
+#include "../util/Log.h"
 #include "../server/conn/ClientList.h"
 
 ServerGame::ServerGame(const std::string& subgame, unsigned int seed) :

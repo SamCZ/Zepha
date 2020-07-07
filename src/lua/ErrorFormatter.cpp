@@ -2,8 +2,13 @@
 // Created by aurailus on 2020-02-11.
 //
 
-#include "ErrorFormatter.h"
+#include <vector>
+#include <sstream>
 #include <algorithm>
+
+#include "ErrorFormatter.h"
+
+#include "../util/Log.h"
 
 std::string ErrorFormatter::formatError(const std::string &fileName, int line, const std::string &stack,
                                         std::string file, bool ansiColors) {

@@ -2,6 +2,8 @@
 // Created by aurailus on 27/11/18.
 //
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "Camera.h"
 
 Camera::Camera() = default;

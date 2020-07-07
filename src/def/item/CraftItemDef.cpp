@@ -4,6 +4,9 @@
 
 #include "CraftItemDef.h"
 
+#include "../texture/AtlasRef.h"
+#include "../texture/TextureAtlas.h"
+
 CraftItemDef::CraftItemDef(const std::string &identifier, const std::string &name, unsigned short maxStackSize,
         const std::vector<std::string>& textures, const std::vector<std::shared_ptr<AtlasRef>>& textureRefs) :
     CraftItemDef(identifier, 0, name, maxStackSize, textures, textureRefs) {}

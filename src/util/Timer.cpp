@@ -2,7 +2,10 @@
 // Created by aurailus on 02/12/18.
 //
 
+#include <iostream>
+
 #include "Timer.h"
+
 #include "Log.h"
 
 Timer::Timer() :

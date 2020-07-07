@@ -4,15 +4,13 @@
 
 #pragma once
 
-#include <json/json.hpp>
-
 #include "../../game/graph/scene/Scene.h"
 
+#include "menu/Subgame.h"
 #include "menu/MenuSandbox.h"
+#include "../hud/components/basic/GuiContainer.h"
 
 class ClientState;
-
-using nlohmann::json;
 
 class MainMenuScene : public Scene {
 public:

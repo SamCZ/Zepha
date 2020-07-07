@@ -8,6 +8,8 @@
 #include "GuiRect.h"
 #include "GuiModel.h"
 #include "../../../../def/texture/Font.h"
+#include "../../../../def/item/BlockDef.h"
+#include "../../../../def/item/CraftItemDef.h"
 
 GuiInventoryItem::GuiInventoryItem(const std::string &key) : GuiContainer(key) {}
 

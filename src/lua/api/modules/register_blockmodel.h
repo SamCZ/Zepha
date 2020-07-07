@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <sol2/sol.hpp>
-
 namespace Api {
     static void register_blockmodel(sol::state& lua, sol::table& core) {
         core["registered_blockmodels"] = lua.create_table();

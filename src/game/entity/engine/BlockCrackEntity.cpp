@@ -2,8 +2,15 @@
 // Created by aurailus on 14/04/19.
 //
 
+#include <glm/glm.hpp>
+
 #include "BlockCrackEntity.h"
 
+#include "../../../def/ClientGame.h"
+#include "../../../def/item/MeshPart.h"
+#include "../../../def/item/BlockDef.h"
+#include "../../../def/texture/AtlasRef.h"
+#include "../../../def/item/BlockModelVertex.h"
 
 BlockCrackEntity::BlockCrackEntity(ClientGame &defs, glm::vec3 blockPos, unsigned int blockID) :
     defs(defs),

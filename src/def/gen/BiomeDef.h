@@ -1,4 +1,6 @@
 //
+// Stores properties, blocks, and noise generation
+// for a biome defined using the Lua API.
 // Created by aurailus on 2019-11-13.
 //
 
@@ -10,7 +12,7 @@
 #include <glm/glm.hpp>
 #include <noise/module/modulebase.h>
 
-#include "../../game/scene/world/Schematic.h"
+class Schematic;
 
 struct BiomeDef {
     BiomeDef() = default;

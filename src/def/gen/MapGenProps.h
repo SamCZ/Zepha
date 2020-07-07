@@ -6,23 +6,21 @@
 
 #include <noise/noise.h>
 
-using namespace noise;
-
 class MapGenProps {
 public:
     MapGenProps(unsigned int seed);
 
     unsigned int seed;
 
-    module::Perlin temperatureBase;
-    module::Turbulence temperatureTurbulence;
-    module::ScaleBias temperature;
+    noise::module::Perlin temperatureBase;
+    noise::module::Turbulence temperatureTurbulence;
+    noise::module::ScaleBias temperature;
 
-    module::Perlin humidityBase;
-    module::Turbulence humidityTurbulence;
-    module::ScaleBias humidity;
+    noise::module::Perlin humidityBase;
+    noise::module::Turbulence humidityTurbulence;
+    noise::module::ScaleBias humidity;
 
-    module::Perlin roughnessBase;
-    module::Turbulence roughnessTurbulence;
-    module::ScaleBias roughness;
+    noise::module::Perlin roughnessBase;
+    noise::module::Turbulence roughnessTurbulence;
+    noise::module::ScaleBias roughness;
 };

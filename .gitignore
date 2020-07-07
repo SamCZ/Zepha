@@ -4,5 +4,5 @@ cmake-build-release
 
 .hidden
 
-lib/*/*
+lib
 worlds

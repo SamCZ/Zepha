@@ -5,6 +5,7 @@
 #pragma once
 
 #include <vector>
+
 #include "ServerTexture.h"
 #include "../../def/model/SerializedModel.h"
 

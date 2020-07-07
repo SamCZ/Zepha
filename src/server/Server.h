@@ -6,8 +6,8 @@
 
 #include "conn/ClientList.h"
 #include "world/ServerWorld.h"
-#include "config/ServerConfig.h"
 #include "../def/ServerGame.h"
+#include "config/ServerConfig.h"
 #include "../util/net/NetHandler.h"
 #include "../game/inventory/InventoryRefs.h"
 

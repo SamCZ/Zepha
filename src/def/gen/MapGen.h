@@ -1,4 +1,5 @@
 //
+// Generates terrain in the form of MapBlocks.
 // Created by aurailus on 28/01/19.
 //
 
@@ -9,13 +10,13 @@
 #include <glm/vec3.hpp>
 #include <unordered_map>
 
+#include "../../util/Vec.h"
+
 class Chunk;
 class MapGenJob;
 class BiomeAtlas;
 class MapGenProps;
 class DefinitionAtlas;
-
-#include "../../util/Vec.h"
 
 class MapGen {
 public:

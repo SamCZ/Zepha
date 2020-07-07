@@ -4,6 +4,7 @@
 
 #include "GuiBuilder.h"
 
+#include "../../util/Util.h"
 #include "components/basic/GuiRect.h"
 #include "components/basic/GuiText.h"
 #include "components/basic/GuiModel.h"

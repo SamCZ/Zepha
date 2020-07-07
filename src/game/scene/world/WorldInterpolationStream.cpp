@@ -32,7 +32,7 @@ bool WorldInterpolationStream::queuePosition(glm::vec3 pos){
 
 std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> WorldInterpolationStream::update() {
     auto finishedChunks = std::make_unique<std::vector<std::shared_ptr<Chunk>>>();
-    auto finishedMapBlocks = std::make_unique<std::vector<std::shared_ptr<MeshFarMap>>>();
+//    auto finishedMapBlocks = std::make_unique<std::vector<std::shared_ptr<MeshFarMap>>>();
 
     for (auto& t : threads) {
         for (auto& u : t.tasks) {
@@ -43,11 +43,11 @@ std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> WorldInterpolationStream::u
                 u.chunk = nullptr;
                 u.job = JobType::EMPTY;
             }
-            else if (u.mapblock != nullptr) {
-                finishedMapBlocks->push_back(u.mapblock);
-                u.mapblock = nullptr;
-                u.job = JobType::EMPTY;
-            }
+//            else if (u.mapblock != nullptr) {
+//                finishedMapBlocks->push_back(u.mapblock);
+//                u.mapblock = nullptr;
+//                u.job = JobType::EMPTY;
+//            }
 
             if (!queuedPacketTasks.empty()) {
                 auto it = queuedPacketTasks.begin();
@@ -90,7 +90,7 @@ void WorldInterpolationStream::Thread::exec() {
                     break;
                 }
                 else if (u.job == JobType::FARMAP) {
-                    std::cout << "Farmap no exist yet" << std::endl;
+                    throw std::runtime_error("Farmap no exist yet.");
                 }
             }
         }

@@ -4,14 +4,16 @@
 
 #pragma once
 
-#include <iostream>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <vector>
+#include <memory>
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
 
-#include "../graph/meshtypes/EntityMesh.h"
-#include "../graph/drawable/Drawable.h"
-#include "Model.h"
 #include "AnimationState.h"
+#include "AnimationSegment.h"
+#include "../graph/drawable/Drawable.h"
+
+class Model;
 
 class Entity : public Drawable {
 public:

@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <iostream>
 #include <sol2/sol.hpp>
+
 #include "../../../game/ClientState.h"
 
 namespace MenuApi {

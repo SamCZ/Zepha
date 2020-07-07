@@ -6,6 +6,7 @@
 
 #include <list>
 #include <string>
+
 #include "../LuaMod.h"
 
 class ServerGame;

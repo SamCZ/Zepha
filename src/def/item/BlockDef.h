@@ -11,6 +11,7 @@
 
 #include "BlockModel.h"
 #include "SelectionBox.h"
+#include "../../util/Util.h"
 #include "../../lua/Callback.h"
 
 class BlockDef : public ItemDef {

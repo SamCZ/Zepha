@@ -1,9 +1,6 @@
 //
-// Created by aurailus on 04/04/19.
-//
-//
 // The Region class, contains 64 MapBlocks in a 4^3 cube.
-// Created by aurailus on 18/04/19.
+// Created by aurailus on 04/04/19.
 //
 
 #pragma once

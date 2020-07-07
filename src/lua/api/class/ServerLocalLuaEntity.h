@@ -5,8 +5,10 @@
 #pragma once
 
 #include <string>
-#include "../../../def/ClientGame.h"
+
 #include "../../../game/entity/Entity.h"
+
+class ClientGame;
 
 class ServerLocalLuaEntity {
 public:

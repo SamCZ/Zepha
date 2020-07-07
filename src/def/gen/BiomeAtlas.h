@@ -1,14 +1,15 @@
 //
+// Manages biome definitions and Voronoi map.
 // Created by aurailus on 2019-11-13.
 //
 
 #pragma once
 
-#include <map>
-#include <vector>
 #include <unordered_map>
-#include "BiomeDef.h"
+
 #include "../../util/Voronoi3D.h"
+
+class BiomeDef;
 
 class BiomeAtlas {
 public:

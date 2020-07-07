@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include "../class/ServerLuaEntity.h"
 #include <sol2/sol.hpp>
+
+#include "../class/ServerLuaEntity.h"
 
 namespace ServerApi {
     void entity(sol::state& lua) {

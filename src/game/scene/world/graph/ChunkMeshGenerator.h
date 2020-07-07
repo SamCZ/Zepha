@@ -8,13 +8,13 @@
 
 #include <memory>
 
-class LocalDefinitionAtlas;
-class ChunkMeshDetails;
-class LocalBiomeAtlas;
-class NoiseSample;
-class BlockDef;
-class MeshPart;
 class Chunk;
+class MeshPart;
+class BlockDef;
+class NoiseSample;
+class LocalBiomeAtlas;
+class ChunkMeshDetails;
+class LocalDefinitionAtlas;
 
 class ChunkMeshGenerator {
 public:

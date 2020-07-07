@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+
 #include "AnimChannel.h"
 
 class ModelAnimation {

@@ -4,6 +4,8 @@
 
 #include "InventoryList.h"
 
+#include "../../def/ItemDef.h"
+#include "../../def/DefinitionAtlas.h"
 #include "../../lua/api/class/LuaItemStack.h"
 
 InventoryList::InventoryList(DefinitionAtlas &defs) : defs(defs) {

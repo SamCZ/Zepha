@@ -4,12 +4,12 @@
 
 #pragma once
 
-
 #include <string>
 #include <sstream>
+#include <iostream>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
-#include <iostream>
+
 #include "Log.h"
 
 namespace Util {

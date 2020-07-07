@@ -5,7 +5,11 @@
 #pragma once
 
 #include "../Entity.h"
-#include "../../../def/ClientGame.h"
+
+class ClientGame;
+class EntityVertex;
+class AtlasRef;
+class MeshPart;
 
 class BlockCrackEntity : public Entity {
 public:

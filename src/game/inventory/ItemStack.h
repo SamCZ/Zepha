@@ -5,8 +5,8 @@
 #pragma once
 
 #include <string>
-#include "../../def/DefinitionAtlas.h"
 
+class DefinitionAtlas;
 class LuaItemStack;
 
 class ItemStack {
@@ -18,6 +18,6 @@ public:
     bool operator!=(const ItemStack& b) const;
     bool operator==(const ItemStack& b) const;
 
-    unsigned int id = DefinitionAtlas::AIR;
+    unsigned int id = 0; // Invalid
     unsigned short count = 0;
 };

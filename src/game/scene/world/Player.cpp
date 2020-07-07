@@ -4,8 +4,11 @@
 
 #include "Player.h"
 
+#include "LocalWorld.h"
 #include "../../../util/Ray.h"
 #include "../../graph/Renderer.h"
+#include "../../../def/ItemDef.h"
+#include "../../../def/item/BlockDef.h"
 #include "../../../world/chunk/Chunk.h"
 
 Player::Player(LocalWorld& world, ClientGame& defs, Renderer& renderer, LocalInventoryRefs& refs) :

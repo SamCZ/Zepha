@@ -4,8 +4,16 @@
 
 #pragma once
 
-#include "ServerConnection.h"
-#include "../world/LocalWorld.h"
+#include <memory>
+#include <functional>
+#include <glm/vec3.hpp>
+
+class Model;
+class Player;
+class LocalWorld;
+class ClientGame;
+class PacketView;
+class ServerConnection;
 
 class ClientNetworkInterpreter {
 public:

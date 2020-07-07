@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <sol2/sol.hpp>
-
 #include "../class/LocalLuaEntity.h"
 #include "../class/ServerLuaEntity.h"
 #include "../../../def/ServerGame.h"

@@ -5,9 +5,9 @@
 #pragma once
 
 #include <cmath>
-#include <glm/glm.hpp>
 #include <glm/vec3.hpp>
-#include "../game/scene/world/Player.h"
+
+class Player;
 
 class Ray {
 public:

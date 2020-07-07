@@ -4,9 +4,10 @@
 
 #pragma once
 
-#include <glm/vec3.hpp>
 #include "../Entity.h"
+
 #include "../../../def/item/SelectionBox.h"
+#include "../../graph/meshtypes/EntityVertex.h"
 
 class WireframeEntity : public Entity {
 public:

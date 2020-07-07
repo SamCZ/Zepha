@@ -4,10 +4,9 @@
 
 #pragma once
 
-#include <vector>
-#include "item/BlockDef.h"
-#include "texture/TextureAtlas.h"
 #include "DefinitionAtlas.h"
+
+class TextureAtlas;
 
 class LocalDefinitionAtlas : public DefinitionAtlas {
 public:

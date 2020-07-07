@@ -2,9 +2,6 @@
 // Created by aurailus on 2019-10-29.
 //
 
-#include <iostream>
-#include <algorithm>
-
 #include "ServerInventoryList.h"
 
 #include "../../util/net/Packet.h"

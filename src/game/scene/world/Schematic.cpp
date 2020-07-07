@@ -4,14 +4,13 @@
 
 #include "Schematic.h"
 
+#include "../../../def/item/BlockDef.h"
 #include "../../../def/DefinitionAtlas.h"
 
 void Schematic::process(DefinitionAtlas& atlas) {
     blocks.reserve(stringData.size());
 
-    for (auto& string : stringData) {
-        blocks.push_back(atlas.blockFromStr(string).index);
-    }
+    for (auto& string : stringData) blocks.push_back(atlas.blockFromStr(string).index);
 
     stringData.clear();
     stringData.shrink_to_fit();

@@ -5,7 +5,9 @@
 #pragma once
 
 #include <sol2/sol.hpp>
+
 #include "../class/ServerLuaInventory.h"
+#include "../class/ServerLuaInventoryList.h"
 
 namespace ServerApi {
     static void inventory(sol::state& lua) {

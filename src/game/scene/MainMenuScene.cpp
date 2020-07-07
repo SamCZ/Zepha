@@ -2,9 +2,18 @@
 // Created by aurailus on 08/01/19.
 //
 
+#include <fstream>
+#include <iostream>
+#include <json/json.hpp>
+#include <cute_files/cute_files.h>
+
 #include "MainMenuScene.h"
 
+#include "menu/Subgame.h"
+#include "../../util/Log.h"
+#include "../ClientState.h"
 #include "../graph/Renderer.h"
+#include "../../def/texture/AtlasRef.h"
 #include "../hud/components/basic/GuiText.h"
 #include "../hud/components/compound/GuiImageButton.h"
 
@@ -142,7 +151,7 @@ void MainMenuScene::findSubgames() {
             if (!hasMods)
                 throw std::string("Subgame ") + std::string(subgameFolder.name) + " is missing a 'mods' directory.";
 
-            json j{};
+            nlohmann::json j{};
             try {
                 std::ifstream(std::string(subgameFolder.path) + "/conf.json") >> j;
             } catch (...) { throw std::string(subgameFolder.name) + "/conf.json is not a valid JSON object."; }

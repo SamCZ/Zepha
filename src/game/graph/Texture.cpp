@@ -2,6 +2,9 @@
 // Created by aurailus on 29/11/18.
 //
 
+#include <stb_image/stb_image.h>
+#include <stdexcept>
+
 #include "Texture.h"
 
 Texture::Texture(const std::string& file) :
@@ -11,14 +14,8 @@ Texture::Texture(const std::string& file) :
 
 void Texture::loadFromFile(std::string file) {
     unsigned char *texData = stbi_load(file.c_str(), &width, &height, &bitDepth, 0);
-
-    if (!texData) {
-        printf("Failed to find texture at '%s'\n", file.c_str());
-        return;
-    }
-
+    if (!texData) throw std::runtime_error("Failed to find texture at " + file + ".");
     loadFromBytes(texData, width, height);
-
     stbi_image_free(texData);
 }
 

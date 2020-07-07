@@ -2,7 +2,12 @@
 // Created by aurailus on 2019-10-28.
 //
 
+#include <glm/common.hpp>
+
 #include "Collidable.h"
+#include "../../def/ClientGame.h"
+#include "../../def/item/BlockDef.h"
+#include "../scene/world/LocalWorld.h"
 
 Collidable::Collidable(LocalWorld &world, ClientGame& defs, const SelectionBox& collisionBox) :
     world(world),
@@ -66,16 +71,16 @@ bool Collidable::collidesAt(glm::vec3& pos, float stepUpMax) {
 
                     if (def.solid)
                         for (auto &cBox : def.cBoxes)
-                            stepUpAmount = (std::max)(cBox.b.y + offsetPos.y - pos.y, stepUpAmount);
+                            stepUpAmount = std::fmax(cBox.b.y + offsetPos.y - pos.y, stepUpAmount);
 
                     if (offset.z == collisionBox.b.z) break;
-                    offset.z = (std::min)(std::floor(offset.z + 1), collisionBox.b.z);
+                    offset.z = std::fmin(std::floor(offset.z + 1), collisionBox.b.z);
                 }
                 if (offset.y == collisionBox.a.y + stepUpMax + 0.025f) break; // Hack for precision errors
-                offset.y = (std::min)(std::floor(offset.y + 1), collisionBox.a.y + stepUpMax + 0.025f);
+                offset.y = std::fmin(std::floor(offset.y + 1), collisionBox.a.y + stepUpMax + 0.025f);
             }
             if (offset.x == collisionBox.b.x) break;
-            offset.x = (std::min)(std::floor(offset.x + 1), collisionBox.b.x);
+            offset.x = std::fmin(std::floor(offset.x + 1), collisionBox.b.x);
         }
     }
 

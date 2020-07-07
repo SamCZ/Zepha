@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include "../../../game/ClientState.h"
-#include <iostream>
+class ClientState;
 
 class Scene {
 public:

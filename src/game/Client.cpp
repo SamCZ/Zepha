@@ -2,13 +2,17 @@
 // Created by aurailus on 06/01/19.
 //
 
+#include <iostream>
+
 #include "Client.h"
 
+#include "../util/Log.h"
 #include "../util/Timer.h"
+#include "../server/LocalServerInstance.h"
+
 #include "scene/GameScene.h"
 #include "scene/ConnectScene.h"
 #include "scene/MainMenuScene.h"
-#include "scene/LuaErrorScene.h"
 
 Client::Client(const std::string& path, const Address &addr, glm::ivec2 dims) :
     state(path.substr(0, path.find_last_of('/') + 1), renderer),
@@ -30,7 +34,7 @@ void Client::loop() {
 
     if (state.desiredState == "local") {
         state.desiredState = "connect";
-        localServer = std::make_unique<LocalServerInstance>(executablePath, addr.port, state.subgame);
+        localServer = std::make_shared<LocalServerInstance>(executablePath, addr.port, state.subgame);
         localServer->start();
     }
 

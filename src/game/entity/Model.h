@@ -4,21 +4,18 @@
 
 #pragma once
 
-#include <string>
-#include <utility>
-#include <iostream>
-#include <assimp/Importer.hpp>
+#include <memory>
+#include <vector>
+#include <glm/vec2.hpp>
+#include <glm/mat4x4.hpp>
 #include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
 #include "ModelBone.h"
 #include "ModelAnimation.h"
 #include "../graph/meshtypes/EntityMesh.h"
-#include "../../def/texture/TextureAtlas.h"
-#include "../../util/Mat4Conv.h"
-#include "../../def/model/SerializedModel.h"
+
+class AtlasRef;
+class SerializedModel;
 
 class Model {
 public:

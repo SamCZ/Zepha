@@ -4,9 +4,10 @@
 
 #pragma once
 
+#include <sol2/sol.hpp>
+
 #include "../class/LocalLuaEntity.h"
 #include "../../../game/scene/world/LocalWorld.h"
-#include <sol2/sol.hpp>
 
 namespace ClientApi {
     void entity(sol::state& lua) {

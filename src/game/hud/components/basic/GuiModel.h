@@ -10,6 +10,7 @@
 
 class ClientGame;
 class ModelStore;
+class TextureAtlas;
 class LuaGuiElement;
 
 class GuiModel : public GuiComponent {

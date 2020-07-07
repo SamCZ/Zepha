@@ -5,6 +5,7 @@
 #include "Dimension.h"
 
 #include "chunk/Chunk.h"
+#include "../def/item/BlockDef.h"
 #include "../def/DefinitionAtlas.h"
 
 bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {

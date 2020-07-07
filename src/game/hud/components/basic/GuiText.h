@@ -4,13 +4,14 @@
 
 #pragma once
 
-#include <utility>
+//#include <utility>
 
 #include "../GuiComponent.h"
 
-#include "../../SerialGui.h"
 #include "../../../../def/texture/Font.h"
-#include "../../../../def/texture/AtlasRef.h"
+
+class TextureAtlas;
+class LuaGuiElement;
 
 class GuiText : public GuiComponent {
 public:

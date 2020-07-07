@@ -4,6 +4,9 @@
 
 #include "LocalLuaAnimationManager.h"
 
+#include "../../../game/entity/Entity.h"
+#include "../../../game/entity/AnimationSegment.h"
+
 LocalLuaAnimationManager::LocalLuaAnimationManager(Entity &entity) :
     entity(entity) {
 

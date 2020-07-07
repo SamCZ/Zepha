@@ -4,10 +4,11 @@
 
 #pragma once
 
-#include <string>
 #include <memory>
+
 #include "SubgameConfig.h"
-#include "../../../def/texture/AtlasRef.h"
+
+class AtlasRef;
 
 class Subgame {
 public:

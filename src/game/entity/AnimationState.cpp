@@ -4,6 +4,10 @@
 
 #include "AnimationState.h"
 
+#include "Model.h"
+#include "ModelAnimation.h"
+#include "AnimationSegment.h"
+
 AnimationState::AnimationState(Model &source) {
     const ModelAnimation& animation = source.getAnimation();
 

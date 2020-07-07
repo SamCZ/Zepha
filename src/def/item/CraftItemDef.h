@@ -8,7 +8,8 @@
 
 #include "../ItemDef.h"
 
-#include "../texture/AtlasRef.h"
+class AtlasRef;
+class TextureAtlas;
 
 class CraftItemDef : public ItemDef {
 public:

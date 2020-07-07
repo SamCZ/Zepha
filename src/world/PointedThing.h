@@ -4,9 +4,6 @@
 
 #pragma once
 
-#include "../def/item/BlockDef.h"
-#include "../def/ClientGame.h"
-
 class PointedThing {
 public:
     enum class Thing {

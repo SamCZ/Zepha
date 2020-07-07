@@ -5,7 +5,11 @@
 #include "GuiRect.h"
 
 #include "../../SerialGui.h"
+#include "../../../entity/Model.h"
 #include "../../../../util/Util.h"
+#include "../../../../def/texture/AtlasRef.h"
+#include "../../../../def/texture/TextureAtlas.h"
+#include "../../../graph/meshtypes/EntityMesh.h"
 
 GuiRect::GuiRect(const std::string &key) : GuiComponent(key) {}
 

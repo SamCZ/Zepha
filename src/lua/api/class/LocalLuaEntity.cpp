@@ -4,6 +4,11 @@
 
 #include "LocalLuaEntity.h"
 
+#include "../../LuaParser.h"
+#include "../../../def/ClientGame.h"
+#include "../../../def/item/BlockDef.h"
+#include "../../../def/item/CraftItemDef.h"
+
 void LocalLuaEntity::snap_pos(const sol::table &pos) {
     entity->setPos({pos[1], pos[2], pos[3]});
 }

@@ -4,8 +4,10 @@
 
 #pragma once
 
-#include "../../../game/inventory/ItemStack.h"
-#include "../../../def/DefinitionAtlas.h"
+#include <sol2/sol.hpp>
+
+class DefinitionAtlas;
+class ItemStack;
 
 class LuaItemStack {
 public:

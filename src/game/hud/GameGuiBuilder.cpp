@@ -2,10 +2,9 @@
 // Created by aurailus on 2019-12-12.
 //
 
-#include <array>
-
 #include "GameGuiBuilder.h"
 
+#include "../../util/Util.h"
 #include "components/compound/GuiInventoryList.h"
 
 std::shared_ptr<GuiComponent> GameGuiBuilder::createComponent(LuaGuiElement& elem, glm::ivec2 bounds) {

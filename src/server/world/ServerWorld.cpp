@@ -4,15 +4,21 @@
 
 #include <glm/glm.hpp>
 #include <unordered_map>
+#include <iostream>
 
 #include "ServerWorld.h"
 
 #include "ServerGenStream.h"
 #include "../conn/ClientList.h"
 #include "../conn/ServerClient.h"
+#include "../../def/ServerGame.h"
+#include "../../def/item/BlockDef.h"
 #include "../../world/chunk/Chunk.h"
+#include "../../util/net/PacketType.h"
+#include "../../util/net/Serializer.h"
 #include "../../world/chunk/MapBlock.h"
 #include "../../world/fs/FileManipulator.h"
+#include "../../lua/api/class/ServerLuaEntity.h"
 
 ServerWorld::ServerWorld(unsigned int seed, ServerGame& game, ClientList& clients) :
     clientList(clients),

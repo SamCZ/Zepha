@@ -4,6 +4,10 @@
 
 #include "LuaItemStack.h"
 
+#include "../../../def/ItemDef.h"
+#include "../../../def/DefinitionAtlas.h"
+#include "../../../game/inventory/ItemStack.h"
+
 LuaItemStack::LuaItemStack(const ItemStack &stack, const DefinitionAtlas &defs) :
     name((stack.count == 0 ? "" : defs.fromId(stack.id).identifier)),
     count(stack.count) {}

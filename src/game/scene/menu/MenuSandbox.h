@@ -4,15 +4,14 @@
 
 #pragma once
 
-#include <fstream>
-#include <cute_files/cute_files.h>
-#include "Subgame.h"
-#include "../../ClientState.h"
-#include "../../hud/GuiBuilder.h"
-#include "../../hud/components/basic/GuiContainer.h"
-#include "../../../lua/LuaMod.h"
 #include "../../../lua/LuaParser.h"
 
+#include "../../hud/GuiBuilder.h"
+
+class Subgame;
+class AtlasRef;
+class ClientState;
+class GuiContainer;
 
 class MenuSandbox : LuaParser {
 public:

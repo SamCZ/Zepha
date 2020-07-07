@@ -2,8 +2,11 @@
 // Created by aurailus on 07/02/19.
 //
 
+#include <iostream>
+
 #include "ClientList.h"
 
+#include "../../util/Log.h"
 #include "../../def/ServerGame.h"
 #include "../../util/net/Serializer.h"
 #include "../../util/net/NetHandler.h"

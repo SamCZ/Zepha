@@ -4,9 +4,9 @@
 
 #pragma once
 
+#include <glm/glm.hpp>
 #include <assimp/matrix4x4.h>
 #include <assimp/matrix3x3.h>
-#include <glm/glm.hpp>
 
 namespace MatConv {
     static inline aiMatrix4x4 GLMMat4ToAi(const glm::mat4 mat) {

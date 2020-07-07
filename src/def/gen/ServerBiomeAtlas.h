@@ -5,7 +5,6 @@
 #pragma once
 
 #include "BiomeAtlas.h"
-#include "BiomeDef.h"
 
 class ServerBiomeAtlas : public BiomeAtlas {
 public:

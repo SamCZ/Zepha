@@ -5,7 +5,7 @@
 #pragma once
 
 #include <array>
-#include <glm/vec3.hpp>
+
 #include "NoiseSample.h"
 
 class MapGenJob {

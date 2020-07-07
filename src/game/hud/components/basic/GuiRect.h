@@ -5,10 +5,11 @@
 #pragma once
 
 #include "../GuiComponent.h"
-#include "../../../../def/texture/AtlasRef.h"
-#include "../../../../lua/api/class/LuaGuiElement.h"
 
+class AtlasRef;
 class ClientGame;
+class TextureAtlas;
+class LuaGuiElement;
 
 class GuiRect : public GuiComponent {
 public:

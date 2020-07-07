@@ -5,18 +5,15 @@
 #pragma once
 
 #include <map>
-#include <cmath>
 #include <memory>
 #include <vector>
-#include <algorithm>
-#include <GL/glew.h>
 #include <glm/vec2.hpp>
-#include <cute_files/cute_files.h>
+#include <glm/vec4.hpp>
 
-#include "AtlasRef.h"
 #include "RawTexData.h"
-#include "../../util/Log.h"
 #include "../../game/graph/Texture.h"
+
+class AtlasRef;
 
 class TextureAtlas {
 public:

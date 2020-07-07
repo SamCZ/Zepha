@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <sol2/sol.hpp>
 #include "../../../game/scene/world/Schematic.h"
 
 namespace Api {

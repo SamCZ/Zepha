@@ -2,7 +2,13 @@
 // Created by aurailus on 08/02/19.
 //
 
+#include <cmath>
 #include "GuiGraph.h"
+
+#include "../../../entity/Model.h"
+#include "../../../../def/texture/AtlasRef.h"
+#include "../../../graph/meshtypes/EntityMesh.h"
+#include "../../../graph/meshtypes/EntityVertex.h"
 
 GuiGraph::GuiGraph(const std::string &key) : GuiComponent(key) {}
 

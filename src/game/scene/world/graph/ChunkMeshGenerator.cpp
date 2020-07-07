@@ -9,7 +9,10 @@
 
 #include "../ChunkMeshDetails.h"
 #include "../../../../util/Vec.h"
+#include "../../../../util/Util.h"
+#include "../../../../def/gen/BiomeDef.h"
 #include "../../../../world/chunk/Chunk.h"
+#include "../../../../def/item/BlockDef.h"
 #include "../../../../def/item/BlockModel.h"
 #include "../../../../def/gen/NoiseSample.h"
 #include "../../../../def/gen/LocalBiomeAtlas.h"

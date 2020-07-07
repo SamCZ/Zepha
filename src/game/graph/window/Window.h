@@ -5,8 +5,6 @@
 #pragma once
 
 #include <map>
-#include <functional>
-#include <glm/vec2.hpp>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 

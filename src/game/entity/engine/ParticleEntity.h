@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include <glm/glm.hpp>
 #include "../Entity.h"
-#include "../../../def/item/BlockDef.h"
+
+class BlockDef;
 
 class ParticleEntity : public Entity {
 public:

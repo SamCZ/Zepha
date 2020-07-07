@@ -5,10 +5,7 @@
 #pragma once
 
 #include <vector>
-#include <glm/glm.hpp>
-#include <string>
-
-#include "stb_image/stb_image_write.h"
+#include <glm/vec3.hpp>
 
 class Voronoi3D {
 public:
@@ -19,7 +16,7 @@ public:
     unsigned short getPoint(unsigned short x, unsigned short y, unsigned short z);
 
     void setColorValues(const std::vector<glm::vec3>& values);
-    void generateImage(unsigned short depth);
+//    void generateImage(unsigned short depth);
 private:
     typedef std::vector<std::vector<std::vector<unsigned short>>> voronoi_data;
 

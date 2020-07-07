@@ -4,7 +4,6 @@
 
 #pragma once
 
-
 #include "gen/ServerBiomeAtlas.h"
 #include "ServerDefinitionAtlas.h"
 #include "../server/asset/AssetStorage.h"

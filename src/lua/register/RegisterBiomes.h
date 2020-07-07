@@ -8,9 +8,12 @@
 #include <noise/module/modulebase.h>
 #include <noise/module/add.h>
 #include <noise/module/module.h>
+
+#include "../../util/Util.h"
 #include "../../def/ClientGame.h"
 #include "../../def/ServerGame.h"
 #include "../../def/gen/BiomeDef.h"
+#include "../../def/item/BlockDef.h"
 
 namespace RegisterBiomes {
     static noise::module::Module* parseNoise(std::vector<noise::module::Module*>& modules, sol::table noise) {

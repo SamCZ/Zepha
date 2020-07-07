@@ -6,8 +6,10 @@
 
 #include "ConnectScene.h"
 
+#include "../ClientState.h"
 #include "../graph/Renderer.h"
 #include "../../util/net/Packet.h"
+#include "../../util/net/Address.h"
 #include "../../util/net/PacketType.h"
 #include "../../util/net/PacketView.h"
 #include "../../server/asset/AssetType.h"
@@ -44,8 +46,7 @@ void ConnectScene::update() {
 
     switch (connectState) {
         default:
-            std::cout << Log::err << "Invalid connectState" << Log::endl;
-            exit(1);
+            throw std::runtime_error("Invalid connection state.");
 
         case State::DONE:
         case State::FAILED_CONNECT:
@@ -191,10 +192,10 @@ void ConnectScene::handleConnecting() {
 
     switch (connection.getConnectionStatus()) {
         default:
-            std::cout << Log::err << "Undefined connection error. Exiting." << Log::endl;
+            throw std::runtime_error("Uncaught connection error.");
 
         case ServerConnection::State::ENET_ERROR:
-            exit(1);
+            throw std::runtime_error("Enet Initialization error.");
             break;
 
         case ServerConnection::State::FAILED_CONNECT:

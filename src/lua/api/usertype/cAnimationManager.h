@@ -5,7 +5,6 @@
 #pragma once
 
 #include "../class/LocalLuaAnimationManager.h"
-#include <sol2/sol.hpp>
 
 namespace ClientApi {
     void animation_manager(sol::state& lua) {

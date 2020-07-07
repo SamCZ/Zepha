@@ -4,6 +4,8 @@
 
 #include "ServerDefinitionAtlas.h"
 
+#include "item/BlockDef.h"
+
 ServerDefinitionAtlas::ServerDefinitionAtlas() {
 
     //Invalid Node

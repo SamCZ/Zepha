@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <sol2/sol.hpp>
+#include "../../../util/Util.h"
 
 namespace Api {
     static void register_keybind(sol::state& lua, sol::table& core) {

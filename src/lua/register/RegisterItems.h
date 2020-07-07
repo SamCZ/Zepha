@@ -5,6 +5,7 @@
 #pragma once
 
 #include <sol2/sol.hpp>
+
 #include "../../def/ClientGame.h"
 #include "../../def/ServerGame.h"
 #include "../../def/gen/BiomeDef.h"

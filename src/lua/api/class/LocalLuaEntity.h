@@ -5,9 +5,11 @@
 #pragma once
 
 #include <sol2/sol.hpp>
-#include "../../../game/entity/Entity.h"
-#include "../../../def/ClientGame.h"
+
 #include "LocalLuaAnimationManager.h"
+#include "../../../game/entity/Entity.h"
+
+class ClientGame;
 
 class LocalLuaEntity {
 public:

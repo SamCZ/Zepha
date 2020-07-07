@@ -4,18 +4,11 @@
 
 #pragma once
 
-#include <sstream>
-#include "../graph/window/Window.h"
-#include "../graph/drawable/DrawableGroup.h"
-#include "../../util/Space.h"
-#include "../../util/Util.h"
-#include "../../util/Ray.h"
-#include "components/compound/GuiLabelledGraph.h"
-#include "components/basic/GuiRect.h"
-#include "components/basic/GuiGraph.h"
-#include "components/basic/GuiText.h"
 #include "components/basic/GuiContainer.h"
-#include "../inventory/ServerInventoryList.h"
+
+class Player;
+class ClientGame;
+class LocalWorld;
 
 class DebugGui : public GuiContainer {
 public:

@@ -5,10 +5,10 @@
 
 #pragma once
 
+#include <mutex>
 #include <array>
 #include <vector>
 #include <glm/vec3.hpp>
-#include <mutex>
 
 #include "../../util/RIE.h"
 #include "../../util/Space.h"

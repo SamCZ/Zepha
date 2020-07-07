@@ -4,14 +4,13 @@
 
 #pragma once
 
+#include "../basic/GuiRect.h"
 #include "../basic/GuiContainer.h"
 
-#include "../basic/GuiRect.h"
-#include "../../SerialGui.h"
-#include "../../../../def/ClientGame.h"
-#include "../../../inventory/Inventory.h"
-#include "../../../inventory/LocalInventoryList.h"
-#include "../../../inventory/LocalInventoryRefs.h"
+class ClientGame;
+class LuaGuiElement;
+class LocalInventoryRefs;
+class LocalInventoryList;
 
 class GuiInventoryList : public GuiContainer {
 public:

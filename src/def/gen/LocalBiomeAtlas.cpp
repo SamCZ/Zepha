@@ -4,6 +4,8 @@
 
 #include "LocalBiomeAtlas.h"
 
+#include "BiomeDef.h"
+
 LocalBiomeAtlas::LocalBiomeAtlas() {
     //Invalid Biome
     BiomeDef* invalid = new BiomeDef("invalid", 0, -1, -1, -1, 0, 0, 0, {}, {}, {}, {});
@@ -19,10 +21,7 @@ void LocalBiomeAtlas::setIdentifiers(const std::vector<std::string>& identifiers
 }
 
 void LocalBiomeAtlas::registerBiome(BiomeDef *def) {
-    if (!defTable.count(def->identifier)) {
-        std::cout << Log::err << "Client/Server biome identifier desync: " + def->identifier + ". Exiting." << Log::endl;
-        exit(1);
-    }
+    if (!defTable.count(def->identifier)) throw std::runtime_error("Client/Server biome desync: " + def->identifier + ".");
     def->index = defTable[def->identifier];
     defs[def->index] = def;
 }

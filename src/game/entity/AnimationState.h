@@ -4,9 +4,13 @@
 
 #pragma once
 
-#include "Model.h"
-#include "ModelAnimation.h"
-#include "AnimationSegment.h"
+#include <map>
+#include <vector>
+#include <string>
+#include <glm/vec2.hpp>
+
+class Model;
+class AnimationSegment;
 
 class AnimationState {
 public:

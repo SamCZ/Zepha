@@ -4,6 +4,9 @@
 
 #include "WireframeEntity.h"
 
+#include "../Model.h"
+#include "../Entity.h"
+#include "../../graph/meshtypes/EntityMesh.h"
 
 WireframeEntity::WireframeEntity(const std::vector<SelectionBox>& boxes, float width, glm::vec3 color) :
     width(width),

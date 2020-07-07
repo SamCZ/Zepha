@@ -4,7 +4,6 @@
 
 #pragma once
 
-
 enum class NetState {
     UNINITIALIZED,
     FAILED_CONNECT,

@@ -1,12 +1,16 @@
-#include <utility>
-
 //
 // Created by aurailus on 25/11/18.
 //
 
+#include <utility>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "Entity.h"
 
+#include "Model.h"
+#include "AnimationSegment.h"
 #include "../graph/Renderer.h"
+#include "../graph/meshtypes/EntityMesh.h"
 
 Entity::Entity() : model(std::make_unique<Model>()) {}
 

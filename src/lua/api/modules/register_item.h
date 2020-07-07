@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <sol2/sol.hpp>
-
 namespace Api {
     static void register_item(sol::state& lua, sol::table& core) {
         core["registered_items"] = lua.create_table();

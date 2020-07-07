@@ -7,10 +7,9 @@
 #include <string>
 
 #ifndef _WIN32
+#include <thread>
 #include <zconf.h>
 #include <signal.h>
-#include <thread>
-
 #endif
 
 class LocalServerInstance {

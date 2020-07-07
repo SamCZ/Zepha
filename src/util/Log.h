@@ -4,9 +4,6 @@
 
 #pragma once
 
-#include <string>
-#include <iostream>
-
 namespace Log {
     #ifdef _WIN32
     static const char* info = "[info] ";

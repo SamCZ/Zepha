@@ -5,8 +5,11 @@
 #pragma once
 
 #include <memory>
+#include <sol2/sol.hpp>
+
 #include "../../../server/world/ServerEntity.h"
-#include "../../../def/ServerGame.h"
+
+class ServerGame;
 
 class ServerLuaEntity {
 public:

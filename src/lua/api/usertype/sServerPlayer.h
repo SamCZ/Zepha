@@ -5,6 +5,7 @@
 #pragma once
 
 #include <sol2/sol.hpp>
+
 #include "../class/ServerLuaPlayer.h"
 
 namespace ServerApi {

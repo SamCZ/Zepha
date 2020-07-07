@@ -33,7 +33,6 @@ void LocalInventoryList::addGuiCallback(std::shared_ptr<std::function<void()>> c
 }
 
 void LocalInventoryList::removeGuiCallback(std::shared_ptr<std::function<void()>> cb) {
-
     for (auto it = guiCallbacks.begin(); it != guiCallbacks.end();) {
         if (cb == (*it)) {
             guiCallbacks.erase(it);
@@ -41,7 +40,8 @@ void LocalInventoryList::removeGuiCallback(std::shared_ptr<std::function<void()>
         }
         it++;
     }
-    std::cout << "Failed to remove callback" << std::endl;
+
+    throw std::runtime_error("Failed to remove callback.");
 }
 
 void LocalInventoryList::manipulated() {

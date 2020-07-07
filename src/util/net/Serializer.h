@@ -8,6 +8,7 @@
 #include <vector>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+
 #include "Packet.h"
 #include "PacketType.h"
 

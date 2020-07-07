@@ -5,9 +5,16 @@
 #pragma once
 
 #include <sol2/sol.hpp>
+
+#include "../Callback.h"
+#include "../../def/ItemDef.h"
 #include "../../def/ClientGame.h"
 #include "../../def/ServerGame.h"
 #include "../../def/gen/BiomeDef.h"
+#include "../../def/item/BlockDef.h"
+#include "../../def/item/BlockModel.h"
+#include "../../def/item/SelectionBox.h"
+#include "../../def/item/CraftItemDef.h"
 
 namespace RegisterBlocks {
 
