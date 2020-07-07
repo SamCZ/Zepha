@@ -8,7 +8,7 @@
 
 #include "world/Player.h"
 #include "world/LocalWorld.h"
-#include "net/ClientNetworkInterpreter.h"
+#include "../../net/client/ClientNetworkInterpreter.h"
 #include "../inventory/LocalInventoryRefs.h"
 #include "../hud/DebugGui.h"
 

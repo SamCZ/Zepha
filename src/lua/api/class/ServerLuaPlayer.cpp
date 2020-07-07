@@ -5,7 +5,7 @@
 #include "ServerLuaPlayer.h"
 
 #include "../../LuaParser.h"
-#include "../../../util/net/NetHandler.h"
+#include "../../../net/NetHandler.h"
 
 void ServerLuaPlayer::set_pos(const sol::table &pos) {
     player.assertPos({pos[1], pos[2], pos[3]});

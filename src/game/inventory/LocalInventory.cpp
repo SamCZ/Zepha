@@ -5,7 +5,7 @@
 #include "LocalInventory.h"
 
 #include "LocalInventoryList.cpp"
-#include "../scene/net/ClientNetworkInterpreter.h"
+#include "../../net/client/ClientNetworkInterpreter.h"
 
 void LocalInventory::createList(std::string name, unsigned short length, unsigned short width, bool maintain) {
     namespace ph = std::placeholders;

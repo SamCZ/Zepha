@@ -8,13 +8,13 @@
 
 #include "../ClientState.h"
 #include "../graph/Renderer.h"
-#include "../../util/net/Packet.h"
-#include "../../util/net/Address.h"
-#include "../../util/net/PacketType.h"
-#include "../../util/net/PacketView.h"
-#include "../../server/asset/AssetType.h"
+#include "../../net/Packet.h"
+#include "../../net/Address.h"
+#include "../../net/PacketType.h"
+#include "../../net/PacketView.h"
 #include "../hud/components/basic/GuiText.h"
 #include "../hud/components/basic/GuiRect.h"
+#include "../../net/server/asset/AssetType.h"
 
 ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
     connection(state.connection) {

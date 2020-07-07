@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "ServerTexture.h"
-#include "../../def/model/SerializedModel.h"
+#include "../../../def/model/SerializedModel.h"
 
 class AssetStorage {
 public:

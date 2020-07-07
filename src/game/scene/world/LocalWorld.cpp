@@ -5,11 +5,11 @@
 #include "LocalWorld.h"
 
 #include "Player.h"
+#include "../../../net/PacketView.h"
 #include "WorldInterpolationStream.h"
 #include "../../../world/chunk/Chunk.h"
 #include "../../../def/item/BlockDef.h"
-#include "../../../util/net/PacketView.h"
-#include "../net/ClientNetworkInterpreter.h"
+#include "../../../net/client/ClientNetworkInterpreter.h"
 #include "../../entity/engine/ParticleEntity.h"
 #include "../../entity/engine/BlockCrackEntity.h"
 

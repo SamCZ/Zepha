@@ -4,10 +4,10 @@
 
 #include "WorldInterpolationStream.h"
 
+#include "../../../net/PacketView.h"
 #include "../../../def/ClientGame.h"
 #include "../../../def/gen/MapGen.h"
 #include "../../../world/chunk/Chunk.h"
-#include "../../../util/net/PacketView.h"
 
 WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, ClientGame& game) :
     props(std::make_shared<MapGenProps>(seed)),

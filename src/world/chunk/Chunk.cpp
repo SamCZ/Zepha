@@ -9,8 +9,8 @@
 #include "Chunk.h"
 
 #include "../../def/DefinitionAtlas.h"
-#include "../../util/net/Serializer.h"
-#include "../../util/net/Deserializer.h"
+#include "../../net/Serializer.h"
+#include "../../net/Deserializer.h"
 
 Chunk::Chunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes) :
     Chunk(blocks, biomes, {0, 0, 0}) {}

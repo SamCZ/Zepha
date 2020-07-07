@@ -6,7 +6,7 @@
 
 #include "ClientState.h"
 #include "graph/Renderer.h"
-#include "../util/net/Address.h"
+#include "../net/Address.h"
 #include "graph/scene/SceneManager.h"
 
 class LocalServerInstance;

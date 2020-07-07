@@ -8,9 +8,9 @@
 #include <glm/vec3.hpp>
 #include <unordered_map>
 
-#include "../../util/Vec.h"
-#include "../../game/inventory/Inventory.h"
-#include "../../game/inventory/ServerInventoryList.h"
+#include "../../../util/Vec.h"
+#include "../../../game/inventory/Inventory.h"
+#include "../../../game/inventory/ServerInventoryList.h"
 
 class InventoryRefs;
 

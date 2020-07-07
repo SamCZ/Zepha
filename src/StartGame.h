@@ -9,7 +9,7 @@
 #include "util/Log.h"
 #include "util/Util.h"
 #include "game/Client.h"
-#include "server/Server.h"
+#include "net/server/Server.h"
 
 enum class Mode { INVALID, CLIENT, SERVER };
 

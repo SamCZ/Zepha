@@ -8,7 +8,7 @@
 
 #include "../util/Log.h"
 #include "../util/Timer.h"
-#include "../server/LocalServerInstance.h"
+#include "../net/server/LocalServerInstance.h"
 
 #include "scene/GameScene.h"
 #include "scene/ConnectScene.h"

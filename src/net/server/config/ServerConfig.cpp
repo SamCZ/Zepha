@@ -4,12 +4,12 @@
 
 #include "ServerConfig.h"
 
-#include "../../def/ItemDef.h"
+#include "../../PacketView.h"
+#include "../../Serializer.h"
 #include "../asset/AssetType.h"
 #include "../conn/ServerClient.h"
-#include "../../def/gen/BiomeDef.h"
-#include "../../util/net/PacketView.h"
-#include "../../util/net/Serializer.h"
+#include "../../../def/ItemDef.h"
+#include "../../../def/gen/BiomeDef.h"
 
 ServerConfig::ServerConfig(ServerGame &defs) : game(defs) {}
 

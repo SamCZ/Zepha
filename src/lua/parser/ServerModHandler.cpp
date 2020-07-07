@@ -9,7 +9,7 @@
 #include <cute_files/cute_files.h>
 
 #include "../../def/ServerGame.h"
-#include "../../util/net/Serializer.h"
+#include "../../net/Serializer.h"
 
 #include "ServerModHandler.h"
 

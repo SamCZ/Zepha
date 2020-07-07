@@ -9,8 +9,8 @@
 #include "chunk/MapBlock.h"
 #include "../def/gen/MapGen.h"
 #include "../def/ServerGame.h"
-#include "../server/conn/ServerClient.h"
-#include "../server/world/ServerWorld.h"
+#include "../net/server/conn/ServerClient.h"
+#include "../net/server/world/ServerWorld.h"
 #include "../lua/api/class/ServerLuaEntity.h"
 
 ServerDimension::ServerDimension(ServerGame &game) : Dimension(game.defs), game(game) {}

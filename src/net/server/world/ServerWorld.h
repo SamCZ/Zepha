@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "../../game/scene/world/World.h"
+#include "../../../game/scene/world/World.h"
 
-#include "../../world/ServerDimension.h"
+#include "../../../world/ServerDimension.h"
 
 class ServerGame;
 class ClientList;

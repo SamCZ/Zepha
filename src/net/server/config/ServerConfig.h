@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../def/ServerGame.h"
+#include "../../../def/ServerGame.h"
 
 class ServerClient;
 

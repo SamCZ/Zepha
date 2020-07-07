@@ -5,7 +5,7 @@
 #pragma once
 
 #include "../def/ClientGame.h"
-#include "scene/net/ServerConnection.h"
+#include "../net/client/ServerConnection.h"
 
 class Renderer;
 

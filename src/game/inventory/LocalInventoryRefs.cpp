@@ -6,9 +6,9 @@
 
 #include "LocalInventory.h"
 #include "LocalInventoryList.h"
-#include "../../util/net/PacketView.h"
+#include "../../net/PacketView.h"
 #include "../../def/LocalDefinitionAtlas.h"
-#include "../scene/net/ClientNetworkInterpreter.h"
+#include "../../net/client/ClientNetworkInterpreter.h"
 
 LocalInventoryRefs::LocalInventoryRefs(LocalDefinitionAtlas& defs, ClientNetworkInterpreter& net) : defs(defs) {
     namespace ph = std::placeholders;

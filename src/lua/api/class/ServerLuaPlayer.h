@@ -7,7 +7,7 @@
 #include <sol2/sol.hpp>
 
 #include "ServerLuaInventory.h"
-#include "../../../server/conn/ServerClient.h"
+#include "../../../net/server/conn/ServerClient.h"
 
 class ServerLuaPlayer {
 public:

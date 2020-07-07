@@ -8,7 +8,7 @@
 #include <thread>
 #include <unordered_set>
 
-#include "../../def/gen/MapGen.h"
+#include "../../../def/gen/MapGen.h"
 
 class ServerGame;
 

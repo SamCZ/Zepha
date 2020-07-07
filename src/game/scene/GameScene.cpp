@@ -5,9 +5,9 @@
 #include "GameScene.h"
 
 #include "../ClientState.h"
+#include "../../net/Packet.h"
 #include "../graph/Renderer.h"
-#include "../../util/net/Packet.h"
-#include "../../util/net/PacketView.h"
+#include "../../net/PacketView.h"
 
 GameScene::GameScene(ClientState& state) : Scene(state),
     game(state.defs),

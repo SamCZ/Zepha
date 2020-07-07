@@ -8,7 +8,7 @@
 #include "ServerGame.h"
 
 #include "../util/Log.h"
-#include "../server/conn/ClientList.h"
+#include "../net/server/conn/ClientList.h"
 
 ServerGame::ServerGame(const std::string& subgame, unsigned int seed) :
     subgamePath("subgames/" + subgame + "/"),

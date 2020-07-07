@@ -2,8 +2,8 @@
 // Created by aurailus on 28/01/19.
 //
 
-#include <random>
 #include <cmath>
+#include <random>
 
 #include "MapGen.h"
 

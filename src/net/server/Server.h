@@ -4,12 +4,12 @@
 
 #pragma once
 
+#include "../NetHandler.h"
 #include "conn/ClientList.h"
 #include "world/ServerWorld.h"
-#include "../def/ServerGame.h"
 #include "config/ServerConfig.h"
-#include "../util/net/NetHandler.h"
-#include "../game/inventory/InventoryRefs.h"
+#include "../../def/ServerGame.h"
+#include "../../game/inventory/InventoryRefs.h"
 
 class ServerClient;
 class Packet;

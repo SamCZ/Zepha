@@ -9,7 +9,7 @@
 #include "NetHandler.h"
 
 #include "Address.h"
-#include "../Log.h"
+#include "../util/Log.h"
 
 NetHandler::NetHandler(const Address& hostAddress) : NetHandler(std::move(hostAddress), 3, 3) {}
 

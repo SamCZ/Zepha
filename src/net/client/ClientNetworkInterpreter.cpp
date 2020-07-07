@@ -6,15 +6,15 @@
 
 #include "ClientNetworkInterpreter.h"
 
+#include "../PacketView.h"
+#include "../Serializer.h"
+#include "../NetHandler.h"
+#include "../../util/Log.h"
 #include "NetPlayerField.h"
-#include "../world/Player.h"
 #include "ServerConnection.h"
-#include "../../../util/Log.h"
-#include "../../entity/Model.h"
-#include "../world/LocalWorld.h"
-#include "../../../util/net/PacketView.h"
-#include "../../../util/net/Serializer.h"
-#include "../../../util/net/NetHandler.h"
+#include "../../game/entity/Model.h"
+#include "../../game/scene/world/Player.h"
+#include "../../game/scene/world/LocalWorld.h"
 
 ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, ClientGame &defs, Player& player) :
     player(player),

@@ -6,7 +6,7 @@
 
 #include "gen/ServerBiomeAtlas.h"
 #include "ServerDefinitionAtlas.h"
-#include "../server/asset/AssetStorage.h"
+#include "../net/server/asset/AssetStorage.h"
 #include "../lua/parser/ServerLuaParser.h"
 
 class ServerWorld;

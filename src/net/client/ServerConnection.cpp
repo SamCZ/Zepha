@@ -7,9 +7,9 @@
 
 #include "ServerConnection.h"
 
-#include "../../../util/Log.h"
-#include "../../../util/net/Address.h"
-#include "../../../util/net/NetHandler.h"
+#include "../../util/Log.h"
+#include "../../net/Address.h"
+#include "../../net/NetHandler.h"
 
 void ServerConnection::attemptConnect(Address addr) {
     if (state != State::UNCONNECTED) {

@@ -17,16 +17,14 @@
 #include "FileManipulator.h"
 
 #include "../chunk/Chunk.h"
-#include "../../util/Util.h"
-#include "../../util/net/Serializer.h"
-#include "../../util/net/Deserializer.h"
+#include "../../net/Serializer.h"
+#include "../../net/Deserializer.h"
 
 FileManipulator::FileManipulator(const std::string &worldPath) :
     path(worldPath) {
 }
 
 void FileManipulator::commitChunk(Chunk &chunk) {
-//    return;
     glm::ivec3 reg = Space::Region::world::fromChunk(chunk.pos);
     unsigned int chunkInd = Space::Chunk::index(chunk.pos);
 

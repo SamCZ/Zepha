@@ -4,10 +4,10 @@
 
 #include "ServerInventoryList.h"
 
-#include "../../util/net/Packet.h"
-#include "../../util/net/Serializer.h"
-#include "../../server/conn/ClientList.h"
+#include "../../net/Packet.h"
+#include "../../net/Serializer.h"
 #include "../../lua/api/class/LuaItemStack.h"
+#include "../../net/server/conn/ClientList.h"
 
 ServerInventoryList::ServerInventoryList(DefinitionAtlas& defs, ClientList* list,
     const std::string& invName, const std::string& listName, unsigned short size, unsigned short width) :

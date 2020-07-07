@@ -6,11 +6,11 @@
 
 #include "ClientList.h"
 
-#include "../../util/Log.h"
-#include "../../def/ServerGame.h"
-#include "../../util/net/Serializer.h"
-#include "../../util/net/NetHandler.h"
-#include "../../game/scene/net/NetPlayerField.h"
+#include "../../Serializer.h"
+#include "../../NetHandler.h"
+#include "../../../util/Log.h"
+#include "../../../def/ServerGame.h"
+#include "../../client/NetPlayerField.h"
 
 ClientList::ClientList(ServerGame& defs) :
     defs(defs) {}

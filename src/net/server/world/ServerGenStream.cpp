@@ -4,9 +4,9 @@
 
 #include "ServerGenStream.h"
 
-#include "../../def/ServerGame.h"
-#include "../../world/chunk/Chunk.h"
-#include "../../def/gen/MapGenProps.h"
+#include "../../../def/ServerGame.h"
+#include "../../../world/chunk/Chunk.h"
+#include "../../../def/gen/MapGenProps.h"
 
 ServerGenStream::ServerGenStream(unsigned int seed, ServerGame& game) :
     props(std::make_shared<MapGenProps>(seed)),

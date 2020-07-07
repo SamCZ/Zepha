@@ -7,7 +7,7 @@
 #include <string>
 #include <glm/vec3.hpp>
 
-#include "../../util/net/Packet.h"
+#include "../../Packet.h"
 
 class ServerEntity {
 public:

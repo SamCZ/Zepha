@@ -8,7 +8,7 @@
 #include "ServerLuaParser.h"
 
 #include "../ErrorFormatter.h"
-#include "../../util/net/Serializer.h"
+#include "../../net/Serializer.h"
 #include "../register/RegisterBlocks.h"
 #include "../register/RegisterItems.h"
 #include "../register/RegisterBiomes.h"

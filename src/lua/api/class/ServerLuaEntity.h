@@ -7,7 +7,7 @@
 #include <memory>
 #include <sol2/sol.hpp>
 
-#include "../../../server/world/ServerEntity.h"
+#include "../../../net/server/world/ServerEntity.h"
 
 class ServerGame;
 

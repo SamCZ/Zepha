@@ -6,10 +6,10 @@
 
 #include "ServerClient.h"
 
-#include "../../util/net/Packet.h"
-#include "../../util/net/Serializer.h"
-#include "../../game/inventory/InventoryRefs.h"
-#include "../../game/scene/net/NetPlayerField.h"
+#include "../../Packet.h"
+#include "../../Serializer.h"
+#include "../../client/NetPlayerField.h"
+#include "../../../game/inventory/InventoryRefs.h"
 
 ServerClient::ServerClient(ENetPeer *peer, ENetAddress address, DefinitionAtlas& defs, InventoryRefs& refs) :
     peer(peer),

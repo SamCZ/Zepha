@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "ServerClient.h"
-#include "../../lua/parser/ServerLuaParser.h"
+#include "../../../lua/parser/ServerLuaParser.h"
 
 class ClientList {
 public:
