@@ -48,7 +48,7 @@ TEST_CASE("Chunk", "[engine]") {
 
     SECTION("Blocks") {
         SECTION("Exact index = 0, strip one after") {
-            Chunk b {{0, 1, 1, 0}, {}};
+            Chunk b {{}, {0, 1, 1, 0}, {}};
 
             b.setBlock(0, 2);
 
@@ -60,7 +60,7 @@ TEST_CASE("Chunk", "[engine]") {
         }
 
         SECTION("Exact index, last block same, strip one after") {
-            Chunk b {{0, 1, 1, 0, 2, 5}, {}};
+            Chunk b {{}, {0, 1, 1, 0, 2, 5}, {}};
 
             b.setBlock(1, 1);
 
@@ -72,7 +72,7 @@ TEST_CASE("Chunk", "[engine]") {
         }
 
         SECTION("Exact index, last block same, strip two after") {
-            Chunk b {{0, 1, 2, 0, 4, 5}, {}};
+            Chunk b {{}, {0, 1, 2, 0, 4, 5}, {}};
 
             b.setBlock(2, 1);
 
@@ -96,7 +96,7 @@ TEST_CASE("Chunk", "[engine]") {
         }
 
         SECTION("Exact index, last block same, no strip after") {
-            Chunk b {{0, 1, 1, 0}, {}};
+            Chunk b {{}, {0, 1, 1, 0}, {}};
 
             b.setBlock(1, 1);
 
@@ -108,7 +108,7 @@ TEST_CASE("Chunk", "[engine]") {
         }
 
         SECTION("Exact index, last block different, strip one after") {
-            Chunk b {{0, 1, 1, 0, 2, 5}, {}};
+            Chunk b {{}, {0, 1, 1, 0, 2, 5}, {}};
 
             b.setBlock(1, 2);
 
@@ -122,7 +122,7 @@ TEST_CASE("Chunk", "[engine]") {
         }
 
         SECTION("Exact index, last block different, strip two after") {
-            Chunk b {{0, 1, 2, 0, 4, 5}, {}};
+            Chunk b {{}, {0, 1, 2, 0, 4, 5}, {}};
 
             b.setBlock(2, 2);
 
@@ -164,7 +164,7 @@ TEST_CASE("Chunk", "[engine]") {
         }
 
         SECTION("Exact index, last block different, no strip after") {
-            Chunk b {{0, 1, 1, 0}, {}};
+            Chunk b {{}, {0, 1, 1, 0}, {}};
 
             b.setBlock(1, 2);
 
@@ -178,7 +178,7 @@ TEST_CASE("Chunk", "[engine]") {
         }
 
         SECTION("Greater index, last block same, strip one after") {
-            Chunk b {{0, 1, 1, 0, 3, 5}, {}};
+            Chunk b {{}, {0, 1, 1, 0, 3, 5}, {}};
 
             b.setBlock(2, 0);
 
@@ -193,7 +193,7 @@ TEST_CASE("Chunk", "[engine]") {
         }
 
         SECTION("Greater index, last block same, strip two after") {
-            Chunk b {{0, 1, 2, 0, 5, 5}, {}};
+            Chunk b {{}, {0, 1, 2, 0, 5, 5}, {}};
 
             b.setBlock(3, 0);
 
@@ -208,7 +208,7 @@ TEST_CASE("Chunk", "[engine]") {
         }
 
         SECTION("Greater index, last block same, no strip after") {
-            Chunk b {{0, 1, 3, 0}, {}};
+            Chunk b {{}, {0, 1, 3, 0}, {}};
 
             b.setBlock(1, 1);
 
@@ -222,7 +222,7 @@ TEST_CASE("Chunk", "[engine]") {
 
         SECTION("Greater index, last block different, strip one after") {
             SECTION("Indexed block different") {
-                Chunk b {{0, 1, 1, 0, 3, 5}, {}};
+                Chunk b {{}, {0, 1, 1, 0, 3, 5}, {}};
 
                 b.setBlock(2, 2);
 
@@ -238,7 +238,7 @@ TEST_CASE("Chunk", "[engine]") {
             }
 
             SECTION("Indexed block same") {
-                Chunk b {{0, 1, 1, 0, 3, 5}, {}};
+                Chunk b {{}, {0, 1, 1, 0, 3, 5}, {}};
 
                 b.setBlock(2, 5);
 
@@ -253,7 +253,7 @@ TEST_CASE("Chunk", "[engine]") {
         }
 
         SECTION("Greater index, last block different, strip three after") {
-            Chunk b {{0, 1, 2, 0, 6, 6}, {}};
+            Chunk b {{}, {0, 1, 2, 0, 6, 6}, {}};
 
             b.setBlock(3, 5);
 
@@ -305,7 +305,7 @@ TEST_CASE("Chunk", "[engine]") {
         }
 
         SECTION("No index found in loop, last block different, not end of chunk") {
-            Chunk b {{0, 1, 2, 0}, {}};
+            Chunk b {{}, {0, 1, 2, 0}, {}};
 
             b.setBlock(6, 6);
 
@@ -321,7 +321,7 @@ TEST_CASE("Chunk", "[engine]") {
         }
 
         SECTION("No index found in loop, last block different, end of chunk") {
-            Chunk b {{0, 1, 2, 0}, {}};
+            Chunk b {{}, {0, 1, 2, 0}, {}};
 
             b.setBlock(4095, 6);
 

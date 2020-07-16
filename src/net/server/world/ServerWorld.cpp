@@ -73,17 +73,17 @@ void ServerWorld::update(double delta) {
 
     std::unordered_set<glm::ivec3, Vec::ivec3> changed {};
 
-    for (auto& mb : *finished) {
-        for (const auto& chunk : mb.chunks) {
+    for (auto& data : *finished) {
+        for (const auto& chunk : data.chunks) {
             changed.insert(chunk->pos);
             dimension.setChunk(chunk);
 //            fileManip->commitChunk(*chunk);
         }
 
-        auto resend = dimension.calculateEdgeLight(mb.pos);
-        changed.insert(resend.begin(), resend.end());
+//        auto resend = dimension.calculateEdgeLight(mb.pos);
+//        changed.insert(resend.begin(), resend.end());
 
-        dimension.getMapBlock(mb.pos)->generated = true;
+        auto mb = dimension.getMapBlock(data.pos)->generated = true;
     }
 
     for (auto& chunk : changed) {

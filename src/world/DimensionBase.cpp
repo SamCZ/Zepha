@@ -47,7 +47,7 @@ std::shared_ptr<Chunk> DimensionBase::getChunk(glm::ivec3 chunkPosition) {
 
 void DimensionBase::setChunk(std::shared_ptr<Chunk> chunk) {
     auto mapBlock = getOrCreateMapBlock(Space::MapBlock::world::fromChunk(chunk->pos));
-    (*mapBlock).set(Space::Chunk::index(chunk->pos), chunk);
+    mapBlock->set(Space::Chunk::index(chunk->pos), chunk);
 }
 
 void DimensionBase::removeChunk(glm::ivec3 pos){
@@ -86,6 +86,6 @@ std::shared_ptr<MapBlock> DimensionBase::getOrCreateMapBlock(glm::ivec3 mapBlock
     unsigned int index = Space::MapBlock::index(mapBlockPosition);
 
     if ((*region)[index] != nullptr) return (*region)[index];
-    (*region).set(index, std::make_shared<MapBlock>(mapBlockPosition));
+    region->set(index, std::make_shared<MapBlock>(mapBlockPosition));
     return (*region)[index];
 }

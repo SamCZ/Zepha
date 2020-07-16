@@ -12,26 +12,25 @@
 #include "../../net/Serializer.h"
 #include "../../net/Deserializer.h"
 
-Chunk::Chunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes) :
-    Chunk(blocks, biomes, {0, 0, 0}) {}
-
-Chunk::Chunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes, glm::ivec3 pos) :
-    blocks(std::move(blocks)), biomes(std::move(biomes)),
-    generated(true), pos(pos) {
-    recalculateRenderableBlocks();
-}
-
 Chunk::Chunk(const Chunk& o) :
-    partial(o.partial),
-    generated(o.generated),
-    dirty(o.dirty),
-    shouldRender(o.shouldRender),
     pos(o.pos),
+    dirty(o.dirty),
     blocks(o.blocks),
     biomes(o.biomes),
-    blockLight(o.blockLight),
+    partial(o.partial),
     sunLight(o.sunLight),
+    generated(o.generated),
+    blockLight(o.blockLight),
+    shouldRender(o.shouldRender),
     renderableBlocks(o.renderableBlocks) {}
+
+Chunk::Chunk(glm::ivec3 pos) : pos(pos) {}
+
+Chunk::Chunk(glm::ivec3 pos, const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes) :
+    blocks(std::move(blocks)), biomes(std::move(biomes)),
+    generated(true), pos(pos) {
+    countRenderableBlocks();
+}
 
 bool Chunk::setBlock(unsigned int ind, unsigned int blk) {
     if (!RIE::write(ind, blk, blocks, 4096)) return false;
@@ -99,10 +98,10 @@ void Chunk::deserialize(Deserializer& d) {
         this->sunLight[i] = sl.s;
     }
 
-    recalculateRenderableBlocks();
+    countRenderableBlocks();
 }
 
-void Chunk::recalculateRenderableBlocks() {
+void Chunk::countRenderableBlocks() {
     shouldRender = false;
     renderableBlocks = 0;
 

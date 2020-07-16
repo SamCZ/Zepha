@@ -69,9 +69,8 @@ set(ZEPHA_SRC
 	game/hud/components/basic/GuiRect.cpp 
 	game/hud/components/basic/GuiRect.h 
 	game/hud/components/basic/GuiGraph.cpp 
-	game/hud/components/basic/GuiGraph.h 
-	def/gen/MapGenJob.h 
-	util/Interp.h 
+	game/hud/components/basic/GuiGraph.h
+        util/Interp.h
 	def/gen/NoiseSample.cpp 
 	def/gen/NoiseSample.h 
 	game/graph/frustum/Frustum.cpp 

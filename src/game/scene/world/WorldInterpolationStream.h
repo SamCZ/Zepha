@@ -12,17 +12,16 @@
 #include <unordered_set>
 
 #include "../../../util/Vec.h"
+#include "../../../def/gen/MapGen.h"
 
 class Chunk;
-class MapGen;
 class ClientGame;
-class MapGenProps;
 class PacketView;
 
 class WorldInterpolationStream {
 public:
     static const int THREADS = 4;
-    static const int THREAD_QUEUE_SIZE = 32;
+    static const int THREAD_QUEUE_SIZE = 64;
 
     WorldInterpolationStream(unsigned int seed, ClientGame& game);
 
@@ -55,18 +54,16 @@ private:
     };
 
     struct Thread {
-        explicit Thread(MapGen* gen);
+        explicit Thread(ClientGame& game, unsigned int seed);
         void exec();
 
-        MapGen* gen;
-        std::vector<Job> tasks = std::vector<Job>(THREAD_QUEUE_SIZE);
-
         bool kill = false;
+
+        std::vector<Job> jobs = std::vector<Job>(THREAD_QUEUE_SIZE);
+
+        MapGen gen;
         std::thread thread;
     };
-
-    std::shared_ptr<MapGenProps> props;
-    MapGen* gen;
 
     std::vector<Thread> threads;
     std::list<std::unique_ptr<PacketView>> queuedPacketTasks;

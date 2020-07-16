@@ -35,9 +35,9 @@ public:
     typedef union { char ch; SunLight s; } sunlight_union;
 
     Chunk() = default;
-    explicit Chunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes);
-    Chunk(const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes, glm::ivec3 pos);
     Chunk(const Chunk& o);
+    explicit Chunk(glm::ivec3 pos);
+    Chunk(glm::ivec3 pos, const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes);
 
     inline std::unique_lock<std::mutex> aquireLock();
 
@@ -65,7 +65,7 @@ public:
     std::string serialize();
     void deserialize(Deserializer& d);
 
-    void recalculateRenderableBlocks();
+    void countRenderableBlocks();
 
     bool partial = false;
     bool generated = false;
@@ -73,8 +73,7 @@ public:
     bool dirty = true;
     bool shouldRender = true;
 
-    glm::ivec3 pos;
-
+    glm::ivec3 pos {};
 private:
     std::mutex m;
 

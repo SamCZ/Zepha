@@ -11,7 +11,8 @@
 
 MeshGenStream::MeshGenStream(ClientGame& game, LocalDimension &dimension) :
     game(game),
-    dimension(dimension) {
+    dimension(dimension),
+    noiseSampler({NoiseSample {16}, NoiseSample {16}, NoiseSample {16}}) {
 
     queuedTasks.reserve(static_cast<unsigned long>(TOTAL_QUEUE_SIZE));
 
@@ -24,11 +25,10 @@ MeshGenStream::MeshGenStream(ClientGame& game, LocalDimension &dimension) :
     offsetTurbulence.SetFrequency(4.0);
     offsetTurbulence.SetPower(0.125);
 
-    noiseSampler = { NoiseSample {}, NoiseSample {}, NoiseSample {} };
-    //8 is just a random value to offset results
-    noiseSampler[0].fill([&](glm::ivec3 pos) -> float { return offsetTurbulence.GetValue(pos.x + 8, pos.y, pos.z); }, {16, 16});
-    noiseSampler[1].fill([&](glm::ivec3 pos) -> float { return offsetTurbulence.GetValue(pos.x, pos.y + 8, pos.z); }, {16, 16});
-    noiseSampler[2].fill([&](glm::ivec3 pos) -> float { return offsetTurbulence.GetValue(pos.x, pos.y, pos.z + 8); }, {16, 16});
+    // 8 is just a random value to offset results
+    noiseSampler[0].populate([&](glm::ivec3 pos) { return offsetTurbulence.GetValue(pos.x + 8, pos.y, pos.z); });
+    noiseSampler[1].populate([&](glm::ivec3 pos) { return offsetTurbulence.GetValue(pos.x, pos.y + 8, pos.z); });
+    noiseSampler[2].populate([&](glm::ivec3 pos) { return offsetTurbulence.GetValue(pos.x, pos.y, pos.z + 8); });
 
     threads.reserve(THREADS);
     for (int i = 0; i < THREADS; i++) threads.emplace_back(game, noiseSampler);

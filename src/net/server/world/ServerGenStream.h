@@ -14,7 +14,7 @@ class ServerGame;
 
 class ServerGenStream {
 public:
-    static const int THREADS = 4;
+    static const int THREADS = 6;
     static const int THREAD_QUEUE_SIZE = 6;
 
     struct FinishedBlockJob {
@@ -35,22 +35,20 @@ private:
         bool locked = false;
 
         glm::ivec3 pos {};
-        MapGen::chunk_partials_map chunks {};
+        std::unique_ptr<MapGen::ChunkMap> generated = nullptr;
     };
 
     struct Thread {
-        explicit Thread(MapGen* gen);
+        explicit Thread(ServerGame& game, unsigned int seed);
         void exec();
 
-        MapGen* gen;
-        std::vector<Job> tasks = std::vector<Job>(THREAD_QUEUE_SIZE);
-
         bool kill = false;
+
+        std::vector<Job> jobs = std::vector<Job>(THREAD_QUEUE_SIZE);
+
+        MapGen gen;
         std::thread thread;
     };
-
-    std::shared_ptr<MapGenProps> props;
-    MapGen gen;
 
     std::vector<Thread> threads;
     std::list<glm::vec3> queuedTasks;

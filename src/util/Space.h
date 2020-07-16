@@ -30,29 +30,30 @@ namespace Space {
             };
         }
 
-        inline glm::ivec3 sectionFromGlobal(glm::ivec3 pos, int size) {
+        inline glm::ivec3 sectionFromGlobal(glm::ivec3 pos, float size) {
             return {
                 std::floor(static_cast<float>(pos.x) / size),
                 std::floor(static_cast<float>(pos.y) / size),
-                std::floor(static_cast<float>(pos.z) / size)};
+                std::floor(static_cast<float>(pos.z) / size)
+            };
         }
     }
 
     namespace Region {
         namespace world {
-            // Get a Region engine position from a MapBlock's world position.
-            static inline glm::ivec3 fromMapBlock(const glm::ivec3& mapBlock) {
-                return sectionFromGlobal(mapBlock, REGION_SIZE);
+            // Get a Region world position from a MapBlock's world position.
+            static inline glm::ivec3 fromMapBlock(const glm::ivec3& pos) {
+                return sectionFromGlobal(pos, REGION_SIZE);
             }
 
-            // Get a Region engine position from a Chunk's world position.
-            static inline glm::ivec3 fromChunk(const glm::ivec3 &chunk) {
-                return sectionFromGlobal(chunk, REGION_CHUNK_LENGTH);
+            // Get a Region world position from a Chunk's world position.
+            static inline glm::ivec3 fromChunk(const glm::ivec3& pos) {
+                return sectionFromGlobal(pos, REGION_CHUNK_LENGTH);
             }
 
-            // Get a Region engine position from a Block's world position.
-            static inline glm::ivec3 fromBlock(const glm::ivec3 &chunk) {
-                return sectionFromGlobal(chunk, REGION_BLOCK_LENGTH);
+            // Get a Region world position from a Block's world position.
+            static inline glm::ivec3 fromBlock(const glm::ivec3& pos) {
+                return sectionFromGlobal(pos, REGION_BLOCK_LENGTH);
             }
         }
     }
@@ -66,14 +67,19 @@ namespace Space {
         }
 
         namespace world {
-            // Get a MapBlock engine position from a Chunk's world position.
-            static inline glm::ivec3 fromChunk(const glm::ivec3 &chunk) {
-                return sectionFromGlobal(chunk, MAPBLOCK_SIZE);
+            // Get a MapBlock world position from a Region's world position.
+            static inline glm::ivec3 fromRegion(const glm::ivec3& pos) {
+                return sectionFromGlobal(pos, 1.f / REGION_SIZE);
             }
 
-            // Get a MapBlock engine position from a Block's world position.
-            static inline glm::ivec3 fromBlock(const glm::ivec3 &vec) {
-                return sectionFromGlobal(vec, MAPBLOCK_BLOCK_LENGTH);
+            // Get a MapBlock world position from a Chunk's world position.
+            static inline glm::ivec3 fromChunk(const glm::ivec3 &pos) {
+                return sectionFromGlobal(pos, MAPBLOCK_SIZE);
+            }
+
+            // Get a MapBlock world position from a Block's world position.
+            static inline glm::ivec3 fromBlock(const glm::ivec3 &pos) {
+                return sectionFromGlobal(pos, MAPBLOCK_BLOCK_LENGTH);
             }
         }
 
@@ -99,6 +105,16 @@ namespace Space {
         }
 
         namespace world {
+            // Get a Chunk world position from a Regions's world position.
+            static inline glm::ivec3 fromRegion(const glm::ivec3& pos) {
+                return sectionFromGlobal(pos, 1.f / REGION_CHUNK_LENGTH);
+            }
+
+            // Get a Chunk world position from a MapBlock's world position.
+            static inline glm::ivec3 fromMapBlock(const glm::ivec3& pos) {
+                return sectionFromGlobal(pos, 1.f / MAPBLOCK_CHUNK_LENGTH);
+            }
+
             // Get a Chunk world position from a Block's world position.
             static inline glm::ivec3 fromBlock(const glm::ivec3& pos) {
                 return sectionFromGlobal(pos, CHUNK_BLOCK_LENGTH);
@@ -139,6 +155,23 @@ namespace Space {
             // Get a Block's relative position in its Region from its world position.
             static inline glm::ivec3 toRegion(const glm::ivec3& pos) {
                 return localFromGlobal(pos, REGION_BLOCK_LENGTH);
+            }
+
+            namespace World {
+                // Get a Block world position from a Regions's world position.
+                static inline glm::ivec3 fromRegion(const glm::ivec3& pos) {
+                    return sectionFromGlobal(pos, 1.f / REGION_BLOCK_LENGTH);
+                }
+
+                // Get a Block world position from a MapBlock's world position.
+                static inline glm::ivec3 fromMapBlock(const glm::ivec3& pos) {
+                    return sectionFromGlobal(pos, 1.f / MAPBLOCK_BLOCK_LENGTH);
+                }
+
+                // Get a Block world position from a Chunk's world position.
+                static inline glm::ivec3 fromChunk(const glm::ivec3& pos) {
+                    return sectionFromGlobal(pos, CHUNK_BLOCK_LENGTH);
+                }
             }
         }
 

@@ -11,19 +11,18 @@
 
 class NoiseSample {
 public:
-    typedef std::function<float(glm::ivec3 pos)> fill_function;
+    typedef std::function<float(glm::vec3 pos)> fill_function;
 
-    NoiseSample() = default;
+    NoiseSample(unsigned int precision, float scaleBy = 1);
+    NoiseSample(glm::ivec2 precision, glm::vec2 scaleBy = {1, 1});
 
-    void fill(const fill_function& fun, float precision);
-    void fill(const fill_function& fun, glm::ivec2 precision);
-
-    float get(glm::ivec3 localPos);
-    void  set(glm::ivec3 localPos, float value);
+    void populate(const fill_function& fn);
+    float get(glm::vec3 pos);
 private:
-    void reserve();
+    unsigned int length;
 
     std::vector<std::vector<std::vector<float>>> data {};
-    glm::ivec2 precision {};
+    glm::ivec3 precision {};
+    glm::vec3 scaleBy;
 };
 

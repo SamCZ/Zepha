@@ -6,15 +6,11 @@
 
 #include "../../../net/PacketView.h"
 #include "../../../def/ClientGame.h"
-#include "../../../def/gen/MapGen.h"
 #include "../../../world/chunk/Chunk.h"
 
-WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, ClientGame& game) :
-    props(std::make_shared<MapGenProps>(seed)),
-    gen(new MapGen(seed, game.defs, game.biomes, props)) {
-
+WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, ClientGame& game) {
     threads.reserve(THREADS);
-    for (int i = 0; i < THREADS; i++) threads.emplace_back(gen);
+    for (int i = 0; i < THREADS; i++) threads.emplace_back(game, seed);
 }
 
 void WorldInterpolationStream::queuePacket(std::unique_ptr<PacketView> p) {
@@ -34,14 +30,15 @@ std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> WorldInterpolationStream::u
     auto finishedChunks = std::make_unique<std::vector<std::shared_ptr<Chunk>>>();
 //    auto finishedMapBlocks = std::make_unique<std::vector<std::shared_ptr<MeshFarMap>>>();
 
-    for (auto& t : threads) {
-        for (auto& u : t.tasks) {
-            if (u.locked) continue;
+    for (unsigned int i = 0; i < THREAD_QUEUE_SIZE; i++) {
+        for (auto& t : threads) {
+            auto& j = t.jobs[i];
+            if (j.locked) continue;
 
-            if (u.chunk != nullptr) {
-                finishedChunks->push_back(u.chunk);
-                u.chunk = nullptr;
-                u.job = JobType::EMPTY;
+            if (j.chunk != nullptr) {
+                finishedChunks->push_back(j.chunk);
+                j.chunk = nullptr;
+                j.job = JobType::EMPTY;
             }
 //            else if (u.mapblock != nullptr) {
 //                finishedMapBlocks->push_back(u.mapblock);
@@ -54,9 +51,9 @@ std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> WorldInterpolationStream::u
                 auto packet = std::move(*it);
                 queuedPacketTasks.erase(it);
 
-                u.job = JobType::PACKET;
-                u.packet = std::move(packet);
-                u.locked = true;
+                j.job = JobType::PACKET;
+                j.packet = std::move(packet);
+                j.locked = true;
             }
             else if (!queuedInterpTasks.empty()) {
                 auto it = queuedInterpTasks.begin();
@@ -64,9 +61,9 @@ std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> WorldInterpolationStream::u
                 queuedInterpTasks.erase(it);
                 queuedInterpMap.erase(pos);
 
-                u.job = JobType::FARMAP;
-                u.mapBlockPos = pos;
-                u.locked = true;
+                j.job = JobType::FARMAP;
+                j.mapBlockPos = pos;
+                j.locked = true;
             }
         }
     }
@@ -74,24 +71,25 @@ std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> WorldInterpolationStream::u
     return finishedChunks;
 }
 
-WorldInterpolationStream::Thread::Thread(MapGen* gen) : gen(gen),
+WorldInterpolationStream::Thread::Thread(ClientGame& game, unsigned int seed) :
+    gen(game.defs, game.biomes, seed),
     thread(std::bind(&WorldInterpolationStream::Thread::exec, this)) {}
 
 void WorldInterpolationStream::Thread::exec() {
     while (!kill) {
         bool empty = true;
-        for (Job& u : tasks) {
+        for (Job& u : jobs) {
             if (u.locked) {
                 if (u.job == JobType::PACKET) {
                     empty = false;
                     u.chunk = std::make_shared<Chunk>();
                     u.chunk->deserialize(u.packet->d);
                     u.locked = false;
-                    break;
                 }
                 else if (u.job == JobType::FARMAP) {
                     throw std::runtime_error("Farmap no exist yet.");
                 }
+//                    break;
             }
         }
         if (empty) std::this_thread::sleep_for(std::chrono::milliseconds(1));
