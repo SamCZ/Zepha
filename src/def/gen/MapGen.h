@@ -61,18 +61,10 @@ private:
     static std::unique_ptr<ChunkData> populateChunkDensity(Job& job, glm::ivec3 localPos);
     static std::unique_ptr<ChunkData> populateChunkDepth(Job& job, glm::ivec3 localPos, std::unique_ptr<ChunkData>& chunkDensity, std::unique_ptr<ChunkData> chunkDensityAbove);
 
-    void populateChunk(Job& job, glm::ivec3 localPos, std::vector<unsigned int> biomeMap, ChunkData& depthMap);
+    void generateChunkBlocks(Job& job, glm::ivec3 localPos, std::vector<unsigned int> biomeMap, ChunkData& depthMap);
+    void generateChunkStructures(Job& job, glm::ivec3 localPos, std::vector<unsigned int> biomeMap, ChunkData& depthMap);
 
-//    // Builds the temperature, humidity, roughness, density, and depth maps.
-//    void buildNoisemaps(Job& job);
-//    // Generate a chunk at pos and insert it into the partials map.
-//	void buildChunk(glm::ivec3 pos, Job& job, ChunkMap& chunks);
-//	// Fill a ChunkData struct with data.
-//	static void fillChunkData(glm::ivec3 pos, Job& job, ChunkData& data, Chunk& chunk, ChunkMap& chunks);
-//	// Fill a Chunk with Blocks based on the Data object.
-//	void fillBlocks(glm::ivec3 pos, Job &job, ChunkData& data, Chunk& chunk);
-//    // Fill a Chunk with Structures based on the Data object.
-//	void generateStructures(glm::ivec3 pos, Job& job, ChunkData& data, Chunk& chunk, ChunkMap& chunks);
+    static void setBlock(Job& job, glm::ivec3 worldPos, unsigned int block, std::shared_ptr<Chunk> hint);
 
 //	// Generate sunlight on the mapgen threads to speed up perf
 //    void generateSunlight(ChunkMap& chunks, glm::ivec3 mbPos);
@@ -80,7 +72,6 @@ private:
 //    void propogateSunlightNodes(ChunkMap& chunks, std::queue<SunlightNode>& queue);
 //
 //	// Place block in the `chunks` array, creates a partial if necessary.
-//    static void setBlock(glm::ivec3 worldPos, unsigned int block, ChunkMap& chunks);
 
 	unsigned int seed = 0;
 

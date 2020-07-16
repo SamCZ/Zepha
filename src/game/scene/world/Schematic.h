@@ -22,6 +22,6 @@ struct Schematic {
 
     inline unsigned int length() { return blocks.size(); }
 
-    void assignOffset(int ind, glm::ivec3& vec);
+    glm::ivec3 getOffset(unsigned int ind);
     unsigned int index(const glm::ivec3& vec);
 };

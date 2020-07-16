@@ -18,11 +18,15 @@ void Schematic::process(DefinitionAtlas& atlas) {
     processed = true;
 }
 
-void Schematic::assignOffset(int ind, glm::ivec3& vec) {
+glm::ivec3 Schematic::getOffset(unsigned int ind) {
+    glm::ivec3 vec {};
+
     vec.z = ind / (dimensions.x * dimensions.y);
     ind -= (vec.z * dimensions.x * dimensions.y);
     vec.y = ind / dimensions.z;
     vec.x = ind % dimensions.x;
+
+    return vec;
 }
 
 unsigned int Schematic::index(const glm::ivec3& vec) {

@@ -36,7 +36,7 @@ public:
 
     Chunk() = default;
     Chunk(const Chunk& o);
-    explicit Chunk(glm::ivec3 pos);
+    Chunk(glm::ivec3 pos, bool partial = false);
     Chunk(glm::ivec3 pos, const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes);
 
     inline std::unique_lock<std::mutex> aquireLock();

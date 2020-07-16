@@ -85,7 +85,8 @@ std::unique_ptr<MapGen::ChunkMap> MapGen::generateArea(glm::ivec3 origin, unsign
                 std::unique_ptr<ChunkData> density = populateChunkDensity(job, pos);
                 std::unique_ptr<ChunkData> depth = populateChunkDepth(job, pos, density, std::move(densityAbove));
 
-                populateChunk(job, pos, biomeMap, *depth);
+                generateChunkBlocks(job, pos, biomeMap, *depth);
+                generateChunkStructures(job, pos, biomeMap, *depth);
 
                 densityAbove = std::move(density);
             }
@@ -137,7 +138,7 @@ std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDepth(Job& job, glm::ive
     return data;
 }
 
-void MapGen::populateChunk(Job& job, glm::ivec3 localPos, std::vector<unsigned int> biomeMap, ChunkData& depthMap) {
+void MapGen::generateChunkBlocks(Job& job, glm::ivec3 localPos, std::vector<unsigned int> biomeMap, ChunkData& depthMap) {
     glm::ivec3 chunkPos = job.pos + localPos;
     auto& chunk = *(*job.chunks->emplace(chunkPos, std::make_shared<Chunk>(chunkPos)).first).second;
 
@@ -174,43 +175,52 @@ void MapGen::populateChunk(Job& job, glm::ivec3 localPos, std::vector<unsigned i
     chunk.generated = true;
 }
 
-//void MapGen::generateStructures(chunk_partials_map& chunks, chunk_partial& chunk) {
-//    std::default_random_engine generator(chunk.second->pos.x + chunk.second->pos.y * 30 + chunk.second->pos.z * 3.5);
-//    std::uniform_real_distribution<float> distribution(0, 1);
-//
-//    glm::ivec3 wp = chunk.second->pos;
-//    glm::ivec3 lp;
-//
-//    for (unsigned short i = 0; i < 256; i++) {
-//        unsigned short x = i / 16;
-//        unsigned short z = i % 16;
-//
-//        if (distribution(generator) > 0.97) {
-//            for (unsigned short y = 0; y < 16; y++) {
-//                lp = {x, y, z};
-//                unsigned short ind = Space::Block::index(lp);
-//
-//                if (chunk.first->depth[ind] > 0 && chunk.first->depth[ind] <= 1.1) {
-//
-//                    glm::ivec3 off = {};
-//                    glm::ivec3 p = wp * 16 + lp;
-//
-//                    auto biome = biomes.biomeFromId(chunk.second->getBiome(ind));
-//                    auto schematic = biome.schematics.size() > 0 ? biome.schematics[0] : nullptr;
-//
-//                    if (schematic != nullptr) {
-//                        if (!schematic->processed) schematic->process(defs);
-//                        for (unsigned int j = 0; j < schematic->length(); j++) {
-//                            schematic->assignOffset(j, off);
-//                            setBlock(p + off - schematic->origin, schematic->blocks[j], chunks);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
-//
+void MapGen::generateChunkStructures(Job& job, glm::ivec3 localPos, std::vector<unsigned int> biomeMap, ChunkData& depthMap) {
+    glm::vec3 posFloat = job.pos + localPos;
+    std::default_random_engine generator(posFloat.x + posFloat.y / M_PI + posFloat.z / (M_PI*2));
+    std::uniform_real_distribution<float> distribution(0, 1);
+
+    auto& chunk = job.chunks->at(job.pos + localPos);
+
+    for (unsigned short i = 0; i < 256; i++) {
+        glm::ivec3 indPos = { i / 16, 0, i % 16 };
+        if (distribution(generator) > 0.97) {
+            for (indPos.y = 0; indPos.y < 16; indPos.y++) {
+
+                unsigned short ind = Space::Block::index(indPos);
+                if (depthMap[ind] > 0 && depthMap[ind] <= 1.1) {
+
+                    glm::ivec3 pos = (job.pos + localPos) * 16 + indPos;
+
+                    unsigned int biomeID = biomeMap[(localPos.x * 16 + indPos.x) * (job.size * 16 + 1) + (localPos.z * 16 + indPos.z)];
+                    auto& biome = this->biomes.biomeFromId(biomeID);
+
+                    auto schematic = biome.schematics.size() > 0 ? biome.schematics[0] : nullptr;
+                    if (schematic) {
+                        if (!schematic->processed) schematic->process(defs);
+                        for (unsigned int j = 0; j < schematic->length(); j++) {
+                            glm::ivec3 off = schematic->getOffset(j);
+                            setBlock(job, pos + off - schematic->origin, schematic->blocks[j], chunk);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+void MapGen::setBlock(MapGen::Job &job, glm::ivec3 worldPos, unsigned int block, std::shared_ptr<Chunk> hint) {
+    if (block == DefinitionAtlas::INVALID) return;
+
+    glm::ivec3 chunkPos = Space::Chunk::world::fromBlock(worldPos);
+//    auto& chunk = *(*job.chunks->emplace(chunkPos, std::make_shared<Chunk>(chunkPos, true)).first).second;
+    if (!job.chunks->count(chunkPos)) return;
+    auto& chunk = *job.chunks->at(chunkPos);
+
+    unsigned int ind = Space::Block::index(worldPos);
+    if (chunk.getBlock(ind) <= DefinitionAtlas::AIR) chunk.setBlock(ind, block);
+}
+
 //void MapGen::generateSunlight(MapGen::chunk_partials_map &chunks, glm::ivec3 mbPos) {
 //    std::queue<SunlightNode> sunlightQueue;
 //
@@ -285,24 +295,6 @@ void MapGen::populateChunk(Job& job, glm::ivec3 localPos, std::vector<unsigned i
 //
 //        queue.pop();
 //    }
-//}
-//
-//void MapGen::setBlock(glm::ivec3 worldPos, unsigned int block, MapGen::chunk_partials_map &chunks) {
-//    if (block == DefinitionAtlas::INVALID) return;
-//
-//    glm::ivec3 chunkPos = Space::Chunk::world::fromBlock(worldPos);
-//    Chunk* chunk = nullptr;
-//
-//    if (chunks.count(chunkPos)) chunk = chunks.at(chunkPos).second;
-//    else {
-//        chunk = new Chunk();
-//        chunk->pos = chunkPos;
-//        chunk->partial = true;
-//        chunks.insert(std::pair<glm::ivec3, chunk_partial>{chunkPos, {new MapGenJob(), chunk}});
-//    }
-//
-//    unsigned int index = Space::Block::index(worldPos);
-//    if (chunk->getBlock(index) <= DefinitionAtlas::AIR) chunk->setBlock(index, block);
 //}
 //
 //std::shared_ptr<Chunk> MapGen::combinePartials(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b) {

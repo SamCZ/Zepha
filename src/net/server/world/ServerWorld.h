@@ -18,8 +18,8 @@ class ServerGenStream;
 
 class ServerWorld : public World {
 public:
-    const static int MB_GEN_H = 4, MB_GEN_V = 4;
-    const static int CHUNK_SEND_H = 10, CHUNK_SEND_V = 10;
+    const static int MB_GEN_H = 6, MB_GEN_V = 4;
+    const static int CHUNK_SEND_H = 16, CHUNK_SEND_V = 16;
 
     explicit ServerWorld(unsigned int seed, ServerGame& game, ClientList& clients);
 

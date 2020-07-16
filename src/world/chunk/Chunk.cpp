@@ -24,7 +24,7 @@ Chunk::Chunk(const Chunk& o) :
     shouldRender(o.shouldRender),
     renderableBlocks(o.renderableBlocks) {}
 
-Chunk::Chunk(glm::ivec3 pos) : pos(pos) {}
+Chunk::Chunk(glm::ivec3 pos, bool partial) : pos(pos), partial(partial) {}
 
 Chunk::Chunk(glm::ivec3 pos, const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes) :
     blocks(std::move(blocks)), biomes(std::move(biomes)),
