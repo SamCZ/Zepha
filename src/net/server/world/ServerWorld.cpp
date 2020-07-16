@@ -26,7 +26,7 @@ ServerWorld::ServerWorld(unsigned int seed, ServerGame& game, ClientList& client
     seed(seed),
     game(game) {
 
-    generateOrder.reserve(MB_GEN_H * 2 + 1 * MB_GEN_H * 2 + 1 * MB_GEN_V * 2 + 1);
+    generateOrder.reserve(mapBlockGenRange.x * 2 + 1 * mapBlockGenRange.x * 2 + 1 * mapBlockGenRange.y * 2 + 1);
     std::unordered_set<glm::ivec3, Vec::ivec3> found {};
     std::queue<glm::ivec3> queue {};
 
@@ -46,9 +46,9 @@ ServerWorld::ServerWorld(unsigned int seed, ServerGame& game, ClientList& client
 
         for (auto dir : dirs) {
             glm::ivec3 offset = pos + dir;
-            if (offset.x < -MB_GEN_H || offset.x > MB_GEN_H ||
-                offset.y < -MB_GEN_V || offset.y > MB_GEN_V ||
-                offset.z < -MB_GEN_H || offset.z > MB_GEN_H ||
+            if (offset.x < -mapBlockGenRange.x || offset.x > mapBlockGenRange.x ||
+                offset.y < -mapBlockGenRange.y || offset.y > mapBlockGenRange.y ||
+                offset.z < -mapBlockGenRange.x || offset.z > mapBlockGenRange.x ||
                 found.count(offset)) continue;
             else {
                 found.insert(offset);
@@ -66,7 +66,7 @@ void ServerWorld::init(const std::string& worldDir) {
 }
 
 void ServerWorld::update(double delta) {
-    dimension.update(clientList.clients);
+    dimension.update(clientList.clients, mapBlockGenRange);
 
     auto finished = genStream->update();
     generatedMapBlocks = static_cast<int>(finished->size());
@@ -93,8 +93,8 @@ void ServerWorld::update(double delta) {
             auto myChunk = Space::Chunk::world::fromBlock(client->getPos());
 
             std::pair<glm::ivec3, glm::ivec3> bounds = {
-                {myChunk.x - CHUNK_SEND_H, myChunk.y - CHUNK_SEND_V, myChunk.z - CHUNK_SEND_H},
-                {myChunk.x + CHUNK_SEND_H, myChunk.y + CHUNK_SEND_V, myChunk.z + CHUNK_SEND_H}};
+                {myChunk.x - activeChunkRange.x, myChunk.y - activeChunkRange.y, myChunk.z - activeChunkRange.x},
+                {myChunk.x + activeChunkRange.x, myChunk.y + activeChunkRange.y, myChunk.z + activeChunkRange.x}};
 
             if (isInBounds(chunk, bounds)) sendChunk(dimension.getChunk(chunk), *client);
         }
@@ -165,13 +165,13 @@ bool ServerWorld::generateMapBlock(glm::ivec3 pos) {
 void ServerWorld::sendChunksToPlayer(ServerClient& client) {
     glm::ivec3 playerChunk = Space::Chunk::world::fromBlock(client.getPos());
     std::pair<glm::ivec3, glm::ivec3> bounds = {
-        {playerChunk.x - CHUNK_SEND_H, playerChunk.y - CHUNK_SEND_V, playerChunk.z - CHUNK_SEND_H},
-        {playerChunk.x + CHUNK_SEND_H, playerChunk.y + CHUNK_SEND_V, playerChunk.z + CHUNK_SEND_H}};
+        {playerChunk.x - activeChunkRange.x, playerChunk.y - activeChunkRange.y, playerChunk.z - activeChunkRange.x},
+        {playerChunk.x + activeChunkRange.x, playerChunk.y + activeChunkRange.y, playerChunk.z + activeChunkRange.x}};
 
     glm::ivec3 lastPlayerChunk = Space::Chunk::world::fromBlock(client.lastPos);
     std::pair<glm::ivec3, glm::ivec3> oldBounds = {
-        {lastPlayerChunk.x - CHUNK_SEND_H, lastPlayerChunk.y - CHUNK_SEND_V, lastPlayerChunk.z - CHUNK_SEND_H},
-        {lastPlayerChunk.x + CHUNK_SEND_H, lastPlayerChunk.y + CHUNK_SEND_V, lastPlayerChunk.z + CHUNK_SEND_H}};
+        {lastPlayerChunk.x - activeChunkRange.x, lastPlayerChunk.y - activeChunkRange.y, lastPlayerChunk.z - activeChunkRange.x},
+        {lastPlayerChunk.x + activeChunkRange.x, lastPlayerChunk.y + activeChunkRange.y, lastPlayerChunk.z + activeChunkRange.x}};
 
     for (int i = bounds.first.x; i < bounds.second.x; i++) {
         for (int j = bounds.first.y; j < bounds.second.y; j++) {
@@ -226,8 +226,8 @@ void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
         if (client->hasPlayer) {
             glm::ivec3 mapBlock = Space::MapBlock::world::fromBlock(client->getPos());
             std::pair<glm::ivec3, glm::ivec3> bounds = {
-                {mapBlock.x - MB_GEN_H, mapBlock.y - MB_GEN_V, mapBlock.z - MB_GEN_H},
-                {mapBlock.x + MB_GEN_H, mapBlock.y + MB_GEN_V, mapBlock.z + MB_GEN_H}};
+                {mapBlock.x - mapBlockGenRange.x, mapBlock.y - mapBlockGenRange.y, mapBlock.z - mapBlockGenRange.x},
+                {mapBlock.x + mapBlockGenRange.x, mapBlock.y + mapBlockGenRange.y, mapBlock.z + mapBlockGenRange.x}};
 
             if (isInBounds(Space::MapBlock::world::fromChunk(chunkPos), bounds))
                 b.sendTo(client->peer, PacketChannel::BLOCK);

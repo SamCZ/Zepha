@@ -89,3 +89,26 @@ std::shared_ptr<MapBlock> DimensionBase::getOrCreateMapBlock(glm::ivec3 mapBlock
     region->set(index, std::make_shared<MapBlock>(mapBlockPosition));
     return (*region)[index];
 }
+
+std::shared_ptr<Chunk> DimensionBase::combinePartials(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b) {
+    std::shared_ptr<Chunk> src;
+    std::shared_ptr<Chunk> res;
+
+    if (a->generated) {
+        res = a;
+        src = b;
+    }
+    else {
+        res = b;
+        src = a;
+    }
+
+    for (unsigned int i = 0; i < 4096; i++) {
+        if (src->getBlock(i) > DefinitionAtlas::INVALID) res->setBlock(i, src->getBlock(i));
+    }
+
+    res->generated = src->generated || res->generated;
+    res->partial = !res->generated;
+    res->countRenderableBlocks();
+    return res;
+}

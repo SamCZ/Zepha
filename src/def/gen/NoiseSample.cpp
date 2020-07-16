@@ -9,16 +9,7 @@ NoiseSample::NoiseSample(unsigned int precision, float scaleBy) : NoiseSample({p
 NoiseSample::NoiseSample(glm::ivec2 precision, glm::vec2 scaleBy) :
     precision(precision.x, precision.y, precision.x),
     scaleBy(scaleBy.x, scaleBy.y, scaleBy.x) {
-    // Reserve space in the vector.
-    for (unsigned int i = 0; i < this->precision.y + 1; i++) {
-        data.emplace_back();
-        for (unsigned int j = 0; j < this->precision.x + 1; j++) {
-            data[i].emplace_back();
-            for (unsigned int k = 0; k < this->precision.z + 1; k++) {
-                data[i][j].emplace_back();
-            }
-        }
-    }
+    data.resize((this->precision.x + 1) * (this->precision.y + 1) * (this->precision.z + 1));
 }
 
 void NoiseSample::populate(const NoiseSample::fill_function &fn) {
@@ -28,6 +19,6 @@ void NoiseSample::populate(const NoiseSample::fill_function &fn) {
             for (pos.z = 0; pos.z <= precision.z; pos.z++) {
                 glm::vec3 queryPos = pos / glm::vec3(precision) * scaleBy;
                 if (queryPos.y == NAN) queryPos.y = 0;
-                data[pos.y][pos.x][pos.z] = fn(queryPos);
+                data[index(pos.x, pos.y, pos.z)] = fn(queryPos);
             }
 }

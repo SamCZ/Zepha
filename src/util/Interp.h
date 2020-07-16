@@ -14,9 +14,10 @@ namespace Interp {
         return p0 + zfactor * ((x0z1 + xfactor * (x1z1 - x0z1)) - p0);
     }
 
-    const constexpr inline float trilerp(const float p000, const float p100, const float p001, const float p101,
-                                         const float p010, const float p110, const float p011, const float p111,
-                                         const float xfactor, const float zfactor, const float yfactor) {
+    const constexpr inline float trilerp(
+         const float p000, const float p100, const float p001, const float p101,
+         const float p010, const float p110, const float p011, const float p111,
+         const float xfactor, const float zfactor, const float yfactor) {
 
         const float p00 = (p000 + xfactor * (p100 - p000));
         const float p01 = (p010 + xfactor * (p110 - p010));

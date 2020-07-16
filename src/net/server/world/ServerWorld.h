@@ -18,8 +18,6 @@ class ServerGenStream;
 
 class ServerWorld : public World {
 public:
-    const static int MB_GEN_H = 6, MB_GEN_V = 4;
-    const static int CHUNK_SEND_H = 16, CHUNK_SEND_V = 16;
 
     explicit ServerWorld(unsigned int seed, ServerGame& game, ClientList& clients);
 
@@ -51,5 +49,8 @@ private:
 
     unsigned int generatedMapBlocks = 0;
     std::vector<glm::ivec3> generateOrder;
+
+    const glm::ivec2 mapBlockGenRange = {6, 4};
+    const glm::ivec2 activeChunkRange = {24, 24};
 };
 

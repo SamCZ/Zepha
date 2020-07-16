@@ -47,10 +47,6 @@ public:
     std::unique_ptr<ChunkMap> generateChunk(glm::ivec3 pos);
     std::unique_ptr<ChunkMap> generateMapBlock(glm::ivec3 pos);
     std::unique_ptr<ChunkMap> generateArea(glm::ivec3 origin, unsigned int size = 1);
-
-//    // Combine two chunk partials, or a chunk and a chunk partial.
-//    // If both are partials `b` takes preference, if one is a fully generated chunk the partial takes preference.
-//    static std::shared_ptr<Chunk> combinePartials(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b);
 private:
 //    struct SunlightNode {
 //        SunlightNode(unsigned short index, Chunk* chunk) : index(index), chunk(chunk) {};
@@ -59,7 +55,7 @@ private:
 //    };
 
     static std::unique_ptr<ChunkData> populateChunkDensity(Job& job, glm::ivec3 localPos);
-    static std::unique_ptr<ChunkData> populateChunkDepth(Job& job, glm::ivec3 localPos, std::unique_ptr<ChunkData>& chunkDensity, std::unique_ptr<ChunkData> chunkDensityAbove);
+    static std::unique_ptr<ChunkData> populateChunkDepth(Job& job, std::unique_ptr<ChunkData>& chunkDensity, std::unique_ptr<ChunkData> chunkDensityAbove);
 
     void generateChunkBlocks(Job& job, glm::ivec3 localPos, std::vector<unsigned int> biomeMap, ChunkData& depthMap);
     void generateChunkStructures(Job& job, glm::ivec3 localPos, std::vector<unsigned int> biomeMap, ChunkData& depthMap);
@@ -70,8 +66,6 @@ private:
 //    void generateSunlight(ChunkMap& chunks, glm::ivec3 mbPos);
 //    static bool containsWorldPos(Chunk *chunk, glm::ivec3 pos);
 //    void propogateSunlightNodes(ChunkMap& chunks, std::queue<SunlightNode>& queue);
-//
-//	// Place block in the `chunks` array, creates a partial if necessary.
 
 	unsigned int seed = 0;
 

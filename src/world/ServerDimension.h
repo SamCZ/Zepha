@@ -16,7 +16,7 @@ class ServerDimension : public Dimension {
 public:
     ServerDimension(ServerGame& game);
 
-    void update(const std::vector<std::shared_ptr<ServerClient>>& clients);
+    void update(const std::vector<std::shared_ptr<ServerClient>>& clients, glm::ivec2 discardRange);
 
     void setChunk(std::shared_ptr<Chunk> chunk) override;
     bool setBlock(glm::ivec3 pos, unsigned int block) override;

@@ -83,7 +83,7 @@ std::unique_ptr<MapGen::ChunkMap> MapGen::generateArea(glm::ivec3 origin, unsign
                 if (pos.y == job.size) { densityAbove = populateChunkDensity(job, pos); continue; }
 
                 std::unique_ptr<ChunkData> density = populateChunkDensity(job, pos);
-                std::unique_ptr<ChunkData> depth = populateChunkDepth(job, pos, density, std::move(densityAbove));
+                std::unique_ptr<ChunkData> depth = populateChunkDepth(job, density, std::move(densityAbove));
 
                 generateChunkBlocks(job, pos, biomeMap, *depth);
                 generateChunkStructures(job, pos, biomeMap, *depth);
@@ -109,7 +109,7 @@ std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDensity(MapGen::Job &job
     return data;
 }
 
-std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDepth(Job& job, glm::ivec3 localPos, std::unique_ptr<ChunkData>& chunkDensity, std::unique_ptr<ChunkData> chunkDensityAbove) {
+std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDepth(Job& job, std::unique_ptr<ChunkData>& chunkDensity, std::unique_ptr<ChunkData> chunkDensityAbove) {
     auto data = std::make_unique<ChunkData>();
 
     for (unsigned short i = 0; i < 256; i++) {
@@ -140,10 +140,18 @@ std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDepth(Job& job, glm::ive
 
 void MapGen::generateChunkBlocks(Job& job, glm::ivec3 localPos, std::vector<unsigned int> biomeMap, ChunkData& depthMap) {
     glm::ivec3 chunkPos = job.pos + localPos;
+
+    auto partial = (job.chunks->count(chunkPos) ? job.chunks->at(chunkPos) : nullptr);
+    if (partial) job.chunks->erase(chunkPos);
+
     auto& chunk = *(*job.chunks->emplace(chunkPos, std::make_shared<Chunk>(chunkPos)).first).second;
 
-    unsigned int cBlockID = -1;
-    unsigned int cBiomeID = -1;
+    unsigned int cBlockID = 0;
+    unsigned int cBiomeID = 0;
+
+    unsigned int partialBlock = DefinitionAtlas::INVALID;
+    int partialInd = -1;
+    unsigned int partialNextAt = 0;
 
     for (unsigned short i = 0; i < 4096; i++) {
         glm::ivec3 indPos = Space::Block::fromIndex(i);
@@ -151,9 +159,16 @@ void MapGen::generateChunkBlocks(Job& job, glm::ivec3 localPos, std::vector<unsi
         unsigned int biomeID = biomeMap[(localPos.x * 16 + indPos.x) * (job.size * 16 + 1) + (localPos.z * 16 + indPos.z)];
         auto& biome = this->biomes.biomeFromId(biomeID);
 
+        if (partial && i >= partialNextAt) {
+            partialInd++;
+            partialBlock = partial->blocks[partialInd * 2 + 1];
+            partialNextAt = (partialInd * 2 + 2 >= partial->blocks.size()) ? 4096 : partial->blocks[partialInd * 2 + 2];
+        }
+
         float depth = depthMap[i];
         unsigned int blockID
-            = depth <= 1 ? DefinitionAtlas::AIR
+            = partialBlock != DefinitionAtlas::INVALID ? partialBlock
+            : depth <= 1 ? DefinitionAtlas::AIR
             : depth <= 2 ? biome.topBlock
             : depth <= 4 ? biome.soilBlock
             : biome.rockBlock;
@@ -213,9 +228,9 @@ void MapGen::setBlock(MapGen::Job &job, glm::ivec3 worldPos, unsigned int block,
     if (block == DefinitionAtlas::INVALID) return;
 
     glm::ivec3 chunkPos = Space::Chunk::world::fromBlock(worldPos);
-//    auto& chunk = *(*job.chunks->emplace(chunkPos, std::make_shared<Chunk>(chunkPos, true)).first).second;
-    if (!job.chunks->count(chunkPos)) return;
-    auto& chunk = *job.chunks->at(chunkPos);
+    auto& chunk = *(*job.chunks->emplace(chunkPos, std::make_shared<Chunk>(chunkPos, true)).first).second;
+//    if (!job.chunks->count(chunkPos)) return;
+//    auto& chunk = *job.chunks->at(chunkPos);
 
     unsigned int ind = Space::Block::index(worldPos);
     if (chunk.getBlock(ind) <= DefinitionAtlas::AIR) chunk.setBlock(ind, block);
@@ -297,25 +312,3 @@ void MapGen::setBlock(MapGen::Job &job, glm::ivec3 worldPos, unsigned int block,
 //    }
 //}
 //
-//std::shared_ptr<Chunk> MapGen::combinePartials(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b) {
-//    std::shared_ptr<Chunk> src;
-//    std::shared_ptr<Chunk> res;
-//
-//    if (a->generated) {
-//        res = a;
-//        src = b;
-//    }
-//    else {
-//        res = b;
-//        src = a;
-//    }
-//
-//    for (unsigned int i = 0; i < 4096; i++) {
-//        if (src->getBlock(i) > DefinitionAtlas::INVALID) res->setBlock(i, src->getBlock(i));
-//    }
-//
-//    res->generated = src->generated || res->generated;
-//    res->partial = !res->generated;
-//    res->recalculateRenderableBlocks();
-//    return res;
-//}

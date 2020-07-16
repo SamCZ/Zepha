@@ -15,7 +15,7 @@
 
 ServerDimension::ServerDimension(ServerGame &game) : Dimension(game.defs), game(game) {}
 
-void ServerDimension::update(const std::vector<std::shared_ptr<ServerClient>> &clients) {
+void ServerDimension::update(const std::vector<std::shared_ptr<ServerClient>> &clients, glm::ivec2 discardRange) {
     for (const auto& region : regions) {
         for (unsigned short i = 0; i < 64; i++) {
             if (region.second->operator[](i) == nullptr) continue;
@@ -25,9 +25,9 @@ void ServerDimension::update(const std::vector<std::shared_ptr<ServerClient>> &c
             for (const auto& client : clients) {
                 if (client->hasPlayer) {
                     auto clientPos = Space::MapBlock::world::fromBlock(client->getPos());
-                    if (abs(clientPos.x - mapBlockPos.x) <= ServerWorld::MB_GEN_H + 1
-                     && abs(clientPos.y - mapBlockPos.y) <= ServerWorld::MB_GEN_V + 1
-                     && abs(clientPos.z - mapBlockPos.z) <= ServerWorld::MB_GEN_H + 1) {
+                    if (abs(clientPos.x - mapBlockPos.x) <= discardRange.x + 1
+                     && abs(clientPos.y - mapBlockPos.y) <= discardRange.y + 1
+                     && abs(clientPos.z - mapBlockPos.z) <= discardRange.x + 1) {
                         clientNearby = true;
                         break;
                     }
@@ -48,10 +48,8 @@ bool ServerDimension::setBlock(glm::ivec3 pos, unsigned int block) {
 }
 
 void ServerDimension::setChunk(std::shared_ptr<Chunk> chunk) {
-    // Combine partials if there are any
-    //TODO: Reimplement partial handling
-//    std::shared_ptr<Chunk> existing = getChunk(chunk->pos);
-//    if (existing != nullptr) chunk = MapGen::combinePartials(chunk, existing);
+    std::shared_ptr<Chunk> existing = getChunk(chunk->pos);
+    if (existing != nullptr) chunk = combinePartials(chunk, existing);
 
     Dimension::setChunk(chunk);
     glm::vec3 mb = Space::MapBlock::world::fromChunk(chunk->pos);

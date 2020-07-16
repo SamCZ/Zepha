@@ -36,6 +36,11 @@ public:
     virtual bool setBlock(glm::ivec3 pos, unsigned int block);
 protected:
 
+    // Combine two chunk partials, or a chunk and a chunk partial.
+    // If both are partials `b` takes preference, if one is a fully generated chunk the partial takes preference.
+    // TODO: Make this more efficient using proper RIE traversal.
+    static std::shared_ptr<Chunk> combinePartials(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b);
+
     typedef std::unordered_map<glm::ivec3, std::shared_ptr<Region>, Vec::ivec3> block_region_map;
     block_region_map regions;
     DefinitionAtlas& defs;

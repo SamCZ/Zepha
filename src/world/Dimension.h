@@ -26,11 +26,14 @@ public:
     relitChunks calculateEdgeLight(glm::ivec3 mbPos);
 
 protected:
+
+    // Lighting propagation.
+
     virtual relitChunks propogateAddNodes();
     virtual relitChunks propogateRemoveNodes();
-
 private:
-    // Lighting functions
+
+    // Other Lighting methods.
 
     static inline bool containsWorldPos(Chunk* chunk, glm::ivec3 pos);
     inline glm::ivec4 getLight(glm::ivec3 worldPos, Chunk* chunk = nullptr);
