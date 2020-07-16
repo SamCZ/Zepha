@@ -28,7 +28,7 @@ public:
     struct Job {
         Job(glm::ivec3 pos, unsigned int size) :
             pos(pos), size(size),
-            volume {size * TERP}, heightmap {{size * TERP, 0}},
+            volume {{size * TERP, (size + 1) * TERP}, {1, 1.25}}, heightmap {{size * TERP, 0}},
             temperature {{size * BIOP, 0}}, roughness {{size * BIOP, 0}}, humidity {{size * BIOP, 0}} {}
 
         glm::ivec3 pos {};

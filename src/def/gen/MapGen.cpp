@@ -57,7 +57,7 @@ std::unique_ptr<MapGen::ChunkMap> MapGen::generateArea(glm::ivec3 origin, unsign
             job.humidity.get(queryPos), job.roughness.get(queryPos)).index;
     }
 
-    // Generate Heightmap
+    // Generate Heightmap and Volume
 
     job.heightmap.populate([&](glm::vec3 pos) {
         glm::ivec3 blockPos = glm::ivec3(pos * 16.f * static_cast<float>(job.size));
@@ -65,19 +65,6 @@ std::unique_ptr<MapGen::ChunkMap> MapGen::generateArea(glm::ivec3 origin, unsign
         glm::vec3 worldPos = glm::vec3(job.pos) + pos * static_cast<float>(job.size);
         return biome.heightmap[biome.heightmap.size() - 1]->GetValue(worldPos.x, 0, worldPos.z);
     });
-
-    // Determine Density Fill Behavior
-
-    int chunksBelowHeightmap = 0;
-    for (unsigned int i = 0; i < job.size; i++) {
-        for (unsigned int j = 0; j < job.size; j++) {
-            glm::vec3 queryPos = {i / static_cast<float>(job.size), 0, i / static_cast<float>(job.size)};
-            if (job.heightmap.get(queryPos) / 16 > job.pos.y + static_cast<int>(job.size) - 1) chunksBelowHeightmap++;
-        }
-    }
-//    bool densityFillBehavior = chunksBelowHeightmap >= pow(job.size, 2) / 4;
-    bool densityFillBehavior = true;
-    if (densityFillBehavior) job.volume = NoiseSample({job.size * TERP, (job.size + 1) * TERP}, {1, 1.25});
 
     job.volume.populate([&](glm::vec3 pos) {
         glm::ivec3 blockPos = glm::ivec3(pos * 16.f * static_cast<float>(job.size));
@@ -92,14 +79,10 @@ std::unique_ptr<MapGen::ChunkMap> MapGen::generateArea(glm::ivec3 origin, unsign
     for (pos.x = 0; pos.x < job.size; pos.x++)
         for (pos.z = 0; pos.z < job.size; pos.z++) {
             std::unique_ptr<ChunkData> densityAbove = nullptr;
-            for (pos.y = job.size - (densityFillBehavior ? 0 : 1); pos.y >= 0; pos.y--) {
-                if (pos.y == job.size) {
-                    densityAbove = populateChunkDensity(job, pos);
-                    continue;
-                }
+            for (pos.y = job.size; pos.y >= 0; pos.y--) {
+                if (pos.y == job.size) { densityAbove = populateChunkDensity(job, pos); continue; }
 
                 std::unique_ptr<ChunkData> density = populateChunkDensity(job, pos);
-
                 std::unique_ptr<ChunkData> depth = populateChunkDepth(job, pos, density, std::move(densityAbove));
 
                 populateChunk(job, pos, biomeMap, *depth);
