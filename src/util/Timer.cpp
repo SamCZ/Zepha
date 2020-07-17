@@ -11,9 +11,8 @@
 Timer::Timer() :
     start(std::chrono::high_resolution_clock::now()) {}
 
-Timer::Timer(const char* name) :
-    name(name), hasName(true),
-    start(std::chrono::high_resolution_clock::now()) {}
+Timer::Timer(const std::string& name) :
+    name(name), start(std::chrono::high_resolution_clock::now()) {}
 
 long Timer::elapsedNs() const {
     auto finish = std::chrono::high_resolution_clock::now();
@@ -22,28 +21,13 @@ long Timer::elapsedNs() const {
 };
 
 void Timer::printElapsedNs() {
-    if (!name) {
-        std::cout << Log::err << "Timer without name called print function." << Log::endl;
-        return;
-    }
-
-    printf("%s took %ld ns.\n", this->name, elapsedNs());
+    std::cout << this->name << " took " << elapsedNs() << " ns.";
 }
 
 void Timer::printElapsedMs() {
-    if (!name) {
-        std::cout << Log::err << "Timer without name called print function." << Log::endl;
-        return;
-    }
-
-    printf("%s took %.2f ms.\n", this->name, elapsedNs() / 1000000.);
+    std::cout << this->name << " took " << (elapsedNs() / 1000000.) << " ms.";
 }
 
 void Timer::printElapsedSeconds() {
-    if (!name) {
-        std::cout << Log::err << "Timer without name called print function." << Log::endl;
-        return;
-    }
-
-    printf("%s took %.2f secs.\n", this->name, elapsedNs() / 1000000. / 1000.);
+    std::cout << this->name << " took " << (elapsedNs() / 1000000. / 1000.) << " secs.";
 }
