@@ -70,7 +70,12 @@ template <> inline Serializer& Serializer::append<char>(const char& elem) {
 }
 
 template <> inline Serializer& Serializer::append<unsigned char>(const unsigned char& elem) {
-    data += elem;
+    data += static_cast<char>(elem);
+    return *this;
+}
+
+template <> inline Serializer& Serializer::append<bool>(const bool& elem) {
+    append<char>(elem);
     return *this;
 }
 

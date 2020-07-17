@@ -21,36 +21,35 @@ class PacketView;
 class WorldInterpolationStream {
 public:
     static const int THREADS = 4;
-    static const int THREAD_QUEUE_SIZE = 64;
+    static const int THREAD_QUEUE_SIZE = 16;
 
     WorldInterpolationStream(unsigned int seed, ClientGame& game);
 
     // Queue parsing of packet `p`.
     void queuePacket(std::unique_ptr<PacketView> p);
     // Queue interpolation of Mapblock at `pos`.
-    bool queuePosition(glm::vec3 pos);
+//    bool queuePosition(glm::vec3 pos);
     // Returns a vector of BlockChunks that have finished processing,
     // and gives the threads new data to work with.
     std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> update();
 
     ~WorldInterpolationStream();
 private:
-    enum class JobType {
-        EMPTY,
-        PACKET,
-        FARMAP
-    };
+//    enum class JobType {
+//        EMPTY,
+//        PACKET,
+//        FARMAP
+//    };
 
     struct Job {
         bool locked = false;
-        JobType job = JobType::EMPTY;
+//        JobType job = JobType::EMPTY;
 
         std::shared_ptr<PacketView> packet = nullptr;
-        std::shared_ptr<Chunk> chunk = nullptr;
+        std::vector<std::shared_ptr<Chunk>> chunks = {};
 
 //        std::shared_ptr<MeshFarMap> mapblock = nullptr;
-        glm::vec3 mapBlockPos = {0, 0, 0};
-
+//        glm::vec3 mapBlockPos = {0, 0, 0};
     };
 
     struct Thread {

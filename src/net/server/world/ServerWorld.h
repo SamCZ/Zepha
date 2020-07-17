@@ -15,10 +15,10 @@ class ClientList;
 class ServerClient;
 class FileManipulator;
 class ServerGenStream;
+class ServerPacketStream;
 
 class ServerWorld : public World {
 public:
-
     explicit ServerWorld(unsigned int seed, ServerGame& game, ClientList& clients);
 
     void init(const std::string& worldDir);
@@ -36,9 +36,8 @@ private:
     bool generateMapBlock(glm::ivec3 pos);
     void sendChunksToPlayer(ServerClient& client);
 
-    static void sendChunk(const std::shared_ptr<Chunk>& chunk, ServerClient& client);
-
     std::shared_ptr<ServerGenStream> genStream = nullptr;
+    std::shared_ptr<ServerPacketStream> packetStream = nullptr;
 
     unsigned int seed;
     ServerGame& game;
@@ -51,6 +50,7 @@ private:
     std::vector<glm::ivec3> generateOrder;
 
     const glm::ivec2 mapBlockGenRange = {6, 4};
+    const glm::ivec2 sendRange        = {6, 4};
     const glm::ivec2 activeChunkRange = {24, 24};
 };
 

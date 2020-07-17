@@ -168,7 +168,7 @@ void Player::findPointedThing(Input &input) {
         for (auto& sBox : boxes) {
             auto face = sBox.intersects(rayEnd, roundedPos);
 
-            if (face != Dir::NONE) {
+            if (face != EVec::NONE) {
                 pointedThing.thing = PointedThing::Thing::BLOCK;
                 pointedThing.target.block = { blockID, roundedPos, face };
                 return;

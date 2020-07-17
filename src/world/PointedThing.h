@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "../util/Vec.h"
+
 class PointedThing {
 public:
     enum class Thing {
@@ -15,7 +17,7 @@ public:
     struct PointedBlock {
         unsigned int blockId;
         glm::ivec3 pos;
-        Dir face;
+        EVec face;
     };
 
     struct PointedEntity {

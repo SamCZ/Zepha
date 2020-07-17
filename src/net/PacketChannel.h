@@ -11,7 +11,7 @@ enum class PacketChannel {
     SERVER,
     PLAYER,
     ENTITY,
-    CHUNK,
+    WORLD,
     BLOCK,
     INVENTORY
 };

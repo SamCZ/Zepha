@@ -22,10 +22,10 @@ namespace RegisterBlocks {
         std::vector<SelectionBox> boxes {};
 
         for (auto pair : boxesTable) {
-            if (!pair.second.is<sol::table>()) throw "must be a table";
+            if (!pair.second.is<sol::table>()) throw std::runtime_error("must be a table");
             sol::table table = pair.second;
 
-            if (table.size() != 6) throw "must contain exactly 6 elements";
+            if (table.size() != 6) throw std::runtime_error("must contain exactly 6 elements");
             boxes.emplace_back(glm::vec3 {table[1], table[2], table[3]}, glm::vec3 {table[4], table[5], table[6]});
         }
 
@@ -50,7 +50,7 @@ namespace RegisterBlocks {
             }
             params.push_back(paramsString);
 
-            if (params.size() < 2) throw "Invalid biome tint values. Must have at least 2 params.";
+            if (params.size() < 2) throw std::runtime_error("Invalid biome tint values. Must have at least 2 params.");
 
             texture = params[1];
             blendInd = atoi(params[0].data()) + 1; //TODO: support multiple blend colors
@@ -62,7 +62,7 @@ namespace RegisterBlocks {
         // Get the specified block model
         auto modelStr = blockTable.get_or<std::string>("model", "default:cube");
         auto modelOpt = blockModels.get<sol::optional<sol::table>>(modelStr);
-        if (!modelOpt) throw "Non-existent model \"" + modelStr + "\" specified";
+        if (!modelOpt) throw std::runtime_error("Non-existent model \"" + modelStr + "\" specified");
 
         sol::table modelTable = *modelOpt;
         BlockModel model;
@@ -75,11 +75,11 @@ namespace RegisterBlocks {
         auto texturesOpt   = blockTable.get<sol::optional<sol::table >>("textures");
         auto ldTexturesOpt = blockTable.get<sol::optional<sol::table >>("lowdef_textures");
 
-        if (!texturesOpt) throw "Missing textures property";
+        if (!texturesOpt) throw std::runtime_error("Missing textures property");
 
         std::vector<std::string> textures;
         for (auto pair : *texturesOpt) {
-            if (!pair.second.is<std::string>()) throw "textures table contains non-string value";
+            if (!pair.second.is<std::string>()) throw std::runtime_error("textures table contains non-string value");
             textures.push_back(pair.second.as<std::string>());
         }
         if (textures.size() == 0) textures.push_back("_missing");
@@ -88,7 +88,7 @@ namespace RegisterBlocks {
         if (!ldTexturesOpt) lowdef_textures = textures;
         else {
             for (auto pair : *ldTexturesOpt) {
-                if (!pair.second.is<std::string>()) throw "lowdef_textures table has non-string value!";
+                if (!pair.second.is<std::string>()) throw std::runtime_error("lowdef_textures table has non-string value!");
                 lowdef_textures.push_back(pair.second.as<std::string>());
             }
         }
@@ -113,18 +113,18 @@ namespace RegisterBlocks {
 
         // Parse through all of the parts and add them to the model
         auto partsOpt = modelTable.get<sol::optional<sol::table>>("parts");
-        if (!partsOpt) throw "blockmodel is missing parts table";
+        if (!partsOpt) throw std::runtime_error("blockmodel is missing parts table");
         partsOpt->for_each([&](sol::object key, sol::object value) {
 
             // Validate that variables are what we expect them to be
-            if (!value.is<sol::table>()) throw "meshpart must be a table";
+            if (!value.is<sol::table>()) throw std::runtime_error("meshpart must be a table");
             sol::table meshPartTable = value.as<sol::table>();
 
             auto points_optional = meshPartTable.get<sol::optional<sol::table>>("points");
-            if (!points_optional) throw "Meshpart is missing a points table";
+            if (!points_optional) throw std::runtime_error("Meshpart is missing a points table");
             sol::table points = *points_optional;
 
-            if (points.size() % 20 != 0) throw "Points table must contain a multiple of 20 values";
+            if (points.size() % 20 != 0) throw std::runtime_error("Points table must contain a multiple of 20 values");
 
             // Populate the Vertices and Indices vectors from the points table
             std::vector<BlockModelVertex> vertices;
@@ -204,16 +204,17 @@ namespace RegisterBlocks {
             //Add the meshpart to the proper face of the model
             std::string face = meshPartTable.get_or<std::string>("face", "nocull");
 
-            Dir d = face == "top" ? Dir::TOP :
-                    face == "bottom" ? Dir::BOTTOM :
-                    face == "left" ? Dir::LEFT :
-                    face == "right" ? Dir::RIGHT :
-                    face == "front" ? Dir::FRONT :
-                    face == "back" ? Dir::BACK :
-                    face == "nocull" ? Dir::NO_CULL :
-                    Dir::INVALID;
+            EVec d =
+                face == "top"    ? EVec::TOP     :
+                face == "bottom" ? EVec::BOTTOM  :
+                face == "left"   ? EVec::LEFT    :
+                face == "right"  ? EVec::RIGHT   :
+                face == "front"  ? EVec::FRONT   :
+                face == "back"   ? EVec::BACK    :
+                face == "nocull" ? EVec::NO_CULL :
+                                   EVec::INVALID ;
 
-            if (d == Dir::INVALID) throw "face value is unrecognized";
+            if (d == EVec::INVALID) throw std::runtime_error("face value is unrecognized");
             model.parts[static_cast<int>(d)].push_back(meshPart);
         });
 
@@ -262,12 +263,12 @@ namespace RegisterBlocks {
             std::string identifier = blockRef.first.as<std::string>();
 
             if (!blockRef.second || !blockRef.second.is<sol::table>())
-                throw "register_block expects a table as the second parameter";
+                throw std::runtime_error("register_block expects a table as the second parameter");
             sol::table blockTable = blockRef.second.as<sol::table>();
 
             // Basic Block Properties
             auto nameOpt = blockTable.get<sol::optional<std::string>>("name");
-            if (!nameOpt) throw identifier + " is missing name property!";
+            if (!nameOpt) throw std::runtime_error(identifier + " is missing name property!");
 
             bool solid = blockTable.get_or("solid", true);
             bool lightPropagates = blockTable.get_or("light_propagates", false);

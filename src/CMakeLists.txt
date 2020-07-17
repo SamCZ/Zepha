@@ -121,9 +121,8 @@ set(ZEPHA_SRC
 	def/ServerDefinitionAtlas.cpp 
 	def/ServerDefinitionAtlas.h 
 	def/item/BlockDef.cpp 
-	def/item/BlockDef.h 
-	util/Dir.h 
-	def/DefinitionAtlas.h 
+	def/item/BlockDef.h
+		def/DefinitionAtlas.h
 	lua/LuaParser.cpp 
 	lua/LuaParser.h 
 	lua/parser/ServerLuaParser.cpp 
@@ -321,6 +320,6 @@ set(ZEPHA_SRC
 		def/gen/MapGenProps.cpp
 	def/gen/MapGenProps.h
 		lua/api/class/LuaGuiElement.cpp
-	lua/api/class/LuaGuiElement.h world/Dimension.cpp world/Dimension.h world/fs/FileManipulator.cpp world/fs/FileManipulator.h def/item/BlockModel.cpp)
+	lua/api/class/LuaGuiElement.h world/Dimension.cpp world/Dimension.h world/fs/FileManipulator.cpp world/fs/FileManipulator.h def/item/BlockModel.cpp net/server/world/ServerPacketStream.cpp net/server/world/ServerPacketStream.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

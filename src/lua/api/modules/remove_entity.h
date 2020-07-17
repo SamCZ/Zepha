@@ -11,7 +11,7 @@ namespace Api {
     static void remove_entity_c(sol::state& lua, sol::table& core, ClientGame& defs, LocalWorld& world) {
         core.set_function("remove_entity", [&](sol::table entity) {
             auto object = entity.get<sol::optional<std::shared_ptr<LocalLuaEntity>>>("object");
-            if (!object) throw "Attempting to remove an invalid entity object.";
+            if (!object) throw std::runtime_error("Attempting to remove an invalid entity object.");
 
             sol::optional<sol::table> luaEntTable = core["entities"][(*object)->id];
             if (!luaEntTable) return;
@@ -27,7 +27,7 @@ namespace Api {
     static void remove_entity_s(sol::state& lua, sol::table& core, ServerGame& defs, ServerWorld& world) {
         core.set_function("remove_entity", [&](sol::table entity) {
             auto object = entity.get<sol::optional<std::shared_ptr<ServerLuaEntity>>>("object");
-            if (!object) throw "Attempting to remove an invalid entity object.";
+            if (!object) throw std::runtime_error("Attempting to remove an invalid entity object.");
 
             sol::optional<sol::table> luaEntTable = core["entities"][(*object)->id];
             if (!luaEntTable) return;

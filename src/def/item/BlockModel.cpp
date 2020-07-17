@@ -4,7 +4,7 @@
 
 #include "BlockModel.h"
 
-#include "../../util/Dir.h"
+#include "../../util/Vec.h"
 
 BlockModel
 BlockModel::createCube(std::vector<std::shared_ptr<AtlasRef>> textureRefs,
@@ -33,7 +33,7 @@ BlockModel::createCube(std::vector<std::shared_ptr<AtlasRef>> textureRefs,
     indices = {0, 1, 2, 2, 3, 0};
     accessInd = (std::max)(0, (std::min)(static_cast<int>(textureRefs.size() - 1), 2));
     MeshPart leftMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
-    blockModel.parts[static_cast<int>(Dir::LEFT)].push_back(leftMeshPart);
+    blockModel.parts[static_cast<int>(EVec::LEFT)].push_back(leftMeshPart);
 
     //Right Face
     vertices = {
@@ -44,7 +44,7 @@ BlockModel::createCube(std::vector<std::shared_ptr<AtlasRef>> textureRefs,
     indices = {0, 1, 2, 2, 3, 0};
     accessInd = (std::max)(0, (std::min)(static_cast<int>(textureRefs.size() - 1), 3));
     MeshPart rightMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
-    blockModel.parts[static_cast<int>(Dir::RIGHT)].push_back(rightMeshPart);
+    blockModel.parts[static_cast<int>(EVec::RIGHT)].push_back(rightMeshPart);
 
     //Top Face
     vertices = {
@@ -55,7 +55,7 @@ BlockModel::createCube(std::vector<std::shared_ptr<AtlasRef>> textureRefs,
     indices = {0, 1, 2, 2, 3, 0};
     accessInd = (std::max)(0, (std::min)(static_cast<int>(textureRefs.size() - 1), 0));
     MeshPart topMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
-    blockModel.parts[static_cast<int>(Dir::TOP)].push_back(topMeshPart);
+    blockModel.parts[static_cast<int>(EVec::TOP)].push_back(topMeshPart);
 
     //Bottom Face
     vertices = {
@@ -66,7 +66,7 @@ BlockModel::createCube(std::vector<std::shared_ptr<AtlasRef>> textureRefs,
     indices = {0, 1, 2, 2, 3, 0};
     accessInd = (std::max)(0, (std::min)(static_cast<int>(textureRefs.size() - 1), 1));
     MeshPart bottomMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
-    blockModel.parts[static_cast<int>(Dir::BOTTOM)].push_back(bottomMeshPart);
+    blockModel.parts[static_cast<int>(EVec::BOTTOM)].push_back(bottomMeshPart);
 
     //Front Face
     vertices = {
@@ -77,7 +77,7 @@ BlockModel::createCube(std::vector<std::shared_ptr<AtlasRef>> textureRefs,
     indices = {0, 1, 2, 2, 3, 0};
     accessInd = (std::max)(0, (std::min)(static_cast<int>(textureRefs.size() - 1), 4));
     MeshPart frontMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
-    blockModel.parts[static_cast<int>(Dir::FRONT)].push_back(frontMeshPart);
+    blockModel.parts[static_cast<int>(EVec::FRONT)].push_back(frontMeshPart);
 
     //Back Face
     vertices = {
@@ -88,7 +88,7 @@ BlockModel::createCube(std::vector<std::shared_ptr<AtlasRef>> textureRefs,
     indices = {0, 1, 2, 2, 3, 0};
     accessInd = (std::max)(0, (std::min)(static_cast<int>(textureRefs.size() - 1), 5));
     MeshPart backMeshPart(vertices, indices, textureRefs[accessInd], blendInds[accessInd], blendMaskRefs[accessInd]);
-    blockModel.parts[static_cast<int>(Dir::BACK)].push_back(backMeshPart);
+    blockModel.parts[static_cast<int>(EVec::BACK)].push_back(backMeshPart);
 
     return blockModel;
 }

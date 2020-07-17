@@ -251,23 +251,23 @@ namespace RegisterBiomes {
             std::string identifier = biomeRef.first.as<std::string>();
 
             if (!biomeRef.second || !biomeRef.second.is<sol::table>())
-                throw "register_biome expects a table as the second parameter";
+                throw std::runtime_error("register_biome expects a table as the second parameter");
             sol::table biomeTable = biomeRef.second.as<sol::table>();
 
             // Environment Properties for Voronoi Diagram
             auto environment = biomeTable.get<sol::optional<sol::table>>("environment");
-            if (!environment) throw "biome definitions require an environment table";
+            if (!environment) throw std::runtime_error("biome definitions require an environment table");
 
             auto temperature = environment->get_or<float>("temperature", -2);
             auto humidity    = environment->get_or<float>("humidity",    -2);
             auto roughness   = environment->get_or<float>("roughness",   -2);
 
             if (temperature < -1 || temperature > 1)
-                throw "environment.temperature property is out of range or missing";
+                throw std::runtime_error("environment.temperature property is out of range or missing");
             if (humidity < 0 || humidity > 1)
-                throw "environment.humidity property is out of range or missing";
+                throw std::runtime_error("environment.humidity property is out of range or missing");
             if (roughness < 0 || roughness > 1)
-                throw "environment.roughness property is out of range or missing";
+                throw std::runtime_error("environment.roughness property is out of range or missing");
 
             // Blocks to form the environment out of
             auto blocksList = biomeTable.get<sol::optional<sol::table>>("blocks");

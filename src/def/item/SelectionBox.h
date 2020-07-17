@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "../../util/Dir.h"
+#include "../../util/Vec.h"
 
 class SelectionBox {
 public:
@@ -27,32 +27,23 @@ public:
         this->b = b;
     }
 
-    Dir intersects(glm::vec3 vec, glm::vec3 blockOffset) {
+    EVec intersects(glm::vec3 vec, glm::vec3 blockOffset) {
         const float THRESH = 0.02f;
 
         vec -= blockOffset; //Normalize Vector Position
 
-        if (std::abs(vec.y - b.y) < THRESH && vec.x > a.x && vec.x < b.x && vec.z > a.z && vec.z < b.z) return Dir::TOP;
-        if (std::abs(vec.y - a.y) < THRESH && vec.x > a.x && vec.x < b.x && vec.z > a.z && vec.z < b.z) return Dir::BOTTOM;
-        if (std::abs(vec.z - a.z) < THRESH && vec.x > a.x && vec.x < b.x && vec.y > a.y && vec.y < b.y) return Dir::FRONT;
-        if (std::abs(vec.z - b.z) < THRESH && vec.x > a.x && vec.x < b.x && vec.y > a.y && vec.y < b.y) return Dir::BACK;
-        if (std::abs(vec.x - b.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return Dir::LEFT;
-        if (std::abs(vec.x - a.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return Dir::RIGHT;
+        if (std::abs(vec.y - b.y) < THRESH && vec.x > a.x && vec.x < b.x && vec.z > a.z && vec.z < b.z) return EVec::TOP;
+        if (std::abs(vec.y - a.y) < THRESH && vec.x > a.x && vec.x < b.x && vec.z > a.z && vec.z < b.z) return EVec::BOTTOM;
+        if (std::abs(vec.z - a.z) < THRESH && vec.x > a.x && vec.x < b.x && vec.y > a.y && vec.y < b.y) return EVec::FRONT;
+        if (std::abs(vec.z - b.z) < THRESH && vec.x > a.x && vec.x < b.x && vec.y > a.y && vec.y < b.y) return EVec::BACK;
+        if (std::abs(vec.x - b.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return EVec::LEFT;
+        if (std::abs(vec.x - a.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return EVec::RIGHT;
 
-        return Dir::NONE;
+        return EVec::NONE;
     }
 
-    static glm::ivec3 faceToOffset(Dir f) {
-        static const glm::ivec3 positionOffsets[6] {
-            { 1, 0, 0},
-            {-1, 0, 0},
-            { 0, 1, 0},
-            { 0,-1, 0},
-            { 0, 0,-1},
-            { 0, 0, 1},
-        };
-
-        return positionOffsets[static_cast<int>(f)];
+    static glm::ivec3 faceToOffset(EVec f) {
+        return Vec::TO_VEC[static_cast<unsigned short>(f)];
     }
 
     glm::vec3 a {}, b {1, 1, 1};

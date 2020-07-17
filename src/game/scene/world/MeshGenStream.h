@@ -19,8 +19,8 @@ class LocalDimension;
 
 class MeshGenStream {
 public:
-    static const int THREAD_QUEUE_SIZE = 64;
-    static const int THREADS = 2;
+    static const int THREADS = 4;
+    static const int THREAD_QUEUE_SIZE = 16;
     static const int TOTAL_QUEUE_SIZE = THREADS * THREAD_QUEUE_SIZE;
 
     explicit MeshGenStream(ClientGame& game, LocalDimension& dimension);
@@ -53,7 +53,7 @@ public:
 
         ClientGame &game;
         std::array<NoiseSample, 3>& offsetSamplers;
-        std::vector<Unit> tasks = std::vector<Unit>(THREAD_QUEUE_SIZE);
+        std::vector<Unit> jobs = std::vector<Unit>(THREAD_QUEUE_SIZE);
 
         bool keepAlive = true;
         std::thread thread {};

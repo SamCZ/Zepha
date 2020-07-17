@@ -21,6 +21,7 @@ enum class PacketType {
     THIS_PLAYER_INFO,
     PLAYER_INFO,
     CHUNK,
+    MAPBLOCK,
     BLOCK_SET,
     ENTITY_INFO,
     ENTITY_REMOVED,

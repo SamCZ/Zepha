@@ -35,4 +35,7 @@ private:
 
     std::shared_ptr<Chunk> chunk;
     std::array<std::shared_ptr<Chunk>, 6> adjacent;
+
+    std::array<unsigned int, 4096> eBlocks;
+    std::array<unsigned short, 4096> eBiomes;
 };

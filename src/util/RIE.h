@@ -128,4 +128,18 @@ struct RIE {
         data.push_back(data[data.size() - 4]);
         return true;
     }
+
+    template<typename T, int L, typename = typename std::enable_if<std::is_integral<T>::value>::type>
+        static void expand(const std::vector<T>& rie, std::array<T, L>& expand) {
+
+        unsigned int rieI = 0;
+        unsigned int i = 0;
+
+        while (rieI * 2 < rie.size()) {
+            T nI = ((rieI * 2) + 2 < rie.size()) ? rie[(rieI * 2) + 2] : L;
+            T value = rie[(rieI * 2) + 1];
+            while (i < nI) expand[i++] = value;
+            rieI++;
+        }
+    }
 };

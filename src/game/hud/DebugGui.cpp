@@ -97,7 +97,7 @@ void DebugGui::update(Player& player, LocalWorld& world, ClientGame& defs, doubl
 
     { //Bottom Right Graphs
         get<GuiLabelledGraph>("meshGraph")->pushValue(world.lastMeshUpdates);
-        get<GuiLabelledGraph>("interpGraph")->pushValue(world.lastGenUpdates);
+        get<GuiLabelledGraph>("interpGraph")->pushValue(world.mapBlocksInterpolated);
         get<GuiLabelledGraph>("genGraph")->pushValue(static_cast<float>(ssGen));
         get<GuiLabelledGraph>("packetGraph")->pushValue(static_cast<float>(ssPack));
     }
@@ -138,15 +138,17 @@ void DebugGui::update(Player& player, LocalWorld& world, ClientGame& defs, doubl
 
         PointedThing thing = player.getPointedThing();
         if (thing.thing == PointedThing::Thing::BLOCK) {
-            Dir faceDir = thing.target.block.face;
+            EVec faceDir = thing.target.block.face;
+
             std::string face =
-                    (faceDir == Dir::TOP) ? "TOP" :
-                    (faceDir == Dir::BOTTOM) ? "BOTTOM" :
-                    (faceDir == Dir::LEFT) ? "LEFT" :
-                    (faceDir == Dir::RIGHT) ? "RIGHT" :
-                    (faceDir == Dir::FRONT) ? "FRONT" :
-                    (faceDir == Dir::BACK) ? "BACK" :
-                    "NONE";
+                faceDir == EVec::TOP    ?  "TOP"   :
+                faceDir == EVec::BOTTOM ? "BOTTOM" :
+                faceDir == EVec::LEFT   ? "LEFT"   :
+                faceDir == EVec::RIGHT  ? "RIGHT"  :
+                faceDir == EVec::FRONT  ? "FRONT"  :
+                faceDir == EVec::BACK   ? "BACK"   :
+                                          "NONE"   ;
+
             str << "Pointing At: " << defs.defs.blockFromId(thing.target.block.blockId).identifier << std::endl;
             str << "Pointed Position: " << vecToString(thing.target.block.pos) << std::endl;
             str << "Pointed Face: " << face << std::endl;

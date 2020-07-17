@@ -18,10 +18,10 @@ namespace Api {
         core["entities"] = lua.create_table();
 
         core.set_function("add_entity", [&](sol::optional<std::string> identifier, sol::optional<sol::table> pos, sol::object staticData) {
-            if (!identifier || !identifier->length()) throw "expected a string as the first argument.";
-            if (!pos) throw "expected a vector as the second argument.";
+            if (!identifier || !identifier->length()) throw std::runtime_error("expected a string as the first argument.");
+            if (!pos) throw std::runtime_error("expected a vector as the second argument.");
 
-            if (core["registered_entities"][*identifier] == sol::nil) throw "identifier '" + *identifier + "' is not a valid entity identifier.";
+            if (core["registered_entities"][*identifier] == sol::nil) throw std::runtime_error("identifier '" + *identifier + "' is not a valid entity identifier.");
             sol::table entityDef = core["registered_entities"][*identifier];
 
             auto entity = std::make_unique<Entity>();
@@ -37,9 +37,9 @@ namespace Api {
             auto displayObject = luaEntity.get<sol::optional<std::string>>("display_object");
             auto displayTexture = luaEntity.get<sol::optional<std::string>>("display_texture");
 
-            if (!displayType) throw "entity '" + *identifier + "' is missing the display property.";
-            if (!displayObject) throw "entity '" + *identifier + "' is missing the display_object property.";
-            if (strncmp(displayType->data(), "model", 5) == 0 && !displayTexture) throw "entity '" + *identifier + "' is missing the display_texture property.";
+            if (!displayType) throw std::runtime_error("entity '" + *identifier + "' is missing the display property.");
+            if (!displayObject) throw std::runtime_error("entity '" + *identifier + "' is missing the display_object property.");
+            if (strncmp(displayType->data(), "model", 5) == 0 && !displayTexture) throw std::runtime_error("entity '" + *identifier + "' is missing the display_texture property.");
 
             entityRef->set_display_type(*displayType, *displayObject, displayTexture);
 
@@ -56,10 +56,10 @@ namespace Api {
         core["entities"] = lua.create_table();
 
         core.set_function("add_entity", [&](sol::optional<std::string> identifier, sol::optional<sol::table> pos, sol::object staticData) {
-            if (!identifier || !identifier->length()) throw "expected a string as the first argument.";
-            if (!pos) throw "expected a vector as the second argument.";
+            if (!identifier || !identifier->length()) throw std::runtime_error("expected a string as the first argument.");
+            if (!pos) throw std::runtime_error("expected a vector as the second argument.");
 
-            if (core["registered_entities"][*identifier] == sol::nil) throw "identifier '" + *identifier + "' is not a valid entity identifier.";
+            if (core["registered_entities"][*identifier] == sol::nil) throw std::runtime_error("identifier '" + *identifier + "' is not a valid entity identifier.");
             sol::table entityDef = core["registered_entities"][*identifier];
 
             auto entity = std::make_unique<ServerEntity>(entities_ind);
@@ -75,9 +75,9 @@ namespace Api {
             auto displayObject = luaEntity.get<sol::optional<std::string>>("display_object");
             auto displayTexture = luaEntity.get<sol::optional<std::string>>("display_texture");
 
-            if (!displayType) throw "entity '" + *identifier + "' is missing the display property.";
-            if (!displayObject) throw "entity '" + *identifier + "' is missing the display_object property.";
-            if (strncmp(displayType->data(), "model", 5) == 0 && !displayTexture) throw "entity '" + *identifier + "' is missing the display_texture property.";
+            if (!displayType) throw std::runtime_error("entity '" + *identifier + "' is missing the display property.");
+            if (!displayObject) throw std::runtime_error("entity '" + *identifier + "' is missing the display_object property.");
+            if (strncmp(displayType->data(), "model", 5) == 0 && !displayTexture) throw std::runtime_error("entity '" + *identifier + "' is missing the display_texture property.");
 
             entityRef->set_display_type(*displayType, *displayObject, displayTexture);
 

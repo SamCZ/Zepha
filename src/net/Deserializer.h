@@ -72,6 +72,18 @@ template <> inline unsigned short Deserializer::read<unsigned short>() {
     return cv.sh;
 }
 
+template <> inline char Deserializer::read<char>() {
+    return data[ind++];
+}
+
+template <> inline unsigned char Deserializer::read<unsigned char>() {
+    return static_cast<unsigned char>(data[ind++]);
+}
+
+template <> inline bool Deserializer::read<bool>() {
+    return read<char>();
+}
+
 template <> inline float Deserializer::read<float>() {
     float_union cv;
     cv.bytes[0] = data[ind];

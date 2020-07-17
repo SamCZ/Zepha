@@ -11,6 +11,7 @@
 #include "ServerGenStream.h"
 #include "../../PacketType.h"
 #include "../../Serializer.h"
+#include "ServerPacketStream.h"
 #include "../conn/ClientList.h"
 #include "../conn/ServerClient.h"
 #include "../../../def/ServerGame.h"
@@ -60,6 +61,7 @@ ServerWorld::ServerWorld(unsigned int seed, ServerGame& game, ClientList& client
 
 void ServerWorld::init(const std::string& worldDir) {
     genStream = std::make_unique<ServerGenStream>(seed, game);
+    packetStream = std::make_unique<ServerPacketStream>(dimension);
     fileManip = std::make_shared<FileManipulator>("worlds/" + worldDir + "/");
 
     generateMapBlock({0, 0, 0});
@@ -68,47 +70,70 @@ void ServerWorld::init(const std::string& worldDir) {
 void ServerWorld::update(double delta) {
     dimension.update(clientList.clients, mapBlockGenRange);
 
-    auto finished = genStream->update();
-    generatedMapBlocks = static_cast<int>(finished->size());
+    std::unordered_set<glm::ivec3, Vec::ivec3> updatedChunks {};
+    std::unordered_set<glm::ivec3, Vec::ivec3> generatedMapBlocks {};
 
-    std::unordered_set<glm::ivec3, Vec::ivec3> changed {};
+    auto finishedGen = genStream->update();
+    for (auto& data : *finishedGen) {
 
-    for (auto& data : *finished) {
         for (const auto& chunk : data.chunks) {
-            changed.insert(chunk->pos);
+            generatedMapBlocks.insert(data.pos);
+            updatedChunks.insert(chunk->pos);
             dimension.setChunk(chunk);
-//            fileManip->commitChunk(*chunk);
         }
 
 //        auto resend = dimension.calculateEdgeLight(mb.pos);
 //        changed.insert(resend.begin(), resend.end());
 
-        auto mb = dimension.getMapBlock(data.pos)->generated = true;
+        dimension.getMapBlock(data.pos)->generated = true;
+        packetStream->queue(data.pos);
     }
 
-    for (auto& chunk : changed) {
+    auto finishedPackets = packetStream->update();
+    for (auto& data : *finishedPackets) {
         for (auto& client : clientList.clients) {
             if (!client->hasPlayer) continue;
-
-            auto myChunk = Space::Chunk::world::fromBlock(client->getPos());
-
-            std::pair<glm::ivec3, glm::ivec3> bounds = {
-                {myChunk.x - activeChunkRange.x, myChunk.y - activeChunkRange.y, myChunk.z - activeChunkRange.x},
-                {myChunk.x + activeChunkRange.x, myChunk.y + activeChunkRange.y, myChunk.z + activeChunkRange.x}};
-
-            if (isInBounds(chunk, bounds)) sendChunk(dimension.getChunk(chunk), *client);
+            data->packet->sendTo(client->peer, PacketChannel::WORLD);
         }
     }
 
+    this->generatedMapBlocks = generatedMapBlocks.size();
+
+//    for (auto& chunkPos : updatedChunks) {
+//        glm::ivec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunkPos);
+//        auto chunk = dimension.getChunk(chunkPos);
+//
+//        assert(chunk != nullptr);
+//
+//        bool sentAlready = false;
+//        for (auto& mapBlock : generatedMapBlocks) if (mapBlock == mapBlockPos) { sentAlready = true; break; }
+//        if (sentAlready) continue;
+//
+//        Packet p(PacketType::CHUNK);
+//        auto l = chunk->aquireLock();
+//        p.data = chunk->serialize();
+//        l.release();
+//
+//        for (auto& client : clientList.clients) {
+//            if (!client->hasPlayer) continue;
+//
+//            auto myChunk = Space::Chunk::world::fromBlock(client->getPos());
+//
+//            std::pair<glm::ivec3, glm::ivec3> bounds = {
+//                {myChunk.x - activeChunkRange.x, myChunk.y - activeChunkRange.y, myChunk.z - activeChunkRange.x},
+//                {myChunk.x + activeChunkRange.x, myChunk.y + activeChunkRange.y, myChunk.z + activeChunkRange.x}};
+//
+//            if (isInBounds(chunkPos, bounds)) p.sendTo(client->peer, PacketChannel::WORLD);
+//        }
+//    }
+
     // Send the # of generated chunks to the client (debug),
     // and trigger new chunks to be generated if a player has changed MapBlocks.
-    Packet r(PacketType::SERVER_INFO);
-    r.data = Serializer().append(generatedMapBlocks).data;
+    Packet r = Serializer().append(this->generatedMapBlocks).packet(PacketType::SERVER_INFO);
 
     for (auto& client : clientList.clients) {
         if (client->hasPlayer) {
             r.sendTo(client->peer, PacketChannel::SERVER);
-
             if (client->changedMapBlocks) changedMapBlocks(*client);
         }
     }
@@ -163,38 +188,25 @@ bool ServerWorld::generateMapBlock(glm::ivec3 pos) {
 }
 
 void ServerWorld::sendChunksToPlayer(ServerClient& client) {
-    glm::ivec3 playerChunk = Space::Chunk::world::fromBlock(client.getPos());
+    glm::ivec3 playerPos = Space::MapBlock::world::fromBlock(client.getPos());
     std::pair<glm::ivec3, glm::ivec3> bounds = {
-        {playerChunk.x - activeChunkRange.x, playerChunk.y - activeChunkRange.y, playerChunk.z - activeChunkRange.x},
-        {playerChunk.x + activeChunkRange.x, playerChunk.y + activeChunkRange.y, playerChunk.z + activeChunkRange.x}};
+        {playerPos.x - sendRange.x, playerPos.y - sendRange.y, playerPos.z - sendRange.x},
+        {playerPos.x + sendRange.x, playerPos.y + sendRange.y, playerPos.z + sendRange.x}};
 
-    glm::ivec3 lastPlayerChunk = Space::Chunk::world::fromBlock(client.lastPos);
+    glm::ivec3 lastPlayerPos = Space::MapBlock::world::fromBlock(client.lastPos);
     std::pair<glm::ivec3, glm::ivec3> oldBounds = {
-        {lastPlayerChunk.x - activeChunkRange.x, lastPlayerChunk.y - activeChunkRange.y, lastPlayerChunk.z - activeChunkRange.x},
-        {lastPlayerChunk.x + activeChunkRange.x, lastPlayerChunk.y + activeChunkRange.y, lastPlayerChunk.z + activeChunkRange.x}};
+        {lastPlayerPos.x - sendRange.x, lastPlayerPos.y - sendRange.y, lastPlayerPos.z - sendRange.x},
+        {lastPlayerPos.x + sendRange.x, lastPlayerPos.y + sendRange.y, lastPlayerPos.z + sendRange.x}};
 
     for (int i = bounds.first.x; i < bounds.second.x; i++) {
         for (int j = bounds.first.y; j < bounds.second.y; j++) {
             for (int k = bounds.first.z; k < bounds.second.z; k++) {
-                glm::ivec3 chunkPos {i, j, k};
-                if (isInBounds(chunkPos, oldBounds)) continue;
-                auto chunk = dimension.getChunk(chunkPos);
-                if (chunk) sendChunk(chunk, client);
+                glm::ivec3 pos {i, j, k};
+                if (isInBounds(pos, oldBounds)) continue;
+                packetStream->queue(pos);
             }
         }
     }
-}
-
-void ServerWorld::sendChunk(const std::shared_ptr<Chunk>& chunk, ServerClient &peer) {
-    if (chunk == nullptr || !chunk->generated) return;
-
-    Packet r(PacketType::CHUNK);
-
-    auto l = chunk->aquireLock();
-    r.data = chunk->serialize();
-    l.release();
-
-    r.sendTo(peer.peer, PacketChannel::CHUNK);
 }
 
 unsigned int ServerWorld::getBlock(glm::ivec3 pos) {

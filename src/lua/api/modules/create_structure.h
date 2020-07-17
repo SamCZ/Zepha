@@ -14,8 +14,8 @@ namespace Api {
             auto origin = data->get<sol::optional<sol::table>>("origin");
             auto schematic = data->get<sol::optional<sol::table>>("schematic");
 
-            if (!origin) throw "expected a table as the first argument.";
-            if (!schematic) throw "expected a table as the first argument.";
+            if (!origin) throw std::runtime_error("expected a table as the first argument.");
+            if (!schematic) throw std::runtime_error("expected a table as the first argument.");
 
             auto s = std::make_shared<Schematic>();
 

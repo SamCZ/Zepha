@@ -146,18 +146,16 @@ void MainMenuScene::findSubgames() {
             }
             cf_dir_close(&subgame);
 
-            if (!hasConf)
-                throw std::string("Subgame ") + std::string(subgameFolder.name) + " is missing a conf.json.";
-            if (!hasMods)
-                throw std::string("Subgame ") + std::string(subgameFolder.name) + " is missing a 'mods' directory.";
+            if (!hasConf) throw std::runtime_error(std::string("Subgame ") + std::string(subgameFolder.name) + " is missing a conf.json.");
+            if (!hasMods) throw std::runtime_error(std::string("Subgame ") + std::string(subgameFolder.name) + " is missing a 'mods' directory.");
 
             nlohmann::json j{};
             try {
                 std::ifstream(std::string(subgameFolder.path) + "/conf.json") >> j;
-            } catch (...) { throw std::string(subgameFolder.name) + "/conf.json is not a valid JSON object."; }
+            } catch (...) { throw std::runtime_error(std::string(subgameFolder.name) + "/conf.json is not a valid JSON object."); }
 
             if (!j.is_object())
-                throw std::string(subgameFolder.name) + "/conf.json is not a valid JSON object.";
+                throw std::runtime_error(std::string(subgameFolder.name) + "/conf.json is not a valid JSON object.");
             if (!j["name"].is_string() || j["name"] == "")
                 throw std::runtime_error("The 'name' property in " + std::string(subgameFolder.name) + "/conf.json is missing or invalid.");
             if (!j["version"].is_string() || j["version"] == "")

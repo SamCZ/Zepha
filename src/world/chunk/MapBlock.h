@@ -7,9 +7,11 @@
 
 #include <array>
 #include <memory>
+#include <vector>
 #include <glm/vec3.hpp>
 
 class Chunk;
+class Deserializer;
 
 class MapBlock {
 public:
@@ -23,5 +25,5 @@ public:
     bool generated = false;
     unsigned short count = 0;
 private:
-    std::array<std::shared_ptr<Chunk>, 64> blockChunks;
+    std::array<std::shared_ptr<Chunk>, 64> chunks;
 };

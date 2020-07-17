@@ -69,11 +69,12 @@ void ClientNetworkInterpreter::update() {
 
 void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
     switch (p->type) {
-        default: {
+        default:
             std::cout << Log::err << "Received unknown packet of type " << static_cast<int>(p->type)
-                      << ". Is the server on a different protocol version?" << Log::endl;
-            break;
-        }
+                << ". Is the server on a different protocol version?" << Log::endl; break;
+
+        case PacketType::SERVER_INFO:
+            serverSideChunkGens = p->d.read<unsigned int>(); break;
 
         case PacketType::THIS_PLAYER_INFO: {
             while (!p->d.atEnd()) {
@@ -96,8 +97,8 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
                     }
                 }
             }
-            break;
-        }
+            break; }
+            
         case PacketType::PLAYER_INFO: {
             unsigned int cid = p->d.read<unsigned int>();
             if (this->cid == cid) break;
@@ -118,41 +119,33 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
 
             // Instantiate a new PlayerEntity
             world->dimension.playerEntities.emplace_back(p->d.read<glm::vec3>(), cid, playerModel);
-            break;
-        }
-        case PacketType::ENTITY_INFO: {
-            world->dimension.serverEntityInfo(*p);
-            break;
-        }
-        case PacketType::ENTITY_REMOVED: {
-            world->dimension.serverEntityRemoved(p->d.read<unsigned int>());
-            break;
-        }
+            break; }
+
+        case PacketType::CHUNK:
+        case PacketType::MAPBLOCK:
+            world->loadWorldPacket(std::move(p)); break;
+            
         case PacketType::BLOCK_SET: {
             auto pos = p->d.read<glm::ivec3>();
             auto block = p->d.read<unsigned int>();
             world->setBlock(pos, block);
+            break; }
+
+        case PacketType::ENTITY_INFO:
+            world->dimension.serverEntityInfo(*p); break;
+
+        case PacketType::ENTITY_REMOVED:
+            world->dimension.serverEntityRemoved(p->d.read<unsigned int>()); break;
+
+        case PacketType::INV_DATA:
+            onInvPacket(std::move(p));
             break;
-        }
-        case PacketType::CHUNK: {
-            world->loadChunkPacket(std::move(p));
-            break;
-        }
-        case PacketType::SERVER_INFO: {
-            serverSideChunkGens = p->d.read<unsigned int>();
-            break;
-        }
+        
         case PacketType::INV_INVALID: {
             std::string source = p->d.read<std::string>();
             std::string list = p->d.read<std::string>();
-
-            std::cout << Log::err << "Invalid inventory " << source << ":" << list << " was requested by client." << Log::endl;
-            exit(1);
-        }
-        case PacketType::INV_DATA: {
-            onInvPacket(std::move(p));
-            break;
-        }
+            throw std::runtime_error("Invalid inventory " + source + ":" + list + " was request by client.");
+            break; }
     }
 }
 

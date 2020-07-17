@@ -23,7 +23,7 @@ public:
     void init(Player* player);
     void update(double delta) override;
 
-    void loadChunkPacket(std::unique_ptr<PacketView> p);
+    void loadWorldPacket(std::unique_ptr<PacketView> p);
     void commitChunk(std::shared_ptr<Chunk> chunk);
 
     unsigned int getBlock(glm::ivec3 pos) override;
@@ -42,7 +42,7 @@ public:
     ClientGame& defs;
     LocalDimension dimension;
 
-    int lastGenUpdates = 0;
+    int mapBlocksInterpolated = 0;
     int lastMeshUpdates = 0;
 private:
     void finishChunks();

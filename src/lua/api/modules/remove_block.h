@@ -10,7 +10,7 @@
 namespace Api {
     static void remove_block(sol::table &core, DefinitionAtlas& defs, World& world) {
         core.set_function("remove_block", [&](sol::table pos) {
-            if (!pos["x"] || !pos["y"] || !pos["z"]) throw "expected a vector as the first argument.";
+            if (!pos["x"] || !pos["y"] || !pos["z"]) throw std::runtime_error("expected a vector as the first argument.");
             world.setBlock({pos.get<float>("x"), pos.get<float>("y"), pos.get<float>("z")}, DefinitionAtlas::AIR);
         });
     }

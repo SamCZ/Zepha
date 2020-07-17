@@ -5,12 +5,14 @@
 #include <gzip/compress.hpp>
 #include <gzip/decompress.hpp>
 #include <gzip/utils.hpp>
+#include <iostream>
 
 #include "Chunk.h"
 
 #include "../../def/DefinitionAtlas.h"
 #include "../../net/Serializer.h"
 #include "../../net/Deserializer.h"
+#include "../../util/Util.h"
 
 Chunk::Chunk(const Chunk& o) :
     pos(o.pos),
@@ -75,7 +77,7 @@ std::string Chunk::serialize() {
 
 void Chunk::deserialize(Deserializer& d) {
     std::string gzipped = d.read<std::string>();
-    if (!gzip::is_compressed(gzipped.data(), gzipped.length())) throw "Chunk contains invalid gzipped data.";
+    if (!gzip::is_compressed(gzipped.data(), gzipped.length())) throw std::runtime_error("Chunk contains invalid gzipped data.");
 
     std::vector<unsigned char> sunLight {};
     std::vector<unsigned short> blockLight {};

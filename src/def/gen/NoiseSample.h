@@ -22,9 +22,11 @@ public:
     inline float get(glm::vec3 pos) {
         glm::vec3 scaled = pos * glm::vec3(precision) / scaleBy;
 
-        glm::ivec3 a = glm::ivec3(scaled);
-        glm::vec3 factor = scaled - glm::floor(scaled);
-        glm::ivec3 b = {fmin(a.x + ceil(factor.x), precision.x), fmin(a.y + ceil(factor.y), precision.y), fmin(a.z + ceil(factor.z), precision.z)};
+        glm::ivec3 a = { scaled.x, scaled.y, scaled.z };
+        glm::vec3  factor = { scaled.x - a.x, scaled.y - a.y, scaled.z - a.z };
+        glm::ivec3 b = { NoiseSample::min(int(std::ceil(scaled.x)), precision.x),
+                         NoiseSample::min(int(std::ceil(scaled.y)), precision.y),
+                         NoiseSample::min(int(std::ceil(scaled.z)), precision.z)};
 
 //        assert(a.x + factor.x <= precision.x && a.y + factor.y <= precision.y && a.z + factor.z <= precision.z);
 
@@ -45,6 +47,10 @@ private:
     inline unsigned int index(int x, int y, int z) {
         return x * (precision.x + 1) * (precision.y + 1) + y * (precision.x + 1) + z;
     };
+
+    static inline int min(int a, int b) {
+        return (a < b ? a : b);
+    }
 
     std::vector<float> data {};
     glm::ivec3 precision {};

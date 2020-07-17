@@ -167,7 +167,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::generateTexture(std::string req) {
 
     if (req.find_first_of('(') != std::string::npos) {
         if (req.find_last_of(')') == std::string::npos) {
-            throw "Miasmatched braces.";
+            throw std::runtime_error("Mismatched braces.");
         }
 
         std::string::size_type paramsBegin = req.find_first_of('(');

@@ -17,16 +17,17 @@
 #include "../../../../def/gen/NoiseSample.h"
 #include "../../../../def/gen/LocalBiomeAtlas.h"
 #include "../../../../def/LocalDefinitionAtlas.h"
+#include "../../../../util/Timer.h"
 
 ChunkMeshGenerator::ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefinitionAtlas& defs, LocalBiomeAtlas& biomes,
-    std::shared_ptr<Chunk> chunk, std::array<std::shared_ptr<Chunk>, 6> adjacent,
-    std::array<NoiseSample, 3>& blockOffsets) :
-
-    defs(defs),
-    chunk(chunk),
-    biomes(biomes),
+    std::shared_ptr<Chunk> chunk, std::array<std::shared_ptr<Chunk>, 6> adjacent, std::array<NoiseSample, 3>& blockOffsets) :
+    meshDetails(meshDetails),
     adjacent(adjacent),
-    meshDetails(meshDetails) {
+    biomes(biomes),
+    chunk(chunk),
+    defs(defs) {
+
+    Timer t("Mesh generation");
 
     meshDetails->vertices.reserve(5000);
     meshDetails->indices.reserve(7000);
@@ -34,91 +35,73 @@ ChunkMeshGenerator::ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefin
     // Lock the related chunks
     std::array<std::unique_lock<std::mutex>, 7> locks;
     locks[0] = std::move(chunk->aquireLock());
-    for (unsigned int i = 0; i < 6; i++) locks[i+1] = std::move(adjacent[i]->aquireLock());
+    for (unsigned int i = 0; i < 6; i++) locks[i + 1] = std::move(adjacent[i]->aquireLock());
 
-    const auto& blockData = chunk->cGetBlocks();
-    const auto& biomeData = chunk->cGetBiomes();
+    RIE::expand<unsigned int, 4096>(chunk->cGetBlocks(), eBlocks);
+    RIE::expand<unsigned short, 4096>(chunk->cGetBiomes(), eBiomes);
 
-    unsigned short blockArrayPos = 0;
-    unsigned int   cBlock = blockData[blockArrayPos + 1];
-    unsigned short biomeArrayPos = 0;
-    unsigned short cBiome = biomeData[biomeArrayPos + 1];
-
-    glm::ivec3 off;
     for (unsigned short i = 0; i < 4096; i++) {
-        if (blockArrayPos + 2 < blockData.size() && i >= blockData[blockArrayPos + 2]) {
-            blockArrayPos += 2;
-            cBlock = blockData[blockArrayPos + 1];
-        }
-        if (biomeArrayPos + 2 < biomeData.size() && i >= biomeData[biomeArrayPos + 2]) {
-            biomeArrayPos += 2;
-            cBiome = biomeData[biomeArrayPos + 1];
-        }
-
-        BlockModel& model = defs.blockFromId(cBlock).model;
-        glm::vec3 biomeTint = biomes.biomeFromId(cBiome).biomeTint;
+        BlockModel& model = defs.blockFromId(eBlocks[i]).model;
+        glm::vec3 biomeTint = biomes.biomeFromId(eBiomes[i]).biomeTint;
 
         if (!model.visible) continue;
 
-        Vec::indAssignVec(i, off);
+        glm::ivec3 off = Space::Block::fromIndex(i);
         glm::vec3 vis = off;
 
         for (auto& mod : model.meshMods) {
             switch (mod.first) {
                 default: break;
-
-                case MeshMod::OFFSET_X:
-                    vis.x += blockOffsets[0].get(vis / 16.f) * mod.second; break;
-                case MeshMod::OFFSET_Y:
-                    vis.y += blockOffsets[1].get(vis / 16.f) * mod.second; break;
-                case MeshMod::OFFSET_Z:
-                    vis.z += blockOffsets[2].get(vis / 16.f) * mod.second; break;
+                case MeshMod::OFFSET_X: vis.x += blockOffsets[0].get(vis / 16.f) * mod.second; break;
+                case MeshMod::OFFSET_Y: vis.y += blockOffsets[1].get(vis / 16.f) * mod.second; break;
+                case MeshMod::OFFSET_Z: vis.z += blockOffsets[2].get(vis / 16.f) * mod.second; break;
             }
         }
 
-        glm::ivec3 pos {};
-        pos = { off.x - 1, off.y, off.z };
-        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(Dir::XNEG)], biomeTint, getLightAt(pos));
+        glm::ivec3 pos = { off.x - 1, off.y, off.z };
+        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(EVec::XNEG)], biomeTint, getLightAt(pos));
         pos = { off.x + 1, off.y, off.z };
-        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(Dir::XPOS)], biomeTint, getLightAt(pos));
+        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(EVec::XPOS)], biomeTint, getLightAt(pos));
         pos = { off.x, off.y - 1, off.z };
-        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(Dir::YNEG)], biomeTint, getLightAt(pos));
+        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(EVec::YNEG)], biomeTint, getLightAt(pos));
         pos = { off.x, off.y + 1, off.z };
-        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(Dir::YPOS)], biomeTint, getLightAt(pos));
+        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(EVec::YPOS)], biomeTint, getLightAt(pos));
         pos = { off.x, off.y, off.z - 1 };
-        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(Dir::ZNEG)], biomeTint, getLightAt(pos));
+        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(EVec::ZNEG)], biomeTint, getLightAt(pos));
         pos = { off.x, off.y, off.z + 1 };
-        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(Dir::ZPOS)], biomeTint, getLightAt(pos));
+        if (!getBlockAt(pos).culls) addFaces(vis, model.parts[static_cast<int>(EVec::ZPOS)], biomeTint, getLightAt(pos));
 
-        addFaces(vis, model.parts[static_cast<int>(Dir::NO_CULL)], biomeTint, getLightAt(vis));
+        addFaces(vis, model.parts[static_cast<int>(EVec::NO_CULL)], biomeTint, getLightAt(vis));
     }
 
     meshDetails->vertices.shrink_to_fit();
     meshDetails->indices.shrink_to_fit();
+
+    t.printElapsedMs();
 }
 
 BlockDef& ChunkMeshGenerator::getBlockAt(const glm::ivec3& pos) {
-    if (pos.x == -1) return defs.blockFromId(adjacent[0]->getBlock(pos + glm::ivec3 {16, 0, 0}));
-    if (pos.x == 16) return defs.blockFromId(adjacent[1]->getBlock(pos - glm::ivec3 {16, 0, 0}));
+    glm::ivec3 dir = {(pos.x < 0 ? -1 : pos.x > 15 ? 1 : 0),
+        (pos.y < 0 ? -1 : pos.y > 15 ? 1 : 0), (pos.z < 0 ? -1 : pos.z > 15 ? 1 : 0)};
 
-    if (pos.y == -1) return defs.blockFromId(adjacent[2]->getBlock(pos + glm::ivec3 {0, 16, 0}));
-    if (pos.y == 16) return defs.blockFromId(adjacent[3]->getBlock(pos - glm::ivec3 {0, 16, 0}));
+    if (dir != glm::ivec3 {0, 0, 0}) {
+        unsigned int ind = static_cast<unsigned int>(Vec::TO_ENUM.at(dir));
+        auto& chunk = adjacent[ind];
+        return defs.blockFromId(chunk->getBlock(Space::Block::index(pos - dir * 16)));
+    }
 
-    if (pos.z == -1) return defs.blockFromId(adjacent[4]->getBlock(pos + glm::ivec3 {0, 0, 16}));
-    if (pos.z == 16) return defs.blockFromId(adjacent[5]->getBlock(pos - glm::ivec3 {0, 0, 16}));
-
-    return defs.blockFromId(chunk->getBlock(pos));
+    return defs.blockFromId(eBlocks[Space::Block::index(pos)]);
 }
 
 glm::vec4 ChunkMeshGenerator::getLightAt(const glm::ivec3& pos) {
-    if (pos.x == -1) return adjacent[0]->getLight(Space::Block::index(pos + glm::ivec3 {16, 0, 0}));
-    if (pos.x == 16) return adjacent[1]->getLight(Space::Block::index(pos - glm::ivec3 {16, 0, 0}));
+    glm::ivec3 dir = {(pos.x < 0 ? -1 : pos.x > 15 ? 1 : 0),
+         (pos.y < 0 ? -1 : pos.y > 15 ? 1 : 0), (pos.z < 0 ? -1 : pos.z > 15 ? 1 : 0)};
 
-    if (pos.y == -1) return adjacent[2]->getLight(Space::Block::index(pos + glm::ivec3 {0, 16, 0}));
-    if (pos.y == 16) return adjacent[3]->getLight(Space::Block::index(pos - glm::ivec3 {0, 16, 0}));
-
-    if (pos.z == -1) return adjacent[4]->getLight(Space::Block::index(pos + glm::ivec3 {0, 0, 16}));
-    if (pos.z == 16) return adjacent[5]->getLight(Space::Block::index(pos - glm::ivec3 {0, 0, 16}));
+    if (dir != glm::ivec3 {0, 0, 0}) {
+        unsigned int ind = static_cast<unsigned int>(Vec::TO_ENUM.at(dir));
+        auto& chunk = adjacent[ind];
+        return chunk->getLight(Space::Block::index(pos - dir * 16));
+    }
 
     return chunk->getLight(Space::Block::index(pos));
 }

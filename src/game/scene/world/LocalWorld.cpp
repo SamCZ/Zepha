@@ -41,7 +41,7 @@ void LocalWorld::update(double delta) {
     if (end != particles.begin()) particles.erase(particles.begin(), end + 1);
 }
 
-void LocalWorld::loadChunkPacket(std::unique_ptr<PacketView> p) {
+void LocalWorld::loadWorldPacket(std::unique_ptr<PacketView> p) {
     worldGenStream->queuePacket(std::move(p));
 }
 
@@ -166,9 +166,6 @@ void LocalWorld::updateBlockDamages(double delta) {
 void LocalWorld::finishChunks() {
     auto finishedChunks = worldGenStream->update();
 
-    lastGenUpdates = 0;
-    for (const auto &chunk : *finishedChunks) {
-        commitChunk(chunk);
-        lastGenUpdates++;
-    }
+    mapBlocksInterpolated = finishedChunks->size() / 64;
+    for (const auto &chunk : *finishedChunks) commitChunk(chunk);
 }

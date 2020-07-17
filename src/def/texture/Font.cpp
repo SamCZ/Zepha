@@ -18,7 +18,7 @@ Font::Font(TextureAtlas& atlas, std::shared_ptr<AtlasRef> tex) :
 
 unsigned int Font::getCharWidth(char c) {
     unsigned int index = static_cast<unsigned int>(c) - 32;
-    if (index >= amountOfChars) throw "Invalid char index.";
+    if (index >= amountOfChars) throw std::runtime_error("Invalid char index.");
     return charWidths[index];
 }
 
@@ -57,7 +57,7 @@ void Font::getCharWidths(TextureAtlas &atlas) {
 
 glm::vec4 Font::getCharUVs(char c) {
     unsigned int index = static_cast<unsigned int>(c) - 32;
-    if (index >= amountOfChars) throw "Invalid char index.";
+    if (index >= amountOfChars) throw std::runtime_error("Invalid char index.");
 
     glm::vec2 charPos = {(index % 18) * charWidth, std::floor(index / 18) * charHeight};
     glm::vec4 uv = {

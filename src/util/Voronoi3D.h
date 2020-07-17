@@ -15,7 +15,7 @@ public:
     void setPoints(const std::vector<glm::vec3>& points);
     unsigned short getPoint(unsigned short x, unsigned short y, unsigned short z);
 
-    void setColorValues(const std::vector<glm::vec3>& values);
+//    void setColorValues(const std::vector<glm::vec3>& values);
 //    void generateImage(unsigned short depth);
 private:
     typedef std::vector<std::vector<std::vector<unsigned short>>> voronoi_data;
@@ -23,5 +23,5 @@ private:
     unsigned short size;
     voronoi_data data;
     std::vector<glm::vec3> points;
-    std::vector<glm::vec3> colorValues;
+//    std::vector<glm::vec3> colorValues;
 };

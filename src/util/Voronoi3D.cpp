@@ -48,9 +48,9 @@ unsigned short Voronoi3D::getPoint(unsigned short x, unsigned short y, unsigned 
     return data[x][y][z];
 }
 
-void Voronoi3D::setColorValues(const std::vector<glm::vec3>& values) {
-    colorValues = values;
-}
+//void Voronoi3D::setColorValues(const std::vector<glm::vec3>& values) {
+//    colorValues = values;
+//}
 
 //void Voronoi3D::generateImage(unsigned short depth) {
 //    auto colorData = new unsigned char[size * size * 3];

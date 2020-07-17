@@ -77,7 +77,7 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
             unsigned char lightLevel = node.chunk->getLight(node.index, channel);
             glm::ivec3 worldPos = node.chunk->pos * 16 + Space::Block::fromIndex(node.index);
 
-            for (const auto& i : Vec::adj) {
+            for (const auto& i : Vec::TO_VEC) {
                 glm::ivec3 check = worldPos + i;
                 unsigned int ind = Space::Block::index(check);
                 Chunk* chunk;
@@ -116,7 +116,7 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
             LightRemoveNode& node = lightRemoveQueue[channel].front();
             glm::ivec3 worldPos = node.chunk->pos * 16 + Space::Block::fromIndex(node.index);
 
-            for (const auto& i : Vec::adj) {
+            for (const auto& i : Vec::TO_VEC) {
                 glm::ivec3 check = worldPos + i;
                 unsigned int ind = Space::Block::index(check);
                 Chunk* chunk;
