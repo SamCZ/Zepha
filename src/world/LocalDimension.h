@@ -55,7 +55,6 @@ private:
     typedef std::list<std::shared_ptr<ServerLocalLuaEntity>>::iterator server_ent_ref;
 
     void finishMeshes();
-    void queueMeshes();
 
     void attemptMeshChunk(const std::shared_ptr<Chunk>& chunk, bool updateAdjacents = true);
     bool getAdjacentExists(glm::vec3 pos, bool updateAdjacents);
@@ -63,7 +62,6 @@ private:
     ClientGame& game;
 
     std::shared_ptr<MeshGenStream> meshGenStream;
-    std::vector<glm::vec3> pendingMesh {};
 
     std::unordered_map<unsigned int, local_ent_ref> localEntityRefs {};
     std::list<std::shared_ptr<LocalLuaEntity>> localEntities {};

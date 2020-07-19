@@ -49,8 +49,8 @@ private:
     unsigned int generatedMapBlocks = 0;
     std::vector<glm::ivec3> generateOrder;
 
-    const glm::ivec2 mapBlockGenRange = {6, 4};
-    const glm::ivec2 sendRange        = {6, 4};
-    const glm::ivec2 activeChunkRange = {24, 24};
+    const glm::ivec2 mapBlockGenRange = {4, 4};
+    const glm::ivec2 sendRange        = {4, 4};
+    const glm::ivec2 activeChunkRange = {16, 16};
 };
 

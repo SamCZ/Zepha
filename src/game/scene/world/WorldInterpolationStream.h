@@ -4,9 +4,8 @@
 
 #pragma once
 
-#include <list>
+#include <queue>
 #include <thread>
-#include <vector>
 #include <memory>
 #include <glm/vec3.hpp>
 #include <unordered_set>
@@ -65,8 +64,8 @@ private:
     };
 
     std::vector<Thread> threads;
-    std::list<std::unique_ptr<PacketView>> queuedPacketTasks;
-    std::unordered_set<glm::vec3, Vec::vec3> queuedInterpMap;
-    std::list<glm::vec3> queuedInterpTasks;
+    std::queue<std::unique_ptr<PacketView>> queuedPacketTasks;
+//    std::unordered_set<glm::vec3, Vec::vec3> queuedInterpMap;
+//    std::queue<glm::vec3> queuedInterpTasks;
 };
 

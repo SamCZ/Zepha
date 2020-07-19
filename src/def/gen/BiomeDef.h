@@ -38,5 +38,5 @@ struct BiomeDef {
 
     std::vector<std::shared_ptr<Schematic>> schematics;
 
-    glm::vec3 biomeTint {};
+    glm::vec3 tint {};
 };

@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include <list>
-#include <vector>
+#include <queue>
 #include <thread>
 #include <glm/vec3.hpp>
 #include <unordered_set>
@@ -57,6 +56,6 @@ private:
     ServerDimension& dimension;
 
     std::vector<Thread> threads;
-    std::list<glm::vec3> queuedTasks;
+    std::queue<glm::vec3> queuedTasks;
     std::unordered_set<glm::vec3, Vec::vec3> queuedMap;
 };

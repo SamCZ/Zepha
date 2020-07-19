@@ -4,23 +4,42 @@
 
 #pragma once
 
+#include <iostream>
 #include <vector>
 #include <type_traits>
 
 struct RIE {
-    template<typename T, typename = typename std::enable_if<std::is_integral<T>::value>::type> static T read(
-            const unsigned int ind, const std::vector<T>& data, const unsigned int dataLen) {
+    template<typename T, typename = typename std::enable_if<std::is_integral<T>::value>::type>
+    static T read(const unsigned int ind, const std::vector<T>& data, const unsigned int dataLen) {
 
         if (ind >= dataLen) return 0;
-        for (unsigned int i = 0; i < data.size(); i += 2) {
+
+        unsigned int guess =
+            (ind < dataLen / 4)   ? 0 :
+            (ind < dataLen / 2)   ? data.size() / 5 :
+            (ind < dataLen * 3/4) ? data.size() / 4 :
+                                    data.size() / 3 ;
+
+        unsigned int atGuess = data[guess * 2];
+        if (ind < atGuess) {
+            unsigned short tries = 0;
+            while (tries++ < 3) {
+                guess /= 2;
+                atGuess = data[guess * 2];
+                if (ind > atGuess) break;
+            }
+            if (ind < atGuess) guess = 0;
+        }
+
+        for (unsigned int i = guess * 2; i < data.size(); i += 2) {
             if (data[i] > ind) return data[i - 1];
         }
 
         return data[data.size() - 1];
     }
 
-    template<typename T, typename = typename std::enable_if<std::is_integral<T>::value>::type> static bool write(
-            const unsigned int ind, const T val, std::vector<T>& data, const unsigned int dataLen) {
+    template<typename T, typename = typename std::enable_if<std::is_integral<T>::value>::type>
+    static bool write(const unsigned int ind, const T val, std::vector<T>& data, const unsigned int dataLen) {
 
         // Automatically keep the vectors in sane ranges
         if (data.capacity() < data.size() + 8) data.reserve(data.size() + 50);
@@ -130,7 +149,7 @@ struct RIE {
     }
 
     template<typename T, int L, typename = typename std::enable_if<std::is_integral<T>::value>::type>
-        static void expand(const std::vector<T>& rie, std::array<T, L>& expand) {
+    static void expand(const std::vector<T>& rie, std::array<T, L>& expand) {
 
         unsigned int rieI = 0;
         unsigned int i = 0;
@@ -141,5 +160,24 @@ struct RIE {
             while (i < nI) expand[i++] = value;
             rieI++;
         }
+    }
+
+    template<typename T, int L, typename = typename std::enable_if<std::is_integral<T>::value>::type>
+    static void encode(const std::array<T, L>& array, std::vector<T>& out) {
+        T len = 1;
+        T block = array[0];
+
+        for (unsigned int i = 1; i < array.size(); i++) {
+            T newBlock = array[i];
+            if (newBlock != block) {
+                out.push_back(len);
+                out.push_back(block);
+                block = newBlock;
+                len = 0;
+            }
+            len++;
+        }
+        out.push_back(len);
+        out.push_back(block);
     }
 };

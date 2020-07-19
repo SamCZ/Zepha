@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <list>
+#include <queue>
 #include <thread>
 #include <unordered_set>
 
@@ -51,6 +51,6 @@ private:
     };
 
     std::vector<Thread> threads;
-    std::list<glm::vec3> queuedTasks;
+    std::queue<glm::vec3> queuedTasks;
     std::unordered_set<glm::vec3, Vec::vec3> queuedMap;
 };

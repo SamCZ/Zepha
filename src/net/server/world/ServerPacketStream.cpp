@@ -16,7 +16,7 @@ ServerPacketStream::ServerPacketStream(ServerDimension& dimension) : dimension(d
 
 bool ServerPacketStream::queue(glm::ivec3 pos) {
     if (!queuedMap.count(pos)) {
-        queuedTasks.push_back(pos);
+        queuedTasks.push(pos);
         queuedMap.insert(pos);
         return true;
     }
@@ -41,10 +41,9 @@ std::unique_ptr<std::vector<std::unique_ptr<ServerPacketStream::FinishedJob>>> S
             }
 
             if (!queuedTasks.empty()) {
-                auto it = queuedTasks.begin();
-                glm::vec3 pos = *it;
-                queuedTasks.erase(it);
+                auto pos = queuedTasks.front();
                 queuedMap.erase(pos);
+                queuedTasks.pop();
 
                 auto mapBlock = dimension.getMapBlock(pos);
                 if (!mapBlock) continue;

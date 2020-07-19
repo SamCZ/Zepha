@@ -14,7 +14,7 @@ ServerGenStream::ServerGenStream(unsigned int seed, ServerGame& game) {
 
 bool ServerGenStream::queue(glm::vec3 pos) {
     if (!queuedMap.count(pos)) {
-        queuedTasks.push_back(pos);
+        queuedTasks.push(pos);
         queuedMap.insert(pos);
         return true;
     }
@@ -36,13 +36,13 @@ std::unique_ptr<std::vector<ServerGenStream::FinishedBlockJob>> ServerGenStream:
             }
 
             if (!queuedTasks.empty()) {
-                auto it = queuedTasks.begin();
-                glm::vec3 pos = *it;
-                queuedTasks.erase(it);
+                auto pos = queuedTasks.front();
                 queuedMap.erase(pos);
+                queuedTasks.pop();
 
                 j.pos = pos;
                 j.locked = true;
+
             }
         }
     }

@@ -40,9 +40,15 @@ ChunkMeshGenerator::ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefin
     RIE::expand<unsigned int, 4096>(chunk->cGetBlocks(), eBlocks);
     RIE::expand<unsigned short, 4096>(chunk->cGetBiomes(), eBiomes);
 
+    BlockDef* block = nullptr;
+    BiomeDef* biome = nullptr;
+
     for (unsigned short i = 0; i < 4096; i++) {
-        BlockModel& model = defs.blockFromId(eBlocks[i]).model;
-        glm::vec3 biomeTint = biomes.biomeFromId(eBiomes[i]).biomeTint;
+        if (!block || block->index != eBlocks[i]) block = &defs.blockFromId(eBlocks[i]);
+        if (!biome || biome->index != eBiomes[i]) biome = &biomes.biomeFromId(eBiomes[i]);
+
+        BlockModel& model = block->model;
+        glm::vec3 biomeTint = biome->tint;
 
         if (!model.visible) continue;
 
@@ -77,7 +83,7 @@ ChunkMeshGenerator::ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefin
     meshDetails->vertices.shrink_to_fit();
     meshDetails->indices.shrink_to_fit();
 
-    t.printElapsedMs();
+//    t.printElapsedMs();
 }
 
 BlockDef& ChunkMeshGenerator::getBlockAt(const glm::ivec3& pos) {

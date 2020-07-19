@@ -14,8 +14,6 @@ MeshGenStream::MeshGenStream(ClientGame& game, LocalDimension &dimension) :
     dimension(dimension),
     noiseSampler({NoiseSample {16}, NoiseSample {16}, NoiseSample {16}}) {
 
-    queuedTasks.reserve(static_cast<unsigned long>(TOTAL_QUEUE_SIZE));
-
     noise::module::Perlin offsetBaseNoise;
     offsetBaseNoise.SetFrequency(8);
     offsetBaseNoise.SetOctaveCount(3);
@@ -39,34 +37,35 @@ std::vector<ChunkMeshDetails*> MeshGenStream::update() {
 
     for (unsigned int i = 0; i < THREAD_QUEUE_SIZE; i++) {
         for (Thread& t : threads) {
-            auto& u = t.jobs[i];
-            if (u.busy) continue;
+            auto& j = t.jobs[i];
+            if (j.busy) continue;
 
-            if (u.thisChunk) {
-                u.thisChunk = nullptr;
-                finishedChunks.push_back(u.meshDetails);
-                u.meshDetails = new ChunkMeshDetails();
+            if (j.thisChunk) {
+                j.thisChunk = nullptr;
+                finishedChunks.push_back(j.meshDetails);
+                j.meshDetails = new ChunkMeshDetails();
             }
 
             if (!queuedTasks.empty()) {
-                glm::ivec3 pos = *queuedTasks.begin();
-                queuedTasks.erase(queuedTasks.begin());
+                auto pos = queuedTasks.front();
                 queuedMap.erase(pos);
+                queuedTasks.pop();
 
-                u.meshDetails->pos = pos;
                 std::shared_ptr<Chunk> chunk = dimension.getChunk(pos);
                 if (chunk == nullptr) goto breakAddTask;
 
-                u.thisChunk = std::shared_ptr<Chunk>(chunk);
+                j.meshDetails->pos = pos;
+                j.thisChunk = std::shared_ptr<Chunk>(chunk);
 
                 int ind = 0;
                 for (const glm::ivec3& dir : Vec::TO_VEC) {
                     std::shared_ptr<Chunk> adjacent = dimension.getChunk(pos + dir);
-                    u.adjacentChunks[ind++] = std::shared_ptr<Chunk>(adjacent);
+                    j.adjacentChunks[ind++] = std::shared_ptr<Chunk>(adjacent);
                     if (adjacent == nullptr) goto breakAddTask;
                 }
 
-                u.busy = true;
+                j.busy = true;
+
             }
 
             breakAddTask:;
@@ -76,47 +75,31 @@ std::vector<ChunkMeshDetails*> MeshGenStream::update() {
     return std::move(finishedChunks);
 }
 
-MeshGenStream::Unit::Unit() {
-    meshDetails = new ChunkMeshDetails();
-}
-
 MeshGenStream::Thread::Thread(ClientGame &defs, std::array<NoiseSample, 3>& offsetSamplers) :
     game(defs), offsetSamplers(offsetSamplers), thread(std::bind(&MeshGenStream::Thread::exec, this)) {}
 
 void MeshGenStream::Thread::exec() {
     while (keepAlive) {
-        bool hasNoTasks = true;
+        bool empty = true;
 
         for (auto i = 0; i < jobs.size(); i++) {
             auto& u = jobs[i];
             if (!u.busy) continue;
 
             ChunkMeshGenerator m(u.meshDetails, game.defs, game.biomes, u.thisChunk, u.adjacentChunks, offsetSamplers);
-            hasNoTasks = false;
+            empty = false;
             u.busy = false;
         }
 
-         if (hasNoTasks) std::this_thread::sleep_for(std::chrono::milliseconds(1));
+         if (empty) std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 
-bool MeshGenStream::spaceInQueue() {
-    return queuedTasks.size() < TOTAL_QUEUE_SIZE;
-}
-
-bool MeshGenStream::isQueued(glm::ivec3 pos) {
-    return static_cast<bool>(queuedMap.count(pos));
-}
-
-bool MeshGenStream::tryToQueue(glm::ivec3 pos) {
-    unsigned long sizeOfQueue = queuedTasks.size();
-
-    if (sizeOfQueue < TOTAL_QUEUE_SIZE && !queuedMap.count(pos)) {
-        queuedTasks.push_back(pos);
+void MeshGenStream::queue(glm::ivec3 pos) {
+    if (!queuedMap.count(pos)) {
+        queuedTasks.push(pos);
         queuedMap.insert(pos);
     }
-
-    return sizeOfQueue + 1 < TOTAL_QUEUE_SIZE;
 }
 
 MeshGenStream::~MeshGenStream() {

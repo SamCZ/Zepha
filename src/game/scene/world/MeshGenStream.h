@@ -4,45 +4,39 @@
 
 #pragma once
 
+#include <queue>
 #include <thread>
 #include <glm/vec3.hpp>
 #include <unordered_set>
 
+#include "ChunkMeshDetails.h"
 #include "../../../util/Vec.h"
 #include "../../../def/gen/NoiseSample.h"
 
 class Chunk;
 class ClientGame;
-class ChunkMeshDetails;
 
 class LocalDimension;
 
 class MeshGenStream {
 public:
     static const int THREADS = 4;
-    static const int THREAD_QUEUE_SIZE = 16;
-    static const int TOTAL_QUEUE_SIZE = THREADS * THREAD_QUEUE_SIZE;
+    static const int THREAD_QUEUE_SIZE = 32;
 
     explicit MeshGenStream(ClientGame& game, LocalDimension& dimension);
     ~MeshGenStream();
 
-    bool spaceInQueue();
-    bool isQueued(glm::ivec3 pos);
-    //Attempt to add `pos` to the pre-thread queue.
-    //Will return a boolean stating if there is more space left in the queue.
-    bool tryToQueue(glm::ivec3 pos);
+    void queue(glm::ivec3 pos);
 
     //Will return a vector of MeshDetails pointers containing finished meshes.
     //Frees up the threads and starts new tasks.
     std::vector<ChunkMeshDetails*> update();
 
-    struct Unit {
-        Unit();
-
+    struct Job {
         std::shared_ptr<Chunk> thisChunk = nullptr;
         std::array<std::shared_ptr<Chunk>, 6> adjacentChunks {};
 
-        ChunkMeshDetails* meshDetails;
+        ChunkMeshDetails* meshDetails = new ChunkMeshDetails();
 
         bool busy = false;
     };
@@ -53,7 +47,7 @@ public:
 
         ClientGame &game;
         std::array<NoiseSample, 3>& offsetSamplers;
-        std::vector<Unit> jobs = std::vector<Unit>(THREAD_QUEUE_SIZE);
+        std::vector<Job> jobs = std::vector<Job>(THREAD_QUEUE_SIZE);
 
         bool keepAlive = true;
         std::thread thread {};
@@ -66,7 +60,7 @@ private:
     ClientGame& game;
 
     std::array<NoiseSample, 3> noiseSampler;
-    std::vector<glm::ivec3> queuedTasks;
+    std::queue<glm::ivec3> queuedTasks;
     std::unordered_set<glm::vec3, Vec::vec3> queuedMap;
 };
 

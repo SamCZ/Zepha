@@ -21,7 +21,6 @@ LocalDimension::LocalDimension(ClientGame &game) : Dimension(game.defs),
 
 void LocalDimension::update(double delta, glm::vec3 playerPos) {
     finishMeshes();
-    queueMeshes();
 
     for (auto& entity : localEntities ) entity->entity->update(delta);
     for (auto& entity : serverEntities) entity->entity->update(delta);
@@ -74,23 +73,6 @@ void LocalDimension::finishMeshes() {
         else removeMeshChunk(meshDetails->pos);
 
         delete meshDetails;
-    }
-}
-
-void LocalDimension::queueMeshes() {
-    if (meshGenStream->spaceInQueue()) {
-        bool moreSpace = true;
-
-        while (moreSpace && !pendingMesh.empty()) {
-            auto it = pendingMesh.begin();
-            glm::vec3 pos = *it;
-
-            if (!meshGenStream->isQueued(pos)) {
-                moreSpace = meshGenStream->tryToQueue(pos);
-            }
-
-            pendingMesh.erase(it);
-        }
     }
 }
 
@@ -231,7 +213,7 @@ void LocalDimension::attemptMeshChunk(const std::shared_ptr<Chunk>& chunk, bool 
     if (!chunk->shouldRender) removeMeshChunk(chunk->pos);
 
 
-    pendingMesh.push_back(chunk->pos);
+    meshGenStream->queue(chunk->pos);
     chunk->dirty = false;
 }
 

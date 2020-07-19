@@ -14,7 +14,7 @@ WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, ClientGame
 }
 
 void WorldInterpolationStream::queuePacket(std::unique_ptr<PacketView> p) {
-    queuedPacketTasks.push_back(std::move(p));
+    queuedPacketTasks.push(std::move(p));
 }
 
 //bool WorldInterpolationStream::queuePosition(glm::vec3 pos){
@@ -47,13 +47,13 @@ std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> WorldInterpolationStream::u
 //            }
 
             if (!queuedPacketTasks.empty()) {
-                auto it = queuedPacketTasks.begin();
-                auto packet = std::move(*it);
-                queuedPacketTasks.erase(it);
+                auto packet = std::move(queuedPacketTasks.front());
+                queuedPacketTasks.pop();
 
 //                j.job = JobType::PACKET;
                 j.packet = std::move(packet);
                 j.locked = true;
+
             }
 //            else if (!queuedInterpTasks.empty()) {
 //                auto it = queuedInterpTasks.begin();

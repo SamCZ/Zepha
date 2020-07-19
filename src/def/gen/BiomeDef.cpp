@@ -11,20 +11,20 @@ BiomeDef::BiomeDef(
     const std::vector<std::shared_ptr<Schematic>> schematics,
     glm::vec3 biomeTint) :
 
-    identifier(identifier),
-    index(index),
+        identifier(identifier),
+        index(index),
 
-    temperature(temperature),
-    humidity(humidity),
-    roughness(roughness),
+        temperature(temperature),
+        humidity(humidity),
+        roughness(roughness),
 
-    topBlock(topBlock),
-    soilBlock(soilBlock),
-    rockBlock(rockBlock),
+        topBlock(topBlock),
+        soilBlock(soilBlock),
+        rockBlock(rockBlock),
 
-    heightmap(heightmap),
-    volume(volume),
+        heightmap(heightmap),
+        volume(volume),
 
-    schematics(schematics),
+        schematics(schematics),
 
-    biomeTint(biomeTint) {}
+        tint(biomeTint) {}

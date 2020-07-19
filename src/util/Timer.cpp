@@ -21,13 +21,13 @@ long Timer::elapsedNs() const {
 };
 
 void Timer::printElapsedNs() {
-    std::cout << this->name << " took " << elapsedNs() << " ns.";
+    std::cout << this->name << " took " << elapsedNs() << " ns." << std::endl;;
 }
 
 void Timer::printElapsedMs() {
-    std::cout << this->name << " took " << (elapsedNs() / 1000000.) << " ms.";
+    std::cout << this->name << " took " << (elapsedNs() / 1000000.) << " ms." << std::endl;;
 }
 
 void Timer::printElapsedSeconds() {
-    std::cout << this->name << " took " << (elapsedNs() / 1000000. / 1000.) << " secs.";
+    std::cout << this->name << " took " << (elapsedNs() / 1000000. / 1000.) << " secs." << std::endl;
 }
