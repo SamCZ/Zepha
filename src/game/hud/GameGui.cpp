@@ -18,7 +18,7 @@ GameGui::GameGui(LocalInventoryRefs& refs, glm::vec2 bufferSize, ClientGame& def
     hudRoot->add(hudLuaRoot);
     menuRoot->add(menuLuaRoot);
 
-    handList->create({3, 3}, {}, {}, refs.getHand(), refs.getHand(), defs);
+    handList->create({3, 3}, {}, {}, refs.getCursorList(), refs.getCursorList(), defs);
     menuRoot->add(handList);
 }
 

@@ -6,12 +6,9 @@
 
 #include "LocalLuaPlayer.h"
 
-#include "../../LuaParser.h"
+#include "LuaItemStack.h"
+#include "LocalLuaInventoryList.h"
 #include "../../../game/scene/world/Player.h"
-
-void LocalLuaPlayer::set_pos(const sol::table &pos) {
-    player.setPos({pos[1], pos[2], pos[3]});
-}
 
 sol::table LocalLuaPlayer::get_pos(sol::this_state s) {
     glm::vec3 pos = player.getPos();
@@ -23,8 +20,8 @@ sol::table LocalLuaPlayer::get_block_pos(sol::this_state s) {
     return LuaParser::luaVec(sol::state_view(s), pos);
 }
 
-void LocalLuaPlayer::set_vel(const sol::table &vel) {
-    player.setVel({vel[1], vel[2], vel[3]});
+void LocalLuaPlayer::set_pos(const sol::table &pos) {
+    player.setPos({pos[1], pos[2], pos[3]}, true);
 }
 
 sol::table LocalLuaPlayer::get_vel(sol::this_state s) {
@@ -32,20 +29,24 @@ sol::table LocalLuaPlayer::get_vel(sol::this_state s) {
     return LuaParser::luaVec(sol::state_view(s), vel);
 }
 
-void LocalLuaPlayer::set_look_yaw(float rot) {
-    player.setYaw(rot);
+void LocalLuaPlayer::set_vel(const sol::table &vel) {
+    player.setVel({vel[1], vel[2], vel[3]}, true);
 }
 
 float LocalLuaPlayer::get_look_yaw() {
     return player.getYaw();
 }
 
-void LocalLuaPlayer::set_look_pitch(float rot) {
-    player.setPitch(rot);
+void LocalLuaPlayer::set_look_yaw(float rot) {
+    player.setYaw(rot, true);
 }
 
 float LocalLuaPlayer::get_look_pitch() {
     return player.getPitch();
+}
+
+void LocalLuaPlayer::set_look_pitch(float rot) {
+    player.setPitch(rot, true);
 }
 
 bool LocalLuaPlayer::is_in_menu() {
@@ -56,6 +57,10 @@ void LocalLuaPlayer::show_menu(std::shared_ptr<LuaGuiElement> root) {
     player.showMenu(root);
 }
 
+void LocalLuaPlayer::close_menu() {
+    player.closeMenu();
+}
+
 std::shared_ptr<LuaGuiElement> LocalLuaPlayer::get_hud() {
     return player.getHud();
 }
@@ -64,16 +69,47 @@ void LocalLuaPlayer::set_hud(std::shared_ptr<LuaGuiElement> hud) {
     player.setHud(hud);
 }
 
-void LocalLuaPlayer::close_menu() {
-    player.closeMenu();
-}
-
 LocalLuaInventory LocalLuaPlayer::get_inventory() {
     return LocalLuaInventory(player.getInventory());
 }
 
-void LocalLuaPlayer::set_selected_block(std::string block) {
-    player.setActiveBlock(block);
+sol::object LocalLuaPlayer::get_hand_list(sol::this_state s) {
+    auto list = player.getHandList();
+    if (!list) return sol::nil;
+    return sol::make_object<LocalLuaInventoryList>(s, LocalLuaInventoryList(*list));
+}
+
+sol::object LocalLuaPlayer::get_hand_stack(sol::this_state s) {
+    auto list = player.getHandList();
+    if (!list) return sol::nil;
+    return sol::make_object<LuaItemStack>(s, LocalLuaInventoryList(*list).get_stack(1));
+}
+
+sol::object LocalLuaPlayer::get_wield_list(sol::this_state s) {
+    auto list = player.getWieldList();
+    if (!list) return sol::nil;
+    return sol::make_object<LocalLuaInventoryList>(s, LocalLuaInventoryList(*list));
+}
+
+void LocalLuaPlayer::set_wield_list(sol::optional<sol::object> list) {
+    if (!list) player.setWieldList("");
+    else if (list->is<std::string>()) player.setWieldList(list->as<std::string>());
+    else if (list->is<LocalLuaInventoryList>()) player.setWieldList(list->as<LocalLuaInventoryList>().get_name());
+    else throw "Attempted to set wield list to nil.";
+}
+
+unsigned int LocalLuaPlayer::get_wield_index() {
+    return player.getWieldIndex() + 1;
+}
+
+void LocalLuaPlayer::set_wield_index(unsigned int index) {
+    player.setWieldIndex(index - 1);
+}
+
+sol::object LocalLuaPlayer::get_wield_stack(sol::this_state s) {
+    auto list = player.getWieldList();
+    if (!list) return sol::nil;
+    return sol::make_object<LuaItemStack>(s, LocalLuaInventoryList(*list).get_stack(player.getWieldIndex() + 1));
 }
 
 void LocalLuaPlayer::set_flying(bool shouldFly) {

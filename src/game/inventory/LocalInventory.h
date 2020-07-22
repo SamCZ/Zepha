@@ -20,9 +20,11 @@ public:
         inv_callback_fn primaryCallback, inv_callback_fn secondaryCallback) :
         defs(defs), name(name), primaryCallback(primaryCallback), secondaryCallback(secondaryCallback) {};
 
-    void createList(std::string name, unsigned short length, unsigned short width, bool maintain = false);
+    void createList(const std::string& name, unsigned short length, unsigned short width, bool persistant = false);
+    void removeList(const std::string& name);
     std::shared_ptr<LocalInventoryList> operator[](std::string name);
 
+    void setPersistant(const std::string& list, bool persistant);
     bool pruneLists(ClientNetworkInterpreter& net, double time);
 
     DefinitionAtlas& defs;

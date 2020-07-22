@@ -23,9 +23,9 @@ enum class Callback {
     AFTER_BREAK,
     AFTER_BREAK_CLIENT,
 
-//    INTERACT,
-//    INTERACT_CLIENT,
-//
-//    HIT,
-//    HIT_CLIENT
+    INTERACT,
+    INTERACT_CLIENT,
+
+    HIT,
+    HIT_CLIENT
 };

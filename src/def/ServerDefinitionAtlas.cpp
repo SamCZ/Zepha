@@ -7,15 +7,28 @@
 #include "item/BlockDef.h"
 
 ServerDefinitionAtlas::ServerDefinitionAtlas() {
-
     //Invalid Node
     BlockModel invalidModel = BlockModel::createCube({}, {}, {});
-    BlockDef* invalid = new BlockDef("invalid", "Invalid (you broke the game!)", 1, invalidModel, invalidModel, true, {}, false, {{}}, {{}}, INVALID);
+    BlockDef* invalid = new BlockDef();
+    invalid->identifier = "invalid";
+    invalid->name = "INVALID";
+    invalid->maxStackSize = 64;
+    invalid->model = invalidModel;
+    invalid->farModel = invalidModel;
+    invalid->sBoxes = {{{0, 0, 0}, {1, 1, 1}}};
+    invalid->cBoxes = {{{0, 0, 0}, {1, 1, 1}}};
     registerDef(invalid);
 
     //Air Node
     BlockModel nullModel {};
-    BlockDef* air = new BlockDef("air", "Air (you broke the game!)", 1, nullModel, nullModel, false, {}, true, {}, {}, AIR);
+    BlockDef* air = new BlockDef();
+    air->identifier = "air";
+    air->name = "Air";
+    air->maxStackSize = 64;
+    air->model = nullModel;
+    air->farModel = nullModel;
+    air->solid = false;
+    air->culls = false;
     registerDef(air);
 }
 

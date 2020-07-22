@@ -17,29 +17,37 @@ public:
 
     Player& player;
 
-    void set_pos(const sol::table& pos);
     sol::table get_pos(sol::this_state s);
     sol::table get_block_pos(sol::this_state s);
+    void set_pos(const sol::table& pos);
 
-    void set_vel(const sol::table& vel);
     sol::table get_vel(sol::this_state s);
+    void set_vel(const sol::table& vel);
 
-    void set_look_yaw(float rot);
     float get_look_yaw();
+    void set_look_yaw(float rot);
 
-    void set_look_pitch(float rot);
     float get_look_pitch();
+    void set_look_pitch(float rot);
 
+    bool is_in_menu();
     void show_menu(std::shared_ptr<LuaGuiElement> root);
     void close_menu();
-    bool is_in_menu();
 
-    void set_hud(std::shared_ptr<LuaGuiElement> hud);
     std::shared_ptr<LuaGuiElement> get_hud();
+    void set_hud(std::shared_ptr<LuaGuiElement> hud);
 
     LocalLuaInventory get_inventory();
 
-    void set_selected_block(std::string block);
+    sol::object get_hand_list(sol::this_state s);
+    sol::object get_hand_stack(sol::this_state s);
+
+    sol::object get_wield_list(sol::this_state s);
+    sol::object get_wield_stack(sol::this_state s);
+    void set_wield_list(sol::optional<sol::object> list);
+
+    unsigned int get_wield_index();
+    void set_wield_index(unsigned int index);
 
     void set_flying(bool shouldFly);
     bool get_flying();
@@ -48,18 +56,26 @@ public:
 namespace ClientApi {
     static void local_player(sol::state& lua) {
         lua.new_usertype<LocalLuaPlayer>("LocalPlayer",
-            "set_pos", &LocalLuaPlayer::set_pos,
+            "is_player", sol::property([]() { return true; }),
+
             "get_pos", &LocalLuaPlayer::get_pos,
             "get_block_pos", &LocalLuaPlayer::get_block_pos,
-            "set_vel", &LocalLuaPlayer::set_vel,
+            "set_pos", &LocalLuaPlayer::set_pos,
             "get_vel", &LocalLuaPlayer::get_vel,
-            "set_look_yaw", &LocalLuaPlayer::set_look_yaw,
+            "set_vel", &LocalLuaPlayer::set_vel,
             "get_look_yaw", &LocalLuaPlayer::get_look_yaw,
-            "set_look_pitch", &LocalLuaPlayer::set_look_pitch,
+            "set_look_yaw", &LocalLuaPlayer::set_look_yaw,
             "get_look_pitch", &LocalLuaPlayer::get_look_pitch,
+            "set_look_pitch", &LocalLuaPlayer::set_look_pitch,
 
             "get_inventory", &LocalLuaPlayer::get_inventory,
-            "set_selected_block", &LocalLuaPlayer::set_selected_block,
+            "get_hand_list", &LocalLuaPlayer::get_hand_list,
+            "get_hand_stack", &LocalLuaPlayer::get_hand_stack,
+            "get_wield_list", &LocalLuaPlayer::get_wield_list,
+            "set_wield_list", &LocalLuaPlayer::set_wield_list,
+            "get_wield_index", &LocalLuaPlayer::get_wield_index,
+            "set_wield_index", &LocalLuaPlayer::set_wield_index,
+            "get_wield_stack", &LocalLuaPlayer::get_wield_stack,
 
             "show_menu", &LocalLuaPlayer::show_menu,
             "close_menu", &LocalLuaPlayer::close_menu,

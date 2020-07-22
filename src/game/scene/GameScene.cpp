@@ -23,8 +23,9 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     r.sendTo(state.connection.getPeer(), PacketChannel::CONNECT);
 
     world.init(&player);
-    net.init(&world, std::bind(&LocalInventoryRefs::packetReceived, refs, ph::_1));
-    game.init(world, player, state);
+    net  .init(&world, std::bind(&LocalInventoryRefs::packetReceived, refs, ph::_1));
+    game .init(world, player, state);
+    refs .init();
 
     state.renderer.window.addResizeCallback("gamescene", std::bind(&DebugGui::bufferResized, debugGui, ph::_1));
     state.renderer.setClearColor(148, 194, 240);

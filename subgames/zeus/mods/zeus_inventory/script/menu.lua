@@ -111,14 +111,16 @@ local menu = zepha.build_gui(function()
     }
 end)
 
+inventory.open_inventory = function()
+    if not zepha.player.in_menu then
+        zepha.player:show_menu(menu)
+    else
+        zepha.player:close_menu()
+    end
+end
+
 zepha.register_keybind("zeus:inventory:open_inventory", {
     description = "Open Inventory",
     default = zepha.keys.e,
-    on_press = function()
-        if not zepha.player.in_menu then
-            zepha.player:show_menu(menu)
-        else
-            zepha.player:close_menu()
-        end
-    end
+    on_press = inventory.open_inventory
 })

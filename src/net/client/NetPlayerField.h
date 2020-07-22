@@ -7,6 +7,13 @@
 enum class NetPlayerField {
     ID,
     POSITION,
+    VELOCITY,
     PITCH,
-    YAW
+    YAW,
+
+    FLYING,
+
+    HAND_INV,
+    WIELD_INV,
+    WIELD_INDEX
 };

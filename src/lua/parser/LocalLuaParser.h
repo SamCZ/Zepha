@@ -23,9 +23,10 @@ public:
 
     LocalModHandler& getHandler();
 
-    template<typename... Args> void safe_function(sol::protected_function f, Args... args) const {
+    template<typename... Args> sol::safe_function_result safe_function(sol::protected_function f, Args... args) const {
         auto res = f(args...);
         if (!res.valid()) errorCallback(res);
+        return res;
     }
 private:
     void loadApi(ClientGame& defs, LocalWorld& world, Player& player);

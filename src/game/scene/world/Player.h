@@ -15,6 +15,8 @@ class Input;
 class LuaGuiElement;
 class LocalInventory;
 class LocalInventoryRefs;
+class Deserializer;
+enum class NetPlayerField;
 
 class Player : Collidable, public Drawable {
 public:
@@ -24,67 +26,84 @@ public:
     static constexpr float EYE_HEIGHT = 1.65f;
     static constexpr float BASE_MOVE_SPEED = 4.3f;
     static constexpr float JUMP_VEL = 0.14f;
-    static constexpr float BLOCK_DAMAGE = 0.36f;
-    static constexpr float BLOCK_INTERVAL = 0.02f;
 
     Player(LocalWorld& world, ClientGame& defs, Renderer& renderer, LocalInventoryRefs& refs);
     void update(Input &input, double delta, glm::vec2 mouseDelta);
     ~Player();
 
-    void setPos(glm::vec3 pos);
     glm::vec3 getPos();
+    void setPos(glm::vec3 pos, bool assert = false);
 
-    void setVel(glm::vec3 vel);
     glm::vec3 getVel();
+    void setVel(glm::vec3 vel, bool assert = false);
 
-    void setYaw(float yaw);
     float getYaw();
+    void setYaw(float yaw, bool assert = false);
 
-    void setPitch(float pitch);
     float getPitch();
+    void setPitch(float pitch, bool assert = false);
 
-    void setFlying(bool flying);
     bool isFlying();
+    void setFlying(bool flying, bool assert = false);
 
-    void setActiveBlock(const std::string& block);
+    LocalInventory& getInventory();
 
+    std::shared_ptr<LocalInventoryList> getHandList();
+    void setHandList(const std::string& list);
+
+    std::shared_ptr<LocalInventoryList> getWieldList();
+    void setWieldList(const std::string& list, bool assert = false);
+
+    unsigned short getWieldIndex();
+    void setWieldIndex(unsigned short index, bool assert = false);
+
+    bool isInMenu();
     void showMenu(std::shared_ptr<LuaGuiElement> root);
     void closeMenu();
-    bool isInMenu();
 
     void setHud(std::shared_ptr<LuaGuiElement> hud);
     std::shared_ptr<LuaGuiElement> getHud();
 
+    PointedThing& getPointedThing();
     void setHudVisible(bool hudVisible);
 
     void draw(Renderer& renderer) override;
     void drawHud(Renderer& renderer);
     void drawMenu(Renderer& renderer);
 
-    LocalInventory& getInventory();
-    PointedThing& getPointedThing();
+    void handleAssertion(Deserializer& d);
+
+    unsigned int id = 0;
 private:
     void moveAndLook(Input &input, double delta, glm::vec2 mouseDelta);
     void updateCamera();
     void findPointedThing(Input &input);
     void updateWireframe();
-    void breakBlock(Input& input, double delta);
+    void interact(Input& input, double delta);
+
+    void updateWieldAndHandItems();
+    template <typename T> void assertField(NetPlayerField field, T data);
 
     ClientGame& game;
     Renderer& renderer;
-    LocalInventoryRefs& refs;
 
     GameGui gameGui;
     Entity handModel;
     Entity handItemModel;
     WireframeEntity wireframe;
 
+    LocalInventoryRefs& refs;
+    unsigned int wieldIndex = 0;
+
+    unsigned int handItem = DefinitionAtlas::AIR;
+    unsigned int wieldItem = DefinitionAtlas::AIR;
+
     float yaw = 0;
     float pitch = 0;
     bool flying = false;
 
-    unsigned int activeBlock = DefinitionAtlas::AIR;
-    PointedThing pointedThing;
+    double breakTime = 0;
     double breakInterval = 0;
+    PointedThing pointedThing;
 };
 

@@ -6,28 +6,30 @@
 
 #include "../Entity.h"
 
-class ClientGame;
-class EntityVertex;
+class BlockDef;
 class AtlasRef;
 class MeshPart;
+class EntityVertex;
+class TextureAtlas;
 
 class BlockCrackEntity : public Entity {
 public:
-    explicit BlockCrackEntity(ClientGame &defs, glm::vec3 blockPos, unsigned int blockID);
+    BlockCrackEntity(BlockDef &def, TextureAtlas& textureAtlas, glm::ivec3 pos);
 
     void update();
-    void setNewDamage(float damage);
+    void addDamage(double damage);
 
-    glm::vec3 blockPos;
-    unsigned int blockID;
-    float targetDamage = 0;
-    float damage = 0;
+    int maxHealth = 0;
+    double damage = 0;
+    double damagePending = 0;
+
     double time = 0;
+    BlockDef& def;
 private:
-    short crackLevel = -1;
-
     void addFaces(unsigned int &indOffset, std::vector<EntityVertex> &vertices, std::vector<unsigned int> &indices, std::vector<MeshPart> &meshParts);
 
+    short crackLevel = -1;
+
+    TextureAtlas& textureAtlas;
     std::vector<std::shared_ptr<AtlasRef>> crackedFaces;
-    ClientGame& defs;
 };

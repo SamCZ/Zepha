@@ -33,18 +33,18 @@ std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(const LuaGuiE
     auto inv = std::make_shared<GuiInventoryList>(elem.key);
 
     inv->create(glm::vec2(SerialGui::SCALE_MODIFIER), padding * SerialGui::SCALE_MODIFIER,
-            slotspc * SerialGui::SCALE_MODIFIER, invList, refs.getHand(), game, start, length);
+            slotspc * SerialGui::SCALE_MODIFIER, invList, refs.getCursorList(), game, start, length);
     inv->setPos(pos);
 
     return inv;
 }
 
 void GuiInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding,
-    std::shared_ptr<LocalInventoryList> list, std::shared_ptr<LocalInventoryList> hand, ClientGame& defs,
+    std::shared_ptr<LocalInventoryList> list, std::shared_ptr<LocalInventoryList> cursor, ClientGame& defs,
     unsigned short start, unsigned short length) {
 
     this->list = list;
-    this->hand = hand;
+    this->cursor = cursor;
     this->defs = &defs;
 
     this->start = start;
@@ -107,7 +107,7 @@ void GuiInventoryList::leftClick(bool down, glm::ivec2 pos) {
 
     if (index >= list->getLength()) return;
 
-    list->primaryInteract(*hand, index);
+    list->primaryInteract(*cursor, index);
 }
 
 void GuiInventoryList::rightClick(bool down, glm::ivec2 pos) {
@@ -122,7 +122,7 @@ void GuiInventoryList::rightClick(bool down, glm::ivec2 pos) {
     unsigned short index = slot.x + slot.y * list->getWidth();
     if (index >= list->getLength()) return;
 
-    list->secondaryInteract(*hand, index);
+    list->secondaryInteract(*cursor, index);
 }
 
 void GuiInventoryList::drawContents() {

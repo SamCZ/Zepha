@@ -16,7 +16,7 @@ class Serializer {
 public:
     std::string data {};
 
-    template <typename T> inline Serializer& append(const T& elem) {};
+    template <typename T> inline Serializer& append(const T& elem) { assert(false); };
 
     Packet packet(PacketType p, bool reliable = true) {
         Packet packet(p, reliable);

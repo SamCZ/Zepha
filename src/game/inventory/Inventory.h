@@ -21,9 +21,13 @@ public:
     std::shared_ptr<ServerInventoryList> operator[](std::string name);
     void removeList(std::string name);
 
+    void setDefaultList(const std::string& name);
+    std::string getDefaultList();
+
     DefinitionAtlas& defs;
     std::string name;
 private:
     ClientList* clients;
     std::map<std::string, std::shared_ptr<ServerInventoryList>> lists;
+    std::string defaultList = "";
 };

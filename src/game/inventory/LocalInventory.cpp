@@ -7,17 +7,26 @@
 #include "LocalInventoryList.cpp"
 #include "../../net/client/ClientNetworkInterpreter.h"
 
-void LocalInventory::createList(std::string name, unsigned short length, unsigned short width, bool maintain) {
+void LocalInventory::createList(const std::string& name, unsigned short length, unsigned short width, bool persistant) {
     namespace ph = std::placeholders;
 
-    lists.insert({name, {(maintain ? -1 : 0),
+    lists.insert({name, {(persistant ? -1 : 0),
         std::make_shared<LocalInventoryList>(defs, this->name, name, length, width,
         std::bind(primaryCallback, this->name, name, ph::_1), std::bind(secondaryCallback, this->name, name, ph::_1))}});
+}
+
+void LocalInventory::removeList(const std::string &name) {
+    if (lists.count(name)) lists[name].first = 1;
 }
 
 std::shared_ptr<LocalInventoryList> LocalInventory::operator[](std::string name) {
     if (lists.count(name)) return lists[name].second;
     else return nullptr;
+}
+
+void LocalInventory::setPersistant(const std::string &list, bool persistant) {
+    if (!lists.count(name)) return;
+    lists[name].first = (persistant ? -1 : 0);
 }
 
 bool LocalInventory::pruneLists(ClientNetworkInterpreter &net, double time) {
@@ -29,7 +38,7 @@ bool LocalInventory::pruneLists(ClientNetworkInterpreter &net, double time) {
             else if (lIt->second.first != 0 && lIt->second.second.use_count() > 1) lIt->second.first = 0;
             // Delete InventoryLists that have passed their timeout.
             else if (lIt->second.first != 0 && lIt->second.first <= time) {
-                net.unwatchInv(name, lIt->first);
+                net.invUnwatch(name, lIt->first);
                 lIt = lists.erase(lIt);
             }
             else lIt++;

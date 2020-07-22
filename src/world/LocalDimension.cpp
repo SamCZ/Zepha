@@ -195,11 +195,11 @@ bool LocalDimension::setBlock(glm::ivec3 pos, unsigned int block) {
     if (lp.z == 15 && getChunk(cp + glm::ivec3 {0, 0, 1})) getChunk(cp + glm::ivec3 {0, 0, 1})->dirty = true;
     else if (lp.z == 0 && getChunk(cp + glm::ivec3 {0, 0, -1})) getChunk(cp + glm::ivec3 {0, 0, -1})->dirty = true;
 
-    attemptMeshChunk(chunk);
+    attemptMeshChunk(chunk, true);
     return true;
 }
 
-void LocalDimension::attemptMeshChunk(const std::shared_ptr<Chunk>& chunk, bool updateAdjacents) {
+void LocalDimension::attemptMeshChunk(const std::shared_ptr<Chunk>& chunk, bool priority, bool updateAdjacents) {
     static const std::vector<glm::ivec3> dirs {
             glm::ivec3 {1, 0, 0}, glm::ivec3 {-1, 0, 0},
             glm::ivec3 {0, 1, 0}, glm::ivec3 {0, -1, 0},
@@ -213,14 +213,14 @@ void LocalDimension::attemptMeshChunk(const std::shared_ptr<Chunk>& chunk, bool 
     if (!chunk->shouldRender) removeMeshChunk(chunk->pos);
 
 
-    meshGenStream->queue(chunk->pos);
+    meshGenStream->queue(chunk->pos, priority);
     chunk->dirty = false;
 }
 
 bool LocalDimension::getAdjacentExists(glm::vec3 pos, bool updateAdjacents) {
     auto chunk = getChunk(pos);
     if (chunk == nullptr) return false;
-    if (updateAdjacents) attemptMeshChunk(chunk, false);
+    if (updateAdjacents) attemptMeshChunk(chunk, false, false);
     return true;
 }
 

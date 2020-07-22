@@ -26,7 +26,7 @@ public:
     explicit MeshGenStream(ClientGame& game, LocalDimension& dimension);
     ~MeshGenStream();
 
-    void queue(glm::ivec3 pos);
+    void queue(glm::ivec3 pos, bool priority = false);
 
     //Will return a vector of MeshDetails pointers containing finished meshes.
     //Frees up the threads and starts new tasks.
@@ -60,7 +60,7 @@ private:
     ClientGame& game;
 
     std::array<NoiseSample, 3> noiseSampler;
-    std::queue<glm::ivec3> queuedTasks;
+    std::deque<glm::ivec3> queuedTasks;
     std::unordered_set<glm::vec3, Vec::vec3> queuedMap;
 };
 

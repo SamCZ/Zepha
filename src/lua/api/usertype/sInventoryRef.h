@@ -14,13 +14,18 @@ namespace ServerApi {
         lua.new_usertype<ServerLuaInventory>("InventoryRef",
             "get_list", &ServerLuaInventory::get_list,
             "add_list", &ServerLuaInventory::add_list,
-            "remove_list", &ServerLuaInventory::remove_list
+            "remove_list", &ServerLuaInventory::remove_list,
+
+            "set_default_list", &ServerLuaInventory::set_default_list,
+            "get_default_list", &ServerLuaInventory::get_default_list
         );
 
         lua.new_usertype<ServerLuaInventoryList>("InventoryListRef",
-            "length", sol::property(&ServerLuaInventoryList::get_length),
-            "width", sol::property(&ServerLuaInventoryList::get_width),
+            "length", sol::property(&ServerLuaInventoryList::get_length, &ServerLuaInventoryList::set_length),
+            "width", sol::property(&ServerLuaInventoryList::get_width, &ServerLuaInventoryList::set_width),
             "name", sol::property(&ServerLuaInventoryList::get_name),
+
+            "resize", &ServerLuaInventoryList::resize,
 
             "get_stack", &ServerLuaInventoryList::get_stack,
             "set_stack", sol::overload(

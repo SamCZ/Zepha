@@ -12,11 +12,21 @@ sol::object ServerLuaInventory::add_list(sol::this_state s, std::string name, in
 }
 
 sol::object ServerLuaInventory::get_list(sol::this_state s, std::string name) {
-    auto inv = inventory[name];
-    if (!inv) return sol::nil;
-    return sol::make_object<ServerLuaInventoryList>(s, ServerLuaInventoryList(*inv));
+    auto list = inventory[name];
+    if (!list) return sol::nil;
+    return sol::make_object<ServerLuaInventoryList>(s, ServerLuaInventoryList(*list));
 }
 
 void ServerLuaInventory::remove_list(std::string name) {
     inventory.removeList(name);
+}
+
+void ServerLuaInventory::set_default_list(sol::object list) {
+    if (list.is<std::string>()) inventory.setDefaultList(list.as<std::string>());
+    else inventory.setDefaultList(list.as<sol::table>().get<std::string>("name"));
+}
+
+sol::object ServerLuaInventory::get_default_list(sol::this_state s) {
+    if (inventory.getDefaultList() == "") return sol::nil;
+    else get_list(s, inventory.getDefaultList());
 }

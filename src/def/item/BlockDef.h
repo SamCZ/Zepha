@@ -16,33 +16,25 @@
 
 class BlockDef : public ItemDef {
 public:
-    BlockDef(
-        const std::string& identifier,
-        const std::string& name,
-        unsigned short maxStackSize,
-        const BlockModel& model,
-        const BlockModel& farModel,
-        bool solid,
-        glm::ivec3 lightSource,
-        bool lightPropagates,
-        const std::vector<SelectionBox>& sBoxes,
-        const std::vector<SelectionBox>& cBoxes,
-        unsigned int index = 0
-    );
+    BlockDef(): ItemDef {"", "", 0, 0, ItemDef::Type::BLOCK} {};
 
     void createModel();
+    bool hasInteraction();
 
     BlockModel model;
     BlockModel farModel;
 
-    bool culls = false;
-    bool solid = false;
+    bool culls = true;
+    bool solid = true;
     bool lightPropagates = false;
 
-    glm::ivec3 lightSource;
+    int health = 0;
+    int defense = 0;
 
-    std::vector<SelectionBox> sBoxes;
-    std::vector<SelectionBox> cBoxes;
+    glm::ivec3 lightSource {};
+
+    std::vector<SelectionBox> sBoxes {};
+    std::vector<SelectionBox> cBoxes {};
 
     std::unordered_map<Callback, sol::function, Util::EnumClassHash> callbacks {};
 };

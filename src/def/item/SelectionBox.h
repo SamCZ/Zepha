@@ -36,8 +36,8 @@ public:
         if (std::abs(vec.y - a.y) < THRESH && vec.x > a.x && vec.x < b.x && vec.z > a.z && vec.z < b.z) return EVec::BOTTOM;
         if (std::abs(vec.z - a.z) < THRESH && vec.x > a.x && vec.x < b.x && vec.y > a.y && vec.y < b.y) return EVec::FRONT;
         if (std::abs(vec.z - b.z) < THRESH && vec.x > a.x && vec.x < b.x && vec.y > a.y && vec.y < b.y) return EVec::BACK;
-        if (std::abs(vec.x - b.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return EVec::LEFT;
-        if (std::abs(vec.x - a.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return EVec::RIGHT;
+        if (std::abs(vec.x - b.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return EVec::RIGHT;
+        if (std::abs(vec.x - a.x) < THRESH && vec.z > a.z && vec.z < b.z && vec.y > a.y && vec.y < b.y) return EVec::LEFT;
 
         return EVec::NONE;
     }

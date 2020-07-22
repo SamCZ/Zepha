@@ -149,7 +149,7 @@ sol::protected_function_result LocalLuaParser::errorCallback(sol::protected_func
     }
 
     std::cout << Log::err << "Zepha has encountered an error, and ErrorFormatter failed to format it:"
-              << std::endl << std::endl << errString << Log::endl;
+              << std::endl << errString << Log::endl;
 
     exit(1);
     return errPfr;

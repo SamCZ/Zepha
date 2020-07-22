@@ -23,20 +23,19 @@ public:
     void init(LocalWorld* world, std::function<void(std::unique_ptr<PacketView>)> invCallback);
     void update();
 
-    // Functions to be called by outside of ClientNetworkInterpreter
-    void setBlock(glm::ivec3 pos, unsigned int block);
-    void watchInv(const std::string& inv, const std::string& list);
-    void unwatchInv(const std::string& inv, const std::string& list);
+    void blockPlace(glm::ivec3 pos, unsigned int block);
+    void blockInteract(glm::ivec3 pos);
 
-    void primaryInteract(const std::string& inv, const std::string& list, unsigned short ind);
-    void secondaryInteract(const std::string& inv, const std::string& list, unsigned short ind);
+    void invWatch(const std::string& inv, const std::string& list);
+    void invUnwatch(const std::string& inv, const std::string& list);
+    void invInteractPrimary(const std::string& inv, const std::string& list, unsigned short ind);
+    void invInteractSecondary(const std::string& inv, const std::string& list, unsigned short ind);
 
     int recvPackets = 0;
     int serverSideChunkGens = 0;
 private:
     void receivedPacket(std::unique_ptr<PacketView> ePacket);
 
-    int cid = 0;
     Player& player;
     ServerConnection& connection;
 

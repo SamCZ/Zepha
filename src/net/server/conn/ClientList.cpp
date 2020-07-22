@@ -45,7 +45,7 @@ void ClientList::createPlayer(std::shared_ptr<ServerClient> c) {
     c->hasPlayer = true;
     c->setUsername("TEMPORaRY");
 
-    c->getInventory()->createList("hand", 1, 1);
+    c->getInventory()->createList("cursor", 1, 1);
 
     defs.parser.playerConnected(c);
 

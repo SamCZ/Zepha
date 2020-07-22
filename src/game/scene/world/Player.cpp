@@ -8,8 +8,13 @@
 #include "../../../util/Ray.h"
 #include "../../graph/Renderer.h"
 #include "../../../def/ItemDef.h"
+#include "../../../net/Serializer.h"
+#include "../../../net/Deserializer.h"
 #include "../../../def/item/BlockDef.h"
 #include "../../../world/chunk/Chunk.h"
+#include "../../inventory/LocalInventory.h"
+#include "../../inventory/LocalInventoryList.h"
+#include "../../../net/client/NetPlayerField.h"
 
 Player::Player(LocalWorld& world, ClientGame& defs, Renderer& renderer, LocalInventoryRefs& refs) :
     Collidable(world, defs, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
@@ -33,7 +38,8 @@ void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {
     moveAndLook(input, delta, mouseDelta);
     findPointedThing(input);
     updateWireframe();
-    breakBlock(input, delta);
+
+    if (!gameGui.isInMenu()) interact(input, delta);
 }
 
 void Player::moveAndLook(Input &input, double delta, glm::vec2 mouseDelta) {
@@ -109,7 +115,7 @@ void Player::updateCamera() {
     renderer.camera.setYaw(yaw);
     renderer.camera.setPitch(pitch);
 
-    auto type = game.defs.fromId(activeBlock).type;
+    auto type = game.defs.fromId(wieldItem).type;
 
     glm::vec3 eyesPos = {pos.x, pos.y + EYE_HEIGHT, pos.z};
     renderer.camera.setPos(eyesPos);
@@ -197,70 +203,78 @@ void Player::updateWireframe() {
     }
 }
 
-void Player::breakBlock(Input& input, double delta) {
+void Player::interact(Input& input, double delta) {
     if (pointedThing.thing == PointedThing::Thing::BLOCK) {
-        if (input.mouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
-            if (breakInterval == 0) {
-                world.damageBlock(pointedThing.target.block.pos, BLOCK_DAMAGE);
-            }
-            breakInterval += delta;
-            if (breakInterval > BLOCK_INTERVAL) breakInterval = 0;
+        if (input.mouseDown(GLFW_MOUSE_BUTTON_LEFT) && breakTime == 0) {
+            breakInterval = world.blockHit(pointedThing);
+            breakTime += delta;
         }
-        else {
-            if (breakInterval > 0) breakInterval += delta;
-            if (breakInterval > BLOCK_INTERVAL) breakInterval = 0;
-        }
+        else if (input.mousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
+            auto& target = game.defs.blockFromId(world.getBlock(pointedThing.target.block.pos));
 
-        if (input.mousePressed(GLFW_MOUSE_BUTTON_RIGHT) && activeBlock != DefinitionAtlas::AIR) {
-            world.localSetBlock(pointedThing.target.block.pos + SelectionBox::faceToOffset(pointedThing.target.block.face), activeBlock);
+            if (target.hasInteraction()) world.blockInteract(pointedThing);
+            else if (wieldItem > DefinitionAtlas::AIR && game.defs.fromId(wieldItem).type == ItemDef::Type::BLOCK) {
+                world.blockPlace(pointedThing.target.block.pos + SelectionBox::faceToOffset(pointedThing.target.block.face), wieldItem);
+            }
+            else {
+                //TODO: Item interactions.
+//                world.itemUse(pointedThing, activeItem);
+            }
         }
     }
-    else breakInterval = 0;
+
+    if (breakTime > 0) breakTime += delta;
+    if (breakTime > breakInterval) breakTime = 0;
 }
 
-/*
- * Position, Velocity, Yaw, Pitch Getters & Setters
- */
-
-void Player::setPos(glm::vec3 pos) {
-    this->pos = pos;
-    this->renderer.camera.setPos({pos.x, pos.y + EYE_HEIGHT, pos.z});
-}
+//
+// Getters and Setters
+//
 
 glm::vec3 Player::getPos() {
     return pos;
 }
 
-void Player::setVel(glm::vec3 vel) {
-    this->vel = vel;
+void Player::setPos(glm::vec3 pos, bool assert) {
+    this->pos = pos;
+    this->renderer.camera.setPos({pos.x, pos.y + EYE_HEIGHT, pos.z});
+    if (assert) assertField(NetPlayerField::POSITION, pos);
 }
 
 glm::vec3 Player::getVel() {
     return vel;
 }
 
-void Player::setYaw(float yaw) {
-    this->yaw = yaw;
+void Player::setVel(glm::vec3 vel, bool assert) {
+    this->vel = vel;
+    if (assert) assertField(NetPlayerField::VELOCITY, vel);
 }
 
 float Player::getYaw() {
     return yaw;
 }
 
-void Player::setPitch(float pitch) {
-    this->pitch = pitch;
+void Player::setYaw(float yaw, bool assert) {
+    this->yaw = yaw;
+    if (assert) assertField(NetPlayerField::YAW, yaw);
 }
 
 float Player::getPitch() {
     return pitch;
 }
 
-void Player::setFlying(bool flying) {
-    this->flying = flying;
+void Player::setPitch(float pitch, bool assert) {
+    this->pitch = pitch;
+    if (assert) assertField(NetPlayerField::PITCH, pitch);
 }
 
 bool Player::isFlying() {
     return flying;
+}
+
+void Player::setFlying(bool flying, bool assert) {
+    this->flying = flying;
+    if (assert) assertField(NetPlayerField::FLYING, flying);
 }
 
 PointedThing& Player::getPointedThing() {
@@ -271,14 +285,40 @@ LocalInventory& Player::getInventory() {
     return *refs.getInv("current_player");
 }
 
+std::shared_ptr<LocalInventoryList> Player::getHandList() {
+    return refs.getHandList();
+}
+
+void Player::setHandList(const std::string& list) {
+    refs.setHandList(list);
+    updateWieldAndHandItems();
+}
+
+std::shared_ptr<LocalInventoryList> Player::getWieldList() {
+    return refs.getWieldList();
+}
+
+void Player::setWieldList(const std::string& list, bool assert) {
+    refs.setWieldList(list);
+    setWieldIndex(wieldIndex);
+    updateWieldAndHandItems();
+    if (assert) assertField(NetPlayerField::WIELD_INV, list);
+}
+
+unsigned short Player::getWieldIndex() {
+    return wieldIndex;
+}
+
+void Player::setWieldIndex(unsigned short index, bool assert) {
+    auto wieldList = refs.getWieldList();
+    wieldIndex = index % std::max((wieldList ? wieldList->getLength() : 1), 1);
+    updateWieldAndHandItems();
+    if (assert) assertField(NetPlayerField::WIELD_INV, static_cast<unsigned short>(index));
+}
+
 /*
  * GUI Functions
  */
-
-void Player::setActiveBlock(const std::string& block) {
-    activeBlock = game.defs.fromStr(block).index;
-    handItemModel.setModel(game.defs.fromId(activeBlock).entityModel);
-}
 
 void Player::showMenu(std::shared_ptr<LuaGuiElement> root) {
     gameGui.showMenu(root);
@@ -322,6 +362,42 @@ void Player::drawHud(Renderer &renderer) {
 
 void Player::drawMenu(Renderer &renderer) {
     gameGui.drawMenu(renderer);
+}
+
+void Player::updateWieldAndHandItems() {
+    auto handList = refs.getHandList();
+    auto wieldList = refs.getWieldList();
+
+    handItem = handList && handList->getLength() > 0 ? handList->getStack(0).id : 0;
+    wieldItem = wieldList && wieldList->getLength() > wieldIndex ? wieldList->getStack(wieldIndex).id : 0;
+
+    auto& model = game.defs.fromId(wieldItem <= DefinitionAtlas::AIR ? handItem : wieldItem).entityModel;
+    handItemModel.setModel(model);
+}
+
+template <typename T>
+void Player::assertField(NetPlayerField field, T data) {
+    std::cout << "attempt to assert field" << std::endl;
+//    Serializer().append(static_cast<unsigned int>(field)).append<T>(data)
+//            .packet(PacketType::THIS_PLAYER_INFO).sendTo(peer, PacketChannel::PLAYER);
+}
+
+void Player::handleAssertion(Deserializer &d) {
+    while (!d.atEnd()) {
+        switch (static_cast<NetPlayerField>(d.read<unsigned int>())) {
+            case NetPlayerField::ID: id = d.read<unsigned int>(); break;
+            case NetPlayerField::POSITION: setPos(d.read<glm::vec3>()); break;
+            case NetPlayerField::VELOCITY: setVel(d.read<glm::vec3>()); break;
+            case NetPlayerField::PITCH: setPitch(d.read<float>()); break;
+            case NetPlayerField::YAW: setYaw(d.read<float>()); break;
+
+            case NetPlayerField::FLYING: setFlying(d.read<bool>()); break;
+
+            case NetPlayerField::HAND_INV: setHandList(d.read<std::string>()); break;
+            case NetPlayerField::WIELD_INV: setWieldList(d.read<std::string>()); break;
+            case NetPlayerField::WIELD_INDEX: setWieldIndex(d.read<unsigned short>()); break;
+        }
+    }
 }
 
 Player::~Player() {

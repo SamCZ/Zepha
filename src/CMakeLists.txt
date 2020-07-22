@@ -291,9 +291,8 @@ set(ZEPHA_SRC
 	lua/ErrorFormatter.h 
 	util/RIE.h 
 	lua/api/class/ServerLuaPlayer.cpp 
-	lua/api/class/ServerLuaPlayer.h 
-	lua/api/usertype/sServerPlayer.h 
-	lua/api/modules/register_on.h 
+	lua/api/class/ServerLuaPlayer.h
+		lua/api/modules/register_on.h
 	lua/api/functions/trigger_event.h 
 	lua/parser/ServerModHandler.cpp 
 	lua/parser/ServerModHandler.h 
@@ -320,6 +319,6 @@ set(ZEPHA_SRC
 		def/gen/MapGenProps.cpp
 	def/gen/MapGenProps.h
 		lua/api/class/LuaGuiElement.cpp
-	lua/api/class/LuaGuiElement.h world/Dimension.cpp world/Dimension.h world/fs/FileManipulator.cpp world/fs/FileManipulator.h def/item/BlockModel.cpp net/server/world/ServerPacketStream.cpp net/server/world/ServerPacketStream.h)
+	lua/api/class/LuaGuiElement.h world/Dimension.cpp world/Dimension.h world/fs/FileManipulator.cpp world/fs/FileManipulator.h def/item/BlockModel.cpp net/server/world/ServerPacketStream.cpp net/server/world/ServerPacketStream.h lua/register/CreateBlockModel.cpp lua/register/CreateBlockModel.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

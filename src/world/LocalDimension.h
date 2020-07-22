@@ -56,7 +56,7 @@ private:
 
     void finishMeshes();
 
-    void attemptMeshChunk(const std::shared_ptr<Chunk>& chunk, bool updateAdjacents = true);
+    void attemptMeshChunk(const std::shared_ptr<Chunk>& chunk, bool priority = false, bool updateAdjacents = true);
     bool getAdjacentExists(glm::vec3 pos, bool updateAdjacents);
 
     ClientGame& game;

@@ -23,8 +23,12 @@ public:
     InventoryList(DefinitionAtlas& defs);
     InventoryList(DefinitionAtlas& defs, const std::string& invName, const std::string& listName, unsigned short size, unsigned short width);
 
+    void setLength(unsigned short length);
     unsigned short getLength() const;
+
+    void setWidth(unsigned short width);
     unsigned short getWidth() const;
+
     std::string getName() const;
 
     // Place the stack at i into the existing stack, returning overflow or other stack.
@@ -41,9 +45,9 @@ public:
     virtual ItemStack removeStack(unsigned short ind, unsigned short count);
 
     // Primary interaction - The action performed when left clicking an inventory slot.
-    virtual void primaryInteract(InventoryList& hand, unsigned short ind);
+    virtual void primaryInteract(InventoryList& cursor, unsigned short ind);
     // Secondary interaction - The action performed when right clicking an inventory slot.
-    virtual void secondaryInteract(InventoryList& hand, unsigned short ind);
+    virtual void secondaryInteract(InventoryList& cursor, unsigned short ind);
 
     ItemStack getStack(unsigned short i) const;
     void setStack(unsigned short i, const ItemStack& stack);

@@ -26,8 +26,16 @@ void InventoryList::initialize() {
     for (unsigned int i = 0; i < itemstacks.size(); i++) itemstacks[i] = {};
 }
 
+void InventoryList::setLength(unsigned short length) {
+    itemstacks.resize(length);
+}
+
 unsigned short InventoryList::getLength() const {
     return itemstacks.size();
+}
+
+void InventoryList::setWidth(unsigned short width) {
+    this->width = width;
 }
 
 unsigned short InventoryList::getWidth() const {
@@ -223,14 +231,14 @@ ItemStack InventoryList::removeStack(unsigned short ind, unsigned short count) {
     }
 }
 
-void InventoryList::primaryInteract(InventoryList& hand, unsigned short ind) {
-    hand.setStack(0, placeStack(ind, hand.getStack(0), true));
+void InventoryList::primaryInteract(InventoryList& cursor, unsigned short ind) {
+    cursor.setStack(0, placeStack(ind, cursor.getStack(0), true));
 }
 
-void InventoryList::secondaryInteract(InventoryList &hand, unsigned short ind) {
-    auto handStack = hand.getStack(0);
+void InventoryList::secondaryInteract(InventoryList &cursor, unsigned short ind) {
+    auto handStack = cursor.getStack(0);
     if (handStack.count == 0) {
-        hand.setStack(0, splitStack(ind, true));
+        cursor.setStack(0, splitStack(ind, true));
     }
     else {
         auto listStack = getStack(ind);
@@ -239,10 +247,10 @@ void InventoryList::secondaryInteract(InventoryList &hand, unsigned short ind) {
             handStack.count -= 1;
             if (handStack.count == 0) handStack.id = 0;
             if (overflow.count != 0) handStack.count += overflow.count;
-            hand.setStack(0, handStack);
+            cursor.setStack(0, handStack);
         }
         else {
-            hand.setStack(0, placeStack(ind, hand.getStack(0), true));
+            cursor.setStack(0, placeStack(ind, cursor.getStack(0), true));
         }
     }
 }

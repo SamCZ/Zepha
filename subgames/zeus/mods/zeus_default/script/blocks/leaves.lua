@@ -1,19 +1,25 @@
 zepha.register_block("zeus:default:leaves", {
-    visible = true,
-    culls = false,
-    light_propagates = true,
     name = "Leaves",
+
+    culls = false,
     model = "base:leaf_like",
     textures = {
         "tint(0, zeus:default:leaves)",
         "tint(0, zeus:default:leaves_puff)"
     },
-    lowdef_textures = {
+    far_textures = {
         "tint(0, zeus:default:leaves_opaque)",
     },
-    toughness = {
-        hand = 1,
-        axe = 0.2,
+
+    tool_props = {
+        health = 5,
+        multipliers = {
+            snap = 2.0,
+            cut = 2.0
+        }
     },
+
+    light_propagates = true,
+
     yields = "zeus:materials:stick"
 })

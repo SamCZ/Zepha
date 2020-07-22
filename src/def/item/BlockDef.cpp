@@ -4,30 +4,6 @@
 
 #include "BlockDef.h"
 
-BlockDef::BlockDef(
-    const std::string& identifier,
-    const std::string& name,
-    unsigned short maxStackSize,
-    const BlockModel& model,
-    const BlockModel& farModel,
-    bool solid,
-    glm::ivec3 lightSource,
-    bool lightPropagates,
-    const std::vector<SelectionBox>& sBoxes,
-    const std::vector<SelectionBox>& cBoxes,
-    unsigned int index) :
-
-    ItemDef {identifier, name, index, maxStackSize, ItemDef::Type::BLOCK},
-
-    model(model),
-    farModel(farModel),
-    culls(model.culls),
-    solid(solid),
-    lightSource(lightSource),
-    lightPropagates(lightPropagates),
-    sBoxes(sBoxes),
-    cBoxes(cBoxes) {}
-
 void BlockDef::createModel() {
     std::unique_ptr<EntityMesh> entity = std::make_unique<EntityMesh>();
     unsigned int indOffset = 0;
@@ -56,4 +32,8 @@ void BlockDef::createModel() {
     entity->create(entityVertices, indices);
     entityModel = std::make_shared<Model>();
     entityModel->fromMesh(std::move(entity));
+}
+
+bool BlockDef::hasInteraction() {
+    return callbacks.count(Callback::INTERACT) || callbacks.count(Callback::INTERACT_CLIENT);
 }

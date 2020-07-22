@@ -12,6 +12,7 @@ class ClientNetworkInterpreter;
 class WorldInterpolationStream;
 class BlockCrackEntity;
 class ParticleEntity;
+class PointedThing;
 class ClientGame;
 class Renderer;
 class Player;
@@ -28,9 +29,12 @@ public:
 
     unsigned int getBlock(glm::ivec3 pos) override;
     void setBlock(glm::ivec3 pos, unsigned int block) override;
-    void localSetBlock(glm::ivec3 pos, unsigned int block);
 
-    void damageBlock(glm::vec3 pos, float amount);
+    void blockPlace(glm::vec3 pos, unsigned int block);
+    void blockBreak(glm::vec3 pos);
+
+    void blockInteract(PointedThing& thing);
+    double blockHit(PointedThing& thing);
 
     unsigned short getBiome(glm::vec3 pos);
     std::shared_ptr<Chunk> getChunk(glm::ivec3 pos);

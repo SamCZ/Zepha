@@ -12,6 +12,7 @@
 #include "../../../net/client/ClientNetworkInterpreter.h"
 #include "../../entity/engine/ParticleEntity.h"
 #include "../../entity/engine/BlockCrackEntity.h"
+#include "../../../lua/api/class/LocalLuaPlayer.h"
 
 LocalWorld::LocalWorld(ClientGame& defs, ClientNetworkInterpreter* server) :
         defs(defs),
@@ -57,46 +58,63 @@ void LocalWorld::setBlock(glm::ivec3 pos, unsigned int block) {
     dimension.setBlock(pos, block);
 }
 
-void LocalWorld::localSetBlock(glm::ivec3 pos, unsigned int block) {
+void LocalWorld::blockPlace(glm::vec3 pos, unsigned int block) {
     if (block == LocalDefinitionAtlas::AIR) {
         auto def = defs.defs.blockFromId(getBlock(pos));
-        if (def.callbacks.count(Callback::BREAK_CLIENT)) {
+        if (def.callbacks.count(Callback::BREAK_CLIENT))
             defs.parser.safe_function(def.callbacks[Callback::BREAK_CLIENT], defs.parser.luaVec(pos));
-        }
     }
     else {
         auto def = defs.defs.blockFromId(block);
-        if (def.callbacks.count(Callback::PLACE_CLIENT)) {
+        if (def.callbacks.count(Callback::PLACE_CLIENT))
             defs.parser.safe_function(def.callbacks[Callback::PLACE_CLIENT], defs.parser.luaVec(pos));
-        }
     }
 
-    net->setBlock(pos, block);
+    net->blockPlace(pos, block);
     dimension.setBlock(pos, block);
 }
 
-void LocalWorld::damageBlock(glm::vec3 pos, float amount) {
+void LocalWorld::blockBreak(glm::vec3 pos) {
+    blockPlace(pos, DefinitionAtlas::AIR);
+}
+
+void LocalWorld::blockInteract(PointedThing &thing) {
+    auto def = defs.defs.blockFromId(getBlock(thing.target.block.pos));
+
+    if (def.callbacks.count(Callback::INTERACT_CLIENT))
+        defs.parser.safe_function(def.callbacks[Callback::INTERACT_CLIENT], defs.parser.luaVec(thing.target.block.pos));
+
+    net->blockInteract(thing.target.block.pos);
+}
+
+double LocalWorld::blockHit(PointedThing& thing) {
+    glm::ivec3 pos = thing.target.block.pos;
+
+    auto& blockDef = defs.defs.blockFromId(getBlock(thing.target.block.pos));
+
+    double damage = 0, timeout = 0;
+    sol::tie(damage, timeout) = defs.parser.safe_function(defs.parser.core["get_hit_impact"],
+        defs.parser.core.get<LocalLuaPlayer>("player"), blockDef.identifier);
+
+    if (damage == 0) return timeout;
+
     BlockCrackEntity* block = nullptr;
-    for (auto test : crackedBlocks) {
-        if (test->blockPos == pos) {
-            block = test;
-            break;
-        }
-    }
+    for (auto test : crackedBlocks) if (glm::ivec3(test->getPos()) == pos) { block = test; break; }
     if (block == nullptr) {
-        auto blockID = getBlock(pos);
-        block = new BlockCrackEntity(defs, pos, blockID);
+        block = new BlockCrackEntity(blockDef, defs.textures, pos);
         crackedBlocks.push_back(block);
     }
 
-    block->setNewDamage(block->targetDamage + amount);
+    block->addDamage(damage);
     block->time = 0;
 
-    auto def = defs.defs.blockFromId(getBlock(pos));
-    for (int i = 0; i < 40 * amount; i++) {
-        auto p = new ParticleEntity(pos, def);
-        particles.push_back(p);
-    }
+//    auto def = defs.defs.blockFromId(getBlock(pos));
+//    for (int i = 0; i < 40 * damage; i++) {
+//        auto p = new ParticleEntity(pos, def);
+//        particles.push_back(p);
+//    }
+
+    return timeout;
 }
 
 unsigned short LocalWorld::getBiome(glm::vec3 pos) {
@@ -138,18 +156,18 @@ void LocalWorld::updateBlockDamages(double delta) {
 
         block->time += delta;
 
-        if (block->damage >= 1) {
-            localSetBlock(block->blockPos, DefinitionAtlas::AIR);
+        if (block->damage >= block->maxHealth) {
+            blockBreak(block->getPos());
             deleteMe = true;
         }
 
         if (block->time > 2) {
             block->update();
-            block->setNewDamage(block->targetDamage - 0.1f);
+            block->addDamage(-1);
             block->time = 0;
         }
 
-        if (block->damage < 0 || block->blockID != getBlock(block->blockPos)) {
+        if (block->damage < 0 || block->def.index != getBlock(block->getPos())) {
             deleteMe = true;
         }
 
@@ -157,9 +175,7 @@ void LocalWorld::updateBlockDamages(double delta) {
             delete *curr;
             it = crackedBlocks.erase(curr);
         }
-        else {
-            block->update();
-        }
+        else block->update();
     }
 }
 

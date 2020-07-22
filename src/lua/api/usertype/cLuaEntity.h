@@ -33,6 +33,8 @@ namespace ClientApi {
              "set_scale", &LocalLuaEntity::set_scale,
              "get_scale", &LocalLuaEntity::get_scale,
 
+             "set_display_type", &LocalLuaEntity::set_display_type,
+
              "pos", sol::property(&LocalLuaEntity::get_pos, &LocalLuaEntity::set_pos),
              "visual_offset", sol::property(&LocalLuaEntity::get_visual_offset, &LocalLuaEntity::set_visual_offset),
              "pitch", sol::property(&LocalLuaEntity::get_pitch, &LocalLuaEntity::set_pitch),
@@ -40,9 +42,7 @@ namespace ClientApi {
              "roll", sol::property(&LocalLuaEntity::get_roll, &LocalLuaEntity::set_roll),
              "scale", sol::property(&LocalLuaEntity::get_scale, &LocalLuaEntity::set_scale),
 
-             "anims", sol::readonly(&LocalLuaEntity::manager),
-
-             "set_display_type", &LocalLuaEntity::set_display_type
+             "anims", sol::readonly(&LocalLuaEntity::manager)
         );
     }
 }

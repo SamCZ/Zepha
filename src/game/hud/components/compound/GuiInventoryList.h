@@ -22,8 +22,8 @@ public:
             glm::ivec2 bounds, LocalInventoryRefs& refs);
 
     void create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding,
-            std::shared_ptr<LocalInventoryList> list, std::shared_ptr<LocalInventoryList> hand, ClientGame& defs,
-            unsigned short start = 0, unsigned short length = 0);
+                std::shared_ptr<LocalInventoryList> list, std::shared_ptr<LocalInventoryList> cursor, ClientGame& defs,
+                unsigned short start = 0, unsigned short length = 0);
 
     void setCallback(CallbackType type, const callback& cb) override;
 
@@ -35,7 +35,7 @@ private:
     std::shared_ptr<GuiRect> hoverRect = std::make_shared<GuiRect>("hover_rect");
     std::shared_ptr<std::function<void()>> myCallback = nullptr;
 
-    std::shared_ptr<LocalInventoryList> list, hand;
+    std::shared_ptr<LocalInventoryList> list, cursor;
     unsigned short start, length;
     glm::ivec2 innerPadding;
     ClientGame* defs = nullptr;

@@ -274,6 +274,13 @@ namespace RegisterBlocks {
             bool lightPropagates = blockTable.get_or("light_propagates", false);
             auto maxStack = blockTable.get_or("stack", 64);
 
+            int health = 1, defense = 0;
+            auto toolOpt = blockTable.get<sol::optional<sol::table>>("tool_props");
+            if (toolOpt) {
+                health = toolOpt->get_or<unsigned int>("health", 1);
+                defense = toolOpt->get_or<unsigned int>("defense", 0);
+            }
+
             glm::vec3 lightSource {};
             if (blockTable.get<sol::optional<sol::table>>("light_source")) {
                 auto light = blockTable.get<sol::table>("light_source");
@@ -301,43 +308,53 @@ namespace RegisterBlocks {
             // Create the block model
             std::pair<BlockModel, BlockModel> models = createBlockModel(blockTable, blockModels, atlas);
 
-            BlockDef *blockDef = new BlockDef(
-                identifier,
-                *nameOpt,
-                maxStack,
-                models.first, models.second,
-                solid,
-                lightSource,
-                lightPropagates,
-                std::move(selectionBoxes),
-                std::move(collisionBoxes),
-                defs.size() // Index
-            );
+            BlockDef* def = new BlockDef();
+            def->identifier = identifier;
+            def->name = *nameOpt;
+            def->index = defs.size();
+
+            def->solid = solid;
+            def->lightSource = lightSource;
+            def->lightPropagates = lightPropagates;
+
+            def->health = health;
+            def->defense = defense;
+
+            def->maxStackSize = maxStack;
+
+            def->model = models.first;
+            def->farModel = models.second;
+
+            def->sBoxes = std::move(selectionBoxes);
+            def->cBoxes = std::move(collisionBoxes);
 
             // Create entity model
-            if (atlas) blockDef->createModel();
+            if (atlas) def->createModel();
 
             // Bind Callbacks
-            addCallback(blockDef, blockTable, "on_construct", Callback::CONSTRUCT);
-            addCallback(blockDef, blockTable, "after_construct", Callback::AFTER_CONSTRUCT);
+            addCallback(def, blockTable, "on_construct", Callback::CONSTRUCT);
+            addCallback(def, blockTable, "after_construct", Callback::AFTER_CONSTRUCT);
 
-            addCallback(blockDef, blockTable, "on_destruct", Callback::DESTRUCT);
-            addCallback(blockDef, blockTable, "after_destruct", Callback::AFTER_DESTRUCT);
+            addCallback(def, blockTable, "on_destruct", Callback::DESTRUCT);
+            addCallback(def, blockTable, "after_destruct", Callback::AFTER_DESTRUCT);
 
-            addCallback(blockDef, blockTable, "on_place", Callback::PLACE);
-            addCallback(blockDef, blockTable, "on_place_client", Callback::PLACE_CLIENT);
+            addCallback(def, blockTable, "on_place", Callback::PLACE);
+            addCallback(def, blockTable, "on_place_client", Callback::PLACE_CLIENT);
 
-            addCallback(blockDef, blockTable, "after_place", Callback::AFTER_PLACE);
-            addCallback(blockDef, blockTable, "after_place_client", Callback::AFTER_PLACE_CLIENT);
+            addCallback(def, blockTable, "after_place", Callback::AFTER_PLACE);
+            addCallback(def, blockTable, "after_place_client", Callback::AFTER_PLACE_CLIENT);
 
-            addCallback(blockDef, blockTable, "on_break", Callback::BREAK);
-            addCallback(blockDef, blockTable, "on_break_client", Callback::BREAK_CLIENT);
+            addCallback(def, blockTable, "on_break", Callback::BREAK);
+            addCallback(def, blockTable, "on_break_client", Callback::BREAK_CLIENT);
 
-            addCallback(blockDef, blockTable, "after_break", Callback::AFTER_BREAK);
-            addCallback(blockDef, blockTable, "after_break_client", Callback::AFTER_BREAK_CLIENT);
+            addCallback(def, blockTable, "after_break", Callback::AFTER_BREAK);
+            addCallback(def, blockTable, "after_break_client", Callback::AFTER_BREAK_CLIENT);
+
+            addCallback(def, blockTable, "on_interact", Callback::INTERACT);
+            addCallback(def, blockTable, "on_interact_client", Callback::INTERACT_CLIENT);
 
             // Add Block Definition to the AtlasK
-            defs.registerDef(blockDef);
+            defs.registerDef(def);
         }
     }
 

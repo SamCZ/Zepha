@@ -1,48 +1,52 @@
--- Register the inventory menu and keybind
-zepha.register_keybind("zeus:inventory:open_inventory", {
-    description = "Open Inventory",
-    default = zepha.keys.e,
-    on_press = function()
-        if zepha.player.menu_state == "" do
-            zepha.player:open_menu([[
-                body[body]
-                    background: #0003
+local chest = zepha.build_gui(function()
+    return Gui.Body {
+        background = "#0003",
 
-                    rect[inventory]
-                        position: 50% 50%
-                        position_anchor: 50% 32%
-                        size: 218px 160px
+        callbacks = {
+            primary = function() zepha.player:close_menu() end,
+        },
 
-                        rect[inv_background]
-                            position: 0px 50px
-                            size: 218px 100px
-                            padding: 20px 10px 8px 10px
-                            background: zeus:inventory:inventory
+        Gui.Rect {
+            key = "inventory",
+            position = { pc(50), pc(50) },
+            position_anchor = { pc(50), pc(32) },
+            size = { 218, 160 },
 
-                            inventory
-                                source: current_player
-                                list: main
-                                position: 1px 1px
-                                slot_spacing: 2px 2px
-                            end
-                        end
+            Gui.Rect {
+                key = "inventory_background",
 
-                        rect[chest_background]
-                            position: 0px -48px
-                            size: 218px 100px
-                            padding: 20px 10px 8px 10px
-                            background: zeus:inventory:chest
+                position = { 0, 50 },
+                size = { 218, 100 },
+                padding = { 20, 10, 8, 10 },
+                background = "zeus:inventory:inventory",
 
-                            inventory
-                                source: current_player
-                                list: main
-                                position: 1px 1px
-                                slot_spacing: 2px 2px
-                            end
-                        end
-                    end
-                end
-            ]])
-        else zepha.player:close_menu() end
+                Gui.InventoryList {
+                    position = { 1, 1 },
+                    slot_spacing = { 2, 2 },
+                    source = "current_player",
+                    list = "main",
+                }
+            },
+
+            Gui.Rect {
+                key = "chest_background",
+
+                position = { 0, -48 },
+                size = { 218, 100 },
+                padding = { 20, 10, 8, 10 },
+                background = "zeus:inventory:chest",
+
+                Gui.InventoryList {
+                    position = { 1, 1 },
+                    slot_spacing = { 2, 2 },
+                    source = "current_player",
+                    list = "main",
+                }
+            }
+        }
     }
-})
+end)
+
+inventory.open_chest = function()
+    zepha.player:show_menu(chest)
+end

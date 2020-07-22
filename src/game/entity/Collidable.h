@@ -22,7 +22,7 @@ public:
     glm::vec3 vel {};
 protected:
     LocalWorld& world;
-    ClientGame& defs;
+    ClientGame& game;
     SelectionBox collisionBox {};
 private:
     bool collidesAt(glm::vec3& pos, float stepUpMax = 0);

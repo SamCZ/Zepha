@@ -27,8 +27,8 @@ namespace RegisterItems {
             auto texturesOpt  = itemTable.get<sol::optional<sol::table>> ("textures");
             auto maxStack     = itemTable.get_or("stack", 64);
 
-            if (!nameOpt) throw identifier + " is missing name property!";
-            if (!texturesOpt) throw identifier + " is missing textures property!";
+            if (!nameOpt) throw std::runtime_error(identifier + " is missing name property!");
+            if (!texturesOpt) throw std::runtime_error(identifier + " is missing textures property!");
 
             //Convert Textures Table to Vector
             std::vector<std::string> textures;

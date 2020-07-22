@@ -9,9 +9,11 @@
 #include <unordered_map>
 
 #include "../../../util/Vec.h"
+#include "../../../def/DefinitionAtlas.h"
 #include "../../../game/inventory/Inventory.h"
 #include "../../../game/inventory/ServerInventoryList.h"
 
+enum class NetPlayerField;
 class InventoryRefs;
 
 class ServerClient {
@@ -22,25 +24,34 @@ public:
 
     void setUsername(const std::string& name);
 
-    void assertPos(glm::vec3 pos);
-    void setPos(glm::vec3 pos);
     glm::vec3 getPos();
+    void setPos(glm::vec3 pos, bool assert = false);
 
-    void assertPitch(float pitch);
-    void setPitch(float pitch);
+    glm::vec3 getVel();
+    void setVel(glm::vec3 vel, bool assert = false);
+
     float getPitch();
+    void setPitch(float pitch, bool assert = false);
 
-    void assertYaw(float yaw);
-    void setYaw(float yaw);
     float getYaw();
+    void setYaw(float yaw, bool assert = false);
 
-    void setFlying(bool flying);
     bool isFlying();
-
-    void setMapBlockIntegrity(glm::ivec3 pos, unsigned long long integrity);
-    unsigned long long getMapBlockIntegrity(glm::ivec3 pos);
+    void setFlying(bool flying, bool assert = false);
 
     std::shared_ptr<Inventory> getInventory();
+
+    std::shared_ptr<InventoryList> getHandList();
+    void setHandList(std::shared_ptr<InventoryList> list, bool assert = false);
+
+    std::shared_ptr<InventoryList> getWieldList();
+    void setWieldList(std::shared_ptr<InventoryList> list, bool assert = false);
+
+    unsigned short getWieldIndex();
+    void setWieldIndex(unsigned short index, bool assert = false);
+
+//    void setMapBlockIntegrity(glm::ivec3 pos, unsigned long long integrity);
+//    unsigned long long getMapBlockIntegrity(glm::ivec3 pos);
 
     bool hasPlayer = false;
 
@@ -54,13 +65,22 @@ public:
     glm::vec3 lastPos = glm::vec3(INFINITY);
 
 private:
-    glm::vec3 pos {};
+    template <typename T> void assertField(NetPlayerField field, T data);
+
+    glm::vec3 pos { 0, -37, 0 };
+    glm::vec3 vel {};
     float pitch = 0;
     float yaw = 0;
 
     bool flying = false;
 
     std::shared_ptr<Inventory> inventory;
+    unsigned int wieldIndex = 0;
+    std::shared_ptr<InventoryList> handList = nullptr;
+    std::shared_ptr<InventoryList> wieldList = nullptr;
+
+    unsigned int handItem = DefinitionAtlas::AIR;
+    unsigned int wieldItem = DefinitionAtlas::AIR;
 
     std::unordered_map<glm::ivec3, unsigned long long, Vec::ivec3> mapBlockIntegrity {};
 };

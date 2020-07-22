@@ -12,25 +12,32 @@
 #include "../../../def/texture/AtlasRef.h"
 #include "../../../def/item/BlockModelVertex.h"
 
-BlockCrackEntity::BlockCrackEntity(ClientGame &defs, glm::vec3 blockPos, unsigned int blockID) :
-    defs(defs),
-    blockPos(blockPos),
-    blockID(blockID) {
-    setPos(blockPos);
-
+BlockCrackEntity::BlockCrackEntity(BlockDef &def, TextureAtlas& textureAtlas, glm::ivec3 pos) :
+    def(def),
+    textureAtlas(textureAtlas) {
+    maxHealth = def.health;
+    setPos(pos);
     update();
 }
 
 void BlockCrackEntity::update() {
-    if (targetDamage > damage) damage = static_cast<float>(fmin(targetDamage, damage + 0.2));
-    else if (targetDamage < damage) damage = static_cast<float>(fmax(targetDamage, damage - 0.2));
+//    if (damagePending > 0) {
+//        double amt = std::min(damagePending, 0.2);
+//        damage += amt;
+//        damagePending -= amt;
+//    }
+//    else if (damagePending < 0) {
+//        double amt = std::max(damagePending, -0.2);
+//        damage += amt;
+//        damagePending -= amt;
+//    }
+    damage += damagePending;
+    damagePending = 0;
 
-    auto crackLevel = static_cast<unsigned short>(std::max(std::min(static_cast<int>(std::floor(damage * 8)), 7), 0));
+    auto crackLevel = static_cast<unsigned short>(std::max(std::min(static_cast<int>(std::floor((damage / static_cast<float>(maxHealth)) * 8)), 7), 0));
 
     if (crackLevel != this->crackLevel) {
         this->crackLevel = crackLevel;
-
-        auto model = defs.defs.blockFromId(blockID).model;
 
         std::vector<EntityVertex> vertices;
         std::vector<unsigned int> indices;
@@ -38,10 +45,7 @@ void BlockCrackEntity::update() {
         unsigned int indOffset = 0;
 
         crackedFaces.clear();
-
-        for (int i = 0; i < 7; i++) {
-            addFaces(indOffset, vertices, indices, model.parts[i]);
-        }
+        for (int i = 0; i < 7; i++) addFaces(indOffset, vertices, indices, def.model.parts[i]);
 
         std::unique_ptr<EntityMesh> mesh = std::make_unique<EntityMesh>();
         mesh->create(vertices, indices);
@@ -49,16 +53,17 @@ void BlockCrackEntity::update() {
     }
 }
 
-void BlockCrackEntity::setNewDamage(float damage) {
-    this->targetDamage = damage;
+void BlockCrackEntity::addDamage(double damage) {
+    damagePending += damage;
+    update();
 }
 
 void BlockCrackEntity::addFaces(unsigned int &indOffset, std::vector<EntityVertex> &vertices, std::vector<unsigned int> &indices, std::vector<MeshPart> &meshParts) {
     for (const MeshPart& mp : meshParts) {
         glm::vec4 uv;
-        auto ref = defs.textures.generateCrackImage(mp.texture->name, static_cast<unsigned short>(crackLevel));
+        auto ref = textureAtlas.generateCrackImage(mp.texture->name, static_cast<unsigned short>(crackLevel));
         if (ref == nullptr) {
-            uv = defs.textures["_missing"]->uv;
+            uv = textureAtlas["_missing"]->uv;
         }
         else uv = ref->uv;
 
@@ -69,19 +74,10 @@ void BlockCrackEntity::addFaces(unsigned int &indOffset, std::vector<EntityVerte
             pushed_pos += glm::normalize(vertex.nml) * 0.003f;
             glm::vec4 tex = {uv.x + (uv.z - uv.x) * vertex.texUVs.x, uv.y + ((uv.w - uv.y) * vertex.texUVs.y), 0, 1};
 
-            vertices.push_back({
-                pushed_pos,
-                tex,
-                {1, 1, 1},
-                true,
-                vertex.nml,
-                {}, {}
-            });
+            vertices.push_back({ pushed_pos, tex, {1, 1, 1}, true, vertex.nml, {}, {} });
         }
 
-        for (unsigned int index : mp.indices) {
-            indices.push_back(indOffset + index);
-        }
+        for (unsigned int index : mp.indices) indices.push_back(indOffset + index);
 
         indOffset += mp.vertices.size();
     }

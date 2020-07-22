@@ -10,9 +10,9 @@
 #include "../scene/world/LocalWorld.h"
 
 Collidable::Collidable(LocalWorld &world, ClientGame& defs, const SelectionBox& collisionBox) :
-    world(world),
-    defs(defs),
-    collisionBox(collisionBox) {}
+        world(world),
+        game(defs),
+        collisionBox(collisionBox) {}
 
 void Collidable::moveCollide(float stepUpAmount) {
     const static double increment = 0.05;
@@ -67,7 +67,7 @@ bool Collidable::collidesAt(glm::vec3& pos, float stepUpMax) {
                 offset.z = collisionBox.a.z;
                 while (true) {
                     glm::vec3 offsetPos = glm::floor(pos + offset);
-                    auto &def = defs.defs.blockFromId(world.getBlock(offsetPos));
+                    auto &def = game.defs.blockFromId(world.getBlock(offsetPos));
 
                     if (def.solid)
                         for (auto &cBox : def.cBoxes)
@@ -99,7 +99,7 @@ bool Collidable::collidesAt(glm::vec3& pos, float stepUpMax) {
             offset.z = collisionBox.a.z;
             while (true) {
                 glm::vec3 offsetPos = glm::floor(pos + offset);
-                auto& def = defs.defs.blockFromId(world.getBlock(offsetPos));
+                auto& def = game.defs.blockFromId(world.getBlock(offsetPos));
 
                 if (def.solid) {
                     for (auto &cBox : def.cBoxes) {

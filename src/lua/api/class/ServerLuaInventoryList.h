@@ -9,13 +9,19 @@
 
 class ServerLuaInventoryList {
 public:
-    ServerLuaInventoryList(ServerInventoryList& list) :
+    ServerLuaInventoryList(InventoryList& list) :
         list(list) {}
 
-    ServerInventoryList& list;
+    InventoryList& list;
 
+    void set_length(int length);
     int get_length();
+
+    void set_width(int width);
     int get_width();
+
+    void resize(int length, int width);
+
     std::string get_name();
 
     LuaItemStack get_stack(unsigned short i);

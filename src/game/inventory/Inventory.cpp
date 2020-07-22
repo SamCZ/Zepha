@@ -25,3 +25,11 @@ std::shared_ptr<ServerInventoryList> Inventory::operator[](std::string name) {
 void Inventory::removeList(std::string name) {
     lists.erase(name);
 }
+
+void Inventory::setDefaultList(const std::string &name) {
+    defaultList = name;
+}
+
+std::string Inventory::getDefaultList() {
+    return defaultList;
+}

@@ -49,7 +49,7 @@ std::vector<ChunkMeshDetails*> MeshGenStream::update() {
             if (!queuedTasks.empty()) {
                 auto pos = queuedTasks.front();
                 queuedMap.erase(pos);
-                queuedTasks.pop();
+                queuedTasks.pop_front();
 
                 std::shared_ptr<Chunk> chunk = dimension.getChunk(pos);
                 if (chunk == nullptr) goto breakAddTask;
@@ -95,9 +95,9 @@ void MeshGenStream::Thread::exec() {
     }
 }
 
-void MeshGenStream::queue(glm::ivec3 pos) {
+void MeshGenStream::queue(glm::ivec3 pos, bool priority) {
     if (!queuedMap.count(pos)) {
-        queuedTasks.push(pos);
+        priority ? queuedTasks.push_front(pos) : queuedTasks.push_back(pos);
         queuedMap.insert(pos);
     }
 }

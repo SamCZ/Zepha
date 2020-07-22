@@ -10,19 +10,28 @@ enum class PacketType {
     // Information Request Types
     BLOCK_IDENTIFIER_LIST,
     BIOME_IDENTIFIER_LIST,
-    MODS,
     MOD_ORDER,
+    MODS,
     MEDIA,
     MEDIA_DONE,
     CONNECT_DATA_RECVD,
 
-    // Ingame Data Types
+    // Miscellaneous
     SERVER_INFO,
-    THIS_PLAYER_INFO,
+
+    // Player Info
     PLAYER_INFO,
+    THIS_PLAYER_INFO,
+
+    // World
     CHUNK,
     MAPBLOCK,
+
+    // Block
     BLOCK_SET,
+    BLOCK_INTERACT,
+
+    // Entity
     ENTITY_INFO,
     ENTITY_REMOVED,
 

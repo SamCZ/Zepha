@@ -169,6 +169,15 @@ void Server::handlePlayerPacket(ServerClient& client, PacketView& p) {
             }
             break;
         }
+        case PacketType::BLOCK_INTERACT: {
+            glm::ivec3 pos = p.d.read<glm::ivec3>();
+            auto def = defs.defs.blockFromId(world.getBlock(pos));
+            if (def.callbacks.count(Callback::INTERACT)) {
+                defs.parser.safe_function(def.callbacks[Callback::INTERACT],
+                    defs.parser.luaVec(pos), ServerLuaPlayer(client));
+            }
+            break;
+        }
         case PacketType::INV_WATCH: {
             std::string source = p.d.read<std::string>();
             std::string list = p.d.read<std::string>();
@@ -177,12 +186,8 @@ void Server::handlePlayerPacket(ServerClient& client, PacketView& p) {
             if (source == "current_player") source = "player:" + std::to_string(client.cid);
 
             bool exists = refs.addWatcher(source, list, client.cid);
-            if (!exists) {
-                Serializer().append(source).append(list)
-                    .packet(PacketType::INV_INVALID).sendTo(client.peer, PacketChannel::INVENTORY);
-                break;
-            }
-
+            if (!exists) Serializer().append(source).append(list)
+                .packet(PacketType::INV_INVALID).sendTo(client.peer, PacketChannel::INVENTORY);
             break;
         }
         case PacketType::INV_UNWATCH: {

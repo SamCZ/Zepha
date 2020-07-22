@@ -14,7 +14,7 @@
 #include "../register/RegisterBiomes.h"
 
 // Usertypes
-#include "../api/usertype/sServerPlayer.h"
+#include "../api/class/ServerLuaPlayer.h"
 #include "../api/usertype/sLuaEntity.h"
 #include "../api/usertype/sInventoryRef.h"
 #include "../api/usertype/cItemStack.h"
@@ -76,18 +76,13 @@ void ServerLuaParser::sendModsPacket(ENetPeer* peer) const {
 
 void ServerLuaParser::playerConnected(std::shared_ptr<ServerClient> client) {
     auto players = core.get<sol::table>("players");
-    players.add(ServerLuaPlayer(*client));
-
-    ServerLuaPlayer& player = players[players.size()];
-
-    safe_function(core["__builtin"]["trigger_event"], "new_player", player);
-    safe_function(core["__builtin"]["trigger_event"], "player_join", player);
+    safe_function(core["__builtin"]["add_player"], ServerLuaPlayer(*client));
 }
 
 void ServerLuaParser::playerDisconnected(std::shared_ptr<ServerClient> client) {
     for (auto& pair : core.get<sol::table>("players")) {
         ServerLuaPlayer& p = pair.second.as<ServerLuaPlayer>();
-        if (p.cid == client->cid) {
+        if (p.get_cid() == client->cid) {
             safe_function(core["__builtin"]["trigger_event"], "player_disconnect", p);
 
             p.is_player = false;

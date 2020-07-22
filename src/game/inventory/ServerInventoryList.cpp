@@ -2,6 +2,8 @@
 // Created by aurailus on 2019-10-29.
 //
 
+#include <iostream>
+
 #include "ServerInventoryList.h"
 
 #include "../../net/Packet.h"
@@ -57,8 +59,7 @@ Packet ServerInventoryList::createPacket() {
 
 void ServerInventoryList::sendTo(std::shared_ptr<ServerClient> client) {
     if (!client) return;
-    auto p = createPacket();
-    p.sendTo(client->peer, PacketChannel::INVENTORY);
+    createPacket().sendTo(client->peer, PacketChannel::INVENTORY);
 }
 
 void ServerInventoryList::sendAll() {

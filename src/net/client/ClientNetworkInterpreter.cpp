@@ -76,37 +76,16 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
         case PacketType::SERVER_INFO:
             serverSideChunkGens = p->d.read<unsigned int>(); break;
 
-        case PacketType::THIS_PLAYER_INFO: {
-            while (!p->d.atEnd()) {
-                switch (p->d.read<unsigned int>()) {
-                    case static_cast<unsigned int>(NetPlayerField::ID): {
-                        cid = p->d.read<unsigned int>();
-                        break;
-                    }
-                    case static_cast<unsigned int>(NetPlayerField::POSITION): {
-                        player.setPos(p->d.read<glm::vec3>());
-                        break;
-                    }
-                    case static_cast<unsigned int>(NetPlayerField::PITCH): {
-                        player.setPitch(p->d.read<float>());
-                        break;
-                    }
-                    case static_cast<unsigned int>(NetPlayerField::YAW): {
-                        player.setYaw(p->d.read<float>());
-                        break;
-                    }
-                }
-            }
-            break; }
+        case PacketType::THIS_PLAYER_INFO:
+            player.handleAssertion(p->d); break;
             
         case PacketType::PLAYER_INFO: {
             unsigned int cid = p->d.read<unsigned int>();
-            if (this->cid == cid) break;
+            if (player.id == cid) break;
 
             bool found = false;
             for (auto& entity : world->dimension.playerEntities) {
                 if (entity.getCid() == cid) {
-                    // Update an existing PlayerEntity
                     entity.interpPos(p->d.read<glm::vec3>());
                     entity.interpRotateZ(-p->d.read<float>() + 90);
                     entity.interpRotateY(-p->d.read<float>() + 90);
@@ -149,27 +128,32 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
     }
 }
 
-void ClientNetworkInterpreter::setBlock(glm::ivec3 pos, unsigned int block) {
-    Serializer().append(pos).append(block)
-        .packet(PacketType::BLOCK_SET).sendTo(connection.getPeer(), PacketChannel::BLOCK);
+void ClientNetworkInterpreter::blockPlace(glm::ivec3 pos, unsigned int block) {
+    Serializer().append(pos).append(block).packet(PacketType::BLOCK_SET)
+        .sendTo(connection.getPeer(), PacketChannel::BLOCK);
 }
 
-void ClientNetworkInterpreter::watchInv(const std::string& inv, const std::string& list) {
-    Serializer().append(inv).append(list)
-            .packet(PacketType::INV_WATCH).sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+void ClientNetworkInterpreter::blockInteract(glm::ivec3 pos) {
+    Serializer().append(pos).packet(PacketType::BLOCK_INTERACT)
+        .sendTo(connection.getPeer(), PacketChannel::BLOCK);
 }
 
-void ClientNetworkInterpreter::unwatchInv(const std::string& inv, const std::string& list) {
-    auto packet = Serializer().append(inv).append(list).packet(PacketType::INV_UNWATCH);
-    packet.sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+void ClientNetworkInterpreter::invWatch(const std::string& inv, const std::string& list) {
+    Serializer().append(inv).append(list).packet(PacketType::INV_WATCH)
+        .sendTo(connection.getPeer(), PacketChannel::INVENTORY);
 }
 
-void ClientNetworkInterpreter::primaryInteract(const std::string &inv, const std::string &list, unsigned short ind) {
-    auto packet = Serializer().append<unsigned short>(0).append(inv).append(list).append<unsigned short>(ind).packet(PacketType::INV_INTERACT);
-    packet.sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+void ClientNetworkInterpreter::invUnwatch(const std::string& inv, const std::string& list) {
+    Serializer().append(inv).append(list).packet(PacketType::INV_UNWATCH)
+        .sendTo(connection.getPeer(), PacketChannel::INVENTORY);
 }
 
-void ClientNetworkInterpreter::secondaryInteract(const std::string &inv, const std::string &list, unsigned short ind) {
-    auto packet = Serializer().append<unsigned short>(1).append(inv).append(list).append<unsigned short>(ind).packet(PacketType::INV_INTERACT);
-    packet.sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+void ClientNetworkInterpreter::invInteractPrimary(const std::string &inv, const std::string &list, unsigned short ind) {
+    Serializer().append<unsigned short>(0).append(inv).append(list).append<unsigned short>(ind).packet(PacketType::INV_INTERACT)
+        .sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+}
+
+void ClientNetworkInterpreter::invInteractSecondary(const std::string &inv, const std::string &list, unsigned short ind) {
+    Serializer().append<unsigned short>(1).append(inv).append(list).append<unsigned short>(ind).packet(PacketType::INV_INTERACT)
+        .sendTo(connection.getPeer(), PacketChannel::INVENTORY);
 }

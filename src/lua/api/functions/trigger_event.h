@@ -19,5 +19,14 @@ namespace Api {
                 end
             end
         )");
+
+
+        lua.script(R"(
+            zepha.__builtin.add_player = function(player)
+                table.insert(zepha.players, player)
+                zepha.__builtin.trigger_event("new_player", player)
+                zepha.__builtin.trigger_event("player_join", player)
+            end
+        )");
     }
 }
