@@ -32,12 +32,13 @@ function zepha.get_hit_impact(player, block)
     local props = zepha.get_tool_props(player)
     local def = (zepha.registered_blocks[block] or {}).tool_props or {}
 
+    if def.health == nil then return 0, props.interval end
+
     local damage = 0
     for group, tool_damage in pairs(props.damage_groups) do
-        local mul = def.multipliers[group]
-        if mul == nil then mul = def.multipliers["_other"] end
+        local mul = (def.multipliers or {})[group]
+        if mul == nil then mul = (def.multipliers or {})["_other"] end
         if mul == nil then mul = 1 end
-
 
         damage = math.max(damage, tool_damage * mul)
     end

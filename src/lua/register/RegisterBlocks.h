@@ -274,10 +274,10 @@ namespace RegisterBlocks {
             bool lightPropagates = blockTable.get_or("light_propagates", false);
             auto maxStack = blockTable.get_or("stack", 64);
 
-            int health = 1, defense = 0;
+            unsigned int health = INT32_MAX, defense = 0;
             auto toolOpt = blockTable.get<sol::optional<sol::table>>("tool_props");
             if (toolOpt) {
-                health = toolOpt->get_or<unsigned int>("health", 1);
+                health = toolOpt->get_or<unsigned int>("health", INT32_MAX);
                 defense = toolOpt->get_or<unsigned int>("defense", 0);
             }
 
