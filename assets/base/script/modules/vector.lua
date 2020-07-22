@@ -1,9 +1,126 @@
 -- Zepha Vector Library
 -- Version 1.0
 
+_G["vector"] = {}
+
+-- create_vector
+-- Create a new vector, and give it a metatable.
+-- x, y, and z must all be numbers.
+local function create_vector(x, y, z)
+    local v = {x, y, z}
+    setmetatable(v, vector._mt)
+    return v
+end
+
+-- vector.add
+-- Add two vectors or a vector and number
+function vector.add(v1, v2)
+    if not vector.is_vector(v1) then return end
+    if vector.is_vector(v2) then
+        return create_vector(rawget(v1, 1) + rawget(v2, 1), rawget(v1, 2) + rawget(v2, 2), rawget(v1, 3) + rawget(v2, 3))
+    elseif type(v2) == "number" then
+        return create_vector(rawget(v1, 1) + v2, rawget(v1, 2) + v2, rawget(v1, 3) + v2)
+    end
+end
+
+-- vector.negative
+-- Flips a vector's content's signs
+function vector.negative(v)
+    if not vector.is_vector(v) then return end
+    return create_vector(-rawget(v, 1), -rawget(v, 2), -rawget(v, 3))
+end
+
+-- vector.subtract
+-- Subtract v2 from v1
+function vector.subtract(v1, v2)
+    return vector.add(v1, vector.negative(v2))
+end
+
+-- vector.multiply
+-- Multiply v1 by a vector or number
+function vector.multiply(v1, m)
+    if not vector.is_vector(v1) then return end
+    if vector.is_vector(m) then
+        return create_vector(rawget(v1, 1) * rawget(m, 1), rawget(v1, 2) * rawget(m, 2), rawget(v1, 3) * rawget(m, 3))
+    elseif type(m) == "number" then
+        return create_vector(rawget(v1, 1) * m, rawget(v1, 2) * m, rawget(v1, 3) * m)
+    end
+end
+
+-- vector.divide
+-- Divice v1 by a vector or number
+function vector.divide(v1, m)
+    if not vector.is_vector(v1) then return end
+    if vector.is_vector(m) then
+        return create_vector(rawget(v1, 1) / rawget(m, 1), rawget(v1, 2) / rawget(m, 2), rawget(v1, 3) / rawget(m, 3))
+    elseif type(m) == "number" then
+        return create_vector(rawget(v1, 1) / m, rawget(v1, 2) / m, rawget(v1, 3) / m)
+    end
+end
+
+-- vector.pow
+-- Return v to the power of p
+function vector.pow(v, m)
+   if not vector.is_vector(v) then return end
+   local res = create_vector(rawget(v, 1), rawget(v, 2), rawget(v, 3))
+   for i = 1, power - 1 do res = res * v end
+   return res
+end
+
+-- vector.equal
+-- Return a boolean indicating if v1 == v2
+function vector.equal(v1, v2)
+    if not vector.is_vector(v1) or not vector.is_vector(v2) then return end
+    return (rawget(v1, 1) == rawget(v2, 1) and rawget(v1, 2) == rawget(v2, 2) and rawget(v1, 3) == rawget(v2, 3))
+end
+
+-- vector.abs
+-- Return the absolute value of v
+function vector.abs(v)
+    if not vector.is_vector(v) then return end
+    return create_vector(math.abs(rawget(v, 1)), math.abs(rawget(v, 2)), math.abs(rawget(v, 3)))
+end
+
+-- vector.round
+-- Round each vector value to the nearest integer
+function vector.round(v)
+    if not vector.is_vector(v) then return end
+    return create_vector(math.round(rawget(v, 1)), math.round(rawget(v, 2)), math.round(rawget(v, 3)))
+end
+
+-- vector.floor
+-- Floor each vector value to the lowest integer
+function vector.floor(v)
+    if not vector.is_vector(v) then return end
+    return create_vector(math.floor(rawget(v, 1)), math.floor(rawget(v, 2)), math.floor(rawget(v, 3)))
+end
+
+-- vector.ceil
+-- Ceil each vector value to the highest integer
+function vector.ceil(v)
+    if not vector.is_vector(v) then return end
+    return create_vector(math.ceil(rawget(v, 1)), math.ceil(rawget(v, 2)), math.ceil(rawget(v, 3)))
+end
+
+-- vector.distance_squared
+-- Get the square of the distance between two vectors
+-- This function is faster if you only need to compare two distances
+function vector.distance_squared(v1, v2)
+    if not vector.is_vector(v1) or not vector.is_vector(v2) then return end
+    local diff = vector.abs(vector.subtract(v1, v2))
+    return diff.x ^ 2 + diff.y ^ 2 + diff.z ^ 2
+end
+
+-- vector.distance
+-- Get the distance between two vectors
+function vector.distance(v1, v2)
+    if not vector.is_vector(v1) or not vector.is_vector(v2) then return end
+    return math.sqrt(vector.distance_squared(v1, v2))
+end
+
 -- Vector metatable
 -- A metatable to be assigned to vectors which applies mathematic operators
-local vector_mt = {
+vector._mt = {
     __is_vector = true,
 
     -- Value manipulation functions
@@ -54,43 +171,22 @@ local vector_mt = {
     end,
 
     -- Higher level methods
-    abs = function(tbl)
-        return vector.abs(tbl)
-    end,
-    round = function(tbl)
-        return vector.round(tbl)
-    end,
-    floor = function(tbl)
-        return vector.floor(tbl)
-    end,
-    ceil = function(tbl)
-        return vector.ceil(tbl)
-    end,
-    distance_squared = function(tbl, o)
-        return vector.distance_squared(tbl, o)
-    end,
-    distance = function(tbl, o)
-        return vector.distance(tbl, o)
-    end
+    abs = vector.abs,
+    round = vector.round,
+    floor = vector.floor,
+    ceil = vector.ceil,
+    dist = vector.distance,
+    distance, vector.distance,
+    dist2 = vector.distance_squared,
+    distance_squared = vector.distance_squared
 }
 
--- create_vector
--- Create a new vector, and give it a metatable.
--- x, y, and z must all be numbers.
-local function create_vector(x, y, z)
-    local vector = {x, y, z}
-    setmetatable(vector, vector_mt)
-    return vector
-end
-
--- check_vector
+-- vector.is_vector
 -- Checks if a value is a vector.
-local function check_vector(v)
+function vector.is_vector(v)
     if type(v) ~= "table" or not v.__is_vector then return false end
     return true
 end
-
-_G["vector"] = {}
 
 -- vector.new
 -- Constructor function for creating vectors from a table or 2-3 values.
@@ -112,109 +208,3 @@ end
 
 -- vector.new shorthand
 _G["V"] = vector.new
-
--- vector.add
--- Add two vectors or a vector and number
-vector.add = function(v1, v2)
-    if not check_vector(v1) then return end
-    if check_vector(v2) then
-        return create_vector(rawget(v1, 1) + rawget(v2, 1), rawget(v1, 2) + rawget(v2, 2), rawget(v1, 3) + rawget(v2, 3))
-    elseif type(v2) == "number" then
-        return create_vector(rawget(v1, 1) + v2, rawget(v1, 2) + v2, rawget(v1, 3) + v2)
-    end
-end
-
--- vector.negative
--- Flips a vector's content's signs
-vector.negative = function(v)
-    if not check_vector(v) then return end
-    return create_vector(-rawget(v, 1), -rawget(v, 2), -rawget(v, 3))
-end
-
--- vector.subtract
--- Subtract v2 from v1
-vector.subtract = function(v1, v2)
-    return vector.add(v1, vector.negative(v2))
-end
-
--- vector.multiply
--- Multiply v1 by a vector or number
-vector.multiply = function(v1, m)
-    if not check_vector(v1) then return end
-    if check_vector(m) then
-        return create_vector(rawget(v1, 1) * rawget(m, 1), rawget(v1, 2) * rawget(m, 2), rawget(v1, 3) * rawget(m, 3))
-    elseif type(m) == "number" then
-        return create_vector(rawget(v1, 1) * m, rawget(v1, 2) * m, rawget(v1, 3) * m)
-    end
-end
-
--- vector.divide
--- Divice v1 by a vector or number
-vector.divide = function(v1, m)
-    if not check_vector(v1) then return end
-    if check_vector(m) then
-        return create_vector(rawget(v1, 1) / rawget(m, 1), rawget(v1, 2) / rawget(m, 2), rawget(v1, 3) / rawget(m, 3))
-    elseif type(m) == "number" then
-        return create_vector(rawget(v1, 1) / m, rawget(v1, 2) / m, rawget(v1, 3) / m)
-    end
-end
-
--- vector.pow
--- Return v to the power of p
-vector.pow = function(v, m)
-   if not check_vector(v) then return end
-   local res = create_vector(rawget(v, 1), rawget(v, 2), rawget(v, 3))
-   for i = 1, power - 1 do res = res * v end
-   return res
-end
-
--- vector.equal
--- Return a boolean indicating if v1 == v2
-vector.equal = function(v1, v2)
-    if not check_vector(v1) or not check_vector(v2) then return end
-    return (rawget(v1, 1) == rawget(v2, 1) and rawget(v1, 2) == rawget(v2, 2) and rawget(v1, 3) == rawget(v2, 3))
-end
-
--- vector.abs
--- Return the absolute value of v
-vector.abs = function(v)
-    if not check_vector(v) then return end
-    return create_vector(math.abs(rawget(v, 1)), math.abs(rawget(v, 2)), math.abs(rawget(v, 3)))
-end
-
--- vector.round
--- Round each vector value to the nearest integer
-vector.round = function(v)
-    if not check_vector(v) then return end
-    return create_vector(math.round(rawget(v, 1)), math.round(rawget(v, 2)), math.round(rawget(v, 3)))
-end
-
--- vector.floor
--- Floor each vector value to the lowest integer
-vector.floor = function(v)
-    if not check_vector(v) then return end
-    return create_vector(math.floor(rawget(v, 1)), math.floor(rawget(v, 2)), math.floor(rawget(v, 3)))
-end
-
--- vector.ceil
--- Ceil each vector value to the highest integer
-vector.ceil = function(v)
-    if not check_vector(v) then return end
-    return create_vector(math.ceil(rawget(v, 1)), math.ceil(rawget(v, 2)), math.ceil(rawget(v, 3)))
-end
-
--- vector.distance_squared
--- Get the square of the distance between two vectors
--- This function is faster if you only need to compare two distances
-vector.distance_squared = function(v1, v2)
-    if not check_vector(v1) or not check_vector(v2) then return end
-    local diff = vector.abs(vector.subtract(v1, v2))
-    return diff.x ^ 2 + diff.y ^ 2 + diff.z ^ 2
-end
-
--- vector.distance
--- Get the distance between two vectors
-vector.distance = function(v1, v2)
-    if not check_vector(v1) or not check_vector(v2) then return end
-    return math.sqrt(vector.distance_squared(v1, v2))
-end

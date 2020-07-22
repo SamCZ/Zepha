@@ -17,9 +17,9 @@ namespace Api {
     static void add_entity_c(sol::state& lua, sol::table& core, ClientGame& defs, LocalWorld& world) {
         core["entities"] = lua.create_table();
 
-        core.set_function("add_entity", [&](sol::optional<std::string> identifier, sol::optional<sol::table> pos, sol::object staticData) {
-            if (!identifier || !identifier->length()) throw std::runtime_error("expected a string as the first argument.");
-            if (!pos) throw std::runtime_error("expected a vector as the second argument.");
+        core.set_function("add_entity", [&](sol::optional<sol::table> pos, sol::optional<std::string> identifier, sol::object staticData) {
+            if (!identifier || !identifier->length()) throw std::runtime_error("Expected an identifier as the second argument.");
+            if (!pos) throw std::runtime_error("Expected a position as the first argument.");
 
             if (core["registered_entities"][*identifier] == sol::nil) throw std::runtime_error("identifier '" + *identifier + "' is not a valid entity identifier.");
             sol::table entityDef = core["registered_entities"][*identifier];
@@ -55,9 +55,9 @@ namespace Api {
     static void add_entity_s(sol::state& lua, sol::table& core, ServerGame& defs, ServerWorld& world) {
         core["entities"] = lua.create_table();
 
-        core.set_function("add_entity", [&](sol::optional<std::string> identifier, sol::optional<sol::table> pos, sol::object staticData) {
-            if (!identifier || !identifier->length()) throw std::runtime_error("expected a string as the first argument.");
-            if (!pos) throw std::runtime_error("expected a vector as the second argument.");
+        core.set_function("add_entity", [&](sol::optional<sol::table> pos, sol::optional<std::string> identifier, sol::object staticData) {
+            if (!identifier || !identifier->length()) throw std::runtime_error("Expected an identifier as the second argument.");
+            if (!pos) throw std::runtime_error("Expected a position as the first argument.");
 
             if (core["registered_entities"][*identifier] == sol::nil) throw std::runtime_error("identifier '" + *identifier + "' is not a valid entity identifier.");
             sol::table entityDef = core["registered_entities"][*identifier];

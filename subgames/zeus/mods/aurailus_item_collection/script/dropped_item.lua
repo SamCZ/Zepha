@@ -1,5 +1,5 @@
 local function collides(entity)
-    return zepha.get_block(entity.pos + V{0, 0.5, 0}) ~= "air"
+    return zepha.get_block((entity.pos - V{0, 0.5, 0}):floor()) ~= "air"
 end
 
 zepha.register_entity("@aurailus:item_collection:dropped_item", {
@@ -73,7 +73,7 @@ zepha.register_entity("@aurailus:item_collection:dropped_item", {
     end,
     check_collect = function(self)
         for _,p in pairs(zepha.players) do
-            if vector.distance(p.pos, self.object.pos) < 2 then
+            if p.pos:dist(self.object.pos) < 2 then
                 self.object.pos = p.pos + V{0, 0.90, 0}
                 self.scooping = true
 
