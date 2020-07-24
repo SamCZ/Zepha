@@ -218,15 +218,11 @@ void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
 
     if (block == DefinitionAtlas::AIR) {
         auto def = game.defs.blockFromId(oldBlock);
-        if (def.callbacks.count(Callback::DESTRUCT)) {
-            def.callbacks[Callback::DESTRUCT](game.parser.luaVec(pos));
-        }
+        if (def.callbacks.count(Callback::DESTRUCT)) def.callbacks[Callback::DESTRUCT](pos);
     }
     else {
         auto def = game.defs.blockFromId(block);
-        if (def.callbacks.count(Callback::CONSTRUCT)) {
-            def.callbacks[Callback::CONSTRUCT](game.parser.luaVec(pos));
-        }
+        if (def.callbacks.count(Callback::CONSTRUCT)) def.callbacks[Callback::CONSTRUCT](pos);
     }
 
     dimension.setBlock(pos, block);
@@ -248,13 +244,11 @@ void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
 
     if (block == DefinitionAtlas::AIR) {
         auto def = game.defs.blockFromId(oldBlock);
-        if (def.callbacks.count(Callback::AFTER_DESTRUCT))
-            def.callbacks[Callback::AFTER_DESTRUCT](game.parser.luaVec(pos));
+        if (def.callbacks.count(Callback::AFTER_DESTRUCT)) def.callbacks[Callback::AFTER_DESTRUCT](pos);
     }
     else {
         auto def = game.defs.blockFromId(block);
-        if (def.callbacks.count(Callback::AFTER_CONSTRUCT))
-            def.callbacks[Callback::AFTER_CONSTRUCT](game.parser.luaVec(pos));
+        if (def.callbacks.count(Callback::AFTER_CONSTRUCT)) def.callbacks[Callback::AFTER_CONSTRUCT](pos);
     }
 }
 

@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include <sol2/sol.hpp>
-
+#include "../Lua.h"
 #include "../../def/ClientGame.h"
 #include "../../def/ServerGame.h"
 #include "../../def/gen/BiomeDef.h"

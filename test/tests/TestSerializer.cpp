@@ -4,8 +4,8 @@
 
 #include <catch2/catch.hpp>
 #include <iostream>
-#include "../../src/util/net/Serializer.h"
-#include "../../src/util/net/Deserializer.h"
+#include "../../src/net/Serializer.h"
+#include "../../src/net/Deserializer.h"
 
 TEST_CASE("Serialization", "[net]") {
     Serializer s;

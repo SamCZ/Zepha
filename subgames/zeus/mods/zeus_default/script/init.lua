@@ -29,10 +29,3 @@ zepha.register_keybind("zeus:default:double_jump_fly", {
         last_press = press;
     end
 })
-
--- if (zepha.client) then
---     zepha.delay(function()
---         zepha.get_hit_impact(zepha.player, "zeus:default:stone")
---         return true
---     end, 1)
--- end

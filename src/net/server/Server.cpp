@@ -130,52 +130,38 @@ void Server::handlePlayerPacket(ServerClient& client, PacketView& p) {
 
             if (block == DefinitionAtlas::AIR) {
                 auto def = defs.defs.blockFromId(worldBlock);
-                if (def.callbacks.count(Callback::BREAK)) {
-                    defs.parser.safe_function(def.callbacks[Callback::BREAK],
-                        defs.parser.luaVec(pos), ServerLuaPlayer(client));
-                }
-                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"],
-                    "break", defs.parser.luaVec(pos), ServerLuaPlayer(client));
+                //TODO: stop casting to float vec3
+                if (def.callbacks.count(Callback::BREAK)) defs.parser.safe_function(def.callbacks[Callback::BREAK], glm::vec3(pos), ServerLuaPlayer(client));
+                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"], "break", glm::vec3(pos), ServerLuaPlayer(client));
             }
             else {
                 auto def = defs.defs.blockFromId(block);
-                if (def.callbacks.count(Callback::PLACE)) {
-                    defs.parser.safe_function(def.callbacks[Callback::PLACE],
-                        defs.parser.luaVec(pos), ServerLuaPlayer(client));
-                }
-                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"],
-                    "place", defs.parser.luaVec(pos), ServerLuaPlayer(client));
+                if (def.callbacks.count(Callback::PLACE))
+                    defs.parser.safe_function(def.callbacks[Callback::PLACE], pos, ServerLuaPlayer(client));
+                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"], "place", pos, ServerLuaPlayer(client));
             }
 
             world.setBlock(pos, block);
 
             if (block == DefinitionAtlas::AIR) {
                 auto def = defs.defs.blockFromId(worldBlock);
-                if (def.callbacks.count(Callback::AFTER_BREAK)) {
-                    defs.parser.safe_function(def.callbacks[Callback::AFTER_BREAK],
-                        defs.parser.luaVec(pos), ServerLuaPlayer(client));
-                }
-                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"],
-                    "after_break", defs.parser.luaVec(pos), ServerLuaPlayer(client));
+                if (def.callbacks.count(Callback::AFTER_BREAK))
+                    defs.parser.safe_function(def.callbacks[Callback::AFTER_BREAK], pos, ServerLuaPlayer(client));
+                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"], "after_break", pos, ServerLuaPlayer(client));
             }
             else {
                 auto def = defs.defs.blockFromId(block);
-                if (def.callbacks.count(Callback::AFTER_PLACE)) {
-                    defs.parser.safe_function(def.callbacks[Callback::AFTER_PLACE],
-                        defs.parser.luaVec(pos), ServerLuaPlayer(client));
-                }
-                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"],
-                    "after_place", defs.parser.luaVec(pos), ServerLuaPlayer(client));
+                if (def.callbacks.count(Callback::AFTER_PLACE))
+                    defs.parser.safe_function(def.callbacks[Callback::AFTER_PLACE], pos, ServerLuaPlayer(client));
+                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"], "after_place", pos, ServerLuaPlayer(client));
             }
             break;
         }
         case PacketType::BLOCK_INTERACT: {
             glm::ivec3 pos = p.d.read<glm::ivec3>();
             auto def = defs.defs.blockFromId(world.getBlock(pos));
-            if (def.callbacks.count(Callback::INTERACT)) {
-                defs.parser.safe_function(def.callbacks[Callback::INTERACT],
-                    defs.parser.luaVec(pos), ServerLuaPlayer(client));
-            }
+            if (def.callbacks.count(Callback::INTERACT))
+                defs.parser.safe_function(def.callbacks[Callback::INTERACT], pos, ServerLuaPlayer(client));
             break;
         }
         case PacketType::INV_WATCH: {

@@ -266,10 +266,10 @@ void InventoryList::setStack(unsigned short i, const ItemStack &stack) {
     }
 }
 
-void InventoryList::setLuaCallback(InventoryList::Callback type, sol::function cb) {
+void InventoryList::setLuaCallback(InventoryList::Callback type, sol::safe_function cb) {
     luaCallbacks[static_cast<size_t>(type)] = cb;
 }
 
-sol::function InventoryList::getLuaCallback(InventoryList::Callback type) {
+sol::safe_function InventoryList::getLuaCallback(InventoryList::Callback type) {
     return luaCallbacks[static_cast<size_t>(type)];
 }

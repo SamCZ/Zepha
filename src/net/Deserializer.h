@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+#include <stdexcept>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
@@ -14,7 +15,7 @@ public:
     Deserializer(const std::string& data) : data(&data[0]), len(data.length()) {};
     Deserializer(const char* start, size_t len) : data(start), len(len) {};
 
-    template <typename T> inline T read() { assert(false); };
+    template <typename T> inline T read() { throw std::runtime_error("Tried to append a non-serializable type"); };
     template <typename T> inline Deserializer& read(T& ref) {
         ref = read<T>();
         return *this;

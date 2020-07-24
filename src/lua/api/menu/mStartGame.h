@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include <sol2/sol.hpp>
-
+#include "../../Lua.h"
 #include "../../../game/ClientState.h"
 
 namespace MenuApi {

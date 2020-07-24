@@ -8,15 +8,13 @@
 
 #include <list>
 #include <glm/vec3.hpp>
-#include <sol2/sol.hpp>
+
+#include "Lua.h"
 
 class LuaParser {
 public:
     constexpr static double UPDATE_STEP {1 / 60.0};
     virtual void update(double delta);
-
-    sol::table luaVec(glm::vec3 vec);
-    static sol::table luaVec(sol::state_view s, glm::vec3 vec);
 
     sol::state lua;
     sol::table core;

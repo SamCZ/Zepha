@@ -4,7 +4,8 @@
 
 #pragma once
 
-#include <sol2/sol.hpp>
+#include <string>
+#include <sol/forward.hpp>
 
 class DefinitionAtlas;
 class ItemStack;

@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+#include <stdexcept>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
@@ -16,7 +17,7 @@ class Serializer {
 public:
     std::string data {};
 
-    template <typename T> inline Serializer& append(const T& elem) { assert(false); };
+    template <typename T> inline Serializer& append(const T& elem) { throw std::runtime_error("Tried to append a non-serializable type"); };
 
     Packet packet(PacketType p, bool reliable = true) {
         Packet packet(p, reliable);

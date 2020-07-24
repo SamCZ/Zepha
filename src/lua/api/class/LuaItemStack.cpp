@@ -4,6 +4,7 @@
 
 #include "LuaItemStack.h"
 
+#include "../../Lua.h"
 #include "../../../def/ItemDef.h"
 #include "../../../def/DefinitionAtlas.h"
 #include "../../../game/inventory/ItemStack.h"

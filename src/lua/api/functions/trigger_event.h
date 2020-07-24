@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <sol2/sol.hpp>
+#include "../../Lua.h"
 
 namespace Api {
     static void trigger_event(sol::state& lua) {
@@ -17,15 +17,6 @@ namespace Api {
                         EVENT_CALLBACK(...)
                     end
                 end
-            end
-        )");
-
-
-        lua.script(R"(
-            zepha.__builtin.add_player = function(player)
-                table.insert(zepha.players, player)
-                zepha.__builtin.trigger_event("new_player", player)
-                zepha.__builtin.trigger_event("player_join", player)
             end
         )");
     }

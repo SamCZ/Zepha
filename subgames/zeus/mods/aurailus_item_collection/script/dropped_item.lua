@@ -73,7 +73,7 @@ zepha.register_entity("@aurailus:item_collection:dropped_item", {
     end,
     check_collect = function(self)
         for _,p in pairs(zepha.players) do
-            if p.pos:dist(self.object.pos) < 2 then
+            if p.pos:distance(self.object.pos) < 2 then
                 self.object.pos = p.pos + V{0, 0.90, 0}
                 self.scooping = true
 

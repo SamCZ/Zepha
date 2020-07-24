@@ -5,12 +5,12 @@
 #pragma once
 
 #include <string>
-#include <sol2/sol.hpp>
 
 #include "../ItemDef.h"
 
 #include "BlockModel.h"
 #include "SelectionBox.h"
+#include "../../lua/Lua.h"
 #include "../../util/Util.h"
 #include "../../lua/Callback.h"
 

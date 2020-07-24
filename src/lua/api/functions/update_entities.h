@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <sol2/sol.hpp>
+#include "../../Lua.h"
 
 namespace Api {
     static void update_entities(sol::state& lua) {

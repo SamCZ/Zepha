@@ -8,30 +8,28 @@
 #include "../../../def/ItemDef.h"
 #include "../../../def/ServerGame.h"
 
-void ServerLuaEntity::snap_pos(const sol::table &pos) {
-    entity->setPos({pos[1], pos[2], pos[3]});
+void ServerLuaEntity::snap_pos(glm::vec3 pos) {
+    entity->setPos(pos);
 }
 
-void ServerLuaEntity::set_pos(const sol::table &pos) {
-    entity->setPos({pos[1], pos[2], pos[3]});
+void ServerLuaEntity::set_pos(glm::vec3 pos) {
+    entity->setPos(pos);
 }
 
-sol::table ServerLuaEntity::get_pos(sol::this_state s) {
-    glm::vec3 pos = entity->getPos();
-    return LuaParser::luaVec(sol::state_view(s), pos);
+glm::vec3 ServerLuaEntity::get_pos() {
+    return entity->getPos();
 }
 
-void ServerLuaEntity::snap_visual_offset(const sol::table &vs) {
-    entity->setVisualOffset({vs[1], vs[2], vs[3]});
+void ServerLuaEntity::snap_visual_offset(glm::vec3 vs) {
+    entity->setVisualOffset(vs);
 }
 
-void ServerLuaEntity::set_visual_offset(const sol::table &pos) {
-    entity->setVisualOffset({pos[1], pos[2], pos[3]});
+void ServerLuaEntity::set_visual_offset(glm::vec3 vs) {
+    entity->setVisualOffset(vs);
 }
 
-sol::table ServerLuaEntity::get_visual_offset(sol::this_state s) {
-    glm::vec3 v = entity->getVisualOffset();
-    return LuaParser::luaVec(sol::state_view(s), v);
+glm::vec3 ServerLuaEntity::get_visual_offset() {
+    return entity->getVisualOffset();
 }
 
 void ServerLuaEntity::snap_pitch(float rot) {

@@ -62,12 +62,12 @@ void LocalWorld::blockPlace(glm::vec3 pos, unsigned int block) {
     if (block == LocalDefinitionAtlas::AIR) {
         auto def = defs.defs.blockFromId(getBlock(pos));
         if (def.callbacks.count(Callback::BREAK_CLIENT))
-            defs.parser.safe_function(def.callbacks[Callback::BREAK_CLIENT], defs.parser.luaVec(pos));
+            defs.parser.safe_function(def.callbacks[Callback::BREAK_CLIENT], pos);
     }
     else {
         auto def = defs.defs.blockFromId(block);
         if (def.callbacks.count(Callback::PLACE_CLIENT))
-            defs.parser.safe_function(def.callbacks[Callback::PLACE_CLIENT], defs.parser.luaVec(pos));
+            defs.parser.safe_function(def.callbacks[Callback::PLACE_CLIENT], pos);
     }
 
     net->blockPlace(pos, block);
@@ -82,7 +82,7 @@ void LocalWorld::blockInteract(PointedThing &thing) {
     auto def = defs.defs.blockFromId(getBlock(thing.target.block.pos));
 
     if (def.callbacks.count(Callback::INTERACT_CLIENT))
-        defs.parser.safe_function(def.callbacks[Callback::INTERACT_CLIENT], defs.parser.luaVec(thing.target.block.pos));
+        defs.parser.safe_function(def.callbacks[Callback::INTERACT_CLIENT], thing.target.block.pos);
 
     net->blockInteract(thing.target.block.pos);
 }

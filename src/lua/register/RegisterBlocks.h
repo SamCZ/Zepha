@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include <sol2/sol.hpp>
-
+#include "../Lua.h"
 #include "../Callback.h"
 #include "../../def/ItemDef.h"
 #include "../../def/ClientGame.h"

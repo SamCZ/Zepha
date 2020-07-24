@@ -5,8 +5,8 @@
 #pragma once
 
 #include <list>
-#include <sol2/sol.hpp>
 
+#include "../../Lua.h"
 #include "../../LuaParser.h"
 
 namespace MenuApi {

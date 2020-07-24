@@ -28,6 +28,7 @@ bool ServerInventoryList::addWatcher(unsigned int cid) {
     watchers.push_back(cid);
 
     sendTo(client);
+    return true;
 }
 
 bool ServerInventoryList::removeWatcher(unsigned int cid) {

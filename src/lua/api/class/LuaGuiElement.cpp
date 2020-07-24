@@ -171,5 +171,6 @@ Any LuaGuiElement::getAsAny(const std::string &key) const {
             return Any::from<glm::vec4>(values);
         }
     }
-    else throw std::runtime_error("Invalid type requested in getAsAny");
+
+    throw std::runtime_error("Invalid type requested in getAsAny");
 }

@@ -76,7 +76,12 @@ void ServerLuaParser::sendModsPacket(ENetPeer* peer) const {
 
 void ServerLuaParser::playerConnected(std::shared_ptr<ServerClient> client) {
     auto players = core.get<sol::table>("players");
-    safe_function(core["__builtin"]["add_player"], ServerLuaPlayer(*client));
+    players.add(ServerLuaPlayer(*client));
+
+    sol::object player = players[players.size()];
+
+    safe_function(core["__builtin"]["trigger_event"], "new_player", player);
+    safe_function(core["__builtin"]["trigger_event"], "player_join", player);
 }
 
 void ServerLuaParser::playerDisconnected(std::shared_ptr<ServerClient> client) {
@@ -148,33 +153,36 @@ sol::protected_function_result ServerLuaParser::errorCallback(sol::protected_fun
     sol::error err = errPfr;
     std::string errString = err.what();
 
-    std::string::size_type slash = errString.find_first_of("/");
-    assert(slash != std::string::npos);
+    try {
+        std::string::size_type slash = errString.find_first_of("/");
+        if (slash != std::string::npos) throw "npos";
 
-    std::string modString = errString.substr(0, slash);
+        std::string modString = errString.substr(0, slash);
 
-    std::string::size_type lineNumStart = errString.find(':', slash);
-    assert(lineNumStart != std::string::npos);
-    std::string::size_type lineNumEnd = errString.find(':', lineNumStart + 1);
-    assert(lineNumEnd != std::string::npos);
+        std::string::size_type lineNumStart = errString.find(':', slash);
+        if (lineNumStart != std::string::npos) throw "lineNumStart";
+        std::string::size_type lineNumEnd = errString.find(':', lineNumStart + 1);
+        if (lineNumStart != std::string::npos) throw "lineNumEnd";
 
-    std::string fileName = errString.substr(0, lineNumStart);
-    int lineNum = std::stoi(errString.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1));
+        std::string fileName = errString.substr(0, lineNumStart);
+        int lineNum = std::stoi(errString.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1));
 
-    for (auto& mod : handler.cGetMods()) {
-        if (mod.config.name == modString) {
-            for (auto& file : mod.files) {
-                if (file.path == fileName) {
-                    std::cout << std::endl << ErrorFormatter::formatError(fileName, lineNum, errString, file.file) << std::endl;
-                    exit(1);
+        for (auto& mod : handler.cGetMods()) {
+            if (mod.config.name == modString) {
+                for (auto& file : mod.files) {
+                    if (file.path == fileName) {
+                        std::cout << std::endl << ErrorFormatter::formatError(fileName, lineNum, errString, file.file) << std::endl;
+                        break;
+                    }
                 }
+                break;
             }
-            break;
         }
     }
-
-    std::cout << Log::err << "Zepha has encountered an error, and ErrorFormatter failed to format it:"
-              << std::endl << std::endl << errString << Log::endl;
+    catch (...) {
+        std::cout << Log::err << "Zepha has encountered an error, and ErrorFormatter failed to format it:"
+            << std::endl << std::endl << errString << Log::endl;
+    }
 
     exit(1);
     return errPfr;

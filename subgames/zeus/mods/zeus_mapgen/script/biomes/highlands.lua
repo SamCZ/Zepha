@@ -31,7 +31,7 @@
 
 
 local shrub = zepha.create_structure({
-    origin = V{},
+    origin = V{1, 2, 3},
     schematic = {
         {{"zeus:default:tallgrass_4"}}
     }

@@ -4,35 +4,34 @@
 
 #include "LocalLuaEntity.h"
 
+#include "../../Lua.h"
 #include "../../LuaParser.h"
 #include "../../../def/ClientGame.h"
 #include "../../../def/item/BlockDef.h"
 #include "../../../def/item/CraftItemDef.h"
 
-void LocalLuaEntity::snap_pos(const sol::table &pos) {
-    entity->setPos({pos[1], pos[2], pos[3]});
+void LocalLuaEntity::snap_pos(glm::vec3 pos) {
+    entity->setPos(pos);
 }
 
-void LocalLuaEntity::set_pos(const sol::table &pos) {
-    entity->interpPos({pos[1], pos[2], pos[3]});
+void LocalLuaEntity::set_pos(glm::vec3 pos) {
+    entity->interpPos(pos);
 }
 
-sol::table LocalLuaEntity::get_pos(sol::this_state s) {
-    glm::vec3 pos = entity->getPos();
-    return LuaParser::luaVec(sol::state_view(s), pos);
+glm::vec3 LocalLuaEntity::get_pos() {
+    return entity->getPos();
 }
 
-void LocalLuaEntity::snap_visual_offset(const sol::table &vs) {
-    entity->setVisualOffset({vs["x"], vs["y"], vs["z"]});
+void LocalLuaEntity::snap_visual_offset(glm::vec3 vs) {
+    entity->setVisualOffset(vs);
 }
 
-void LocalLuaEntity::set_visual_offset(const sol::table &pos) {
-    entity->interpVisualOffset({pos[1], pos[2], pos[3]});
+void LocalLuaEntity::set_visual_offset(glm::vec3 vs) {
+    entity->interpVisualOffset(vs);
 }
 
-sol::table LocalLuaEntity::get_visual_offset(sol::this_state s) {
-    glm::vec3 v = entity->getVisualOffset();
-    return LuaParser::luaVec(sol::state_view(s), v);
+glm::vec3 LocalLuaEntity::get_visual_offset() {
+    return entity->getVisualOffset();
 }
 
 void LocalLuaEntity::snap_pitch(float rot) {

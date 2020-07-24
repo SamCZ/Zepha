@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include <sol2/sol.hpp>
 #include <noise/module/modulebase.h>
 #include <noise/module/add.h>
 #include <noise/module/module.h>
 
+#include "../Lua.h"
 #include "../../util/Util.h"
 #include "../../def/ClientGame.h"
 #include "../../def/ServerGame.h"
@@ -241,6 +241,7 @@ namespace RegisterBiomes {
             modules.push_back(module);
             return module;
         }
+        throw std::runtime_error("Invalid noise module specified.");
     }
 
     static void registerBiomes(sol::table source, DefinitionAtlas& defs, BiomeAtlas& biomes) {

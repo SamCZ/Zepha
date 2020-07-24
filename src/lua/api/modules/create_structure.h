@@ -11,7 +11,7 @@ namespace Api {
         core.set_function("create_structure", [&](sol::optional<sol::table> data) {
             if (!data) throw "expected a table as the first argument.";
 
-            auto origin = data->get<sol::optional<sol::table>>("origin");
+            auto origin = data->get<sol::optional<glm::vec3>>("origin");
             auto schematic = data->get<sol::optional<sol::table>>("schematic");
 
             if (!origin) throw std::runtime_error("expected a table as the first argument.");
@@ -26,7 +26,7 @@ namespace Api {
             s->dimensions = {xWid, yWid, zWid};
             s->stringData.resize(xWid * yWid * zWid);
 
-            s->origin = {origin->get<unsigned int>(1), origin->get<unsigned int>(2), origin->get<unsigned int>(3)};
+            s->origin = origin ? glm::ivec3{*origin} : glm::ivec3 {};
 
             for (unsigned int y = 1; y <= yWid; y++) {
                 for (unsigned int z = 1; z <= zWid; z++) {

@@ -7,6 +7,7 @@
 
 #include <list>
 #include <memory>
+#include <functional>
 
 #include "../../entity/Entity.h"
 
@@ -42,6 +43,7 @@ public:
                 return std::static_pointer_cast<T>(it);
             }
         }
+        return nullptr;
     };
 
     std::shared_ptr<GuiComponent> insert(unsigned int index, std::shared_ptr<GuiComponent> component);

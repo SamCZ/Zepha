@@ -17,6 +17,4 @@ zepha.register_entity("zeus:default:test", {
     end
 })
 
-if zepha.client then
-    local entity = zepha.add_entity(V{}, "zeus:default:test")
-end
+if zepha.client then entity = zepha.add_entity(V(), "zeus:default:test") end

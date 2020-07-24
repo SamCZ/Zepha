@@ -3,7 +3,6 @@
 //
 
 #include <catch2/catch.hpp>
-#include <iostream>
 #include "../../src/world/chunk/Chunk.h"
 
 #pragma clang diagnostic push

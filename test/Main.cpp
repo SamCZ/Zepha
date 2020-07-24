@@ -5,7 +5,7 @@
 #pragma clang diagnostic pop
 
 #include <catch2/catch.hpp>
-#include <sol2/sol.hpp>
+#include <sol/sol.hpp>
 
 TEST_CASE("Catch2 Library", "[core]") {
     REQUIRE(true);

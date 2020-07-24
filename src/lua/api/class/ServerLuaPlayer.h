@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include <sol2/sol.hpp>
-
+#include "../../Lua.h"
 #include "ServerLuaInventory.h"
 #include "../../../net/server/conn/ServerClient.h"
 
@@ -20,12 +19,12 @@ public:
     unsigned int get_cid();
     std::string get_address();
 
-    sol::table get_pos(sol::this_state s);
-    sol::table get_block_pos(sol::this_state s);
-    void set_pos(const sol::table& pos);
+    glm::vec3 get_pos();
+    glm::vec3 get_block_pos();
+    void set_pos(glm::vec3 pos);
 
-    sol::table get_vel(sol::this_state s);
-    void set_vel(const sol::table& vel);
+    glm::vec3 get_vel();
+    void set_vel(glm::vec3 vel);
 
     float get_look_yaw();
     void set_look_yaw(float rot);

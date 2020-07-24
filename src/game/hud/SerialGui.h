@@ -15,7 +15,6 @@
 
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
-#include <sol2/sol.hpp>
 
 #include "../../util/Any.h"
 #include "../../lua/api/class/LuaGuiElement.h"

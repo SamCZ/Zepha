@@ -20,27 +20,24 @@ std::string ServerLuaPlayer::get_address() {
     return NetHandler::intToIPString(player.address.host) + ":" + std::to_string(player.address.port);
 }
 
-sol::table ServerLuaPlayer::get_pos(sol::this_state s) {
-    glm::vec3 pos = player.getPos();
-    return LuaParser::luaVec(sol::state_view(s), pos);
+glm::vec3 ServerLuaPlayer::get_pos() {
+    return player.getPos();
 }
 
-sol::table ServerLuaPlayer::get_block_pos(sol::this_state s) {
-    glm::vec3 pos = glm::floor(player.getPos());
-    return LuaParser::luaVec(sol::state_view(s), pos);
+glm::vec3 ServerLuaPlayer::get_block_pos() {
+    return glm::floor(player.getPos());
 }
 
-void ServerLuaPlayer::set_pos(const sol::table &pos) {
-    player.setPos({pos[1], pos[2], pos[3]}, true);
+void ServerLuaPlayer::set_pos(glm::vec3 pos) {
+    player.setPos(pos, true);
 }
 
-sol::table ServerLuaPlayer::get_vel(sol::this_state s) {
-    glm::vec3 vel = player.getVel();
-    return LuaParser::luaVec(sol::state_view(s), vel);
+glm::vec3 ServerLuaPlayer::get_vel() {
+    return player.getVel();
 }
 
-void ServerLuaPlayer::set_vel(const sol::table &vel) {
-    player.setVel({vel[1], vel[2], vel[3]}, true);
+void ServerLuaPlayer::set_vel(glm::vec3 vel) {
+    player.setVel(vel, true);
 }
 
 float ServerLuaPlayer::get_look_yaw() {

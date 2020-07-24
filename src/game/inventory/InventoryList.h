@@ -5,8 +5,8 @@
 #pragma once
 
 #include <string>
-#include <sol2/sol.hpp>
 
+#include "../../lua/Lua.h"
 #include "ItemStack.h"
 
 class DefinitionAtlas;
@@ -53,7 +53,7 @@ public:
     void setStack(unsigned short i, const ItemStack& stack);
 
     sol::function getLuaCallback(Callback type);
-    void setLuaCallback(Callback type, sol::function cb);
+    void setLuaCallback(Callback type, sol::safe_function cb);
 
     DefinitionAtlas& defs;
 

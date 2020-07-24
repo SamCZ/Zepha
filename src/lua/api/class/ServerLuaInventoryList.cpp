@@ -44,7 +44,7 @@ void ServerLuaInventoryList::set_stack(unsigned short i, LuaItemStack stack) {
 
 void ServerLuaInventoryList::set_stack(unsigned short i, sol::table stack) {
     if (i < 1 || i > list.getLength()) throw "index is outside of list bounds.";
-    list.setStack(i - 1, ItemStack(list.defs.fromStr(stack[1]).index, stack.get<unsigned short>(2)));
+    list.setStack(i - 1, ItemStack(list.defs.fromStr(stack[1]).index, stack[2]));
 }
 
 LuaItemStack ServerLuaInventoryList::place_stack(unsigned short i, LuaItemStack stack) {
@@ -54,7 +54,7 @@ LuaItemStack ServerLuaInventoryList::place_stack(unsigned short i, LuaItemStack 
 
 LuaItemStack ServerLuaInventoryList::place_stack(unsigned short i, sol::table stack) {
     if (i < 1 || i > list.getLength()) throw "index is outside of list bounds.";
-    return LuaItemStack(list.placeStack(i - 1, ItemStack(list.defs.fromStr(stack[1]).index, stack.get<unsigned short>(2))), list.defs);
+    return LuaItemStack(list.placeStack(i - 1, ItemStack(list.defs.fromStr(stack[1]).index, stack[2])), list.defs);
 }
 
 LuaItemStack ServerLuaInventoryList::split_stack(unsigned short i) {
@@ -67,7 +67,7 @@ LuaItemStack ServerLuaInventoryList::add_stack(LuaItemStack stack) {
 }
 
 LuaItemStack ServerLuaInventoryList::add_stack(sol::table stack) {
-    return LuaItemStack(list.addStack(ItemStack(list.defs.fromStr(stack[1]).index, stack.get<unsigned short>(2))), list.defs);
+    return LuaItemStack(list.addStack(ItemStack(list.defs.fromStr(stack[1]).index, stack[2])), list.defs);
 }
 
 int ServerLuaInventoryList::stack_fits(LuaItemStack stack) {
@@ -75,7 +75,7 @@ int ServerLuaInventoryList::stack_fits(LuaItemStack stack) {
 }
 
 int ServerLuaInventoryList::stack_fits(sol::table stack) {
-    return list.stackFits(ItemStack(list.defs.fromStr(stack[1]).index, stack.get<unsigned short>(2)));
+    return list.stackFits(ItemStack(list.defs.fromStr(stack[1]).index, stack[2]));
 }
 
 LuaItemStack ServerLuaInventoryList::take_stack(LuaItemStack request) {
@@ -83,7 +83,7 @@ LuaItemStack ServerLuaInventoryList::take_stack(LuaItemStack request) {
 }
 
 LuaItemStack ServerLuaInventoryList::take_stack(sol::table request) {
-    return LuaItemStack(list.takeStack(ItemStack(list.defs.fromStr(request[1]).index, request.get<unsigned short>(2))), list.defs);
+    return LuaItemStack(list.takeStack(ItemStack(list.defs.fromStr(request[1]).index, request[2])), list.defs);
 }
 
 LuaItemStack ServerLuaInventoryList::remove_stack(unsigned short i, unsigned short count) {
@@ -91,10 +91,10 @@ LuaItemStack ServerLuaInventoryList::remove_stack(unsigned short i, unsigned sho
     return LuaItemStack(list.removeStack(i - 1, count), list.defs);
 }
 
-void ServerLuaInventoryList::set_callback(ServerInventoryList::Callback t, sol::function fun) {
+void ServerLuaInventoryList::set_callback(ServerInventoryList::Callback t, sol::safe_function fun) {
     list.setLuaCallback(t, fun);
 }
 
-sol::function ServerLuaInventoryList::get_callback(ServerInventoryList::Callback t) {
+sol::safe_function ServerLuaInventoryList::get_callback(ServerInventoryList::Callback t) {
     return list.getLuaCallback(t);
 }

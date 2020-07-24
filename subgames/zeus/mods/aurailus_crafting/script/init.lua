@@ -2,11 +2,11 @@ _G["crafting"] = {}
 
 crafting.registered_recipes = {}
 
-crafting.register_recipe = function(tbl)
+function crafting.register_recipe(tbl)
     table.insert(crafting.registered_recipes, tbl)
 end
 
-crafting.bind = function(craft_input, craft_output)
+function crafting.bind(craft_input, craft_output)
     local width = craft_input.width
     local length = craft_input.length
 

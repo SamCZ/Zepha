@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include <sol2/sol.hpp>
-
+#include "../../Lua.h"
 #include "../class/LocalLuaEntity.h"
 #include "../../../game/scene/world/LocalWorld.h"
 

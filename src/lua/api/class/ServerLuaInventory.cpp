@@ -28,5 +28,5 @@ void ServerLuaInventory::set_default_list(sol::object list) {
 
 sol::object ServerLuaInventory::get_default_list(sol::this_state s) {
     if (inventory.getDefaultList() == "") return sol::nil;
-    else get_list(s, inventory.getDefaultList());
+    else return get_list(s, inventory.getDefaultList());
 }

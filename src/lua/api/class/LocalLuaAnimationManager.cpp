@@ -4,13 +4,12 @@
 
 #include "LocalLuaAnimationManager.h"
 
+#include "../../Lua.h"
 #include "../../../game/entity/Entity.h"
 #include "../../../game/entity/AnimationSegment.h"
 
 LocalLuaAnimationManager::LocalLuaAnimationManager(Entity &entity) :
-    entity(entity) {
-
-}
+    entity(entity) {}
 
 void LocalLuaAnimationManager::define(sol::table anims) {
     std::vector<AnimationSegment> animations;

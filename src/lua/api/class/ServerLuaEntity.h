@@ -5,8 +5,8 @@
 #pragma once
 
 #include <memory>
-#include <sol2/sol.hpp>
 
+#include "../../Lua.h"
 #include "../../../net/server/world/ServerEntity.h"
 
 class ServerGame;
@@ -20,13 +20,13 @@ public:
     unsigned int id;
     ServerGame& defs;
 
-    void snap_pos(const sol::table& pos);
-    void set_pos(const sol::table& pos);
-    sol::table get_pos(sol::this_state s);
+    void snap_pos(glm::vec3 pos);
+    void set_pos(glm::vec3 pos);
+    glm::vec3 get_pos();
 
-    void snap_visual_offset(const sol::table& vs);
-    void set_visual_offset(const sol::table& pos);
-    sol::table get_visual_offset(sol::this_state s);
+    void snap_visual_offset(glm::vec3 vs);
+    void set_visual_offset(glm::vec3 vs);
+    glm::vec3 get_visual_offset();
 
     void snap_pitch(float rot);
     void set_pitch(float rot);
