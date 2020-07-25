@@ -8,6 +8,7 @@
 #include "../../def/ClientGame.h"
 #include "../../def/item/BlockDef.h"
 #include "../scene/world/LocalWorld.h"
+#include "../../def/LocalDefinitionAtlas.h"
 
 Collidable::Collidable(LocalWorld &world, ClientGame& defs, const SelectionBox& collisionBox) :
         world(world),
@@ -67,7 +68,7 @@ bool Collidable::collidesAt(glm::vec3& pos, float stepUpMax) {
                 offset.z = collisionBox.a.z;
                 while (true) {
                     glm::vec3 offsetPos = glm::floor(pos + offset);
-                    auto &def = game.defs.blockFromId(world.getBlock(offsetPos));
+                    auto &def = game.defs->blockFromId(world.getBlock(offsetPos));
 
                     if (def.solid)
                         for (auto &cBox : def.cBoxes)
@@ -99,7 +100,7 @@ bool Collidable::collidesAt(glm::vec3& pos, float stepUpMax) {
             offset.z = collisionBox.a.z;
             while (true) {
                 glm::vec3 offsetPos = glm::floor(pos + offset);
-                auto& def = game.defs.blockFromId(world.getBlock(offsetPos));
+                auto& def = game.defs->blockFromId(world.getBlock(offsetPos));
 
                 if (def.solid) {
                     for (auto &cBox : def.cBoxes) {

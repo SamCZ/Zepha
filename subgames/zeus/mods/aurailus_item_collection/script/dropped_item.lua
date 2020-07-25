@@ -77,7 +77,7 @@ zepha.register_entity("@aurailus:item_collection:dropped_item", {
                 self.object.pos = p.pos + V{0, 0.90, 0}
                 self.scooping = true
 
-                zepha.delay(function()
+                zepha.after(function()
                     p:get_inventory():get_list("main"):add_stack({self.item, 1})
                     zepha.remove_entity(self)
                 end, 2/20)

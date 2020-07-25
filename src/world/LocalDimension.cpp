@@ -9,13 +9,14 @@
 #include "../world/chunk/Region.h"
 #include "../game/graph/Renderer.h"
 #include "../world/chunk/MapBlock.h"
+#include "../def/LocalDefinitionAtlas.h"
 #include "../lua/api/class/LocalLuaEntity.h"
 #include "../game/scene/world/MeshGenStream.h"
 #include "../game/scene/world/graph/MeshChunk.h"
 #include "../game/scene/world/ChunkMeshDetails.h"
 #include "../lua/api/class/ServerLocalLuaEntity.h"
 
-LocalDimension::LocalDimension(ClientGame &game) : Dimension(game.defs),
+LocalDimension::LocalDimension(ClientGame &game) : Dimension(*game.defs),
     meshGenStream(std::make_shared<MeshGenStream>(game, *this)),
     game(game) {}
 

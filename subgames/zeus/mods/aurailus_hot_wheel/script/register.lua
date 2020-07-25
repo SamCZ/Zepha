@@ -1,4 +1,4 @@
-zepha.register_on("new_player", function(p)
+zepha.bind("new_player", function(p)
     local inv = p:get_inventory()
     inv:add_list("hot_wheel_1", 5, 5)
     inv:add_list("hot_wheel_2", 5, 5)
@@ -21,7 +21,7 @@ zepha.register_on("new_player", function(p)
 --         inv.allow_take = function() return 0 end
 --
 --         inv.allow_put = function(slot, item)
---             zepha.delay(function()
+--             zepha.after(function()
 --                 -- This delay is necessary to avoid the engine overwriting it with nothing
 --                 inv:set_stack(slot, item)
 --             end, 0)

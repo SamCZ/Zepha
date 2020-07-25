@@ -2,6 +2,8 @@
 // Created by aurailus on 27/03/19.
 //
 
+#include <noise/noise.h>
+
 #include "MeshGenStream.h"
 
 #include "ChunkMeshDetails.h"
@@ -86,7 +88,7 @@ void MeshGenStream::Thread::exec() {
             auto& u = jobs[i];
             if (!u.busy) continue;
 
-            ChunkMeshGenerator m(u.meshDetails, game.defs, game.biomes, u.thisChunk, u.adjacentChunks, offsetSamplers);
+            ChunkMeshGenerator m(u.meshDetails, *game.defs, *game.biomes, u.thisChunk, u.adjacentChunks, offsetSamplers);
             empty = false;
             u.busy = false;
         }

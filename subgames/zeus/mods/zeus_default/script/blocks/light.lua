@@ -30,7 +30,7 @@
 --         textures = {"zeus:default:light_blue"},
 --         light_source = c / 2,
 --         on_place_client = function(pos)
---             zepha.delay(function()
+--             zepha.after(function()
 --                 target = target + 1
 --                 if target == 8 then target = 1 end
 --                 zepha.set_block(pos, "zeus:default:light_" .. tostring(target))

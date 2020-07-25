@@ -10,9 +10,7 @@
 
 #include "../util/Log.h"
 
-std::string ErrorFormatter::formatError(const std::string &fileName, int line, const std::string &stack,
-                                        std::string file, bool ansiColors) {
-
+std::string ErrorFormatter::formatError(const std::string &fileName, int line, const std::string &stack, std::string file, bool ansiColors) {
     const std::string red = (ansiColors ? Log::red : "");
     const std::string unbl = (ansiColors ? Log::unbl : "");
     const std::string endl  = (ansiColors ? Log::endl : "\n");

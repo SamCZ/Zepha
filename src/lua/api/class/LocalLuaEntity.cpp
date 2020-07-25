@@ -9,6 +9,7 @@
 #include "../../../def/ClientGame.h"
 #include "../../../def/item/BlockDef.h"
 #include "../../../def/item/CraftItemDef.h"
+#include "../../../def/LocalDefinitionAtlas.h"
 
 void LocalLuaEntity::snap_pos(glm::vec3 pos) {
     entity->setPos(pos);
@@ -84,7 +85,7 @@ float LocalLuaEntity::get_scale() {
 
 void LocalLuaEntity::set_display_type(const std::string &type, const std::string &arg, sol::optional<std::string> arg2) {
     if (strncmp(type.data(), "gameobject", 10) == 0) {
-        ItemDef& def = defs.defs.fromStr(arg);
+        ItemDef& def = defs.defs->fromStr(arg);
 
         if (def.type == ItemDef::Type::BLOCK)
             entity->setModel(static_cast<BlockDef&>(def).entityModel);

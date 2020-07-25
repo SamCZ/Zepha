@@ -9,19 +9,23 @@
 #include "../asset/AssetType.h"
 #include "../conn/ServerClient.h"
 #include "../../../def/ItemDef.h"
+#include "../../../def/ServerGame.h"
 #include "../../../def/gen/BiomeDef.h"
+#include "../../../def/gen/ServerBiomeAtlas.h"
+#include "../../../def/ServerDefinitionAtlas.h"
+#include "../../../lua/parser/ServerLuaParser.h"
 
 ServerConfig::ServerConfig(ServerGame &defs) : game(defs) {}
 
 void ServerConfig::init() {
-    blockIdentifierList.reserve(static_cast<unsigned long>(game.defs.size()));
-    for (unsigned int i = 0; i < game.defs.size(); i++) {
-        blockIdentifierList.push_back(game.defs.fromId(i).identifier);
+    blockIdentifierList.reserve(static_cast<unsigned long>(game.defs->size()));
+    for (unsigned int i = 0; i < game.defs->size(); i++) {
+        blockIdentifierList.push_back(game.defs->fromId(i).identifier);
     }
 
-    biomeIdentifierList.reserve(static_cast<unsigned long>(game.biomes.size()));
-    for (unsigned int i = 0; i < game.biomes.size(); i++) {
-        biomeIdentifierList.push_back(game.biomes.biomeFromId(i).identifier);
+    biomeIdentifierList.reserve(static_cast<unsigned long>(game.biomes->size()));
+    for (unsigned int i = 0; i < game.biomes->size(); i++) {
+        biomeIdentifierList.push_back(game.biomes->biomeFromId(i).identifier);
     }
 }
 
@@ -34,7 +38,7 @@ bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
 
         case PacketType::SERVER_INFO: {
             Serializer()
-                .append(game.biomes.seed)
+                .append(game.biomes->seed)
                 .packet(PacketType::SERVER_INFO)
                 .sendTo(client.peer, PacketChannel::CONNECT);
             break;
@@ -57,7 +61,7 @@ bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
         }
 
         case PacketType::MODS: {
-            game.parser.sendModsPacket(client.peer);
+            game.lua->sendModsPacket(client.peer);
             break;
         }
 

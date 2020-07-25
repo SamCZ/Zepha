@@ -6,6 +6,8 @@
 
 #include "../../../def/ServerGame.h"
 #include "../../../world/chunk/Chunk.h"
+#include "../../../def/gen/ServerBiomeAtlas.h"
+#include "../../../def/ServerDefinitionAtlas.h"
 
 ServerGenStream::ServerGenStream(unsigned int seed, ServerGame& game) {
     threads.reserve(THREADS);
@@ -51,7 +53,7 @@ std::unique_ptr<std::vector<ServerGenStream::FinishedBlockJob>> ServerGenStream:
 }
 
 ServerGenStream::Thread::Thread(ServerGame& game, unsigned int seed) :
-    gen(game.defs, game.biomes, seed),
+    gen(*game.defs, *game.biomes, seed),
     thread(std::bind(&ServerGenStream::Thread::exec, this)) {}
 
 void ServerGenStream::Thread::exec() {

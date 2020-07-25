@@ -12,7 +12,7 @@ local item = 1
 
 local function position()
     rotating = true
-    zepha.delay(function()
+    zepha.after(function()
         currentRotation = currentRotation + (desiredRotation - currentRotation) / 2
 
         for i, list in ipairs(api.lists) do

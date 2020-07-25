@@ -77,7 +77,7 @@ zepha.register_item("@aurailus:basictools:wooden_shovel", {
 });
 
 if zepha.server then
-    zepha.register_on("new_player", function(player)
+    zepha.bind("new_player", function(player)
         local inv = player:get_inventory():get_list("hot_wheel_1");
 --         inv:add_stack({"@aurailus:basictools:wooden_pickaxe", 1})
 --         inv:add_stack({"@aurailus:basictools:wooden_hatchet", 1})

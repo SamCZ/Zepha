@@ -11,6 +11,7 @@
 #include "../../../util/Log.h"
 #include "../../../def/ServerGame.h"
 #include "../../client/NetPlayerField.h"
+#include "../../../lua/parser/ServerLuaParser.h"
 
 ClientList::ClientList(ServerGame& defs) :
     defs(defs) {}
@@ -19,7 +20,7 @@ void ClientList::handleConnect(ENetEvent e, InventoryRefs& refs) {
     ENetPeer* peer = e.peer;
     ENetAddress& addr = peer->address;
 
-    auto client = std::make_shared<ServerClient>(peer, addr, defs.defs, refs);
+    auto client = std::make_shared<ServerClient>(peer, addr, refs);
     clients.push_back(client);
     peer->data = client.get();
 
@@ -31,7 +32,7 @@ void ClientList::handleDisconnect(ENetEvent e) {
 
     for (unsigned int i = 0; i < clients.size(); i++) {
         if (clients[i]->cid == cid) {
-            defs.parser.playerDisconnected(clients[i]);
+            defs.lua->playerDisconnected(clients[i]);
             clients.erase(clients.begin() + i);
             break;
         }
@@ -47,7 +48,7 @@ void ClientList::createPlayer(std::shared_ptr<ServerClient> c) {
 
     c->getInventory()->createList("cursor", 1, 1);
 
-    defs.parser.playerConnected(c);
+    defs.lua->playerConnected(c);
 
     Packet p(PacketType::THIS_PLAYER_INFO);
     p.data = Serializer()

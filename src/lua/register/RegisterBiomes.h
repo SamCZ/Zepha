@@ -14,6 +14,8 @@
 #include "../../def/ServerGame.h"
 #include "../../def/gen/BiomeDef.h"
 #include "../../def/item/BlockDef.h"
+#include "../../def/gen/LocalBiomeAtlas.h"
+#include "../../def/gen/ServerBiomeAtlas.h"
 
 namespace RegisterBiomes {
     static noise::module::Module* parseNoise(std::vector<noise::module::Module*>& modules, sol::table noise) {
@@ -311,15 +313,15 @@ namespace RegisterBiomes {
 
             // Create biome definition
             BiomeDef* biomeDef = new BiomeDef(
-                    identifier, biomes.size(),
-                    temperature, humidity, roughness,
-                    defs.blockFromStr(*bTop).index,
-                    defs.blockFromStr(*bSoil).index,
-                    defs.blockFromStr(*bRock).index,
-                    heightmapModules,
-                    volumeModules,
-                    schematics,
-                    glm::vec3(Util::hexToColorVec((*biomeTint)))
+                identifier, biomes.size(),
+                temperature, humidity, roughness,
+                defs.blockFromStr(*bTop).index,
+                defs.blockFromStr(*bSoil).index,
+                defs.blockFromStr(*bRock).index,
+                heightmapModules,
+                volumeModules,
+                schematics,
+                glm::vec3(Util::hexToColorVec((*biomeTint)))
             );
 
             // Add biome to biomes
@@ -327,13 +329,13 @@ namespace RegisterBiomes {
         }
     }
 
-    static void server(sol::table& core, ServerGame& defs) {
-        registerBiomes(core.get<sol::table>("registered_biomes"), defs.defs, defs.biomes);
-        defs.biomes.generateVoronoi();
+    static void server(sol::table& core, ServerGame& game) {
+        registerBiomes(core.get<sol::table>("registered_biomes"), *game.defs, *game.biomes);
+        game.biomes->generateVoronoi();
     }
 
-    static void client(sol::table& core, ClientGame& defs) {
-        registerBiomes(core.get<sol::table>("registered_biomes"), defs.defs, defs.biomes);
-        defs.biomes.generateVoronoi();
+    static void client(sol::table& core, ClientGame& game) {
+        registerBiomes(core.get<sol::table>("registered_biomes"), *game.defs, *game.biomes);
+        game.biomes->generateVoronoi();
     }
 };

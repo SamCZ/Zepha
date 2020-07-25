@@ -235,9 +235,8 @@ set(ZEPHA_SRC
 		game/scene/menu/Subgame.h
 	game/scene/menu/SubgameConfig.h 
 	game/scene/menu/MenuSandbox.cpp 
-	game/scene/menu/MenuSandbox.h 
-	lua/api/menu/mDelay.h 
-	lua/api/menu/mSetGui.h 
+	game/scene/menu/MenuSandbox.h
+		lua/api/menu/mSetGui.h
 	game/hud/GuiBuilder.cpp 
 	game/hud/GuiBuilder.h 
 	game/hud/GameGuiBuilder.cpp 
@@ -268,9 +267,8 @@ set(ZEPHA_SRC
 	lua/api/class/ServerLocalLuaEntity.cpp 
 	lua/api/class/ServerLocalLuaEntity.h 
 	lua/api/modules/register_item.h 
-	lua/api/modules/register_biome.h 
-	lua/api/modules/delay.h 
-	lua/api/modules/register_block.h 
+	lua/api/modules/register_biome.h
+		lua/api/modules/register_block.h
 	lua/api/modules/register_blockmodel.h 
 	lua/api/modules/register_entity.h 
 	game/scene/world/World.cpp 
@@ -292,8 +290,7 @@ set(ZEPHA_SRC
 	util/RIE.h 
 	lua/api/class/ServerLuaPlayer.cpp 
 	lua/api/class/ServerLuaPlayer.h
-		lua/api/modules/register_on.h
-	lua/api/functions/trigger_event.h 
+		lua/api/functions/trigger_event.h
 	lua/parser/ServerModHandler.cpp 
 	lua/parser/ServerModHandler.h 
 	lua/parser/LocalModHandler.cpp 
@@ -319,6 +316,6 @@ set(ZEPHA_SRC
 		def/gen/MapGenProps.cpp
 	def/gen/MapGenProps.h
 		lua/api/class/LuaGuiElement.cpp
-	lua/api/class/LuaGuiElement.h world/Dimension.cpp world/Dimension.h world/fs/FileManipulator.cpp world/fs/FileManipulator.h def/item/BlockModel.cpp net/server/world/ServerPacketStream.cpp net/server/world/ServerPacketStream.h lua/register/CreateBlockModel.cpp lua/register/CreateBlockModel.h lua/customization/vec3.hpp)
+	lua/api/class/LuaGuiElement.h world/Dimension.cpp world/Dimension.h world/fs/FileManipulator.cpp world/fs/FileManipulator.h def/item/BlockModel.cpp net/server/world/ServerPacketStream.cpp net/server/world/ServerPacketStream.h lua/register/CreateBlockModel.cpp lua/register/CreateBlockModel.h lua/customization/vec3.hpp lua/api/modules/Base.h lua/api/modules/Register.cpp lua/api/modules/Register.h def/Game.h def/Game.cpp lua/api/modules/Base.cpp)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

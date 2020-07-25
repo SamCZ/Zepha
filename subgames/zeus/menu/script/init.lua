@@ -52,7 +52,7 @@ local menu = zepha.build_gui(function()
     }
 end)
 
--- zepha.delay(function()
+-- zepha.after(function()
 --     menu:remove("buttonPlay")
 --     menu:remove("buttonServers")
 --     menu:get("sidebar"):append(function(m) return Gui.Text({
@@ -75,7 +75,7 @@ menu(function()
 end)
 
 local tick = 0
-zepha.delay(function()
+zepha.after(function()
     local i = 1
     local part = particle_wrap:get(i)
     tick = tick + 0.012

@@ -26,7 +26,7 @@ zepha.register_block("@aurailus:crazyblocks:inventory", {
 })
 
 if zepha.server then
-    zepha.register_on("new_player", function(player)
+    zepha.bind("new_player", function(player)
         player:get_inventory():get_list("hot_wheel_1"):add_stack({"@aurailus:crazyblocks:stacker", 1})
         player:get_inventory():get_list("hot_wheel_1"):add_stack({"@aurailus:crazyblocks:inventory", 1})
         player:get_inventory():get_list("hot_wheel_1"):add_stack({"@aurailus:crazyblocks:box", 1})

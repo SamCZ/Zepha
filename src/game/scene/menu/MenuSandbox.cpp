@@ -14,7 +14,6 @@
 #include "../../hud/components/basic/GuiContainer.h"
 
 // Modules
-#include "../../../lua/api/menu/mDelay.h"
 #include "../../../lua/api/menu/mSetGui.h"
 #include "../../../lua/api/menu/mStartGame.h"
 
@@ -28,7 +27,6 @@ MenuSandbox::MenuSandbox(glm::ivec2 &win, ClientState& state, std::shared_ptr<Gu
 void MenuSandbox::reset() {
     container->remove("error");
     builder.clear(true);
-    delayed_functions.clear();
     core = {};
     mod = {};
     lua = sol::state {};
@@ -45,7 +43,6 @@ void MenuSandbox::loadApi() {
 
     ClientApi::gui_element(lua);
 
-    MenuApi::delay      (core, delayed_functions);
     MenuApi::set_gui    (builder, win, lua, core);
     MenuApi::start_game (state, core);
 
@@ -71,7 +68,6 @@ void MenuSandbox::windowResized() {
 }
 
 void MenuSandbox::update(double delta) {
-    LuaParser::update(delta);
     builder.update();
 }
 

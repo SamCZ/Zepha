@@ -13,6 +13,8 @@
 #include "../../util/Timer.h"
 #include "../PacketChannel.h"
 #include "../../def/item/BlockDef.h"
+#include "../../def/ServerDefinitionAtlas.h"
+#include "../../lua/parser/ServerLuaParser.h"
 #include "../../lua/api/class/ServerLuaPlayer.h"
 
 Server::Server(unsigned short port, const std::string& subgame) :
@@ -22,7 +24,7 @@ Server::Server(unsigned short port, const std::string& subgame) :
     defs(subgame, seed),
     clientList(defs),
     handler(port, 32),
-    refs(defs.defs, &clientList),
+    refs(*defs.defs, &clientList),
     world(seed, defs, clientList) {
 
     defs.init(world);
@@ -129,39 +131,39 @@ void Server::handlePlayerPacket(ServerClient& client, PacketView& p) {
             unsigned int worldBlock = (block == DefinitionAtlas::AIR ? world.getBlock(pos) : 0);
 
             if (block == DefinitionAtlas::AIR) {
-                auto def = defs.defs.blockFromId(worldBlock);
+                auto def = defs.defs->blockFromId(worldBlock);
                 //TODO: stop casting to float vec3
-                if (def.callbacks.count(Callback::BREAK)) defs.parser.safe_function(def.callbacks[Callback::BREAK], glm::vec3(pos), ServerLuaPlayer(client));
-                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"], "break", glm::vec3(pos), ServerLuaPlayer(client));
+                if (def.callbacks.count(Callback::BREAK)) defs.lua->safe_function(def.callbacks[Callback::BREAK], glm::vec3(pos), ServerLuaPlayer(client));
+                defs.lua->safe_function(defs.lua->core["trigger"], "break", glm::vec3(pos), ServerLuaPlayer(client));
             }
             else {
-                auto def = defs.defs.blockFromId(block);
+                auto def = defs.defs->blockFromId(block);
                 if (def.callbacks.count(Callback::PLACE))
-                    defs.parser.safe_function(def.callbacks[Callback::PLACE], pos, ServerLuaPlayer(client));
-                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"], "place", pos, ServerLuaPlayer(client));
+                    defs.lua->safe_function(def.callbacks[Callback::PLACE], pos, ServerLuaPlayer(client));
+                defs.lua->safe_function(defs.lua->core["trigger"], "place", pos, ServerLuaPlayer(client));
             }
 
             world.setBlock(pos, block);
 
             if (block == DefinitionAtlas::AIR) {
-                auto def = defs.defs.blockFromId(worldBlock);
+                auto def = defs.defs->blockFromId(worldBlock);
                 if (def.callbacks.count(Callback::AFTER_BREAK))
-                    defs.parser.safe_function(def.callbacks[Callback::AFTER_BREAK], pos, ServerLuaPlayer(client));
-                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"], "after_break", pos, ServerLuaPlayer(client));
+                    defs.lua->safe_function(def.callbacks[Callback::AFTER_BREAK], pos, ServerLuaPlayer(client));
+                defs.lua->safe_function(defs.lua->core["trigger"], "after_break", pos, ServerLuaPlayer(client));
             }
             else {
-                auto def = defs.defs.blockFromId(block);
+                auto def = defs.defs->blockFromId(block);
                 if (def.callbacks.count(Callback::AFTER_PLACE))
-                    defs.parser.safe_function(def.callbacks[Callback::AFTER_PLACE], pos, ServerLuaPlayer(client));
-                defs.parser.safe_function(defs.parser.core["__builtin"]["trigger_event"], "after_place", pos, ServerLuaPlayer(client));
+                    defs.lua->safe_function(def.callbacks[Callback::AFTER_PLACE], pos, ServerLuaPlayer(client));
+                defs.lua->safe_function(defs.lua->core["trigger"], "after_place", pos, ServerLuaPlayer(client));
             }
             break;
         }
         case PacketType::BLOCK_INTERACT: {
             glm::ivec3 pos = p.d.read<glm::ivec3>();
-            auto def = defs.defs.blockFromId(world.getBlock(pos));
+            auto def = defs.defs->blockFromId(world.getBlock(pos));
             if (def.callbacks.count(Callback::INTERACT))
-                defs.parser.safe_function(def.callbacks[Callback::INTERACT], pos, ServerLuaPlayer(client));
+                defs.lua->safe_function(def.callbacks[Callback::INTERACT], pos, ServerLuaPlayer(client));
             break;
         }
         case PacketType::INV_WATCH: {

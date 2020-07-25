@@ -21,7 +21,6 @@
 #include "../api/usertype/cAnimationManager.h"
 
 // Modules
-#include "../api/modules/delay.h"
 #include "../api/modules/register_block.h"
 #include "../api/modules/register_blockmodel.h"
 #include "../api/modules/register_biome.h"
@@ -53,11 +52,10 @@ void LocalLuaParser::init(ClientGame& defs, LocalWorld& world, Player& player, C
 }
 
 void LocalLuaParser::update(double delta) {
-    LuaParser::update(delta);
-
     this->delta += delta;
     while (this->delta > static_cast<double>(UPDATE_STEP)) {
         safe_function(core["__builtin"]["update_entities"], static_cast<double>(UPDATE_STEP));
+        safe_function(core["__builtin"]["update_delayed_functions"]);
         this->delta -= static_cast<double>(UPDATE_STEP);
     }
 }
@@ -84,8 +82,6 @@ void LocalLuaParser::loadApi(ClientGame &defs, LocalWorld &world, Player& player
     core["player"] = LocalLuaPlayer(player);
 
     // Modules
-    Api::delay (core, delayed_functions);
-
     Api::register_block      (lua, core);
     Api::register_blockmodel (lua, core);
     Api::register_biome      (lua, core);
@@ -93,9 +89,9 @@ void LocalLuaParser::loadApi(ClientGame &defs, LocalWorld &world, Player& player
     Api::register_entity     (lua, core);
     Api::register_keybind    (lua, core);
 
-    Api::get_block    (core, defs.defs, world);
-    Api::set_block    (core, defs.defs, world);
-    Api::remove_block (core, defs.defs, world);
+    Api::get_block    (core, *defs.defs, world);
+    Api::set_block    (core, *defs.defs, world);
+    Api::remove_block (core, *defs.defs, world);
 
     Api::add_entity_c    (lua, core, defs, world);
     Api::remove_entity_c (lua, core, defs, world);

@@ -20,14 +20,12 @@
 #include "../api/usertype/cItemStack.h"
 
 // Modules
-#include "../api/modules/delay.h"
 #include "../api/modules/register_block.h"
 #include "../api/modules/register_blockmodel.h"
 #include "../api/modules/register_biome.h"
 #include "../api/modules/register_item.h"
 #include "../api/modules/register_entity.h"
 #include "../api/modules/register_keybind.h"
-#include "../api/modules/register_on.h"
 #include "../api/modules/set_block.h"
 #include "../api/modules/get_block.h"
 #include "../api/modules/remove_block.h"
@@ -56,11 +54,10 @@ void ServerLuaParser::init(ServerGame& defs, ServerWorld& world, const std::stri
 }
 
 void ServerLuaParser::update(double delta) {
-    LuaParser::update(delta);
-
     this->delta += delta;
     while (this->delta > static_cast<double>(UPDATE_STEP)) {
         safe_function(core["__builtin"]["update_entities"], static_cast<double>(UPDATE_STEP));
+        safe_function(core["__builtin"]["update_delayed_functions"]);
         this->delta -= static_cast<double>(UPDATE_STEP);
     }
 }
@@ -80,15 +77,15 @@ void ServerLuaParser::playerConnected(std::shared_ptr<ServerClient> client) {
 
     sol::object player = players[players.size()];
 
-    safe_function(core["__builtin"]["trigger_event"], "new_player", player);
-    safe_function(core["__builtin"]["trigger_event"], "player_join", player);
+    safe_function(core["trigger"], "new_player", player);
+    safe_function(core["trigger"], "player_join", player);
 }
 
 void ServerLuaParser::playerDisconnected(std::shared_ptr<ServerClient> client) {
     for (auto& pair : core.get<sol::table>("players")) {
         ServerLuaPlayer& p = pair.second.as<ServerLuaPlayer>();
         if (p.get_cid() == client->cid) {
-            safe_function(core["__builtin"]["trigger_event"], "player_disconnect", p);
+            safe_function(core["trigger"], "player_disconnect", p);
 
             p.is_player = false;
             core.get<sol::table>("players")[pair.first] = sol::nil;
@@ -113,19 +110,16 @@ void ServerLuaParser::loadApi(ServerGame &defs, ServerWorld &world) {
     core["players"] = lua.create_table();
 
     // Modules
-    Api::delay (core, delayed_functions);
-
     Api::register_block      (lua, core);
     Api::register_blockmodel (lua, core);
     Api::register_biome      (lua, core);
     Api::register_item       (lua, core);
     Api::register_entity     (lua, core);
     Api::register_keybind    (lua, core);
-    Api::register_on_s       (lua, core, *this);
 
-    Api::get_block    (core, defs.defs, world);
-    Api::set_block    (core, defs.defs, world);
-    Api::remove_block (core, defs.defs, world);
+    Api::get_block    (core, *defs.defs, world);
+    Api::set_block    (core, *defs.defs, world);
+    Api::remove_block (core, *defs.defs, world);
 
     Api::add_entity_s    (lua, core, defs, world);
     Api::remove_entity_s (lua, core, defs, world);

@@ -7,6 +7,7 @@
 #include "../../LuaParser.h"
 #include "../../../def/ItemDef.h"
 #include "../../../def/ServerGame.h"
+#include "../../../def/ServerDefinitionAtlas.h"
 
 void ServerLuaEntity::snap_pos(glm::vec3 pos) {
     entity->setPos(pos);
@@ -82,7 +83,7 @@ float ServerLuaEntity::get_scale() {
 
 void ServerLuaEntity::set_display_type(const std::string &type, const std::string &arg, sol::optional<std::string> arg2) {
     if (strncmp(type.data(), "gameobject", 10) == 0) {
-        ItemDef& def = defs.defs.fromStr(arg);
+        ItemDef& def = defs.defs->fromStr(arg);
 //        if (def.index == 0) throw "Invalid gameobject to display";
 
         if (def.type == ItemDef::Type::BLOCK)

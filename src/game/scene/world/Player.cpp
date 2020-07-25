@@ -13,6 +13,7 @@
 #include "../../../def/item/BlockDef.h"
 #include "../../../world/chunk/Chunk.h"
 #include "../../inventory/LocalInventory.h"
+#include "../../../def/LocalDefinitionAtlas.h"
 #include "../../inventory/LocalInventoryList.h"
 #include "../../../net/client/NetPlayerField.h"
 
@@ -115,7 +116,7 @@ void Player::updateCamera() {
     renderer.camera.setYaw(yaw);
     renderer.camera.setPitch(pitch);
 
-    auto type = game.defs.fromId(wieldItem).type;
+    auto type = game.defs->fromId(wieldItem).type;
 
     glm::vec3 eyesPos = {pos.x, pos.y + EYE_HEIGHT, pos.z};
     renderer.camera.setPos(eyesPos);
@@ -169,7 +170,7 @@ void Player::findPointedThing(Input &input) {
         }
 
         unsigned int blockID = blockChunk->getBlock(Space::Block::relative::toChunk(roundedPos));
-        auto& boxes = game.defs.blockFromId(blockID).sBoxes;
+        auto& boxes = game.defs->blockFromId(blockID).sBoxes;
 
         for (auto& sBox : boxes) {
             auto face = sBox.intersects(rayEnd, roundedPos);
@@ -191,7 +192,7 @@ void Player::updateWireframe() {
         wireframe.setVisible(false);
     }
     else if (pointedThing.thing == PointedThing::Thing::BLOCK) {
-        auto& boxes = game.defs.blockFromId(pointedThing.target.block.blockId).sBoxes;
+        auto& boxes = game.defs->blockFromId(pointedThing.target.block.blockId).sBoxes;
         float distance = glm::distance(pos, glm::vec3(pointedThing.target.block.pos) + glm::vec3(0.5));
 
         wireframe.updateMesh(boxes, 0.002f + distance * 0.0014f);
@@ -210,10 +211,10 @@ void Player::interact(Input& input, double delta) {
             breakTime += delta;
         }
         else if (input.mousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
-            auto& target = game.defs.blockFromId(world.getBlock(pointedThing.target.block.pos));
+            auto& target = game.defs->blockFromId(world.getBlock(pointedThing.target.block.pos));
 
             if (target.hasInteraction()) world.blockInteract(pointedThing);
-            else if (wieldItem > DefinitionAtlas::AIR && game.defs.fromId(wieldItem).type == ItemDef::Type::BLOCK) {
+            else if (wieldItem > DefinitionAtlas::AIR && game.defs->fromId(wieldItem).type == ItemDef::Type::BLOCK) {
                 world.blockPlace(pointedThing.target.block.pos + SelectionBox::faceToOffset(pointedThing.target.block.face), wieldItem);
             }
             else {
@@ -371,7 +372,7 @@ void Player::updateWieldAndHandItems() {
     handItem = handList && handList->getLength() > 0 ? handList->getStack(0).id : 0;
     wieldItem = wieldList && wieldList->getLength() > wieldIndex ? wieldList->getStack(wieldIndex).id : 0;
 
-    auto& model = game.defs.fromId(wieldItem <= DefinitionAtlas::AIR ? handItem : wieldItem).entityModel;
+    auto& model = game.defs->fromId(wieldItem <= DefinitionAtlas::AIR ? handItem : wieldItem).entityModel;
     handItemModel.setModel(model);
 }
 

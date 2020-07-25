@@ -7,6 +7,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <functional>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
@@ -250,6 +251,16 @@ namespace Util {
 
     constexpr static uint64_t hash(const char * m) {
         return (*m) ? mix(*m, hash(m + 1)) : 0;
+    }
+
+    template <class C, typename Ret, typename ... Ts>
+    std::function<Ret(Ts...)> bind_this(C* c, Ret (C::*m)(Ts...)) {
+        return [=](auto&&... args) { return (c->*m)(std::forward<decltype(args)>(args)...); };
+    }
+
+    template <class C, typename Ret, typename ... Ts>
+    std::function<Ret(Ts...)> bind_this(const C* c, Ret (C::*m)(Ts...) const) {
+        return [=](auto&&... args) { return (c->*m)(std::forward<decltype(args)>(args)...); };
     }
 };
 

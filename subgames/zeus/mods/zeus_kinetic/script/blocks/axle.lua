@@ -23,7 +23,7 @@ zepha.register_block('zeus:kinetic:axle_0', {
         end
     end,
     on_construct = function(pos)
-        zepha.delay(function()
+        zepha.after(function()
             zepha.set_block(pos, "zeus:kinetic:axle_1")
         end, 4)
     end
@@ -41,7 +41,7 @@ zepha.register_block('zeus:kinetic:axle_1', {
         {0, 6/16, 6/16, 1, 10/16, 10/16}
     },
     on_construct = function(pos)
-        zepha.delay(function()
+        zepha.after(function()
             zepha.set_block(pos, "zeus:kinetic:axle_2")
         end, 4)
     end
@@ -59,7 +59,7 @@ zepha.register_block('zeus:kinetic:axle_2', {
         {0, 6/16, 6/16, 1, 10/16, 10/16}
     },
     on_construct = function(pos)
-        zepha.delay(function()
+        zepha.after(function()
             zepha.set_block(pos, "zeus:kinetic:axle_3")
         end, 4)
     end
@@ -77,7 +77,7 @@ zepha.register_block('zeus:kinetic:axle_3', {
         {0, 6/16, 6/16, 1, 10/16, 10/16}
     },
     on_construct = function(pos)
-        zepha.delay(function()
+        zepha.after(function()
             zepha.set_block(pos, "zeus:kinetic:axle_0")
         end, 4)
     end

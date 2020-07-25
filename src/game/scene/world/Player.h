@@ -95,8 +95,8 @@ private:
     LocalInventoryRefs& refs;
     unsigned int wieldIndex = 0;
 
-    unsigned int handItem = DefinitionAtlas::AIR;
-    unsigned int wieldItem = DefinitionAtlas::AIR;
+    unsigned int handItem = 1; // Air
+    unsigned int wieldItem = 1; // Air
 
     float yaw = 0;
     float pitch = 0;

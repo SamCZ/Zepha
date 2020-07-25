@@ -20,7 +20,7 @@ class ServerClient {
 public:
     const static int CHUNK_SEND_RANGE = 32;
 
-    ServerClient(ENetPeer* peer, ENetAddress address, DefinitionAtlas& defs, InventoryRefs& refs);
+    ServerClient(ENetPeer* peer, ENetAddress address, InventoryRefs& refs);
 
     void setUsername(const std::string& name);
 

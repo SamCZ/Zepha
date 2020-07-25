@@ -14,6 +14,8 @@
 #include "../../def/item/BlockModel.h"
 #include "../../def/item/SelectionBox.h"
 #include "../../def/item/CraftItemDef.h"
+#include "../../def/LocalDefinitionAtlas.h"
+#include "../../def/ServerDefinitionAtlas.h"
 
 namespace RegisterBlocks {
 
@@ -357,13 +359,13 @@ namespace RegisterBlocks {
         }
     }
 
-    static void server(sol::table& core, ServerGame& defs) {
+    static void server(sol::table& core, ServerGame& game) {
         registerBlocks(core.get<sol::table>("registered_blocks"),
-                core.get<sol::table>("registered_blockmodels"), defs.defs, nullptr);
+            core.get<sol::table>("registered_blockmodels"), *game.defs, nullptr);
     }
 
-    static void client(sol::table& core, ClientGame& defs) {
+    static void client(sol::table& core, ClientGame& game) {
         registerBlocks(core.get<sol::table>("registered_blocks"),
-                core.get<sol::table>("registered_blockmodels"), defs.defs, &defs.textures);
+            core.get<sol::table>("registered_blockmodels"), *game.defs, &game.textures);
     }
 };

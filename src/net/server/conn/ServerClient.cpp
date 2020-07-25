@@ -11,7 +11,7 @@
 #include "../../client/NetPlayerField.h"
 #include "../../../game/inventory/InventoryRefs.h"
 
-ServerClient::ServerClient(ENetPeer *peer, ENetAddress address, DefinitionAtlas& defs, InventoryRefs& refs) :
+ServerClient::ServerClient(ENetPeer *peer, ENetAddress address, InventoryRefs& refs) :
     peer(peer),
     address(address),
     cid(peer->connectID),

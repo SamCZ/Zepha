@@ -7,6 +7,7 @@
 #include "../../../lua/LuaParser.h"
 
 #include "../../hud/GuiBuilder.h"
+#include "../../../lua/LuaMod.h"
 
 class Subgame;
 class AtlasRef;

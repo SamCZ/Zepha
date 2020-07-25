@@ -4,8 +4,10 @@
 
 #pragma once
 
-#include "../../../def/ServerGame.h"
+#include "../../PacketView.h"
 
+class PacketView;
+class ServerGame;
 class ServerClient;
 
 class ServerConfig {

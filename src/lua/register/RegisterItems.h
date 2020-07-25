@@ -8,6 +8,8 @@
 #include "../../def/ClientGame.h"
 #include "../../def/ServerGame.h"
 #include "../../def/gen/BiomeDef.h"
+#include "../../def/LocalDefinitionAtlas.h"
+#include "../../def/ServerDefinitionAtlas.h"
 
 namespace RegisterItems {
     static void registerItems(sol::table source, DefinitionAtlas& defs, TextureAtlas* atlas) {
@@ -57,11 +59,11 @@ namespace RegisterItems {
         }
     }
 
-    static void server(sol::table& core, ServerGame& defs) {
-        registerItems(core.get<sol::table>("registered_items"), defs.defs, nullptr);
+    static void server(sol::table& core, ServerGame& game) {
+        registerItems(core.get<sol::table>("registered_items"), *game.defs, nullptr);
     }
 
-    static void client(sol::table& core, ClientGame& defs) {
-        registerItems(core.get<sol::table>("registered_items"), defs.defs, &defs.textures);
+    static void client(sol::table& core, ClientGame& game) {
+        registerItems(core.get<sol::table>("registered_items"), *game.defs, &game.textures);
     }
 };

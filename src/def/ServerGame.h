@@ -4,25 +4,31 @@
 
 #pragma once
 
-#include "gen/ServerBiomeAtlas.h"
-#include "ServerDefinitionAtlas.h"
+#include "Game.h"
+
 #include "../net/server/asset/AssetStorage.h"
-#include "../lua/parser/ServerLuaParser.h"
 
 class ServerWorld;
 class ClientList;
 
-class ServerGame {
+class ServerLuaParser;
+class ServerBiomeAtlas;
+class ServerDefinitionAtlas;
+
+class ServerGame : public Game {
 public:
     ServerGame(const std::string& subgame, unsigned int seed);
+    ~ServerGame();
+
     void init(ServerWorld& world);
     void update(double delta, ClientList& clients);
 
     std::string subgamePath;
 
-    ServerDefinitionAtlas defs;
-    ServerLuaParser       parser;
-    ServerBiomeAtlas      biomes;
-    AssetStorage          assets;
+    AssetStorage assets;
+
+    std::unique_ptr<ServerLuaParser> lua;
+    std::unique_ptr<ServerBiomeAtlas> biomes;
+    std::unique_ptr<ServerDefinitionAtlas> defs;
 };
 

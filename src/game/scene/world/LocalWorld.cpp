@@ -9,10 +9,13 @@
 #include "WorldInterpolationStream.h"
 #include "../../../world/chunk/Chunk.h"
 #include "../../../def/item/BlockDef.h"
-#include "../../../net/client/ClientNetworkInterpreter.h"
+#include "../../../def/gen/LocalBiomeAtlas.h"
+#include "../../../def/LocalDefinitionAtlas.h"
+#include "../../../lua/parser/LocalLuaParser.h"
 #include "../../entity/engine/ParticleEntity.h"
 #include "../../entity/engine/BlockCrackEntity.h"
 #include "../../../lua/api/class/LocalLuaPlayer.h"
+#include "../../../net/client/ClientNetworkInterpreter.h"
 
 LocalWorld::LocalWorld(ClientGame& defs, ClientNetworkInterpreter* server) :
         defs(defs),
@@ -60,14 +63,14 @@ void LocalWorld::setBlock(glm::ivec3 pos, unsigned int block) {
 
 void LocalWorld::blockPlace(glm::vec3 pos, unsigned int block) {
     if (block == LocalDefinitionAtlas::AIR) {
-        auto def = defs.defs.blockFromId(getBlock(pos));
+        auto def = defs.defs->blockFromId(getBlock(pos));
         if (def.callbacks.count(Callback::BREAK_CLIENT))
-            defs.parser.safe_function(def.callbacks[Callback::BREAK_CLIENT], pos);
+            defs.lua->safe_function(def.callbacks[Callback::BREAK_CLIENT], pos);
     }
     else {
-        auto def = defs.defs.blockFromId(block);
+        auto def = defs.defs->blockFromId(block);
         if (def.callbacks.count(Callback::PLACE_CLIENT))
-            defs.parser.safe_function(def.callbacks[Callback::PLACE_CLIENT], pos);
+            defs.lua->safe_function(def.callbacks[Callback::PLACE_CLIENT], pos);
     }
 
     net->blockPlace(pos, block);
@@ -79,10 +82,10 @@ void LocalWorld::blockBreak(glm::vec3 pos) {
 }
 
 void LocalWorld::blockInteract(PointedThing &thing) {
-    auto def = defs.defs.blockFromId(getBlock(thing.target.block.pos));
+    auto def = defs.defs->blockFromId(getBlock(thing.target.block.pos));
 
     if (def.callbacks.count(Callback::INTERACT_CLIENT))
-        defs.parser.safe_function(def.callbacks[Callback::INTERACT_CLIENT], thing.target.block.pos);
+        defs.lua->safe_function(def.callbacks[Callback::INTERACT_CLIENT], thing.target.block.pos);
 
     net->blockInteract(thing.target.block.pos);
 }
@@ -90,11 +93,11 @@ void LocalWorld::blockInteract(PointedThing &thing) {
 double LocalWorld::blockHit(PointedThing& thing) {
     glm::ivec3 pos = thing.target.block.pos;
 
-    auto& blockDef = defs.defs.blockFromId(getBlock(thing.target.block.pos));
+    auto& blockDef = defs.defs->blockFromId(getBlock(thing.target.block.pos));
 
     double damage = 0, timeout = 0;
-    sol::tie(damage, timeout) = defs.parser.safe_function(defs.parser.core["get_hit_impact"],
-        defs.parser.core.get<LocalLuaPlayer>("player"), blockDef.identifier);
+    sol::tie(damage, timeout) = defs.lua->safe_function(defs.lua->core["get_hit_impact"],
+        defs.lua->core.get<LocalLuaPlayer>("player"), blockDef.identifier);
 
     if (damage == 0) return timeout;
 

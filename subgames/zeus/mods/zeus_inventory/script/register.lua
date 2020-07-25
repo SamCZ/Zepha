@@ -1,4 +1,4 @@
-zepha.register_on("new_player", function(p)
+zepha.bind("new_player", function(p)
     local inv = p:get_inventory()
 
     -- Resize the main inventory

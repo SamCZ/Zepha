@@ -13,18 +13,10 @@
 
 class LuaParser {
 public:
-    constexpr static double UPDATE_STEP {1 / 60.0};
-    virtual void update(double delta);
+    constexpr static double UPDATE_STEP {1. / 60.};
+    virtual void update(double delta) = 0;
 
     sol::state lua;
     sol::table core;
-
-    struct DelayedFunction {
-        sol::function function;
-        std::vector<sol::object> args;
-        float timeout;
-        float initial_timeout;
-    };
-    std::list<DelayedFunction> delayed_functions;
 };
 

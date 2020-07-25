@@ -7,9 +7,10 @@
 #include "ServerLocalLuaEntity.h"
 
 #include "../../../def/ItemDef.h"
+#include "../../../def/ClientGame.h"
 #include "../../../def/item/BlockDef.h"
 #include "../../../def/item/CraftItemDef.h"
-#include "../../../def/ClientGame.h"
+#include "../../../def/LocalDefinitionAtlas.h"
 
 ServerLocalLuaEntity::ServerLocalLuaEntity(unsigned int id, ClientGame &defs, const std::string &appearance,
     const std::string &arg1, const std::string &arg2) :
@@ -24,7 +25,7 @@ void ServerLocalLuaEntity::setDisplayType(const std::string &type, const std::st
     if (strncmp(type.data(), "gameobject", 10) == 0 &&
        (strncmp(displayType.data(), "gameobject", 10) || arg2 != displayArg2)) {
 
-        ItemDef& def = defs.defs.fromStr(arg2);
+        ItemDef& def = defs.defs->fromStr(arg2);
 
         if (def.type == ItemDef::Type::BLOCK)
             entity->setModel(static_cast<BlockDef&>(def).entityModel);

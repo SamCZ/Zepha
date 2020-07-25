@@ -18,7 +18,7 @@ public:
     void changeVisibilityState(int state);
     void positionElements(glm::vec2 bufferSize);
 
-    void update(Player& player, LocalWorld& world, ClientGame& defs, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
+    void update(Player& player, LocalWorld& world, ClientGame& game, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
 private:
     int displayMode;
 };

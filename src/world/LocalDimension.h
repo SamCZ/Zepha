@@ -13,6 +13,7 @@
 
 class Renderer;
 class MeshChunk;
+class PacketView;
 class MeshGenStream;
 class ChunkRenderElem;
 class LocalLuaEntity;

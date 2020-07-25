@@ -7,13 +7,17 @@
 #include "ConnectScene.h"
 
 #include "../ClientState.h"
-#include "../graph/Renderer.h"
 #include "../../net/Packet.h"
+#include "../../lua/LuaMod.h"
+#include "../graph/Renderer.h"
 #include "../../net/Address.h"
 #include "../../net/PacketType.h"
 #include "../../net/PacketView.h"
+#include "../../def/gen/LocalBiomeAtlas.h"
+#include "../../def/LocalDefinitionAtlas.h"
 #include "../hud/components/basic/GuiText.h"
 #include "../hud/components/basic/GuiRect.h"
+#include "../../lua/parser/LocalLuaParser.h"
 #include "../../net/server/asset/AssetType.h"
 
 ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
@@ -88,7 +92,7 @@ void ConnectScene::update() {
                     auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received block index-identifier table.\n");
 
-                    state.defs.defs.setIdentifiers(p.d.read<std::vector<std::string>>());
+                    state.defs.defs->setIdentifiers(p.d.read<std::vector<std::string>>());
 
                     Packet resp(PacketType::BIOME_IDENTIFIER_LIST);
                     resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
@@ -97,7 +101,7 @@ void ConnectScene::update() {
                     auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received biome index-identifier table.\nDownloading mods...\n");
 
-                    state.defs.biomes.setIdentifiers(p.d.read<std::vector<std::string>>());
+                    state.defs.biomes->setIdentifiers(p.d.read<std::vector<std::string>>());
 
                     connectState = State::MODS;
                     Packet resp(PacketType::MODS);
@@ -118,10 +122,10 @@ void ConnectScene::update() {
                 if (p.type == PacketType::MODS) {
                     auto luaMod = LuaMod::fromPacket(p);
                     statusText->setText(statusText->getText() + "Received mod " + luaMod.config.name + ".\n");
-                    state.defs.parser.getHandler().addLuaMod(std::move(luaMod));
+                    state.defs.lua->getHandler().addLuaMod(std::move(luaMod));
                 }
                 else if (p.type == PacketType::MOD_ORDER) {
-                    state.defs.parser.getHandler().setModsOrder(p.d.read<std::vector<std::string>>());
+                    state.defs.lua->getHandler().setModsOrder(p.d.read<std::vector<std::string>>());
 
                     statusText->setText(statusText->getText() + "Done downloading mods.\nReceived the mods order.\nDownloading media...\n");
 

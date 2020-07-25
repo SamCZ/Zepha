@@ -7,32 +7,34 @@
 
 #pragma once
 
-#include "gen/MapGenProps.h"
-#include "model/ModelStore.h"
-#include "gen/LocalBiomeAtlas.h"
-#include "texture/TextureAtlas.h"
-#include "LocalDefinitionAtlas.h"
-#include "../lua/parser/LocalLuaParser.h"
+#include "Game.h"
 
+#include "model/ModelStore.h"
+#include "texture/TextureAtlas.h"
+
+class Player;
+class LocalWorld;
 class ClientState;
 
-class ClientGame {
+class LocalLuaParser;
+class LocalBiomeAtlas;
+class LocalDefinitionAtlas;
+
+class ClientGame : public Game {
 public:
-    explicit ClientGame(const std::string& tex_path);
-    // This constructor is only valid for ClientGame objects!
-    ClientGame(const ClientGame& copy);
+    explicit ClientGame(const std::string& texPath);
+    ~ClientGame();
 
     void init(LocalWorld &world, Player& player, ClientState& state);
     void update(double delta);
 
-    ~ClientGame() = default;
+    std::string texPath;
 
-    std::string tex_path;
+    ModelStore models;
+    TextureAtlas textures;
 
-    TextureAtlas         textures;
-    LocalLuaParser       parser;
-    LocalDefinitionAtlas defs;
-    LocalBiomeAtlas      biomes;
-    ModelStore           models;
+    std::unique_ptr<LocalLuaParser> lua;
+    std::unique_ptr<LocalBiomeAtlas> biomes;
+    std::unique_ptr<LocalDefinitionAtlas> defs;
 };
 

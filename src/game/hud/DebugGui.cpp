@@ -12,6 +12,8 @@
 #include "../../def/item/BlockDef.h"
 #include "components/basic/GuiText.h"
 #include "../scene/world/LocalWorld.h"
+#include "../../def/gen/LocalBiomeAtlas.h"
+#include "../../def/LocalDefinitionAtlas.h"
 #include "components/compound/GuiLabelledGraph.h"
 
 DebugGui::DebugGui(glm::vec2 bufferSize, ClientGame& defs) :
@@ -79,7 +81,7 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
     get<GuiLabelledGraph>("gpuGraph")->setPos({bufferWidth - 254, 90 + 80});
 }
 
-void DebugGui::update(Player& player, LocalWorld& world, ClientGame& defs, double fps, int /*chunks*/, int drawCalls, int ssGen, int ssPack) {
+void DebugGui::update(Player& player, LocalWorld& world, ClientGame& game, double fps, int /*chunks*/, int drawCalls, int ssGen, int ssPack) {
 
     { //Top Right Graphs
         get<GuiLabelledGraph>("fpsGraph")->pushValue(static_cast<float>(fps));
@@ -104,7 +106,7 @@ void DebugGui::update(Player& player, LocalWorld& world, ClientGame& defs, doubl
 
     { //Top-left Data
         unsigned int biomeID = world.getBiome(glm::floor(player.getPos()));
-        std::string biome = defs.biomes.biomeFromId(biomeID).identifier;
+        std::string biome = game.biomes->biomeFromId(biomeID).identifier;
 
         glm::vec3 playerPos = glm::floor(player.getPos());
         glm::vec3 chunkPos = Space::Chunk::world::fromBlock(playerPos);
@@ -133,8 +135,8 @@ void DebugGui::update(Player& player, LocalWorld& world, ClientGame& defs, doubl
 
         str << "Biome: " << biome << std::endl << std::endl;
 
-        str << "Texture Slots: " << defs.textures.textureSlotsUsed << " / " << defs.textures.maxTextureSlots
-            << " (" << round(defs.textures.textureSlotsUsed / static_cast<float>(defs.textures.maxTextureSlots) * 100) << "%)" << std::endl << std::endl;
+        str << "Texture Slots: " << game.textures.textureSlotsUsed << " / " << game.textures.maxTextureSlots
+            << " (" << round(game.textures.textureSlotsUsed / static_cast<float>(game.textures.maxTextureSlots) * 100) << "%)" << std::endl << std::endl;
 
         PointedThing thing = player.getPointedThing();
         if (thing.thing == PointedThing::Thing::BLOCK) {
@@ -149,7 +151,7 @@ void DebugGui::update(Player& player, LocalWorld& world, ClientGame& defs, doubl
                 faceDir == EVec::BACK   ? "BACK"   :
                                           "NONE"   ;
 
-            str << "Pointing At: " << defs.defs.blockFromId(thing.target.block.blockId).identifier << std::endl;
+            str << "Pointing At: " << game.defs->blockFromId(thing.target.block.blockId).identifier << std::endl;
             str << "Pointed Position: " << vecToString(thing.target.block.pos) << std::endl;
             str << "Pointed Face: " << face << std::endl;
         }
@@ -165,8 +167,8 @@ void DebugGui::update(Player& player, LocalWorld& world, ClientGame& defs, doubl
 
         std::ostringstream crossText;
         if (thing.thing == PointedThing::Thing::BLOCK) {
-            crossText << defs.defs.blockFromId(thing.target.block.blockId).name
-                      << " (" << defs.defs.blockFromId(thing.target.block.blockId).identifier << ")" << std::endl;
+            crossText << game.defs->blockFromId(thing.target.block.blockId).name
+                      << " (" << game.defs->blockFromId(thing.target.block.blockId).identifier << ")" << std::endl;
         }
         get<GuiText>("crosshairText")->setText(crossText.str());
     }

@@ -9,9 +9,9 @@
 #include "../basic/GuiInventoryItem.h"
 #include "../../../../def/ClientGame.h"
 #include "../../../../def/texture/Font.h"
+#include "../../../../def/LocalDefinitionAtlas.h"
 #include "../../../inventory/LocalInventoryList.h"
 #include "../../../inventory/LocalInventoryRefs.h"
-#include "../../../inventory/LocalInventoryList.h"
 
 GuiInventoryList::GuiInventoryList(const std::string &key) : GuiContainer(key) {}
 
@@ -152,7 +152,7 @@ void GuiInventoryList::drawContents() {
             if (stack.id == 0) continue;
 
             auto item = std::make_shared<GuiInventoryItem>("item_" + std::to_string(i) + "_" + std::to_string(j));
-            item->create(scale, stack.count, defs->defs.fromId(stack.id), f);
+            item->create(scale, stack.count, defs->defs->fromId(stack.id), f);
             add(item);
             item->setPos({padding.x + j * (16*scale.x+innerPadding.x/scale.x), padding.y + i * (16*scale.y+innerPadding.y/scale.y)});
         }

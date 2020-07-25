@@ -10,9 +10,9 @@
 #include "../../net/PacketView.h"
 
 GameScene::GameScene(ClientState& state) : Scene(state),
+    refs(*game.defs, net),
     game(state.defs),
     world(game, &net),
-    refs(game.defs, net),
     net(state.connection, game, player),
     player(world, game, state.renderer, refs),
     debugGui(state.renderer.window.getSize(), game) {

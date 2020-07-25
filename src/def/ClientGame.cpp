@@ -4,24 +4,28 @@
 
 #include "ClientGame.h"
 
-ClientGame::ClientGame(const ClientGame &copy) : ClientGame(copy.tex_path) {}
+#include "gen/LocalBiomeAtlas.h"
+#include "LocalDefinitionAtlas.h"
+#include "../lua/parser/LocalLuaParser.h"
 
-ClientGame::ClientGame(const std::string& path) :
-        tex_path(path),
+ClientGame::ClientGame(const std::string& texPath) :
+    texPath(texPath),
+    textures(2048),
 
-        parser(),
-        biomes(),
-        textures(2048),
-        defs(textures) {
+    lua(std::make_unique<LocalLuaParser>()),
+    biomes(std::make_unique<LocalBiomeAtlas>()),
+    defs(std::make_unique<LocalDefinitionAtlas>(textures)) {
 
-    textures.loadDirectory(tex_path);
+    textures.loadDirectory(texPath);
 }
 
 void ClientGame::init(LocalWorld &world, Player& player, ClientState& state) {
-    parser.init(*this, world, player, state);
+    lua->init(*this, world, player, state);
 }
 
 void ClientGame::update(double delta) {
-    parser.update(delta);
+    lua->update(delta);
     textures.update();
 }
+
+ClientGame::~ClientGame() {}

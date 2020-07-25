@@ -7,6 +7,8 @@
 #include "../../../net/PacketView.h"
 #include "../../../def/ClientGame.h"
 #include "../../../world/chunk/Chunk.h"
+#include "../../../def/gen/LocalBiomeAtlas.h"
+#include "../../../def/LocalDefinitionAtlas.h"
 
 WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, ClientGame& game) {
     threads.reserve(THREADS);
@@ -72,7 +74,7 @@ std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> WorldInterpolationStream::u
 }
 
 WorldInterpolationStream::Thread::Thread(ClientGame& game, unsigned int seed) :
-    gen(game.defs, game.biomes, seed),
+    gen(*game.defs, *game.biomes, seed),
     thread(std::bind(&WorldInterpolationStream::Thread::exec, this)) {}
 
 void WorldInterpolationStream::Thread::exec() {
