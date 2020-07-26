@@ -6,7 +6,7 @@
 
 #include "../../LuaParser.h"
 #include "../../../def/ItemDef.h"
-#include "../../../def/ServerGame.h"
+#include "../../../def/ServerSubgame.h"
 #include "../../../def/ServerDefinitionAtlas.h"
 
 void ServerLuaEntity::snap_pos(glm::vec3 pos) {

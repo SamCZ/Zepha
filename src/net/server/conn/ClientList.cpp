@@ -9,11 +9,11 @@
 #include "../../Serializer.h"
 #include "../../NetHandler.h"
 #include "../../../util/Log.h"
-#include "../../../def/ServerGame.h"
+#include "../../../def/ServerSubgame.h"
 #include "../../client/NetPlayerField.h"
 #include "../../../lua/parser/ServerLuaParser.h"
 
-ClientList::ClientList(ServerGame& defs) :
+ClientList::ClientList(ServerSubgame& defs) :
     defs(defs) {}
 
 void ClientList::handleConnect(ENetEvent e, InventoryRefs& refs) {

@@ -7,28 +7,31 @@
 
 #pragma once
 
-#include "Game.h"
+#include "Subgame.h"
 
 #include "model/ModelStore.h"
+#include "gen/LocalBiomeAtlas.h"
+#include "LocalDefinitionAtlas.h"
 #include "texture/TextureAtlas.h"
+#include "../lua/parser/LocalLuaParser.h"
 
 class Player;
 class LocalWorld;
 class ClientState;
 
-class LocalLuaParser;
-class LocalBiomeAtlas;
-class LocalDefinitionAtlas;
-
-class ClientGame : public Game {
+class LocalSubgame : public Subgame {
 public:
-    explicit ClientGame(const std::string& texPath);
-    ~ClientGame();
+    explicit LocalSubgame(const std::string& texPath);
+    ~LocalSubgame();
 
     void init(LocalWorld &world, Player& player, ClientState& state);
     void update(double delta);
 
     std::string texPath;
+
+    LocalDefinitionAtlas& getDefs() override { return *defs; };
+    LocalBiomeAtlas& getBiomes() override { return *biomes; };
+    LocalLuaParser& getParser() override { return *lua; };
 
     ModelStore models;
     TextureAtlas textures;

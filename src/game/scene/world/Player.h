@@ -27,7 +27,7 @@ public:
     static constexpr float BASE_MOVE_SPEED = 4.3f;
     static constexpr float JUMP_VEL = 0.14f;
 
-    Player(LocalWorld& world, ClientGame& defs, Renderer& renderer, LocalInventoryRefs& refs);
+    Player(LocalWorld& world, LocalSubgame& defs, Renderer& renderer, LocalInventoryRefs& refs);
     void update(Input &input, double delta, glm::vec2 mouseDelta);
     ~Player();
 
@@ -84,7 +84,7 @@ private:
     void updateWieldAndHandItems();
     template <typename T> void assertField(NetPlayerField field, T data);
 
-    ClientGame& game;
+    LocalSubgame& game;
     Renderer& renderer;
 
     GameGui gameGui;

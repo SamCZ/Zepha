@@ -5,7 +5,7 @@
 #include "DebugGui.h"
 
 
-#include "../../def/ClientGame.h"
+#include "../../def/LocalSubgame.h"
 #include "../scene/world/Player.h"
 #include "../../def/texture/Font.h"
 #include "../../def/gen/BiomeDef.h"
@@ -16,7 +16,7 @@
 #include "../../def/LocalDefinitionAtlas.h"
 #include "components/compound/GuiLabelledGraph.h"
 
-DebugGui::DebugGui(glm::vec2 bufferSize, ClientGame& defs) :
+DebugGui::DebugGui(glm::vec2 bufferSize, LocalSubgame& defs) :
     displayMode(0) {
 
     auto fpsHistogramRef = defs.textures["histogram"];
@@ -81,7 +81,7 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
     get<GuiLabelledGraph>("gpuGraph")->setPos({bufferWidth - 254, 90 + 80});
 }
 
-void DebugGui::update(Player& player, LocalWorld& world, ClientGame& game, double fps, int /*chunks*/, int drawCalls, int ssGen, int ssPack) {
+void DebugGui::update(Player& player, LocalWorld& world, LocalSubgame& game, double fps, int /*chunks*/, int drawCalls, int ssGen, int ssPack) {
 
     { //Top Right Graphs
         get<GuiLabelledGraph>("fpsGraph")->pushValue(static_cast<float>(fps));

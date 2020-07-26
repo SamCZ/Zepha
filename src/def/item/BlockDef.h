@@ -36,5 +36,5 @@ public:
     std::vector<SelectionBox> sBoxes {};
     std::vector<SelectionBox> cBoxes {};
 
-    std::unordered_map<Callback, sol::function, Util::EnumClassHash> callbacks {};
+    std::unordered_map<Callback, sol::protected_function, Util::EnumClassHash> callbacks {};
 };

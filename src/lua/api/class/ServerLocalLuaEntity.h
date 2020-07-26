@@ -8,15 +8,15 @@
 
 #include "../../../game/entity/Entity.h"
 
-class ClientGame;
+class LocalSubgame;
 
 class ServerLocalLuaEntity {
 public:
-    ServerLocalLuaEntity(unsigned int id, ClientGame& defs, const std::string& appearance, const std::string& arg1, const std::string& arg2);
+    ServerLocalLuaEntity(unsigned int id, LocalSubgame& defs, const std::string& appearance, const std::string& arg1, const std::string& arg2);
 
     void setDisplayType(const std::string& type, const std::string& arg, const std::string& arg2);
 
-    ClientGame& defs;
+    LocalSubgame& defs;
     std::unique_ptr<Entity> entity = std::make_unique<Entity>();
     unsigned int id;
 

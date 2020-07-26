@@ -7,7 +7,7 @@
 #include "../GuiComponent.h"
 
 class AtlasRef;
-class ClientGame;
+class LocalSubgame;
 class TextureAtlas;
 class LuaGuiElement;
 

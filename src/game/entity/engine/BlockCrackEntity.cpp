@@ -6,7 +6,7 @@
 
 #include "BlockCrackEntity.h"
 
-#include "../../../def/ClientGame.h"
+#include "../../../def/LocalSubgame.h"
 #include "../../../def/item/MeshPart.h"
 #include "../../../def/item/BlockDef.h"
 #include "../../../def/texture/AtlasRef.h"

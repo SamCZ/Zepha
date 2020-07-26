@@ -11,13 +11,13 @@
 class Model;
 class Player;
 class LocalWorld;
-class ClientGame;
+class LocalSubgame;
 class PacketView;
 class ServerConnection;
 
 class ClientNetworkInterpreter {
 public:
-    ClientNetworkInterpreter(ServerConnection& connection, ClientGame& defs, Player& player);
+    ClientNetworkInterpreter(ServerConnection& connection, LocalSubgame& defs, Player& player);
     ClientNetworkInterpreter(const ClientNetworkInterpreter& other) = default;
 
     void init(LocalWorld* world, std::function<void(std::unique_ptr<PacketView>)> invCallback);

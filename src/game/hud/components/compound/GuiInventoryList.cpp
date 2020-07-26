@@ -7,7 +7,7 @@
 #include "../../SerialGui.h"
 #include "../basic/GuiRect.h"
 #include "../basic/GuiInventoryItem.h"
-#include "../../../../def/ClientGame.h"
+#include "../../../../def/LocalSubgame.h"
 #include "../../../../def/texture/Font.h"
 #include "../../../../def/LocalDefinitionAtlas.h"
 #include "../../../inventory/LocalInventoryList.h"
@@ -15,7 +15,7 @@
 
 GuiInventoryList::GuiInventoryList(const std::string &key) : GuiContainer(key) {}
 
-std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(const LuaGuiElement& elem, ClientGame &game,
+std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(const LuaGuiElement& elem, LocalSubgame &game,
         glm::ivec2 bounds, LocalInventoryRefs& refs) {
 
     glm::vec2 pos     = SerialGui::get<glm::vec2>(elem, "position", bounds);
@@ -40,7 +40,7 @@ std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(const LuaGuiE
 }
 
 void GuiInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding,
-    std::shared_ptr<LocalInventoryList> list, std::shared_ptr<LocalInventoryList> cursor, ClientGame& defs,
+    std::shared_ptr<LocalInventoryList> list, std::shared_ptr<LocalInventoryList> cursor, LocalSubgame& defs,
     unsigned short start, unsigned short length) {
 
     this->list = list;

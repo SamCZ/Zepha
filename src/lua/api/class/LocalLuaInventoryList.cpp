@@ -79,10 +79,10 @@ LuaItemStack LocalLuaInventoryList::remove_stack(unsigned short i, unsigned shor
     return LuaItemStack(list.removeStack(i - 1, count), list.defs);
 }
 
-void LocalLuaInventoryList::set_callback(LocalInventoryList::Callback t, sol::function fun) {
+void LocalLuaInventoryList::set_callback(LocalInventoryList::Callback t, sol::protected_function fun) {
     list.setLuaCallback(t, fun);
 }
 
-sol::function LocalLuaInventoryList::get_callback(LocalInventoryList::Callback t) {
+sol::protected_function LocalLuaInventoryList::get_callback(LocalInventoryList::Callback t) {
     return list.getLuaCallback(t);
 }

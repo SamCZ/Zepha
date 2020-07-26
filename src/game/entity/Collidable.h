@@ -9,11 +9,11 @@
 #include "../../def/item/SelectionBox.h"
 
 class LocalWorld;
-class ClientGame;
+class LocalSubgame;
 
 class Collidable {
 public:
-    Collidable(LocalWorld& world, ClientGame& defs, const SelectionBox& collisionBox);
+    Collidable(LocalWorld& world, LocalSubgame& defs, const SelectionBox& collisionBox);
 
     void moveCollide(float stepUpAmount = 0);
     bool isOnGround();
@@ -22,7 +22,7 @@ public:
     glm::vec3 vel {};
 protected:
     LocalWorld& world;
-    ClientGame& game;
+    LocalSubgame& game;
     SelectionBox collisionBox {};
 private:
     bool collidesAt(glm::vec3& pos, float stepUpMax = 0);

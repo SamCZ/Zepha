@@ -58,7 +58,7 @@ zepha.register_keybind("zeus:default:spawn_rabbit", {
     description = "Spawn Rabbit",
     default = zepha.keys.y,
     on_press = function()
-        zepha.add_entity("zeus:default:rabbit", zepha.player.pos)
+        zepha.add_entity(zepha.player.pos, "zeus:default:rabbit")
     end
 })
 

@@ -12,7 +12,7 @@
 #include "../inventory/LocalInventoryRefs.h"
 #include "../hud/DebugGui.h"
 
-class ClientGame;
+class LocalSubgame;
 class Drawable;
 
 class GameScene : public Scene {
@@ -24,7 +24,7 @@ public:
 
     void cleanup() override;
 public:
-    ClientGame& game;
+    LocalSubgame& game;
 
     ClientNetworkInterpreter net;
     LocalInventoryRefs refs;

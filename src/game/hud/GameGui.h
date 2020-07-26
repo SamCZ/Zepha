@@ -9,7 +9,7 @@
 
 class GameGui {
 public:
-    explicit GameGui(LocalInventoryRefs& refs, glm::vec2 bufferSize, ClientGame& defs, Renderer& renderer);
+    explicit GameGui(LocalInventoryRefs& refs, glm::vec2 bufferSize, LocalSubgame& defs, Renderer& renderer);
     void winResized(glm::ivec2 win);
     void update(double delta);
 
@@ -26,7 +26,7 @@ public:
     void drawHud(Renderer& renderer);
     void drawMenu(Renderer& renderer);
 private:
-    ClientGame& defs;
+    LocalSubgame& defs;
     Renderer& renderer;
 
     glm::ivec2 win {};

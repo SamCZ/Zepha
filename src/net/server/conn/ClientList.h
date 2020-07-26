@@ -8,11 +8,11 @@
 
 #include "ServerClient.h"
 
-class ServerGame;
+class ServerSubgame;
 
 class ClientList {
 public:
-    explicit ClientList(ServerGame& defs);
+    explicit ClientList(ServerSubgame& defs);
 
     void handleConnect(ENetEvent e, InventoryRefs& refs);
     void handleDisconnect(ENetEvent e);
@@ -22,5 +22,5 @@ public:
 
     std::vector<std::shared_ptr<ServerClient>> clients;
 private:
-    ServerGame& defs;
+    ServerSubgame& defs;
 };

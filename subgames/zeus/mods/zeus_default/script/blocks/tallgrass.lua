@@ -1,5 +1,5 @@
 for i = 1, 5, 1 do
-    zepha.register_block("zeus:default:tallgrass_" .. i, {
+    zepha.register_block(":tallgrass_" .. i, {
         name = "Tall Grass",
 
         culls = false,

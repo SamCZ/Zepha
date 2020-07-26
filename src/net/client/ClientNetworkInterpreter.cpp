@@ -16,7 +16,7 @@
 #include "../../game/scene/world/Player.h"
 #include "../../game/scene/world/LocalWorld.h"
 
-ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, ClientGame &defs, Player& player) :
+ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, LocalSubgame &defs, Player& player) :
     player(player),
     connection(connection),
     playerModel(std::make_shared<Model>()) {

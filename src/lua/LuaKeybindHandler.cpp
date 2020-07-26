@@ -16,10 +16,10 @@ void LuaKeybindHandler::keybindHandler(bool state, int i) {
     else for (auto& cb : callbacksUp[i]) parser->safe_function(cb);
 }
 
-void LuaKeybindHandler::bindOnDown(unsigned short key, const sol::function &cb) {
+void LuaKeybindHandler::bindOnDown(unsigned short key, const sol::protected_function& cb) {
     callbacksDown[key].push_back(cb);
 }
 
-void LuaKeybindHandler::bindOnUp(unsigned short key, const sol::function &cb) {
+void LuaKeybindHandler::bindOnUp(unsigned short key, const sol::protected_function& cb) {
     callbacksUp[key].push_back(cb);
 }

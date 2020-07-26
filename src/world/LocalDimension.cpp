@@ -16,7 +16,7 @@
 #include "../game/scene/world/ChunkMeshDetails.h"
 #include "../lua/api/class/ServerLocalLuaEntity.h"
 
-LocalDimension::LocalDimension(ClientGame &game) : Dimension(*game.defs),
+LocalDimension::LocalDimension(LocalSubgame &game) : Dimension(*game.defs),
     meshGenStream(std::make_shared<MeshGenStream>(game, *this)),
     game(game) {}
 

@@ -1,4 +1,4 @@
-zepha.register_block("zeus:default:grass", {
+zepha.register_block(":grass", {
     name = "Grass",
 
     model = "base:block_foliage",

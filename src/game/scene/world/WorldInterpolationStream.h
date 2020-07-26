@@ -14,7 +14,7 @@
 #include "../../../def/gen/MapGen.h"
 
 class Chunk;
-class ClientGame;
+class LocalSubgame;
 class PacketView;
 
 class WorldInterpolationStream {
@@ -22,7 +22,7 @@ public:
     static const int THREADS = 4;
     static const int THREAD_QUEUE_SIZE = 16;
 
-    WorldInterpolationStream(unsigned int seed, ClientGame& game);
+    WorldInterpolationStream(unsigned int seed, LocalSubgame& game);
 
     // Queue parsing of packet `p`.
     void queuePacket(std::unique_ptr<PacketView> p);
@@ -52,7 +52,7 @@ private:
     };
 
     struct Thread {
-        explicit Thread(ClientGame& game, unsigned int seed);
+        explicit Thread(LocalSubgame& game, unsigned int seed);
         void exec();
 
         bool kill = false;

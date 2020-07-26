@@ -11,10 +11,10 @@
 
 #include "ServerModHandler.h"
 
-#include "../../def/ServerGame.h"
+#include "../../def/ServerSubgame.h"
 #include "../../net/Serializer.h"
 
-void ServerModHandler::loadMods(ServerGame& defs, const std::string &path) {
+void ServerModHandler::loadMods(ServerSubgame& defs, const std::string &path) {
     auto modDirs = findModDirectories(path);
     mods = initializeLuaMods(modDirs);
 
@@ -159,7 +159,7 @@ std::vector<LuaMod> ServerModHandler::initializeLuaMods(const std::list<std::str
     return mods;
 }
 
-void ServerModHandler::loadTextures(ServerGame &defs, const std::vector<LuaMod>& mods) {
+void ServerModHandler::loadTextures(ServerSubgame &defs, const std::vector<LuaMod>& mods) {
     cf_dir_t dir;
     for (const LuaMod& mod : mods) {
         std::string root = mod.modPath + "/textures";
@@ -204,7 +204,7 @@ void ServerModHandler::loadTextures(ServerGame &defs, const std::vector<LuaMod>&
     }
 }
 
-void ServerModHandler::loadModels(ServerGame &defs, const std::vector<LuaMod>& mods) {
+void ServerModHandler::loadModels(ServerSubgame &defs, const std::vector<LuaMod>& mods) {
     cf_dir_t dir;
     for (const LuaMod& mod : mods) {
         std::string root = mod.modPath + "/models";

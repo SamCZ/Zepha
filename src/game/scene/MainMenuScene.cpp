@@ -9,7 +9,7 @@
 
 #include "MainMenuScene.h"
 
-#include "menu/Subgame.h"
+#include "menu/SubgameDef.h"
 #include "../../util/Log.h"
 #include "../ClientState.h"
 #include "../graph/Renderer.h"
@@ -178,9 +178,7 @@ void MainMenuScene::findSubgames() {
     }
     cf_dir_close(&subgamesDir);
 
-    std::sort(subgames.begin(), subgames.end(), [](Subgame& a, Subgame& b) {
-        return a.config.name < b.config.name;
-    });
+    std::sort(subgames.begin(), subgames.end(), [](SubgameDef& a, SubgameDef& b) { return a.config.name < b.config.name; });
 }
 
 void MainMenuScene::positionElements() {

@@ -8,20 +8,23 @@
 
 #include "sol/forward.hpp"
 
-class Game;
+class World;
+class Subgame;
 
 namespace Api {
-    namespace Module {
-        enum class State { CLIENT, SERVER };
+    enum class State { CLIENT, SERVER };
 
-        class Base {
+    namespace Module {
+        class Module {
         public:
-            Base(State& state, Game& game, sol::table& core);
+            Module(State state, Subgame& game, World& world, sol::table& core);
             virtual void bind() = 0;
 
         protected:
-            Game& game;
-            State& state;
+            State state;
+
+            World& world;
+            Subgame& game;
 
             sol::state& lua;
             sol::table& core;

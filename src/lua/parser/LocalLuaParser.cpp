@@ -21,34 +21,26 @@
 #include "../api/usertype/cAnimationManager.h"
 
 // Modules
-#include "../api/modules/register_block.h"
-#include "../api/modules/register_blockmodel.h"
-#include "../api/modules/register_biome.h"
-#include "../api/modules/register_item.h"
-#include "../api/modules/register_entity.h"
-#include "../api/modules/set_block.h"
-#include "../api/modules/get_block.h"
-#include "../api/modules/remove_block.h"
-#include "../api/modules/add_entity.h"
-#include "../api/modules/remove_entity.h"
-#include "../api/modules/register_keybind.h"
+#include "../api/modules/Block.h"
+#include "../api/modules/Entity.h"
+#include "../api/modules/Register.h"
+
 #include "../api/modules/time.h"
 #include "../api/modules/create_structure.h"
 
 // Functions
-#include "../api/functions/trigger_event.h"
 #include "../api/functions/update_entities.h"
 
-LocalLuaParser::LocalLuaParser(): keybinds(this) {}
+LocalLuaParser::LocalLuaParser(LocalSubgame& game): LuaParser(game), game(game), keybinds(this) {}
 
-void LocalLuaParser::init(ClientGame& defs, LocalWorld& world, Player& player, ClientState& state) {
+void LocalLuaParser::init(LocalWorld& world, Player& player, ClientState& state) {
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
 
-    loadApi(defs, world, player);
+    loadApi(game, world, player);
     handler.executeMods(std::bind(&LocalLuaParser::runFileSandboxed, this, std::placeholders::_1));
     state.renderer.window.input.setCallback(std::bind(&LuaKeybindHandler::keybindHandler, &keybinds, std::placeholders::_1, std::placeholders::_2));
 
-    registerDefs(defs);
+    registerDefs(game);
 }
 
 void LocalLuaParser::update(double delta) {
@@ -64,7 +56,7 @@ LocalModHandler& LocalLuaParser::getHandler() {
     return handler;
 }
 
-void LocalLuaParser::loadApi(ClientGame &defs, LocalWorld &world, Player& player) {
+void LocalLuaParser::loadApi(LocalSubgame &defs, LocalWorld &world, Player& player) {
     //Create Zepha Table
     core = lua.create_table();
     lua["zepha"] = core;
@@ -82,22 +74,13 @@ void LocalLuaParser::loadApi(ClientGame &defs, LocalWorld &world, Player& player
     core["player"] = LocalLuaPlayer(player);
 
     // Modules
-    Api::register_block      (lua, core);
-    Api::register_blockmodel (lua, core);
-    Api::register_biome      (lua, core);
-    Api::register_item       (lua, core);
-    Api::register_entity     (lua, core);
-    Api::register_keybind    (lua, core);
+    modules.emplace_back(std::make_unique<Api::Module::Block>(Api::State::CLIENT, game, world, core));
+    modules.emplace_back(std::make_unique<Api::Module::Entity>(Api::State::CLIENT, game, world, core));
+    modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::CLIENT, game, world, core));
 
-    Api::get_block    (core, *defs.defs, world);
-    Api::set_block    (core, *defs.defs, world);
-    Api::remove_block (core, *defs.defs, world);
-
-    Api::add_entity_c    (lua, core, defs, world);
-    Api::remove_entity_c (lua, core, defs, world);
+    bindModules();
 
     Api::time(lua, core);
-
     Api::create_structure (lua, core);
 
     // Functions
@@ -108,7 +91,7 @@ void LocalLuaParser::loadApi(ClientGame &defs, LocalWorld &world, Player& player
     lua.set_function("runfile", &LocalLuaParser::runFileSandboxed, this);
 }
 
-void LocalLuaParser::registerDefs(ClientGame &defs) {
+void LocalLuaParser::registerDefs(LocalSubgame &defs) {
     RegisterBlocks  ::client(core, defs);
     RegisterItems   ::client(core, defs);
     RegisterBiomes  ::client(core, defs);

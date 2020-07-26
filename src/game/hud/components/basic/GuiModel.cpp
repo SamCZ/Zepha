@@ -7,7 +7,7 @@
 #include "../../SerialGui.h"
 #include "../../../entity/Model.h"
 #include "../../../graph/Renderer.h"
-#include "../../../../def/ClientGame.h"
+#include "../../../../def/LocalSubgame.h"
 #include "../../../../def/model/ModelStore.h"
 #include "../../../../def/texture/TextureAtlas.h"
 

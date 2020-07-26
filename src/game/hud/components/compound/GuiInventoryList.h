@@ -7,7 +7,7 @@
 #include "../basic/GuiRect.h"
 #include "../basic/GuiContainer.h"
 
-class ClientGame;
+class LocalSubgame;
 class LuaGuiElement;
 class LocalInventoryRefs;
 class LocalInventoryList;
@@ -18,11 +18,11 @@ public:
     GuiInventoryList(const std::string& key);
     ~GuiInventoryList() override;
 
-    static std::shared_ptr<GuiInventoryList> fromSerialized(const LuaGuiElement& elem, ClientGame &game,
+    static std::shared_ptr<GuiInventoryList> fromSerialized(const LuaGuiElement& elem, LocalSubgame &game,
             glm::ivec2 bounds, LocalInventoryRefs& refs);
 
     void create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding,
-                std::shared_ptr<LocalInventoryList> list, std::shared_ptr<LocalInventoryList> cursor, ClientGame& defs,
+                std::shared_ptr<LocalInventoryList> list, std::shared_ptr<LocalInventoryList> cursor, LocalSubgame& defs,
                 unsigned short start = 0, unsigned short length = 0);
 
     void setCallback(CallbackType type, const callback& cb) override;
@@ -38,5 +38,5 @@ private:
     std::shared_ptr<LocalInventoryList> list, cursor;
     unsigned short start, length;
     glm::ivec2 innerPadding;
-    ClientGame* defs = nullptr;
+    LocalSubgame* defs = nullptr;
 };

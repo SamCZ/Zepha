@@ -8,7 +8,7 @@
 
 #include "GuiContainer.h"
 
-class ClientGame;
+class LocalSubgame;
 class ModelStore;
 class TextureAtlas;
 class LuaGuiElement;

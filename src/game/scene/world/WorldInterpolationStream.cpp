@@ -5,12 +5,12 @@
 #include "WorldInterpolationStream.h"
 
 #include "../../../net/PacketView.h"
-#include "../../../def/ClientGame.h"
+#include "../../../def/LocalSubgame.h"
 #include "../../../world/chunk/Chunk.h"
 #include "../../../def/gen/LocalBiomeAtlas.h"
 #include "../../../def/LocalDefinitionAtlas.h"
 
-WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, ClientGame& game) {
+WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, LocalSubgame& game) {
     threads.reserve(THREADS);
     for (int i = 0; i < THREADS; i++) threads.emplace_back(game, seed);
 }
@@ -73,7 +73,7 @@ std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> WorldInterpolationStream::u
     return finishedChunks;
 }
 
-WorldInterpolationStream::Thread::Thread(ClientGame& game, unsigned int seed) :
+WorldInterpolationStream::Thread::Thread(LocalSubgame& game, unsigned int seed) :
     gen(*game.defs, *game.biomes, seed),
     thread(std::bind(&WorldInterpolationStream::Thread::exec, this)) {}
 

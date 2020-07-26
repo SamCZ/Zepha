@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../def/ClientGame.h"
+#include "../def/LocalSubgame.h"
 #include "../net/client/ServerConnection.h"
 
 class Renderer;
@@ -18,7 +18,7 @@ public:
 
     Renderer& renderer;
     ServerConnection connection {};
-    ClientGame defs;
+    LocalSubgame defs;
 
     unsigned int seed = 0;
 

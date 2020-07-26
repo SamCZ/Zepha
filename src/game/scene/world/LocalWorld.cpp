@@ -17,7 +17,7 @@
 #include "../../../lua/api/class/LocalLuaPlayer.h"
 #include "../../../net/client/ClientNetworkInterpreter.h"
 
-LocalWorld::LocalWorld(ClientGame& defs, ClientNetworkInterpreter* server) :
+LocalWorld::LocalWorld(LocalSubgame& defs, ClientNetworkInterpreter* server) :
         defs(defs),
         net(server),
         dimension(defs) {}
@@ -63,12 +63,12 @@ void LocalWorld::setBlock(glm::ivec3 pos, unsigned int block) {
 
 void LocalWorld::blockPlace(glm::vec3 pos, unsigned int block) {
     if (block == LocalDefinitionAtlas::AIR) {
-        auto def = defs.defs->blockFromId(getBlock(pos));
+        auto& def = defs.defs->blockFromId(getBlock(pos));
         if (def.callbacks.count(Callback::BREAK_CLIENT))
             defs.lua->safe_function(def.callbacks[Callback::BREAK_CLIENT], pos);
     }
     else {
-        auto def = defs.defs->blockFromId(block);
+        auto& def = defs.defs->blockFromId(block);
         if (def.callbacks.count(Callback::PLACE_CLIENT))
             defs.lua->safe_function(def.callbacks[Callback::PLACE_CLIENT], pos);
     }
@@ -82,7 +82,7 @@ void LocalWorld::blockBreak(glm::vec3 pos) {
 }
 
 void LocalWorld::blockInteract(PointedThing &thing) {
-    auto def = defs.defs->blockFromId(getBlock(thing.target.block.pos));
+    auto& def = defs.defs->blockFromId(getBlock(thing.target.block.pos));
 
     if (def.callbacks.count(Callback::INTERACT_CLIENT))
         defs.lua->safe_function(def.callbacks[Callback::INTERACT_CLIENT], thing.target.block.pos);

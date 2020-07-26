@@ -14,7 +14,7 @@
 #include "ServerPacketStream.h"
 #include "../conn/ClientList.h"
 #include "../conn/ServerClient.h"
-#include "../../../def/ServerGame.h"
+#include "../../../def/ServerSubgame.h"
 #include "../../../def/item/BlockDef.h"
 #include "../../../world/chunk/Chunk.h"
 #include "../../../world/chunk/MapBlock.h"
@@ -22,7 +22,7 @@
 #include "../../../def/ServerDefinitionAtlas.h"
 #include "../../../lua/api/class/ServerLuaEntity.h"
 
-ServerWorld::ServerWorld(unsigned int seed, ServerGame& game, ClientList& clients) :
+ServerWorld::ServerWorld(unsigned int seed, ServerSubgame& game, ClientList& clients) :
     clientList(clients),
     dimension(game),
     seed(seed),
@@ -218,11 +218,11 @@ void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
     auto oldBlock = getBlock(pos);
 
     if (block == DefinitionAtlas::AIR) {
-        auto def = game.defs->blockFromId(oldBlock);
+        auto& def = game.defs->blockFromId(oldBlock);
         if (def.callbacks.count(Callback::DESTRUCT)) def.callbacks[Callback::DESTRUCT](pos);
     }
     else {
-        auto def = game.defs->blockFromId(block);
+        auto& def = game.defs->blockFromId(block);
         if (def.callbacks.count(Callback::CONSTRUCT)) def.callbacks[Callback::CONSTRUCT](pos);
     }
 
@@ -244,11 +244,11 @@ void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
     }
 
     if (block == DefinitionAtlas::AIR) {
-        auto def = game.defs->blockFromId(oldBlock);
+        auto& def = game.defs->blockFromId(oldBlock);
         if (def.callbacks.count(Callback::AFTER_DESTRUCT)) def.callbacks[Callback::AFTER_DESTRUCT](pos);
     }
     else {
-        auto def = game.defs->blockFromId(block);
+        auto& def = game.defs->blockFromId(block);
         if (def.callbacks.count(Callback::AFTER_CONSTRUCT)) def.callbacks[Callback::AFTER_CONSTRUCT](pos);
     }
 }

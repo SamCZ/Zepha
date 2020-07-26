@@ -8,7 +8,7 @@
 
 #include "Dimension.h"
 
-#include "../def/ClientGame.h"
+#include "../def/LocalSubgame.h"
 #include "../game/entity/engine/PlayerEntity.h"
 
 class Renderer;
@@ -24,7 +24,7 @@ public:
     const static int MB_STORE_H = 6;
     const static int MB_STORE_V = 4;
 
-    explicit LocalDimension(ClientGame& game);
+    explicit LocalDimension(LocalSubgame& game);
     void update(double delta, glm::vec3 playerPos);
 
     void setChunk(std::shared_ptr<Chunk> chunk) override;
@@ -60,7 +60,7 @@ private:
     void attemptMeshChunk(const std::shared_ptr<Chunk>& chunk, bool priority = false, bool updateAdjacents = true);
     bool getAdjacentExists(glm::vec3 pos, bool updateAdjacents);
 
-    ClientGame& game;
+    LocalSubgame& game;
 
     std::shared_ptr<MeshGenStream> meshGenStream;
 

@@ -10,7 +10,7 @@
 
 #include "../../../world/ServerDimension.h"
 
-class ServerGame;
+class ServerSubgame;
 class ClientList;
 class ServerClient;
 class FileManipulator;
@@ -19,7 +19,7 @@ class ServerPacketStream;
 
 class ServerWorld : public World {
 public:
-    explicit ServerWorld(unsigned int seed, ServerGame& game, ClientList& clients);
+    explicit ServerWorld(unsigned int seed, ServerSubgame& game, ClientList& clients);
 
     void init(const std::string& worldDir);
     void update(double delta) override;
@@ -40,7 +40,7 @@ private:
     std::shared_ptr<ServerPacketStream> packetStream = nullptr;
 
     unsigned int seed;
-    ServerGame& game;
+    ServerSubgame& game;
     ClientList& clientList;
     
     std::string worldDir;

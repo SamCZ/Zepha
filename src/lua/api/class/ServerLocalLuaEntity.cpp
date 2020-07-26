@@ -7,12 +7,12 @@
 #include "ServerLocalLuaEntity.h"
 
 #include "../../../def/ItemDef.h"
-#include "../../../def/ClientGame.h"
+#include "../../../def/LocalSubgame.h"
 #include "../../../def/item/BlockDef.h"
 #include "../../../def/item/CraftItemDef.h"
 #include "../../../def/LocalDefinitionAtlas.h"
 
-ServerLocalLuaEntity::ServerLocalLuaEntity(unsigned int id, ClientGame &defs, const std::string &appearance,
+ServerLocalLuaEntity::ServerLocalLuaEntity(unsigned int id, LocalSubgame &defs, const std::string &appearance,
     const std::string &arg1, const std::string &arg2) :
 
     id(id),

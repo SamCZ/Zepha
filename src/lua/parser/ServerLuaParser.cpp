@@ -9,9 +9,10 @@
 
 #include "../ErrorFormatter.h"
 #include "../../net/Serializer.h"
-#include "../register/RegisterBlocks.h"
 #include "../register/RegisterItems.h"
 #include "../register/RegisterBiomes.h"
+#include "../register/RegisterBlocks.h"
+#include "../../net/server/world/ServerWorld.h"
 
 // Usertypes
 #include "../api/class/ServerLuaPlayer.h"
@@ -20,17 +21,10 @@
 #include "../api/usertype/cItemStack.h"
 
 // Modules
-#include "../api/modules/register_block.h"
-#include "../api/modules/register_blockmodel.h"
-#include "../api/modules/register_biome.h"
-#include "../api/modules/register_item.h"
-#include "../api/modules/register_entity.h"
-#include "../api/modules/register_keybind.h"
-#include "../api/modules/set_block.h"
-#include "../api/modules/get_block.h"
-#include "../api/modules/remove_block.h"
-#include "../api/modules/add_entity.h"
-#include "../api/modules/remove_entity.h"
+#include "../api/modules/Block.h"
+#include "../api/modules/Entity.h"
+#include "../api/modules/Register.h"
+
 #include "../api/modules/time.h"
 #include "../api/modules/create_structure.h"
 
@@ -38,15 +32,16 @@
 #include "../api/functions/trigger_event.h"
 #include "../api/functions/update_entities.h"
 
+ServerLuaParser::ServerLuaParser(ServerSubgame& game) : LuaParser(game), game(game) {}
 
-void ServerLuaParser::init(ServerGame& defs, ServerWorld& world, const std::string& path) {
+void ServerLuaParser::init(ServerWorld& world, const std::string& path) {
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
 
-    loadApi(defs, world);
-    handler.loadMods(defs, path + "mods");
+    loadApi(game, world);
+    handler.loadMods(game, path + "mods");
     handler.executeMods(std::bind(&ServerLuaParser::runFileSandboxed, this, std::placeholders::_1));
 
-    registerDefs(defs);
+    registerDefs(game);
 
     std::cout << Log::info << "Loaded " << handler.cGetMods().size() << " mods: [ ";
     for (unsigned int i = 0; i < handler.cGetMods().size(); i++)
@@ -94,7 +89,7 @@ void ServerLuaParser::playerDisconnected(std::shared_ptr<ServerClient> client) {
     }
 }
 
-void ServerLuaParser::loadApi(ServerGame &defs, ServerWorld &world) {
+void ServerLuaParser::loadApi(ServerSubgame &defs, ServerWorld &world) {
     //Create Zepha Table
     core = lua.create_table();
     lua["zepha"] = core;
@@ -110,22 +105,13 @@ void ServerLuaParser::loadApi(ServerGame &defs, ServerWorld &world) {
     core["players"] = lua.create_table();
 
     // Modules
-    Api::register_block      (lua, core);
-    Api::register_blockmodel (lua, core);
-    Api::register_biome      (lua, core);
-    Api::register_item       (lua, core);
-    Api::register_entity     (lua, core);
-    Api::register_keybind    (lua, core);
+    modules.emplace_back(std::make_unique<Api::Module::Block>(Api::State::SERVER, game, world, core));
+    modules.emplace_back(std::make_unique<Api::Module::Entity>(Api::State::SERVER, game, world, core));
+    modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::SERVER, game, world, core));
 
-    Api::get_block    (core, *defs.defs, world);
-    Api::set_block    (core, *defs.defs, world);
-    Api::remove_block (core, *defs.defs, world);
-
-    Api::add_entity_s    (lua, core, defs, world);
-    Api::remove_entity_s (lua, core, defs, world);
+    bindModules();
 
     Api::time(lua, core);
-
     Api::create_structure (lua, core);
 
     // Functions
@@ -137,7 +123,7 @@ void ServerLuaParser::loadApi(ServerGame &defs, ServerWorld &world) {
     lua.set_function("runfile", &ServerLuaParser::runFileSandboxed, this);
 }
 
-void ServerLuaParser::registerDefs(ServerGame &defs) {
+void ServerLuaParser::registerDefs(ServerSubgame &defs) {
     RegisterBlocks::server(core, defs);
     RegisterItems ::server(core, defs);
     RegisterBiomes::server(core, defs);

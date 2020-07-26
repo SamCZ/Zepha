@@ -1,4 +1,4 @@
-zepha.register_block("zeus:default:water", {
+zepha.register_block(":water", {
     name = "Water",
     model = "base:block",
     textures = {"zeus:default:water"}

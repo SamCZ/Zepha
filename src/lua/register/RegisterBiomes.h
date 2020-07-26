@@ -10,8 +10,8 @@
 
 #include "../Lua.h"
 #include "../../util/Util.h"
-#include "../../def/ClientGame.h"
-#include "../../def/ServerGame.h"
+#include "../../def/LocalSubgame.h"
+#include "../../def/ServerSubgame.h"
 #include "../../def/gen/BiomeDef.h"
 #include "../../def/item/BlockDef.h"
 #include "../../def/gen/LocalBiomeAtlas.h"
@@ -329,12 +329,12 @@ namespace RegisterBiomes {
         }
     }
 
-    static void server(sol::table& core, ServerGame& game) {
+    static void server(sol::table& core, ServerSubgame& game) {
         registerBiomes(core.get<sol::table>("registered_biomes"), *game.defs, *game.biomes);
         game.biomes->generateVoronoi();
     }
 
-    static void client(sol::table& core, ClientGame& game) {
+    static void client(sol::table& core, LocalSubgame& game) {
         registerBiomes(core.get<sol::table>("registered_biomes"), *game.defs, *game.biomes);
         game.biomes->generateVoronoi();
     }

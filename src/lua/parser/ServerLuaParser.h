@@ -10,13 +10,15 @@
 
 #include "ServerModHandler.h"
 
-class ServerGame;
+class ServerSubgame;
 class ServerWorld;
 class ServerClient;
 
 class ServerLuaParser : public LuaParser {
 public:
-    void init(ServerGame& defs, ServerWorld& world, const std::string& rootPath);
+    explicit ServerLuaParser(ServerSubgame& game);
+    void init(ServerWorld& world, const std::string& rootPath);
+
     void update(double delta) override;
 
     void sendModsPacket(ENetPeer* peer) const;
@@ -29,11 +31,13 @@ public:
         if (!res.valid()) errorCallback(res);
     }
 private:
-    void loadApi(ServerGame& defs, ServerWorld& world);
-    void registerDefs(ServerGame &defs);
+    void loadApi(ServerSubgame& defs, ServerWorld& world);
+    void registerDefs(ServerSubgame &defs);
 
     sol::protected_function_result errorCallback(sol::protected_function_result errPfr);
     sol::protected_function_result runFileSandboxed(const std::string& file);
+
+    ServerSubgame& game;
 
     ServerModHandler handler;
     double delta = 0;

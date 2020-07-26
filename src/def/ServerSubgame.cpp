@@ -4,30 +4,27 @@
 
 #include <cute_files/cute_files.h>
 
-#include "ServerGame.h"
+#include "ServerSubgame.h"
 
-#include "../def/gen/ServerBiomeAtlas.h"
-#include "../def/ServerDefinitionAtlas.h"
 #include "../net/server/conn/ClientList.h"
-#include "../lua/parser/ServerLuaParser.h"
 
-ServerGame::ServerGame(const std::string& subgame, unsigned int seed) :
+ServerSubgame::ServerSubgame(const std::string& subgame, unsigned int seed) :
     subgamePath("subgames/" + subgame + "/"),
 
     defs(std::make_unique<ServerDefinitionAtlas>()),
     biomes(std::make_unique<ServerBiomeAtlas>(seed)),
-    lua(std::make_unique<ServerLuaParser>()) {
+    lua(std::make_unique<ServerLuaParser>(*this)) {
 
     if (subgame.empty()) throw std::runtime_error("No subgame specified.");
     else if (!cf_file_exists(subgamePath.data())) throw std::runtime_error("Subgame does not exist.");
 }
 
-void ServerGame::init(ServerWorld &world) {
-    lua->init(*this, world, subgamePath);
+void ServerSubgame::init(ServerWorld &world) {
+    lua->init(world, subgamePath);
 }
 
-void ServerGame::update(double delta, ClientList& clients) {
+void ServerSubgame::update(double delta, ClientList& clients) {
     lua->update(delta);
 }
 
-ServerGame::~ServerGame() {}
+ServerSubgame::~ServerSubgame() {}

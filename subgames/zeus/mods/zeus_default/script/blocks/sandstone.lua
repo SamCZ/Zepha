@@ -1,4 +1,4 @@
-zepha.register_block("zeus:default:sandstone", {
+zepha.register_block(":sandstone", {
     name = "Sandstone",
 
     model = "base:block",

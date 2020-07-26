@@ -1,4 +1,4 @@
-zepha.register_block("zeus:default:wood", {
+zepha.register_block(":wood", {
     name = "Log",
 
     model = "base:block",

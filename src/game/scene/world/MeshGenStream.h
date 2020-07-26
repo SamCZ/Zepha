@@ -14,7 +14,7 @@
 #include "../../../def/gen/NoiseSample.h"
 
 class Chunk;
-class ClientGame;
+class LocalSubgame;
 
 class LocalDimension;
 
@@ -23,7 +23,7 @@ public:
     static const int THREADS = 4;
     static const int THREAD_QUEUE_SIZE = 32;
 
-    explicit MeshGenStream(ClientGame& game, LocalDimension& dimension);
+    explicit MeshGenStream(LocalSubgame& game, LocalDimension& dimension);
     ~MeshGenStream();
 
     void queue(glm::ivec3 pos, bool priority = false);
@@ -42,10 +42,10 @@ public:
     };
 
     struct Thread {
-        explicit Thread(ClientGame &defs, std::array<NoiseSample, 3>& offsetSampler);
+        explicit Thread(LocalSubgame &defs, std::array<NoiseSample, 3>& offsetSampler);
         void exec();
 
-        ClientGame &game;
+        LocalSubgame &game;
         std::array<NoiseSample, 3>& offsetSamplers;
         std::vector<Job> jobs = std::vector<Job>(THREAD_QUEUE_SIZE);
 
@@ -57,7 +57,7 @@ public:
 private:
 
     LocalDimension& dimension;
-    ClientGame& game;
+    LocalSubgame& game;
 
     std::array<NoiseSample, 3> noiseSampler;
     std::deque<glm::ivec3> queuedTasks;

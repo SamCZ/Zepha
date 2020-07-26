@@ -5,9 +5,10 @@
 #pragma once
 
 #include "../Lua.h"
-#include "../../def/ClientGame.h"
-#include "../../def/ServerGame.h"
+#include "../../def/LocalSubgame.h"
 #include "../../def/gen/BiomeDef.h"
+#include "../../def/ServerSubgame.h"
+#include "../../def/item/CraftItemDef.h"
 #include "../../def/LocalDefinitionAtlas.h"
 #include "../../def/ServerDefinitionAtlas.h"
 
@@ -59,11 +60,11 @@ namespace RegisterItems {
         }
     }
 
-    static void server(sol::table& core, ServerGame& game) {
+    static void server(sol::table& core, ServerSubgame& game) {
         registerItems(core.get<sol::table>("registered_items"), *game.defs, nullptr);
     }
 
-    static void client(sol::table& core, ClientGame& game) {
+    static void client(sol::table& core, LocalSubgame& game) {
         registerItems(core.get<sol::table>("registered_items"), *game.defs, &game.textures);
     }
 };

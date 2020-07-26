@@ -10,6 +10,8 @@
 
 class ItemDef {
 public:
+    ItemDef(const ItemDef& o) = delete;
+
     enum class Type {
         INVALID,
         BLOCK,

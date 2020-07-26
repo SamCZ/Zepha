@@ -13,13 +13,13 @@ class WorldInterpolationStream;
 class BlockCrackEntity;
 class ParticleEntity;
 class PointedThing;
-class ClientGame;
+class LocalSubgame;
 class Renderer;
 class Player;
 
 class LocalWorld : public World {
 public:
-    LocalWorld(ClientGame& defs, ClientNetworkInterpreter* net);
+    LocalWorld(LocalSubgame& defs, ClientNetworkInterpreter* net);
 
     void init(Player* player);
     void update(double delta) override;
@@ -43,7 +43,7 @@ public:
     int renderChunks(Renderer &render);
     void renderEntities(Renderer &renderer);
 
-    ClientGame& defs;
+    LocalSubgame& defs;
     LocalDimension dimension;
 
     int mapBlocksInterpolated = 0;

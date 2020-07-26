@@ -50,15 +50,7 @@ sol::object LuaGuiElement::set_trait(const std::string& key, sol::object val) {
     return val;
 }
 
-sol::object LuaGuiElement::call(sol::this_state s, sol::function fun) {
-    sol::table tbl = sol::state_view(s)["zepha"]["__builtin"]["gui_env"];
-    sol::environment env(s, sol::create, tbl);
-
-    sol::set_environment(env, fun);
-    return fun(this);
-}
-
-sol::object LuaGuiElement::pcall(sol::this_state s, sol::protected_function fun) {
+sol::object LuaGuiElement::call(sol::this_state s, sol::protected_function fun) {
     sol::table tbl = sol::state_view(s)["zepha"]["__builtin"]["gui_env"];
     sol::environment env(s, sol::create, tbl);
 

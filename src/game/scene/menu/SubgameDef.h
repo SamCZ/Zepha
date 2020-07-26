@@ -10,7 +10,7 @@
 
 class AtlasRef;
 
-class Subgame {
+class SubgameDef {
 public:
     std::shared_ptr<AtlasRef> iconRef = nullptr;
     SubgameConfig config {};

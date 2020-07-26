@@ -9,16 +9,16 @@
 #include "../../Lua.h"
 #include "../../../net/server/world/ServerEntity.h"
 
-class ServerGame;
+class ServerSubgame;
 
 class ServerLuaEntity {
 public:
-    ServerLuaEntity(std::unique_ptr<ServerEntity> entity, unsigned int id, ServerGame& defs) :
+    ServerLuaEntity(std::unique_ptr<ServerEntity> entity, unsigned int id, ServerSubgame& defs) :
             entity(std::move(entity)), id(id), defs(defs) {}
 
     std::unique_ptr<ServerEntity> entity = nullptr;
     unsigned int id;
-    ServerGame& defs;
+    ServerSubgame& defs;
 
     void snap_pos(glm::vec3 pos);
     void set_pos(glm::vec3 pos);

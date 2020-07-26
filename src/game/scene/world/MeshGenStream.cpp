@@ -11,7 +11,7 @@
 #include "../../../world/chunk/Chunk.h"
 #include "../../../world/LocalDimension.h"
 
-MeshGenStream::MeshGenStream(ClientGame& game, LocalDimension &dimension) :
+MeshGenStream::MeshGenStream(LocalSubgame& game, LocalDimension &dimension) :
     game(game),
     dimension(dimension),
     noiseSampler({NoiseSample {16}, NoiseSample {16}, NoiseSample {16}}) {
@@ -77,7 +77,7 @@ std::vector<ChunkMeshDetails*> MeshGenStream::update() {
     return std::move(finishedChunks);
 }
 
-MeshGenStream::Thread::Thread(ClientGame &defs, std::array<NoiseSample, 3>& offsetSamplers) :
+MeshGenStream::Thread::Thread(LocalSubgame &defs, std::array<NoiseSample, 3>& offsetSamplers) :
     game(defs), offsetSamplers(offsetSamplers), thread(std::bind(&MeshGenStream::Thread::exec, this)) {}
 
 void MeshGenStream::Thread::exec() {

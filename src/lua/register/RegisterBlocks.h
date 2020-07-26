@@ -7,8 +7,8 @@
 #include "../Lua.h"
 #include "../Callback.h"
 #include "../../def/ItemDef.h"
-#include "../../def/ClientGame.h"
-#include "../../def/ServerGame.h"
+#include "../../def/LocalSubgame.h"
+#include "../../def/ServerSubgame.h"
 #include "../../def/gen/BiomeDef.h"
 #include "../../def/item/BlockDef.h"
 #include "../../def/item/BlockModel.h"
@@ -252,7 +252,7 @@ namespace RegisterBlocks {
     }
 
     static void addCallback(BlockDef* blockDef, sol::table& blockTable, const std::string& name, Callback enumType) {
-        auto cb = blockTable.get<sol::optional<sol::function>>(name);
+        auto cb = blockTable.get<sol::optional<sol::protected_function>>(name);
         if (cb) blockDef->callbacks.insert({enumType, *cb});
     }
 
@@ -359,12 +359,12 @@ namespace RegisterBlocks {
         }
     }
 
-    static void server(sol::table& core, ServerGame& game) {
+    static void server(sol::table& core, ServerSubgame& game) {
         registerBlocks(core.get<sol::table>("registered_blocks"),
             core.get<sol::table>("registered_blockmodels"), *game.defs, nullptr);
     }
 
-    static void client(sol::table& core, ClientGame& game) {
+    static void client(sol::table& core, LocalSubgame& game) {
         registerBlocks(core.get<sol::table>("registered_blocks"),
             core.get<sol::table>("registered_blockmodels"), *game.defs, &game.textures);
     }

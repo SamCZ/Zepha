@@ -11,13 +11,14 @@
 
 class Subgame;
 class AtlasRef;
+class SubgameDef;
 class ClientState;
 class GuiContainer;
 
 class MenuSandbox : LuaParser {
 public:
     MenuSandbox(glm::ivec2& win, ClientState& state, std::shared_ptr<GuiContainer> container);
-    void load(const Subgame& subgame);
+    void load(const SubgameDef& subgame);
 
     void update(double delta) override;
     void windowResized();

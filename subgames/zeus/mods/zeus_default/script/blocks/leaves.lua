@@ -1,4 +1,4 @@
-zepha.register_block("zeus:default:leaves", {
+zepha.register_block(":leaves", {
     name = "Leaves",
 
     culls = false,

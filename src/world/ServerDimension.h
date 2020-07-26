@@ -8,13 +8,13 @@
 
 #include <list>
 
-class ServerGame;
+class ServerSubgame;
 class ServerClient;
 class ServerLuaEntity;
 
 class ServerDimension : public Dimension {
 public:
-    ServerDimension(ServerGame& game);
+    ServerDimension(ServerSubgame& game);
 
     void update(const std::vector<std::shared_ptr<ServerClient>>& clients, glm::ivec2 discardRange);
 
@@ -29,7 +29,7 @@ public:
     const std::list<unsigned int>& getRemovedEntities() const;
     void clearRemovedEntities();
 private:
-    ServerGame& game;
+    ServerSubgame& game;
 
     typedef std::list<std::shared_ptr<ServerLuaEntity>>::iterator luaent_ref;
 

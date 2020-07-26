@@ -6,7 +6,7 @@
 
 #include "../../game/graph/scene/Scene.h"
 
-#include "menu/Subgame.h"
+#include "menu/SubgameDef.h"
 #include "menu/MenuSandbox.h"
 #include "../hud/components/basic/GuiContainer.h"
 
@@ -36,7 +36,7 @@ private:
 
     MenuSandbox sandbox;
 
-    std::vector<Subgame> subgames;
-    Subgame* selectedSubgame = nullptr;
+    std::vector<SubgameDef> subgames;
+    SubgameDef* selectedSubgame = nullptr;
 };
 

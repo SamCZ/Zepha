@@ -8,13 +8,13 @@
 #include "chunk/Region.h"
 #include "chunk/MapBlock.h"
 #include "../def/gen/MapGen.h"
-#include "../def/ServerGame.h"
+#include "../def/ServerSubgame.h"
 #include "../def/ServerDefinitionAtlas.h"
 #include "../net/server/conn/ServerClient.h"
 #include "../net/server/world/ServerWorld.h"
 #include "../lua/api/class/ServerLuaEntity.h"
 
-ServerDimension::ServerDimension(ServerGame &game) : Dimension(*game.defs), game(game) {}
+ServerDimension::ServerDimension(ServerSubgame &game) : Dimension(*game.defs), game(game) {}
 
 void ServerDimension::update(const std::vector<std::shared_ptr<ServerClient>> &clients, glm::ivec2 discardRange) {
     for (const auto& region : regions) {

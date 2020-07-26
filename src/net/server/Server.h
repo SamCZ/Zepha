@@ -8,7 +8,7 @@
 #include "conn/ClientList.h"
 #include "world/ServerWorld.h"
 #include "config/ServerConfig.h"
-#include "../../def/ServerGame.h"
+#include "../../def/ServerSubgame.h"
 #include "../../game/inventory/InventoryRefs.h"
 
 class ServerClient;
@@ -30,7 +30,7 @@ private:
     unsigned int seed = 0;
     unsigned short port = 0;
 
-    ServerGame defs;
+    ServerSubgame defs;
     ServerWorld world;
     NetHandler handler;
     ClientList clientList;

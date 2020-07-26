@@ -52,8 +52,8 @@ public:
     ItemStack getStack(unsigned short i) const;
     void setStack(unsigned short i, const ItemStack& stack);
 
-    sol::function getLuaCallback(Callback type);
-    void setLuaCallback(Callback type, sol::safe_function cb);
+    sol::protected_function getLuaCallback(Callback type);
+    void setLuaCallback(Callback type, sol::protected_function cb);
 
     DefinitionAtlas& defs;
 

@@ -38,6 +38,6 @@ public:
 
     LuaItemStack remove_stack(unsigned short ind, unsigned short count);
 
-    void set_callback(LocalInventoryList::Callback t, sol::function fun);
-    sol::function get_callback(LocalInventoryList::Callback t);
+    void set_callback(LocalInventoryList::Callback t, sol::protected_function fun);
+    sol::protected_function get_callback(LocalInventoryList::Callback t);
 };

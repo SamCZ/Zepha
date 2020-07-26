@@ -9,16 +9,16 @@
 #include "LocalModHandler.h"
 #include "../LuaKeybindHandler.h"
 
-class ClientGame;
-class ClientState;
-class LocalWorld;
 class Player;
+class LocalWorld;
+class ClientState;
+class LocalSubgame;
 
 class LocalLuaParser : public LuaParser {
 public:
-    LocalLuaParser();
+    explicit LocalLuaParser(LocalSubgame& game);
+    void init(LocalWorld& world, Player& player, ClientState& state);
 
-    void init(ClientGame& defs, LocalWorld& world, Player& player, ClientState& state);
     void update(double delta);
 
     LocalModHandler& getHandler();
@@ -29,11 +29,13 @@ public:
         return res;
     }
 private:
-    void loadApi(ClientGame& defs, LocalWorld& world, Player& player);
-    void registerDefs(ClientGame &defs);
+    void loadApi(LocalSubgame& defs, LocalWorld& world, Player& player);
+    void registerDefs(LocalSubgame &defs);
 
     sol::protected_function_result errorCallback(sol::protected_function_result errPfr) const;
     sol::protected_function_result runFileSandboxed(const std::string& file);
+
+    LocalSubgame& game;
 
     LuaKeybindHandler keybinds;
     LocalModHandler handler;

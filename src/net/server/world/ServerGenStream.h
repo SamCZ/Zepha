@@ -10,7 +10,7 @@
 
 #include "../../../def/gen/MapGen.h"
 
-class ServerGame;
+class ServerSubgame;
 
 class ServerGenStream {
 public:
@@ -22,7 +22,7 @@ public:
         std::vector<std::shared_ptr<Chunk>> chunks;
     };
 
-    explicit ServerGenStream(unsigned int seed, ServerGame& game);
+    explicit ServerGenStream(unsigned int seed, ServerSubgame& game);
     ~ServerGenStream();
 
     // Add the MapBlock position `pos` to the generation queue.
@@ -39,7 +39,7 @@ private:
     };
 
     struct Thread {
-        explicit Thread(ServerGame& game, unsigned int seed);
+        explicit Thread(ServerSubgame& game, unsigned int seed);
         void exec();
 
         bool kill = false;

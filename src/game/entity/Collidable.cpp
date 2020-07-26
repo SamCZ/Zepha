@@ -5,12 +5,12 @@
 #include <glm/common.hpp>
 
 #include "Collidable.h"
-#include "../../def/ClientGame.h"
+#include "../../def/LocalSubgame.h"
 #include "../../def/item/BlockDef.h"
 #include "../scene/world/LocalWorld.h"
 #include "../../def/LocalDefinitionAtlas.h"
 
-Collidable::Collidable(LocalWorld &world, ClientGame& defs, const SelectionBox& collisionBox) :
+Collidable::Collidable(LocalWorld &world, LocalSubgame& defs, const SelectionBox& collisionBox) :
         world(world),
         game(defs),
         collisionBox(collisionBox) {}

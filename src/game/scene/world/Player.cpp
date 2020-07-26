@@ -17,7 +17,7 @@
 #include "../../inventory/LocalInventoryList.h"
 #include "../../../net/client/NetPlayerField.h"
 
-Player::Player(LocalWorld& world, ClientGame& defs, Renderer& renderer, LocalInventoryRefs& refs) :
+Player::Player(LocalWorld& world, LocalSubgame& defs, Renderer& renderer, LocalInventoryRefs& refs) :
     Collidable(world, defs, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
 
     refs(refs),

@@ -7,8 +7,7 @@
 
 #include "MenuSandbox.h"
 
-#include "Subgame.h"
-#include "../../../util/Log.h"
+#include "SubgameDef.h"
 #include "../../../lua/ErrorFormatter.h"
 #include "../../hud/components/basic/GuiText.h"
 #include "../../hud/components/basic/GuiContainer.h"
@@ -17,7 +16,7 @@
 #include "../../../lua/api/menu/mSetGui.h"
 #include "../../../lua/api/menu/mStartGame.h"
 
-MenuSandbox::MenuSandbox(glm::ivec2 &win, ClientState& state, std::shared_ptr<GuiContainer> container) :
+MenuSandbox::MenuSandbox(glm::ivec2 &win, ClientState& state, std::shared_ptr<GuiContainer> container) : LuaParser(state.defs),
     win(win),
     state(state),
     container(container),
@@ -51,7 +50,7 @@ void MenuSandbox::loadApi() {
     lua.set_function("runfile", &MenuSandbox::runFileSandboxed, this);
 }
 
-void MenuSandbox::load(const Subgame& subgame) {
+void MenuSandbox::load(const SubgameDef& subgame) {
     reset();
 
     try {

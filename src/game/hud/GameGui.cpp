@@ -6,7 +6,7 @@
 
 #include "../graph/Renderer.h"
 
-GameGui::GameGui(LocalInventoryRefs& refs, glm::vec2 bufferSize, ClientGame& defs, Renderer& renderer) :
+GameGui::GameGui(LocalInventoryRefs& refs, glm::vec2 bufferSize, LocalSubgame& defs, Renderer& renderer) :
     refs(refs),
     defs(defs),
     win(bufferSize),

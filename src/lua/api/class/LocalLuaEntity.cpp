@@ -6,7 +6,7 @@
 
 #include "../../Lua.h"
 #include "../../LuaParser.h"
-#include "../../../def/ClientGame.h"
+#include "../../../def/LocalSubgame.h"
 #include "../../../def/item/BlockDef.h"
 #include "../../../def/item/CraftItemDef.h"
 #include "../../../def/LocalDefinitionAtlas.h"

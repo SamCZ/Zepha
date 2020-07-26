@@ -1,8 +1,8 @@
-zepha.register_block("zeus:default:cobblestone", {
+zepha.register_block(":cobblestone", {
     name = "Cobblestone",
 
     model = "base:block",
-    textures = {"zeus:default:cobblestone"},
+    textures = { "zeus:default:cobblestone" },
 
     tool_props = {
         health = 25,

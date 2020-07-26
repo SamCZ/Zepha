@@ -1,8 +1,8 @@
-zepha.register_block("zeus:default:dirt", {
+zepha.register_block(":dirt", {
     name = "Dirt",
 
     model = "base:block",
-    textures = {"zeus:default:dirt"},
+    textures = { "zeus:default:dirt" },
 
     tool_props = {
         health = 25,

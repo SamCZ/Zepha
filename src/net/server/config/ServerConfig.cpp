@@ -9,13 +9,13 @@
 #include "../asset/AssetType.h"
 #include "../conn/ServerClient.h"
 #include "../../../def/ItemDef.h"
-#include "../../../def/ServerGame.h"
+#include "../../../def/ServerSubgame.h"
 #include "../../../def/gen/BiomeDef.h"
 #include "../../../def/gen/ServerBiomeAtlas.h"
 #include "../../../def/ServerDefinitionAtlas.h"
 #include "../../../lua/parser/ServerLuaParser.h"
 
-ServerConfig::ServerConfig(ServerGame &defs) : game(defs) {}
+ServerConfig::ServerConfig(ServerSubgame &defs) : game(defs) {}
 
 void ServerConfig::init() {
     blockIdentifierList.reserve(static_cast<unsigned long>(game.defs->size()));

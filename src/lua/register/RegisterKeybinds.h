@@ -5,8 +5,8 @@
 #pragma once
 
 #include "../Lua.h"
-#include "../../def/ClientGame.h"
-#include "../../def/ServerGame.h"
+#include "../../def/LocalSubgame.h"
+#include "../../def/ServerSubgame.h"
 #include "../../def/gen/BiomeDef.h"
 
 namespace RegisterKeybinds {
