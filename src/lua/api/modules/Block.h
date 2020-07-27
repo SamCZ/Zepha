@@ -6,12 +6,12 @@
 
 #include <glm/vec3.hpp>
 
-#include "Module.h"
+#include "SubgameModule.h"
 
 namespace Api::Module {
-    class Block : public Api::Module::Module {
+    class Block : public Api::Module::SubgameModule {
     public:
-        using Module::Module;
+        using SubgameModule::SubgameModule;
         void bind() override;
 
     protected:

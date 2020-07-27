@@ -21,7 +21,7 @@ void Api::Module::Entity::bind() {
     else                        core.set_function("remove_entity", Util::bind_this(this, &Entity::serverRemoveEntity));
 }
 
-sol::object Api::Module::Entity::addEntity(glm::ivec3 pos, const std::string &identifier, sol::optional<sol::object> staticData) {
+sol::object Api::Module::Entity::addEntity(glm::vec3 pos, const std::string &identifier, sol::optional<sol::object> staticData) {
     if (core["registered_entities"][identifier] == sol::nil) throw std::runtime_error(identifier + " is not a valid entity identifier.");
     sol::table def = core["registered_entities"][identifier];
 
@@ -41,8 +41,8 @@ sol::object Api::Module::Entity::addEntity(glm::ivec3 pos, const std::string &id
     // Server
     if (state == State::SERVER) {
         auto entity = std::make_unique<ServerEntity>(ind);
-        auto ref = std::make_shared<ServerLuaEntity>(std::move(entity), ind++, static_cast<ServerSubgame&>(game));
         entity->setPos(pos);
+        auto ref = std::make_shared<ServerLuaEntity>(std::move(entity), ind++, static_cast<ServerSubgame&>(game));
 
         luaEntity["object"] = ref;
         ref->set_display_type(*displayType, *displayObject, displayTexture);

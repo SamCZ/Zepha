@@ -239,7 +239,7 @@ void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
                 {mapBlock.x + mapBlockGenRange.x, mapBlock.y + mapBlockGenRange.y, mapBlock.z + mapBlockGenRange.x}};
 
             if (isInBounds(Space::MapBlock::world::fromChunk(chunkPos), bounds))
-                b.sendTo(client->peer, PacketChannel::BLOCK);
+                b.sendTo(client->peer, PacketChannel::INTERACT);
         }
     }
 

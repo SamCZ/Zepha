@@ -6,16 +6,16 @@
 
 #include <glm/vec3.hpp>
 
-#include "Module.h"
+#include "SubgameModule.h"
 
 namespace Api::Module {
-    class Entity : public Api::Module::Module {
+    class Entity : public Api::Module::SubgameModule {
     public:
-        using Module::Module;
+        using SubgameModule::SubgameModule;
         void bind() override;
 
     protected:
-        sol::object addEntity(glm::ivec3 pos, const std::string& identifier, sol::optional<sol::object> staticData);
+        sol::object addEntity(glm::vec3 pos, const std::string& identifier, sol::optional<sol::object> staticData);
         void clientRemoveEntity(sol::table entity);
         void serverRemoveEntity(sol::table entity);
 

@@ -36,17 +36,32 @@ void Player::update(Input &input, double delta, glm::vec2 mouseDelta) {
     gameGui.update(delta);
     handItemModel.setVisible(gameGui.isVisible());
 
-    moveAndLook(input, delta, mouseDelta);
+    updatePhysics(input, delta, mouseDelta);
+
+    moveCollide(isOnGround() ? 0.6 : vel.y <= 0 ? 0.1 : 0);
+    updateCamera();
+
     findPointedThing(input);
     updateWireframe();
 
     if (!gameGui.isInMenu()) interact(input, delta);
 }
 
-void Player::moveAndLook(Input &input, double delta, glm::vec2 mouseDelta) {
+bool Player::getKey(Input& input, Player::PlayerControl control) {
+    if (gameGui.isInMenu()) return false;
+    return input.keyDown(
+        control == PlayerControl::FORWARD  ? GLFW_KEY_W :
+        control == PlayerControl::BACKWARD ? GLFW_KEY_S :
+        control == PlayerControl::LEFT     ? GLFW_KEY_A :
+        control == PlayerControl::RIGHT    ? GLFW_KEY_D :
+        control == PlayerControl::JUMP     ? GLFW_KEY_SPACE :
+        control == PlayerControl::MOD1     ? GLFW_KEY_LEFT_SHIFT :
+                                             GLFW_KEY_LEFT_CONTROL);
+}
 
+void Player::updatePhysics(Input &input, double delta, glm::vec2 mouseDelta) {
     //Position movement
-    bool sprinting = input.keyDown(GLFW_KEY_LEFT_CONTROL);
+    bool sprinting = getKey(input, PlayerControl::MOD2);
 
     double moveSpeed = BASE_MOVE_SPEED * delta * (sprinting ? 1.6 : 1);
     float friction = 0.3f;
@@ -55,9 +70,7 @@ void Player::moveAndLook(Input &input, double delta, glm::vec2 mouseDelta) {
         moveSpeed *= 4;
         friction = 0.15f;
     }
-    else {
-        if (input.keyDown(GLFW_KEY_SPACE) && isOnGround()) vel.y = JUMP_VEL;
-    }
+    else if (getKey(input, PlayerControl::JUMP) && isOnGround()) vel.y = JUMP_VEL;
 
     //Calculate movement vector from camera angle.
     auto& camera = renderer.camera;
@@ -66,14 +79,14 @@ void Player::moveAndLook(Input &input, double delta, glm::vec2 mouseDelta) {
 
     glm::vec3 mod {0, 0, 0};
 
-    if (input.keyDown(GLFW_KEY_W)) mod += frontFlat;
-    if (input.keyDown(GLFW_KEY_S)) mod -= frontFlat;
-    if (input.keyDown(GLFW_KEY_D)) mod += rightFlat;
-    if (input.keyDown(GLFW_KEY_A)) mod -= rightFlat;
+    if (getKey(input, PlayerControl::FORWARD))  mod += frontFlat;
+    if (getKey(input, PlayerControl::BACKWARD)) mod -= frontFlat;
+    if (getKey(input, PlayerControl::RIGHT))    mod += rightFlat;
+    if (getKey(input, PlayerControl::LEFT))     mod -= rightFlat;
 
     if (flying) {
-        if (input.keyDown(GLFW_KEY_SPACE)) mod.y += 1;
-        if (input.keyDown(GLFW_KEY_LEFT_SHIFT)) mod.y -= 1;
+        if (getKey(input, PlayerControl::JUMP)) mod.y += 1;
+        if (getKey(input, PlayerControl::MOD1)) mod.y -= 1;
     }
     else {
         if (!isOnGround()) vel.y = std::fmax(vel.y - 0.0085, -3);
@@ -107,9 +120,6 @@ void Player::moveAndLook(Input &input, double delta, glm::vec2 mouseDelta) {
     while (yaw < 0.f)   yaw += 360.f;
 
     pitch = std::fmin(std::fmax(pitch, -90), 90);
-
-    moveCollide(isOnGround() ? 0.6 : vel.y <= 0 ? 0.1 : 0);
-    updateCamera();
 }
 
 void Player::updateCamera() {

@@ -7,8 +7,8 @@
 #include "../ErrorFormatter.h"
 #include "../../game/ClientState.h"
 #include "../../game/graph/Renderer.h"
-#include "../register/RegisterBlocks.h"
 #include "../register/RegisterItems.h"
+#include "../register/RegisterBlocks.h"
 #include "../register/RegisterBiomes.h"
 #include "../register/RegisterKeybinds.h"
 
@@ -21,11 +21,11 @@
 #include "../api/usertype/cAnimationManager.h"
 
 // Modules
+#include "../api/modules/Time.h"
 #include "../api/modules/Block.h"
 #include "../api/modules/Entity.h"
 #include "../api/modules/Register.h"
 
-#include "../api/modules/time.h"
 #include "../api/modules/create_structure.h"
 
 // Functions
@@ -74,13 +74,13 @@ void LocalLuaParser::loadApi(LocalSubgame &defs, LocalWorld &world, Player& play
     core["player"] = LocalLuaPlayer(player);
 
     // Modules
-    modules.emplace_back(std::make_unique<Api::Module::Block>(Api::State::CLIENT, game, world, core));
-    modules.emplace_back(std::make_unique<Api::Module::Entity>(Api::State::CLIENT, game, world, core));
-    modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::CLIENT, game, world, core));
+    modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::CLIENT, lua, core));
+    modules.emplace_back(std::make_unique<Api::Module::Block>(Api::State::CLIENT, core, game, world));
+    modules.emplace_back(std::make_unique<Api::Module::Entity>(Api::State::CLIENT, core, game, world));
+    modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::CLIENT, core, game, world));
 
     bindModules();
 
-    Api::time(lua, core);
     Api::create_structure (lua, core);
 
     // Functions
@@ -133,8 +133,7 @@ sol::protected_function_result LocalLuaParser::errorCallback(sol::protected_func
             << std::endl << std::endl << errString << Log::endl;
     }
 
-    exit(1);
-    return errPfr;
+    throw std::runtime_error("Exiting.");
 }
 
 sol::protected_function_result LocalLuaParser::runFileSandboxed(const std::string& file) {

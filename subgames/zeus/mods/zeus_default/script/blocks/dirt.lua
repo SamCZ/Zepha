@@ -13,4 +13,7 @@ zepha.register_block(":dirt", {
     },
 
     yields = "zeus:default:dirt",
+
+    on_interact = function(pos) zepha.set_block(pos, "zeus:default:grass") end,
+    on_interact_client = function(pos) zepha.set_block(pos, "zeus:default:grass") end
 })

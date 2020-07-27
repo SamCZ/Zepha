@@ -64,7 +64,7 @@ void ClientNetworkInterpreter::update() {
             .append(player.getYaw())
             .data;
 
-    p.sendTo(connection.getPeer(), PacketChannel::PLAYER);
+    p.sendTo(connection.getPeer(), PacketChannel::INTERACT);
 }
 
 void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
@@ -130,12 +130,12 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
 
 void ClientNetworkInterpreter::blockPlace(glm::ivec3 pos, unsigned int block) {
     Serializer().append(pos).append(block).packet(PacketType::BLOCK_SET)
-        .sendTo(connection.getPeer(), PacketChannel::BLOCK);
+        .sendTo(connection.getPeer(), PacketChannel::INTERACT);
 }
 
 void ClientNetworkInterpreter::blockInteract(glm::ivec3 pos) {
     Serializer().append(pos).packet(PacketType::BLOCK_INTERACT)
-        .sendTo(connection.getPeer(), PacketChannel::BLOCK);
+        .sendTo(connection.getPeer(), PacketChannel::INTERACT);
 }
 
 void ClientNetworkInterpreter::invWatch(const std::string& inv, const std::string& list) {

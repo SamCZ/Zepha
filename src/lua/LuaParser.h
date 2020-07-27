@@ -9,7 +9,7 @@
 #include <list>
 #include <glm/vec3.hpp>
 
-#include "api/modules/Module.h"
+#include "api/modules/SubgameModule.h"
 
 #include "Lua.h"
 
@@ -29,6 +29,6 @@ public:
     sol::state lua;
     sol::table core;
     
-    std::vector<std::unique_ptr<Api::Module::Module>> modules;
+    std::vector<std::unique_ptr<Api::Module::BaseModule>> modules;
 };
 

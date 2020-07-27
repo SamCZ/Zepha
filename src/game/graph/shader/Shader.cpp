@@ -24,10 +24,7 @@ std::string Shader::readFile(const std::string& fileLocation) {
     std::string contents;
     std::ifstream fileStream(fileLocation, std::ios::in);
 
-    if (!fileStream.is_open()) {
-        std::cout << Log::err << "Failed to open shader file '" << fileLocation << "'." << Log::endl;
-        exit(1);
-    }
+    if (!fileStream.is_open()) throw std::runtime_error("Failed to open shader file " + fileLocation + ".");
 
     std::string line;
     while (!fileStream.eof()) {
@@ -88,11 +85,7 @@ void Shader::setArr(int loc, unsigned int count, glm::mat4 &start) {
 
 void Shader::compileShader(const std::string& vertexSource, const std::string& fragmentSource, const std::string& geoSource) {
     shaderID = glCreateProgram();
-
-    if (!shaderID) {
-        std::cout << Log::err << "Error creating shader program." << Log::endl;
-        exit(1);
-    }
+    if (!shaderID) throw std::runtime_error("Failed to create shader program.");
 
     addShader(shaderID, vertexSource, GL_VERTEX_SHADER);
     addShader(shaderID, fragmentSource, GL_FRAGMENT_SHADER);
@@ -106,8 +99,7 @@ void Shader::compileShader(const std::string& vertexSource, const std::string& f
 
     if (!result) {
         glGetProgramInfoLog(shaderID, sizeof(eLog), nullptr, eLog);
-        std::cout << Log::err << "Error linking program.\n" << eLog << Log::endl;
-        exit(1);
+        throw std::runtime_error("Failed to link shader program. Error:\n" + std::string(eLog));
     }
 
     glValidateProgram(shaderID);
@@ -115,8 +107,7 @@ void Shader::compileShader(const std::string& vertexSource, const std::string& f
 
     if (!result) {
         glGetProgramInfoLog(shaderID, sizeof(eLog), nullptr, eLog);
-        std::cout << Log::err << "Error validating program.\n" << eLog << Log::endl;
-        exit(1);
+        throw std::runtime_error("Failed to validate shader program. Error:\n" + std::string(eLog));
     }
 }
 
@@ -135,12 +126,9 @@ void Shader::addShader(GLuint program, const std::string& shaderCode, GLenum sha
     glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
 
     if (!result) {
-        std::string shaderTypeName = (shaderType == GL_VERTEX_SHADER) ? "vertex" : (shaderType == GL_FRAGMENT_SHADER) ? "fragment" : "geometry";
-
         glGetShaderInfoLog(shader, sizeof(eLog), nullptr, eLog);
-        std::cout << Log::err << "Error compiling the " << shaderTypeName << " shader:\n" << eLog
-            << Log::endl << Log::err << shaderCode << std::endl;
-        return;
+        std::string shaderTypeName = (shaderType == GL_VERTEX_SHADER) ? "vertex" : (shaderType == GL_FRAGMENT_SHADER) ? "fragment" : "geometry";
+        throw std::runtime_error("Failed to compile the " + shaderTypeName + " shader. Error:\n" + eLog);
     }
 
     glAttachShader(program, shader);

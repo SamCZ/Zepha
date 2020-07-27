@@ -20,6 +20,10 @@ enum class NetPlayerField;
 
 class Player : Collidable, public Drawable {
 public:
+    enum class PlayerControl {
+        FORWARD, LEFT, BACKWARD, RIGHT,
+        JUMP, MOD1, MOD2
+    };
     static constexpr float MOUSE_SENSITIVITY = 0.1f;
     static constexpr float LOOK_DISTANCE = 6.5f;
     static constexpr float LOOK_PRECISION = 0.01f;
@@ -75,10 +79,14 @@ public:
 
     unsigned int id = 0;
 private:
-    void moveAndLook(Input &input, double delta, glm::vec2 mouseDelta);
+    bool getKey(Input& input, PlayerControl control);
+
+    void updatePhysics(Input &input, double delta, glm::vec2 mouseDelta);
     void updateCamera();
+
     void findPointedThing(Input &input);
     void updateWireframe();
+
     void interact(Input& input, double delta);
 
     void updateWieldAndHandItems();

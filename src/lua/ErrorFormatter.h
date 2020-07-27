@@ -9,5 +9,5 @@
 class ErrorFormatter {
 public:
     static std::string formatError(const std::string& fileName, int line,
-            const std::string& stack, std::string file, bool ansiColors = true);
+            const std::string& stack, std::string file, bool ansiColors = true) noexcept;
 };

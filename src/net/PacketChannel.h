@@ -6,13 +6,16 @@
 
 enum class PacketChannel {
     UNDEFINED = -1,
+
     AUTH,
     CONNECT,
+
     SERVER,
-    PLAYER,
-    ENTITY,
+
     WORLD,
-    BLOCK,
+    ENTITY,
+    INTERACT,
+
     INVENTORY
 };
 

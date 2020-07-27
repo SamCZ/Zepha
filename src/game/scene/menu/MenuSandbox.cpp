@@ -13,6 +13,7 @@
 #include "../../hud/components/basic/GuiContainer.h"
 
 // Modules
+#include "../../../lua/api/modules/Time.h"
 #include "../../../lua/api/menu/mSetGui.h"
 #include "../../../lua/api/menu/mStartGame.h"
 
@@ -40,10 +41,15 @@ void MenuSandbox::loadApi() {
     lua["zepha"] = core;
     core["__builtin"] = lua.create_table();
 
+
+    modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::CLIENT, lua, core));
+
     ClientApi::gui_element(lua);
 
     MenuApi::set_gui    (builder, win, lua, core);
     MenuApi::start_game (state, core);
+
+    bindModules();
 
     // Create sandboxed runfile()
     lua["dofile"] = lua["loadfile"] = sol::nil;
@@ -68,6 +74,7 @@ void MenuSandbox::windowResized() {
 
 void MenuSandbox::update(double delta) {
     builder.update();
+    core["__builtin"]["update_delayed_functions"]();
 }
 
 sol::protected_function_result MenuSandbox::runFileSandboxed(const std::string& file) {
@@ -174,22 +181,25 @@ sol::protected_function_result MenuSandbox::errorCallback(sol::protected_functio
 
     try {
         std::string::size_type lineNumStart = errString.find(':');
-        assert(lineNumStart != std::string::npos);
+        if (lineNumStart == std::string::npos) throw std::out_of_range("Improperly formatted error. [0]");
         std::string::size_type lineNumEnd = errString.find(':', lineNumStart + 1);
-        assert(lineNumEnd != std::string::npos);
+        if (lineNumEnd == std::string::npos) throw std::out_of_range("Improperly formatted error. [1]");
 
         std::string fileName = errString.substr(0, lineNumStart);
         int lineNum = std::stoi(errString.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1));
 
-        for (LuaModFile &f : mod.files) {
-            if (f.path == fileName) {
-                std::cout << std::endl << ErrorFormatter::formatError(fileName, lineNum, errString, f.file) << std::endl;
-                exit(1);
-            }
-        }
+        for (LuaModFile &f : mod.files)
+            if (f.path == fileName)
+                throw std::runtime_error(ErrorFormatter::formatError(fileName, lineNum, errString, f.file));
+
+        throw std::out_of_range("Error thrown outside of handled files. [2]");
     }
-    catch (...) {
-        std::cout << std::endl << Log::err << errString << Log::endl;
+    catch (std::runtime_error e) {
+        std::cout << Log::err << e.what() << std::endl;
+        throw;
     }
-    exit(1);
+    catch (std::out_of_range e) {
+        std::cout << Log::err << "Failed to format error, " << e.what() << Log::endl;
+        throw std::runtime_error(errString);
+    }
 }

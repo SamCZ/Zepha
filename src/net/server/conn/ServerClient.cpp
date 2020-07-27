@@ -115,5 +115,5 @@ void ServerClient::setWieldIndex(unsigned short index, bool assert) {
 template <typename T>
 void ServerClient::assertField(NetPlayerField field, T data) {
     Serializer().append(static_cast<unsigned int>(field)).append<T>(data)
-        .packet(PacketType::THIS_PLAYER_INFO).sendTo(peer, PacketChannel::PLAYER);
+        .packet(PacketType::THIS_PLAYER_INFO).sendTo(peer, PacketChannel::INTERACT);
 }

@@ -296,9 +296,8 @@ set(ZEPHA_SRC
 	game/inventory/InventoryRefs.cpp 
 	game/inventory/InventoryRefs.h 
 	game/inventory/InventoryList.cpp 
-	game/inventory/InventoryList.h 
-	lua/api/modules/time.h
-	net/PacketView.cpp
+	game/inventory/InventoryList.h
+		net/PacketView.cpp
 	net/PacketView.h
 	lua/api/modules/create_structure.h
 	util/Any.h
@@ -316,9 +315,9 @@ set(ZEPHA_SRC
 	lua/register/CreateBlockModel.cpp
 	lua/register/CreateBlockModel.h
 	lua/customization/vec3.hpp
-	lua/api/modules/Module.h
+		lua/api/modules/SubgameModule.h
 	lua/api/modules/Register.cpp
 	lua/api/modules/Register.h
-		def/Subgame.h lua/api/modules/Module.cpp lua/api/modules/Block.cpp lua/api/modules/Block.h lua/api/modules/Entity.cpp lua/api/modules/Entity.h)
+		def/Subgame.h lua/api/modules/SubgameModule.cpp lua/api/modules/Block.cpp lua/api/modules/Block.h lua/api/modules/Entity.cpp lua/api/modules/Entity.h lua/api/modules/Time.cpp lua/api/modules/Time.h lua/api/modules/BaseModule.cpp lua/api/modules/BaseModule.h)
 
 add_library (Zepha_Core ${ZEPHA_SRC})

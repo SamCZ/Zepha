@@ -156,9 +156,9 @@ void LocalDimension::serverEntityInfo(PacketView& p) {
         auto entity = std::make_shared<ServerLocalLuaEntity>(id, game, displayMode, displayArg1, displayArg2);
         entity->entity->setPos(position);
         entity->entity->setVisualOffset(visualOffset);
-        entity->entity->interpRotateX(rotation.x);
-        entity->entity->interpRotateY(rotation.y);
-        entity->entity->interpRotateZ(rotation.z);
+        entity->entity->setRotateX(rotation.x);
+        entity->entity->setRotateY(rotation.y);
+        entity->entity->setRotateZ(rotation.z);
         entity->entity->setScale(scale);
         serverEntities.push_back(entity);
         serverEntityRefs.emplace(id, --serverEntities.end());

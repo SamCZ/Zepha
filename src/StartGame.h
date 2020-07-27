@@ -22,18 +22,11 @@ std::map<std::string, std::string> parseArgs(int argc, char* argv[]) {
         size_t equals = arg.find('=');
         std::string first = (equals == -1) ? arg : arg.substr(0, equals);
 
-        if (args.count(first)) {
-            std::cout << Log::err << "Duplicate argument '" << first << "'" << Log::endl;
-            exit(1);
-        }
+        if (args.count(first)) throw std::invalid_argument("Duplicate argument " + first + ".");
+
         if (equals == -1) args.emplace(first, "");
-        else {
-            if (equals == arg.length() - 1) {
-                std::cout << Log::err << "Empty argument '" << first << "'" << Log::endl;
-                exit(1);
-            }
-            args.emplace(first, arg.substr(equals + 1, arg.length()));
-        }
+        else if (equals == arg.length() - 1) throw std::invalid_argument("Empty argument " + first + ".");
+        else args.emplace(first, arg.substr(equals + 1, arg.length()));
     }
 
     return args;

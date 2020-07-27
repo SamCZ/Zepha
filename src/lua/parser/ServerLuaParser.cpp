@@ -21,11 +21,11 @@
 #include "../api/usertype/cItemStack.h"
 
 // Modules
+#include "../api/modules/Time.h"
 #include "../api/modules/Block.h"
 #include "../api/modules/Entity.h"
 #include "../api/modules/Register.h"
 
-#include "../api/modules/time.h"
 #include "../api/modules/create_structure.h"
 
 // Functions
@@ -105,13 +105,13 @@ void ServerLuaParser::loadApi(ServerSubgame &defs, ServerWorld &world) {
     core["players"] = lua.create_table();
 
     // Modules
-    modules.emplace_back(std::make_unique<Api::Module::Block>(Api::State::SERVER, game, world, core));
-    modules.emplace_back(std::make_unique<Api::Module::Entity>(Api::State::SERVER, game, world, core));
-    modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::SERVER, game, world, core));
+    modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::CLIENT, lua, core));
+    modules.emplace_back(std::make_unique<Api::Module::Block>(Api::State::SERVER, core, game, world));
+    modules.emplace_back(std::make_unique<Api::Module::Entity>(Api::State::SERVER, core, game, world));
+    modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::SERVER, core, game, world));
 
     bindModules();
 
-    Api::time(lua, core);
     Api::create_structure (lua, core);
 
     // Functions
@@ -164,8 +164,7 @@ sol::protected_function_result ServerLuaParser::errorCallback(sol::protected_fun
             << std::endl << std::endl << errString << Log::endl;
     }
 
-    exit(1);
-    return errPfr;
+    throw std::runtime_error("Exiting.");
 }
 
 sol::protected_function_result ServerLuaParser::runFileSandboxed(const std::string& file) {

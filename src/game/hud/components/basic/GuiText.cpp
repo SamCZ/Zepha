@@ -71,6 +71,9 @@ void GuiText::setText(std::string text) {
     for (unsigned int i = 0; i < this->text.length() + 1; i++) {
         char c = this->text[i];
 
+        //TODO: Proper font handling.
+        if (c == '\t') c = ' ';
+
         if (c == '\n' || i == this->text.length()) {
             if (lineWidth > 0) {
                 lineWidth += 2;
@@ -111,6 +114,10 @@ void GuiText::setText(std::string text) {
 
     for (unsigned int i = 0; i < this->text.length() + 1; i++) {
         char c = this->text[i];
+
+        //TODO: Proper font handling.
+        if (c == '\t') c = ' ';
+
         unsigned int h = Font::charHeight;
 
         if (c == '\n' || i == this->text.length()) {

@@ -4,12 +4,14 @@
 
 #pragma once
 
-#include "Module.h"
+#include <string>
+
+#include "SubgameModule.h"
 
 namespace Api::Module {
-    class Register : public Api::Module::Module {
+    class Register : public Api::Module::SubgameModule {
     public:
-        using Module::Module;
+        using SubgameModule::SubgameModule;
         void bind() override;
 
     protected:
