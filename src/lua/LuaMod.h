@@ -5,16 +5,26 @@
 #pragma once
 
 #include <vector>
-
-#include "LuaModFile.h"
-#include "LuaModConfig.h"
+#include <string>
 
 class PacketView;
 
 class LuaMod {
 public:
-    std::vector<LuaModFile> files {};
-    LuaModConfig config {};
+    struct File {
+        std::string path;
+        std::string file;
+    };
+
+    struct Config {
+        std::string name;
+        std::string description;
+        std::string version;
+        std::vector<std::string> depends;
+    };
+
+    std::vector<File> files {};
+    Config config {};
     std::string modPath;
     std::string serialized;
 

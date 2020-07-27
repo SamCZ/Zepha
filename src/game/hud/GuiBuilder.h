@@ -7,7 +7,7 @@
 #include "SerialGui.h"
 #include "components/GuiComponent.h"
 #include "../../def/LocalSubgame.h"
-#include "../../lua/api/class/LuaGuiElement.h"
+#include "../../lua/usertype/LuaGuiElement.h"
 
 class GuiContainer;
 

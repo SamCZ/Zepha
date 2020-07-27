@@ -13,7 +13,7 @@
 #include "../../../def/gen/BiomeDef.h"
 #include "../../../def/gen/ServerBiomeAtlas.h"
 #include "../../../def/ServerDefinitionAtlas.h"
-#include "../../../lua/parser/ServerLuaParser.h"
+#include "../../../lua/ServerLuaParser.h"
 
 ServerConfig::ServerConfig(ServerSubgame &defs) : game(defs) {}
 

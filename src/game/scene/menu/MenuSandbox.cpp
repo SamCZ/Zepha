@@ -8,14 +8,15 @@
 #include "MenuSandbox.h"
 
 #include "SubgameDef.h"
+#include "../../../lua/LuaMod.h"
 #include "../../../lua/ErrorFormatter.h"
 #include "../../hud/components/basic/GuiText.h"
 #include "../../hud/components/basic/GuiContainer.h"
 
 // Modules
-#include "../../../lua/api/modules/Time.h"
-#include "../../../lua/api/menu/mSetGui.h"
-#include "../../../lua/api/menu/mStartGame.h"
+#include "../../../lua/modules/Time.h"
+#include "../../../lua/modules/mSetGui.h"
+#include "../../../lua/modules/mStartGame.h"
 
 MenuSandbox::MenuSandbox(glm::ivec2 &win, ClientState& state, std::shared_ptr<GuiContainer> container) : LuaParser(state.defs),
     win(win),
@@ -78,7 +79,7 @@ void MenuSandbox::update(double delta) {
 }
 
 sol::protected_function_result MenuSandbox::runFileSandboxed(const std::string& file) {
-    for (LuaModFile& f : mod.files) {
+    for (LuaMod::File& f : mod.files) {
         if (f.path != file) continue;
 
         sol::environment env(lua, sol::create, lua.globals());
@@ -142,7 +143,7 @@ void MenuSandbox::loadAndRunMod(const std::string &modPath) {
         std::ifstream t(file);
         std::string fileStr((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
 
-        LuaModFile f {modPath, fileStr};
+        LuaMod::File f {modPath, fileStr};
         mod.files.push_back(f);
     }
 
@@ -188,7 +189,7 @@ sol::protected_function_result MenuSandbox::errorCallback(sol::protected_functio
         std::string fileName = errString.substr(0, lineNumStart);
         int lineNum = std::stoi(errString.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1));
 
-        for (LuaModFile &f : mod.files)
+        for (LuaMod::File& f : mod.files)
             if (f.path == fileName)
                 throw std::runtime_error(ErrorFormatter::formatError(fileName, lineNum, errString, f.file));
 

@@ -10,7 +10,7 @@
 
 #include "../def/gen/ServerBiomeAtlas.h"
 #include "../def/ServerDefinitionAtlas.h"
-#include "../lua/parser/ServerLuaParser.h"
+#include "../lua/ServerLuaParser.h"
 #include "../net/server/asset/AssetStorage.h"
 
 class ServerWorld;

@@ -13,7 +13,7 @@
 #include "gen/LocalBiomeAtlas.h"
 #include "LocalDefinitionAtlas.h"
 #include "texture/TextureAtlas.h"
-#include "../lua/parser/LocalLuaParser.h"
+#include "../lua/LocalLuaParser.h"
 
 class Player;
 class LocalWorld;

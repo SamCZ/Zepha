@@ -11,7 +11,7 @@
 #include "../../../util/Log.h"
 #include "../../../def/ServerSubgame.h"
 #include "../../client/NetPlayerField.h"
-#include "../../../lua/parser/ServerLuaParser.h"
+#include "../../../lua/ServerLuaParser.h"
 
 ClientList::ClientList(ServerSubgame& defs) :
     defs(defs) {}

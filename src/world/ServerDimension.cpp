@@ -12,7 +12,7 @@
 #include "../def/ServerDefinitionAtlas.h"
 #include "../net/server/conn/ServerClient.h"
 #include "../net/server/world/ServerWorld.h"
-#include "../lua/api/class/ServerLuaEntity.h"
+#include "../lua/usertype/ServerLuaEntity.h"
 
 ServerDimension::ServerDimension(ServerSubgame &game) : Dimension(*game.defs), game(game) {}
 

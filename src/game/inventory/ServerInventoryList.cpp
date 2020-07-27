@@ -8,7 +8,7 @@
 
 #include "../../net/Packet.h"
 #include "../../net/Serializer.h"
-#include "../../lua/api/class/LuaItemStack.h"
+#include "../../lua/usertype/LuaItemStack.h"
 #include "../../net/server/conn/ClientList.h"
 
 ServerInventoryList::ServerInventoryList(DefinitionAtlas& defs, ClientList* list,

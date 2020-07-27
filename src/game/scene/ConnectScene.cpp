@@ -17,7 +17,7 @@
 #include "../../def/LocalDefinitionAtlas.h"
 #include "../hud/components/basic/GuiText.h"
 #include "../hud/components/basic/GuiRect.h"
-#include "../../lua/parser/LocalLuaParser.h"
+#include "../../lua/LocalLuaParser.h"
 #include "../../net/server/asset/AssetType.h"
 
 ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),

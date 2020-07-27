@@ -14,8 +14,8 @@
 #include "../PacketChannel.h"
 #include "../../def/item/BlockDef.h"
 #include "../../def/ServerDefinitionAtlas.h"
-#include "../../lua/parser/ServerLuaParser.h"
-#include "../../lua/api/class/ServerLuaPlayer.h"
+#include "../../lua/ServerLuaParser.h"
+#include "../../lua/usertype/ServerLuaPlayer.h"
 
 Server::Server(unsigned short port, const std::string& subgame) :
     seed(69),

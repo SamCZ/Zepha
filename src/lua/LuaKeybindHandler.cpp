@@ -4,7 +4,7 @@
 
 #include "LuaKeybindHandler.h"
 
-#include "parser/LocalLuaParser.h"
+#include "LocalLuaParser.h"
 
 LuaKeybindHandler::LuaKeybindHandler(LocalLuaParser* parser): parser(parser) {
     for (auto &callback : callbacksDown) callback = {};

@@ -9,7 +9,7 @@
 #include <list>
 #include <glm/vec3.hpp>
 
-#include "api/modules/SubgameModule.h"
+#include "modules/SubgameModule.h"
 
 #include "Lua.h"
 

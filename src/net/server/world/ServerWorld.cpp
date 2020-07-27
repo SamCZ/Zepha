@@ -20,7 +20,7 @@
 #include "../../../world/chunk/MapBlock.h"
 #include "../../../world/fs/FileManipulator.h"
 #include "../../../def/ServerDefinitionAtlas.h"
-#include "../../../lua/api/class/ServerLuaEntity.h"
+#include "../../../lua/usertype/ServerLuaEntity.h"
 
 ServerWorld::ServerWorld(unsigned int seed, ServerSubgame& game, ClientList& clients) :
     clientList(clients),

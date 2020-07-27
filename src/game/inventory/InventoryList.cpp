@@ -6,7 +6,7 @@
 
 #include "../../def/ItemDef.h"
 #include "../../def/DefinitionAtlas.h"
-#include "../../lua/api/class/LuaItemStack.h"
+#include "../../lua/usertype/LuaItemStack.h"
 
 InventoryList::InventoryList(DefinitionAtlas &defs) : defs(defs) {
     initialize();

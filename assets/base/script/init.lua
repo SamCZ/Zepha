@@ -5,6 +5,7 @@ runfile(_PATH .. "modules/math")
 runfile(_PATH .. "modules/table")
 runfile(_PATH .. "modules/after")
 runfile(_PATH .. "modules/vector")
+runfile(_PATH .. "modules/entity")
 runfile(_PATH .. "modules/callbacks")
 
 -- Register base models (if not on main menu)

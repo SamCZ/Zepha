@@ -11,10 +11,10 @@
 #include "../../../def/item/BlockDef.h"
 #include "../../../def/gen/LocalBiomeAtlas.h"
 #include "../../../def/LocalDefinitionAtlas.h"
-#include "../../../lua/parser/LocalLuaParser.h"
+#include "../../../lua/LocalLuaParser.h"
 #include "../../entity/engine/ParticleEntity.h"
 #include "../../entity/engine/BlockCrackEntity.h"
-#include "../../../lua/api/class/LocalLuaPlayer.h"
+#include "../../../lua/usertype/LocalLuaPlayer.h"
 #include "../../../net/client/ClientNetworkInterpreter.h"
 
 LocalWorld::LocalWorld(LocalSubgame& defs, ClientNetworkInterpreter* server) :

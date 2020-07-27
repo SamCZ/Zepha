@@ -17,7 +17,7 @@
 #include <glm/vec4.hpp>
 
 #include "../../util/Any.h"
-#include "../../lua/api/class/LuaGuiElement.h"
+#include "../../lua/usertype/LuaGuiElement.h"
 
 namespace SerialGui {
     const float SCALE_MODIFIER = 3;
