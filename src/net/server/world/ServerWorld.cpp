@@ -17,12 +17,15 @@
 #include "../../../def/ServerSubgame.h"
 #include "../../../def/item/BlockDef.h"
 #include "../../../world/chunk/Chunk.h"
+#include "../../../lua/usertype/Target.h"
 #include "../../../world/chunk/MapBlock.h"
 #include "../../../world/fs/FileManipulator.h"
-#include "../../../def/ServerDefinitionAtlas.h"
+#include "../../../lua/usertype/LuaItemStack.h"
 #include "../../../lua/usertype/ServerLuaEntity.h"
+#include "../../../lua/usertype/ServerLuaPlayer.h"
 
 ServerWorld::ServerWorld(unsigned int seed, ServerSubgame& game, ClientList& clients) :
+    World(game),
     clientList(clients),
     dimension(game),
     seed(seed),
@@ -68,7 +71,7 @@ void ServerWorld::init(const std::string& worldDir) {
     generateMapBlock({0, 0, 0});
 }
 
-void ServerWorld::update(double delta) {
+void ServerWorld::update(double) {
     dimension.update(clientList.clients, mapBlockGenRange);
 
     std::unordered_set<glm::ivec3, Vec::ivec3> updatedChunks {};
@@ -251,6 +254,27 @@ void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
         auto& def = game.defs->blockFromId(block);
         if (def.callbacks.count(Callback::AFTER_CONSTRUCT)) def.callbacks[Callback::AFTER_CONSTRUCT](pos);
     }
+}
+
+void ServerWorld::blockPlace(const Target &target, ServerClient &client) {
+    std::tuple<sol::optional<LuaItemStack>, sol::optional<glm::vec3>> res = game.lua->safe_function(
+        game.lua->core["block_place"], ServerLuaPlayer(client), Api::Usertype::Target(target));
+
+    auto stack = std::get<sol::optional<LuaItemStack>>(res);
+    if (stack) client.getWieldList()->setStack(client.getWieldIndex(), ItemStack(*stack, game.getDefs()));
+}
+
+void ServerWorld::blockInteract(const Target &target, ServerClient &client) {
+    game.lua->safe_function(game.lua->core["block_interact"],
+        ServerLuaPlayer(client), Api::Usertype::Target(target));
+}
+
+void ServerWorld::blockPlaceOrInteract(const Target &target, ServerClient &client) {
+    std::tuple<sol::optional<LuaItemStack>, sol::optional<glm::vec3>> res = game.lua->safe_function(
+        game.lua->core["block_interact_or_place"], ServerLuaPlayer(client), Api::Usertype::Target(target));
+
+    auto stack = std::get<sol::optional<LuaItemStack>>(res);
+    if (stack) client.getWieldList()->setStack(client.getWieldIndex(), ItemStack(*stack, game.getDefs()));
 }
 
 bool ServerWorld::isInBounds(glm::ivec3 cPos, std::pair<glm::ivec3, glm::ivec3> &bounds) {

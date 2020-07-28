@@ -18,6 +18,7 @@ public:
 
     void update();
     void addDamage(double damage);
+    void setDamage(double damage);
 
     int maxHealth = 0;
     double damage = 0;

@@ -8,6 +8,7 @@
 
 #include "../../Packet.h"
 #include "../../Serializer.h"
+#include "../../Deserializer.h"
 #include "../../client/NetPlayerField.h"
 #include "../../../game/inventory/InventoryRefs.h"
 
@@ -77,21 +78,26 @@ std::shared_ptr<Inventory> ServerClient::getInventory() {
 }
 
 std::shared_ptr<InventoryList> ServerClient::getHandList() {
-    return handList;
+    return (*inventory)[handList];
 }
 
-void ServerClient::setHandList(std::shared_ptr<InventoryList> list, bool assert) {
-    handList = list;
-    if (assert) assertField(NetPlayerField::HAND_INV, handList ? handList->getName() : "");
+void ServerClient::setHandList(const std::string& list, bool assert) {
+    if (list.empty() || !(*inventory)[list]) this->handList = "";
+    else this->handList = list;
+
+    if (assert) assertField(NetPlayerField::HAND_INV, this->handList);
 }
 
 std::shared_ptr<InventoryList> ServerClient::getWieldList() {
-    return wieldList;
+    return (*inventory)[wieldList];
 }
 
-void ServerClient::setWieldList(std::shared_ptr<InventoryList> list, bool assert) {
-    wieldList = list;
-    if (assert) assertField(NetPlayerField::WIELD_INV, wieldList ? wieldList->getName() : "");
+void ServerClient::setWieldList(const std::string& list, bool assert) {
+    if (list.empty() || !(*inventory)[list]) this->wieldList = "";
+    else this->wieldList = list;
+
+    if (assert) assertField(NetPlayerField::WIELD_INV, this->wieldList);
+    setWieldIndex(wieldIndex, assert);
 }
 
 unsigned short ServerClient::getWieldIndex() {
@@ -99,8 +105,26 @@ unsigned short ServerClient::getWieldIndex() {
 }
 
 void ServerClient::setWieldIndex(unsigned short index, bool assert) {
+    auto wieldList = (*inventory)[this->wieldList];
     wieldIndex = index % (wieldList ? wieldList->getLength() : 1);
     if (assert) assertField(NetPlayerField::WIELD_INDEX, static_cast<unsigned short>(wieldIndex));
+}
+
+void ServerClient::handleAssertion(Deserializer &d) {
+    while (!d.atEnd()) {
+        switch (static_cast<NetPlayerField>(d.read<unsigned int>())) {
+            case NetPlayerField::POSITION: setPos(d.read<glm::vec3>()); break;
+            case NetPlayerField::VELOCITY: setVel(d.read<glm::vec3>()); break;
+            case NetPlayerField::PITCH: setPitch(d.read<float>()); break;
+            case NetPlayerField::YAW: setYaw(d.read<float>()); break;
+
+            case NetPlayerField::FLYING: setFlying(d.read<bool>()); break;
+
+            case NetPlayerField::HAND_INV: setHandList(d.read<std::string>()); break;
+            case NetPlayerField::WIELD_INV: setWieldList(d.read<std::string>()); break;
+            case NetPlayerField::WIELD_INDEX: setWieldIndex(d.read<unsigned short>()); break;
+        }
+    }
 }
 
 //void ServerClient::setMapBlockIntegrity(glm::ivec3 pos, unsigned long long integrity) {

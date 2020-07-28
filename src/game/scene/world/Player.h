@@ -8,7 +8,7 @@
 #include "../../graph/drawable/Drawable.h"
 
 #include "../../hud/GameGui.h"
-#include "../../../world/PointedThing.h"
+#include "../../../world/Target.h"
 #include "../../entity/engine/WireframeEntity.h"
 
 class Input;
@@ -22,8 +22,8 @@ class Player : Collidable, public Drawable {
 public:
     enum class PlayerControl {
         FORWARD, LEFT, BACKWARD, RIGHT,
-        JUMP, MOD1, MOD2
-    };
+        JUMP, MOD1, MOD2 };
+
     static constexpr float MOUSE_SENSITIVITY = 0.1f;
     static constexpr float LOOK_DISTANCE = 6.5f;
     static constexpr float LOOK_PRECISION = 0.01f;
@@ -31,7 +31,7 @@ public:
     static constexpr float BASE_MOVE_SPEED = 4.3f;
     static constexpr float JUMP_VEL = 0.14f;
 
-    Player(LocalWorld& world, LocalSubgame& defs, Renderer& renderer, LocalInventoryRefs& refs);
+    Player(LocalSubgame &game, LocalWorld &world, Renderer &renderer, LocalInventoryRefs &refs, ClientNetworkInterpreter& net);
     void update(Input &input, double delta, glm::vec2 mouseDelta);
     ~Player();
 
@@ -68,7 +68,7 @@ public:
     void setHud(std::shared_ptr<LuaGuiElement> hud);
     std::shared_ptr<LuaGuiElement> getHud();
 
-    PointedThing& getPointedThing();
+    Target& getPointedThing();
     void setHudVisible(bool hudVisible);
 
     void draw(Renderer& renderer) override;
@@ -90,9 +90,9 @@ private:
     void interact(Input& input, double delta);
 
     void updateWieldAndHandItems();
-    template <typename T> void assertField(NetPlayerField field, T data);
 
     LocalSubgame& game;
+    ClientNetworkInterpreter& net;
     Renderer& renderer;
 
     GameGui gameGui;
@@ -112,6 +112,6 @@ private:
 
     double breakTime = 0;
     double breakInterval = 0;
-    PointedThing pointedThing;
+    Target target;
 };
 

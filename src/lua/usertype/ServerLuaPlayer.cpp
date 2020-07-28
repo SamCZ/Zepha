@@ -74,8 +74,8 @@ sol::object ServerLuaPlayer::get_hand_list(sol::this_state s) {
 
 void ServerLuaPlayer::set_hand_list(sol::object list) {
     if (!list) player.setHandList(nullptr);
-    else if (list.is<std::string>()) player.setHandList((*player.getInventory())[list.as<std::string>()], true);
-    else if (list.is<ServerLuaInventoryList>()) player.setHandList((*player.getInventory())[list.as<ServerLuaInventoryList>().get_name()], true);
+    else if (list.is<std::string>()) player.setHandList(list.as<std::string>(), true);
+    else if (list.is<ServerLuaInventoryList>()) player.setHandList(list.as<ServerLuaInventoryList>().get_name(), true);
     else throw "Attempted to set hand list to nil.";
 }
 
@@ -92,9 +92,9 @@ sol::object ServerLuaPlayer::get_wield_list(sol::this_state s) {
 }
 
 void ServerLuaPlayer::set_wield_list(sol::object list) {
-    if (!list) player.setWieldList(nullptr);
-    else if (list.is<std::string>()) player.setWieldList((*player.getInventory())[list.as<std::string>()], true);
-    else if (list.is<ServerLuaInventoryList>()) player.setWieldList((*player.getInventory())[list.as<ServerLuaInventoryList>().get_name()], true);
+    if (!list) player.setWieldList(nullptr, true);
+    else if (list.is<std::string>()) player.setWieldList(list.as<std::string>(), true);
+    else if (list.is<ServerLuaInventoryList>()) player.setWieldList(list.as<ServerLuaInventoryList>().get_name(), true);
     else throw "Attempted to set wield list to nil.";
 }
 

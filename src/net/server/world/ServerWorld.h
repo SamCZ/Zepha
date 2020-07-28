@@ -10,9 +10,11 @@
 
 #include "../../../world/ServerDimension.h"
 
-class ServerSubgame;
+class Target;
+class ItemStack;
 class ClientList;
 class ServerClient;
+class ServerSubgame;
 class FileManipulator;
 class ServerGenStream;
 class ServerPacketStream;
@@ -26,6 +28,10 @@ public:
 
     unsigned int getBlock(glm::ivec3 pos) override;
     void setBlock(glm::ivec3 pos, unsigned int block) override;
+
+    void blockPlace(const Target& target, ServerClient& client);
+    void blockPlaceOrInteract(const Target& target, ServerClient& client);
+    void blockInteract(const Target& target, ServerClient& client);
 
     ServerDimension dimension;
 private:

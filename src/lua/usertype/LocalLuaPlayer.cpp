@@ -89,9 +89,9 @@ sol::object LocalLuaPlayer::get_wield_list(sol::this_state s) {
 }
 
 void LocalLuaPlayer::set_wield_list(sol::optional<sol::object> list) {
-    if (!list) player.setWieldList("");
-    else if (list->is<std::string>()) player.setWieldList(list->as<std::string>());
-    else if (list->is<LocalLuaInventoryList>()) player.setWieldList(list->as<LocalLuaInventoryList>().get_name());
+    if (!list) player.setWieldList("", true);
+    else if (list->is<std::string>()) player.setWieldList(list->as<std::string>(), true);
+    else if (list->is<LocalLuaInventoryList>()) player.setWieldList(list->as<LocalLuaInventoryList>().get_name(), true);
     else throw "Attempted to set wield list to nil.";
 }
 
@@ -100,7 +100,7 @@ unsigned int LocalLuaPlayer::get_wield_index() {
 }
 
 void LocalLuaPlayer::set_wield_index(unsigned int index) {
-    player.setWieldIndex(index - 1);
+    player.setWieldIndex(index - 1, true);
 }
 
 sol::object LocalLuaPlayer::get_wield_stack(sol::this_state s) {
@@ -110,7 +110,7 @@ sol::object LocalLuaPlayer::get_wield_stack(sol::this_state s) {
 }
 
 void LocalLuaPlayer::set_flying(bool shouldFly) {
-    player.setFlying(shouldFly);
+    player.setFlying(shouldFly, true);
 }
 
 bool LocalLuaPlayer::get_flying() {

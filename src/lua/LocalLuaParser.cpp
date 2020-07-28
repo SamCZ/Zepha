@@ -19,15 +19,14 @@
 #include "usertype/cLuaEntity.h"
 #include "usertype/cInventoryRef.h"
 #include "usertype/cAnimationManager.h"
+#include "usertype/Target.h"
 
 // Modules
 #include "modules/Time.h"
 #include "modules/Block.h"
 #include "modules/Entity.h"
 #include "modules/Register.h"
-
 #include "modules/create_structure.h"
-#include "LuaMod.h"
 
 LocalLuaParser::LocalLuaParser(LocalSubgame& game): LuaParser(game), game(game), keybinds(this) {}
 
@@ -67,6 +66,8 @@ void LocalLuaParser::loadApi(LocalSubgame &defs, LocalWorld &world, Player& play
     ClientApi::inventory         (lua);
     ClientApi::item_stack        (lua);
     ClientApi::gui_element       (lua);
+
+    Api::Usertype::Target::bind(Api::State::CLIENT, lua, core);
 
     core["client"] = true;
     core["player"] = LocalLuaPlayer(player);

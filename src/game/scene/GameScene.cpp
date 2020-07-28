@@ -14,7 +14,7 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     game(state.defs),
     world(game, &net),
     net(state.connection, game, player),
-    player(world, game, state.renderer, refs),
+    player(game, world, state.renderer, refs, net),
     debugGui(state.renderer.window.getSize(), game) {
 
     namespace ph = std::placeholders;
@@ -23,7 +23,7 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     r.sendTo(state.connection.getPeer(), PacketChannel::CONNECT);
 
     world.init(&player);
-    net  .init(&world, std::bind(&LocalInventoryRefs::packetReceived, refs, ph::_1));
+    net  .init(&world, Util::bind_this(&refs, &LocalInventoryRefs::packetReceived));
     game .init(world, player, state);
     refs .init();
 

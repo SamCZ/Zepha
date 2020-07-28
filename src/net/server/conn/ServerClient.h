@@ -14,6 +14,7 @@
 #include "../../../game/inventory/ServerInventoryList.h"
 
 enum class NetPlayerField;
+class Deserializer;
 class InventoryRefs;
 
 class ServerClient {
@@ -42,13 +43,15 @@ public:
     std::shared_ptr<Inventory> getInventory();
 
     std::shared_ptr<InventoryList> getHandList();
-    void setHandList(std::shared_ptr<InventoryList> list, bool assert = false);
+    void setHandList(const std::string& list, bool assert = false);
 
     std::shared_ptr<InventoryList> getWieldList();
-    void setWieldList(std::shared_ptr<InventoryList> list, bool assert = false);
+    void setWieldList(const std::string& list, bool assert = false);
 
     unsigned short getWieldIndex();
     void setWieldIndex(unsigned short index, bool assert = false);
+
+    void handleAssertion(Deserializer& d);
 
 //    void setMapBlockIntegrity(glm::ivec3 pos, unsigned long long integrity);
 //    unsigned long long getMapBlockIntegrity(glm::ivec3 pos);
@@ -76,8 +79,9 @@ private:
 
     std::shared_ptr<Inventory> inventory;
     unsigned int wieldIndex = 0;
-    std::shared_ptr<InventoryList> handList = nullptr;
-    std::shared_ptr<InventoryList> wieldList = nullptr;
+
+    std::string handList = "";
+    std::string wieldList = "";
 
     unsigned int handItem = DefinitionAtlas::AIR;
     unsigned int wieldItem = DefinitionAtlas::AIR;

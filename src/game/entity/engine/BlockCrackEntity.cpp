@@ -58,6 +58,12 @@ void BlockCrackEntity::addDamage(double damage) {
     update();
 }
 
+void BlockCrackEntity::setDamage(double damage) {
+    double diff = damage - (this->damage + damagePending);
+    std::cout << diff << ", " << this->damage << ", " << damagePending << std::endl;
+    addDamage(diff);
+}
+
 void BlockCrackEntity::addFaces(unsigned int &indOffset, std::vector<EntityVertex> &vertices, std::vector<unsigned int> &indices, std::vector<MeshPart> &meshParts) {
     for (const MeshPart& mp : meshParts) {
         glm::vec4 uv;

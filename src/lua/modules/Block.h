@@ -17,5 +17,9 @@ namespace Api::Module {
     protected:
         std::string getBlock(glm::ivec3 pos);
         void setBlock(glm::ivec3 pos, const std::string& identifier);
+
+        double damageGet(glm::ivec3 pos);
+        double damageSet(glm::ivec3 pos, double damage);
+        double damageAdd(glm::ivec3 pos, double damage);
     };
 }

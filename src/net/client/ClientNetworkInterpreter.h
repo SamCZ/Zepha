@@ -8,12 +8,16 @@
 #include <functional>
 #include <glm/vec3.hpp>
 
+#include "../Serializer.h"
+#include "ServerConnection.h"
+
 class Model;
 class Player;
+class Target;
 class LocalWorld;
-class LocalSubgame;
 class PacketView;
-class ServerConnection;
+class LocalSubgame;
+enum class NetPlayerField;
 
 class ClientNetworkInterpreter {
 public:
@@ -23,13 +27,19 @@ public:
     void init(LocalWorld* world, std::function<void(std::unique_ptr<PacketView>)> invCallback);
     void update();
 
-    void blockPlace(glm::ivec3 pos, unsigned int block);
-    void blockInteract(glm::ivec3 pos);
+    void blockPlace(Target& target);
+    void blockInteract(Target& target);
+    void blockPlaceOrInteract(Target& target);
 
     void invWatch(const std::string& inv, const std::string& list);
     void invUnwatch(const std::string& inv, const std::string& list);
     void invInteractPrimary(const std::string& inv, const std::string& list, unsigned short ind);
     void invInteractSecondary(const std::string& inv, const std::string& list, unsigned short ind);
+
+    template <typename T> void assertPlayerField(NetPlayerField field, T data) {
+        Serializer().append(static_cast<unsigned int>(field)).append<T>(data)
+            .packet(PacketType::THIS_PLAYER_INFO).sendTo(connection.getPeer(), PacketChannel::INTERACT);
+    }
 
     int recvPackets = 0;
     int serverSideChunkGens = 0;

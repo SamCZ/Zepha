@@ -1,4 +1,4 @@
-set(ZEPHA_SRC 
+add_library(Zepha_Core
 	def/DefinitionAtlas.cpp
 	def/DefinitionAtlas.h
 	def/gen/BiomeAtlas.cpp
@@ -200,8 +200,7 @@ set(ZEPHA_SRC
 	lua/LuaMod.h
 	lua/LuaParser.cpp
 	lua/LuaParser.h
-	lua/modules/BaseModule.cpp
-	lua/modules/BaseModule.h
+		lua/modules/BaseModule.h
 	lua/modules/Block.cpp
 	lua/modules/Block.h
 	lua/modules/create_structure.h
@@ -321,9 +320,7 @@ set(ZEPHA_SRC
 	world/fs/FileManipulator.h
 	world/LocalDimension.cpp
 	world/LocalDimension.h
-	world/PointedThing.h
+		world/Target.h
 	world/ServerDimension.cpp
 	world/ServerDimension.h
-)
-
-add_library (Zepha_Core ${ZEPHA_SRC})
+		lua/usertype/Target.cpp lua/usertype/Target.h lua/usertype/BaseUsertype.h lua/usertype/SubgameUsertype.h world/Target.cpp)

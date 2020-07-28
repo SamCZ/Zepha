@@ -138,21 +138,19 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalSubgame& game, dou
         str << "Texture Slots: " << game.textures.textureSlotsUsed << " / " << game.textures.maxTextureSlots
             << " (" << round(game.textures.textureSlotsUsed / static_cast<float>(game.textures.maxTextureSlots) * 100) << "%)" << std::endl << std::endl;
 
-        PointedThing thing = player.getPointedThing();
-        if (thing.thing == PointedThing::Thing::BLOCK) {
-            EVec faceDir = thing.target.block.face;
-
+        Target thing = player.getPointedThing();
+        if (thing.type == Target::Type::BLOCK) {
             std::string face =
-                faceDir == EVec::TOP    ?  "TOP"   :
-                faceDir == EVec::BOTTOM ? "BOTTOM" :
-                faceDir == EVec::LEFT   ? "LEFT"   :
-                faceDir == EVec::RIGHT  ? "RIGHT"  :
-                faceDir == EVec::FRONT  ? "FRONT"  :
-                faceDir == EVec::BACK   ? "BACK"   :
-                                          "NONE"   ;
+                thing.face == EVec::TOP    ?  "TOP"   :
+                thing.face == EVec::BOTTOM ? "BOTTOM" :
+                thing.face == EVec::LEFT   ? "LEFT"   :
+                thing.face == EVec::RIGHT  ? "RIGHT"  :
+                thing.face == EVec::FRONT  ? "FRONT"  :
+                thing.face == EVec::BACK   ? "BACK"   :
+                                             "NONE"   ;
 
-            str << "Pointing At: " << game.defs->blockFromId(thing.target.block.blockId).identifier << std::endl;
-            str << "Pointed Position: " << vecToString(thing.target.block.pos) << std::endl;
+            str << "Pointing At: " << game.defs->blockFromId(world.getBlock(thing.pos)).identifier << std::endl;
+            str << "Pointed Position: " << vecToString(thing.pos) << std::endl;
             str << "Pointed Face: " << face << std::endl;
         }
         else {
@@ -163,12 +161,12 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalSubgame& game, dou
     }
 
     { //Crosshair Text
-        PointedThing thing = player.getPointedThing();
+        Target target = player.getPointedThing();
 
         std::ostringstream crossText;
-        if (thing.thing == PointedThing::Thing::BLOCK) {
-            crossText << game.defs->blockFromId(thing.target.block.blockId).name
-                      << " (" << game.defs->blockFromId(thing.target.block.blockId).identifier << ")" << std::endl;
+        if (target.type == Target::Type::BLOCK) {
+            crossText << game.defs->blockFromId(world.getBlock(target.pos)).name
+                      << " (" << game.defs->blockFromId(world.getBlock(target.pos)).identifier << ")" << std::endl;
         }
         get<GuiText>("crosshairText")->setText(crossText.str());
     }

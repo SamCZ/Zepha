@@ -19,6 +19,7 @@
 #include "usertype/sLuaEntity.h"
 #include "usertype/sInventoryRef.h"
 #include "usertype/cItemStack.h"
+#include "usertype/Target.h"
 
 // Modules
 #include "modules/Time.h"
@@ -98,11 +99,13 @@ void ServerLuaParser::loadApi(ServerSubgame &defs, ServerWorld &world) {
     ServerApi::inventory     (lua);
     ClientApi::item_stack    (lua);
 
+    Api::Usertype::Target::bind(Api::State::SERVER, lua, core);
+
     core["server"] = true;
     core["players"] = lua.create_table();
 
     // Modules
-    modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::CLIENT, lua, core));
+    modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::SERVER, lua, core));
     modules.emplace_back(std::make_unique<Api::Module::Block>(Api::State::SERVER, core, game, world));
     modules.emplace_back(std::make_unique<Api::Module::Entity>(Api::State::SERVER, core, game, world));
     modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::SERVER, core, game, world));
@@ -122,7 +125,7 @@ void ServerLuaParser::registerDefs(ServerSubgame &defs) {
     RegisterBiomes::server(core, defs);
 }
 
-sol::protected_function_result ServerLuaParser::errorCallback(sol::protected_function_result errPfr) {
+sol::protected_function_result ServerLuaParser::errorCallback(sol::protected_function_result errPfr) const {
     sol::error err = errPfr;
     std::string errString = err.what();
 

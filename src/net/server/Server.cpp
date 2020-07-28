@@ -8,13 +8,10 @@
 #include "Server.h"
 
 #include "../Serializer.h"
-#include "../PacketView.h"
-#include "../../util/Log.h"
 #include "../../util/Timer.h"
 #include "../PacketChannel.h"
+#include "../../world/Target.h"
 #include "../../def/item/BlockDef.h"
-#include "../../def/ServerDefinitionAtlas.h"
-#include "../../lua/ServerLuaParser.h"
 #include "../../lua/usertype/ServerLuaPlayer.h"
 
 Server::Server(unsigned short port, const std::string& subgame) :
@@ -114,16 +111,20 @@ void Server::handlePlayerPacket(ServerClient& client, PacketView& p) {
     switch (p.type) {
         default: {
             std::cout << Log::err << "Invalid packet type (" << static_cast<int>(p.type) << ") recieved." << Log::endl;
-            break;
-        }
+            break; }
+
         case PacketType::PLAYER_INFO: {
             client.setPos(p.d.read<glm::vec3>());
             client.setPitch(p.d.read<float>());
             client.setYaw(p.d.read<float>());
 
             playersUpdated.emplace(client.cid);
-            break;
-        }
+            break; }
+
+        case PacketType::THIS_PLAYER_INFO: {
+            client.handleAssertion(p.d);
+            break; }
+
         case PacketType::BLOCK_SET: {
             glm::ivec3 pos = p.d.read<glm::ivec3>();
             unsigned int block = p.d.read<unsigned int>();
@@ -155,14 +156,26 @@ void Server::handlePlayerPacket(ServerClient& client, PacketView& p) {
                     defs.lua->safe_function(def.callbacks[Callback::AFTER_PLACE], pos, ServerLuaPlayer(client));
                 defs.lua->safe_function(defs.lua->core["trigger"], "after_place", pos, ServerLuaPlayer(client));
             }
-            break;
-        }
+            break; }
+
+        case PacketType::BLOCK_PLACE: {
+            glm::ivec3 pos = p.d.read<glm::ivec3>();
+            auto face = static_cast<EVec>(p.d.read<unsigned short>());
+            world.blockPlace(Target(pos, face), client);
+            break; }
+
         case PacketType::BLOCK_INTERACT: {
             glm::ivec3 pos = p.d.read<glm::ivec3>();
-            auto& def = defs.defs->blockFromId(world.getBlock(pos));
-            if (def.callbacks.count(Callback::INTERACT)) defs.lua->safe_function(def.callbacks[Callback::INTERACT], pos, ServerLuaPlayer(client));
-            break;
-        }
+            auto face = static_cast<EVec>(p.d.read<unsigned short>());
+            world.blockInteract(Target(pos, face), client);
+            break; }
+
+        case PacketType::BLOCK_PLACE_OR_INTERACT: {
+            glm::ivec3 pos = p.d.read<glm::ivec3>();
+            auto face = static_cast<EVec>(p.d.read<unsigned short>());
+            world.blockPlaceOrInteract(Target(pos, face), client);
+            break; }
+
         case PacketType::INV_WATCH: {
             std::string source = p.d.read<std::string>();
             std::string list = p.d.read<std::string>();
@@ -173,8 +186,8 @@ void Server::handlePlayerPacket(ServerClient& client, PacketView& p) {
             bool exists = refs.addWatcher(source, list, client.cid);
             if (!exists) Serializer().append(source).append(list)
                 .packet(PacketType::INV_INVALID).sendTo(client.peer, PacketChannel::INVENTORY);
-            break;
-        }
+            break; }
+
         case PacketType::INV_UNWATCH: {
             std::string source = p.d.read<std::string>();
             std::string list = p.d.read<std::string>();
@@ -189,10 +202,9 @@ void Server::handlePlayerPacket(ServerClient& client, PacketView& p) {
                 break;
             }
 
-            break;
-        }
-        case PacketType::INV_INTERACT: {
+            break; }
 
+        case PacketType::INV_INTERACT: {
             unsigned short type = p.d.read<unsigned short>();
 
             std::string source = p.d.read<std::string>();
@@ -205,8 +217,7 @@ void Server::handlePlayerPacket(ServerClient& client, PacketView& p) {
             if (type == 0) refs.primaryInteract(source, list, ind, client.cid);
             else refs.secondaryInteract(source, list, ind, client.cid);
 
-            break;
-        }
+            break; }
     }
 }
 

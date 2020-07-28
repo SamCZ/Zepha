@@ -11,7 +11,6 @@
 #include "../NetHandler.h"
 #include "../../util/Log.h"
 #include "NetPlayerField.h"
-#include "ServerConnection.h"
 #include "../../game/entity/Model.h"
 #include "../../game/scene/world/Player.h"
 #include "../../game/scene/world/LocalWorld.h"
@@ -128,14 +127,19 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
     }
 }
 
-void ClientNetworkInterpreter::blockPlace(glm::ivec3 pos, unsigned int block) {
-    Serializer().append(pos).append(block).packet(PacketType::BLOCK_SET)
-        .sendTo(connection.getPeer(), PacketChannel::INTERACT);
+void ClientNetworkInterpreter::blockPlace(Target &target) {
+    Serializer().append<glm::ivec3>(target.pos).append(static_cast<unsigned short>(target.face))
+        .packet(PacketType::BLOCK_PLACE).sendTo(connection.getPeer(), PacketChannel::INTERACT);
 }
 
-void ClientNetworkInterpreter::blockInteract(glm::ivec3 pos) {
-    Serializer().append(pos).packet(PacketType::BLOCK_INTERACT)
-        .sendTo(connection.getPeer(), PacketChannel::INTERACT);
+void ClientNetworkInterpreter::blockInteract(Target &target) {
+    Serializer().append<glm::ivec3>(target.pos).append(static_cast<unsigned short>(target.face))
+        .packet(PacketType::BLOCK_INTERACT).sendTo(connection.getPeer(), PacketChannel::INTERACT);
+}
+
+void ClientNetworkInterpreter::blockPlaceOrInteract(Target &target) {
+    Serializer().append<glm::ivec3>(target.pos).append(static_cast<unsigned short>(target.face))
+        .packet(PacketType::BLOCK_PLACE_OR_INTERACT).sendTo(connection.getPeer(), PacketChannel::INTERACT);
 }
 
 void ClientNetworkInterpreter::invWatch(const std::string& inv, const std::string& list) {

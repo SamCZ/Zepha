@@ -8,23 +8,23 @@
 #include "../../../util/Ray.h"
 #include "../../graph/Renderer.h"
 #include "../../../def/ItemDef.h"
-#include "../../../net/Serializer.h"
 #include "../../../net/Deserializer.h"
 #include "../../../def/item/BlockDef.h"
 #include "../../../world/chunk/Chunk.h"
 #include "../../inventory/LocalInventory.h"
-#include "../../../def/LocalDefinitionAtlas.h"
 #include "../../inventory/LocalInventoryList.h"
 #include "../../../net/client/NetPlayerField.h"
+#include "../../../net/client/ClientNetworkInterpreter.h"
 
-Player::Player(LocalWorld& world, LocalSubgame& defs, Renderer& renderer, LocalInventoryRefs& refs) :
-    Collidable(world, defs, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
+Player::Player(LocalSubgame &game, LocalWorld &world, Renderer &renderer, LocalInventoryRefs &refs, ClientNetworkInterpreter& net) :
+    Collidable(world, game, {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}}),
 
+    net(net),
     refs(refs),
-    game(defs),
+    game(game),
     renderer(renderer),
     wireframe({}, 0.01, {1, 1, 1}),
-    gameGui(refs, renderer.window.getSize(), defs, renderer) {
+    gameGui(refs, renderer.window.getSize(), game, renderer) {
     handItemModel.parent = &handModel;
 
     renderer.window.addResizeCallback("player", [&](glm::ivec2 win) {
@@ -186,27 +186,25 @@ void Player::findPointedThing(Input &input) {
             auto face = sBox.intersects(rayEnd, roundedPos);
 
             if (face != EVec::NONE) {
-                pointedThing.thing = PointedThing::Thing::BLOCK;
-                pointedThing.target.block = { blockID, roundedPos, face };
+                target = Target(roundedPos, face);
                 return;
             }
         }
     }
 
-    pointedThing.thing = PointedThing::Thing::NOTHING;
-    pointedThing.target.nothing = 0;
+    target = Target {};
 }
 
 void Player::updateWireframe() {
     if (!gameGui.isVisible()) {
         wireframe.setVisible(false);
     }
-    else if (pointedThing.thing == PointedThing::Thing::BLOCK) {
-        auto& boxes = game.defs->blockFromId(pointedThing.target.block.blockId).sBoxes;
-        float distance = glm::distance(pos, glm::vec3(pointedThing.target.block.pos) + glm::vec3(0.5));
+    else if (target.type == Target::Type::BLOCK) {
+        auto& boxes = game.defs->blockFromId(world.getBlock(target.pos)).sBoxes;
+        float distance = glm::distance(pos, target.pos + glm::vec3(0.5));
 
         wireframe.updateMesh(boxes, 0.002f + distance * 0.0014f);
-        wireframe.setPos(pointedThing.target.block.pos);
+        wireframe.setPos(target.pos);
         wireframe.setVisible(true);
     }
     else {
@@ -215,23 +213,12 @@ void Player::updateWireframe() {
 }
 
 void Player::interact(Input& input, double delta) {
-    if (pointedThing.thing == PointedThing::Thing::BLOCK) {
+    if (target.type == Target::Type::BLOCK) {
         if (input.mouseDown(GLFW_MOUSE_BUTTON_LEFT) && breakTime == 0) {
-            breakInterval = world.blockHit(pointedThing);
+            breakInterval = world.blockHit(target);
             breakTime += delta;
         }
-        else if (input.mousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
-            auto& target = game.defs->blockFromId(world.getBlock(pointedThing.target.block.pos));
-
-            if (target.hasInteraction()) world.blockInteract(pointedThing);
-            else if (wieldItem > DefinitionAtlas::AIR && game.defs->fromId(wieldItem).type == ItemDef::Type::BLOCK) {
-                world.blockPlace(pointedThing.target.block.pos + SelectionBox::faceToOffset(pointedThing.target.block.face), wieldItem);
-            }
-            else {
-                //TODO: Item interactions.
-//                world.itemUse(pointedThing, activeItem);
-            }
-        }
+        else if (input.mousePressed(GLFW_MOUSE_BUTTON_RIGHT)) world.blockPlaceOrInteract(target);
     }
 
     if (breakTime > 0) breakTime += delta;
@@ -249,7 +236,7 @@ glm::vec3 Player::getPos() {
 void Player::setPos(glm::vec3 pos, bool assert) {
     this->pos = pos;
     this->renderer.camera.setPos({pos.x, pos.y + EYE_HEIGHT, pos.z});
-    if (assert) assertField(NetPlayerField::POSITION, pos);
+    if (assert) net.assertPlayerField(NetPlayerField::POSITION, pos);
 }
 
 glm::vec3 Player::getVel() {
@@ -258,7 +245,7 @@ glm::vec3 Player::getVel() {
 
 void Player::setVel(glm::vec3 vel, bool assert) {
     this->vel = vel;
-    if (assert) assertField(NetPlayerField::VELOCITY, vel);
+    if (assert) net.assertPlayerField(NetPlayerField::VELOCITY, vel);
 }
 
 float Player::getYaw() {
@@ -267,7 +254,7 @@ float Player::getYaw() {
 
 void Player::setYaw(float yaw, bool assert) {
     this->yaw = yaw;
-    if (assert) assertField(NetPlayerField::YAW, yaw);
+    if (assert) net.assertPlayerField(NetPlayerField::YAW, yaw);
 }
 
 float Player::getPitch() {
@@ -276,7 +263,7 @@ float Player::getPitch() {
 
 void Player::setPitch(float pitch, bool assert) {
     this->pitch = pitch;
-    if (assert) assertField(NetPlayerField::PITCH, pitch);
+    if (assert) net.assertPlayerField(NetPlayerField::PITCH, pitch);
 }
 
 bool Player::isFlying() {
@@ -285,11 +272,11 @@ bool Player::isFlying() {
 
 void Player::setFlying(bool flying, bool assert) {
     this->flying = flying;
-    if (assert) assertField(NetPlayerField::FLYING, flying);
+    if (assert) net.assertPlayerField(NetPlayerField::FLYING, flying);
 }
 
-PointedThing& Player::getPointedThing() {
-    return pointedThing;
+Target& Player::getPointedThing() {
+    return target;
 }
 
 LocalInventory& Player::getInventory() {
@@ -313,7 +300,7 @@ void Player::setWieldList(const std::string& list, bool assert) {
     refs.setWieldList(list);
     setWieldIndex(wieldIndex);
     updateWieldAndHandItems();
-    if (assert) assertField(NetPlayerField::WIELD_INV, list);
+    if (assert) net.assertPlayerField(NetPlayerField::WIELD_INV, list);
 }
 
 unsigned short Player::getWieldIndex() {
@@ -324,7 +311,7 @@ void Player::setWieldIndex(unsigned short index, bool assert) {
     auto wieldList = refs.getWieldList();
     wieldIndex = index % std::max((wieldList ? wieldList->getLength() : 1), 1);
     updateWieldAndHandItems();
-    if (assert) assertField(NetPlayerField::WIELD_INV, static_cast<unsigned short>(index));
+    if (assert) net.assertPlayerField(NetPlayerField::WIELD_INDEX, static_cast<unsigned short>(index));
 }
 
 /*
@@ -384,13 +371,6 @@ void Player::updateWieldAndHandItems() {
 
     auto& model = game.defs->fromId(wieldItem <= DefinitionAtlas::AIR ? handItem : wieldItem).entityModel;
     handItemModel.setModel(model);
-}
-
-template <typename T>
-void Player::assertField(NetPlayerField field, T data) {
-    std::cout << "attempt to assert field" << std::endl;
-//    Serializer().append(static_cast<unsigned int>(field)).append<T>(data)
-//            .packet(PacketType::THIS_PLAYER_INFO).sendTo(peer, PacketChannel::PLAYER);
 }
 
 void Player::handleAssertion(Deserializer &d) {

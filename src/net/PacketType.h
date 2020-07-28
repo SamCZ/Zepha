@@ -28,8 +28,11 @@ enum class PacketType {
     MAPBLOCK,
 
     // Block
-    BLOCK_SET,
+    BLOCK_PLACE,
     BLOCK_INTERACT,
+    BLOCK_PLACE_OR_INTERACT,
+
+    BLOCK_SET,
 
     // Entity
     ENTITY_INFO,
