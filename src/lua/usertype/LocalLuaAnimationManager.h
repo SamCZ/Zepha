@@ -6,16 +6,16 @@
 
 #include "../Lua.h"
 
-class Entity;
+class DrawableEntity;
 
 class LocalLuaAnimationManager {
 public:
-    LocalLuaAnimationManager(Entity& entity);
+    LocalLuaAnimationManager(DrawableEntity& entity);
 
     void define(sol::table anims);
     LocalLuaAnimationManager& set_anim(sol::object anim, sol::optional<bool> loop);
     LocalLuaAnimationManager& play(sol::optional<unsigned int> offset);
     LocalLuaAnimationManager& pause(sol::optional<unsigned int> offset);
 private:
-    Entity& entity;
+    DrawableEntity& entity;
 };

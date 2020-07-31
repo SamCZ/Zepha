@@ -10,20 +10,14 @@
 #include "../Serializer.h"
 #include "../NetHandler.h"
 #include "../../util/Log.h"
-#include "NetPlayerField.h"
 #include "../../game/entity/Model.h"
-#include "../../game/scene/world/Player.h"
 #include "../../game/scene/world/LocalWorld.h"
+#include "../../game/scene/world/LocalPlayer.h"
 
-ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, LocalSubgame &defs, Player& player) :
-    player(player),
-    connection(connection),
-    playerModel(std::make_shared<Model>()) {
-    playerModel->fromSerialized(defs.models.models["zeus:default:player"], { defs.textures["zeus:default:player"] });
-}
+ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, LocalSubgame &defs, LocalWorld& world) :
+    world(world), connection(connection) {}
 
-void ClientNetworkInterpreter::init(LocalWorld *world, std::function<void(std::unique_ptr<PacketView>)> invCallback) {
-    this->world = world;
+void ClientNetworkInterpreter::init(std::function<void(std::unique_ptr<PacketView>)> invCallback) {
     this->onInvPacket = invCallback;
 }
 
@@ -55,15 +49,13 @@ void ClientNetworkInterpreter::update() {
         }
     }
 
-    //Send Player Position
-    Packet p(PacketType::PLAYER_INFO);
-    p.data = Serializer()
-            .append(player.getPos())
-            .append(player.getPitch())
-            .append(player.getYaw())
-            .data;
-
-    p.sendTo(connection.getPeer(), PacketChannel::INTERACT);
+    auto player = world.getPlayer();
+    if (player) Serializer()
+        .appendE(Player::NetField::POS).append(player->getPos())
+        .appendE(Player::NetField::VEL).append(player->getVel())
+        .appendE(Player::NetField::PITCH).append(player->getPitch())
+        .appendE(Player::NetField::YAW).append(player->getYaw())
+        .packet(PacketType::THIS_PLAYER_INFO, false).sendTo(connection.getPeer(), PacketChannel::INTERACT);
 }
 
 void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
@@ -76,48 +68,30 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
             serverSideChunkGens = p->d.read<unsigned int>(); break;
 
         case PacketType::THIS_PLAYER_INFO:
-            player.handleAssertion(p->d); break;
+            if (!world.getPlayer()) throw std::runtime_error("Received player info *before* the player was created.");
+            world.getPlayer()->handleAssertion(p->d); break;
             
-        case PacketType::PLAYER_INFO: {
-            unsigned int cid = p->d.read<unsigned int>();
-            if (player.id == cid) break;
-
-            bool found = false;
-            for (auto& entity : world->dimension.playerEntities) {
-                if (entity.getCid() == cid) {
-                    entity.interpPos(p->d.read<glm::vec3>());
-                    entity.interpRotateZ(-p->d.read<float>() + 90);
-                    entity.interpRotateY(-p->d.read<float>() + 90);
-
-                    found = true;
-                    break;
-                }
-            }
-            if (found) break;
-
-            // Instantiate a new PlayerEntity
-            world->dimension.playerEntities.emplace_back(p->d.read<glm::vec3>(), cid, playerModel);
-            break; }
+        case PacketType::PLAYER_ENT_INFO:
+            world.handlePlayerEntPacket(std::move(p)); break;
 
         case PacketType::CHUNK:
         case PacketType::MAPBLOCK:
-            world->loadWorldPacket(std::move(p)); break;
+            world.handleWorldPacket(std::move(p)); break;
             
         case PacketType::BLOCK_SET: {
             auto pos = p->d.read<glm::ivec3>();
             auto block = p->d.read<unsigned int>();
-            world->setBlock(pos, block);
+            world.getActiveDimension().setBlock(pos, block);
             break; }
 
         case PacketType::ENTITY_INFO:
-            world->dimension.serverEntityInfo(*p); break;
+            world.getActiveDimension().serverEntityInfo(*p); break;
 
         case PacketType::ENTITY_REMOVED:
-            world->dimension.serverEntityRemoved(p->d.read<unsigned int>()); break;
+            world.getActiveDimension().serverEntityRemoved(p->d.read<unsigned int>()); break;
 
         case PacketType::INV_DATA:
-            onInvPacket(std::move(p));
-            break;
+            onInvPacket(std::move(p)); break;
         
         case PacketType::INV_INVALID: {
             std::string source = p->d.read<std::string>();
@@ -152,12 +126,11 @@ void ClientNetworkInterpreter::invUnwatch(const std::string& inv, const std::str
         .sendTo(connection.getPeer(), PacketChannel::INVENTORY);
 }
 
-void ClientNetworkInterpreter::invInteractPrimary(const std::string &inv, const std::string &list, unsigned short ind) {
-    Serializer().append<unsigned short>(0).append(inv).append(list).append<unsigned short>(ind).packet(PacketType::INV_INTERACT)
-        .sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+void ClientNetworkInterpreter::invInteract(const std::string &inv, const std::string &list, bool primary, unsigned short ind) {
+    Serializer().append<unsigned short>(primary).append(inv).append(list).append<unsigned short>(ind)
+        .packet(PacketType::INV_INTERACT).sendTo(connection.getPeer(), PacketChannel::INVENTORY);
 }
 
-void ClientNetworkInterpreter::invInteractSecondary(const std::string &inv, const std::string &list, unsigned short ind) {
-    Serializer().append<unsigned short>(1).append(inv).append(list).append<unsigned short>(ind).packet(PacketType::INV_INTERACT)
-        .sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+void ClientNetworkInterpreter::sendPacket(const Packet &packet, PacketChannel channel) {
+    packet.sendTo(connection.getPeer(), channel);
 }

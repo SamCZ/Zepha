@@ -7,37 +7,36 @@
 #include "LocalInventoryList.cpp"
 #include "../../net/client/ClientNetworkInterpreter.h"
 
-void LocalInventory::createList(const std::string& name, unsigned short length, unsigned short width, bool persistant) {
-    namespace ph = std::placeholders;
-
-    lists.insert({name, {(persistant ? -1 : 0),
-        std::make_shared<LocalInventoryList>(defs, this->name, name, length, width,
-        std::bind(primaryCallback, this->name, name, ph::_1), std::bind(secondaryCallback, this->name, name, ph::_1))}});
+LocalInventoryList& LocalInventory::getList(const std::string &name) {
+    if (hasList(name)) createList(name, 0, 0);
+    return static_cast<LocalInventoryList&>(Inventory::getList(name));
 }
 
-void LocalInventory::removeList(const std::string &name) {
-    if (lists.count(name)) lists[name].first = 1;
+void LocalInventory::createList(const std::string &name, unsigned short length, unsigned short width) {
+    lists.emplace(name, std::make_shared<LocalInventoryList>(game, name, this->name, length, width, net));
+    net.invWatch(this->name, name);
 }
 
-std::shared_ptr<LocalInventoryList> LocalInventory::operator[](std::string name) {
-    if (lists.count(name)) return lists[name].second;
-    else return nullptr;
+std::shared_ptr<LocalInventoryList> LocalInventory::getListPtr(const std::string &name) {
+    if (!hasList(name)) createList(name, 0, 0);
+    return std::static_pointer_cast<LocalInventoryList>(lists[name]);
 }
 
 void LocalInventory::setPersistant(const std::string &list, bool persistant) {
     if (!lists.count(name)) return;
-    lists[name].first = (persistant ? -1 : 0);
+    std::static_pointer_cast<LocalInventoryList>(lists[list])->persistant = persistant;
 }
 
-bool LocalInventory::pruneLists(ClientNetworkInterpreter &net, double time) {
+bool LocalInventory::pruneLists(double time) {
     for (auto lIt = lists.begin(); lIt != lists.end();) {
-        if (lIt->second.first != -1) {
+        auto list = std::static_pointer_cast<LocalInventoryList>(lIt->second);
+        if (!list->persistant) {
             // Start the timeout for Inventories that aren't being used.
-            if (lIt->second.first == 0 && lIt->second.second.use_count() == 1) lIt->second.first = time + 15;
+            if (list->decayTime == 0 && list.use_count() == 2) list->decayTime = time + 15;
             // Remove the timeout for Inventories that are being used.
-            else if (lIt->second.first != 0 && lIt->second.second.use_count() > 1) lIt->second.first = 0;
+            else if (list->decayTime != 0 && list.use_count() > 2) list->decayTime = 0;
             // Delete InventoryLists that have passed their timeout.
-            else if (lIt->second.first != 0 && lIt->second.first <= time) {
+            else if (list->decayTime != 0 && list->decayTime <= time) {
                 net.invUnwatch(name, lIt->first);
                 lIt = lists.erase(lIt);
             }

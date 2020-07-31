@@ -330,12 +330,12 @@ namespace RegisterBiomes {
     }
 
     static void server(sol::table& core, ServerSubgame& game) {
-        registerBiomes(core.get<sol::table>("registered_biomes"), *game.defs, *game.biomes);
-        game.biomes->generateVoronoi();
+        registerBiomes(core.get<sol::table>("registered_biomes"), game.getDefs(), game.getBiomes());
+        game.getBiomes().generateVoronoi();
     }
 
     static void client(sol::table& core, LocalSubgame& game) {
-        registerBiomes(core.get<sol::table>("registered_biomes"), *game.defs, *game.biomes);
-        game.biomes->generateVoronoi();
+        registerBiomes(core.get<sol::table>("registered_biomes"), game.getDefs(), game.getBiomes());
+        game.getBiomes().generateVoronoi();
     }
 };

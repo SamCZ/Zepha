@@ -18,27 +18,26 @@
 ServerConfig::ServerConfig(ServerSubgame &defs) : game(defs) {}
 
 void ServerConfig::init() {
-    blockIdentifierList.reserve(static_cast<unsigned long>(game.defs->size()));
-    for (unsigned int i = 0; i < game.defs->size(); i++) {
-        blockIdentifierList.push_back(game.defs->fromId(i).identifier);
+    blockIdentifierList.reserve(static_cast<unsigned long>(game.getDefs().size()));
+    for (unsigned int i = 0; i < game.getDefs().size(); i++) {
+        blockIdentifierList.push_back(game.getDefs().fromId(i).identifier);
     }
 
-    biomeIdentifierList.reserve(static_cast<unsigned long>(game.biomes->size()));
-    for (unsigned int i = 0; i < game.biomes->size(); i++) {
-        biomeIdentifierList.push_back(game.biomes->biomeFromId(i).identifier);
+    biomeIdentifierList.reserve(static_cast<unsigned long>(game.getBiomes().size()));
+    for (unsigned int i = 0; i < game.getBiomes().size(); i++) {
+        biomeIdentifierList.push_back(game.getBiomes().biomeFromId(i).identifier);
     }
 }
 
 bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
     switch (r.type) {
         default: break;
-        case PacketType::CONNECT_DATA_RECVD: {
+        case PacketType::CONNECT_DATA_RECVD:
             return true;
-        }
 
         case PacketType::SERVER_INFO: {
             Serializer()
-                .append(game.biomes->seed)
+                .append(game.getBiomes().seed)
                 .packet(PacketType::SERVER_INFO)
                 .sendTo(client.peer, PacketChannel::CONNECT);
             break;
@@ -61,7 +60,7 @@ bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
         }
 
         case PacketType::MODS: {
-            game.lua->sendModsPacket(client.peer);
+            game.getParser().sendModsPacket(client.peer);
             break;
         }
 

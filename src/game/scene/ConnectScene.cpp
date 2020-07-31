@@ -92,7 +92,7 @@ void ConnectScene::update() {
                     auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received block index-identifier table.\n");
 
-                    state.defs.defs->setIdentifiers(p.d.read<std::vector<std::string>>());
+                    state.defs.getDefs().setIdentifiers(p.d.read<std::vector<std::string>>());
 
                     Packet resp(PacketType::BIOME_IDENTIFIER_LIST);
                     resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
@@ -101,7 +101,7 @@ void ConnectScene::update() {
                     auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received biome index-identifier table.\nDownloading mods...\n");
 
-                    state.defs.biomes->setIdentifiers(p.d.read<std::vector<std::string>>());
+                    state.defs.getBiomes().setIdentifiers(p.d.read<std::vector<std::string>>());
 
                     connectState = State::MODS;
                     Packet resp(PacketType::MODS);
@@ -122,10 +122,10 @@ void ConnectScene::update() {
                 if (p.type == PacketType::MODS) {
                     auto luaMod = LuaMod::fromPacket(p);
                     statusText->setText(statusText->getText() + "Received mod " + luaMod.config.name + ".\n");
-                    state.defs.lua->getHandler().addLuaMod(std::move(luaMod));
+                    state.defs.getParser().getHandler().addLuaMod(std::move(luaMod));
                 }
                 else if (p.type == PacketType::MOD_ORDER) {
-                    state.defs.lua->getHandler().setModsOrder(p.d.read<std::vector<std::string>>());
+                    state.defs.getParser().getHandler().setModsOrder(p.d.read<std::vector<std::string>>());
 
                     statusText->setText(statusText->getText() + "Done downloading mods.\nReceived the mods order.\nDownloading media...\n");
 

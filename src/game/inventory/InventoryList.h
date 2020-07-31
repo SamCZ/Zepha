@@ -6,30 +6,30 @@
 
 #include <string>
 
-#include "../../lua/Lua.h"
 #include "ItemStack.h"
+#include "../../lua/Lua.h"
+#include "../../net/Packet.h"
+#include "../../def/Subgame.h"
 
 class DefinitionAtlas;
 
 class InventoryList {
 public:
-    enum class Callback {
-        ALLOW_TAKE,
-        ALLOW_PUT,
-        ON_TAKE,
-        ON_PUT
-    };
+    enum class Callback { ALLOW_TAKE, ALLOW_PUT, ON_TAKE, ON_PUT };
 
-    InventoryList(DefinitionAtlas& defs);
-    InventoryList(DefinitionAtlas& defs, const std::string& invName, const std::string& listName, unsigned short size, unsigned short width);
+    InventoryList(const InventoryList& o) = delete;
+    InventoryList(Subgame& game, const std::string& name, const std::string& invName, unsigned short size, unsigned short width);
 
-    void setLength(unsigned short length);
-    unsigned short getLength() const;
+    std::string getName() const;
 
     void setWidth(unsigned short width);
     unsigned short getWidth() const;
 
-    std::string getName() const;
+    void setLength(unsigned short length);
+    unsigned short getLength() const;
+
+    ItemStack getStack(unsigned short i) const;
+    void setStack(unsigned short i, const ItemStack& stack);
 
     // Place the stack at i into the existing stack, returning overflow or other stack.
     virtual ItemStack placeStack(unsigned short i, const ItemStack& stack, bool playerInitiated = false);
@@ -44,27 +44,20 @@ public:
     // Removes up to count items from ind, returns the items removed
     virtual ItemStack removeStack(unsigned short ind, unsigned short count);
 
-    // Primary interaction - The action performed when left clicking an inventory slot.
-    virtual void primaryInteract(InventoryList& cursor, unsigned short ind);
-    // Secondary interaction - The action performed when right clicking an inventory slot.
-    virtual void secondaryInteract(InventoryList& cursor, unsigned short ind);
+    virtual void interact(InventoryList& cursor, bool primary, unsigned short ind);
 
-    ItemStack getStack(unsigned short i) const;
-    void setStack(unsigned short i, const ItemStack& stack);
+//    sol::protected_function getLuaCallback(Callback type);
+//    void setLuaCallback(Callback type, sol::protected_function cb);
 
-    sol::protected_function getLuaCallback(Callback type);
-    void setLuaCallback(Callback type, sol::protected_function cb);
-
-    DefinitionAtlas& defs;
+    Subgame& getGame();
 
 protected:
-    virtual void manipulated() = 0;
-    void initialize();
+    Subgame& game;
 
-    std::string invName {}, listName {};
+    std::string name, invName;
     unsigned short width = 0;
+    std::vector<ItemStack> items {};
 
-    std::vector<ItemStack> itemstacks {};
-
-    std::array<sol::function, 4> luaCallbacks = {};
+    Packet createPacket();
+    virtual void manipulated() = 0;
 };

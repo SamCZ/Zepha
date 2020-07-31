@@ -5,20 +5,11 @@
 #include "WireframeEntity.h"
 
 #include "../Model.h"
-#include "../Entity.h"
+#include "../DrawableEntity.h"
 #include "../../graph/meshtypes/EntityMesh.h"
-
-WireframeEntity::WireframeEntity(const std::vector<SelectionBox>& boxes, float width, glm::vec3 color) :
-    width(width),
-    color(color) {
-    model = std::make_shared<Model>();
-
-    buildMesh(boxes);
-}
 
 void WireframeEntity::updateMesh(const std::vector<SelectionBox>& boxes, float width) {
     this->width = width;
-
     buildMesh(boxes);
 }
 

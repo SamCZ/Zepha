@@ -4,34 +4,33 @@
 
 #pragma once
 
+#include <set>
 #include <memory>
 #include <functional>
 #include <unordered_map>
 
+#include "Inventory.h"
+
+#include "LocalInventoryList.h"
+#include "../../def/LocalSubgame.h"
+
 class DefinitionAtlas;
-class LocalInventoryList;
 class ClientNetworkInterpreter;
 
-class LocalInventory {
+class LocalInventory : public Inventory {
 public:
-    typedef std::function<void(const std::string& inv, const std::string& list, unsigned short)> inv_callback_fn;
+    LocalInventory(LocalSubgame& game, const std::string& name, ClientNetworkInterpreter& net) :
+        Inventory(game, name), net(net) {}
 
-    LocalInventory(DefinitionAtlas& defs, const std::string& name,
-        inv_callback_fn primaryCallback, inv_callback_fn secondaryCallback) :
-        defs(defs), name(name), primaryCallback(primaryCallback), secondaryCallback(secondaryCallback) {};
+    virtual LocalInventoryList& getList(const std::string& name) override;
+    std::shared_ptr<LocalInventoryList> getListPtr(const std::string& name);
 
-    void createList(const std::string& name, unsigned short length, unsigned short width, bool persistant = false);
-    void removeList(const std::string& name);
-    std::shared_ptr<LocalInventoryList> operator[](std::string name);
+    virtual void createList(const std::string& name, unsigned short length, unsigned short width) override;
+
 
     void setPersistant(const std::string& list, bool persistant);
-    bool pruneLists(ClientNetworkInterpreter& net, double time);
+    bool pruneLists(double time);
 
-    DefinitionAtlas& defs;
 private:
-    std::string name;
-    std::unordered_map<std::string, std::pair<double, std::shared_ptr<LocalInventoryList>>> lists;
-
-    inv_callback_fn primaryCallback;
-    inv_callback_fn secondaryCallback;
+    ClientNetworkInterpreter& net;
 };

@@ -9,7 +9,7 @@
 #include <memory>
 #include <functional>
 
-#include "../../entity/Entity.h"
+#include "../../entity/DrawableEntity.h"
 
 class Window;
 
@@ -72,7 +72,7 @@ protected:
     bool hovered = false;
     bool overflows = false;
 
-    Entity entity;
+    DrawableEntity entity;
     std::array<callback, 3> callbacks;
 
 private:

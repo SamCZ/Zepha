@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <type_traits>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
@@ -19,7 +20,12 @@ public:
 
     template <typename T> inline Serializer& append(const T& elem) { throw std::runtime_error("Tried to append a non-serializable type"); };
 
-    Packet packet(PacketType p, bool reliable = true) {
+    template<typename E, typename = typename std::enable_if<std::is_enum<E>::value>::type> inline Serializer& appendE(const E& elem) {
+        append<unsigned short>(static_cast<unsigned short>(elem));
+        return *this;
+    }
+
+    Packet packet(PacketType p = PacketType::UNDEFINED, bool reliable = true) {
         Packet packet(p, reliable);
         packet.data = data;
         return std::move(packet);

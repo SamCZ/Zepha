@@ -1,35 +1,28 @@
 //
-// Created by aurailus on 2019-12-17.
+// Created by aurailus on 2020-07-29.
 //
 
 #include "Inventory.h"
 
-void Inventory::sendDirtyLists() {
-    for (auto& list : lists) {
-        if (list.second->dirty) {
-            list.second->sendAll();
-            list.second->dirty = false;
-        }
-    }
+#include "InventoryList.h"
+
+Inventory::Inventory(Subgame &game, const std::string& name) : game(game), name(name) {}
+
+bool Inventory::hasList(const std::string &name) {
+    return lists.count(name);
 }
 
-void Inventory::createList(std::string name, unsigned short length, unsigned short width) {
-    lists.emplace(name, std::make_shared<ServerInventoryList>(defs, clients, this->name, name, length, width));
-}
-
-std::shared_ptr<ServerInventoryList> Inventory::operator[](std::string name) {
-    if (lists.count(name)) return lists[name];
-    else return nullptr;
-}
-
-void Inventory::removeList(std::string name) {
+void Inventory::removeList(const std::string &name) {
     lists.erase(name);
 }
 
-void Inventory::setDefaultList(const std::string &name) {
-    defaultList = name;
+InventoryList& Inventory::getList(const std::string &name) {
+    if (lists.count(name)) return *lists[name];
+    throw std::runtime_error("List " + name + " doesn't exist in Inventory " + this->name + ".");
 }
 
-std::string Inventory::getDefaultList() {
-    return defaultList;
+std::shared_ptr<InventoryList> Inventory::getListPtr(const std::string &name) {
+    // A dirty hack to cause LocalInventory to create a temp list.
+    try { getList(name); } catch (...) {}
+    return lists[name];
 }

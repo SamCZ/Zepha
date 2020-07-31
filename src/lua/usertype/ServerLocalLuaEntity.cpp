@@ -25,7 +25,7 @@ void ServerLocalLuaEntity::setDisplayType(const std::string &type, const std::st
     if (strncmp(type.data(), "gameobject", 10) == 0 &&
        (strncmp(displayType.data(), "gameobject", 10) || arg2 != displayArg2)) {
 
-        ItemDef& def = defs.defs->fromStr(arg2);
+        ItemDef& def = defs.getDefs().fromStr(arg2);
 
         if (def.type == ItemDef::Type::BLOCK)
             entity->setModel(static_cast<BlockDef&>(def).entityModel);

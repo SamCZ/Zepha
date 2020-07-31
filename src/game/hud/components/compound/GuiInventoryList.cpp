@@ -29,11 +29,11 @@ std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(const LuaGuiE
     unsigned short start  = static_cast<unsigned short>(elem.get_or<float>("start", 1) - 1);
     unsigned short length = static_cast<unsigned short>(elem.get_or<float>("length", 0));
 
-    auto invList = refs.getList(source, list);
+    auto invList = refs.getInventory(source).getListPtr(list);
     auto inv = std::make_shared<GuiInventoryList>(elem.key);
 
     inv->create(glm::vec2(SerialGui::SCALE_MODIFIER), padding * SerialGui::SCALE_MODIFIER,
-            slotspc * SerialGui::SCALE_MODIFIER, invList, refs.getCursorList(), game, start, length);
+        slotspc * SerialGui::SCALE_MODIFIER, invList, refs.getCursorList(), game, start, length);
     inv->setPos(pos);
 
     return inv;
@@ -72,9 +72,8 @@ void GuiInventoryList::setCallback(CallbackType type, const callback& cb) {
     GuiComponent::setCallback(type, [&, cb, type](bool down, glm::ivec2 pos) {
         if (cb) cb(down, pos);
 
-        if      (type == GuiComponent::CallbackType::PRIMARY  ) this->leftClick (down, pos);
-        else if (type == GuiComponent::CallbackType::SECONDARY) this->rightClick(down, pos);
-        else if (type == GuiComponent::CallbackType::HOVER    ) this->hoverEvent(down, pos);
+        if (type == GuiComponent::CallbackType::HOVER) this->hoverEvent(down, pos);
+        else this->interactEvent(pos, type == GuiComponent::CallbackType::PRIMARY);
     });
 }
 
@@ -94,8 +93,8 @@ void GuiInventoryList::hoverEvent(bool hovered, glm::ivec2 pos) {
     else if (this->hovered) hoverRect->setScale({});
 }
 
-void GuiInventoryList::leftClick(bool down, glm::ivec2 pos) {
-    if (!down || list->getWidth() == 0) return;
+void GuiInventoryList::interactEvent(glm::ivec2 pos, bool primary) {
+    if (list->getWidth() == 0) return;
 
     pos += glm::ivec2(glm::vec2(this->padding.x, this->padding.y) * this->scale);
 
@@ -107,22 +106,7 @@ void GuiInventoryList::leftClick(bool down, glm::ivec2 pos) {
 
     if (index >= list->getLength()) return;
 
-    list->primaryInteract(*cursor, index);
-}
-
-void GuiInventoryList::rightClick(bool down, glm::ivec2 pos) {
-    if (!down || list->getWidth() == 0) return;
-
-    pos += glm::ivec2(glm::vec2(this->padding.x, this->padding.y) * this->scale);
-
-    glm::ivec2 slot = pos / (glm::ivec2(this->scale) * this->innerPadding);
-    slot.x = std::min(slot.x, static_cast<int>(list->getWidth() - 1));
-    slot.y = std::min(slot.y, list->getLength() / list->getWidth() - 1);
-
-    unsigned short index = slot.x + slot.y * list->getWidth();
-    if (index >= list->getLength()) return;
-
-    list->secondaryInteract(*cursor, index);
+    list->interact(*cursor, primary, index);
 }
 
 void GuiInventoryList::drawContents() {
@@ -152,7 +136,7 @@ void GuiInventoryList::drawContents() {
             if (stack.id == 0) continue;
 
             auto item = std::make_shared<GuiInventoryItem>("item_" + std::to_string(i) + "_" + std::to_string(j));
-            item->create(scale, stack.count, defs->defs->fromId(stack.id), f);
+            item->create(scale, stack.count, defs->getDefs().fromId(stack.id), f);
             add(item);
             item->setPos({padding.x + j * (16*scale.x+innerPadding.x/scale.x), padding.y + i * (16*scale.y+innerPadding.y/scale.y)});
         }

@@ -12,24 +12,22 @@
 #include "../../PacketType.h"
 #include "../../Serializer.h"
 #include "ServerPacketStream.h"
-#include "../conn/ClientList.h"
-#include "../conn/ServerClient.h"
-#include "../../../def/ServerSubgame.h"
+#include "../conn/ServerClients.h"
+#include "../conn/ServerPlayer.h"
 #include "../../../def/item/BlockDef.h"
 #include "../../../world/chunk/Chunk.h"
 #include "../../../lua/usertype/Target.h"
 #include "../../../world/chunk/MapBlock.h"
-#include "../../../world/fs/FileManipulator.h"
 #include "../../../lua/usertype/LuaItemStack.h"
 #include "../../../lua/usertype/ServerLuaEntity.h"
-#include "../../../lua/usertype/ServerLuaPlayer.h"
+#include "../../../game/inventory/ServerInventoryRefs.h"
 
-ServerWorld::ServerWorld(unsigned int seed, ServerSubgame& game, ClientList& clients) :
+ServerWorld::ServerWorld(unsigned int seed, ServerSubgame& game, ServerClients& clients) :
     World(game),
-    clientList(clients),
-    dimension(game),
     seed(seed),
-    game(game) {
+    clients(clients),
+    refs(std::make_shared<ServerInventoryRefs>(game, clients)) {
+    clients.init(this);
 
     generateOrder.reserve(mapBlockGenRange.x * 2 + 1 * mapBlockGenRange.x * 2 + 1 * mapBlockGenRange.y * 2 + 1);
     std::unordered_set<glm::ivec3, Vec::ivec3> found {};
@@ -64,41 +62,41 @@ ServerWorld::ServerWorld(unsigned int seed, ServerSubgame& game, ClientList& cli
 }
 
 void ServerWorld::init(const std::string& worldDir) {
-    genStream = std::make_unique<ServerGenStream>(seed, game);
-    packetStream = std::make_unique<ServerPacketStream>(dimension);
-    fileManip = std::make_shared<FileManipulator>("worlds/" + worldDir + "/");
+    genStream = std::make_unique<ServerGenStream>(seed, static_cast<ServerSubgame&>(game));
+    packetStream = std::make_unique<ServerPacketStream>(*this);
+//    fileManip = std::make_shared<FileManipulator>("worlds/" + worldDir + "/");
 
-    generateMapBlock({0, 0, 0});
+    createDimension("default"); //TODO: Do not do not
+    generateMapBlock(0, {0, 0, 0});
 }
 
-void ServerWorld::update(double) {
-    dimension.update(clientList.clients, mapBlockGenRange);
+void ServerWorld::update(double delta) {
+    World::update(delta);
 
-    std::unordered_set<glm::ivec3, Vec::ivec3> updatedChunks {};
-    std::unordered_set<glm::ivec3, Vec::ivec3> generatedMapBlocks {};
+    std::unordered_set<glm::ivec4, Vec::ivec4> updatedChunks {};
+    std::unordered_set<glm::ivec4, Vec::ivec4> generatedMapBlocks {};
 
     auto finishedGen = genStream->update();
     for (auto& data : *finishedGen) {
+        auto& dimension = getDimension(data.pos.w);
 
         for (const auto& chunk : data.chunks) {
             generatedMapBlocks.insert(data.pos);
-            updatedChunks.insert(chunk->pos);
+            updatedChunks.insert(glm::ivec4(chunk->pos, data.pos.w));
             dimension.setChunk(chunk);
         }
 
 //        auto resend = dimension.calculateEdgeLight(mb.pos);
 //        changed.insert(resend.begin(), resend.end());
 
-        dimension.getMapBlock(data.pos)->generated = true;
+        dimension.getMapBlock(glm::ivec3(data.pos))->generated = true;
         packetStream->queue(data.pos);
     }
 
     auto finishedPackets = packetStream->update();
     for (auto& data : *finishedPackets) {
-        for (auto& client : clientList.clients) {
-            if (!client->hasPlayer) continue;
-            data->packet->sendTo(client->peer, PacketChannel::WORLD);
-        }
+        for (auto& player : clients.players)
+            data->packet->sendTo(player->getPeer(), PacketChannel::WORLD);
     }
 
     this->generatedMapBlocks = generatedMapBlocks.size();
@@ -131,67 +129,97 @@ void ServerWorld::update(double) {
 //        }
 //    }
 
-    // Send the # of generated chunks to the client (debug),
-    // and trigger new chunks to be generated if a player has changed MapBlocks.
     Packet r = Serializer().append(this->generatedMapBlocks).packet(PacketType::SERVER_INFO);
 
-    for (auto& client : clientList.clients) {
-        if (client->hasPlayer) {
-            r.sendTo(client->peer, PacketChannel::SERVER);
-            if (client->changedMapBlocks) changedMapBlocks(*client);
-        }
+    for (auto& player : clients.players) {
+        r.sendTo(player->getPeer(), PacketChannel::SERVER);
+        if (player->changedMapBlocks) changedMapBlocks(*player);
     }
 
-    // Send all dirty entities to all clients
-    // TODO: Only send to *nearby clients*.
-    for (auto& entity : dimension.getLuaEntities()) {
-        if (entity->entity->checkAndResetDirty()) {
-            Packet p = entity->entity->createPacket();
-            for (auto& client : clientList.clients) {
-                if (client->hasPlayer) p.sendTo(client->peer, PacketChannel::ENTITY);
+    for (auto& d : dimensions) {
+        auto dimension = std::static_pointer_cast<ServerDimension>(d);
+
+        for (auto& entity : dimension->getLuaEntities()) {
+            if (entity->entity->checkAndResetDirty()) {
+                Packet p = entity->entity->createPacket();
+
+                for (auto& client : clients.players)
+                    p.sendTo(client->getPeer(), PacketChannel::ENTITY);
             }
         }
-    }
 
-    for (unsigned int entity : dimension.getRemovedEntities()) {
-        Packet p = Serializer()
-        .append<unsigned int>(entity)
-        .packet(PacketType::ENTITY_REMOVED);
+        for (unsigned int entity : dimension->getRemovedEntities()) {
+            Packet p = Serializer().append<unsigned int>(entity).packet(PacketType::ENTITY_REMOVED);
 
-        for (auto& client : clientList.clients) {
-            if (client->hasPlayer) p.sendTo(client->peer, PacketChannel::ENTITY);
+            for (auto& client : clients.players)
+                p.sendTo(client->getPeer(), PacketChannel::ENTITY);
         }
+
+        dimension->clearRemovedEntities();
     }
-
-    dimension.clearRemovedEntities();
 }
 
-void ServerWorld::changedMapBlocks(ServerClient& client) {
-    generateMapBlocks(client);
-    sendChunksToPlayer(client);
-    client.changedMapBlocks = false;
+ServerDimension& ServerWorld::createDimension(const std::string &identifier) {
+    this->dimensions.emplace_back(std::make_shared<ServerDimension>(static_cast<ServerSubgame&>(game), *this, identifier, this->dimensions.size()));
+    return static_cast<ServerDimension&>(*dimensions[dimensions.size() - 1]);
 }
 
-void ServerWorld::generateMapBlocks(ServerClient& client) {
+ServerDimension& ServerWorld::getDimension(unsigned int index) {
+    return static_cast<ServerDimension&>(*dimensions[index]);
+}
+
+ServerDimension& ServerWorld::getDimension(const std::string &identifier) {
+    for (auto& dimension : dimensions)
+        if (dimension->getIdentifier() == identifier)
+            return static_cast<ServerDimension&>(*dimension);
+    throw std::runtime_error("No dimension named " + identifier + " found.");
+}
+
+std::shared_ptr<ServerDimension> ServerWorld::getDefaultDimensionPtr() {
+    for (auto& dimension : dimensions)
+        if (dimension->getIdentifier() == defaultDimension)
+            return std::static_pointer_cast<ServerDimension>(dimension);
+    throw std::runtime_error("No default dimension set.");
+}
+
+std::shared_ptr<ServerDimension> ServerWorld::getDimensionPtr(const std::string &identifier) {
+    for (auto& dimension : dimensions)
+        if (dimension->getIdentifier() == identifier)
+            return std::static_pointer_cast<ServerDimension>(dimension);
+    throw std::runtime_error("No dimension named " + identifier + " found.");
+}
+
+std::shared_ptr<ServerInventoryRefs> ServerWorld::getRefs() {
+    return refs;
+}
+
+void ServerWorld::changedMapBlocks(ServerPlayer& player) {
+    generateMapBlocks(player);
+    sendChunksToPlayer(player);
+    player.changedMapBlocks = false;
+}
+
+void ServerWorld::generateMapBlocks(ServerPlayer& player) {
     unsigned int generating = 0;
-    glm::ivec3 playerMapBlock = Space::MapBlock::world::fromBlock(client.getPos());
+    glm::ivec3 playerMapBlock = Space::MapBlock::world::fromBlock(player.getPos());
 
     for (const auto &c : generateOrder) {
         glm::ivec3 mapBlockPos = playerMapBlock + c;
-        auto existing = dimension.getMapBlock(mapBlockPos);
+        auto existing = player.getDimension().getMapBlock(mapBlockPos);
         if (existing && existing->generated) continue;
-        else generating += generateMapBlock(mapBlockPos);
+        else generating += generateMapBlock(player.getDimension().getInd(), mapBlockPos);
     }
 
     std::cout << "Player moved, generating " << generating << " MapBlocks." << std::endl;
 }
 
-bool ServerWorld::generateMapBlock(glm::ivec3 pos) {
-    if(!dimension.getMapBlock(pos) || !dimension.getMapBlock(pos)->generated) return genStream->queue(pos);
+bool ServerWorld::generateMapBlock(unsigned int dim, glm::ivec3 pos) {
+    auto& dimension = getDimension(dim);
+    if(!dimension.getMapBlock(pos) || !dimension.getMapBlock(pos)->generated) return genStream->queue(glm::ivec4(pos, dim));
     return false;
 }
 
-void ServerWorld::sendChunksToPlayer(ServerClient& client) {
+void ServerWorld::sendChunksToPlayer(ServerPlayer& client) {
     glm::ivec3 playerPos = Space::MapBlock::world::fromBlock(client.getPos());
     std::pair<glm::ivec3, glm::ivec3> bounds = {
         {playerPos.x - sendRange.x, playerPos.y - sendRange.y, playerPos.z - sendRange.x},
@@ -207,74 +235,10 @@ void ServerWorld::sendChunksToPlayer(ServerClient& client) {
             for (int k = bounds.first.z; k < bounds.second.z; k++) {
                 glm::ivec3 pos {i, j, k};
                 if (isInBounds(pos, oldBounds)) continue;
-                packetStream->queue(pos);
+                packetStream->queue(glm::ivec4(pos, client.getDimension().getInd()));
             }
         }
     }
-}
-
-unsigned int ServerWorld::getBlock(glm::ivec3 pos) {
-    return dimension.getBlock(pos);
-}
-
-void ServerWorld::setBlock(glm::ivec3 pos, unsigned int block) {
-    auto oldBlock = getBlock(pos);
-
-    if (block == DefinitionAtlas::AIR) {
-        auto& def = game.defs->blockFromId(oldBlock);
-        if (def.callbacks.count(Callback::DESTRUCT)) def.callbacks[Callback::DESTRUCT](pos);
-    }
-    else {
-        auto& def = game.defs->blockFromId(block);
-        if (def.callbacks.count(Callback::CONSTRUCT)) def.callbacks[Callback::CONSTRUCT](pos);
-    }
-
-    dimension.setBlock(pos, block);
-
-    Packet b = Serializer().append(pos).append(block).packet(PacketType::BLOCK_SET);
-    auto chunkPos = Space::Chunk::world::fromBlock(pos);
-
-    for (auto &client : clientList.clients) {
-        if (client->hasPlayer) {
-            glm::ivec3 mapBlock = Space::MapBlock::world::fromBlock(client->getPos());
-            std::pair<glm::ivec3, glm::ivec3> bounds = {
-                {mapBlock.x - mapBlockGenRange.x, mapBlock.y - mapBlockGenRange.y, mapBlock.z - mapBlockGenRange.x},
-                {mapBlock.x + mapBlockGenRange.x, mapBlock.y + mapBlockGenRange.y, mapBlock.z + mapBlockGenRange.x}};
-
-            if (isInBounds(Space::MapBlock::world::fromChunk(chunkPos), bounds))
-                b.sendTo(client->peer, PacketChannel::INTERACT);
-        }
-    }
-
-    if (block == DefinitionAtlas::AIR) {
-        auto& def = game.defs->blockFromId(oldBlock);
-        if (def.callbacks.count(Callback::AFTER_DESTRUCT)) def.callbacks[Callback::AFTER_DESTRUCT](pos);
-    }
-    else {
-        auto& def = game.defs->blockFromId(block);
-        if (def.callbacks.count(Callback::AFTER_CONSTRUCT)) def.callbacks[Callback::AFTER_CONSTRUCT](pos);
-    }
-}
-
-void ServerWorld::blockPlace(const Target &target, ServerClient &client) {
-    std::tuple<sol::optional<LuaItemStack>, sol::optional<glm::vec3>> res = game.lua->safe_function(
-        game.lua->core["block_place"], ServerLuaPlayer(client), Api::Usertype::Target(target));
-
-    auto stack = std::get<sol::optional<LuaItemStack>>(res);
-    if (stack) client.getWieldList()->setStack(client.getWieldIndex(), ItemStack(*stack, game.getDefs()));
-}
-
-void ServerWorld::blockInteract(const Target &target, ServerClient &client) {
-    game.lua->safe_function(game.lua->core["block_interact"],
-        ServerLuaPlayer(client), Api::Usertype::Target(target));
-}
-
-void ServerWorld::blockPlaceOrInteract(const Target &target, ServerClient &client) {
-    std::tuple<sol::optional<LuaItemStack>, sol::optional<glm::vec3>> res = game.lua->safe_function(
-        game.lua->core["block_interact_or_place"], ServerLuaPlayer(client), Api::Usertype::Target(target));
-
-    auto stack = std::get<sol::optional<LuaItemStack>>(res);
-    if (stack) client.getWieldList()->setStack(client.getWieldIndex(), ItemStack(*stack, game.getDefs()));
 }
 
 bool ServerWorld::isInBounds(glm::ivec3 cPos, std::pair<glm::ivec3, glm::ivec3> &bounds) {

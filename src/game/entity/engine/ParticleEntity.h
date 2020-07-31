@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "../Entity.h"
+#include "../DrawableEntity.h"
 
 class BlockDef;
 
-class ParticleEntity : public Entity {
+class ParticleEntity : public DrawableEntity {
 public:
     ParticleEntity(glm::vec3 pos, BlockDef& block);
 

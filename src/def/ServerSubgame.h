@@ -14,7 +14,7 @@
 #include "../net/server/asset/AssetStorage.h"
 
 class ServerWorld;
-class ClientList;
+class ServerClients;
 
 class ServerSubgame : public Subgame {
 public:
@@ -22,7 +22,7 @@ public:
     ~ServerSubgame();
 
     void init(ServerWorld& world);
-    void update(double delta, ClientList& clients);
+    void update(double delta);
 
     std::string subgamePath;
 
@@ -30,8 +30,9 @@ public:
     ServerBiomeAtlas& getBiomes() override { return *biomes; };
     ServerLuaParser& getParser() override { return *lua; };
 
-//private:
     AssetStorage assets;
+
+private:
 
     std::unique_ptr<ServerLuaParser> lua;
     std::unique_ptr<ServerBiomeAtlas> biomes;

@@ -4,26 +4,23 @@
 
 #include "DebugGui.h"
 
-
-#include "../../def/LocalSubgame.h"
-#include "../scene/world/Player.h"
+#include "../scene/world/LocalPlayer.h"
 #include "../../def/texture/Font.h"
 #include "../../def/gen/BiomeDef.h"
 #include "../../def/item/BlockDef.h"
 #include "components/basic/GuiText.h"
 #include "../scene/world/LocalWorld.h"
-#include "../../def/gen/LocalBiomeAtlas.h"
-#include "../../def/LocalDefinitionAtlas.h"
 #include "components/compound/GuiLabelledGraph.h"
 
-DebugGui::DebugGui(glm::vec2 bufferSize, LocalSubgame& defs) :
-    displayMode(0) {
+DebugGui::DebugGui(glm::vec2 bufferSize, LocalSubgame& game, LocalWorld& world) :
+    game(game),
+    world(world) {
 
-    auto fpsHistogramRef = defs.textures["histogram"];
-    auto genericHistogramRef = defs.textures["histogram_white"];
-    auto fontRef = defs.textures["font"];
+    auto fpsHistogramRef = game.textures["histogram"];
+    auto genericHistogramRef = game.textures["histogram_white"];
+    auto fontRef = game.textures["font"];
 
-    Font f(defs.textures, fontRef);
+    Font f(game.textures, fontRef);
 
     auto crosshairText = std::make_shared<GuiText>("crosshairText");
     crosshairText->create({2, 2}, {}, {0.2, 0.2, 0.2, 0.5}, {1, 1, 1, 1}, f);
@@ -81,7 +78,7 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
     get<GuiLabelledGraph>("gpuGraph")->setPos({bufferWidth - 254, 90 + 80});
 }
 
-void DebugGui::update(Player& player, LocalWorld& world, LocalSubgame& game, double fps, int /*chunks*/, int drawCalls, int ssGen, int ssPack) {
+void DebugGui::update(LocalPlayer& player, double fps, int /*chunks*/, int drawCalls, int ssGen, int ssPack) {
 
     { //Top Right Graphs
         get<GuiLabelledGraph>("fpsGraph")->pushValue(static_cast<float>(fps));
@@ -105,8 +102,8 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalSubgame& game, dou
     }
 
     { //Top-left Data
-        unsigned int biomeID = world.getBiome(glm::floor(player.getPos()));
-        std::string biome = game.biomes->biomeFromId(biomeID).identifier;
+        unsigned int biomeID = world.getActiveDimension().getBiome(glm::floor(player.getPos()));
+        std::string biome = game.getBiomes().biomeFromId(biomeID).identifier;
 
         glm::vec3 playerPos = glm::floor(player.getPos());
         glm::vec3 chunkPos = Space::Chunk::world::fromBlock(playerPos);
@@ -149,7 +146,7 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalSubgame& game, dou
                 thing.face == EVec::BACK   ? "BACK"   :
                                              "NONE"   ;
 
-            str << "Pointing At: " << game.defs->blockFromId(world.getBlock(thing.pos)).identifier << std::endl;
+            str << "Pointing At: " << game.getDefs().blockFromId(world.getActiveDimension().getBlock(thing.pos)).identifier << std::endl;
             str << "Pointed Position: " << vecToString(thing.pos) << std::endl;
             str << "Pointed Face: " << face << std::endl;
         }
@@ -165,8 +162,8 @@ void DebugGui::update(Player& player, LocalWorld& world, LocalSubgame& game, dou
 
         std::ostringstream crossText;
         if (target.type == Target::Type::BLOCK) {
-            crossText << game.defs->blockFromId(world.getBlock(target.pos)).name
-                      << " (" << game.defs->blockFromId(world.getBlock(target.pos)).identifier << ")" << std::endl;
+            crossText << game.getDefs().blockFromId(world.getActiveDimension().getBlock(target.pos)).name
+                      << " (" << game.getDefs().blockFromId(world.getActiveDimension().getBlock(target.pos)).identifier << ")" << std::endl;
         }
         get<GuiText>("crosshairText")->setText(crossText.str());
     }

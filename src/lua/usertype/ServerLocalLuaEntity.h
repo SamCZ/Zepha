@@ -6,7 +6,7 @@
 
 #include <string>
 
-#include "../../game/entity/Entity.h"
+#include "../../game/entity/DrawableEntity.h"
 
 class LocalSubgame;
 
@@ -17,7 +17,7 @@ public:
     void setDisplayType(const std::string& type, const std::string& arg, const std::string& arg2);
 
     LocalSubgame& defs;
-    std::unique_ptr<Entity> entity = std::make_unique<Entity>();
+    std::unique_ptr<DrawableEntity> entity = std::make_unique<DrawableEntity>();
     unsigned int id;
 
     std::string displayType {};

@@ -4,27 +4,22 @@
 
 #include "LocalInventoryList.h"
 
-LocalInventoryList::LocalInventoryList(DefinitionAtlas& defs, const std::string& invName,
-        const std::string& listName, unsigned short size, unsigned short width,
-        std::function<void(unsigned short)> primaryCallback, std::function<void(unsigned short)> secondaryCallback) :
-    InventoryList(defs, invName, listName, size, width),
+#include "../../net/client/ClientNetworkInterpreter.h"
 
-    primaryCallback(primaryCallback),
-    secondaryCallback(secondaryCallback) {}
+LocalInventoryList::LocalInventoryList(Subgame& game, const std::string& name,
+    const std::string& invName, unsigned short size, unsigned short width,
+    ClientNetworkInterpreter& net) :
+    InventoryList(game, name, invName, size, width),
+    net(net) {}
 
-void LocalInventoryList::primaryInteract(InventoryList &hand, unsigned short ind) {
-    InventoryList::primaryInteract(hand, ind);
-    primaryCallback(ind);
+void LocalInventoryList::interact(InventoryList &hand, bool primary, unsigned short ind) {
+    InventoryList::interact(hand, primary, ind);
+    net.invInteract(invName, name, primary, ind);
 }
 
-void LocalInventoryList::secondaryInteract(InventoryList &hand, unsigned short ind) {
-    InventoryList::secondaryInteract(hand, ind);
-    secondaryCallback(ind);
-}
-
-void LocalInventoryList::setData(unsigned int size, unsigned int width, std::vector<ItemStack> stacks) {
+void LocalInventoryList::setData(unsigned int size, unsigned int width, std::vector<ItemStack> items) {
     this->width = width;
-    this->itemstacks = stacks;
+    this->items = items;
     manipulated();
 }
 

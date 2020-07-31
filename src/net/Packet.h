@@ -17,9 +17,9 @@ public:
     Packet() = default;
     explicit Packet(PacketType type, bool reliable = true);
 
-    ENetPacket* toENetPacket();
-    void sendTo(ENetPeer* peer, PacketChannel channel);
-    void sendTo(const ENetPeer &peer, PacketChannel channel);
+    ENetPacket* toENetPacket() const;
+    void sendTo(ENetPeer* peer, PacketChannel channel) const;
+    void sendTo(const ENetPeer &peer, PacketChannel channel) const;
 
     PacketType type = PacketType::UNDEFINED;
     std::string data {};

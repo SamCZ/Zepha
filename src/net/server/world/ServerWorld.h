@@ -12,45 +12,46 @@
 
 class Target;
 class ItemStack;
-class ClientList;
-class ServerClient;
+class ServerClients;
+class ServerPlayer;
+class ServerInventoryRefs;
 class ServerSubgame;
-class FileManipulator;
 class ServerGenStream;
 class ServerPacketStream;
 
 class ServerWorld : public World {
 public:
-    explicit ServerWorld(unsigned int seed, ServerSubgame& game, ClientList& clients);
+    explicit ServerWorld(unsigned int seed, ServerSubgame& game, ServerClients& clients);
 
     void init(const std::string& worldDir);
     void update(double delta) override;
 
-    unsigned int getBlock(glm::ivec3 pos) override;
-    void setBlock(glm::ivec3 pos, unsigned int block) override;
+    virtual ServerDimension& createDimension(const std::string& identifier) override;
 
-    void blockPlace(const Target& target, ServerClient& client);
-    void blockPlaceOrInteract(const Target& target, ServerClient& client);
-    void blockInteract(const Target& target, ServerClient& client);
+    virtual ServerDimension& getDimension(unsigned int index) override;
+    virtual ServerDimension& getDimension(const std::string& identifier) override;
 
-    ServerDimension dimension;
+    std::shared_ptr<ServerDimension> getDefaultDimensionPtr();
+    std::shared_ptr<ServerDimension> getDimensionPtr(const std::string& identifier);
+
+    std::shared_ptr<ServerInventoryRefs> getRefs();
 private:
-    void changedMapBlocks(ServerClient& client);
+    void changedMapBlocks(ServerPlayer& player);
     static bool isInBounds(glm::ivec3 pos, std::pair<glm::ivec3, glm::ivec3>& bounds);
 
-    void generateMapBlocks(ServerClient& client);
-    bool generateMapBlock(glm::ivec3 pos);
-    void sendChunksToPlayer(ServerClient& client);
+    bool generateMapBlock(unsigned int dim, glm::ivec3 pos);
+    void generateMapBlocks(ServerPlayer& player);
+    void sendChunksToPlayer(ServerPlayer& client);
 
     std::shared_ptr<ServerGenStream> genStream = nullptr;
     std::shared_ptr<ServerPacketStream> packetStream = nullptr;
 
     unsigned int seed;
-    ServerSubgame& game;
-    ClientList& clientList;
-    
-    std::string worldDir;
-    std::shared_ptr<FileManipulator> fileManip;
+    ServerClients& clients;
+    std::shared_ptr<ServerInventoryRefs> refs;
+
+//    std::string worldDir;
+//    std::shared_ptr<FileManipulator> fileManip;
 
     unsigned int generatedMapBlocks = 0;
     std::vector<glm::ivec3> generateOrder;

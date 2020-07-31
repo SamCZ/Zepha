@@ -6,7 +6,7 @@
 
 #include "GuiBuilder.h"
 
-#include "../inventory/Inventory.h"
+#include "../inventory/ServerInventory.h"
 #include "../inventory/LocalInventoryRefs.h"
 
 class GameGuiBuilder : public GuiBuilder {

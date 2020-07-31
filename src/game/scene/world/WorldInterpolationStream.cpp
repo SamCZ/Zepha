@@ -74,7 +74,7 @@ std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> WorldInterpolationStream::u
 }
 
 WorldInterpolationStream::Thread::Thread(LocalSubgame& game, unsigned int seed) :
-    gen(*game.defs, *game.biomes, seed),
+    gen(game.getDefs(), game.getBiomes(), seed),
     thread(std::bind(&WorldInterpolationStream::Thread::exec, this)) {}
 
 void WorldInterpolationStream::Thread::exec() {

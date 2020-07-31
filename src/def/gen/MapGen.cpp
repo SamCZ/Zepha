@@ -20,15 +20,15 @@ MapGen::MapGen(DefinitionAtlas& defs, BiomeAtlas& biomes, unsigned int seed) :
     biomes(biomes),
     props(seed) {}
 
-std::unique_ptr<MapGen::ChunkMap> MapGen::generateChunk(glm::ivec3 pos) {
-    return generateArea(pos);
+std::unique_ptr<MapGen::ChunkMap> MapGen::generateChunk(glm::ivec3 pos, unsigned int dimension) {
+    return generateArea(pos, dimension, 1);
 }
 
-std::unique_ptr<MapGen::ChunkMap> MapGen::generateMapBlock(glm::ivec3 pos) {
-    return generateArea(Space::Chunk::world::fromMapBlock(pos), 4);
+std::unique_ptr<MapGen::ChunkMap> MapGen::generateMapBlock(glm::ivec3 pos, unsigned int dimension) {
+    return generateArea(Space::Chunk::world::fromMapBlock(glm::vec3(pos)), dimension, 4);
 }
 
-std::unique_ptr<MapGen::ChunkMap> MapGen::generateArea(glm::ivec3 origin, unsigned int size) {
+std::unique_ptr<MapGen::ChunkMap> MapGen::generateArea(glm::ivec3 origin, unsigned int dimension, unsigned int size) {
 	Job job(origin, size);
 
     // Build Biome Prop Maps

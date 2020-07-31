@@ -6,19 +6,22 @@
 
 #include "components/basic/GuiContainer.h"
 
-class Player;
+class LocalPlayer;
 class LocalSubgame;
 class LocalWorld;
 
 class DebugGui : public GuiContainer {
 public:
-    DebugGui(glm::vec2 bufferSize, LocalSubgame& atlas);
+    DebugGui(glm::vec2 bufferSize, LocalSubgame& game, LocalWorld& world);
 
     void bufferResized(glm::vec2 bufferSize);
     void changeVisibilityState(int state);
     void positionElements(glm::vec2 bufferSize);
 
-    void update(Player& player, LocalWorld& world, LocalSubgame& game, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
+    void update(LocalPlayer& player, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
 private:
     int displayMode;
+
+    LocalWorld& world;
+    LocalSubgame& game;
 };

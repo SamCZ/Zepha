@@ -44,9 +44,9 @@ public:
 
 	MapGen(DefinitionAtlas& atlas, BiomeAtlas& biome, unsigned int seed);
 
-    std::unique_ptr<ChunkMap> generateChunk(glm::ivec3 pos);
-    std::unique_ptr<ChunkMap> generateMapBlock(glm::ivec3 pos);
-    std::unique_ptr<ChunkMap> generateArea(glm::ivec3 origin, unsigned int size = 1);
+    std::unique_ptr<ChunkMap> generateChunk(glm::ivec3 pos, unsigned int dimension);
+    std::unique_ptr<ChunkMap> generateMapBlock(glm::ivec3 pos, unsigned int dimension);
+    std::unique_ptr<ChunkMap> generateArea(glm::ivec3 origin, unsigned int dimension, unsigned int size = 1);
 private:
 //    struct SunlightNode {
 //        SunlightNode(unsigned short index, Chunk* chunk) : index(index), chunk(chunk) {};

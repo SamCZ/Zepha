@@ -6,7 +6,7 @@
 
 #include "../graph/scene/Scene.h"
 
-#include "world/Player.h"
+#include "world/LocalPlayer.h"
 #include "world/LocalWorld.h"
 #include "../../net/client/ClientNetworkInterpreter.h"
 #include "../inventory/LocalInventoryRefs.h"
@@ -25,11 +25,7 @@ public:
     void cleanup() override;
 public:
     LocalSubgame& game;
-
-    ClientNetworkInterpreter net;
-    LocalInventoryRefs refs;
     LocalWorld world;
-    Player player;
 
     DebugGui debugGui;
     std::vector<Drawable*> entities;

@@ -13,7 +13,7 @@
 #include "../../../util/Vec.h"
 #include "../../../world/chunk/MapBlock.h"
 
-class ServerDimension;
+class ServerWorld;
 
 class ServerPacketStream {
 public:
@@ -21,15 +21,15 @@ public:
     static const int THREAD_QUEUE_SIZE = 64;
 
     struct FinishedJob {
-        FinishedJob(glm::ivec3 pos, std::unique_ptr<Packet> packet) : pos(pos), packet(std::move(packet)) {}
+        FinishedJob(glm::ivec4 pos, std::unique_ptr<Packet> packet) : pos(pos), packet(std::move(packet)) {}
 
-        glm::ivec3 pos {};
+        glm::ivec4 pos {};
         std::unique_ptr<Packet> packet;
     };
 
-    ServerPacketStream(ServerDimension& dimension);
+    ServerPacketStream(ServerWorld& world);
 
-    bool queue(glm::ivec3 pos);
+    bool queue(glm::ivec4 pos);
     std::unique_ptr<std::vector<std::unique_ptr<FinishedJob>>> update();
 
     ~ServerPacketStream();
@@ -37,7 +37,7 @@ private:
     struct Job {
         bool locked = false;
 
-        glm::ivec3 pos {};
+        glm::ivec4 pos {};
         std::unique_ptr<Packet> packet = nullptr;
         std::shared_ptr<MapBlock> mapBlock = nullptr;
     };
@@ -53,9 +53,9 @@ private:
         std::thread thread;
     };
 
-    ServerDimension& dimension;
+    ServerWorld& world;
 
     std::vector<Thread> threads;
-    std::queue<glm::vec3> queuedTasks;
-    std::unordered_set<glm::vec3, Vec::vec3> queuedMap;
+    std::queue<glm::ivec4> queuedTasks;
+    std::unordered_set<glm::ivec4, Vec::ivec4> queuedMap;
 };

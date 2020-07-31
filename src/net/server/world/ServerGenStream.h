@@ -18,7 +18,7 @@ public:
     static const int THREAD_QUEUE_SIZE = 6;
 
     struct FinishedBlockJob {
-        glm::ivec3 pos;
+        glm::ivec4 pos;
         std::vector<std::shared_ptr<Chunk>> chunks;
     };
 
@@ -26,7 +26,7 @@ public:
     ~ServerGenStream();
 
     // Add the MapBlock position `pos` to the generation queue.
-    bool queue(glm::vec3 pos);
+    bool queue(glm::ivec4 pos);
     // Returns a vector of BlockChunks that have finished generating,
     // and gives the threads new data to work with.
     std::unique_ptr<std::vector<FinishedBlockJob>> update();
@@ -34,7 +34,7 @@ private:
     struct Job {
         bool locked = false;
 
-        glm::ivec3 pos {};
+        glm::ivec4 pos {};
         std::unique_ptr<MapGen::ChunkMap> generated = nullptr;
     };
 
@@ -51,6 +51,6 @@ private:
     };
 
     std::vector<Thread> threads;
-    std::queue<glm::vec3> queuedTasks;
-    std::unordered_set<glm::vec3, Vec::vec3> queuedMap;
+    std::queue<glm::ivec4> queuedTasks;
+    std::unordered_set<glm::ivec4, Vec::ivec4> queuedMap;
 };

@@ -6,39 +6,33 @@
 
 #include "Ray.h"
 
-#include "../game/scene/world/Player.h"
+#include "../game/scene/world/LocalPlayer.h"
 
-Ray::Ray(glm::vec3 pos, float yaw, float pitch) {
-    this->start = pos;
-    this->pos = pos;
+Ray::Ray(glm::vec3 pos, float yawDeg, float pitchDeg) :
+    pos(pos),
+    start(pos) {
 
-    float yawR = glm::radians(yaw + 90);
-    float pitchR = glm::radians(pitch);
+    float yaw = glm::radians(yawDeg + 90);
+    float pitch = glm::radians(pitchDeg);
 
     this->dir = glm::normalize(glm::vec3(
-        std::sin(yawR) * std::cos(pitchR),
-        std::sin(pitchR),
-       -std::cos(yawR) * std::cos(pitchR)
-    ));
+        std::sin(yaw) * std::cos(pitch), std::sin(pitch),
+       -std::cos(yaw) * std::cos(pitch) ));
 }
 
-Ray::Ray(Player* player) {
-    this->start = player->getPos();
-    this->start.y += Player::EYE_HEIGHT;
-    this->pos = start;
+Ray::Ray(Player& player) : pos(start),
+    start(player.getPos() + player.getLookOffset()) {
 
-    float yawR = glm::radians(player->getYaw() + 90);
-    float pitchR = glm::radians(player->getPitch());
+    float yaw = glm::radians(player.getYaw() + 90);
+    float pitch = glm::radians(player.getPitch());
 
-    this->dir = glm::normalize(glm::vec3(
-            std::sin(yawR) * std::cos(pitchR),
-            std::sin(pitchR),
-           -std::cos(yawR) * std::cos(pitchR)
-    ));
+    dir = glm::normalize(glm::vec3(
+            std::sin(yaw) * std::cos(pitch), std::sin(pitch),
+           -std::cos(yaw) * std::cos(pitch) ));
 }
 
 void Ray::step(float scale) {
-    pos += (scale * dir);
+    pos += scale * dir;
 }
 
 glm::vec3 Ray::getEnd() {

@@ -1,5 +1,5 @@
 //
-// Created by aurailus on 2019-12-17.
+// Created by aurailus on 2020-07-29.
 //
 
 #pragma once
@@ -7,27 +7,26 @@
 #include <map>
 #include <string>
 #include <memory>
-#include "ServerInventoryList.h"
 
-class ClientList;
+class Subgame;
+class InventoryList;
 
 class Inventory {
 public:
-    Inventory(DefinitionAtlas& defs, ClientList* clients, const std::string& name) : defs(defs), clients(clients), name(name) {};
+    Inventory(const Inventory& o) = delete;
+    explicit Inventory(Subgame& game, const std::string& name);
 
-    void sendDirtyLists();
+    virtual bool hasList(const std::string& name);
+    virtual InventoryList& getList(const std::string& name);
+    std::shared_ptr<InventoryList> getListPtr(const std::string& name);
 
-    void createList(std::string name, unsigned short length, unsigned short width);
-    std::shared_ptr<ServerInventoryList> operator[](std::string name);
-    void removeList(std::string name);
+    virtual void createList(const std::string& name, unsigned short length, unsigned short width) = 0;
+    virtual void removeList(const std::string& name);
 
-    void setDefaultList(const std::string& name);
-    std::string getDefaultList();
 
-    DefinitionAtlas& defs;
+protected:
+    Subgame& game;
+
     std::string name;
-private:
-    ClientList* clients;
-    std::map<std::string, std::shared_ptr<ServerInventoryList>> lists;
-    std::string defaultList = "";
+    std::map<std::string, std::shared_ptr<InventoryList>> lists;
 };

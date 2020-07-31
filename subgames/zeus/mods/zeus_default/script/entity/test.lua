@@ -17,4 +17,4 @@ zepha.register_entity("zeus:default:test", {
     end
 })
 
-if zepha.client then entity = zepha.add_entity(V(), "zeus:default:test") end
+if zepha.client then zepha.after(function() zepha.get_default_dimension():add_entity(V(), "zeus:default:test") end, 0) end

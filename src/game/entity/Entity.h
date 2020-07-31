@@ -1,83 +1,43 @@
 //
-// Created by aurailus on 25/11/18.
+// Created by aurailus on 2020-07-30.
 //
 
 #pragma once
 
-#include <vector>
-#include <memory>
 #include <glm/vec3.hpp>
-#include <glm/mat4x4.hpp>
 
-#include "AnimationState.h"
-#include "AnimationSegment.h"
-#include "../graph/drawable/Drawable.h"
+#include "../../def/item/SelectionBox.h"
 
-class Model;
-
-class Entity : public Drawable {
+class Entity {
 public:
-    Entity();
-    explicit Entity(std::shared_ptr<Model> model);
-    void setModel(std::shared_ptr<Model> model);
+    virtual glm::vec3 getPos();
+    virtual void setPos(glm::vec3 position);
 
-    void update(double delta) override;
-    void draw(Renderer& renderer) override;
+    virtual glm::vec3 getVel();
+    virtual void setVel(glm::vec3 velocity);
 
-    void interpPos(glm::vec3 position);
-    void setPos(glm::vec3 position);
-    glm::vec3 getPos();
+    virtual glm::vec3 getVisualOffset();
+    virtual void setVisualOffset(glm::vec3 vs);
 
-    void interpVisualOffset(glm::vec3 vs);
-    void setVisualOffset(glm::vec3 vs);
-    glm::vec3 getVisualOffset();
+    virtual float getRotateX();
+    virtual void setRotateX(float rotation);
 
-    void setRotateX(float rotation);
-    void interpRotateX(float rotation);
-    float getRotateX();
+    virtual float getRotateY();
+    virtual void setRotateY(float rotation);
 
-    void setRotateY(float rotation);
-    void interpRotateY(float rotation);
-    float getRotateY();
+    virtual float getRotateZ();
+    virtual void setRotateZ(float rotation);
 
-    void setRotateZ(float rotation);
-    void interpRotateZ(float rotation);
-    float getRotateZ();
+    virtual glm::vec3 getScale();
+    virtual void setScale(float scale);
+    virtual void setScale(glm::vec3 scale);
 
-    void interpScale(float scale);
-    void setScale(float scale);
-    void interpScale(glm::vec3 scale);
-    void setScale(glm::vec3 scale);
-    glm::vec3 getScale();
-
-    void setAnimations(const std::vector<AnimationSegment>& anims);
-    void playAnimation(const std::string& anim, bool loop);
-    void playRange(unsigned int start, unsigned int end, bool loop);
-    void setPlaying(bool playing, unsigned int offset);
-
-    void cleanup();
-    ~Entity() override;
-
-    AnimationState animState {};
-
-    Entity* parent = nullptr;
 protected:
-    glm::mat4 getModelMatrix();
-    glm::mat4 getRotationMatrix();
-
-    glm::vec3 position {};
-    glm::vec3 visualPosition {};
-
-    glm::vec3 visualOffset {};
-    glm::vec3 visualVisualOffset {};
-
-    glm::vec3 rotation {};
-    glm::vec3 visualRotation {};
-
+    glm::vec3 pos {};
+    glm::vec3 vel {};
+    glm::vec3 rot {};
+    glm::vec3 visualOff {};
     glm::vec3 scale {1, 1, 1};
-    glm::vec3 visualScale {1, 1, 1};
 
-    std::shared_ptr<Model> model = nullptr;
-    std::vector<glm::mat4> transforms {};
+    SelectionBox collision;
 };
-

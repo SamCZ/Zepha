@@ -12,19 +12,32 @@
 
 #include "DimensionBase.h"
 
+class Target;
+class Player;
+
 class Dimension : public DimensionBase {
 public:
     typedef std::unordered_set<glm::ivec3, Vec::ivec3> relitChunks;
 
-    Dimension(DefinitionAtlas& defs) : DimensionBase(defs) {}
+    Dimension(const Dimension& o) = delete;
+    Dimension(Subgame& game, World& world, const std::string& identifier, unsigned int ind) :
+        DimensionBase(game, world, identifier, ind) {}
+
+    virtual void update(double delta) = 0;
 
     // Override setBlock to update lighting.
     bool setBlock(glm::ivec3 pos, unsigned int block) override;
 
+    virtual void blockPlace(const Target &target, std::shared_ptr<Player> player) = 0;
+    virtual void blockPlaceOrInteract(const Target &target, std::shared_ptr<Player> player) = 0;
+    virtual void blockInteract(const Target &target, std::shared_ptr<Player> player) = 0;
+    virtual double blockHit(const Target &target, std::shared_ptr<Player> player) = 0;
+
+    unsigned int nextEntityInd();
+
     // Calculate light propogation around MapBlock edges,
     // Called after a new mapblock is inserted into the dimension.
     relitChunks calculateEdgeLight(glm::ivec3 mbPos);
-
 protected:
 
     // Lighting propagation.
@@ -60,4 +73,6 @@ private:
     static constexpr unsigned char SUNLIGHT_CHANNEL = 3;
     std::array<std::queue<LightAddNode>, 4> lightAddQueue;
     std::array<std::queue<LightRemoveNode>, 4> lightRemoveQueue;
+
+    unsigned int entityInd = 0;
 };

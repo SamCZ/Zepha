@@ -7,13 +7,13 @@
 #include <string>
 #include <sol/forward.hpp>
 
-class DefinitionAtlas;
+class Subgame;
 class ItemStack;
 
 class LuaItemStack {
 public:
     LuaItemStack() = default;
-    LuaItemStack(const ItemStack& stack, const DefinitionAtlas& defs);
+    LuaItemStack(const ItemStack& stack, Subgame& game);
     LuaItemStack(const std::string& name, unsigned short count);
     LuaItemStack(sol::table tbl);
 

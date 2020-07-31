@@ -4,32 +4,30 @@
 
 #pragma once
 
-#include <list>
+#include <set>
 
 #include "InventoryList.h"
 
-class ClientList;
-class ServerClient;
+class ServerClients;
+class ServerPlayer;
 class Packet;
 
 class ServerInventoryList : public InventoryList {
 public:
-    ServerInventoryList(DefinitionAtlas& defs, ClientList* list, const std::string& invName,
-                        const std::string& listName, unsigned short size, unsigned short width);
+    ServerInventoryList(Subgame& defs, ServerClients& list, const std::string& name,
+                        const std::string& invName, unsigned short size, unsigned short width);
 
-    bool addWatcher(unsigned int cid);
-    bool removeWatcher(unsigned int cid);
+    bool addWatcher(unsigned int id);
+    bool removeWatcher(unsigned int id);
 
-    void sendAll();
-    void sendTo(std::shared_ptr<ServerClient> client);
+    void sendToAll();
+    void sendTo(std::shared_ptr<ServerPlayer> player);
 
     bool dirty = false;
 
 private:
     void manipulated() override;
 
-    Packet createPacket();
-
-    ClientList* clients;
-    std::list<unsigned int> watchers;
+    ServerClients& clients;
+    std::set<unsigned int> watchers {};
 };

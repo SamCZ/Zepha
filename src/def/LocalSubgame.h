@@ -15,7 +15,7 @@
 #include "texture/TextureAtlas.h"
 #include "../lua/LocalLuaParser.h"
 
-class Player;
+class LocalPlayer;
 class LocalWorld;
 class ClientState;
 
@@ -24,7 +24,8 @@ public:
     explicit LocalSubgame(const std::string& texPath);
     ~LocalSubgame();
 
-    void init(LocalWorld &world, Player& player, ClientState& state);
+    void initApi(LocalWorld &world, ClientState& state);
+    void loadPlayer(std::shared_ptr<LocalPlayer> player);
     void update(double delta);
 
     std::string texPath;
@@ -36,6 +37,7 @@ public:
     ModelStore models;
     TextureAtlas textures;
 
+private:
     std::unique_ptr<LocalLuaParser> lua;
     std::unique_ptr<LocalBiomeAtlas> biomes;
     std::unique_ptr<LocalDefinitionAtlas> defs;

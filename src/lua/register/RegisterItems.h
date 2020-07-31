@@ -61,10 +61,10 @@ namespace RegisterItems {
     }
 
     static void server(sol::table& core, ServerSubgame& game) {
-        registerItems(core.get<sol::table>("registered_items"), *game.defs, nullptr);
+        registerItems(core.get<sol::table>("registered_items"), game.getDefs(), nullptr);
     }
 
     static void client(sol::table& core, LocalSubgame& game) {
-        registerItems(core.get<sol::table>("registered_items"), *game.defs, &game.textures);
+        registerItems(core.get<sol::table>("registered_items"), game.getDefs(), &game.textures);
     }
 };

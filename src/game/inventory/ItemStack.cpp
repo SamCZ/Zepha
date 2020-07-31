@@ -5,11 +5,12 @@
 #include "ItemStack.h"
 
 #include "../../def/ItemDef.h"
+#include "../../def/Subgame.h"
 #include "../../def/DefinitionAtlas.h"
 #include "../../lua/usertype/LuaItemStack.h"
 
-ItemStack::ItemStack(LuaItemStack &stack, const DefinitionAtlas &atlas) :
-    id((stack.get_count() == 0) ? DefinitionAtlas::AIR : atlas.fromStr(stack.get_name()).index),
+ItemStack::ItemStack(LuaItemStack &stack, Subgame& game) :
+    id((stack.get_count() == 0) ? DefinitionAtlas::AIR : game.getDefs().fromStr(stack.get_name()).index),
     count((this->id == DefinitionAtlas::AIR) ? 0 : stack.get_count()) {}
 
 ItemStack::ItemStack(unsigned int id, unsigned short count) :

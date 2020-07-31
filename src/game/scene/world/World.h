@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <map>
 #include <memory>
 #include <glm/vec3.hpp>
 #include <unordered_map>
@@ -16,22 +15,22 @@ class Dimension;
 
 class World {
 public:
+    World(const World& o) = delete;
     explicit World(Subgame& game);
 
-    virtual void update(double delta) = 0;
+    virtual void update(double delta);
 
-//    virtual Dimension& getDimension() = 0;
+    virtual Dimension& createDimension(const std::string& identifier) = 0;
 
-    virtual unsigned int getBlock(glm::ivec3 pos) = 0;
-    virtual void setBlock(glm::ivec3 pos, unsigned int block) = 0;
+    virtual Dimension& getDefaultDimension();
+    virtual void setDefaultDimension(const std::string& defaultDimension);
 
-    virtual double getBlockDamage(glm::ivec3 pos) const;
-    virtual double setBlockDamage(glm::ivec3 pos, double damage);
+    virtual Dimension& getDimension(unsigned int index) = 0;
+    virtual Dimension& getDimension(const std::string& identifier) = 0;
 
 protected:
-    void updateBlockDamages();
-
-    std::map<std::string, std::shared_ptr<Dimension>> dimensions;
+    std::string defaultDimension {};
+    std::vector<std::shared_ptr<Dimension>> dimensions;
 
     struct Damage { double curr, max; };
     std::unordered_map<glm::ivec3, Damage, Vec::ivec3> blockDamages;

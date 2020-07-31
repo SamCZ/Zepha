@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../../entity/Entity.h"
+#include "../../../entity/DrawableEntity.h"
 #include "../../../../util/Util.h"
 #include "../basic/GuiRect.h"
 #include "../basic/GuiGraph.h"

@@ -4,15 +4,14 @@
 
 #pragma once
 
-#include "../Entity.h"
+#include "../DrawableEntity.h"
 
 #include "../../../def/item/SelectionBox.h"
 #include "../../graph/meshtypes/EntityVertex.h"
 
-class WireframeEntity : public Entity {
+class WireframeEntity : public DrawableEntity {
 public:
-    WireframeEntity() = default;
-    WireframeEntity(const std::vector<SelectionBox>& boxes, float width, glm::vec3 color);
+    WireframeEntity(glm::vec3 color) : DrawableEntity(std::make_shared<Model>()), color(color) {};
 
     void updateMesh(const std::vector<SelectionBox>& boxes, float width);
 private:

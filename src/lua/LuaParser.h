@@ -24,6 +24,14 @@ public:
     
     void bindModules();
 
+    template<typename... Args> sol::protected_function_result safe_function(sol::protected_function f, Args... args) const {
+        auto res = f(args...);
+        if (!res.valid()) errorCallback(res);
+        return res;
+    }
+
+    virtual sol::protected_function_result errorCallback(sol::protected_function_result r) const = 0;
+
     Subgame& game;
 
     sol::state lua;

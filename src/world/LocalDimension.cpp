@@ -8,25 +8,31 @@
 #include "../world/chunk/Chunk.h"
 #include "../world/chunk/Region.h"
 #include "../game/graph/Renderer.h"
+#include "../lua/usertype/Target.h"
+#include "../lua/usertype/Player.h"
 #include "../world/chunk/MapBlock.h"
-#include "../def/LocalDefinitionAtlas.h"
+#include "../lua/usertype/LuaItemStack.h"
+#include "../game/scene/world/LocalWorld.h"
 #include "../lua/usertype/LocalLuaEntity.h"
+#include "../game/scene/world/LocalPlayer.h"
 #include "../game/scene/world/MeshGenStream.h"
 #include "../game/scene/world/graph/MeshChunk.h"
 #include "../game/scene/world/ChunkMeshDetails.h"
 #include "../lua/usertype/ServerLocalLuaEntity.h"
+//#include "../game/inventory/LocalInventoryList.h"
 
-LocalDimension::LocalDimension(LocalSubgame &game) : Dimension(*game.defs),
-    meshGenStream(std::make_shared<MeshGenStream>(game, *this)),
-    game(game) {}
+LocalDimension::LocalDimension(LocalSubgame &game, LocalWorld& world, const std::string& identifier, unsigned int ind) :
+    Dimension(game, world, identifier, ind), meshGenStream(std::make_shared<MeshGenStream>(game, *this)) {}
 
-void LocalDimension::update(double delta, glm::vec3 playerPos) {
+void LocalDimension::update(double delta) {
     finishMeshes();
 
     for (auto& entity : localEntities ) entity->entity->update(delta);
     for (auto& entity : serverEntities) entity->entity->update(delta);
     for (auto& entity : playerEntities) entity.update(delta);
 
+    //TODO: Fix playerpos.
+    glm::ivec3 playerPos {};
     auto clientMapBlock = Space::MapBlock::world::fromBlock(playerPos);
 
     for (auto it = regions.cbegin(); it != regions.cend();) {
@@ -57,47 +63,77 @@ void LocalDimension::update(double delta, glm::vec3 playerPos) {
     }
 }
 
-void LocalDimension::finishMeshes() {
-    lastMeshUpdates = 0;
-    auto finishedMeshes = meshGenStream->update();
-
-    for (ChunkMeshDetails* meshDetails : finishedMeshes) {
-
-        if (!meshDetails->vertices.empty()) {
-            auto meshChunk = std::make_shared<MeshChunk>();
-            meshChunk->create(meshDetails->vertices, meshDetails->indices);
-            meshChunk->setPos(meshDetails->pos);
-
-            setMeshChunk(meshChunk);
-            lastMeshUpdates++;
-        }
-        else removeMeshChunk(meshDetails->pos);
-
-        delete meshDetails;
-    }
-}
-
-int LocalDimension::renderChunks(Renderer &renderer) {
-    int count = 0;
-    for (auto &renderElement : renderElems) {
-        FrustumAABB bbox(renderElement->getPos() * glm::vec3(16), glm::vec3(16));
-        if (renderer.camera.inFrustum(bbox) != Frustum::OUTSIDE) {
-            renderElement->draw(renderer);
-            count++;
-        }
-    }
-    return count;
-}
-
-void LocalDimension::renderEntities(Renderer &renderer) {
-    for (auto& entity : localEntities) entity->entity->draw(renderer);
-    for (auto& entity : serverEntities) entity->entity->draw(renderer);
-    for (auto& entity : playerEntities) entity.draw(renderer);
-}
-
 void LocalDimension::setChunk(std::shared_ptr<Chunk> chunk) {
     Dimension::setChunk(chunk);
     attemptMeshChunk(chunk);
+}
+
+bool LocalDimension::setBlock(glm::ivec3 pos, unsigned int block) {
+    bool exists = Dimension::setBlock(pos, block);
+    if (!exists) return false;
+
+    auto chunkPos = Space::Chunk::world::fromBlock(pos);
+    auto chunk = getChunk(chunkPos);
+
+    chunk->dirty = true;
+
+    auto lp = Space::Block::relative::toChunk(pos);
+    auto cp = Space::Chunk::world::fromBlock(pos);
+
+    if (lp.x == 15 && getChunk(cp + glm::ivec3 {1, 0, 0})) getChunk(cp + glm::ivec3 {1, 0, 0})->dirty = true;
+    else if (lp.x == 0 && getChunk(cp + glm::ivec3 {-1, 0, 0})) getChunk(cp + glm::ivec3 {-1, 0, 0})->dirty = true;
+    if (lp.y == 15 && getChunk(cp + glm::ivec3 {0, 1, 0})) getChunk(cp + glm::ivec3 {0, 1, 0})->dirty = true;
+    else if (lp.y == 0 && getChunk(cp + glm::ivec3 {0, -1, 0})) getChunk(cp + glm::ivec3 {0, -1, 0})->dirty = true;
+    if (lp.z == 15 && getChunk(cp + glm::ivec3 {0, 0, 1})) getChunk(cp + glm::ivec3 {0, 0, 1})->dirty = true;
+    else if (lp.z == 0 && getChunk(cp + glm::ivec3 {0, 0, -1})) getChunk(cp + glm::ivec3 {0, 0, -1})->dirty = true;
+
+    attemptMeshChunk(chunk, true);
+    return true;
+}
+
+void LocalDimension::blockPlace(const Target &target, std::shared_ptr<Player> player) {
+    std::tuple<sol::optional<LuaItemStack>, sol::optional<glm::vec3>> res = game.getParser().safe_function(
+        game.getParser().core["block_place"], Api::Usertype::LocalPlayer(std::static_pointer_cast<LocalPlayer>(player)), Api::Usertype::Target(target));
+
+//    net->blockPlace(target);
+
+    auto stack = std::get<sol::optional<LuaItemStack>>(res);
+    if (!stack) return;
+
+    auto& inv = std::static_pointer_cast<LocalPlayer>(player)->getInventory();
+    if (inv.hasList(player->getWieldList()))
+        inv.getList(player->getWieldList()).setStack(player->getWieldIndex(), ItemStack(*stack, game));
+}
+
+void LocalDimension::blockInteract(const Target &target, std::shared_ptr<Player> player) {
+    game.getParser().safe_function(game.getParser().core["block_interact"],
+        Api::Usertype::LocalPlayer(std::static_pointer_cast<LocalPlayer>(player)), Api::Usertype::Target(target));
+
+//    net->blockInteract(target);
+}
+
+void LocalDimension::blockPlaceOrInteract(const Target &target, std::shared_ptr<Player> player) {
+    std::tuple<sol::optional<LuaItemStack>, sol::optional<glm::vec3>> res = game.getParser().safe_function(
+        game.getParser().core["block_interact_or_place"], Api::Usertype::LocalPlayer(std::static_pointer_cast<LocalPlayer>(player)), Api::Usertype::Target(target));
+
+//    net->blockPlaceOrInteract(target);
+
+    auto stack = std::get<sol::optional<LuaItemStack>>(res);
+    if (!stack) return;
+
+    auto& inv = std::static_pointer_cast<LocalPlayer>(player)->getInventory();
+    if (inv.hasList(player->getWieldList()))
+        inv.getList(player->getWieldList()).setStack(player->getWieldIndex(), ItemStack(*stack, game));
+}
+
+double LocalDimension::blockHit(const Target &target, std::shared_ptr<Player> player) {
+    double timeout = 0, damage = 0;
+    sol::tie(damage, timeout) = game.getParser().safe_function(game.getParser().core["block_hit"],
+        Api::Usertype::LocalPlayer(std::static_pointer_cast<LocalPlayer>(player)), Api::Usertype::Target(target));
+
+//    net->blockHit(target);
+
+    return timeout;
 }
 
 void LocalDimension::setMeshChunk(std::shared_ptr<MeshChunk> meshChunk) {
@@ -153,7 +189,7 @@ void LocalDimension::serverEntityInfo(PacketView& p) {
         luaEntity.setDisplayType(displayMode, displayArg1, displayArg2);
     }
     else {
-        auto entity = std::make_shared<ServerLocalLuaEntity>(id, game, displayMode, displayArg1, displayArg2);
+        auto entity = std::make_shared<ServerLocalLuaEntity>(id, static_cast<LocalSubgame&>(game), displayMode, displayArg1, displayArg2);
         entity->entity->setPos(position);
         entity->entity->setVisualOffset(visualOffset);
         entity->entity->setRotateX(rotation.x);
@@ -173,31 +209,62 @@ void LocalDimension::serverEntityRemoved(unsigned int id) {
     serverEntityRefs.erase(id);
 }
 
+int LocalDimension::renderChunks(Renderer &renderer) {
+    int count = 0;
+    for (auto &renderElement : renderElems) {
+        FrustumAABB bbox(renderElement->getPos() * glm::vec3(16), glm::vec3(16));
+        if (renderer.camera.inFrustum(bbox) != Frustum::OUTSIDE) {
+            renderElement->draw(renderer);
+            count++;
+        }
+    }
+    return count;
+}
+
+void LocalDimension::renderEntities(Renderer &renderer) {
+    for (auto& entity : localEntities) entity->entity->draw(renderer);
+    for (auto& entity : serverEntities) entity->entity->draw(renderer);
+    for (auto& entity : playerEntities) entity.draw(renderer);
+}
+
 int LocalDimension::getMeshChunkCount() {
     return static_cast<int>(renderElems.size());
 }
 
-bool LocalDimension::setBlock(glm::ivec3 pos, unsigned int block) {
-    bool exists = Dimension::setBlock(pos, block);
-    if (!exists) return false;
+LocalSubgame& LocalDimension::getGame() {
+    return static_cast<LocalSubgame&>(DimensionBase::getGame());
+}
 
-    auto chunkPos = Space::Chunk::world::fromBlock(pos);
-    auto chunk = getChunk(chunkPos);
+std::unordered_set<glm::ivec3, Vec::ivec3> LocalDimension::propogateAddNodes() {
+    auto updated = Dimension::propogateAddNodes();
+    for (auto& update : updated) attemptMeshChunk(getChunk(update));
+    return {};
+}
 
-    chunk->dirty = true;
+std::unordered_set<glm::ivec3, Vec::ivec3> LocalDimension::propogateRemoveNodes() {
+    auto updated = Dimension::propogateRemoveNodes();
+    for (auto& update : updated) attemptMeshChunk(getChunk(update));
+    return {};
+}
 
-    auto lp = Space::Block::relative::toChunk(pos);
-    auto cp = Space::Chunk::world::fromBlock(pos);
+void LocalDimension::finishMeshes() {
+    lastMeshUpdates = 0;
+    auto finishedMeshes = meshGenStream->update();
 
-    if (lp.x == 15 && getChunk(cp + glm::ivec3 {1, 0, 0})) getChunk(cp + glm::ivec3 {1, 0, 0})->dirty = true;
-    else if (lp.x == 0 && getChunk(cp + glm::ivec3 {-1, 0, 0})) getChunk(cp + glm::ivec3 {-1, 0, 0})->dirty = true;
-    if (lp.y == 15 && getChunk(cp + glm::ivec3 {0, 1, 0})) getChunk(cp + glm::ivec3 {0, 1, 0})->dirty = true;
-    else if (lp.y == 0 && getChunk(cp + glm::ivec3 {0, -1, 0})) getChunk(cp + glm::ivec3 {0, -1, 0})->dirty = true;
-    if (lp.z == 15 && getChunk(cp + glm::ivec3 {0, 0, 1})) getChunk(cp + glm::ivec3 {0, 0, 1})->dirty = true;
-    else if (lp.z == 0 && getChunk(cp + glm::ivec3 {0, 0, -1})) getChunk(cp + glm::ivec3 {0, 0, -1})->dirty = true;
+    for (ChunkMeshDetails* meshDetails : finishedMeshes) {
 
-    attemptMeshChunk(chunk, true);
-    return true;
+        if (!meshDetails->vertices.empty()) {
+            auto meshChunk = std::make_shared<MeshChunk>();
+            meshChunk->create(meshDetails->vertices, meshDetails->indices);
+            meshChunk->setPos(meshDetails->pos);
+
+            setMeshChunk(meshChunk);
+            lastMeshUpdates++;
+        }
+        else removeMeshChunk(meshDetails->pos);
+
+        delete meshDetails;
+    }
 }
 
 void LocalDimension::attemptMeshChunk(const std::shared_ptr<Chunk>& chunk, bool priority, bool updateAdjacents) {
@@ -223,16 +290,4 @@ bool LocalDimension::getAdjacentExists(glm::vec3 pos, bool updateAdjacents) {
     if (chunk == nullptr) return false;
     if (updateAdjacents) attemptMeshChunk(chunk, false, false);
     return true;
-}
-
-std::unordered_set<glm::ivec3, Vec::ivec3> LocalDimension::propogateAddNodes() {
-    auto updated = Dimension::propogateAddNodes();
-    for (auto& update : updated) attemptMeshChunk(getChunk(update));
-    return {};
-}
-
-std::unordered_set<glm::ivec3, Vec::ivec3> LocalDimension::propogateRemoveNodes() {
-    auto updated = Dimension::propogateRemoveNodes();
-    for (auto& update : updated) attemptMeshChunk(getChunk(update));
-    return {};
 }

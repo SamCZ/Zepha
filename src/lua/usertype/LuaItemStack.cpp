@@ -6,11 +6,12 @@
 
 #include "../Lua.h"
 #include "../../def/ItemDef.h"
+#include "../../def/Subgame.h"
 #include "../../def/DefinitionAtlas.h"
 #include "../../game/inventory/ItemStack.h"
 
-LuaItemStack::LuaItemStack(const ItemStack &stack, const DefinitionAtlas &defs) :
-    name((stack.count == 0 ? "" : defs.fromId(stack.id).identifier)),
+LuaItemStack::LuaItemStack(const ItemStack &stack, Subgame& game) :
+    name((stack.count == 0 ? "" : game.getDefs().fromId(stack.id).identifier)),
     count(stack.count) {}
 
 LuaItemStack::LuaItemStack(const std::string& name, unsigned short count) :

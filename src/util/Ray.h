@@ -12,7 +12,7 @@ class Player;
 class Ray {
 public:
     Ray() = default;
-    explicit Ray(Player* player);
+    explicit Ray(Player& player);
     Ray(glm::vec3 pos, float yaw, float pitch);
 
     void step(float scale);

@@ -32,7 +32,7 @@ private:
     void showError(const std::string& what, const std::string& subgame);
 
     sol::protected_function_result runFileSandboxed(const std::string& file);
-    sol::protected_function_result errorCallback(sol::protected_function_result errPfr);
+    virtual sol::protected_function_result errorCallback(sol::protected_function_result r) const override;
 
     LuaMod mod {};
     std::vector<std::shared_ptr<AtlasRef>> modAssets {};

@@ -20,7 +20,7 @@ enum class PacketType {
     SERVER_INFO,
 
     // Player Info
-    PLAYER_INFO,
+    PLAYER_ENT_INFO,
     THIS_PLAYER_INFO,
 
     // World

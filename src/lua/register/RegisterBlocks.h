@@ -361,11 +361,11 @@ namespace RegisterBlocks {
 
     static void server(sol::table& core, ServerSubgame& game) {
         registerBlocks(core.get<sol::table>("registered_blocks"),
-            core.get<sol::table>("registered_blockmodels"), *game.defs, nullptr);
+            core.get<sol::table>("registered_blockmodels"), game.getDefs(), nullptr);
     }
 
     static void client(sol::table& core, LocalSubgame& game) {
         registerBlocks(core.get<sol::table>("registered_blocks"),
-            core.get<sol::table>("registered_blockmodels"), *game.defs, &game.textures);
+            core.get<sol::table>("registered_blockmodels"), game.getDefs(), &game.textures);
     }
 };

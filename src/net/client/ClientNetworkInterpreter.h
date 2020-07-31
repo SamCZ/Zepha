@@ -12,7 +12,7 @@
 #include "ServerConnection.h"
 
 class Model;
-class Player;
+class LocalPlayer;
 class Target;
 class LocalWorld;
 class PacketView;
@@ -21,10 +21,10 @@ enum class NetPlayerField;
 
 class ClientNetworkInterpreter {
 public:
-    ClientNetworkInterpreter(ServerConnection& connection, LocalSubgame& defs, Player& player);
-    ClientNetworkInterpreter(const ClientNetworkInterpreter& other) = default;
+    ClientNetworkInterpreter(const ClientNetworkInterpreter& other) = delete;
+    ClientNetworkInterpreter(ServerConnection& connection, LocalSubgame& defs, LocalWorld& world);
 
-    void init(LocalWorld* world, std::function<void(std::unique_ptr<PacketView>)> invCallback);
+    void init(std::function<void(std::unique_ptr<PacketView>)> invCallback);
     void update();
 
     void blockPlace(Target& target);
@@ -33,24 +33,17 @@ public:
 
     void invWatch(const std::string& inv, const std::string& list);
     void invUnwatch(const std::string& inv, const std::string& list);
-    void invInteractPrimary(const std::string& inv, const std::string& list, unsigned short ind);
-    void invInteractSecondary(const std::string& inv, const std::string& list, unsigned short ind);
+    void invInteract(const std::string& inv, const std::string& list, bool primary, unsigned short ind);
 
-    template <typename T> void assertPlayerField(NetPlayerField field, T data) {
-        Serializer().append(static_cast<unsigned int>(field)).append<T>(data)
-            .packet(PacketType::THIS_PLAYER_INFO).sendTo(connection.getPeer(), PacketChannel::INTERACT);
-    }
+    void sendPacket(const Packet& packet, PacketChannel channel);
 
     int recvPackets = 0;
     int serverSideChunkGens = 0;
 private:
     void receivedPacket(std::unique_ptr<PacketView> ePacket);
 
-    Player& player;
+    LocalWorld& world;
     ServerConnection& connection;
-
-    LocalWorld* world = nullptr;
-    std::shared_ptr<Model> playerModel;
 
     std::function<void(std::unique_ptr<PacketView>)> onInvPacket;
 };

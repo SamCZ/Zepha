@@ -7,8 +7,8 @@
 #include "../../PacketView.h"
 
 class PacketView;
-class ServerSubgame;
 class ServerClient;
+class ServerSubgame;
 
 class ServerConfig {
 public:
@@ -17,7 +17,7 @@ public:
     void init();
 
     //Bool: Create player
-    bool handlePacket(ServerClient &client, PacketView& p);
+    bool handlePacket(ServerClient& client, PacketView& p);
 private:
     ServerSubgame& game;
     std::vector<std::string> blockIdentifierList {};

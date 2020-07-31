@@ -24,10 +24,13 @@ namespace Vec {
     // Comparison Functions
 
     struct vec3 { size_t operator()(const glm::vec3& k)const {
-        return std::hash<float>()(k.x) ^ std::hash<float>()(k.y) ^ std::hash<float>()(k.z); } };
+            return std::hash<float>()(k.x) ^ std::hash<float>()(k.y) ^ std::hash<float>()(k.z); } };
 
     struct ivec3 { size_t operator()(const glm::ivec3& k)const {
-        return std::hash<int>()(k.x) ^ std::hash<int>()(k.y) ^ std::hash<int>()(k.z); } };
+            return std::hash<int>()(k.x) ^ std::hash<int>()(k.y) ^ std::hash<int>()(k.z); } };
+
+    struct ivec4 { size_t operator()(const glm::ivec4& k)const {
+            return std::hash<int>()(k.x) ^ std::hash<int>()(k.y) ^ std::hash<int>()(k.z) ^ std::hash<int>()(k.w); } };
 
     // Adjacent Arrays & Maps
 

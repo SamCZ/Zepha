@@ -7,9 +7,15 @@
 #include "chunk/Chunk.h"
 #include "chunk/Region.h"
 #include "chunk/MapBlock.h"
+#include "../def/Subgame.h"
 #include "../def/DefinitionAtlas.h"
 
-DimensionBase::DimensionBase(DefinitionAtlas &defs) : defs(defs) {}
+DimensionBase::DimensionBase(Subgame &game, World& world, const std::string &identifier, unsigned int ind) :
+    game(game), world(world), identifier(identifier), ind(ind) {}
+
+std::string DimensionBase::getIdentifier() const {
+    return identifier;
+}
 
 std::shared_ptr<Region> DimensionBase::getRegion(glm::ivec3 regionPosition) {
     if (!regions.count(regionPosition)) return nullptr;
@@ -71,8 +77,23 @@ bool DimensionBase::setBlock(glm::ivec3 pos, unsigned int block) {
     if (!chunk) return false;
     auto l = chunk->aquireLock();
 
-    auto &def = defs.blockFromId(block);
     return chunk->setBlock(Space::Block::relative::toChunk(pos), block);
+}
+
+unsigned int DimensionBase::getBiome(glm::ivec3 pos) {
+    auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
+    if (!chunk) return 0;
+    auto l = chunk->aquireLock();
+
+    return chunk->getBiome(Space::Block::relative::toChunk(pos));
+}
+
+bool DimensionBase::setBiome(glm::ivec3 pos, unsigned int biome) {
+    auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
+    if (!chunk) return false;
+    auto l = chunk->aquireLock();
+
+    return chunk->setBiome(Space::Block::relative::toChunk(pos), biome);
 }
 
 std::shared_ptr<Region> DimensionBase::getOrCreateRegion(glm::ivec3 pos) {
@@ -88,6 +109,14 @@ std::shared_ptr<MapBlock> DimensionBase::getOrCreateMapBlock(glm::ivec3 mapBlock
     if ((*region)[index] != nullptr) return (*region)[index];
     region->set(index, std::make_shared<MapBlock>(mapBlockPosition));
     return (*region)[index];
+}
+
+Subgame &DimensionBase::getGame() {
+    return game;
+}
+
+World &DimensionBase::getWorld() {
+    return world;
 }
 
 std::shared_ptr<Chunk> DimensionBase::combinePartials(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b) {
@@ -111,4 +140,26 @@ std::shared_ptr<Chunk> DimensionBase::combinePartials(std::shared_ptr<Chunk> a, 
     res->partial = !res->generated;
     res->countRenderableBlocks();
     return res;
+}
+
+double DimensionBase::getBlockDamage(glm::ivec3 pos) const {
+    return 0;
+}
+
+double DimensionBase::setBlockDamage(glm::ivec3 pos, double damage) {
+    return 0;
+    //TODO: WOwdowadoawod
+//    double totalDamage = World::setBlockDamage(pos, damage);
+
+//    BlockCrackEntity* block = nullptr;
+//    if (crackEntities.count(pos)) block = crackEntities[pos];
+//    else block = new BlockCrackEntity(game.defs->blockFromId(getBlock(pos)), game.textures, pos);
+//    block->setDamage(damage);
+//    block->time = 0;
+//
+//    return totalDamage;
+}
+
+unsigned int DimensionBase::getInd() {
+    return ind;
 }

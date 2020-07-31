@@ -5,16 +5,17 @@
 #include <iostream>
 #include "ServerPacketStream.h"
 
+#include "ServerWorld.h"
 #include "../../Serializer.h"
-#include "../../../world/ServerDimension.h"
 #include "../../../world/chunk/Chunk.h"
+#include "../../../world/ServerDimension.h"
 
-ServerPacketStream::ServerPacketStream(ServerDimension& dimension) : dimension(dimension) {
+ServerPacketStream::ServerPacketStream(ServerWorld& world) : world(world) {
     threads.reserve(THREADS);
     for (int i = 0; i < THREADS; i++) threads.emplace_back();
 }
 
-bool ServerPacketStream::queue(glm::ivec3 pos) {
+bool ServerPacketStream::queue(glm::ivec4 pos) {
     if (!queuedMap.count(pos)) {
         queuedTasks.push(pos);
         queuedMap.insert(pos);
@@ -45,7 +46,7 @@ std::unique_ptr<std::vector<std::unique_ptr<ServerPacketStream::FinishedJob>>> S
                 queuedMap.erase(pos);
                 queuedTasks.pop();
 
-                auto mapBlock = dimension.getMapBlock(pos);
+                auto mapBlock = world.getDimension(pos.w).getMapBlock(glm::ivec3(pos));
                 if (!mapBlock) continue;
 
                 j.pos = pos;

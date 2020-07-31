@@ -5,13 +5,13 @@
 #pragma once
 
 #include "../NetHandler.h"
-#include "conn/ClientList.h"
+#include "conn/ServerClients.h"
 #include "world/ServerWorld.h"
 #include "config/ServerConfig.h"
 #include "../../def/ServerSubgame.h"
-#include "../../game/inventory/InventoryRefs.h"
+#include "../../game/inventory/ServerInventoryRefs.h"
 
-class ServerClient;
+class ServerPlayer;
 class Packet;
 
 class Server {
@@ -19,27 +19,27 @@ public:
     explicit Server(unsigned short port, const std::string& subgame);
 
     void update();
-    void handlePlayerPacket(ServerClient& client, PacketView& p);
 
     void cleanup();
-
     ~Server();
 private:
-    bool alive = true;
+    void packetReceived(ENetEvent& e);
+    void playerPacketReceived(PacketView& p, ServerPlayer& player);
 
-    unsigned int seed = 0;
     unsigned short port = 0;
+    unsigned int seed = 0;
 
-    ServerSubgame defs;
+    ServerSubgame game;
+    ServerClients clients;
     ServerWorld world;
     NetHandler handler;
-    ClientList clientList;
     ServerConfig config;
-    InventoryRefs refs;
 
     std::unordered_set<unsigned int> playersUpdated {};
 
-    double elapsedSeconds = 0;
-    double deltaTime = 0;
+    double elapsed = 0;
+    double delta = 0;
+
+    bool alive = true;
 };
 

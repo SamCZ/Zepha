@@ -4,19 +4,19 @@
 
 #pragma once
 
-#include "../Entity.h"
+#include "../DrawableEntity.h"
 
-class PlayerEntity : public Entity {
+class PlayerEntity : public DrawableEntity {
 public:
-    PlayerEntity(glm::vec3 pos, unsigned int cid, const std::shared_ptr<Model>& playerModel) : cid(cid) {
-        setModel(playerModel);
+    PlayerEntity(Subgame& game, Dimension* dim, glm::vec3 pos, unsigned int id, const std::shared_ptr<Model>& model) :
+        DrawableEntity(model), id(id) {
         setPos(pos);
     }
 
-    unsigned int getCid() {
-        return cid;
+    unsigned int getId() {
+        return id;
     }
 
 private:
-    unsigned int cid;
+    unsigned int id;
 };

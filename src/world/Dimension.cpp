@@ -5,6 +5,7 @@
 #include "Dimension.h"
 
 #include "chunk/Chunk.h"
+#include "../def/Subgame.h"
 #include "../def/item/BlockDef.h"
 #include "../def/DefinitionAtlas.h"
 
@@ -15,7 +16,7 @@ bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {
 
     if (!DimensionBase::setBlock(pos, block)) return false;
 
-    auto &def = defs.blockFromId(block);
+    auto &def = game.getDefs().blockFromId(block);
 
     glm::ivec4 oldLight = chunk->getLight(Space::Block::index(pos));
     glm::ivec3 newLight = def.lightSource;
@@ -31,6 +32,10 @@ bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {
     propogateRemoveNodes();
 
     return true;
+}
+
+unsigned int Dimension::nextEntityInd() {
+    return entityInd++;
 }
 
 std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::calculateEdgeLight(glm::ivec3 mbPos) {
@@ -93,7 +98,7 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
                 }
 
                 bool sunDown = (channel == SUNLIGHT_CHANNEL && lightLevel == 15 && i.y == -1);
-                if (defs.blockFromId(chunk->getBlock(ind)).lightPropagates && (sunDown || chunk->getLight(ind, channel) + 2 <= lightLevel)) {
+                if (game.getDefs().blockFromId(chunk->getBlock(ind)).lightPropagates && (sunDown || chunk->getLight(ind, channel) + 2 <= lightLevel)) {
                     int subtract = sunDown ? 0 : 1;
                     chunk->setLight(ind, channel, lightLevel - subtract);
                     lightAddQueue[channel].emplace(ind, chunk);
@@ -134,7 +139,7 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
                 unsigned char checkLight = chunk->getLight(ind, channel);
                 if (checkLight != 0 && (checkLight < node.value || (channel == SUNLIGHT_CHANNEL && i.y == -1 && node.value == 15))) {
                     unsigned int replaceLight = (channel == SUNLIGHT_CHANNEL ? 0 :
-                        defs.blockFromId(chunk->getBlock(Space::Block::index(check))).lightSource[channel]);
+                        game.getDefs().blockFromId(chunk->getBlock(Space::Block::index(check))).lightSource[channel]);
                     chunk->setLight(ind, channel, replaceLight);
 
                     if (replaceLight) lightAddQueue[channel].emplace(ind, chunk);

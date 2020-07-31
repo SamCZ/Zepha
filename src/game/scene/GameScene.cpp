@@ -10,24 +10,18 @@
 #include "../../net/PacketView.h"
 
 GameScene::GameScene(ClientState& state) : Scene(state),
-    refs(*game.defs, net),
     game(state.defs),
-    world(game, &net),
-    net(state.connection, game, player),
-    player(game, world, state.renderer, refs, net),
-    debugGui(state.renderer.window.getSize(), game) {
-
-    namespace ph = std::placeholders;
+    world(game, state.connection, state.renderer),
+    debugGui(state.renderer.window.getSize(), game, world) {
 
     Packet r(PacketType::CONNECT_DATA_RECVD);
     r.sendTo(state.connection.getPeer(), PacketChannel::CONNECT);
 
-    world.init(&player);
-    net  .init(&world, Util::bind_this(&refs, &LocalInventoryRefs::packetReceived));
-    game .init(world, player, state);
-    refs .init();
+    world.connect();
+    game.initApi(world, state);
+    if (world.initPlayer()) game.loadPlayer(world.getPlayer());
 
-    state.renderer.window.addResizeCallback("gamescene", std::bind(&DebugGui::bufferResized, debugGui, ph::_1));
+    state.renderer.window.addResizeCallback("gamescene", Util::bind_this(&debugGui, &DebugGui::bufferResized));
     state.renderer.setClearColor(148, 194, 240);
     state.renderer.window.input.lockMouse(true);
 }
@@ -35,22 +29,21 @@ GameScene::GameScene(ClientState& state) : Scene(state),
 void GameScene::update() {
     Window& window = state.renderer.window;
 
-    player.update(window.input, state.delta, window.input.mouseDelta());
     game.update(state.delta);
-    refs.update(state.delta, net);
-    net.update();
+    world.update(state.delta);
 
     for (auto entity : entities) entity->update(state.delta);
 
-    debugGui.update(player, world, game, state.fps, world.getMeshChunkCount(), drawCalls, net.serverSideChunkGens, net.recvPackets);
-    world.update(state.delta);
-    net.serverSideChunkGens = 0;
-    net.recvPackets = 0;
+    debugGui.update(*world.getPlayer(), state.fps, world.getActiveDimension().getMeshChunkCount(),
+        drawCalls, world.getNet().serverSideChunkGens, world.getNet().recvPackets);
+
+    world.getNet().serverSideChunkGens = 0;
+    world.getNet().recvPackets = 0;
 
     if (window.input.keyPressed(GLFW_KEY_F1)) {
         hudVisible = !hudVisible;
         debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
-        player.setHudVisible(hudVisible);
+        world.getPlayer()->setHudVisible(hudVisible);
     }
 
     if (window.input.keyPressed(GLFW_KEY_F3)) {
@@ -72,15 +65,14 @@ void GameScene::draw() {
 
     for (auto entity : entities) entity->draw(renderer);
     world.renderEntities(renderer);
-    player.draw(renderer);
 
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
     renderer.enableTexture(&game.textures.atlasTexture);
 
-    player.drawHud(renderer);
+    world.getPlayer()->drawHud(renderer);
     debugGui.draw(renderer);
-    player.drawMenu(renderer);
+    world.getPlayer()->drawMenu(renderer);
 
     renderer.swapBuffers();
 }

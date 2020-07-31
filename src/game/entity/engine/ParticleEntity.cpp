@@ -9,7 +9,7 @@
 #include "../../../def/item/BlockDef.h"
 #include "../../../def/texture/AtlasRef.h"
 
-ParticleEntity::ParticleEntity(glm::vec3 pos, BlockDef &block) {
+ParticleEntity::ParticleEntity(glm::vec3 pos, BlockDef &block) : DrawableEntity(std::make_shared<Model>()) {
     setPos(pos + glm::vec3(.5,.3,.5));
 
     std::set<std::shared_ptr<AtlasRef>>& textureRefs = block.model.textureRefs;
@@ -61,12 +61,12 @@ void ParticleEntity::update(double delta, glm::vec3 player) {
 
     setPos(getPos() + velocity * glm::vec3(static_cast<float>(delta)));
 
-    double angle = -glm::degrees(std::atan2(player.z - position.z, player.x - position.x)) + 90.f;
+    double angle = -glm::degrees(std::atan2(player.z - pos.z, player.x - pos.x)) + 90.f;
     setRotateY(static_cast<float>(angle));
 
     velocity.y -= 32.f  * delta;
 }
 
 void ParticleEntity::draw(Renderer &renderer) {
-    Entity::draw(renderer);
+    DrawableEntity::draw(renderer);
 }

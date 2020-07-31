@@ -1,55 +1,18 @@
 //
-// Created by aurailus on 2020-02-26.
+// Created by aurailus on 2020-07-29.
 //
 
 #include "InventoryRefs.h"
 
-#include "ServerInventoryList.h"
-#include "../../def/ServerDefinitionAtlas.h"
+#include "../../def/Subgame.h"
 
-InventoryRefs::InventoryRefs(ServerDefinitionAtlas &defs, ClientList* clients) :
-    defs(defs), clients(clients) {}
+InventoryRefs::InventoryRefs(Subgame& game) : game(game) {}
 
-void InventoryRefs::update() {
-    for (auto& inv : inventories) {
-        inv.second->sendDirtyLists();
-    }
+bool InventoryRefs::hasInventory(const std::string &inv) {
+    return inventories.count(inv);
 }
 
-std::shared_ptr<Inventory> InventoryRefs::createInv(const std::string &inv) {
-    if (!inventories.count(inv)) inventories.emplace(inv, std::make_shared<Inventory>(defs, clients, inv));
-    return inventories[inv];
-}
-
-std::shared_ptr<Inventory> InventoryRefs::getInv(const std::string &inv) {
-    return inventories[inv];
-}
-
-std::shared_ptr<ServerInventoryList> InventoryRefs::getList(const std::string &inv, const std::string &list) {
-    if (!inventories.count(inv)) return nullptr;
-    return inventories[inv]->operator[](list);
-}
-
-bool InventoryRefs::addWatcher(const std::string &inv, const std::string &list, unsigned int cid) {
-    if (!inventories.count(inv)) return false;
-    if (!inventories[inv]->operator[](list)) return false;
-
-    inventories[inv]->operator[](list)->addWatcher(cid);
-    return true;
-}
-
-bool InventoryRefs::removeWatcher(const std::string &inv, const std::string &list, unsigned int cid) {
-    if (!inventories.count(inv)) return false;
-    if (!inventories[inv]->operator[](list)) return false;
-
-    inventories[inv]->operator[](list)->removeWatcher(cid);
-    return true;
-}
-
-void InventoryRefs::primaryInteract(const std::string &inv, const std::string &list, unsigned short ind, unsigned int cid) {
-    (*inventories[inv])[list]->primaryInteract(*(*inventories["player:" + std::to_string(cid)])["cursor"], ind);
-}
-
-void InventoryRefs::secondaryInteract(const std::string &inv, const std::string &list, unsigned short ind, unsigned int cid) {
-    (*inventories[inv])[list]->secondaryInteract(*(*inventories["player:" + std::to_string(cid)])["cursor"], ind);
+Inventory& InventoryRefs::getInventory(const std::string &inv) {
+    if (!inventories.count(inv)) throw std::runtime_error("Inventory " + inv + " doesn't exist~!");
+    return *inventories.at(inv);
 }

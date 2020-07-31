@@ -6,7 +6,7 @@
 
 #include "ServerSubgame.h"
 
-#include "../net/server/conn/ClientList.h"
+#include "../net/server/conn/ServerClients.h"
 
 ServerSubgame::ServerSubgame(const std::string& subgame, unsigned int seed) :
     subgamePath("subgames/" + subgame + "/"),
@@ -23,7 +23,7 @@ void ServerSubgame::init(ServerWorld &world) {
     lua->init(world, subgamePath);
 }
 
-void ServerSubgame::update(double delta, ClientList& clients) {
+void ServerSubgame::update(double delta) {
     lua->update(delta);
 }
 

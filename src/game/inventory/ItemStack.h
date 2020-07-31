@@ -6,14 +6,14 @@
 
 #include <string>
 
-class DefinitionAtlas;
+class Subgame;
 class LuaItemStack;
 
 class ItemStack {
 public:
     ItemStack() = default;
     ItemStack(unsigned int id, unsigned short count);
-    ItemStack(LuaItemStack& stack, const DefinitionAtlas& atlas);
+    ItemStack(LuaItemStack& stack, Subgame& game);
 
     bool operator!=(const ItemStack& b) const;
     bool operator==(const ItemStack& b) const;

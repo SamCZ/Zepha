@@ -5,10 +5,10 @@
 #include "LocalLuaAnimationManager.h"
 
 #include "../Lua.h"
-#include "../../game/entity/Entity.h"
+#include "../../game/entity/DrawableEntity.h"
 #include "../../game/entity/AnimationSegment.h"
 
-LocalLuaAnimationManager::LocalLuaAnimationManager(Entity &entity) :
+LocalLuaAnimationManager::LocalLuaAnimationManager(DrawableEntity &entity) :
     entity(entity) {}
 
 void LocalLuaAnimationManager::define(sol::table anims) {

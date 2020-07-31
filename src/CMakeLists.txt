@@ -53,17 +53,13 @@ add_library(Zepha_Core
 	game/entity/AnimationState.h
 	game/entity/AnimChannel.cpp
 	game/entity/AnimChannel.h
-	game/entity/Collidable.cpp
-	game/entity/Collidable.h
-	game/entity/engine/BlockCrackEntity.cpp
-	game/entity/engine/BlockCrackEntity.h
 	game/entity/engine/ParticleEntity.cpp
 	game/entity/engine/ParticleEntity.h
 	game/entity/engine/PlayerEntity.h
 	game/entity/engine/WireframeEntity.cpp
 	game/entity/engine/WireframeEntity.h
-	game/entity/Entity.cpp
-	game/entity/Entity.h
+	game/entity/DrawableEntity.cpp
+	game/entity/DrawableEntity.h
 	game/entity/Model.cpp
 	game/entity/Model.h
 	game/entity/ModelAnimation.cpp
@@ -142,12 +138,12 @@ add_library(Zepha_Core
 	game/hud/GuiBuilder.cpp
 	game/hud/GuiBuilder.h
 	game/hud/SerialGui.h
-	game/inventory/Inventory.cpp
-	game/inventory/Inventory.h
+	game/inventory/ServerInventory.cpp
+	game/inventory/ServerInventory.h
 	game/inventory/InventoryList.cpp
 	game/inventory/InventoryList.h
-	game/inventory/InventoryRefs.cpp
-	game/inventory/InventoryRefs.h
+	game/inventory/ServerInventoryRefs.cpp
+	game/inventory/ServerInventoryRefs.h
 	game/inventory/ItemStack.cpp
 	game/inventory/ItemStack.h
 	game/inventory/LocalInventory.cpp
@@ -178,8 +174,8 @@ add_library(Zepha_Core
 	game/scene/world/LocalWorld.h
 	game/scene/world/MeshGenStream.cpp
 	game/scene/world/MeshGenStream.h
-	game/scene/world/Player.cpp
-	game/scene/world/Player.h
+	game/scene/world/LocalPlayer.cpp
+	game/scene/world/LocalPlayer.h
 	game/scene/world/Schematic.cpp
 	game/scene/world/Schematic.h
 	game/scene/world/World.cpp
@@ -200,12 +196,8 @@ add_library(Zepha_Core
 	lua/LuaMod.h
 	lua/LuaParser.cpp
 	lua/LuaParser.h
-		lua/modules/BaseModule.h
-	lua/modules/Block.cpp
-	lua/modules/Block.h
+	lua/modules/BaseModule.h
 	lua/modules/create_structure.h
-	lua/modules/Entity.cpp
-	lua/modules/Entity.h
 	lua/modules/mSetGui.h
 	lua/modules/mStartGame.h
 	lua/modules/Register.cpp
@@ -225,19 +217,14 @@ add_library(Zepha_Core
 	lua/ServerModHandler.cpp
 	lua/ServerModHandler.h
 	lua/usertype/cAnimationManager.h
-	lua/usertype/cInventoryRef.h
 	lua/usertype/cItemStack.h
 	lua/usertype/cLuaEntity.h
 	lua/usertype/LocalLuaAnimationManager.cpp
 	lua/usertype/LocalLuaAnimationManager.h
 	lua/usertype/LocalLuaEntity.cpp
 	lua/usertype/LocalLuaEntity.h
-	lua/usertype/LocalLuaInventory.cpp
-	lua/usertype/LocalLuaInventory.h
-	lua/usertype/LocalLuaInventoryList.cpp
-	lua/usertype/LocalLuaInventoryList.h
-	lua/usertype/LocalLuaPlayer.cpp
-	lua/usertype/LocalLuaPlayer.h
+	lua/usertype/Player.cpp
+	lua/usertype/Player.h
 	lua/usertype/LuaGuiElement.cpp
 	lua/usertype/LuaGuiElement.h
 	lua/usertype/LuaItemStack.cpp
@@ -246,17 +233,14 @@ add_library(Zepha_Core
 	lua/usertype/ServerLocalLuaEntity.h
 	lua/usertype/ServerLuaEntity.cpp
 	lua/usertype/ServerLuaEntity.h
-	lua/usertype/ServerLuaInventory.cpp
-	lua/usertype/ServerLuaInventory.h
-	lua/usertype/ServerLuaInventoryList.cpp
-	lua/usertype/ServerLuaInventoryList.h
-	lua/usertype/ServerLuaPlayer.cpp
-	lua/usertype/ServerLuaPlayer.h
+	lua/usertype/Inventory.cpp
+	lua/usertype/Inventory.h
+	lua/usertype/InventoryList.cpp
+	lua/usertype/InventoryList.h
 	lua/usertype/sLuaEntity.h
 	net/Address.h
 	net/client/ClientNetworkInterpreter.cpp
 	net/client/ClientNetworkInterpreter.h
-	net/client/NetPlayerField.h
 	net/client/ServerConnection.cpp
 	net/client/ServerConnection.h
 	net/Deserializer.h
@@ -275,10 +259,10 @@ add_library(Zepha_Core
 	net/server/asset/ServerTexture.h
 	net/server/config/ServerConfig.cpp
 	net/server/config/ServerConfig.h
-	net/server/conn/ClientList.cpp
-	net/server/conn/ClientList.h
-	net/server/conn/ServerClient.cpp
-	net/server/conn/ServerClient.h
+	net/server/conn/ServerClients.cpp
+	net/server/conn/ServerClients.h
+	net/server/conn/ServerPlayer.cpp
+	net/server/conn/ServerPlayer.h
 	net/server/LocalServerInstance.cpp
 	net/server/LocalServerInstance.h
 	net/server/Server.cpp
@@ -320,7 +304,25 @@ add_library(Zepha_Core
 	world/fs/FileManipulator.h
 	world/LocalDimension.cpp
 	world/LocalDimension.h
-		world/Target.h
+	world/Target.h
 	world/ServerDimension.cpp
 	world/ServerDimension.h
-		lua/usertype/Target.cpp lua/usertype/Target.h lua/usertype/BaseUsertype.h lua/usertype/SubgameUsertype.h world/Target.cpp)
+	lua/usertype/Target.cpp
+	lua/usertype/Target.h
+	lua/usertype/BaseUsertype.h
+	lua/usertype/SubgameUsertype.h
+	world/Target.cpp
+		lua/usertype/Dimension.cpp
+		lua/usertype/Dimension.h
+		game/scene/world/Player.cpp
+	game/scene/world/Player.h
+	game/inventory/InventoryRefs.cpp
+	game/inventory/InventoryRefs.h
+	game/inventory/Inventory.cpp
+	game/inventory/Inventory.h
+	game/entity/Entity.cpp
+	game/entity/Entity.h
+	game/entity/Collision.cpp
+	game/entity/Collision.h
+	net/server/conn/ServerClient.cpp
+	net/server/conn/ServerClient.h lua/modules/Dimension.cpp lua/modules/Dimension.h)

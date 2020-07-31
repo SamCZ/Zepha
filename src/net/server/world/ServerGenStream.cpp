@@ -14,7 +14,7 @@ ServerGenStream::ServerGenStream(unsigned int seed, ServerSubgame& game) {
     for (int i = 0; i < THREADS; i++) threads.emplace_back(game, seed);
 }
 
-bool ServerGenStream::queue(glm::vec3 pos) {
+bool ServerGenStream::queue(glm::ivec4 pos) {
     if (!queuedMap.count(pos)) {
         queuedTasks.push(pos);
         queuedMap.insert(pos);
@@ -53,7 +53,7 @@ std::unique_ptr<std::vector<ServerGenStream::FinishedBlockJob>> ServerGenStream:
 }
 
 ServerGenStream::Thread::Thread(ServerSubgame& game, unsigned int seed) :
-    gen(*game.defs, *game.biomes, seed),
+    gen(game.getDefs(), game.getBiomes(), seed),
     thread(std::bind(&ServerGenStream::Thread::exec, this)) {}
 
 void ServerGenStream::Thread::exec() {
@@ -62,7 +62,7 @@ void ServerGenStream::Thread::exec() {
         for (Job& j : jobs) {
             if (j.locked) {
                 empty = false;
-                j.generated = gen.generateMapBlock(j.pos);
+                j.generated = gen.generateMapBlock(glm::ivec3(j.pos), j.pos.w);
                 j.locked = false;
             }
         }

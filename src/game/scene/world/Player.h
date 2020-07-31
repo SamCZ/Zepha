@@ -1,117 +1,85 @@
 //
-// Created by aurailus on 28/12/18.
+// Created by aurailus on 2020-07-28.
 //
 
 #pragma once
 
-#include "../../entity/Collidable.h"
-#include "../../graph/drawable/Drawable.h"
+#include <memory>
+#include <glm/vec3.hpp>
 
-#include "../../hud/GameGui.h"
-#include "../../../world/Target.h"
-#include "../../entity/engine/WireframeEntity.h"
+#include "../../entity/Entity.h"
+#include "../../../def/DefinitionAtlas.h"
 
-class Input;
-class LuaGuiElement;
-class LocalInventory;
-class LocalInventoryRefs;
+class World;
+class Packet;
+class Subgame;
+class Inventory;
+class Dimension;
 class Deserializer;
-enum class NetPlayerField;
+class InventoryList;
 
-class Player : Collidable, public Drawable {
+class Player : public virtual Entity {
 public:
-    enum class PlayerControl {
-        FORWARD, LEFT, BACKWARD, RIGHT,
-        JUMP, MOD1, MOD2 };
+    enum class NetField {
+        ID, POS, VEL, PITCH, YAW, LOOK_OFF, FLYING,
+        HAND_INV, WIELD_INV, WIELD_INDEX };
 
-    static constexpr float MOUSE_SENSITIVITY = 0.1f;
-    static constexpr float LOOK_DISTANCE = 6.5f;
-    static constexpr float LOOK_PRECISION = 0.01f;
-    static constexpr float EYE_HEIGHT = 1.65f;
-    static constexpr float BASE_MOVE_SPEED = 4.3f;
-    static constexpr float JUMP_VEL = 0.14f;
+    Player(Subgame& game, Dimension& dim, unsigned int id = 0) :
+            game(game), dim(dim), id(id), lookOffset(0, 1.65, 0) {
+        collision = {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}};
+    }
 
-    Player(LocalSubgame &game, LocalWorld &world, Renderer &renderer, LocalInventoryRefs &refs, ClientNetworkInterpreter& net);
-    void update(Input &input, double delta, glm::vec2 mouseDelta);
-    ~Player();
+    virtual unsigned int getId();
+    virtual void setId(unsigned int id);
 
-    glm::vec3 getPos();
-    void setPos(glm::vec3 pos, bool assert = false);
+    virtual void setPos(glm::vec3 pos, bool assert = false);
+    virtual void setVel(glm::vec3 vel, bool assert = false);
 
-    glm::vec3 getVel();
-    void setVel(glm::vec3 vel, bool assert = false);
+    virtual float getYaw();
+    virtual void setYaw(float yaw, bool assert = false);
 
-    float getYaw();
-    void setYaw(float yaw, bool assert = false);
+    virtual float getPitch();
+    virtual void setPitch(float pitch, bool assert = false);
 
-    float getPitch();
-    void setPitch(float pitch, bool assert = false);
+    virtual glm::vec3 getLookOffset();
+    virtual void setLookOffset(glm::vec3 lookOffset, bool assert = false);
 
-    bool isFlying();
-    void setFlying(bool flying, bool assert = false);
+    virtual bool isFlying();
+    virtual void setFlying(bool flying, bool assert = false);
 
-    LocalInventory& getInventory();
+    virtual std::string& getHandList();
+    virtual void setHandList(const std::string& list, bool assert = false);
 
-    std::shared_ptr<LocalInventoryList> getHandList();
-    void setHandList(const std::string& list);
+    virtual std::string& getWieldList();
+    virtual void setWieldList(const std::string& list, bool assert = false);
 
-    std::shared_ptr<LocalInventoryList> getWieldList();
-    void setWieldList(const std::string& list, bool assert = false);
+    virtual unsigned short getWieldIndex();
+    virtual void setWieldIndex(unsigned short index, bool assert = false);
 
-    unsigned short getWieldIndex();
-    void setWieldIndex(unsigned short index, bool assert = false);
+    virtual Inventory& getInventory() = 0;
+    virtual Dimension& getDimension() = 0;
 
-    bool isInMenu();
-    void showMenu(std::shared_ptr<LuaGuiElement> root);
-    void closeMenu();
-
-    void setHud(std::shared_ptr<LuaGuiElement> hud);
-    std::shared_ptr<LuaGuiElement> getHud();
-
-    Target& getPointedThing();
-    void setHudVisible(bool hudVisible);
-
-    void draw(Renderer& renderer) override;
-    void drawHud(Renderer& renderer);
-    void drawMenu(Renderer& renderer);
-
-    void handleAssertion(Deserializer& d);
+    virtual void handleAssertion(Deserializer& d) = 0;
+protected:
+    virtual void assertField(Packet packet) = 0;
 
     unsigned int id = 0;
-private:
-    bool getKey(Input& input, PlayerControl control);
 
-    void updatePhysics(Input &input, double delta, glm::vec2 mouseDelta);
-    void updateCamera();
-
-    void findPointedThing(Input &input);
-    void updateWireframe();
-
-    void interact(Input& input, double delta);
-
-    void updateWieldAndHandItems();
-
-    LocalSubgame& game;
-    ClientNetworkInterpreter& net;
-    Renderer& renderer;
-
-    GameGui gameGui;
-    Entity handModel;
-    Entity handItemModel;
-    WireframeEntity wireframe;
-
-    LocalInventoryRefs& refs;
-    unsigned int wieldIndex = 0;
-
-    unsigned int handItem = 1; // Air
-    unsigned int wieldItem = 1; // Air
+    Subgame& game;
+    Dimension& dim;
 
     float yaw = 0;
     float pitch = 0;
+
+    glm::vec3 lookOffset {};
+
     bool flying = false;
 
-    double breakTime = 0;
-    double breakInterval = 0;
-    Target target;
-};
+    std::string handList = "";
+    std::string wieldList = "";
 
+    unsigned int handItem = DefinitionAtlas::AIR;
+    unsigned int wieldItem = DefinitionAtlas::AIR;
+
+    unsigned int wieldIndex = 0;
+};

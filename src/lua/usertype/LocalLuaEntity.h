@@ -6,16 +6,16 @@
 
 #include "../Lua.h"
 #include "LocalLuaAnimationManager.h"
-#include "../../game/entity/Entity.h"
+#include "../../game/entity/DrawableEntity.h"
 
 class LocalSubgame;
 
 class LocalLuaEntity {
 public:
-    LocalLuaEntity(std::unique_ptr<Entity> entity, unsigned int id, LocalSubgame& defs) :
+    LocalLuaEntity(std::unique_ptr<DrawableEntity> entity, unsigned int id, LocalSubgame& defs) :
         entity(std::move(entity)), id(id), defs(defs), manager(*this->entity) {}
 
-    std::unique_ptr<Entity> entity = nullptr;
+    std::unique_ptr<DrawableEntity> entity = nullptr;
     unsigned int id;
     LocalSubgame& defs;
 

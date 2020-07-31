@@ -12,23 +12,25 @@
 #include "register/RegisterItems.h"
 #include "register/RegisterBiomes.h"
 #include "register/RegisterBlocks.h"
+#include "../net/server/conn/ServerPlayer.h"
 #include "../net/server/world/ServerWorld.h"
 
 // Usertypes
-#include "usertype/ServerLuaPlayer.h"
-#include "usertype/sLuaEntity.h"
-#include "usertype/sInventoryRef.h"
-#include "usertype/cItemStack.h"
 #include "usertype/Target.h"
+#include "usertype/Player.h"
+#include "usertype/Inventory.h"
+#include "usertype/Dimension.h"
+#include "usertype/InventoryList.h"
+
+#include "usertype/sLuaEntity.h"
+#include "usertype/cItemStack.h"
 
 // Modules
 #include "modules/Time.h"
-#include "modules/Block.h"
-#include "modules/Entity.h"
 #include "modules/Register.h"
+#include "modules/Dimension.h"
 
 #include "modules/create_structure.h"
-#include "LuaMod.h"
 
 ServerLuaParser::ServerLuaParser(ServerSubgame& game) : LuaParser(game), game(game) {}
 
@@ -64,9 +66,9 @@ void ServerLuaParser::sendModsPacket(ENetPeer* peer) const {
     Serializer().append(order).packet(PacketType::MOD_ORDER).sendTo(peer, PacketChannel::CONNECT);
 }
 
-void ServerLuaParser::playerConnected(std::shared_ptr<ServerClient> client) {
+void ServerLuaParser::playerConnected(std::shared_ptr<ServerPlayer> client) {
     auto players = core.get<sol::table>("players");
-    players.add(ServerLuaPlayer(*client));
+    players.add(Api::Usertype::ServerPlayer(std::static_pointer_cast<Player>(client)));
 
     sol::object player = players[players.size()];
 
@@ -74,13 +76,12 @@ void ServerLuaParser::playerConnected(std::shared_ptr<ServerClient> client) {
     safe_function(core["trigger"], "player_join", player);
 }
 
-void ServerLuaParser::playerDisconnected(std::shared_ptr<ServerClient> client) {
+void ServerLuaParser::playerDisconnected(std::shared_ptr<ServerPlayer> player) {
     for (auto& pair : core.get<sol::table>("players")) {
-        ServerLuaPlayer& p = pair.second.as<ServerLuaPlayer>();
-        if (p.get_cid() == client->cid) {
+        auto& p = pair.second.as<Api::Usertype::ServerPlayer>();
+        if (p.get_id() == player->getId()) {
             safe_function(core["trigger"], "player_disconnect", p);
 
-            p.is_player = false;
             core.get<sol::table>("players")[pair.first] = sol::nil;
             break;
         }
@@ -95,20 +96,21 @@ void ServerLuaParser::loadApi(ServerSubgame &defs, ServerWorld &world) {
 
     // Types
     ServerApi::entity        (lua);
-    ServerApi::server_player (lua);
-    ServerApi::inventory     (lua);
     ClientApi::item_stack    (lua);
 
     Api::Usertype::Target::bind(Api::State::SERVER, lua, core);
+    Api::Usertype::Dimension::bind(Api::State::SERVER, lua, core);
+    Api::Usertype::Inventory::bind(Api::State::SERVER, lua, core);
+    Api::Usertype::ServerPlayer::bind(Api::State::SERVER, lua, core);
+    Api::Usertype::InventoryList::bind(Api::State::SERVER, lua, core);
 
     core["server"] = true;
     core["players"] = lua.create_table();
 
     // Modules
     modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::SERVER, lua, core));
-    modules.emplace_back(std::make_unique<Api::Module::Block>(Api::State::SERVER, core, game, world));
-    modules.emplace_back(std::make_unique<Api::Module::Entity>(Api::State::SERVER, core, game, world));
     modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::SERVER, core, game, world));
+    modules.emplace_back(std::make_unique<Api::Module::Dimension>(Api::State::SERVER, core, game, world));
 
     Api::create_structure (lua, core);
 
@@ -125,8 +127,8 @@ void ServerLuaParser::registerDefs(ServerSubgame &defs) {
     RegisterBiomes::server(core, defs);
 }
 
-sol::protected_function_result ServerLuaParser::errorCallback(sol::protected_function_result errPfr) const {
-    sol::error err = errPfr;
+sol::protected_function_result ServerLuaParser::errorCallback(sol::protected_function_result r) const {
+    sol::error err = r;
     std::string errString = err.what();
 
     try {

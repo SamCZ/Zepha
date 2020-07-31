@@ -7,72 +7,46 @@
 #include "ServerInventoryList.h"
 
 #include "../../net/Packet.h"
-#include "../../net/Serializer.h"
 #include "../../lua/usertype/LuaItemStack.h"
-#include "../../net/server/conn/ClientList.h"
+#include "../../net/server/conn/ServerPlayer.h"
+#include "../../net/server/conn/ServerClients.h"
 
-ServerInventoryList::ServerInventoryList(DefinitionAtlas& defs, ClientList* list,
-    const std::string& invName, const std::string& listName, unsigned short size, unsigned short width) :
-    InventoryList(defs, invName, listName, size, width),
+ServerInventoryList::ServerInventoryList(Subgame& game, ServerClients& list,
+    const std::string& name, const std::string& invName, unsigned short size, unsigned short width) :
+    InventoryList(game, name, invName, size, width),
     clients(list) {}
 
 void ServerInventoryList::manipulated() {
     dirty = true;
 }
 
-bool ServerInventoryList::addWatcher(unsigned int cid) {
-    auto& client = clients->getClient(cid);
-    if (!client) return false;
-
-    for (const auto& i : watchers) if (i == cid) return false;
-    watchers.push_back(cid);
-
+bool ServerInventoryList::addWatcher(unsigned int id) {
+    auto& client = clients.getPlayer(id);
+    if (!client || watchers.count(id)) return false;
+    watchers.insert(id);
     sendTo(client);
     return true;
 }
 
-bool ServerInventoryList::removeWatcher(unsigned int cid) {
-    for (auto it = watchers.cbegin(); it != watchers.cend();) {
-        if (*it == cid) {
-            watchers.erase(it);
-            return true;
-        }
-        it++;
-    }
-    return false;
+bool ServerInventoryList::removeWatcher(unsigned int id) {
+    if (!watchers.count(id)) return false;
+    watchers.erase(id);
+    return true;
 }
 
-Packet ServerInventoryList::createPacket() {
-    Serializer s{};
-
-    s.append<std::string>(invName)
-     .append<std::string>(listName)
-     .append<unsigned int>(itemstacks.size())
-     .append<unsigned int>(width);
-
-    for (auto& stack : itemstacks) {
-        s.append<unsigned short>(stack.count);
-        s.append<unsigned int>(stack.id);
-    }
-
-    return s.packet(PacketType::INV_DATA, false);
+void ServerInventoryList::sendTo(std::shared_ptr<ServerPlayer> player) {
+    if (!player) return;
+    createPacket().sendTo(player->getPeer(), PacketChannel::INVENTORY);
 }
 
-void ServerInventoryList::sendTo(std::shared_ptr<ServerClient> client) {
-    if (!client) return;
-    createPacket().sendTo(client->peer, PacketChannel::INVENTORY);
-}
-
-void ServerInventoryList::sendAll() {
+void ServerInventoryList::sendToAll() {
     auto p = createPacket();
 
     for (auto it = watchers.cbegin(); it != watchers.cend();) {
-        auto& client = clients->getClient(*it);
-        if (!client) {
-            it = watchers.erase(it);
-        }
+        auto& player = clients.getPlayer(*it);
+        if (!player) it = watchers.erase(it);
         else {
-            p.sendTo(client->peer, PacketChannel::INVENTORY);
+            p.sendTo(player->getPeer(), PacketChannel::INVENTORY);
             it++;
         }
     }

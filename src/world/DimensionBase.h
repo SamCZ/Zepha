@@ -11,14 +11,18 @@
 
 #include "../util/Vec.h"
 
+class World;
 class Chunk;
 class Region;
+class Subgame;
 class MapBlock;
 class DefinitionAtlas;
 
 class DimensionBase {
 public:
-    DimensionBase(DefinitionAtlas& defs);
+    DimensionBase(Subgame& game, World& world, const std::string& identifier, unsigned int ind);
+
+    std::string getIdentifier() const;
 
     std::shared_ptr<Region> getRegion(glm::ivec3 regionPosition);
     void removeRegion(glm::ivec3 pos);
@@ -34,16 +38,32 @@ public:
 
     unsigned int getBlock(glm::ivec3 pos);
     virtual bool setBlock(glm::ivec3 pos, unsigned int block);
-protected:
 
+    virtual double getBlockDamage(glm::ivec3 pos) const;
+    virtual double setBlockDamage(glm::ivec3 pos, double damage);
+
+    unsigned int getBiome(glm::ivec3 pos);
+    virtual bool setBiome(glm::ivec3 pos, unsigned int biome);
+
+    unsigned int getInd();
+
+    virtual Subgame& getGame();
+    virtual World& getWorld();
+protected:
     // Combine two chunk partials, or a chunk and a chunk partial.
     // If both are partials `b` takes preference, if one is a fully generated chunk the partial takes preference.
     // TODO: Make this more efficient using proper RIE traversal.
     static std::shared_ptr<Chunk> combinePartials(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b);
 
+    Subgame& game;
+    World& world;
+
     typedef std::unordered_map<glm::ivec3, std::shared_ptr<Region>, Vec::ivec3> block_region_map;
     block_region_map regions;
-    DefinitionAtlas& defs;
+
+    std::string identifier;
+    unsigned int ind;
+    
 private:
 
     inline std::shared_ptr<Region> getOrCreateRegion(glm::ivec3 pos);

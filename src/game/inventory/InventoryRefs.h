@@ -1,33 +1,27 @@
 //
-// Created by aurailus on 2020-02-26.
+// Created by aurailus on 2020-07-29.
 //
 
 #pragma once
 
-#include "Inventory.h"
+#include <string>
+#include <memory>
+#include <unordered_map>
 
-class ServerInventoryList;
-class ServerDefinitionAtlas;
+class Subgame;
+class Inventory;
 
 class InventoryRefs {
 public:
-    InventoryRefs(ServerDefinitionAtlas& defs, ClientList* clients);
+    InventoryRefs(const InventoryRefs& o) = delete;
+    explicit InventoryRefs(Subgame& game);
 
-    void update();
+    virtual bool hasInventory(const std::string& inv);
+    virtual Inventory& createInventory(const std::string& inv) = 0;
+    virtual Inventory& getInventory(const std::string& inv);
 
-    std::shared_ptr<Inventory> createInv(const std::string& inv);
-    std::shared_ptr<Inventory> getInv(const std::string& inv);
-    std::shared_ptr<ServerInventoryList> getList(const std::string& inv, const std::string& list);
+protected:
+    Subgame& game;
 
-    bool addWatcher(const std::string& inv, const std::string& list, unsigned int cid);
-    bool removeWatcher(const std::string& inv, const std::string& list, unsigned int cid);
-
-    void primaryInteract(const std::string& inv, const std::string& list, unsigned short ind, unsigned int cid);
-    void secondaryInteract(const std::string& inv, const std::string& list, unsigned short ind, unsigned int cid);
-private:
     std::unordered_map<std::string, std::shared_ptr<Inventory>> inventories {};
-
-    ClientList* clients;
-    ServerDefinitionAtlas& defs;
-    double time = 0;
 };

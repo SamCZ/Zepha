@@ -13,31 +13,38 @@
 #include "register/RegisterKeybinds.h"
 
 // Usertypes
+#include "usertype/Target.h"
+#include "usertype/Player.h"
+#include "usertype/Inventory.h"
+#include "usertype/Dimension.h"
+#include "usertype/InventoryList.h"
+
 #include "usertype/LuaGuiElement.h"
 #include "usertype/cItemStack.h"
-#include "usertype/LocalLuaPlayer.h"
 #include "usertype/cLuaEntity.h"
-#include "usertype/cInventoryRef.h"
 #include "usertype/cAnimationManager.h"
-#include "usertype/Target.h"
 
 // Modules
 #include "modules/Time.h"
-#include "modules/Block.h"
-#include "modules/Entity.h"
 #include "modules/Register.h"
+#include "modules/Dimension.h"
+
 #include "modules/create_structure.h"
 
 LocalLuaParser::LocalLuaParser(LocalSubgame& game): LuaParser(game), game(game), keybinds(this) {}
 
-void LocalLuaParser::init(LocalWorld& world, Player& player, ClientState& state) {
+void LocalLuaParser::init(LocalWorld& world, ClientState& state) {
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
 
-    loadApi(game, world, player);
+    loadApi(game, world);
     handler.executeMods(std::bind(&LocalLuaParser::runFileSandboxed, this, std::placeholders::_1));
     state.renderer.window.input.setCallback(std::bind(&LuaKeybindHandler::keybindHandler, &keybinds, std::placeholders::_1, std::placeholders::_2));
 
     registerDefs(game);
+}
+
+void LocalLuaParser::loadPlayer(std::shared_ptr<LocalPlayer> player) {
+    core["player"] = Api::Usertype::LocalPlayer(player);
 }
 
 void LocalLuaParser::update(double delta) {
@@ -53,7 +60,7 @@ LocalModHandler& LocalLuaParser::getHandler() {
     return handler;
 }
 
-void LocalLuaParser::loadApi(LocalSubgame &defs, LocalWorld &world, Player& player) {
+void LocalLuaParser::loadApi(LocalSubgame &defs, LocalWorld &world) {
     //Create Zepha Table
     core = lua.create_table();
     lua["zepha"] = core;
@@ -62,21 +69,21 @@ void LocalLuaParser::loadApi(LocalSubgame &defs, LocalWorld &world, Player& play
     // Types
     ClientApi::entity            (lua);
     ClientApi::animation_manager (lua);
-    ClientApi::local_player      (lua);
-    ClientApi::inventory         (lua);
     ClientApi::item_stack        (lua);
     ClientApi::gui_element       (lua);
 
     Api::Usertype::Target::bind(Api::State::CLIENT, lua, core);
+    Api::Usertype::Dimension::bind(Api::State::CLIENT, lua, core);
+    Api::Usertype::Inventory::bind(Api::State::CLIENT, lua, core);
+    Api::Usertype::LocalPlayer::bind(Api::State::CLIENT, lua, core);
+    Api::Usertype::InventoryList::bind(Api::State::CLIENT, lua, core);
 
     core["client"] = true;
-    core["player"] = LocalLuaPlayer(player);
 
     // Modules
     modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::CLIENT, lua, core));
-    modules.emplace_back(std::make_unique<Api::Module::Block>(Api::State::CLIENT, core, game, world));
-    modules.emplace_back(std::make_unique<Api::Module::Entity>(Api::State::CLIENT, core, game, world));
     modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::CLIENT, core, game, world));
+    modules.emplace_back(std::make_unique<Api::Module::Dimension>(Api::State::CLIENT, core, game, world));
 
     bindModules();
 
@@ -94,8 +101,8 @@ void LocalLuaParser::registerDefs(LocalSubgame &defs) {
     RegisterKeybinds::client(core, keybinds);
 }
 
-sol::protected_function_result LocalLuaParser::errorCallback(sol::protected_function_result errPfr) const {
-    sol::error err = errPfr;
+sol::protected_function_result LocalLuaParser::errorCallback(sol::protected_function_result r) const {
+    sol::error err = r;
     std::string errString = err.what();
 
     try {

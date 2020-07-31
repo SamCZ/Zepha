@@ -176,8 +176,8 @@ void MenuSandbox::showError(const std::string& what, const std::string& subgame)
     errWrap->add(errMsg);
 }
 
-sol::protected_function_result MenuSandbox::errorCallback(sol::protected_function_result errPfr) {
-    sol::error err = errPfr;
+sol::protected_function_result MenuSandbox::errorCallback(sol::protected_function_result r) const {
+    sol::error err = r;
     std::string errString = err.what();
 
     try {
@@ -189,9 +189,8 @@ sol::protected_function_result MenuSandbox::errorCallback(sol::protected_functio
         std::string fileName = errString.substr(0, lineNumStart);
         int lineNum = std::stoi(errString.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1));
 
-        for (LuaMod::File& f : mod.files)
-            if (f.path == fileName)
-                throw std::runtime_error(ErrorFormatter::formatError(fileName, lineNum, errString, f.file));
+        for (const LuaMod::File& file : mod.files) if (file.path == fileName)
+            throw std::runtime_error(ErrorFormatter::formatError(fileName, lineNum, errString, file.file));
 
         throw std::out_of_range("Error thrown outside of handled files. [2]");
     }
