@@ -72,7 +72,6 @@ void Player::setHandList(const std::string &list, bool assert) {
 }
 
 std::string Player::getWieldList() {
-    std::cout << wieldList << std::endl;
     return wieldList;
 }
 

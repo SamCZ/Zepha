@@ -11,8 +11,8 @@
 
 LocalWorld::LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& renderer) :
     World(game),
-    renderer(renderer),
     net(conn, *this),
+    renderer(renderer),
     refs(std::make_shared<LocalInventoryRefs>(game, net)),
     worldGenStream(std::make_shared<WorldInterpolationStream>(55, game)),
     player(std::make_shared<LocalPlayer>(game, *this, DimensionPtr(nullptr), renderer)) {}

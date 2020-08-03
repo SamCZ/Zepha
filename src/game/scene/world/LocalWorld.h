@@ -47,7 +47,7 @@ private:
 
     ClientNetworkInterpreter net;
     std::shared_ptr<LocalInventoryRefs> refs;
-    PlayerPtr player {};
+    PlayerPtr player;
 
     std::shared_ptr<LocalDimension> activeDimension = nullptr;
 
