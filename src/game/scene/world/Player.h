@@ -25,8 +25,8 @@ public:
         ID, POS, VEL, PITCH, YAW, LOOK_OFF, FLYING,
         HAND_INV, WIELD_INV, WIELD_INDEX };
 
-    Player(SubgamePtr game, DimensionPtr dim, unsigned int id = 0) :
-            game(game), dim(dim), id(id), lookOffset(0, 1.65, 0) {
+    Player(SubgamePtr game, World& world, DimensionPtr dim, unsigned int id = 0) :
+        game(game), world(world), dim(dim), id(id), lookOffset(0, 1.65, 0) {
         collision = {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}};
     }
 
@@ -57,8 +57,10 @@ public:
     virtual unsigned short getWieldIndex();
     virtual void setWieldIndex(unsigned short index, bool assert = false);
 
-    virtual InventoryPtr getInventory() = 0;
     DimensionPtr getDimension();
+    virtual void setDimension(DimensionPtr dim);
+
+    virtual InventoryPtr getInventory() = 0;
 
     virtual void handleAssertion(Deserializer& d) = 0;
 protected:
@@ -66,6 +68,7 @@ protected:
 
     unsigned int id = 0;
 
+    World& world;
     SubgamePtr game;
     DimensionPtr dim;
 

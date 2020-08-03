@@ -23,7 +23,7 @@ class LocalPlayer : public virtual DrawableEntity, public Player {
 public:
     enum class PlayerControl { FORWARD, LEFT, BACKWARD, RIGHT, JUMP, MOD1, MOD2 };
 
-    LocalPlayer(SubgamePtr game, DimensionPtr dim, Renderer &renderer);
+    LocalPlayer(SubgamePtr game, LocalWorld& world, DimensionPtr dim, Renderer &renderer);
 
     void update(Input &input, double delta, glm::vec2 mouseDelta);
     virtual void assertField(Packet packet) override;
@@ -36,6 +36,7 @@ public:
     virtual void setHandList(const std::string& list, bool assert = false) override;
     virtual void setWieldList(const std::string& list, bool assert = false) override;
     virtual void setWieldIndex(unsigned short index, bool assert = false) override;
+    virtual void setDimension(DimensionPtr dim) override;
 
     bool isInMenu();
     void showMenu(std::shared_ptr<LuaGuiElement> root);
@@ -45,7 +46,7 @@ public:
     std::shared_ptr<LuaGuiElement> getHud();
     void setHudVisible(bool hudVisible);
 
-    Target& getPointedThing();
+    Target& getTarget();
 
     void draw(Renderer& renderer) override;
     void drawHud(Renderer& renderer);

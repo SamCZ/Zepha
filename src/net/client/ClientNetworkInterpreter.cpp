@@ -68,7 +68,6 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
             serverSideChunkGens = p->d.read<unsigned int>(); break;
 
         case PacketType::THIS_PLAYER_INFO:
-            if (!world.getPlayer()) throw std::runtime_error("Received player info *before* the player was created.");
             world.getPlayer()->handleAssertion(p->d); break;
             
         case PacketType::PLAYER_ENT_INFO:

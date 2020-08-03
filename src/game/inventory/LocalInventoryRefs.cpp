@@ -11,11 +11,12 @@
 #include "../../def/LocalDefinitionAtlas.h"
 #include "../../net/client/ClientNetworkInterpreter.h"
 
-LocalInventoryRefs::LocalInventoryRefs(SubgamePtr game, ClientNetworkInterpreter& net) : InventoryRefs(game), net(net) {}
-
-void LocalInventoryRefs::init() {
+LocalInventoryRefs::LocalInventoryRefs(SubgamePtr game, ClientNetworkInterpreter& net) : InventoryRefs(game), net(net) {
     createInventory("current_player");
     getInventory("current_player")->createList("cursor", 1, 1);
+}
+
+void LocalInventoryRefs::init() {
     watch("current_player", "cursor");
 }
 

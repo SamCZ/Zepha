@@ -13,11 +13,11 @@
 #include "../../../world/chunk/Chunk.h"
 #include "../../../net/client/ClientNetworkInterpreter.h"
 
-LocalPlayer::LocalPlayer(SubgamePtr game, DimensionPtr dim, Renderer &renderer) :
-    Player(game, dim),
+LocalPlayer::LocalPlayer(SubgamePtr game, LocalWorld& world, DimensionPtr dim, Renderer &renderer) :
+    Player(game, world, dim),
     renderer(renderer),
     wireframe({1, 1, 1}),
-    gameGui(dim->getWorld().getRefs().l(), renderer.window.getSize(), game.l(), renderer) {
+    gameGui(world.getRefs().l(), renderer.window.getSize(), game.l(), renderer) {
 
     handItemModel.parent = &handModel;
 
@@ -43,17 +43,17 @@ void LocalPlayer::update(Input &input, double delta, glm::vec2 mouseDelta) {
 
 void LocalPlayer::assertField(Packet packet) {
     packet.type = PacketType::THIS_PLAYER_INFO;
-    static_cast<LocalWorld&>(dim->getWorld()).getNet().sendPacket(packet, PacketChannel::INTERACT);
+    static_cast<LocalWorld&>(world).getNet().sendPacket(packet, PacketChannel::INTERACT);
 }
 
 void LocalPlayer::handleAssertion(Deserializer &d) {
     while (!d.atEnd()) {
-        switch (static_cast<NetField>(d.read<unsigned int>())) {
+        switch (d.readE<NetField>()) {
             case NetField::ID:     id = d.read<unsigned int>(); break;
             case NetField::POS:    setPos(d.read<glm::vec3>()); break;
             case NetField::VEL:    setVel(d.read<glm::vec3>()); break;
-            case NetField::PITCH:  setPitch(d.read<float>());   break;
             case NetField::YAW:    setYaw(d.read<float>());     break;
+            case NetField::PITCH:  setPitch(d.read<float>());   break;
             case NetField::FLYING: setFlying(d.read<bool>());   break;
 
             case NetField::HAND_INV: setHandList(d.read<std::string>()); break;
@@ -80,13 +80,13 @@ void LocalPlayer::setLookOffset(glm::vec3 eyeOffset, bool assert) {
 
 void LocalPlayer::setHandList(const std::string &list, bool assert) {
     Player::setHandList(list, assert);
-    dim->getWorld().getRefs().l()->setHandList(list);
+    world.getRefs().l()->setHandList(list);
     updateWieldAndHandItems();
 }
 
 void LocalPlayer::setWieldList(const std::string& list, bool assert) {
     Player::setWieldList(list, false);
-    dim->getWorld().getRefs().l()->setWieldList(list);
+    world.getRefs().l()->setWieldList(list);
     setWieldIndex(wieldIndex);
     updateWieldAndHandItems();
     if (assert) assertField(Serializer().append(
@@ -94,11 +94,16 @@ void LocalPlayer::setWieldList(const std::string& list, bool assert) {
 }
 
 void LocalPlayer::setWieldIndex(unsigned short index, bool assert) {
-    auto wieldList = dim->getWorld().getRefs().l()->getWieldList();
+    auto wieldList = world.getRefs().l()->getWieldList();
     wieldIndex = index % std::max((wieldList ? wieldList->getLength() : 1), 1);
     updateWieldAndHandItems();
     if (assert) assertField(Serializer().append(
         static_cast<unsigned int>(NetField::WIELD_INDEX)).append(index).packet());
+}
+
+void LocalPlayer::setDimension(DimensionPtr dim) {
+    Player::setDimension(dim);
+    static_cast<LocalWorld&>(world).setActiveDimension(dim);
 }
 
 //
@@ -139,7 +144,7 @@ InventoryPtr LocalPlayer::getInventory() {
     return dim->getWorld().getRefs()->getInventory("current_player");
 }
 
-Target& LocalPlayer::getPointedThing() {
+Target& LocalPlayer::getTarget() {
     return target;
 }
 
@@ -312,7 +317,7 @@ void LocalPlayer::findPointedThing(Input &input) {
             auto face = sBox.intersects(rayEnd, roundedPos);
 
             if (face != EVec::NONE) {
-                target = Target(roundedPos, face);
+                target = Target(dim, roundedPos, face);
                 return;
             }
         }
@@ -353,8 +358,8 @@ void LocalPlayer::interact(Input& input, double delta) {
 }
 
 void LocalPlayer::updateWieldAndHandItems() {
-    auto handList = dim->getWorld().getRefs().l()->getHandList();
-    auto wieldList = dim->getWorld().getRefs().l()->getWieldList();
+    auto handList = world.getRefs().l()->getHandList();
+    auto wieldList = world.getRefs().l()->getWieldList();
 
     handItem = handList && handList->getLength() > 0 ? handList->getStack(0).id : 0;
     wieldItem = wieldList && wieldList->getLength() > wieldIndex ? wieldList->getStack(wieldIndex).id : 0;

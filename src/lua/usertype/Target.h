@@ -7,6 +7,8 @@
 #include <glm/vec3.hpp>
 
 #include "SubgameUsertype.h"
+
+#include "Dimension.h"
 #include "../../world/Target.h"
 
 namespace Api::Usertype {
@@ -18,6 +20,7 @@ namespace Api::Usertype {
 
         ::Target::Type type;
 
+        Dimension dim;
         glm::ivec3 pos;
         glm::ivec3 pos_above;
 

@@ -41,7 +41,9 @@ void Api::Module::Register::bind() {
 
 void Api::Module::Register::createRegisterFn(const std::string& name, const std::string& table) {
     std::string tableName = "registered_" +  (table.empty() ? name + "s" : table);
+
     core[tableName] = lua.create_table();
+
     core.set_function("register_" + name, [=](sol::this_environment env, std::string identifier, sol::table data)
         { registerFn(tableName, static_cast<sol::environment>(env), identifier, data); });
 }

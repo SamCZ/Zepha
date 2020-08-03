@@ -80,7 +80,7 @@ void ServerLuaParser::playerDisconnected(std::shared_ptr<ServerPlayer> player) {
     for (auto& pair : core.get<sol::table>("players")) {
         auto& p = pair.second.as<Api::Usertype::ServerPlayer>();
         if (p.get_id() == player->getId()) {
-            safe_function(core["trigger"], "player_disconnect", p);
+            safe_function(core["trigger"], "player_leave", p);
 
             core.get<sol::table>("players")[pair.first] = sol::nil;
             break;

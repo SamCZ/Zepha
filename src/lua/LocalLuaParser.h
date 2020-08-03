@@ -18,14 +18,13 @@ class LocalSubgame;
 class LocalLuaParser : public LuaParser {
 public:
     explicit LocalLuaParser(LocalSubgame& game);
-    void init(WorldPtr world, ClientState& state);
-    void loadPlayer(PlayerPtr player);
+    void init(WorldPtr world, PlayerPtr player, ClientState& state);
 
     void update(double delta) override;
 
     LocalModHandler& getHandler();
 private:
-    void loadApi(WorldPtr world);
+    void loadApi(WorldPtr world, PlayerPtr player);
     void registerDefs();
 
     virtual sol::protected_function_result errorCallback(sol::protected_function_result r) const override;

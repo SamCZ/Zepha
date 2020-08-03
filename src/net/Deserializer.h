@@ -21,6 +21,14 @@ public:
         return *this;
     };
 
+    template<typename E, typename = typename std::enable_if<std::is_enum<E>::value>::type> inline E readE() {
+        return static_cast<E>(read<unsigned short>());
+    };
+    template<typename E, typename = typename std::enable_if<std::is_enum<E>::value>::type> inline Deserializer& readE(E& ref) {
+        ref = static_cast<E>(read<unsigned short>());
+        return *this;
+    };
+
     bool atEnd() {
         return ind >= len;
     };

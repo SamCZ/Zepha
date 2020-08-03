@@ -18,8 +18,8 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     r.sendTo(state.connection.getPeer(), PacketChannel::CONNECT);
 
     world.l()->connect();
-    game.l()->initApi(world, state);
-    if (world.l()->initPlayer()) game.l()->loadPlayer(world.l()->getPlayer());
+    game .l()->init(world, world.l()->getPlayer(), state);
+    world.l()->updatePlayerDimension();
 
     state.renderer.window.addResizeCallback("gamescene", Util::bind_this(&debugGui, &DebugGui::bufferResized));
     state.renderer.setClearColor(148, 194, 240);

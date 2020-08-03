@@ -60,6 +60,10 @@ Api::Usertype::Dimension Api::Usertype::ServerPlayer::get_dimension() {
     return Dimension(player->getDimension());
 }
 
+void Api::Usertype::ServerPlayer::set_dimension(const std::string& identifier) {
+    player->setDimension(player->getDimension()->getWorld().getDimension(identifier));
+}
+
 sol::object Api::Usertype::ServerPlayer::get_hand_list(sol::this_state s) {
     auto listStr = player->getHandList();
     if (listStr.empty()) return sol::nil;
@@ -115,7 +119,7 @@ bool Api::Usertype::ServerPlayer::get_flying() {
     return player->isFlying();
 }
 
-void Api::Usertype::ServerPlayer::bind(State state, sol::state &lua, sol::table &core) {
+void Api::Usertype::ServerPlayer::bind(State, sol::state &lua, sol::table &core) {
     lua.new_usertype<ServerPlayer>("Player",
         "get_id", &ServerPlayer::get_id,
         "get_pos", &ServerPlayer::get_pos,
@@ -139,6 +143,7 @@ void Api::Usertype::ServerPlayer::bind(State state, sol::state &lua, sol::table 
         "get_wield_stack", &ServerPlayer::get_wield_stack,
 
         "get_dimension", &ServerPlayer::get_dimension,
+        "set_dimension", &ServerPlayer::set_dimension,
 
         "pos", sol::property(&ServerPlayer::get_pos, &ServerPlayer::set_pos),
         "block_pos", sol::property(&ServerPlayer::get_block_pos, &ServerPlayer::set_pos),
@@ -171,7 +176,7 @@ void Api::Usertype::LocalPlayer::set_hud(std::shared_ptr<LuaGuiElement> hud) {
     player.l()->setHud(hud);
 }
 
-void Api::Usertype::LocalPlayer::bind(State state, sol::state &lua, sol::table &core) {
+void Api::Usertype::LocalPlayer::bind(State, sol::state &lua, sol::table &core) {
     lua.new_usertype<LocalPlayer>("Player",
         "get_id", &LocalPlayer::get_id,
         "get_pos", &LocalPlayer::get_pos,

@@ -14,16 +14,17 @@ LocalWorld::LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& render
     renderer(renderer),
     net(conn, *this),
     refs(std::make_shared<LocalInventoryRefs>(game, net)),
-    worldGenStream(std::make_shared<WorldInterpolationStream>(55, game)) {}
+    worldGenStream(std::make_shared<WorldInterpolationStream>(55, game)),
+    player(std::make_shared<LocalPlayer>(game, *this, DimensionPtr(nullptr), renderer)) {}
 
 void LocalWorld::connect() {
     net.init(Util::bind_this(&(*refs), &LocalInventoryRefs::packetReceived));
     refs->init();
 }
 
-bool LocalWorld::initPlayer() {
+bool LocalWorld::updatePlayerDimension() {
     if (defaultDimension.empty()) return false;
-    player = PlayerPtr(std::make_shared<LocalPlayer>(game, getDefaultDimension(), renderer));
+    player->setDimension(getDefaultDimension());
     activeDimension = getDefaultDimension().l();
     return true;
 }
@@ -81,6 +82,10 @@ DimensionPtr LocalWorld::createDimension(const std::string &identifier) {
 
 DimensionPtr LocalWorld::getActiveDimension() {
     return activeDimension;
+}
+
+void LocalWorld::setActiveDimension(DimensionPtr dim) {
+    this->activeDimension = dim.l();
 }
 
 ClientNetworkInterpreter& LocalWorld::getNet() {

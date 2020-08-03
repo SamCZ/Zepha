@@ -9,6 +9,7 @@
 Api::Usertype::Target::Target(const ::Target &target) :
     pos(target.pos),
     type(target.type),
+    dim(Dimension(target.dim)),
     pos_above(target.getAbovePos()) {}
 
 std::string Api::Usertype::Target::getType() {
@@ -22,6 +23,7 @@ void Api::Usertype::Target::bind(State, sol::state &lua, sol::table &core) {
         "type", sol::property(&Target::getType),
 
         "pos", sol::readonly(&Target::pos),
+        "dim", sol::readonly(&Target::dim),
         "pos_above", sol::readonly(&Target::pos_above)
     );
 }

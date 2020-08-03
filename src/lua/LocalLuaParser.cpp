@@ -33,18 +33,14 @@
 
 LocalLuaParser::LocalLuaParser(LocalSubgame& game): LuaParser(game), keybinds(this) {}
 
-void LocalLuaParser::init(WorldPtr world, ClientState& state) {
+void LocalLuaParser::init(WorldPtr world, PlayerPtr player, ClientState& state) {
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
 
-    loadApi(world);
-    handler.executeMods(std::bind(&LocalLuaParser::runFileSandboxed, this, std::placeholders::_1));
-    state.renderer.window.input.setCallback(std::bind(&LuaKeybindHandler::keybindHandler, &keybinds, std::placeholders::_1, std::placeholders::_2));
+    loadApi(world, player);
+    handler.executeMods(Util::bind_this(this, &LocalLuaParser::runFileSandboxed));
+    state.renderer.window.input.setCallback(Util::bind_this(&keybinds, &LuaKeybindHandler::keybindHandler));
 
     registerDefs();
-}
-
-void LocalLuaParser::loadPlayer(PlayerPtr player) {
-    core["player"] = Api::Usertype::LocalPlayer(player);
 }
 
 void LocalLuaParser::update(double delta) {
@@ -60,7 +56,7 @@ LocalModHandler& LocalLuaParser::getHandler() {
     return handler;
 }
 
-void LocalLuaParser::loadApi(WorldPtr world) {
+void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
     //Create Zepha Table
     core = lua.create_table();
     lua["zepha"] = core;
@@ -79,6 +75,7 @@ void LocalLuaParser::loadApi(WorldPtr world) {
     Api::Usertype::InventoryList::bind(Api::State::CLIENT, lua, core);
 
     core["client"] = true;
+    core["player"] = Api::Usertype::LocalPlayer(player);
 
     // Modules
     modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::CLIENT, lua, core));

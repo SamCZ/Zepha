@@ -10,9 +10,9 @@
 #include "../world/ServerWorld.h"
 #include "../../../game/inventory/ServerInventoryRefs.h"
 
-ServerPlayer::ServerPlayer(ServerClient& client, SubgamePtr game, DimensionPtr dim) :
-    Player(game, dim, client.id), client(client),
-    inventory(dim->getWorld().getRefs()->createInventory("player:" + std::to_string(id))) {}
+ServerPlayer::ServerPlayer(ServerClient& client, World& world, SubgamePtr game, DimensionPtr dim) :
+    Player(game, world, dim, client.id), client(client),
+    inventory(world.getRefs()->createInventory("player:" + std::to_string(id))) {}
 
 void ServerPlayer::assertField(Packet packet) {
     packet.type = PacketType::THIS_PLAYER_INFO;
@@ -21,7 +21,7 @@ void ServerPlayer::assertField(Packet packet) {
 
 void ServerPlayer::handleAssertion(Deserializer &d) {
     while (!d.atEnd()) {
-        switch (static_cast<NetField>(d.read<unsigned int>())) {
+        switch (d.readE<NetField>()) {
             case NetField::POS:    setPos(d.read<glm::vec3>()); break;
             case NetField::VEL:    setVel(d.read<glm::vec3>()); break;
             case NetField::PITCH:  setPitch(d.read<float>());   break;

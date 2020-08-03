@@ -39,6 +39,7 @@ class CovariantPtr {
     std::shared_ptr<B> b = nullptr;
 public:
     CovariantPtr() = default;
+    CovariantPtr(std::nullptr_t) {};
     CovariantPtr(std::shared_ptr<B> ptr) : b(ptr) {}
     CovariantPtr(std::shared_ptr<L> ptr) : b(std::dynamic_pointer_cast<B>(ptr)) {}
     CovariantPtr(std::shared_ptr<S> ptr) : b(std::dynamic_pointer_cast<B>(ptr)) {}

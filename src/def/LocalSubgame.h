@@ -25,8 +25,7 @@ public:
     explicit LocalSubgame(const std::string& texPath);
     ~LocalSubgame();
 
-    void initApi(WorldPtr world, ClientState& state);
-    void loadPlayer(PlayerPtr player);
+    void init(WorldPtr world, PlayerPtr player, ClientState& state);
     void update(double delta);
 
     std::string texPath;

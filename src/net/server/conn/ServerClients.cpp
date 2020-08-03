@@ -51,19 +51,20 @@ void ServerClients::handleDisconnect(ENetEvent e) {
 }
 
 void ServerClients::createPlayer(std::shared_ptr<ServerClient> client, DimensionPtr dimension) {
-    auto player = std::make_shared<ServerPlayer>(*client, game, dimension);
+    auto player = std::make_shared<ServerPlayer>(*client, dimension->getWorld(), game, dimension);
     player->getInventory()->createList("cursor", 1, 1);
     client->player = player;
-
     players.push_back(player);
     game.s()->getParser().playerConnected(player);
+
+    player->setPos({0, -37, 0}, true);
 
     Serializer()
         .appendE(Player::NetField::ID).append(player->getId())
         .appendE(Player::NetField::POS).append(player->getPos())
         .appendE(Player::NetField::PITCH).append(player->getPitch())
         .appendE(Player::NetField::YAW).append(player->getYaw())
-        .packet(PacketType::THIS_PLAYER_INFO).sendTo(player->getPeer(), PacketChannel::ENTITY);
+        .packet(PacketType::THIS_PLAYER_INFO).sendTo(player->getPeer(), PacketChannel::INTERACT);
 }
 
 const std::shared_ptr<ServerClient> ServerClients::getClient(unsigned int id) const {

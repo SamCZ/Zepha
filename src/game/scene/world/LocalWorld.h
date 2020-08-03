@@ -21,7 +21,7 @@ public:
     LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& window);
 
     void connect();
-    bool initPlayer();
+    bool updatePlayerDimension();
     void update(double delta) override;
 
     void handleWorldPacket(std::unique_ptr<PacketView> p);
@@ -31,6 +31,7 @@ public:
     virtual DimensionPtr createDimension(const std::string& identifier) override;
 
     DimensionPtr getActiveDimension();
+    void setActiveDimension(DimensionPtr);
 
     PlayerPtr getPlayer();
     virtual InventoryRefsPtr getRefs() override;

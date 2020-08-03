@@ -5,6 +5,7 @@
 #pragma once
 
 #include "../util/Vec.h"
+#include "../util/CovariantPtr.h"
 
 class Target {
 public:
@@ -12,7 +13,7 @@ public:
 
     Target() = default;
     Target(const Target &o) = default;
-    Target(glm::ivec3 pos, EVec face);
+    Target(DimensionPtr dim, glm::ivec3 pos, EVec face);
 
     glm::ivec3 getAbovePos() const;
 
@@ -20,5 +21,6 @@ public:
     Type type = Target::Type::NOTHING;
 
     glm::vec3 pos {};
+    DimensionPtr dim;
     EVec face = EVec::NONE;
 };

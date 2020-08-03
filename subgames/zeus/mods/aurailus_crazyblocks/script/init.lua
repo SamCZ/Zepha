@@ -1,9 +1,9 @@
 runfile(_PATH .. "chest")
 
-local function stacker_action(pos)
+local function stacker_action(dim, pos)
     local v = V(0, 1, 0)
-    while zepha.get_block(pos + v) == "@aurailus:crazyblocks:stacker" do v = v + V(0, 1, 0) end
-    zepha.set_block(pos + v, "@aurailus:crazyblocks:stacker")
+    while dim:get_block(pos + v) == "@aurailus:crazyblocks:stacker" do v = v + V(0, 1, 0) end
+    dim:set_block(pos + v, "@aurailus:crazyblocks:stacker")
 end
 
 local function inventory_action()
@@ -27,9 +27,10 @@ zepha.register_block("@aurailus:crazyblocks:inventory", {
 
 if zepha.server then
     zepha.bind("new_player", function(player)
-        player:get_inventory():get_list("hot_wheel_1"):add_stack({"zeus:default:dirt", 32})
-        player:get_inventory():get_list("hot_wheel_1"):add_stack({"@aurailus:crazyblocks:stacker", 1})
-        player:get_inventory():get_list("hot_wheel_1"):add_stack({"@aurailus:crazyblocks:inventory", 1})
-        player:get_inventory():get_list("hot_wheel_1"):add_stack({"@aurailus:crazyblocks:box", 1})
+        local hw = player:get_inventory():get_list("hot_wheel_1")
+        hw:add_stack({"zeus:default:dirt", 32})
+        hw:add_stack({"@aurailus:crazyblocks:stacker", 1})
+        hw:add_stack({"@aurailus:crazyblocks:inventory", 1})
+        hw:add_stack({"@aurailus:crazyblocks:box", 1})
     end)
 end

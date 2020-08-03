@@ -45,7 +45,9 @@ namespace Api::Usertype {
         void set_wield_list(sol::optional<sol::object> list);
 
         Inventory get_inventory();
+
         Dimension get_dimension();
+        void set_dimension(const std::string& identifier);
 
         unsigned int get_wield_index();
         void set_wield_index(unsigned int index);

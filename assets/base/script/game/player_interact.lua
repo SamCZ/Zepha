@@ -27,9 +27,10 @@ function zepha.block_interact(player, target)
     local block = player.dim:get_block(target.pos)
     local def = zepha.registered_blocks[block]
 
+    local args = { target.dim, target.pos, player }
     local cb = zepha.server and "on_interact" or "on_interact_client"
-    if type(def[cb]) == "function" then def[cb](target.pos, player) end
-    zepha.trigger(cb, target.pos, player)
+    if type(def[cb]) == "function" then def[cb](unpack(args)) end
+    zepha.trigger(cb, unpack(args))
 
     return def.on_interact or def.on_interact_client
 end

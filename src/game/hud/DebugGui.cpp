@@ -16,9 +16,9 @@ DebugGui::DebugGui(glm::vec2 bufferSize, SubgamePtr game, WorldPtr world) :
     game(game),
     world(world) {
 
+    auto fontRef = game.l()->textures["font"];
     auto fpsHistogramRef = game.l()->textures["histogram"];
     auto genericHistogramRef = game.l()->textures["histogram_white"];
-    auto fontRef = game.l()->textures["font"];
 
     Font f(game.l()->textures, fontRef);
 
@@ -79,8 +79,12 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
 }
 
 void DebugGui::update(std::shared_ptr<LocalPlayer> player, double fps, int /*chunks*/, int drawCalls, int ssGen, int ssPack) {
+    Target target = player->getTarget();
 
-    { //Top Right Graphs
+    auto& onBiomeDef = game->getBiomes().biomeFromId(world.l()->getActiveDimension()->getBiome(glm::floor(player->getPos())));
+    auto& targetedBlockDef = game->getDefs().blockFromId(world.l()->getActiveDimension()->getBlock(target.pos));
+
+    { // Top Right Graphs
         get<GuiLabelledGraph>("fpsGraph")->pushValue(static_cast<float>(fps));
         get<GuiLabelledGraph>("drawsGraph")->pushValue(drawCalls);
 
@@ -90,27 +94,23 @@ void DebugGui::update(std::shared_ptr<LocalPlayer> player, double fps, int /*chu
         glGetIntegerv(0x9049, &videoMemAvail);
 
         get<GuiLabelledGraph>("gpuGraph")->pushValue(static_cast<int>(std::round(
-                (videoMemTotal - videoMemAvail) / static_cast<float>(videoMemTotal) * 100.0))
-                                                     / 100.0f);
+            (videoMemTotal - videoMemAvail) / static_cast<float>(videoMemTotal) * 100.0)) / 100.0f);
     }
 
-    { //Bottom Right Graphs
+    { // Bottom Right Graphs
         get<GuiLabelledGraph>("meshGraph")->pushValue(world.l()->lastMeshUpdates);
         get<GuiLabelledGraph>("interpGraph")->pushValue(world.l()->mapBlocksInterpolated);
         get<GuiLabelledGraph>("genGraph")->pushValue(static_cast<float>(ssGen));
         get<GuiLabelledGraph>("packetGraph")->pushValue(static_cast<float>(ssPack));
     }
 
-    { //Top-left Data
-        unsigned int biomeID = world.l()->getActiveDimension()->getBiome(glm::floor(player->getPos()));
-        std::string biome = game->getBiomes().biomeFromId(biomeID).identifier;
-
+    { // Top-left Data
         glm::vec3 playerPos = glm::floor(player->getPos());
         glm::vec3 chunkPos = Space::Chunk::world::fromBlock(playerPos);
         glm::vec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunkPos);
         glm::vec3 regionPos = Space::Region::world::fromChunk(chunkPos);
 
-        //Block Coordinates offset from respective container
+        // Block Coordinates offset from respective container
         glm::vec3 posOffsetFromChunk  = Space::Block::relative::toChunk(playerPos);
         glm::vec3 posOffsetFromBlock  = Space::Block::relative::toMapBlock(playerPos);
         glm::vec3 posOffsetFromRegion = Space::Block::relative::toRegion(playerPos);
@@ -130,24 +130,23 @@ void DebugGui::update(std::shared_ptr<LocalPlayer> player, double fps, int /*chu
         str << "Yaw: " << floatToString(player->getYaw()) << ", ";
         str << "Pitch: " << floatToString(player->getPitch()) << std::endl << std::endl;
 
-        str << "Biome: " << biome << std::endl << std::endl;
+        str << "Biome: " << onBiomeDef.identifier << " [" << onBiomeDef.index << "]" << std::endl << std::endl;
 
         str << "Texture Slots: " << game.l()->textures.textureSlotsUsed << " / " << game.l()->textures.maxTextureSlots
             << " (" << round(game.l()->textures.textureSlotsUsed / static_cast<float>(game.l()->textures.maxTextureSlots) * 100) << "%)" << std::endl << std::endl;
 
-        Target thing = player->getPointedThing();
-        if (thing.type == Target::Type::BLOCK) {
+        if (target.type == Target::Type::BLOCK) {
             std::string face =
-                thing.face == EVec::TOP    ?  "TOP"   :
-                thing.face == EVec::BOTTOM ? "BOTTOM" :
-                thing.face == EVec::LEFT   ? "LEFT"   :
-                thing.face == EVec::RIGHT  ? "RIGHT"  :
-                thing.face == EVec::FRONT  ? "FRONT"  :
-                thing.face == EVec::BACK   ? "BACK"   :
-                                             "NONE"   ;
+                    target.face == EVec::TOP ? "TOP" :
+                    target.face == EVec::BOTTOM ? "BOTTOM" :
+                    target.face == EVec::LEFT ? "LEFT" :
+                    target.face == EVec::RIGHT ? "RIGHT" :
+                    target.face == EVec::FRONT ? "FRONT" :
+                    target.face == EVec::BACK ? "BACK" :
+                    "NONE"   ;
 
-            str << "Pointing At: " << game->getDefs().blockFromId(world.l()->getActiveDimension()->getBlock(thing.pos)).identifier << std::endl;
-            str << "Pointed Position: " << vecToString(thing.pos) << std::endl;
+            str << "Pointing At: " << targetedBlockDef.identifier << " [" << targetedBlockDef.index << "]" << std::endl;
+            str << "Pointed Position: " << vecToString(target.pos) << std::endl;
             str << "Pointed Face: " << face << std::endl;
         }
         else {
@@ -157,15 +156,10 @@ void DebugGui::update(std::shared_ptr<LocalPlayer> player, double fps, int /*chu
         get<GuiText>("dataText")->setText(str.str());
     }
 
-    { //Crosshair Text
-        Target target = player->getPointedThing();
-
-        std::ostringstream crossText;
-        if (target.type == Target::Type::BLOCK) {
-            crossText << game->getDefs().blockFromId(world.l()->getActiveDimension()->getBlock(target.pos)).name
-                      << " (" << game->getDefs().blockFromId(world.l()->getActiveDimension()->getBlock(target.pos)).identifier << ")" << std::endl;
-        }
-        get<GuiText>("crosshairText")->setText(crossText.str());
+    { // Crosshair Text
+        if (target.type == Target::Type::BLOCK) get<GuiText>("crosshairText")->setText(targetedBlockDef.name + " (" +
+            targetedBlockDef.identifier + ") [" + std::to_string(targetedBlockDef.index) + "]");
+        else get<GuiText>("crosshairText")->setText("");
     }
 }
 
@@ -173,7 +167,7 @@ void DebugGui::bufferResized(glm::vec2 bufferSize) {
     positionElements(bufferSize);
 }
 
-//0 = All, 1 = None, 2 = FPS
+// 0 = All, 1 = None, 2 = FPS
 void DebugGui::changeVisibilityState(int state) {
     displayMode = state;
 

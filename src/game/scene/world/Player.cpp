@@ -88,6 +88,11 @@ void Player::setWieldIndex(unsigned short index, bool assert) {
     if (assert) assertField(Serializer().append(NetField::WIELD_INDEX).append(index).packet());
 }
 
+void Player::setDimension(DimensionPtr dim) {
+    this->dim = dim;
+}
+
+
 DimensionPtr Player::getDimension() {
     return dim;
 }
