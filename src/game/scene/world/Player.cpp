@@ -2,6 +2,7 @@
 // Created by aurailus on 2020-07-28.
 //
 
+#include <iostream>
 #include "Player.h"
 
 #include "../../../net/Serializer.h"
@@ -61,7 +62,7 @@ void Player::setFlying(bool flying, bool assert) {
     if (assert) assertField(Serializer().appendE(NetField::FLYING).append(flying).packet());
 }
 
-std::string &Player::getHandList() {
+std::string Player::getHandList() {
     return handList;
 }
 
@@ -70,7 +71,8 @@ void Player::setHandList(const std::string &list, bool assert) {
     if (assert) assertField(Serializer().appendE(NetField::HAND_INV).append(handList).packet());
 }
 
-std::string &Player::getWieldList() {
+std::string Player::getWieldList() {
+    std::cout << wieldList << std::endl;
     return wieldList;
 }
 
@@ -85,7 +87,7 @@ unsigned short Player::getWieldIndex() {
 
 void Player::setWieldIndex(unsigned short index, bool assert) {
     wieldIndex = index;
-    if (assert) assertField(Serializer().append(NetField::WIELD_INDEX).append(index).packet());
+    if (assert) assertField(Serializer().appendE(NetField::WIELD_INDEX).append(index).packet());
 }
 
 void Player::setDimension(DimensionPtr dim) {

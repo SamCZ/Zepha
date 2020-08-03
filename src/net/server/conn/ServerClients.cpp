@@ -11,8 +11,6 @@
 #include "../../Serializer.h"
 #include "../../NetHandler.h"
 #include "../../../util/Log.h"
-#include "../../../def/ServerSubgame.h"
-#include "../../../lua/ServerLuaParser.h"
 
 ServerClients::ServerClients(SubgamePtr game) :
     game(game) {}
@@ -64,7 +62,7 @@ void ServerClients::createPlayer(std::shared_ptr<ServerClient> client, Dimension
         .appendE(Player::NetField::POS).append(player->getPos())
         .appendE(Player::NetField::PITCH).append(player->getPitch())
         .appendE(Player::NetField::YAW).append(player->getYaw())
-        .packet(PacketType::THIS_PLAYER_INFO).sendTo(player->getPeer(), PacketChannel::INTERACT);
+        .packet(Packet::Type::THIS_PLAYER_INFO).sendTo(player->getPeer(), Packet::Channel::INTERACT);
 }
 
 const std::shared_ptr<ServerClient> ServerClients::getClient(unsigned int id) const {

@@ -48,10 +48,10 @@ public:
     virtual bool isFlying();
     virtual void setFlying(bool flying, bool assert = false);
 
-    virtual std::string& getHandList();
+    virtual std::string getHandList();
     virtual void setHandList(const std::string& list, bool assert = false);
 
-    virtual std::string& getWieldList();
+    virtual std::string getWieldList();
     virtual void setWieldList(const std::string& list, bool assert = false);
 
     virtual unsigned short getWieldIndex();

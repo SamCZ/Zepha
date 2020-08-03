@@ -15,8 +15,8 @@ ServerPlayer::ServerPlayer(ServerClient& client, World& world, SubgamePtr game, 
     inventory(world.getRefs()->createInventory("player:" + std::to_string(id))) {}
 
 void ServerPlayer::assertField(Packet packet) {
-    packet.type = PacketType::THIS_PLAYER_INFO;
-    packet.sendTo(getPeer(), PacketChannel::INTERACT);
+    packet.type = Packet::Type::THIS_PLAYER_INFO;
+    packet.sendTo(getPeer(), Packet::Channel::INTERACT);
 }
 
 void ServerPlayer::handleAssertion(Deserializer &d) {

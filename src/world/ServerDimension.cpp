@@ -67,12 +67,12 @@ void ServerDimension::blockPlace(const Target &target, PlayerPtr player) {
 
 void ServerDimension::blockInteract(const Target &target, PlayerPtr player) {
     game->getParser().safe_function(game->getParser().core["block_interact"],
-        Api::Usertype::LocalPlayer(player.s()), Api::Usertype::Target(target));
+        Api::Usertype::ServerPlayer(player), Api::Usertype::Target(target));
 }
 
 void ServerDimension::blockPlaceOrInteract(const Target &target, PlayerPtr player) {
     std::tuple<sol::optional<Api::Usertype::ItemStack>, sol::optional<glm::vec3>> res = game->getParser().safe_function(
-        game->getParser().core["block_interact_or_place"], Api::Usertype::LocalPlayer(player.s()), Api::Usertype::Target(target));
+        game->getParser().core["block_interact_or_place"], Api::Usertype::ServerPlayer(player), Api::Usertype::Target(target));
 
     auto stack = std::get<sol::optional<Api::Usertype::ItemStack>>(res);
     if (!stack) return;
@@ -84,7 +84,7 @@ void ServerDimension::blockPlaceOrInteract(const Target &target, PlayerPtr playe
 double ServerDimension::blockHit(const Target &target, PlayerPtr player) {
     double timeout = 0, damage = 0;
     sol::tie(damage, timeout) = game->getParser().safe_function(game->getParser().core["block_hit"],
-        Api::Usertype::LocalPlayer(player.s()), Api::Usertype::Target(target));
+        Api::Usertype::ServerPlayer(player), Api::Usertype::Target(target));
 
     return timeout;
 }

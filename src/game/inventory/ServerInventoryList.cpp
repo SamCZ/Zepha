@@ -36,7 +36,7 @@ bool ServerInventoryList::removeWatcher(unsigned int id) {
 
 void ServerInventoryList::sendTo(std::shared_ptr<ServerPlayer> player) {
     if (!player) return;
-    createPacket().sendTo(player->getPeer(), PacketChannel::INVENTORY);
+    createPacket().sendTo(player->getPeer(), Packet::Channel::INTERACT);
 }
 
 void ServerInventoryList::sendToAll() {
@@ -46,7 +46,7 @@ void ServerInventoryList::sendToAll() {
         auto& player = clients.getPlayer(*it);
         if (!player) it = watchers.erase(it);
         else {
-            p.sendTo(player->getPeer(), PacketChannel::INVENTORY);
+            p.sendTo(player->getPeer(), Packet::Channel::INTERACT);
             it++;
         }
     }

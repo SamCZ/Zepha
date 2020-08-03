@@ -12,7 +12,6 @@
 #include <glm/vec3.hpp>
 
 #include "Packet.h"
-#include "PacketType.h"
 
 class Serializer {
 public:
@@ -25,7 +24,7 @@ public:
         return *this;
     }
 
-    Packet packet(PacketType p = PacketType::UNDEFINED, bool reliable = true) {
+    Packet packet(Packet::Type p = Packet::Type::UNDEFINED, bool reliable = true) {
         Packet packet(p, reliable);
         packet.data = data;
         return std::move(packet);

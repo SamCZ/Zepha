@@ -9,16 +9,14 @@
 #include "ServerWorld.h"
 
 #include "ServerGenStream.h"
-#include "../../PacketType.h"
 #include "../../Serializer.h"
 #include "ServerPacketStream.h"
-#include "../conn/ServerClients.h"
 #include "../conn/ServerPlayer.h"
+#include "../conn/ServerClients.h"
 #include "../../../def/item/BlockDef.h"
 #include "../../../world/chunk/Chunk.h"
 #include "../../../lua/usertype/Target.h"
 #include "../../../world/chunk/MapBlock.h"
-#include "../../../lua/usertype/ItemStack.h"
 #include "../../../lua/usertype/ServerLuaEntity.h"
 #include "../../../game/inventory/ServerInventoryRefs.h"
 
@@ -93,7 +91,7 @@ void ServerWorld::update(double delta) {
     auto finishedPackets = packetStream->update();
     for (auto& data : *finishedPackets) {
         for (auto& player : clients.players)
-            data->packet->sendTo(player->getPeer(), PacketChannel::WORLD);
+            data->packet->sendTo(player->getPeer(), Packet::Channel::WORLD);
     }
 
     this->generatedMapBlocks = generatedMapBlocks.size();
@@ -126,10 +124,10 @@ void ServerWorld::update(double delta) {
 //        }
 //    }
 
-    Packet r = Serializer().append(this->generatedMapBlocks).packet(PacketType::SERVER_INFO);
+    Packet r = Serializer().append(this->generatedMapBlocks).packet(Packet::Type::SERVER_INFO);
 
     for (auto& player : clients.players) {
-        r.sendTo(player->getPeer(), PacketChannel::SERVER);
+        r.sendTo(player->getPeer(), Packet::Channel::SERVER);
         if (player->changedMapBlocks) changedMapBlocks(*player);
     }
 
@@ -141,15 +139,15 @@ void ServerWorld::update(double delta) {
                 Packet p = entity->entity->createPacket();
 
                 for (auto& client : clients.players)
-                    p.sendTo(client->getPeer(), PacketChannel::ENTITY);
+                    p.sendTo(client->getPeer(), Packet::Channel::ENTITY);
             }
         }
 
         for (unsigned int entity : dimension->getRemovedEntities()) {
-            Packet p = Serializer().append<unsigned int>(entity).packet(PacketType::ENTITY_REMOVED);
+            Packet p = Serializer().append<unsigned int>(entity).packet(Packet::Type::ENTITY_REMOVED);
 
             for (auto& client : clients.players)
-                p.sendTo(client->getPeer(), PacketChannel::ENTITY);
+                p.sendTo(client->getPeer(), Packet::Channel::ENTITY);
         }
 
         dimension->clearRemovedEntities();

@@ -5,7 +5,6 @@
 #include "GameScene.h"
 
 #include "../ClientState.h"
-#include "../../net/Packet.h"
 #include "../graph/Renderer.h"
 #include "../../net/PacketView.h"
 
@@ -14,8 +13,8 @@ GameScene::GameScene(ClientState& state) : Scene(state),
     world(std::make_shared<LocalWorld>(game, state.connection, state.renderer)),
     debugGui(state.renderer.window.getSize(), game, world) {
 
-    Packet r(PacketType::CONNECT_DATA_RECVD);
-    r.sendTo(state.connection.getPeer(), PacketChannel::CONNECT);
+    Packet r(Packet::Type::CONNECT_DATA_RECVD);
+    r.sendTo(state.connection.getPeer(), Packet::Channel::CONNECT);
 
     world.l()->connect();
     game .l()->init(world, world.l()->getPlayer(), state);

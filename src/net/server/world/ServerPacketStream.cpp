@@ -73,7 +73,7 @@ void ServerPacketStream::Thread::exec() {
                     s.append(chunk->serialize());
                 }
 
-                j.packet = std::make_unique<Packet>(PacketType::MAPBLOCK);
+                j.packet = std::make_unique<Packet>(Packet::Type::MAPBLOCK);
                 j.packet->data = s.data;
                 j.locked = false;
             }

@@ -28,15 +28,15 @@ public:
     void init(std::function<void(std::unique_ptr<PacketView>)> invCallback);
     void update();
 
-    void blockPlace(Target& target);
-    void blockInteract(Target& target);
-    void blockPlaceOrInteract(Target& target);
+    void blockPlace(const Target& target);
+    void blockInteract(const Target& target);
+    void blockPlaceOrInteract(const Target& target);
 
     void invWatch(const std::string& inv, const std::string& list);
     void invUnwatch(const std::string& inv, const std::string& list);
     void invInteract(const std::string& inv, const std::string& list, bool primary, unsigned short ind);
 
-    void sendPacket(const Packet& packet, PacketChannel channel);
+    void sendPacket(const Packet& packet, Packet::Channel channel);
 
     int recvPackets = 0;
     int serverSideChunkGens = 0;

@@ -41,8 +41,7 @@ add_library(Zepha_Core
 	def/texture/AtlasRef.h
 	def/texture/Font.cpp
 	def/texture/Font.h
-	def/texture/RawTexData.h
-	def/texture/TextureAtlas.cpp
+        def/texture/TextureAtlas.cpp
 	def/texture/TextureAtlas.h
 	game/Client.cpp
 	game/Client.h
@@ -248,9 +247,7 @@ add_library(Zepha_Core
 	net/NetState.h
 	net/Packet.cpp
 	net/Packet.h
-	net/PacketChannel.h
-	net/PacketType.h
-	net/PacketView.cpp
+		net/PacketView.cpp
 	net/PacketView.h
 	net/Serializer.h
 	net/server/asset/AssetStorage.h

@@ -59,11 +59,11 @@ void ServerLuaParser::update(double delta) {
 
 void ServerLuaParser::sendModsPacket(ENetPeer* peer) const {
     for (const LuaMod& mod : handler.cGetMods())
-        Serializer().append(mod.serialized).packet(PacketType::MODS).sendTo(peer, PacketChannel::CONNECT);
+        Serializer().append(mod.serialized).packet(Packet::Type::MODS).sendTo(peer, Packet::Channel::CONNECT);
 
     std::vector<std::string> order {};
     for (const LuaMod& mod : handler.cGetMods()) order.push_back(mod.config.name);
-    Serializer().append(order).packet(PacketType::MOD_ORDER).sendTo(peer, PacketChannel::CONNECT);
+    Serializer().append(order).packet(Packet::Type::MOD_ORDER).sendTo(peer, Packet::Channel::CONNECT);
 }
 
 void ServerLuaParser::playerConnected(std::shared_ptr<ServerPlayer> client) {

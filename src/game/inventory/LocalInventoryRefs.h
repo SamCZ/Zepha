@@ -11,7 +11,6 @@
 #include "InventoryRefs.h"
 
 #include "LocalInventory.h"
-#include "../../net/PacketChannel.h"
 
 class Packet;
 class PacketView;

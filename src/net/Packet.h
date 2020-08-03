@@ -9,20 +9,46 @@
 #include <string>
 #include <enet/enet.h>
 
-#include "PacketType.h"
-#include "PacketChannel.h"
-
 class Packet {
 public:
+    enum class Channel {
+        UNDEFINED = 0,
+        // Authentication
+        AUTH, CONNECT,
+        // Misc Server Information
+        SERVER,
+        // Data streams
+        WORLD, ENTITY, INTERACT
+    };
+
+    enum class Type {
+        UNDEFINED = 0,
+        // Information Request Types
+        BLOCK_IDENTIFIER_LIST, BIOME_IDENTIFIER_LIST, MOD_ORDER,
+        MODS, MEDIA, MEDIA_DONE, CONNECT_DATA_RECVD,
+        // Miscellaneous
+        SERVER_INFO,
+        // Player Info
+        PLAYER_ENT_INFO, THIS_PLAYER_INFO,
+        // World
+        CHUNK, MAPBLOCK,
+        // Block
+        BLOCK_PLACE, BLOCK_INTERACT,
+        BLOCK_PLACE_OR_INTERACT, BLOCK_SET,
+        // Entity
+        ENTITY_INFO, ENTITY_REMOVED,
+        // Inventory
+        INV_WATCH, INV_UNWATCH, INV_INVALID, INV_DATA, INV_INTERACT
+    };
+
     Packet() = default;
-    explicit Packet(PacketType type, bool reliable = true);
+    explicit Packet(Type type, bool reliable = true);
 
     ENetPacket* toENetPacket() const;
-    void sendTo(ENetPeer* peer, PacketChannel channel) const;
-    void sendTo(const ENetPeer &peer, PacketChannel channel) const;
+    void sendTo(ENetPeer* peer, Channel channel) const;
+    void sendTo(const ENetPeer &peer, Channel channel) const;
 
-    PacketType type = PacketType::UNDEFINED;
+    Type type = Type::UNDEFINED;
     std::string data {};
     bool reliable = true;
 };
-

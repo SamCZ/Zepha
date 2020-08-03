@@ -80,5 +80,5 @@ Packet ServerEntity::createPacket(bool reliable) {
             .append(displayMode)
             .append(displayArgument1)
             .append(displayArgument2)
-            .packet(PacketType::ENTITY_INFO, reliable));
+            .packet(Packet::Type::ENTITY_INFO, reliable));
 }

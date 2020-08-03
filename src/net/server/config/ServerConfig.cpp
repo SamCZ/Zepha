@@ -9,11 +9,8 @@
 #include "../asset/AssetType.h"
 #include "../conn/ServerClient.h"
 #include "../../../def/ItemDef.h"
-#include "../../../def/ServerSubgame.h"
 #include "../../../def/gen/BiomeDef.h"
-#include "../../../def/gen/ServerBiomeAtlas.h"
-#include "../../../def/ServerDefinitionAtlas.h"
-#include "../../../lua/ServerLuaParser.h"
+#include "../../../def/ServerSubgame.h"
 
 ServerConfig::ServerConfig(SubgamePtr game) : game(game) {}
 
@@ -32,39 +29,39 @@ void ServerConfig::init() {
 bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
     switch (r.type) {
         default: break;
-        case PacketType::CONNECT_DATA_RECVD:
+        case Packet::Type::CONNECT_DATA_RECVD:
             return true;
 
-        case PacketType::SERVER_INFO: {
+        case Packet::Type::SERVER_INFO: {
             Serializer()
                 .append(game.s()->getBiomes().seed)
-                .packet(PacketType::SERVER_INFO)
-                .sendTo(client.peer, PacketChannel::CONNECT);
+                .packet(Packet::Type::SERVER_INFO)
+                .sendTo(client.peer, Packet::Channel::CONNECT);
             break;
         }
 
-        case PacketType::BLOCK_IDENTIFIER_LIST: {
+        case Packet::Type::BLOCK_IDENTIFIER_LIST: {
             Serializer()
                 .append(blockIdentifierList)
-                .packet(PacketType::BLOCK_IDENTIFIER_LIST)
-                .sendTo(client.peer, PacketChannel::CONNECT);
+                .packet(Packet::Type::BLOCK_IDENTIFIER_LIST)
+                .sendTo(client.peer, Packet::Channel::CONNECT);
             break;
         }
 
-        case PacketType::BIOME_IDENTIFIER_LIST: {
+        case Packet::Type::BIOME_IDENTIFIER_LIST: {
             Serializer()
                 .append(biomeIdentifierList)
-                .packet(PacketType::BIOME_IDENTIFIER_LIST)
-                .sendTo(client.peer, PacketChannel::CONNECT);
+                .packet(Packet::Type::BIOME_IDENTIFIER_LIST)
+                .sendTo(client.peer, Packet::Channel::CONNECT);
             break;
         }
 
-        case PacketType::MODS: {
+        case Packet::Type::MODS: {
             game.s()->getParser().sendModsPacket(client.peer);
             break;
         }
 
-        case PacketType::MEDIA: {
+        case Packet::Type::MEDIA: {
             const unsigned int MAX_PACKET_SIZE = 32*1024;
             unsigned int packetSize = 0;
 
@@ -73,13 +70,13 @@ bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
             for (ServerTexture& texture : game.s()->assets.textures) {
                 if (packetSize + 20 + texture.data.length() > MAX_PACKET_SIZE && packetSize != 0) {
                     s.append(static_cast<int>(AssetType::END));
-                    Packet p(PacketType::MEDIA);
+                    Packet p(Packet::Type::MEDIA);
 
                     p.data = s.data;
                     packetSize = 0;
                     s = {};
 
-                    p.sendTo(client.peer, PacketChannel::CONNECT);
+                    p.sendTo(client.peer, Packet::Channel::CONNECT);
                 }
 
                 s.append(static_cast<int>(AssetType::TEXTURE))
@@ -94,13 +91,13 @@ bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
             for (SerializedModel& model : game.s()->assets.models) {
                 if (packetSize + 16 + model.data.length() > MAX_PACKET_SIZE && packetSize != 0) {
                     s.append(static_cast<int>(AssetType::END));
-                    Packet p(PacketType::MEDIA);
+                    Packet p(Packet::Type::MEDIA);
 
                     p.data = s.data;
                     packetSize = 0;
                     s = {};
 
-                    p.sendTo(client.peer, PacketChannel::CONNECT);
+                    p.sendTo(client.peer, Packet::Channel::CONNECT);
                 }
 
                 s.append(static_cast<int>(AssetType::MODEL))
@@ -112,13 +109,13 @@ bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
             }
 
             s.append(static_cast<int>(AssetType::END));
-            Packet p(PacketType::MEDIA);
+            Packet p(Packet::Type::MEDIA);
             p.data = s.data;
 
-            p.sendTo(client.peer, PacketChannel::CONNECT);
+            p.sendTo(client.peer, Packet::Channel::CONNECT);
 
-            Packet d(PacketType::MEDIA_DONE);
-            d.sendTo(client.peer, PacketChannel::CONNECT);
+            Packet d(Packet::Type::MEDIA_DONE);
+            d.sendTo(client.peer, Packet::Channel::CONNECT);
         }
     }
 

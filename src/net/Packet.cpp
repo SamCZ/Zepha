@@ -5,9 +5,8 @@
 #include "Packet.h"
 
 #include "Serializer.h"
-#include "Deserializer.h"
 
-Packet::Packet(PacketType type, bool reliable) : type(type), reliable(reliable) {}
+Packet::Packet(Type type, bool reliable) : type(type), reliable(reliable) {}
 
 ENetPacket* Packet::toENetPacket() const {
     std::string serialized = Serializer().append(static_cast<unsigned int>(type)).data + data;
@@ -16,12 +15,12 @@ ENetPacket* Packet::toENetPacket() const {
     return enet;
 }
 
-void Packet::sendTo(ENetPeer *peer, PacketChannel channel) const {
+void Packet::sendTo(ENetPeer *peer, Channel channel) const {
     ENetPacket* enet = toENetPacket();
     enet_peer_send(peer, static_cast<enet_uint8>(channel), enet);
 }
 
-void Packet::sendTo(const ENetPeer &peer, PacketChannel channel) const {
+void Packet::sendTo(const ENetPeer &peer, Channel channel) const {
     ENetPacket* enet = toENetPacket();
     enet_peer_send(const_cast<ENetPeer*>(&peer), static_cast<enet_uint8>(channel), enet);
 }

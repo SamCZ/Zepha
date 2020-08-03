@@ -95,7 +95,7 @@ void LocalDimension::blockPlace(const Target &target, PlayerPtr player) {
     std::tuple<sol::optional<Api::Usertype::ItemStack>, sol::optional<glm::vec3>> res = game->getParser().safe_function(
         game->getParser().core["block_place"], Api::Usertype::LocalPlayer(player.l()), Api::Usertype::Target(target));
 
-//    net->blockPlace(target);
+    static_cast<LocalWorld&>(world).getNet().blockPlace(target);
 
     auto stack = std::get<sol::optional<Api::Usertype::ItemStack>>(res);
     if (!stack) return;
@@ -109,14 +109,14 @@ void LocalDimension::blockInteract(const Target &target, PlayerPtr player) {
     game->getParser().safe_function(game->getParser().core["block_interact"],
         Api::Usertype::LocalPlayer(player.l()), Api::Usertype::Target(target));
 
-//    net->blockInteract(target);
+    static_cast<LocalWorld&>(world).getNet().blockInteract(target);
 }
 
 void LocalDimension::blockPlaceOrInteract(const Target &target, PlayerPtr player) {
     std::tuple<sol::optional<Api::Usertype::ItemStack>, sol::optional<glm::vec3>> res = game->getParser().safe_function(
         game->getParser().core["block_interact_or_place"], Api::Usertype::LocalPlayer(player.l()), Api::Usertype::Target(target));
 
-//    net->blockPlaceOrInteract(target);
+    static_cast<LocalWorld&>(world).getNet().blockPlaceOrInteract(target);
 
     auto stack = std::get<sol::optional<Api::Usertype::ItemStack>>(res);
     if (!stack) return;

@@ -9,7 +9,6 @@
 
 #include "../Serializer.h"
 #include "../../util/Timer.h"
-#include "../PacketChannel.h"
 #include "conn/ServerClient.h"
 #include "conn/ServerPlayer.h"
 #include "../../world/Target.h"
@@ -66,11 +65,11 @@ void Server::update() {
             .appendE(Player::NetField::POS).append(player->getPos())
             .appendE(Player::NetField::PITCH).append(player->getPitch())
             .appendE(Player::NetField::YAW).append(player->getYaw())
-            .packet(PacketType::PLAYER_ENT_INFO, false);
+            .packet(Packet::Type::PLAYER_ENT_INFO, false);
 
         for (auto& iter : clients.players)
             if (iter->getId() != id && glm::distance(player->getPos(), iter->getPos()) < 200)
-                p.sendTo(iter->getPeer(), PacketChannel::ENTITY);
+                p.sendTo(iter->getPeer(), Packet::Channel::ENTITY);
     }
 
     playersUpdated.clear();
@@ -85,9 +84,10 @@ void Server::update() {
 void Server::packetReceived(ENetEvent& e) {
     PacketView p(e.packet);
     auto client = static_cast<ServerClient*>(e.peer->data);
+    auto player = PlayerPtr(clients.getPlayer(client->id));
 
     // Handle the packet as a player and then return.
-    if (client->player) return playerPacketReceived(p, *client->player);
+    if (client->player) return playerPacketReceived(p, player);
 
     // Function returns true if a player is to be created.
     if (config.handlePacket(*client, p)) {
@@ -96,8 +96,10 @@ void Server::packetReceived(ENetEvent& e) {
     }
 }
 
-void Server::playerPacketReceived(PacketView& p, ServerPlayer& player) {
+void Server::playerPacketReceived(PacketView& p, PlayerPtr player) {
     // Pre-initialization because switch statements suck.
+    glm::ivec3 pos;
+    EVec face = EVec::NONE;
     std::string source, list;
     unsigned short a, ind;
 
@@ -105,11 +107,11 @@ void Server::playerPacketReceived(PacketView& p, ServerPlayer& player) {
         default:
             throw std::runtime_error("Unknown packet type " + std::to_string(static_cast<int>(p.type)) + " received."); break;
 
-        case PacketType::THIS_PLAYER_INFO:
-            player.handleAssertion(p.d);
-            playersUpdated.emplace(player.getId()); break;
+        case Packet::Type::THIS_PLAYER_INFO:
+            player->handleAssertion(p.d);
+            playersUpdated.emplace(player->getId()); break;
 
-        case PacketType::BLOCK_SET:
+//        case Packet::Type::BLOCK_SET:
 //            glm::ivec3 pos = p.d.read<glm::ivec3>();
 //            unsigned int block = p.d.read<unsigned int>();
 //
@@ -142,42 +144,33 @@ void Server::playerPacketReceived(PacketView& p, ServerPlayer& player) {
 //            }
 //            break; }
 
-        case PacketType::BLOCK_PLACE:
-//            glm::ivec3 pos = p.d.read<glm::ivec3>();
-//            auto face = static_cast<EVec>(p.d.read<unsigned short>());
-//            world.blockPlace(Target(pos, face), client);
-//            break;
+        case Packet::Type::BLOCK_PLACE:
+            p.d.read(pos).readE(face);
+            player->getDimension()->blockPlace(Target(player->getDimension(), pos, face), player); break;
 
-        case PacketType::BLOCK_INTERACT:
-//            glm::ivec3 pos = p.d.read<glm::ivec3>();
-//            auto face = static_cast<EVec>(p.d.read<unsigned short>());
-//            world.blockInteract(Target(pos, face), client);
-//            break;
+        case Packet::Type::BLOCK_INTERACT:
+            p.d.read(pos).readE(face);
+            player->getDimension()->blockInteract(Target(player->getDimension(), pos, face), player); break;
 
-        case PacketType::BLOCK_PLACE_OR_INTERACT:
-//            glm::ivec3 pos = p.d.read<glm::ivec3>();
-//            auto face = static_cast<EVec>(p.d.read<unsigned short>());
-//            world.blockPlaceOrInteract(Target(pos, face), client);
-//            break;
+        case Packet::Type::BLOCK_PLACE_OR_INTERACT:
+            p.d.read(pos).readE(face);
+            player->getDimension()->blockPlaceOrInteract(Target(player->getDimension(), pos, face), player); break;
 
-        case PacketType::INV_WATCH:
+        case Packet::Type::INV_WATCH:
             p.d.read<std::string>(source).read<std::string>(list);
-            if (!world->getRefs().s()->addWatcher(source, list, player.getId()))
-                Serializer().append(source).append(list).packet(PacketType::INV_INVALID)
-                    .sendTo(player.getPeer(), PacketChannel::INTERACT);
-            break;
+            if (!world->getRefs().s()->addWatcher(source, list, player->getId()))
+                Serializer().append(source).append(list).packet(Packet::Type::INV_INVALID)
+                    .sendTo(player.s()->getPeer(), Packet::Channel::INTERACT); break;
 
-        case PacketType::INV_UNWATCH:
+        case Packet::Type::INV_UNWATCH:
             p.d.read<std::string>(source).read<std::string>(list);
-            if (!world->getRefs().s()->removeWatcher(source, list, player.getId()))
-                Serializer().append(source).append(list).packet(PacketType::INV_INVALID)
-                    .sendTo(player.getPeer(), PacketChannel::INVENTORY);
-            break;
+            if (!world->getRefs().s()->removeWatcher(source, list, player->getId()))
+                Serializer().append(source).append(list).packet(Packet::Type::INV_INVALID)
+                    .sendTo(player.s()->getPeer(), Packet::Channel::INTERACT); break;
 
-        case PacketType::INV_INTERACT:
+        case Packet::Type::INV_INTERACT:
             p.d.read<unsigned short>(a).read<std::string>(source).read<std::string>(list).read<unsigned short>(ind);
-            world->getRefs().s()->interact(a, source, list, ind, player.getId());
-            break;
+            world->getRefs().s()->interact(a, source, list, ind, player->getId()); break;
     }
 }
 

@@ -42,8 +42,8 @@ void LocalPlayer::update(Input &input, double delta, glm::vec2 mouseDelta) {
 }
 
 void LocalPlayer::assertField(Packet packet) {
-    packet.type = PacketType::THIS_PLAYER_INFO;
-    static_cast<LocalWorld&>(world).getNet().sendPacket(packet, PacketChannel::INTERACT);
+    packet.type = Packet::Type::THIS_PLAYER_INFO;
+    static_cast<LocalWorld&>(world).getNet().sendPacket(packet, Packet::Channel::INTERACT);
 }
 
 void LocalPlayer::handleAssertion(Deserializer &d) {
@@ -85,20 +85,17 @@ void LocalPlayer::setHandList(const std::string &list, bool assert) {
 }
 
 void LocalPlayer::setWieldList(const std::string& list, bool assert) {
-    Player::setWieldList(list, false);
+    Player::setWieldList(list, assert);
     world.getRefs().l()->setWieldList(list);
     setWieldIndex(wieldIndex);
     updateWieldAndHandItems();
-    if (assert) assertField(Serializer().append(
-        static_cast<unsigned int>(NetField::WIELD_INV)).append(list).packet());
 }
 
 void LocalPlayer::setWieldIndex(unsigned short index, bool assert) {
     auto wieldList = world.getRefs().l()->getWieldList();
     wieldIndex = index % std::max((wieldList ? wieldList->getLength() : 1), 1);
+    Player::setWieldIndex(wieldIndex, assert);
     updateWieldAndHandItems();
-    if (assert) assertField(Serializer().append(
-        static_cast<unsigned int>(NetField::WIELD_INDEX)).append(index).packet());
 }
 
 void LocalPlayer::setDimension(DimensionPtr dim) {

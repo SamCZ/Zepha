@@ -201,7 +201,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::generateTexture(std::string req) {
     return nullptr;
 }
 
-RawTexData TextureAtlas::getBytesOfTex(const std::string &name) {
+TextureAtlas::RawTexData TextureAtlas::getBytesOfTex(const std::string &name) {
     glm::vec4 pos;
 
     if (textures.count(name)) pos = textures[name]->pos;
@@ -213,7 +213,7 @@ RawTexData TextureAtlas::getBytesOfTex(const std::string &name) {
     return getBytesAtPos({pos.x, pos.y}, {pos.z - pos.x, pos.w - pos.y});
 }
 
-RawTexData TextureAtlas::getBytesAtPos(glm::ivec2 pos, glm::ivec2 dims) {
+TextureAtlas::RawTexData TextureAtlas::getBytesAtPos(glm::ivec2 pos, glm::ivec2 dims) {
     RawTexData data {};
     data.width = dims.x;
     data.height = dims.y;

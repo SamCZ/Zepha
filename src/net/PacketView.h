@@ -7,8 +7,8 @@
 #include <memory>
 #include <enet/enet.h>
 
-#include "PacketType.h"
 #include "Deserializer.h"
+#include "Packet.h"
 
 class PacketView {
 public:
@@ -17,5 +17,5 @@ public:
 
     std::shared_ptr<ENetPacket> packet;
     Deserializer d;
-    PacketType type;
+    Packet::Type type;
 };

@@ -10,13 +10,18 @@
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
-#include "RawTexData.h"
 #include "../../game/graph/Texture.h"
 
 class AtlasRef;
 
 class TextureAtlas {
 public:
+    struct RawTexData {
+        unsigned char* data;
+        int width;
+        int height;
+    };
+
     TextureAtlas() = default;
     explicit TextureAtlas(unsigned int width, unsigned int height = 0);
 

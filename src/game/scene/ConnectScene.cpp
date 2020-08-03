@@ -8,16 +8,12 @@
 
 #include "../ClientState.h"
 #include "../../net/Packet.h"
-#include "../../lua/LuaMod.h"
 #include "../graph/Renderer.h"
 #include "../../net/Address.h"
-#include "../../net/PacketType.h"
 #include "../../net/PacketView.h"
-#include "../../def/gen/LocalBiomeAtlas.h"
 #include "../../def/LocalDefinitionAtlas.h"
 #include "../hud/components/basic/GuiText.h"
 #include "../hud/components/basic/GuiRect.h"
-#include "../../lua/LocalLuaParser.h"
 #include "../../net/server/asset/AssetType.h"
 
 ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
@@ -67,15 +63,15 @@ void ConnectScene::update() {
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 PacketView p(e.packet);
 
-                if (p.type == PacketType::SERVER_INFO) {
+                if (p.type == Packet::Type::SERVER_INFO) {
                     auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received server properties.\n");
 
                     state.seed = p.d.read<unsigned int>();
 
                     connectState = State::IDENTIFIER_LIST;
-                    Packet resp(PacketType::BLOCK_IDENTIFIER_LIST);
-                    resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
+                    Packet resp(Packet::Type::BLOCK_IDENTIFIER_LIST);
+                    resp.sendTo(connection.getPeer(), Packet::Channel::CONNECT);
                 }
             }
             break;
@@ -88,24 +84,24 @@ void ConnectScene::update() {
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 PacketView p(e.packet);
 
-                if (p.type == PacketType::BLOCK_IDENTIFIER_LIST) {
+                if (p.type == Packet::Type::BLOCK_IDENTIFIER_LIST) {
                     auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received block index-identifier table.\n");
 
                     state.defs.getDefs().setIdentifiers(p.d.read<std::vector<std::string>>());
 
-                    Packet resp(PacketType::BIOME_IDENTIFIER_LIST);
-                    resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
+                    Packet resp(Packet::Type::BIOME_IDENTIFIER_LIST);
+                    resp.sendTo(connection.getPeer(), Packet::Channel::CONNECT);
                 }
-                else if (p.type == PacketType::BIOME_IDENTIFIER_LIST) {
+                else if (p.type == Packet::Type::BIOME_IDENTIFIER_LIST) {
                     auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received biome index-identifier table.\nDownloading mods...\n");
 
                     state.defs.getBiomes().setIdentifiers(p.d.read<std::vector<std::string>>());
 
                     connectState = State::MODS;
-                    Packet resp(PacketType::MODS);
-                    resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
+                    Packet resp(Packet::Type::MODS);
+                    resp.sendTo(connection.getPeer(), Packet::Channel::CONNECT);
                 }
             }
             break;
@@ -119,19 +115,19 @@ void ConnectScene::update() {
 
                 auto statusText = components.get<GuiText>("statusText");
 
-                if (p.type == PacketType::MODS) {
+                if (p.type == Packet::Type::MODS) {
                     auto luaMod = LuaMod::fromPacket(p);
                     statusText->setText(statusText->getText() + "Received mod " + luaMod.config.name + ".\n");
                     state.defs.getParser().getHandler().addLuaMod(std::move(luaMod));
                 }
-                else if (p.type == PacketType::MOD_ORDER) {
+                else if (p.type == Packet::Type::MOD_ORDER) {
                     state.defs.getParser().getHandler().setModsOrder(p.d.read<std::vector<std::string>>());
 
                     statusText->setText(statusText->getText() + "Done downloading mods.\nReceived the mods order.\nDownloading media...\n");
 
                     connectState = State::MEDIA;
-                    Packet resp(PacketType::MEDIA);
-                    resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
+                    Packet resp(Packet::Type::MEDIA);
+                    resp.sendTo(connection.getPeer(), Packet::Channel::CONNECT);
                 }
             }
             break;
@@ -146,7 +142,7 @@ void ConnectScene::update() {
 
                 auto statusText = components.get<GuiText>("statusText");
 
-                if (p.type == PacketType::MEDIA) {
+                if (p.type == Packet::Type::MEDIA) {
                     AssetType t = static_cast<AssetType>(p.d.read<int>());
                     unsigned int count = 0;
 
@@ -177,7 +173,7 @@ void ConnectScene::update() {
 
                     statusText->setText(statusText->getText() + "Received " + std::to_string(count) + "x media files.\n");
                 }
-                else if (p.type == PacketType::MEDIA_DONE) {
+                else if (p.type == Packet::Type::MEDIA_DONE) {
                     components.get<GuiRect>("loadBar")->setScale({state.renderer.window.getSize().x, 32});
                     statusText->setText(statusText->getText() + "Done downloading media.\nJoining world...\n");
 
@@ -191,7 +187,7 @@ void ConnectScene::update() {
 }
 
 void ConnectScene::handleConnecting() {
-    Packet resp(PacketType::SERVER_INFO);
+    Packet resp(Packet::Type::SERVER_INFO);
     auto statusText = components.get<GuiText>("statusText");
 
     switch (connection.getConnectionStatus()) {
@@ -222,7 +218,7 @@ void ConnectScene::handleConnecting() {
             connectState = State::PROPERTIES;
             statusText->setText(statusText->getText() + " Connected!~\n");
 
-            resp.sendTo(connection.getPeer(), PacketChannel::CONNECT);
+            resp.sendTo(connection.getPeer(), Packet::Channel::CONNECT);
 
             break;
     }

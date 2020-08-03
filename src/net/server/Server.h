@@ -24,7 +24,7 @@ public:
     ~Server();
 private:
     void packetReceived(ENetEvent& e);
-    void playerPacketReceived(PacketView& p, ServerPlayer& player);
+    void playerPacketReceived(PacketView& p, PlayerPtr player);
 
     unsigned short port = 0;
     unsigned int seed = 0;

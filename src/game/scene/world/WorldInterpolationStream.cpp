@@ -7,7 +7,6 @@
 #include "../../../net/PacketView.h"
 #include "../../../def/LocalSubgame.h"
 #include "../../../world/chunk/Chunk.h"
-#include "../../../def/gen/LocalBiomeAtlas.h"
 #include "../../../def/LocalDefinitionAtlas.h"
 
 WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, SubgamePtr game) {
@@ -85,12 +84,12 @@ void WorldInterpolationStream::Thread::exec() {
 //                if (u.job == JobType::PACKET) {
                     empty = false;
 
-                    if (u.packet->type == PacketType::CHUNK) {
+                    if (u.packet->type == Packet::Type::CHUNK) {
                         u.chunks.reserve(1);
                         u.chunks.emplace_back(std::make_shared<Chunk>());
                         u.chunks.back()->deserialize(u.packet->d);
                     }
-                    else if (u.packet->type == PacketType::MAPBLOCK) {
+                    else if (u.packet->type == Packet::Type::MAPBLOCK) {
                         u.chunks.reserve(64);
                         while (!u.packet->d.atEnd()) {
                             std::string dat = u.packet->d.read<std::string>();

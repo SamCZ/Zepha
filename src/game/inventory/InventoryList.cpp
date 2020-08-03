@@ -9,7 +9,6 @@
 #include "../../def/DefinitionAtlas.h"
 #include "../../lua/usertype/ItemStack.h"
 
-
 InventoryList::InventoryList(SubgamePtr game, const std::string& name, const std::string& invName, unsigned short size, unsigned short width) :
     game(game),
     name(name),
@@ -266,7 +265,7 @@ Packet InventoryList::createPacket() {
         s.append<unsigned int>(stack.id);
     }
 
-    return s.packet(PacketType::INV_DATA, false);
+    return s.packet(Packet::Type::INV_DATA, false);
 }
 
 //void InventoryList::setLuaCallback(InventoryList::Callback type, sol::protected_function cb) {

@@ -10,7 +10,6 @@
 #include "../Serializer.h"
 #include "../NetHandler.h"
 #include "../../util/Log.h"
-#include "../../game/entity/Model.h"
 #include "../../game/scene/world/LocalWorld.h"
 #include "../../game/scene/world/LocalPlayer.h"
 
@@ -55,7 +54,7 @@ void ClientNetworkInterpreter::update() {
         .appendE(Player::NetField::VEL).append(player->getVel())
         .appendE(Player::NetField::PITCH).append(player->getPitch())
         .appendE(Player::NetField::YAW).append(player->getYaw())
-        .packet(PacketType::THIS_PLAYER_INFO, false).sendTo(connection.getPeer(), PacketChannel::INTERACT);
+        .packet(Packet::Type::THIS_PLAYER_INFO, false).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
 void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
@@ -64,35 +63,35 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
             std::cout << Log::err << "Received unknown packet of type " << static_cast<int>(p->type)
                 << ". Is the server on a different protocol version?" << Log::endl; break;
 
-        case PacketType::SERVER_INFO:
+        case Packet::Type::SERVER_INFO:
             serverSideChunkGens = p->d.read<unsigned int>(); break;
 
-        case PacketType::THIS_PLAYER_INFO:
+        case Packet::Type::THIS_PLAYER_INFO:
             world.getPlayer()->handleAssertion(p->d); break;
             
-        case PacketType::PLAYER_ENT_INFO:
+        case Packet::Type::PLAYER_ENT_INFO:
             world.handlePlayerEntPacket(std::move(p)); break;
 
-        case PacketType::CHUNK:
-        case PacketType::MAPBLOCK:
+        case Packet::Type::CHUNK:
+        case Packet::Type::MAPBLOCK:
             world.handleWorldPacket(std::move(p)); break;
             
-        case PacketType::BLOCK_SET: {
+        case Packet::Type::BLOCK_SET: {
             auto pos = p->d.read<glm::ivec3>();
             auto block = p->d.read<unsigned int>();
             world.getActiveDimension()->setBlock(pos, block);
             break; }
 
-        case PacketType::ENTITY_INFO:
+        case Packet::Type::ENTITY_INFO:
             world.getActiveDimension().l()->serverEntityInfo(*p); break;
 
-        case PacketType::ENTITY_REMOVED:
+        case Packet::Type::ENTITY_REMOVED:
             world.getActiveDimension().l()->serverEntityRemoved(p->d.read<unsigned int>()); break;
 
-        case PacketType::INV_DATA:
+        case Packet::Type::INV_DATA:
             onInvPacket(std::move(p)); break;
         
-        case PacketType::INV_INVALID: {
+        case Packet::Type::INV_INVALID: {
             std::string source = p->d.read<std::string>();
             std::string list = p->d.read<std::string>();
             throw std::runtime_error("Invalid inventory " + source + ":" + list + " was request by client.");
@@ -100,36 +99,36 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
     }
 }
 
-void ClientNetworkInterpreter::blockPlace(Target &target) {
+void ClientNetworkInterpreter::blockPlace(const Target &target) {
     Serializer().append<glm::ivec3>(target.pos).append(static_cast<unsigned short>(target.face))
-        .packet(PacketType::BLOCK_PLACE).sendTo(connection.getPeer(), PacketChannel::INTERACT);
+        .packet(Packet::Type::BLOCK_PLACE).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
-void ClientNetworkInterpreter::blockInteract(Target &target) {
+void ClientNetworkInterpreter::blockInteract(const Target &target) {
     Serializer().append<glm::ivec3>(target.pos).append(static_cast<unsigned short>(target.face))
-        .packet(PacketType::BLOCK_INTERACT).sendTo(connection.getPeer(), PacketChannel::INTERACT);
+        .packet(Packet::Type::BLOCK_INTERACT).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
-void ClientNetworkInterpreter::blockPlaceOrInteract(Target &target) {
+void ClientNetworkInterpreter::blockPlaceOrInteract(const Target &target) {
     Serializer().append<glm::ivec3>(target.pos).append(static_cast<unsigned short>(target.face))
-        .packet(PacketType::BLOCK_PLACE_OR_INTERACT).sendTo(connection.getPeer(), PacketChannel::INTERACT);
+        .packet(Packet::Type::BLOCK_PLACE_OR_INTERACT).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
 void ClientNetworkInterpreter::invWatch(const std::string& inv, const std::string& list) {
-    Serializer().append(inv).append(list).packet(PacketType::INV_WATCH)
-        .sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+    Serializer().append(inv).append(list).packet(Packet::Type::INV_WATCH)
+        .sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
 void ClientNetworkInterpreter::invUnwatch(const std::string& inv, const std::string& list) {
-    Serializer().append(inv).append(list).packet(PacketType::INV_UNWATCH)
-        .sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+    Serializer().append(inv).append(list).packet(Packet::Type::INV_UNWATCH)
+        .sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
 void ClientNetworkInterpreter::invInteract(const std::string &inv, const std::string &list, bool primary, unsigned short ind) {
     Serializer().append<unsigned short>(primary).append(inv).append(list).append<unsigned short>(ind)
-        .packet(PacketType::INV_INTERACT).sendTo(connection.getPeer(), PacketChannel::INVENTORY);
+        .packet(Packet::Type::INV_INTERACT).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
-void ClientNetworkInterpreter::sendPacket(const Packet &packet, PacketChannel channel) {
+void ClientNetworkInterpreter::sendPacket(const Packet &packet, Packet::Channel channel) {
     packet.sendTo(connection.getPeer(), channel);
 }
