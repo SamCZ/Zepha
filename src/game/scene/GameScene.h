@@ -24,8 +24,8 @@ public:
 
     void cleanup() override;
 public:
-    LocalSubgame& game;
-    LocalWorld world;
+    SubgamePtr game;
+    WorldPtr world;
 
     DebugGui debugGui;
     std::vector<Drawable*> entities;

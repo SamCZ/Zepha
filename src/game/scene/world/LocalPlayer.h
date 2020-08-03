@@ -23,14 +23,13 @@ class LocalPlayer : public virtual DrawableEntity, public Player {
 public:
     enum class PlayerControl { FORWARD, LEFT, BACKWARD, RIGHT, JUMP, MOD1, MOD2 };
 
-    LocalPlayer(LocalSubgame &game, LocalDimension& dim, Renderer &renderer);
+    LocalPlayer(SubgamePtr game, DimensionPtr dim, Renderer &renderer);
 
     void update(Input &input, double delta, glm::vec2 mouseDelta);
     virtual void assertField(Packet packet) override;
     virtual void handleAssertion(Deserializer& d) override;
 
-    virtual LocalInventory& getInventory() override;
-    virtual LocalDimension& getDimension() override;
+    virtual InventoryPtr getInventory() override;
 
     virtual void setPos(glm::vec3 pos, bool assert = false) override;
     virtual void setLookOffset(glm::vec3 eyeOffset, bool assert = false) override;

@@ -12,6 +12,7 @@
 
 #include "../../../util/Vec.h"
 #include "../../../def/gen/MapGen.h"
+#include "../../../util/CovariantPtr.h"
 
 class Chunk;
 class LocalSubgame;
@@ -22,7 +23,7 @@ public:
     static const int THREADS = 4;
     static const int THREAD_QUEUE_SIZE = 16;
 
-    WorldInterpolationStream(unsigned int seed, LocalSubgame& game);
+    WorldInterpolationStream(unsigned int seed, SubgamePtr game);
 
     // Queue parsing of packet `p`.
     void queuePacket(std::unique_ptr<PacketView> p);

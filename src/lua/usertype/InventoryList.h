@@ -8,16 +8,15 @@
 
 #include "SubgameUsertype.h"
 
-#include "LuaItemStack.h"
-
-class InventoryList;
+#include "ItemStack.h"
+#include "../../util/CovariantPtr.h"
 
 namespace Api::Usertype {
     class InventoryList : public SubgameUsertype {
     public:
-        InventoryList(std::shared_ptr<::InventoryList> list) : list(list) {}
+        InventoryList(InventoryListPtr list) : list(list) {}
 
-        std::shared_ptr<::InventoryList> list;
+        InventoryListPtr list;
 
         void set_length(int length);
         int get_length();
@@ -29,26 +28,26 @@ namespace Api::Usertype {
 
         std::string get_name();
 
-        LuaItemStack get_stack(unsigned short i);
+        ItemStack get_stack(unsigned short i);
 
-        void set_stack(unsigned short i, LuaItemStack stack);
+        void set_stack(unsigned short i, ItemStack stack);
         void set_stack(unsigned short i, sol::table stack);
 
-        LuaItemStack place_stack(unsigned short i, LuaItemStack stack);
-        LuaItemStack place_stack(unsigned short i, sol::table stack);
+        ItemStack place_stack(unsigned short i, ItemStack stack);
+        ItemStack place_stack(unsigned short i, sol::table stack);
 
-        LuaItemStack split_stack(unsigned short i);
+        ItemStack split_stack(unsigned short i);
 
-        LuaItemStack add_stack(LuaItemStack stack);
-        LuaItemStack add_stack(sol::table stack);
+        ItemStack add_stack(ItemStack stack);
+        ItemStack add_stack(sol::table stack);
 
-        int stack_fits(LuaItemStack stack);
+        int stack_fits(ItemStack stack);
         int stack_fits(sol::table stack);
 
-        LuaItemStack take_stack(LuaItemStack request);
-        LuaItemStack take_stack(sol::table request);
+        ItemStack take_stack(ItemStack request);
+        ItemStack take_stack(sol::table request);
 
-        LuaItemStack remove_stack(unsigned short ind, unsigned short count);
+        ItemStack remove_stack(unsigned short ind, unsigned short count);
 
     //    void set_callback(ServerInventoryList::Callback t, sol::safe_function fun);
     //    sol::safe_function get_callback(ServerInventoryList::Callback t);

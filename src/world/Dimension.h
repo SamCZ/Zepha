@@ -20,18 +20,16 @@ public:
     typedef std::unordered_set<glm::ivec3, Vec::ivec3> relitChunks;
 
     Dimension(const Dimension& o) = delete;
-    Dimension(Subgame& game, World& world, const std::string& identifier, unsigned int ind) :
+    Dimension(SubgamePtr game, World& world, const std::string& identifier, unsigned int ind) :
         DimensionBase(game, world, identifier, ind) {}
-
-    virtual void update(double delta) = 0;
 
     // Override setBlock to update lighting.
     bool setBlock(glm::ivec3 pos, unsigned int block) override;
 
-    virtual void blockPlace(const Target &target, std::shared_ptr<Player> player) = 0;
-    virtual void blockPlaceOrInteract(const Target &target, std::shared_ptr<Player> player) = 0;
-    virtual void blockInteract(const Target &target, std::shared_ptr<Player> player) = 0;
-    virtual double blockHit(const Target &target, std::shared_ptr<Player> player) = 0;
+    virtual void blockPlace(const Target &target, PlayerPtr player) = 0;
+    virtual void blockPlaceOrInteract(const Target &target, PlayerPtr player) = 0;
+    virtual void blockInteract(const Target &target, PlayerPtr player) = 0;
+    virtual double blockHit(const Target &target, PlayerPtr player) = 0;
 
     unsigned int nextEntityInd();
 

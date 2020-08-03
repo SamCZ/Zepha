@@ -10,6 +10,7 @@
 
 #include "../Serializer.h"
 #include "ServerConnection.h"
+#include "../../util/CovariantPtr.h"
 
 class Model;
 class LocalPlayer;
@@ -22,7 +23,7 @@ enum class NetPlayerField;
 class ClientNetworkInterpreter {
 public:
     ClientNetworkInterpreter(const ClientNetworkInterpreter& other) = delete;
-    ClientNetworkInterpreter(ServerConnection& connection, LocalSubgame& defs, LocalWorld& world);
+    ClientNetworkInterpreter(ServerConnection& connection, LocalWorld& world);
 
     void init(std::function<void(std::unique_ptr<PacketView>)> invCallback);
     void update();

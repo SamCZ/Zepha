@@ -6,6 +6,7 @@
 
 #include "../basic/GuiRect.h"
 #include "../basic/GuiContainer.h"
+#include "../../../../util/CovariantPtr.h"
 
 class LocalSubgame;
 class LuaGuiElement;
@@ -18,11 +19,11 @@ public:
     GuiInventoryList(const std::string& key);
     ~GuiInventoryList() override;
 
-    static std::shared_ptr<GuiInventoryList> fromSerialized(const LuaGuiElement& elem, LocalSubgame &game,
-            glm::ivec2 bounds, LocalInventoryRefs& refs);
+    static std::shared_ptr<GuiInventoryList> fromSerialized(const LuaGuiElement& elem,
+        SubgamePtr game, glm::ivec2 bounds, InventoryRefsPtr refs);
 
     void create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding,
-                std::shared_ptr<LocalInventoryList> list, std::shared_ptr<LocalInventoryList> cursor, LocalSubgame& defs,
+                InventoryListPtr list, InventoryListPtr cursor, SubgamePtr defs,
                 unsigned short start = 0, unsigned short length = 0);
 
     void setCallback(CallbackType type, const callback& cb) override;
@@ -34,13 +35,13 @@ private:
     std::shared_ptr<GuiRect> hoverRect = std::make_shared<GuiRect>("hover_rect");
     std::shared_ptr<std::function<void()>> myCallback = nullptr;
 
-    std::shared_ptr<LocalInventoryList> list;
-    std::shared_ptr<LocalInventoryList> cursor;
+    InventoryListPtr list;
+    InventoryListPtr cursor;
 
     unsigned short start;
     unsigned short length;
 
     glm::ivec2 innerPadding;
 
-    LocalSubgame* defs = nullptr;
+    SubgamePtr defs = SubgamePtr();
 };

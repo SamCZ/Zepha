@@ -14,7 +14,7 @@
 #include "../../../def/ServerSubgame.h"
 #include "../../../lua/ServerLuaParser.h"
 
-ServerClients::ServerClients(ServerSubgame& game) :
+ServerClients::ServerClients(SubgamePtr game) :
     game(game) {}
 
 void ServerClients::init(ServerWorld *world) {
@@ -39,7 +39,7 @@ void ServerClients::handleDisconnect(ENetEvent e) {
     // Disconnect the player, if it exists.
     for (auto it = players.begin(); it != players.end();) {
         if ((*it)->getId() == id) {
-            game.getParser().playerDisconnected(*it);
+            game.s()->getParser().playerDisconnected(*it);
             players.erase(it);
             break;
         }
@@ -50,13 +50,13 @@ void ServerClients::handleDisconnect(ENetEvent e) {
     }
 }
 
-void ServerClients::createPlayer(std::shared_ptr<ServerClient> client, ServerDimension& dimension) {
+void ServerClients::createPlayer(std::shared_ptr<ServerClient> client, DimensionPtr dimension) {
     auto player = std::make_shared<ServerPlayer>(*client, game, dimension);
-    player->getInventory().createList("cursor", 1, 1);
+    player->getInventory()->createList("cursor", 1, 1);
     client->player = player;
 
     players.push_back(player);
-    game.getParser().playerConnected(player);
+    game.s()->getParser().playerConnected(player);
 
     Serializer()
         .appendE(Player::NetField::ID).append(player->getId())

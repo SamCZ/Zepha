@@ -6,7 +6,7 @@
 
 #include "../graph/Renderer.h"
 
-GameGui::GameGui(LocalInventoryRefs& refs, glm::vec2 bufferSize, LocalSubgame& defs, Renderer& renderer) :
+GameGui::GameGui(InventoryRefsPtr refs, glm::vec2 bufferSize, SubgamePtr defs, Renderer& renderer) :
     refs(refs),
     defs(defs),
     win(bufferSize),
@@ -18,7 +18,7 @@ GameGui::GameGui(LocalInventoryRefs& refs, glm::vec2 bufferSize, LocalSubgame& d
     hudRoot->add(hudLuaRoot);
     menuRoot->add(menuLuaRoot);
 
-    handList->create({3, 3}, {}, {}, refs.getCursorList(), refs.getCursorList(), defs);
+    handList->create({3, 3}, {}, {}, refs.l()->getCursorList(), refs.l()->getCursorList(), defs);
     menuRoot->add(handList);
 }
 

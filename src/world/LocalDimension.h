@@ -24,16 +24,17 @@ public:
     const static int MB_STORE_H = 6;
     const static int MB_STORE_V = 4;
 
-    LocalDimension(LocalSubgame& game, LocalWorld& world, const std::string& identifier, unsigned int ind);
+    LocalDimension(SubgamePtr game, LocalWorld& world, const std::string& identifier, unsigned int ind);
+
     void update(double delta) override;
 
     void setChunk(std::shared_ptr<Chunk> chunk) override;
     bool setBlock(glm::ivec3 pos, unsigned int block) override;
 
-    virtual void blockPlace(const Target &target, std::shared_ptr<Player> player) override;
-    virtual void blockPlaceOrInteract(const Target &target, std::shared_ptr<Player> player) override;
-    virtual void blockInteract(const Target &target, std::shared_ptr<Player> player) override;
-    virtual double blockHit(const Target &target, std::shared_ptr<Player> player) override;
+    virtual void blockPlace(const Target &target, PlayerPtr player) override;
+    virtual void blockPlaceOrInteract(const Target &target, PlayerPtr player) override;
+    virtual void blockInteract(const Target &target, PlayerPtr player) override;
+    virtual double blockHit(const Target &target, PlayerPtr player) override;
 
     void setMeshChunk(std::shared_ptr<MeshChunk> chunk);
     void removeMeshChunk(const glm::ivec3& pos);
@@ -47,8 +48,6 @@ public:
     int renderChunks(Renderer &renderer);
     void renderEntities(Renderer &renderer);
     int getMeshChunkCount();
-
-    virtual LocalSubgame& getGame();
 
     int lastMeshUpdates = 0;
     std::vector<PlayerEntity> playerEntities;

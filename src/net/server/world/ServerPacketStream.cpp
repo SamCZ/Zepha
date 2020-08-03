@@ -46,7 +46,7 @@ std::unique_ptr<std::vector<std::unique_ptr<ServerPacketStream::FinishedJob>>> S
                 queuedMap.erase(pos);
                 queuedTasks.pop();
 
-                auto mapBlock = world.getDimension(pos.w).getMapBlock(glm::ivec3(pos));
+                auto mapBlock = world.getDimension(pos.w)->getMapBlock(glm::ivec3(pos));
                 if (!mapBlock) continue;
 
                 j.pos = pos;

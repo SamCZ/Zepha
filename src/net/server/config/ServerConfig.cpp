@@ -15,17 +15,17 @@
 #include "../../../def/ServerDefinitionAtlas.h"
 #include "../../../lua/ServerLuaParser.h"
 
-ServerConfig::ServerConfig(ServerSubgame &defs) : game(defs) {}
+ServerConfig::ServerConfig(SubgamePtr game) : game(game) {}
 
 void ServerConfig::init() {
-    blockIdentifierList.reserve(static_cast<unsigned long>(game.getDefs().size()));
-    for (unsigned int i = 0; i < game.getDefs().size(); i++) {
-        blockIdentifierList.push_back(game.getDefs().fromId(i).identifier);
+    blockIdentifierList.reserve(static_cast<unsigned long>(game->getDefs().size()));
+    for (unsigned int i = 0; i < game->getDefs().size(); i++) {
+        blockIdentifierList.push_back(game->getDefs().fromId(i).identifier);
     }
 
-    biomeIdentifierList.reserve(static_cast<unsigned long>(game.getBiomes().size()));
-    for (unsigned int i = 0; i < game.getBiomes().size(); i++) {
-        biomeIdentifierList.push_back(game.getBiomes().biomeFromId(i).identifier);
+    biomeIdentifierList.reserve(static_cast<unsigned long>(game->getBiomes().size()));
+    for (unsigned int i = 0; i < game->getBiomes().size(); i++) {
+        biomeIdentifierList.push_back(game->getBiomes().biomeFromId(i).identifier);
     }
 }
 
@@ -37,7 +37,7 @@ bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
 
         case PacketType::SERVER_INFO: {
             Serializer()
-                .append(game.getBiomes().seed)
+                .append(game.s()->getBiomes().seed)
                 .packet(PacketType::SERVER_INFO)
                 .sendTo(client.peer, PacketChannel::CONNECT);
             break;
@@ -60,7 +60,7 @@ bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
         }
 
         case PacketType::MODS: {
-            game.getParser().sendModsPacket(client.peer);
+            game.s()->getParser().sendModsPacket(client.peer);
             break;
         }
 
@@ -70,7 +70,7 @@ bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
 
             Serializer s {};
 
-            for (ServerTexture& texture : game.assets.textures) {
+            for (ServerTexture& texture : game.s()->assets.textures) {
                 if (packetSize + 20 + texture.data.length() > MAX_PACKET_SIZE && packetSize != 0) {
                     s.append(static_cast<int>(AssetType::END));
                     Packet p(PacketType::MEDIA);
@@ -91,7 +91,7 @@ bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
                 packetSize += texture.data.length() + 20;
             }
 
-            for (SerializedModel& model : game.assets.models) {
+            for (SerializedModel& model : game.s()->assets.models) {
                 if (packetSize + 16 + model.data.length() > MAX_PACKET_SIZE && packetSize != 0) {
                     s.append(static_cast<int>(AssetType::END));
                     Packet p(PacketType::MEDIA);

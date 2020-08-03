@@ -8,15 +8,16 @@
 #include <glm/vec3.hpp>
 
 #include "SubgameUsertype.h"
+#include "../../util/CovariantPtr.h"
 
 class Dimension;
 
 namespace Api::Usertype {
     class Dimension : public SubgameUsertype {
     public:
-        Dimension(std::shared_ptr<::Dimension> dimension) : dimension(dimension) {}
+        Dimension(DimensionPtr dim) : dim(dim) {}
 
-        std::shared_ptr<::Dimension> dimension;
+        DimensionPtr dim;
 
         std::string get_block(glm::ivec3 pos);
         void set_block(glm::ivec3 pos, const std::string& block);

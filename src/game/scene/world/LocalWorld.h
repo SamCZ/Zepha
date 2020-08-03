@@ -18,7 +18,7 @@ class WorldInterpolationStream;
 
 class LocalWorld : public World {
 public:
-    LocalWorld(LocalSubgame& game, ServerConnection& conn, Renderer& window);
+    LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& window);
 
     void connect();
     bool initPlayer();
@@ -28,20 +28,13 @@ public:
     void handlePlayerEntPacket(std::unique_ptr<PacketView> p);
     void commitChunk(std::shared_ptr<Chunk> chunk);
 
-    virtual LocalDimension& createDimension(const std::string& identifier) override;
+    virtual DimensionPtr createDimension(const std::string& identifier) override;
 
-    virtual LocalDimension& getDefaultDimension() override;
+    DimensionPtr getActiveDimension();
 
-    virtual LocalDimension& getDimension(unsigned int index) override;
-    virtual LocalDimension& getDimension(const std::string& identifier) override;
-
-    std::shared_ptr<LocalDimension> getDefaultDimensionPtr();
-    std::shared_ptr<LocalDimension> getDimensionPtr(const std::string& identifier);
-
+    PlayerPtr getPlayer();
+    virtual InventoryRefsPtr getRefs() override;
     ClientNetworkInterpreter& getNet();
-    LocalDimension& getActiveDimension();
-    std::shared_ptr<LocalPlayer> getPlayer();
-    std::shared_ptr<LocalInventoryRefs> getRefs();
 
     int renderChunks(Renderer &render);
     void renderEntities(Renderer &renderer);
@@ -53,7 +46,7 @@ private:
 
     ClientNetworkInterpreter net;
     std::shared_ptr<LocalInventoryRefs> refs;
-    std::shared_ptr<LocalPlayer> player = nullptr;
+    PlayerPtr player {};
 
     std::shared_ptr<LocalDimension> activeDimension = nullptr;
 

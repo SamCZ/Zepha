@@ -11,15 +11,17 @@
 #include "../def/ServerSubgame.h"
 #include "../lua/usertype/Player.h"
 #include "../lua/usertype/Target.h"
-#include "../lua/usertype/LuaItemStack.h"
+#include "../lua/usertype/ItemStack.h"
 #include "../net/server/conn/ServerPlayer.h"
 #include "../net/server/world/ServerWorld.h"
 #include "../lua/usertype/ServerLuaEntity.h"
 
-ServerDimension::ServerDimension(ServerSubgame& game, ServerWorld& world, const std::string& identifier, unsigned int ind) :
-    Dimension(game, world, identifier, ind) {}
+ServerDimension::ServerDimension(SubgamePtr game, ServerWorld& world, const std::string& identifier, unsigned int ind) :
+    Dimension(game, static_cast<World&>(world), identifier, ind) {}
 
 void ServerDimension::update(double delta) {
+    Dimension::update(delta);
+
     //TODO: Thiss
 //    for (const auto& region : regions) {
 //        for (unsigned short i = 0; i < 64; i++) {
@@ -52,37 +54,37 @@ bool ServerDimension::setBlock(glm::ivec3 pos, unsigned int block) {
     return true;
 }
 
-void ServerDimension::blockPlace(const Target &target, std::shared_ptr<Player> player) {
-    std::tuple<sol::optional<LuaItemStack>, sol::optional<glm::vec3>> res = game.getParser().safe_function(
-        game.getParser().core["block_place"], Api::Usertype::ServerPlayer(std::static_pointer_cast<ServerPlayer>(player)), Api::Usertype::Target(target));
+void ServerDimension::blockPlace(const Target &target, PlayerPtr player) {
+    std::tuple<sol::optional<Api::Usertype::ItemStack>, sol::optional<glm::vec3>> res = game->getParser().safe_function(
+        game->getParser().core["block_place"], Api::Usertype::ServerPlayer(player.s()), Api::Usertype::Target(target));
 
-    auto stack = std::get<sol::optional<LuaItemStack>>(res);
+    auto stack = std::get<sol::optional<Api::Usertype::ItemStack>>(res);
     if (!stack) return;
 
-    auto& inv = std::static_pointer_cast<ServerPlayer>(player)->getInventory();
-    if (inv.hasList(player->getWieldList())) inv.getList(player->getWieldList()).setStack(player->getWieldIndex(), ItemStack(*stack, game));
+    auto inv = player->getInventory();
+    if (inv->hasList(player->getWieldList())) inv->getList(player->getWieldList())->setStack(player->getWieldIndex(), ItemStack(*stack, game));
 }
 
-void ServerDimension::blockInteract(const Target &target, std::shared_ptr<Player> player) {
-    game.getParser().safe_function(game.getParser().core["block_interact"],
-        Api::Usertype::LocalPlayer(std::static_pointer_cast<LocalPlayer>(player)), Api::Usertype::Target(target));
+void ServerDimension::blockInteract(const Target &target, PlayerPtr player) {
+    game->getParser().safe_function(game->getParser().core["block_interact"],
+        Api::Usertype::LocalPlayer(player.s()), Api::Usertype::Target(target));
 }
 
-void ServerDimension::blockPlaceOrInteract(const Target &target, std::shared_ptr<Player> player) {
-    std::tuple<sol::optional<LuaItemStack>, sol::optional<glm::vec3>> res = game.getParser().safe_function(
-        game.getParser().core["block_interact_or_place"], Api::Usertype::LocalPlayer(std::static_pointer_cast<LocalPlayer>(player)), Api::Usertype::Target(target));
+void ServerDimension::blockPlaceOrInteract(const Target &target, PlayerPtr player) {
+    std::tuple<sol::optional<Api::Usertype::ItemStack>, sol::optional<glm::vec3>> res = game->getParser().safe_function(
+        game->getParser().core["block_interact_or_place"], Api::Usertype::LocalPlayer(player.s()), Api::Usertype::Target(target));
 
-    auto stack = std::get<sol::optional<LuaItemStack>>(res);
+    auto stack = std::get<sol::optional<Api::Usertype::ItemStack>>(res);
     if (!stack) return;
 
-    auto& inv = std::static_pointer_cast<LocalPlayer>(player)->getInventory();
-    if (inv.hasList(player->getWieldList())) inv.getList(player->getWieldList()).setStack(player->getWieldIndex(), ItemStack(*stack, game));
+    auto inv = player.s()->getInventory();
+    if (inv->hasList(player->getWieldList())) inv->getList(player->getWieldList())->setStack(player->getWieldIndex(), ItemStack(*stack, game));
 }
 
-double ServerDimension::blockHit(const Target &target, std::shared_ptr<Player> player) {
+double ServerDimension::blockHit(const Target &target, PlayerPtr player) {
     double timeout = 0, damage = 0;
-    sol::tie(damage, timeout) = game.getParser().safe_function(game.getParser().core["block_hit"],
-        Api::Usertype::LocalPlayer(std::static_pointer_cast<LocalPlayer>(player)), Api::Usertype::Target(target));
+    sol::tie(damage, timeout) = game->getParser().safe_function(game->getParser().core["block_hit"],
+        Api::Usertype::LocalPlayer(player.s()), Api::Usertype::Target(target));
 
     return timeout;
 }

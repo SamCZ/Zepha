@@ -11,7 +11,7 @@
 #include "../lua/usertype/Target.h"
 #include "../lua/usertype/Player.h"
 #include "../world/chunk/MapBlock.h"
-#include "../lua/usertype/LuaItemStack.h"
+#include "../lua/usertype/ItemStack.h"
 #include "../game/scene/world/LocalWorld.h"
 #include "../lua/usertype/LocalLuaEntity.h"
 #include "../game/scene/world/LocalPlayer.h"
@@ -21,19 +21,19 @@
 #include "../lua/usertype/ServerLocalLuaEntity.h"
 //#include "../game/inventory/LocalInventoryList.h"
 
-LocalDimension::LocalDimension(LocalSubgame &game, LocalWorld& world, const std::string& identifier, unsigned int ind) :
-    Dimension(game, world, identifier, ind), meshGenStream(std::make_shared<MeshGenStream>(game, *this)) {}
+LocalDimension::LocalDimension(SubgamePtr game, LocalWorld& world, const std::string& identifier, unsigned int ind) :
+    Dimension(game, static_cast<World&>(world), identifier, ind), meshGenStream(std::make_shared<MeshGenStream>(game, *this)) {}
 
 void LocalDimension::update(double delta) {
+    Dimension::update(delta);
+
     finishMeshes();
 
     for (auto& entity : localEntities ) entity->entity->update(delta);
     for (auto& entity : serverEntities) entity->entity->update(delta);
     for (auto& entity : playerEntities) entity.update(delta);
 
-    //TODO: Fix playerpos.
-    glm::ivec3 playerPos {};
-    auto clientMapBlock = Space::MapBlock::world::fromBlock(playerPos);
+    auto clientMapBlock = Space::MapBlock::world::fromBlock(static_cast<LocalWorld&>(world).getPlayer()->getPos());
 
     for (auto it = regions.cbegin(); it != regions.cend();) {
         bool remove = false;
@@ -91,45 +91,45 @@ bool LocalDimension::setBlock(glm::ivec3 pos, unsigned int block) {
     return true;
 }
 
-void LocalDimension::blockPlace(const Target &target, std::shared_ptr<Player> player) {
-    std::tuple<sol::optional<LuaItemStack>, sol::optional<glm::vec3>> res = game.getParser().safe_function(
-        game.getParser().core["block_place"], Api::Usertype::LocalPlayer(std::static_pointer_cast<LocalPlayer>(player)), Api::Usertype::Target(target));
+void LocalDimension::blockPlace(const Target &target, PlayerPtr player) {
+    std::tuple<sol::optional<Api::Usertype::ItemStack>, sol::optional<glm::vec3>> res = game->getParser().safe_function(
+        game->getParser().core["block_place"], Api::Usertype::LocalPlayer(player.l()), Api::Usertype::Target(target));
 
 //    net->blockPlace(target);
 
-    auto stack = std::get<sol::optional<LuaItemStack>>(res);
+    auto stack = std::get<sol::optional<Api::Usertype::ItemStack>>(res);
     if (!stack) return;
 
-    auto& inv = std::static_pointer_cast<LocalPlayer>(player)->getInventory();
-    if (inv.hasList(player->getWieldList()))
-        inv.getList(player->getWieldList()).setStack(player->getWieldIndex(), ItemStack(*stack, game));
+    auto inv = player.l()->getInventory();
+    if (inv->hasList(player->getWieldList()))
+        inv->getList(player->getWieldList())->setStack(player->getWieldIndex(), ItemStack(*stack, game));
 }
 
-void LocalDimension::blockInteract(const Target &target, std::shared_ptr<Player> player) {
-    game.getParser().safe_function(game.getParser().core["block_interact"],
-        Api::Usertype::LocalPlayer(std::static_pointer_cast<LocalPlayer>(player)), Api::Usertype::Target(target));
+void LocalDimension::blockInteract(const Target &target, PlayerPtr player) {
+    game->getParser().safe_function(game->getParser().core["block_interact"],
+        Api::Usertype::LocalPlayer(player.l()), Api::Usertype::Target(target));
 
 //    net->blockInteract(target);
 }
 
-void LocalDimension::blockPlaceOrInteract(const Target &target, std::shared_ptr<Player> player) {
-    std::tuple<sol::optional<LuaItemStack>, sol::optional<glm::vec3>> res = game.getParser().safe_function(
-        game.getParser().core["block_interact_or_place"], Api::Usertype::LocalPlayer(std::static_pointer_cast<LocalPlayer>(player)), Api::Usertype::Target(target));
+void LocalDimension::blockPlaceOrInteract(const Target &target, PlayerPtr player) {
+    std::tuple<sol::optional<Api::Usertype::ItemStack>, sol::optional<glm::vec3>> res = game->getParser().safe_function(
+        game->getParser().core["block_interact_or_place"], Api::Usertype::LocalPlayer(player.l()), Api::Usertype::Target(target));
 
 //    net->blockPlaceOrInteract(target);
 
-    auto stack = std::get<sol::optional<LuaItemStack>>(res);
+    auto stack = std::get<sol::optional<Api::Usertype::ItemStack>>(res);
     if (!stack) return;
 
-    auto& inv = std::static_pointer_cast<LocalPlayer>(player)->getInventory();
-    if (inv.hasList(player->getWieldList()))
-        inv.getList(player->getWieldList()).setStack(player->getWieldIndex(), ItemStack(*stack, game));
+    auto inv = player.l()->getInventory();
+    if (inv->hasList(player->getWieldList()))
+        inv->getList(player->getWieldList())->setStack(player->getWieldIndex(), ItemStack(*stack, game));
 }
 
-double LocalDimension::blockHit(const Target &target, std::shared_ptr<Player> player) {
+double LocalDimension::blockHit(const Target &target, PlayerPtr player) {
     double timeout = 0, damage = 0;
-    sol::tie(damage, timeout) = game.getParser().safe_function(game.getParser().core["block_hit"],
-        Api::Usertype::LocalPlayer(std::static_pointer_cast<LocalPlayer>(player)), Api::Usertype::Target(target));
+    sol::tie(damage, timeout) = game->getParser().safe_function(game->getParser().core["block_hit"],
+        Api::Usertype::LocalPlayer(player.l()), Api::Usertype::Target(target));
 
 //    net->blockHit(target);
 
@@ -189,7 +189,7 @@ void LocalDimension::serverEntityInfo(PacketView& p) {
         luaEntity.setDisplayType(displayMode, displayArg1, displayArg2);
     }
     else {
-        auto entity = std::make_shared<ServerLocalLuaEntity>(id, static_cast<LocalSubgame&>(game), displayMode, displayArg1, displayArg2);
+        auto entity = std::make_shared<ServerLocalLuaEntity>(id, game, displayMode, displayArg1, displayArg2);
         entity->entity->setPos(position);
         entity->entity->setVisualOffset(visualOffset);
         entity->entity->setRotateX(rotation.x);
@@ -229,10 +229,6 @@ void LocalDimension::renderEntities(Renderer &renderer) {
 
 int LocalDimension::getMeshChunkCount() {
     return static_cast<int>(renderElems.size());
-}
-
-LocalSubgame& LocalDimension::getGame() {
-    return static_cast<LocalSubgame&>(DimensionBase::getGame());
 }
 
 std::unordered_set<glm::ivec3, Vec::ivec3> LocalDimension::propogateAddNodes() {

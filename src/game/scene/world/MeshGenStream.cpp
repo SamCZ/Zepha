@@ -11,8 +11,7 @@
 #include "../../../world/chunk/Chunk.h"
 #include "../../../world/LocalDimension.h"
 
-MeshGenStream::MeshGenStream(LocalSubgame& game, LocalDimension &dimension) :
-    game(game),
+MeshGenStream::MeshGenStream(SubgamePtr game, LocalDimension &dimension) :
     dimension(dimension),
     noiseSampler({NoiseSample {16}, NoiseSample {16}, NoiseSample {16}}) {
 
@@ -31,7 +30,7 @@ MeshGenStream::MeshGenStream(LocalSubgame& game, LocalDimension &dimension) :
     noiseSampler[2].populate([&](glm::ivec3 pos) { return offsetTurbulence.GetValue(pos.x, pos.y, pos.z + 8); });
 
     threads.reserve(THREADS);
-    for (int i = 0; i < THREADS; i++) threads.emplace_back(game, noiseSampler);
+    for (int i = 0; i < THREADS; i++) threads.emplace_back(*game.l(), noiseSampler);
 }
 
 std::vector<ChunkMeshDetails*> MeshGenStream::update() {

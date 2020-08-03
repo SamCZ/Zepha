@@ -12,6 +12,7 @@
 #include "modules/SubgameModule.h"
 
 #include "Lua.h"
+#include "../util/CovariantPtr.h"
 
 class Subgame;
 

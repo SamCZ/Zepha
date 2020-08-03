@@ -11,6 +11,7 @@
 
 #include "ChunkMeshDetails.h"
 #include "../../../util/Vec.h"
+#include "../../../util/CovariantPtr.h"
 #include "../../../def/gen/NoiseSample.h"
 
 class Chunk;
@@ -23,7 +24,7 @@ public:
     static const int THREADS = 4;
     static const int THREAD_QUEUE_SIZE = 32;
 
-    explicit MeshGenStream(LocalSubgame& game, LocalDimension& dimension);
+    explicit MeshGenStream(SubgamePtr game, LocalDimension& dimension);
     ~MeshGenStream();
 
     void queue(glm::ivec3 pos, bool priority = false);
@@ -57,7 +58,6 @@ public:
 private:
 
     LocalDimension& dimension;
-    LocalSubgame& game;
 
     std::array<NoiseSample, 3> noiseSampler;
     std::deque<glm::ivec3> queuedTasks;

@@ -7,18 +7,19 @@
 #include <memory>
 
 #include "../Lua.h"
+#include "../../util/CovariantPtr.h"
 #include "../../net/server/world/ServerEntity.h"
 
 class ServerSubgame;
 
 class ServerLuaEntity {
 public:
-    ServerLuaEntity(std::unique_ptr<ServerEntity> entity, unsigned int id, ServerSubgame& defs) :
-            entity(std::move(entity)), id(id), defs(defs) {}
+    ServerLuaEntity(std::unique_ptr<ServerEntity> entity, unsigned int id, SubgamePtr game) :
+            entity(std::move(entity)), id(id), game(game) {}
 
     std::unique_ptr<ServerEntity> entity = nullptr;
     unsigned int id;
-    ServerSubgame& defs;
+    SubgamePtr game;
 
     void snap_pos(glm::vec3 pos);
     void set_pos(glm::vec3 pos);

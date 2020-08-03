@@ -12,11 +12,10 @@
 #include "../../def/item/CraftItemDef.h"
 #include "../../def/LocalDefinitionAtlas.h"
 
-ServerLocalLuaEntity::ServerLocalLuaEntity(unsigned int id, LocalSubgame &defs, const std::string &appearance,
+ServerLocalLuaEntity::ServerLocalLuaEntity(unsigned int id, SubgamePtr game, const std::string &appearance,
     const std::string &arg1, const std::string &arg2) :
-
     id(id),
-    defs(defs) {
+    game(game) {
 
     setDisplayType(appearance, arg1, arg2);
 }
@@ -25,7 +24,7 @@ void ServerLocalLuaEntity::setDisplayType(const std::string &type, const std::st
     if (strncmp(type.data(), "gameobject", 10) == 0 &&
        (strncmp(displayType.data(), "gameobject", 10) || arg2 != displayArg2)) {
 
-        ItemDef& def = defs.getDefs().fromStr(arg2);
+        ItemDef& def = game->getDefs().fromStr(arg2);
 
         if (def.type == ItemDef::Type::BLOCK)
             entity->setModel(static_cast<BlockDef&>(def).entityModel);
@@ -35,7 +34,7 @@ void ServerLocalLuaEntity::setDisplayType(const std::string &type, const std::st
     else if (strncmp(type.data(), "model", 5) == 0 && !arg2.empty() &&
             (strncmp(displayType.data(), "model", 5) || arg != displayArg1 || arg != displayArg2)) {
         auto model = std::make_shared<Model>();
-        model->fromSerialized(defs.models.models[arg], {defs.textures[arg2]});
+        model->fromSerialized(game.l()->models.models[arg], {game.l()->textures[arg2]});
         entity->setModel(model);
     }
     else return;

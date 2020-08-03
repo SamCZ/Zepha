@@ -10,10 +10,6 @@ void ServerInventory::createList(const std::string &name, unsigned short length,
     lists.emplace(name, std::make_shared<ServerInventoryList>(game, clients, name, this->name, length, width));
 }
 
-ServerInventoryList& ServerInventory::getList(const std::string &name) {
-    return static_cast<ServerInventoryList&>(Inventory::getList(name));
-}
-
 //void ServerInventory::sendDirtyLists() {
 //    for (auto& list : lists) {
 //        if (list.second->dirty) {

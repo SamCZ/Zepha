@@ -7,19 +7,14 @@
 #include "LocalInventoryList.cpp"
 #include "../../net/client/ClientNetworkInterpreter.h"
 
-LocalInventoryList& LocalInventory::getList(const std::string &name) {
-    if (hasList(name)) createList(name, 0, 0);
-    return static_cast<LocalInventoryList&>(Inventory::getList(name));
+InventoryListPtr LocalInventory::getList(const std::string &name) {
+    if (!hasList(name)) createList(name, 0, 0);
+    return Inventory::getList(name);
 }
 
 void LocalInventory::createList(const std::string &name, unsigned short length, unsigned short width) {
     lists.emplace(name, std::make_shared<LocalInventoryList>(game, name, this->name, length, width, net));
     net.invWatch(this->name, name);
-}
-
-std::shared_ptr<LocalInventoryList> LocalInventory::getListPtr(const std::string &name) {
-    if (!hasList(name)) createList(name, 0, 0);
-    return std::static_pointer_cast<LocalInventoryList>(lists[name]);
 }
 
 void LocalInventory::setPersistant(const std::string &list, bool persistant) {

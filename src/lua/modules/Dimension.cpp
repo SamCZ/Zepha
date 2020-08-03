@@ -25,15 +25,9 @@ void Api::Module::Dimension::setDefaultDimension(const std::string& identifier) 
 }
 
 sol::object Api::Module::Dimension::getDefaultDimension(const sol::this_state s) {
-    std::shared_ptr<::Dimension> dim = state == State::CLIENT ?
-        std::static_pointer_cast<::Dimension>(static_cast<LocalWorld&>(world).getDefaultDimensionPtr()) :
-        std::static_pointer_cast<::Dimension>(static_cast<ServerWorld&>(world).getDefaultDimensionPtr());
-    return sol::make_object(s, Api::Usertype::Dimension(dim));
+    return sol::make_object(s, Api::Usertype::Dimension(world.getDefaultDimension()));
 }
 
 sol::object Api::Module::Dimension::getDimension(sol::this_state s, const std::string& identifier) {
-    std::shared_ptr<::Dimension> dim = state == State::CLIENT ?
-        std::static_pointer_cast<::Dimension>(static_cast<LocalWorld&>(world).getDimensionPtr(identifier)) :
-        std::static_pointer_cast<::Dimension>(static_cast<ServerWorld&>(world).getDimensionPtr(identifier));
-    return sol::make_object(s, Api::Usertype::Dimension(dim));
+    return sol::make_object(s, Api::Usertype::Dimension(world.getDimension(identifier)));
 }

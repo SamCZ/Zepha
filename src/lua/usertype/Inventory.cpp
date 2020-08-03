@@ -10,17 +10,17 @@
 
 
 sol::object Api::Usertype::Inventory::add_list(sol::this_state s, std::string name, int size, int width) {
-    inventory.createList(name, size, width);
-    return sol::make_object<InventoryList>(s, InventoryList(inventory.getListPtr(name)));
+    inventory->createList(name, size, width);
+    return sol::make_object<InventoryList>(s, InventoryList(inventory->getList(name)));
 }
 
 sol::object Api::Usertype::Inventory::get_list(sol::this_state s, std::string name) {
-    if (!inventory.hasList(name)) return sol::nil;
-    return sol::make_object<InventoryList>(s, InventoryList(inventory.getListPtr(name)));
+    if (!inventory->hasList(name)) return sol::nil;
+    return sol::make_object<InventoryList>(s, InventoryList(inventory->getList(name)));
 }
 
 void Api::Usertype::Inventory::remove_list(std::string name) {
-    inventory.removeList(name);
+    inventory->removeList(name);
 }
 
 void Api::Usertype::Inventory::set_default_list(sol::object list) {

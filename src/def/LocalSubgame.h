@@ -13,6 +13,7 @@
 #include "gen/LocalBiomeAtlas.h"
 #include "LocalDefinitionAtlas.h"
 #include "texture/TextureAtlas.h"
+#include "../util/CovariantPtr.h"
 #include "../lua/LocalLuaParser.h"
 
 class LocalPlayer;
@@ -24,8 +25,8 @@ public:
     explicit LocalSubgame(const std::string& texPath);
     ~LocalSubgame();
 
-    void initApi(LocalWorld &world, ClientState& state);
-    void loadPlayer(std::shared_ptr<LocalPlayer> player);
+    void initApi(WorldPtr world, ClientState& state);
+    void loadPlayer(PlayerPtr player);
     void update(double delta);
 
     std::string texPath;
@@ -38,8 +39,8 @@ public:
     TextureAtlas textures;
 
 private:
-    std::unique_ptr<LocalLuaParser> lua;
-    std::unique_ptr<LocalBiomeAtlas> biomes;
-    std::unique_ptr<LocalDefinitionAtlas> defs;
+    std::shared_ptr<LocalLuaParser> lua;
+    std::shared_ptr<LocalBiomeAtlas> biomes;
+    std::shared_ptr<LocalDefinitionAtlas> defs;
 };
 

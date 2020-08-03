@@ -29,9 +29,9 @@ private:
     unsigned short port = 0;
     unsigned int seed = 0;
 
-    ServerSubgame game;
+    SubgamePtr game;
     ServerClients clients;
-    ServerWorld world;
+    WorldPtr world;
     NetHandler handler;
     ServerConfig config;
 

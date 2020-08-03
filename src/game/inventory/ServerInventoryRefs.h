@@ -13,12 +13,11 @@ class ServerInventoryList;
 
 class ServerInventoryRefs : public InventoryRefs {
 public:
-    ServerInventoryRefs(Subgame& game, ServerClients& clients);
+    ServerInventoryRefs(SubgamePtr game, ServerClients& clients);
 
     void update();
 
-    virtual ServerInventory& createInventory(const std::string &inv) override;
-    virtual ServerInventory& getInventory(const std::string &inv) override;
+    virtual InventoryPtr createInventory(const std::string &inv) override;
 
     bool addWatcher(const std::string& inv, const std::string& list, unsigned int id);
     bool removeWatcher(const std::string& inv, const std::string& list, unsigned int id);

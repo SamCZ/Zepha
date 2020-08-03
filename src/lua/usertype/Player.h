@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "Inventory.h"
+#include "Dimension.h"
 #include "../../game/scene/world/LocalPlayer.h"
 
 class LuaGuiElement;
@@ -16,9 +17,9 @@ class LuaGuiElement;
 namespace Api::Usertype {
     class ServerPlayer : public SubgameUsertype {
     public:
-        ServerPlayer(std::shared_ptr<::Player> player) : player(player) {}
+        ServerPlayer(PlayerPtr player) : player(player) {}
 
-        std::shared_ptr<::Player> player;
+        PlayerPtr player;
 
         unsigned int get_id();
 
@@ -44,6 +45,7 @@ namespace Api::Usertype {
         void set_wield_list(sol::optional<sol::object> list);
 
         Inventory get_inventory();
+        Dimension get_dimension();
 
         unsigned int get_wield_index();
         void set_wield_index(unsigned int index);
@@ -56,8 +58,7 @@ namespace Api::Usertype {
 
     class LocalPlayer : public ServerPlayer {
     public:
-        LocalPlayer(std::shared_ptr<::LocalPlayer> player) :
-            ServerPlayer(std::static_pointer_cast<::Player>(player)) {}
+        LocalPlayer(PlayerPtr player) : ServerPlayer(player) {}
 
         bool is_in_menu();
         void show_menu(std::shared_ptr<LuaGuiElement> root);

@@ -20,10 +20,10 @@
 #include "usertype/Player.h"
 #include "usertype/Inventory.h"
 #include "usertype/Dimension.h"
+#include "usertype/ItemStack.h"
 #include "usertype/InventoryList.h"
 
 #include "usertype/sLuaEntity.h"
-#include "usertype/cItemStack.h"
 
 // Modules
 #include "modules/Time.h"
@@ -32,16 +32,16 @@
 
 #include "modules/create_structure.h"
 
-ServerLuaParser::ServerLuaParser(ServerSubgame& game) : LuaParser(game), game(game) {}
+ServerLuaParser::ServerLuaParser(ServerSubgame& game) : LuaParser(game) {}
 
-void ServerLuaParser::init(ServerWorld& world, const std::string& path) {
+void ServerLuaParser::init(WorldPtr world, const std::string& path) {
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
 
-    loadApi(game, world);
-    handler.loadMods(game, path + "mods");
+    loadApi(world);
+    handler.loadMods(static_cast<ServerSubgame&>(game), path + "mods");
     handler.executeMods(std::bind(&ServerLuaParser::runFileSandboxed, this, std::placeholders::_1));
 
-    registerDefs(game);
+    registerDefs();
 
     std::cout << Log::info << "Loaded " << handler.cGetMods().size() << " mods: [ ";
     for (unsigned int i = 0; i < handler.cGetMods().size(); i++)
@@ -88,7 +88,7 @@ void ServerLuaParser::playerDisconnected(std::shared_ptr<ServerPlayer> player) {
     }
 }
 
-void ServerLuaParser::loadApi(ServerSubgame &defs, ServerWorld &world) {
+void ServerLuaParser::loadApi(WorldPtr world) {
     //Create Zepha Table
     core = lua.create_table();
     lua["zepha"] = core;
@@ -96,11 +96,11 @@ void ServerLuaParser::loadApi(ServerSubgame &defs, ServerWorld &world) {
 
     // Types
     ServerApi::entity        (lua);
-    ClientApi::item_stack    (lua);
 
     Api::Usertype::Target::bind(Api::State::SERVER, lua, core);
-    Api::Usertype::Dimension::bind(Api::State::SERVER, lua, core);
     Api::Usertype::Inventory::bind(Api::State::SERVER, lua, core);
+    Api::Usertype::Dimension::bind(Api::State::SERVER, lua, core);
+    Api::Usertype::ItemStack::bind(Api::State::SERVER, lua, core);
     Api::Usertype::ServerPlayer::bind(Api::State::SERVER, lua, core);
     Api::Usertype::InventoryList::bind(Api::State::SERVER, lua, core);
 
@@ -109,8 +109,8 @@ void ServerLuaParser::loadApi(ServerSubgame &defs, ServerWorld &world) {
 
     // Modules
     modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::SERVER, lua, core));
-    modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::SERVER, core, game, world));
-    modules.emplace_back(std::make_unique<Api::Module::Dimension>(Api::State::SERVER, core, game, world));
+    modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::SERVER, core, game, *world.s()));
+    modules.emplace_back(std::make_unique<Api::Module::Dimension>(Api::State::SERVER, core, game, *world.s()));
 
     Api::create_structure (lua, core);
 
@@ -121,10 +121,11 @@ void ServerLuaParser::loadApi(ServerSubgame &defs, ServerWorld &world) {
     lua.set_function("runfile", &ServerLuaParser::runFileSandboxed, this);
 }
 
-void ServerLuaParser::registerDefs(ServerSubgame &defs) {
-    RegisterBlocks::server(core, defs);
-    RegisterItems ::server(core, defs);
-    RegisterBiomes::server(core, defs);
+void ServerLuaParser::registerDefs() {
+    auto& server = static_cast<ServerSubgame&>(game);
+    RegisterBlocks::server(core, server);
+    RegisterItems ::server(core, server);
+    RegisterBiomes::server(core, server);
 }
 
 sol::protected_function_result ServerLuaParser::errorCallback(sol::protected_function_result r) const {

@@ -7,10 +7,10 @@
 #include "../../def/ItemDef.h"
 #include "../../net/Serializer.h"
 #include "../../def/DefinitionAtlas.h"
-#include "../../lua/usertype/LuaItemStack.h"
+#include "../../lua/usertype/ItemStack.h"
 
 
-InventoryList::InventoryList(Subgame& game, const std::string& name, const std::string& invName, unsigned short size, unsigned short width) :
+InventoryList::InventoryList(SubgamePtr game, const std::string& name, const std::string& invName, unsigned short size, unsigned short width) :
     game(game),
     name(name),
     items(size),
@@ -65,7 +65,7 @@ ItemStack InventoryList::placeStack(unsigned short i, const ItemStack &stack, bo
     else {
         if (otherStack.count) {
             if (otherStack.id == stack.id) {
-                unsigned short maxStack = game.getDefs().fromId(stack.id).maxStackSize;
+                unsigned short maxStack = game->getDefs().fromId(stack.id).maxStackSize;
                 if (allowedPut >= stack.count && allowedPut + otherStack.count < maxStack) {
                     setStack(i, {stack.id, static_cast<unsigned short>(otherStack.count + allowedPut)});
 //                    if (on_put) on_put(i+1, LuaItemStack(otherStack, defs));
@@ -123,7 +123,7 @@ ItemStack InventoryList::splitStack(unsigned short i, bool playerInitiated) {
 }
 
 ItemStack InventoryList::addStack(ItemStack stack, bool playerInitiated) {
-    unsigned short maxStack = game.getDefs().fromId(stack.id).maxStackSize;
+    unsigned short maxStack = game->getDefs().fromId(stack.id).maxStackSize;
 
     unsigned short i = 0;
     while (i < items.size() && stack.count > 0) {
@@ -159,7 +159,7 @@ ItemStack InventoryList::addStack(ItemStack stack, bool playerInitiated) {
 }
 
 unsigned short InventoryList::stackFits(const ItemStack &stack) {
-    unsigned short maxStack = game.getDefs().fromId(stack.id).maxStackSize;
+    unsigned short maxStack = game->getDefs().fromId(stack.id).maxStackSize;
 
     unsigned short i = 0;
     unsigned short fits = 0;
@@ -218,14 +218,14 @@ ItemStack InventoryList::removeStack(unsigned short ind, unsigned short count) {
     }
 }
 
-void InventoryList::interact(InventoryList& cursor, bool primary, unsigned short ind) {
+void InventoryList::interact(InventoryListPtr cursor, bool primary, unsigned short ind) {
     if (primary) {
-        cursor.setStack(0, placeStack(ind, cursor.getStack(0), true));
+        cursor->setStack(0, placeStack(ind, cursor->getStack(0), true));
     }
     else {
-        auto handStack = cursor.getStack(0);
+        auto handStack = cursor->getStack(0);
         if (handStack.count == 0) {
-            cursor.setStack(0, splitStack(ind, true));
+            cursor->setStack(0, splitStack(ind, true));
         }
         else {
             auto listStack = getStack(ind);
@@ -234,10 +234,10 @@ void InventoryList::interact(InventoryList& cursor, bool primary, unsigned short
                 handStack.count -= 1;
                 if (handStack.count == 0) handStack.id = 0;
                 if (overflow.count != 0) handStack.count += overflow.count;
-                cursor.setStack(0, handStack);
+                cursor->setStack(0, handStack);
             }
             else {
-                cursor.setStack(0, placeStack(ind, cursor.getStack(0), true));
+                cursor->setStack(0, placeStack(ind, cursor->getStack(0), true));
             }
         }
     }
@@ -277,6 +277,6 @@ Packet InventoryList::createPacket() {
 //    return luaCallbacks[static_cast<size_t>(type)];
 //}
 
-Subgame &InventoryList::getGame() {
+SubgamePtr InventoryList::getGame() {
     return game;
 }

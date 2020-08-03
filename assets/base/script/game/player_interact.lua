@@ -3,7 +3,7 @@
 -- Otherwise, calls zepha.block_place and returned the function's returned values.
 function zepha.block_interact_or_place(player, target, stack)
     local stack = stack or player:get_wield_stack()
-    local target_block = zepha.get_block(target.pos)
+    local target_block = player.dim:get_block(target.pos)
     local target_def = zepha.registered_blocks[target_block]
     local stack_def = zepha.registered_blocks[stack and stack.name or nil]
 
@@ -24,7 +24,7 @@ end
 -- Interacts with the targeted block. Returns true if the block has an on_interact or
 -- on_interact_client callback, returns false otherwise.
 function zepha.block_interact(player, target)
-    local block = zepha.get_block(target.pos)
+    local block = player.dim:get_block(target.pos)
     local def = zepha.registered_blocks[block]
 
     local cb = zepha.server and "on_interact" or "on_interact_client"
@@ -43,21 +43,21 @@ function zepha.block_place(player, target, stack)
     local stack_def = zepha.registered_blocks[stack and stack.name or nil]
     if stack == nil or stack_def == nil then return stack, nil end
 
-    zepha.set_block(target.pos_above, stack.name)
+    player.dim:set_block(target.pos_above, stack.name)
 
     stack.count = stack.count - 1
     return stack, target.pos_above
 end
 
 function zepha.block_hit(player, target)
-    local block = zepha.get_block(target.pos)
+    local block = player.dim:get_block(target.pos)
     local def = zepha.registered_blocks[block]
 
     -- Don't do anything, return a small timeout to avoid spamming the function.
     if not def then return 0, 0.1 end
 
     local damage, timeout = zepha.get_hit_impact(player, block)
-    zepha.block_damage_add(target.pos, damage)
+    player.dim:add_block_damage(target.pos, damage)
 
     return damage, timeout
 end

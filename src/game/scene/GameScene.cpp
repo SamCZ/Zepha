@@ -10,16 +10,16 @@
 #include "../../net/PacketView.h"
 
 GameScene::GameScene(ClientState& state) : Scene(state),
-    game(state.defs),
-    world(game, state.connection, state.renderer),
+    game(std::make_shared<LocalSubgame>(state.defs)),
+    world(std::make_shared<LocalWorld>(game, state.connection, state.renderer)),
     debugGui(state.renderer.window.getSize(), game, world) {
 
     Packet r(PacketType::CONNECT_DATA_RECVD);
     r.sendTo(state.connection.getPeer(), PacketChannel::CONNECT);
 
-    world.connect();
-    game.initApi(world, state);
-    if (world.initPlayer()) game.loadPlayer(world.getPlayer());
+    world.l()->connect();
+    game.l()->initApi(world, state);
+    if (world.l()->initPlayer()) game.l()->loadPlayer(world.l()->getPlayer());
 
     state.renderer.window.addResizeCallback("gamescene", Util::bind_this(&debugGui, &DebugGui::bufferResized));
     state.renderer.setClearColor(148, 194, 240);
@@ -29,21 +29,21 @@ GameScene::GameScene(ClientState& state) : Scene(state),
 void GameScene::update() {
     Window& window = state.renderer.window;
 
-    game.update(state.delta);
-    world.update(state.delta);
+    game.l()->update(state.delta);
+    world->update(state.delta);
 
     for (auto entity : entities) entity->update(state.delta);
 
-    debugGui.update(*world.getPlayer(), state.fps, world.getActiveDimension().getMeshChunkCount(),
-        drawCalls, world.getNet().serverSideChunkGens, world.getNet().recvPackets);
+    debugGui.update(world.l()->getPlayer().l(), state.fps, world.l()->getActiveDimension().l()->getMeshChunkCount(),
+        drawCalls, world.l()->getNet().serverSideChunkGens, world.l()->getNet().recvPackets);
 
-    world.getNet().serverSideChunkGens = 0;
-    world.getNet().recvPackets = 0;
+    world.l()->getNet().serverSideChunkGens = 0;
+    world.l()->getNet().recvPackets = 0;
 
     if (window.input.keyPressed(GLFW_KEY_F1)) {
         hudVisible = !hudVisible;
         debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
-        world.getPlayer()->setHudVisible(hudVisible);
+        world.l()->getPlayer().l()->setHudVisible(hudVisible);
     }
 
     if (window.input.keyPressed(GLFW_KEY_F3)) {
@@ -57,22 +57,22 @@ void GameScene::draw() {
     Camera& camera = renderer.camera;
 
     renderer.beginChunkDeferredCalls();
-    renderer.enableTexture(&game.textures.atlasTexture);
+    renderer.enableTexture(&game.l()->textures.atlasTexture);
 
-    drawCalls = world.renderChunks(renderer);
+    drawCalls = world.l()->renderChunks(renderer);
 
     renderer.beginEntityDeferredCalls();
 
     for (auto entity : entities) entity->draw(renderer);
-    world.renderEntities(renderer);
+    world.l()->renderEntities(renderer);
 
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
-    renderer.enableTexture(&game.textures.atlasTexture);
+    renderer.enableTexture(&game.l()->textures.atlasTexture);
 
-    world.getPlayer()->drawHud(renderer);
+    world.l()->getPlayer().l()->drawHud(renderer);
     debugGui.draw(renderer);
-    world.getPlayer()->drawMenu(renderer);
+    world.l()->getPlayer().l()->drawMenu(renderer);
 
     renderer.swapBuffers();
 }

@@ -11,14 +11,13 @@
 #include "../../../net/Deserializer.h"
 #include "../../../def/item/BlockDef.h"
 #include "../../../world/chunk/Chunk.h"
-#include "../../inventory/LocalInventoryList.h"
 #include "../../../net/client/ClientNetworkInterpreter.h"
 
-LocalPlayer::LocalPlayer(LocalSubgame& game, LocalDimension& dim, Renderer &renderer) :
+LocalPlayer::LocalPlayer(SubgamePtr game, DimensionPtr dim, Renderer &renderer) :
     Player(game, dim),
     renderer(renderer),
     wireframe({1, 1, 1}),
-    gameGui(*static_cast<LocalWorld&>(dim.getWorld()).getRefs(), renderer.window.getSize(), game, renderer) {
+    gameGui(dim->getWorld().getRefs().l(), renderer.window.getSize(), game.l(), renderer) {
 
     handItemModel.parent = &handModel;
 
@@ -44,7 +43,7 @@ void LocalPlayer::update(Input &input, double delta, glm::vec2 mouseDelta) {
 
 void LocalPlayer::assertField(Packet packet) {
     packet.type = PacketType::THIS_PLAYER_INFO;
-    static_cast<LocalWorld&>(dim.getWorld()).getNet().sendPacket(packet, PacketChannel::INTERACT);
+    static_cast<LocalWorld&>(dim->getWorld()).getNet().sendPacket(packet, PacketChannel::INTERACT);
 }
 
 void LocalPlayer::handleAssertion(Deserializer &d) {
@@ -81,13 +80,13 @@ void LocalPlayer::setLookOffset(glm::vec3 eyeOffset, bool assert) {
 
 void LocalPlayer::setHandList(const std::string &list, bool assert) {
     Player::setHandList(list, assert);
-    static_cast<LocalWorld&>(dim.getWorld()).getRefs()->setHandList(list);
+    dim->getWorld().getRefs().l()->setHandList(list);
     updateWieldAndHandItems();
 }
 
 void LocalPlayer::setWieldList(const std::string& list, bool assert) {
     Player::setWieldList(list, false);
-    static_cast<LocalWorld&>(dim.getWorld()).getRefs()->setWieldList(list);
+    dim->getWorld().getRefs().l()->setWieldList(list);
     setWieldIndex(wieldIndex);
     updateWieldAndHandItems();
     if (assert) assertField(Serializer().append(
@@ -95,7 +94,7 @@ void LocalPlayer::setWieldList(const std::string& list, bool assert) {
 }
 
 void LocalPlayer::setWieldIndex(unsigned short index, bool assert) {
-    auto wieldList = static_cast<LocalWorld&>(dim.getWorld()).getRefs()->getWieldList();
+    auto wieldList = dim->getWorld().getRefs().l()->getWieldList();
     wieldIndex = index % std::max((wieldList ? wieldList->getLength() : 1), 1);
     updateWieldAndHandItems();
     if (assert) assertField(Serializer().append(
@@ -136,8 +135,8 @@ void LocalPlayer::setHudVisible(bool hudVisible) {
 // Misc Getters
 //
 
-LocalInventory& LocalPlayer::getInventory() {
-    return static_cast<LocalWorld&>(dim.getWorld()).getRefs()->getInventory("current_player");
+InventoryPtr LocalPlayer::getInventory() {
+    return dim->getWorld().getRefs()->getInventory("current_player");
 }
 
 Target& LocalPlayer::getPointedThing() {
@@ -250,7 +249,7 @@ void LocalPlayer::updateCamera() {
     renderer.camera.setYaw(yaw);
     renderer.camera.setPitch(pitch);
 
-    auto type = game.getDefs().fromId(wieldItem).type;
+    auto type = game->getDefs().fromId(wieldItem).type;
 
     glm::vec3 eyesPos = pos + getLookOffset();
     renderer.camera.setPos(eyesPos);
@@ -300,14 +299,14 @@ void LocalPlayer::findPointedThing(Input &input) {
         glm::ivec3 currChunkPos = Space::Chunk::world::fromBlock(roundedPos);
         if (currChunkPos != chunkPos || blockChunk == nullptr) {
             chunkPos = currChunkPos;
-            blockChunk = dim.getChunk(chunkPos);
+            blockChunk = dim->getChunk(chunkPos);
             if (blockChunk == nullptr) continue;
 
             lock = blockChunk->aquireLock();
         }
 
         unsigned int blockID = blockChunk->getBlock(Space::Block::relative::toChunk(roundedPos));
-        auto& boxes = game.getDefs().blockFromId(blockID).sBoxes;
+        auto& boxes = game->getDefs().blockFromId(blockID).sBoxes;
 
         for (auto& sBox : boxes) {
             auto face = sBox.intersects(rayEnd, roundedPos);
@@ -327,7 +326,7 @@ void LocalPlayer::updateWireframe() {
         wireframe.setVisible(false);
     }
     else if (target.type == Target::Type::BLOCK) {
-        auto& boxes = game.getDefs().blockFromId(dim.getBlock(target.pos)).sBoxes;
+        auto& boxes = game->getDefs().blockFromId(dim->getBlock(target.pos)).sBoxes;
         float distance = glm::distance(pos, target.pos + glm::vec3(0.5));
 
         wireframe.updateMesh(boxes, 0.002f + distance * 0.0014f);
@@ -342,11 +341,11 @@ void LocalPlayer::updateWireframe() {
 void LocalPlayer::interact(Input& input, double delta) {
     if (target.type == Target::Type::BLOCK) {
         if (input.mouseDown(GLFW_MOUSE_BUTTON_LEFT) && breakTime == 0) {
-            breakInterval = dim.blockHit(target, static_cast<LocalWorld&>(dim.getWorld()).getPlayer());
+            breakInterval = dim->blockHit(target, static_cast<LocalWorld&>(dim->getWorld()).getPlayer());
             breakTime += delta;
         }
         else if (input.mousePressed(GLFW_MOUSE_BUTTON_RIGHT))
-            dim.blockPlaceOrInteract(target, static_cast<LocalWorld&>(dim.getWorld()).getPlayer());
+            dim->blockPlaceOrInteract(target, static_cast<LocalWorld&>(dim->getWorld()).getPlayer());
     }
 
     if (breakTime > 0) breakTime += delta;
@@ -354,20 +353,16 @@ void LocalPlayer::interact(Input& input, double delta) {
 }
 
 void LocalPlayer::updateWieldAndHandItems() {
-    auto handList = static_cast<LocalWorld&>(dim.getWorld()).getRefs()->getHandList();
-    auto wieldList = static_cast<LocalWorld&>(dim.getWorld()).getRefs()->getWieldList();
+    auto handList = dim->getWorld().getRefs().l()->getHandList();
+    auto wieldList = dim->getWorld().getRefs().l()->getWieldList();
 
     handItem = handList && handList->getLength() > 0 ? handList->getStack(0).id : 0;
     wieldItem = wieldList && wieldList->getLength() > wieldIndex ? wieldList->getStack(wieldIndex).id : 0;
 
-    auto& model = game.getDefs().fromId(wieldItem <= DefinitionAtlas::AIR ? handItem : wieldItem).entityModel;
+    auto& model = game->getDefs().fromId(wieldItem <= DefinitionAtlas::AIR ? handItem : wieldItem).entityModel;
     handItemModel.setModel(model);
 }
 
 LocalPlayer::~LocalPlayer() {
     renderer.window.removeResizeCallback("player");
-}
-
-LocalDimension& LocalPlayer::getDimension() {
-    return static_cast<LocalDimension&>(dim);
 }

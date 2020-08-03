@@ -9,6 +9,7 @@
 #include <unordered_map>
 
 #include "../../../util/Vec.h"
+#include "../../../util/CovariantPtr.h"
 
 class Subgame;
 class Dimension;
@@ -16,24 +17,22 @@ class Dimension;
 class World {
 public:
     World(const World& o) = delete;
-    explicit World(Subgame& game);
+    explicit World(SubgamePtr game);
 
     virtual void update(double delta);
 
-    virtual Dimension& createDimension(const std::string& identifier) = 0;
+    virtual DimensionPtr createDimension(const std::string& identifier) = 0;
 
-    virtual Dimension& getDefaultDimension();
+    virtual DimensionPtr getDefaultDimension();
     virtual void setDefaultDimension(const std::string& defaultDimension);
 
-    virtual Dimension& getDimension(unsigned int index) = 0;
-    virtual Dimension& getDimension(const std::string& identifier) = 0;
+    virtual DimensionPtr getDimension(unsigned int index);
+    virtual DimensionPtr getDimension(const std::string& identifier);
 
+    virtual InventoryRefsPtr getRefs() = 0;
 protected:
     std::string defaultDimension {};
     std::vector<std::shared_ptr<Dimension>> dimensions;
 
-    struct Damage { double curr, max; };
-    std::unordered_map<glm::ivec3, Damage, Vec::ivec3> blockDamages;
-
-    Subgame& game;
+    SubgamePtr game;
 };

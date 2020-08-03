@@ -8,14 +8,14 @@
 
 #include "SubgameUsertype.h"
 
-class Inventory;
+#include "../../util/CovariantPtr.h"
 
 namespace Api::Usertype {
     class Inventory : public SubgameUsertype {
     public:
-        Inventory(::Inventory& inventory) : inventory(inventory) {}
+        Inventory(InventoryPtr inventory) : inventory(inventory) {}
 
-        ::Inventory& inventory;
+        InventoryPtr inventory;
 
         sol::object add_list(sol::this_state s, std::string name, int size, int width);
         sol::object get_list(sol::this_state s, std::string name);

@@ -8,6 +8,8 @@
 #include <memory>
 #include <enet/enet.h>
 
+#include "../../../util/CovariantPtr.h"
+
 class ServerWorld;
 class ServerClient;
 class ServerPlayer;
@@ -16,13 +18,13 @@ class ServerDimension;
 
 class ServerClients {
 public:
-    explicit ServerClients(ServerSubgame& game);
+    explicit ServerClients(SubgamePtr game);
     void init(ServerWorld* world);
 
     void handleConnect(ENetEvent e);
     void handleDisconnect(ENetEvent e);
 
-    void createPlayer(std::shared_ptr<ServerClient> client, ServerDimension& dimension);
+    void createPlayer(std::shared_ptr<ServerClient> client, DimensionPtr dimension);
     const std::shared_ptr<ServerClient> getClient(unsigned int id) const;
     const std::shared_ptr<ServerPlayer> getPlayer(unsigned int id) const;
 
@@ -30,6 +32,6 @@ public:
     std::list<std::shared_ptr<ServerPlayer>> players;
 
 private:
-    ServerSubgame& game;
+    SubgamePtr game;
     ServerWorld* world;
 };

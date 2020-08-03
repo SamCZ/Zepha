@@ -6,13 +6,13 @@
 
 #include "../../def/Subgame.h"
 
-InventoryRefs::InventoryRefs(Subgame& game) : game(game) {}
+InventoryRefs::InventoryRefs(SubgamePtr game) : game(game) {}
 
 bool InventoryRefs::hasInventory(const std::string &inv) {
     return inventories.count(inv);
 }
 
-Inventory& InventoryRefs::getInventory(const std::string &inv) {
+InventoryPtr InventoryRefs::getInventory(const std::string &inv) {
     if (!inventories.count(inv)) throw std::runtime_error("Inventory " + inv + " doesn't exist~!");
-    return *inventories.at(inv);
+    return inventories.at(inv);
 }

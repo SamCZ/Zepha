@@ -21,20 +21,17 @@ class ServerPacketStream;
 
 class ServerWorld : public World {
 public:
-    explicit ServerWorld(unsigned int seed, ServerSubgame& game, ServerClients& clients);
+    explicit ServerWorld(unsigned int seed, SubgamePtr game, ServerClients& clients);
 
     void init(const std::string& worldDir);
     void update(double delta) override;
 
-    virtual ServerDimension& createDimension(const std::string& identifier) override;
+    virtual DimensionPtr createDimension(const std::string& identifier) override;
 
-    virtual ServerDimension& getDimension(unsigned int index) override;
-    virtual ServerDimension& getDimension(const std::string& identifier) override;
+    virtual DimensionPtr getDimension(unsigned int index) override;
+    virtual DimensionPtr getDimension(const std::string& identifier) override;
 
-    std::shared_ptr<ServerDimension> getDefaultDimensionPtr();
-    std::shared_ptr<ServerDimension> getDimensionPtr(const std::string& identifier);
-
-    std::shared_ptr<ServerInventoryRefs> getRefs();
+    virtual InventoryRefsPtr getRefs() override;
 private:
     void changedMapBlocks(ServerPlayer& player);
     static bool isInBounds(glm::ivec3 pos, std::pair<glm::ivec3, glm::ivec3>& bounds);

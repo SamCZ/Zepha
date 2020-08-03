@@ -21,11 +21,11 @@ Server::Server(unsigned short port, const std::string& subgame) :
     config(game),
     clients(game),
     handler(port, 32),
-    game(subgame, seed),
-    world(seed, game, clients) {
+    game(std::make_shared<ServerSubgame>(subgame, seed)),
+    world(std::make_shared<ServerWorld>(seed, game, clients)) {
 
-    game.init(world);
-    world.init("world");
+    game.s()->init(world);
+    world.s()->init("world");
     config.init();
 
     std::cout << Log::info << "Server started successfully, listening for clients." << Log::endl;
@@ -36,8 +36,8 @@ void Server::update() {
     const static long interval_ns = static_cast<long>((1000 / 60.f) * 1000000L);
     Timer loop("");
 
-    world.update(0);
-    game.update(delta);
+    world->update(delta);
+    game.s()->update(delta);
 
     ENetEvent event;
     while (handler.update(&event) && loop.elapsedNs() < interval_ns) {
@@ -92,7 +92,7 @@ void Server::packetReceived(ENetEvent& e) {
     // Function returns true if a player is to be created.
     if (config.handlePacket(*client, p)) {
         auto clientShared = clients.getClient(client->id);
-        if (clientShared) clients.createPlayer(clientShared, world.getDimension("default"));
+        if (clientShared) clients.createPlayer(clientShared, world->getDefaultDimension());
     }
 }
 
@@ -162,21 +162,21 @@ void Server::playerPacketReceived(PacketView& p, ServerPlayer& player) {
 
         case PacketType::INV_WATCH:
             p.d.read<std::string>(source).read<std::string>(list);
-            if (!world.getRefs()->addWatcher(source, list, player.getId()))
+            if (!world->getRefs().s()->addWatcher(source, list, player.getId()))
                 Serializer().append(source).append(list).packet(PacketType::INV_INVALID)
                     .sendTo(player.getPeer(), PacketChannel::INTERACT);
             break;
 
         case PacketType::INV_UNWATCH:
             p.d.read<std::string>(source).read<std::string>(list);
-            if (!world.getRefs()->removeWatcher(source, list, player.getId()))
+            if (!world->getRefs().s()->removeWatcher(source, list, player.getId()))
                 Serializer().append(source).append(list).packet(PacketType::INV_INVALID)
                     .sendTo(player.getPeer(), PacketChannel::INVENTORY);
             break;
 
         case PacketType::INV_INTERACT:
             p.d.read<unsigned short>(a).read<std::string>(source).read<std::string>(list).read<unsigned short>(ind);
-            world.getRefs()->interact(a, source, list, ind, player.getId());
+            world->getRefs().s()->interact(a, source, list, ind, player.getId());
             break;
     }
 }

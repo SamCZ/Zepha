@@ -21,14 +21,13 @@ enum class NetPlayerField;
 
 class ServerPlayer : public Player {
 public:
-    ServerPlayer(ServerClient& client, ServerSubgame& game, ServerDimension& dim);
+    ServerPlayer(ServerClient& client, SubgamePtr game, DimensionPtr dim);
 
     virtual void assertField(Packet packet) override;
     virtual void handleAssertion(Deserializer& d) override;
 
     virtual void setPos(glm::vec3 pos, bool assert = false) override;
-    virtual ServerInventory& getInventory() override;
-    virtual ServerDimension& getDimension() override;
+    virtual InventoryPtr getInventory() override;
 
     ENetPeer* getPeer();
 
@@ -37,5 +36,5 @@ public:
 
 private:
     ServerClient& client;
-    ServerInventory& inventory;
+    InventoryPtr inventory;
 };

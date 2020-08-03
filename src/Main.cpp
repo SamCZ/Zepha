@@ -20,18 +20,6 @@
 #include "StartGame.h"
 
 int main(int argc, char* argv[]) {
-
-//    sol::state lua;
-//    lua.open_libraries(sol::lib::base);
-//
-//    lua.script(R"(
-//        number = 32
-//    )");
-//
-//    unsigned short n = lua.get<unsigned short>("number");
-//    std::cout << n << std::endl;
-
-
     return StartGame(argc, argv);
 }
 

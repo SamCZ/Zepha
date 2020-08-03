@@ -8,13 +8,22 @@
 #include "chunk/Region.h"
 #include "chunk/MapBlock.h"
 #include "../def/Subgame.h"
+#include "../def/item/BlockDef.h"
 #include "../def/DefinitionAtlas.h"
 
-DimensionBase::DimensionBase(Subgame &game, World& world, const std::string &identifier, unsigned int ind) :
+DimensionBase::DimensionBase(SubgamePtr game, World& world, const std::string &identifier, unsigned int ind) :
     game(game), world(world), identifier(identifier), ind(ind) {}
 
 std::string DimensionBase::getIdentifier() const {
     return identifier;
+}
+
+unsigned int DimensionBase::getInd() {
+    return ind;
+}
+
+void DimensionBase::update(double delta) {
+    updateBlockDamage(delta);
 }
 
 std::shared_ptr<Region> DimensionBase::getRegion(glm::ivec3 regionPosition) {
@@ -80,6 +89,29 @@ bool DimensionBase::setBlock(glm::ivec3 pos, unsigned int block) {
     return chunk->setBlock(Space::Block::relative::toChunk(pos), block);
 }
 
+
+double DimensionBase::getBlockDamage(glm::ivec3 pos) const {
+    double damage = blockDamages.count(pos) ? blockDamages.at(pos).curr : 0;
+    std::cout << damage << std::endl;
+    return damage;
+}
+
+double DimensionBase::setBlockDamage(glm::ivec3 pos, double damage) {
+    if (blockDamages.count(pos)) blockDamages[pos].curr = damage;
+    else blockDamages.insert({pos, Damage { damage, static_cast<double>(game->getDefs().blockFromId(getBlock(pos)).health)}});
+    return getBlockDamage(pos);
+
+//    double totalDamage = World::setBlockDamage(pos, damage);
+
+//    BlockCrackEntity* block = nullptr;
+//    if (crackEntities.count(pos)) block = crackEntities[pos];
+//    else block = new BlockCrackEntity(game.defs->blockFromId(getBlock(pos)), game.textures, pos);
+//    block->setDamage(damage);
+//    block->time = 0;
+//
+//    return totalDamage;
+}
+
 unsigned int DimensionBase::getBiome(glm::ivec3 pos) {
     auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
     if (!chunk) return 0;
@@ -111,12 +143,23 @@ std::shared_ptr<MapBlock> DimensionBase::getOrCreateMapBlock(glm::ivec3 mapBlock
     return (*region)[index];
 }
 
-Subgame &DimensionBase::getGame() {
+SubgamePtr DimensionBase::getGame() {
     return game;
 }
 
-World &DimensionBase::getWorld() {
+World& DimensionBase::getWorld() {
     return world;
+}
+
+
+void DimensionBase::updateBlockDamage(double delta) {
+    for (auto it = blockDamages.begin(); it != blockDamages.end();) {
+        if (it->second.curr > it->second.max) {
+            setBlock(it->first, DefinitionAtlas::AIR);
+            it = blockDamages.erase(it);
+        }
+        else it++;
+    }
 }
 
 std::shared_ptr<Chunk> DimensionBase::combinePartials(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b) {
@@ -140,26 +183,4 @@ std::shared_ptr<Chunk> DimensionBase::combinePartials(std::shared_ptr<Chunk> a, 
     res->partial = !res->generated;
     res->countRenderableBlocks();
     return res;
-}
-
-double DimensionBase::getBlockDamage(glm::ivec3 pos) const {
-    return 0;
-}
-
-double DimensionBase::setBlockDamage(glm::ivec3 pos, double damage) {
-    return 0;
-    //TODO: WOwdowadoawod
-//    double totalDamage = World::setBlockDamage(pos, damage);
-
-//    BlockCrackEntity* block = nullptr;
-//    if (crackEntities.count(pos)) block = crackEntities[pos];
-//    else block = new BlockCrackEntity(game.defs->blockFromId(getBlock(pos)), game.textures, pos);
-//    block->setDamage(damage);
-//    block->time = 0;
-//
-//    return totalDamage;
-}
-
-unsigned int DimensionBase::getInd() {
-    return ind;
 }

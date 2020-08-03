@@ -9,6 +9,7 @@
 #include <unordered_set>
 
 #include "../../../def/gen/MapGen.h"
+#include "../../../util/CovariantPtr.h"
 
 class ServerSubgame;
 
@@ -22,7 +23,7 @@ public:
         std::vector<std::shared_ptr<Chunk>> chunks;
     };
 
-    explicit ServerGenStream(unsigned int seed, ServerSubgame& game);
+    explicit ServerGenStream(unsigned int seed, SubgamePtr game);
     ~ServerGenStream();
 
     // Add the MapBlock position `pos` to the generation queue.

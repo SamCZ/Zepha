@@ -14,7 +14,7 @@
 #include "../../game/scene/world/LocalWorld.h"
 #include "../../game/scene/world/LocalPlayer.h"
 
-ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, LocalSubgame &defs, LocalWorld& world) :
+ClientNetworkInterpreter::ClientNetworkInterpreter(ServerConnection &connection, LocalWorld& world) :
     world(world), connection(connection) {}
 
 void ClientNetworkInterpreter::init(std::function<void(std::unique_ptr<PacketView>)> invCallback) {
@@ -81,14 +81,14 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
         case PacketType::BLOCK_SET: {
             auto pos = p->d.read<glm::ivec3>();
             auto block = p->d.read<unsigned int>();
-            world.getActiveDimension().setBlock(pos, block);
+            world.getActiveDimension()->setBlock(pos, block);
             break; }
 
         case PacketType::ENTITY_INFO:
-            world.getActiveDimension().serverEntityInfo(*p); break;
+            world.getActiveDimension().l()->serverEntityInfo(*p); break;
 
         case PacketType::ENTITY_REMOVED:
-            world.getActiveDimension().serverEntityRemoved(p->d.read<unsigned int>()); break;
+            world.getActiveDimension().l()->serverEntityRemoved(p->d.read<unsigned int>()); break;
 
         case PacketType::INV_DATA:
             onInvPacket(std::move(p)); break;

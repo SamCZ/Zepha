@@ -11,11 +11,11 @@
 
 class GameGuiBuilder : public GuiBuilder {
 public:
-    GameGuiBuilder(LocalInventoryRefs& refs, LocalSubgame& defs, std::shared_ptr<GuiContainer> root) :
-        defs(defs), refs(refs), GuiBuilder(defs.textures, defs.models, root) {};
+    GameGuiBuilder(InventoryRefsPtr refs, SubgamePtr defs, std::shared_ptr<GuiContainer> root) :
+        defs(defs), refs(refs), GuiBuilder(defs.l()->textures, defs.l()->models, root) {};
 
     std::shared_ptr<GuiComponent> createComponent(LuaGuiElement& elem, glm::ivec2 bounds) override;
 private:
-    LocalInventoryRefs& refs;
-    LocalSubgame& defs;
+    InventoryRefsPtr refs;
+    SubgamePtr defs;
 };

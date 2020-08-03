@@ -6,12 +6,10 @@
 
 #include "../../../def/ServerSubgame.h"
 #include "../../../world/chunk/Chunk.h"
-#include "../../../def/gen/ServerBiomeAtlas.h"
-#include "../../../def/ServerDefinitionAtlas.h"
 
-ServerGenStream::ServerGenStream(unsigned int seed, ServerSubgame& game) {
+ServerGenStream::ServerGenStream(unsigned int seed, SubgamePtr game) {
     threads.reserve(THREADS);
-    for (int i = 0; i < THREADS; i++) threads.emplace_back(game, seed);
+    for (int i = 0; i < THREADS; i++) threads.emplace_back(*game.s(), seed);
 }
 
 bool ServerGenStream::queue(glm::ivec4 pos) {

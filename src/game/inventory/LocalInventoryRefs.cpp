@@ -11,11 +11,11 @@
 #include "../../def/LocalDefinitionAtlas.h"
 #include "../../net/client/ClientNetworkInterpreter.h"
 
-LocalInventoryRefs::LocalInventoryRefs(Subgame& game, ClientNetworkInterpreter& net) : InventoryRefs(game), net(net) {}
+LocalInventoryRefs::LocalInventoryRefs(SubgamePtr game, ClientNetworkInterpreter& net) : InventoryRefs(game), net(net) {}
 
 void LocalInventoryRefs::init() {
     createInventory("current_player");
-    getInventory("current_player").createList("cursor", 1, 1);
+    getInventory("current_player")->createList("cursor", 1, 1);
     watch("current_player", "cursor");
 }
 
@@ -28,13 +28,9 @@ void LocalInventoryRefs::update(double delta, ClientNetworkInterpreter& net) {
     }
 }
 
-LocalInventory& LocalInventoryRefs::createInventory(const std::string &inv) {
-    if (!inventories.count(inv)) inventories.emplace(inv, std::make_shared<LocalInventory>(static_cast<LocalSubgame&>(game), inv, net));
-    return static_cast<LocalInventory&>(*inventories[inv]);
-}
-
-LocalInventory& LocalInventoryRefs::getInventory(const std::string &inv) {
-    return static_cast<LocalInventory&>(InventoryRefs::getInventory(inv));
+InventoryPtr LocalInventoryRefs::createInventory(const std::string &inv) {
+    if (!inventories.count(inv)) inventories.emplace(inv, std::make_shared<LocalInventory>(game, inv, net));
+    return inventories[inv];
 }
 
 void LocalInventoryRefs::packetReceived(std::unique_ptr<PacketView> p) {
@@ -57,7 +53,7 @@ void LocalInventoryRefs::packetReceived(std::unique_ptr<PacketView> p) {
         stacks.push_back({id, count});
     }
 
-    static_cast<LocalInventoryList&>(inventories[source]->getList(list)).setData(size, width, stacks);
+    inventories[source]->getList(list).l()->setData(size, width, stacks);
 }
 
 void LocalInventoryRefs::watch(const std::string &inv, const std::string &list, bool persistant) {
@@ -81,8 +77,8 @@ std::shared_ptr<LocalInventoryList> LocalInventoryRefs::getHandList() {
 void LocalInventoryRefs::setHandList(const std::string &list) {
     if (handList && list == handList->getName()) return;
     if (handList) unWatch("current_player", handList->getName());
-    handList = getInventory("current_player").getListPtr(list);
-    getInventory("current_player").setPersistant(list, true);
+    handList = getInventory("current_player")->getList(list).l();
+    getInventory("current_player").l()->setPersistant(list, true);
 }
 
 std::shared_ptr<LocalInventoryList> LocalInventoryRefs::getWieldList() {
@@ -92,12 +88,10 @@ std::shared_ptr<LocalInventoryList> LocalInventoryRefs::getWieldList() {
 void LocalInventoryRefs::setWieldList(const std::string &list) {
     if (wieldList && list == wieldList->getName()) return;
     if (wieldList) unWatch("current_player", wieldList->getName());
-    wieldList = getInventory("current_player").getListPtr(list);
-    getInventory("current_player").setPersistant(list, true);
+    wieldList = getInventory("current_player")->getList(list).l();
+    getInventory("current_player").l()->setPersistant(list, true);
 }
 
 std::shared_ptr<LocalInventoryList> LocalInventoryRefs::getCursorList() {
-    return std::static_pointer_cast<LocalInventoryList>(
-        std::static_pointer_cast<LocalInventory>(inventories["current_player"])
-        ->getListPtr("cursor"));
+    return inventories["current_player"]->getList("cursor").l();
 }

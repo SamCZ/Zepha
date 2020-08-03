@@ -6,13 +6,13 @@
 
 #include "../../net/client/ClientNetworkInterpreter.h"
 
-LocalInventoryList::LocalInventoryList(Subgame& game, const std::string& name,
+LocalInventoryList::LocalInventoryList(SubgamePtr game, const std::string& name,
     const std::string& invName, unsigned short size, unsigned short width,
     ClientNetworkInterpreter& net) :
     InventoryList(game, name, invName, size, width),
     net(net) {}
 
-void LocalInventoryList::interact(InventoryList &hand, bool primary, unsigned short ind) {
+void LocalInventoryList::interact(InventoryListPtr hand, bool primary, unsigned short ind) {
     InventoryList::interact(hand, primary, ind);
     net.invInteract(invName, name, primary, ind);
 }

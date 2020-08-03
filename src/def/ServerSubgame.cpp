@@ -19,7 +19,7 @@ ServerSubgame::ServerSubgame(const std::string& subgame, unsigned int seed) :
     else if (!cf_file_exists(subgamePath.data())) throw std::runtime_error("Subgame does not exist.");
 }
 
-void ServerSubgame::init(ServerWorld &world) {
+void ServerSubgame::init(WorldPtr world) {
     lua->init(world, subgamePath);
 }
 

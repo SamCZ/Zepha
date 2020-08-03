@@ -19,14 +19,12 @@ class ClientNetworkInterpreter;
 
 class LocalInventory : public Inventory {
 public:
-    LocalInventory(LocalSubgame& game, const std::string& name, ClientNetworkInterpreter& net) :
+    LocalInventory(SubgamePtr game, const std::string& name, ClientNetworkInterpreter& net) :
         Inventory(game, name), net(net) {}
 
-    virtual LocalInventoryList& getList(const std::string& name) override;
-    std::shared_ptr<LocalInventoryList> getListPtr(const std::string& name);
+    virtual InventoryListPtr getList(const std::string& name) override;
 
     virtual void createList(const std::string& name, unsigned short length, unsigned short width) override;
-
 
     void setPersistant(const std::string& list, bool persistant);
     bool pruneLists(double time);

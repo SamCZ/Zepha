@@ -15,17 +15,17 @@ class ServerLuaEntity;
 
 class ServerDimension : public Dimension {
 public:
-    ServerDimension(ServerSubgame& game, ServerWorld& world, const std::string& identifier, unsigned int ind);
+    ServerDimension(SubgamePtr game, ServerWorld& world, const std::string& identifier, unsigned int ind);
 
     virtual void update(double delta) override;
 
     void setChunk(std::shared_ptr<Chunk> chunk) override;
     bool setBlock(glm::ivec3 pos, unsigned int block) override;
 
-    virtual void blockPlace(const Target &target, std::shared_ptr<Player> player) override;
-    virtual void blockPlaceOrInteract(const Target &target, std::shared_ptr<Player> player) override;
-    virtual void blockInteract(const Target &target, std::shared_ptr<Player> player) override;
-    virtual double blockHit(const Target &target, std::shared_ptr<Player> player) override;
+    virtual void blockPlace(const Target &target, PlayerPtr player) override;
+    virtual void blockPlaceOrInteract(const Target &target, PlayerPtr player) override;
+    virtual void blockInteract(const Target &target, PlayerPtr player) override;
+    virtual double blockHit(const Target &target, PlayerPtr player) override;
 
     void addLuaEntity(std::shared_ptr<ServerLuaEntity>& entity);
     void removeLuaEntity(std::shared_ptr<ServerLuaEntity>& entity);

@@ -6,14 +6,14 @@
 
 #include <string>
 
-class Subgame;
-class LuaItemStack;
+#include "../../util/CovariantPtr.h"
+#include "../../lua/usertype/ItemStack.h"
 
 class ItemStack {
 public:
     ItemStack() = default;
     ItemStack(unsigned int id, unsigned short count);
-    ItemStack(LuaItemStack& stack, Subgame& game);
+    ItemStack(Api::Usertype::ItemStack& stack, SubgamePtr game);
 
     bool operator!=(const ItemStack& b) const;
     bool operator==(const ItemStack& b) const;

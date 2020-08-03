@@ -7,11 +7,11 @@
 #include "ServerInventoryList.h"
 
 #include "../../net/Packet.h"
-#include "../../lua/usertype/LuaItemStack.h"
+#include "../../lua/usertype/ItemStack.h"
 #include "../../net/server/conn/ServerPlayer.h"
 #include "../../net/server/conn/ServerClients.h"
 
-ServerInventoryList::ServerInventoryList(Subgame& game, ServerClients& list,
+ServerInventoryList::ServerInventoryList(SubgamePtr game, ServerClients& list,
     const std::string& name, const std::string& invName, unsigned short size, unsigned short width) :
     InventoryList(game, name, invName, size, width),
     clients(list) {}

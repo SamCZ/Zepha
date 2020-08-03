@@ -12,12 +12,12 @@
 #include "../../def/DefinitionAtlas.h"
 #include "../../def/item/SelectionBox.h"
 
-bool Collision::isOnGround(Subgame& game, Dimension& dim, SelectionBox& collision, glm::vec3 pos, glm::vec3 vel) {
+bool Collision::isOnGround(SubgamePtr game, DimensionPtr dim, SelectionBox& collision, glm::vec3 pos, glm::vec3 vel) {
     pos.y -= 0.05f;
     return collidesAt(game, dim, collision, pos) && vel.y <= 0;
 }
 
-void Collision::moveCollide(Subgame& game, Dimension& dim, SelectionBox& collision, glm::vec3& pos, glm::vec3& vel, float stepUpAmount) {
+void Collision::moveCollide(SubgamePtr game, DimensionPtr dim, SelectionBox& collision, glm::vec3& pos, glm::vec3& vel, float stepUpAmount) {
     const static double increment = 0.05;
 
     double moved = 0;
@@ -57,7 +57,7 @@ void Collision::moveCollide(Subgame& game, Dimension& dim, SelectionBox& collisi
     }
 }
 
-bool Collision::collidesAt(Subgame& game, Dimension& dim, SelectionBox& collision, glm::vec3& pos, float stepUpMax) {
+bool Collision::collidesAt(SubgamePtr game, DimensionPtr dim, SelectionBox& collision, glm::vec3& pos, float stepUpMax) {
 
     // Find the minimum vertical increase needed to step up
     float stepUpAmount = 0;
@@ -71,7 +71,7 @@ bool Collision::collidesAt(Subgame& game, Dimension& dim, SelectionBox& collisio
                 offset.z = collision.a.z;
                 while (true) {
                     glm::vec3 offsetPos = glm::floor(pos + offset);
-                    auto &def = game.getDefs().blockFromId(dim.getBlock(offsetPos));
+                    auto &def = game->getDefs().blockFromId(dim->getBlock(offsetPos));
 
                     if (def.solid)
                         for (auto &cBox : def.cBoxes)
@@ -103,7 +103,7 @@ bool Collision::collidesAt(Subgame& game, Dimension& dim, SelectionBox& collisio
             offset.z = collision.a.z;
             while (true) {
                 glm::vec3 offsetPos = glm::floor(pos + offset);
-                auto& def = game.getDefs().blockFromId(dim.getBlock(offsetPos));
+                auto& def = game->getDefs().blockFromId(dim->getBlock(offsetPos));
 
                 if (def.solid) {
                     for (auto &cBox : def.cBoxes) {

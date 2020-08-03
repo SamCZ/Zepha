@@ -12,15 +12,15 @@
 #include "../scene/world/LocalWorld.h"
 #include "components/compound/GuiLabelledGraph.h"
 
-DebugGui::DebugGui(glm::vec2 bufferSize, LocalSubgame& game, LocalWorld& world) :
+DebugGui::DebugGui(glm::vec2 bufferSize, SubgamePtr game, WorldPtr world) :
     game(game),
     world(world) {
 
-    auto fpsHistogramRef = game.textures["histogram"];
-    auto genericHistogramRef = game.textures["histogram_white"];
-    auto fontRef = game.textures["font"];
+    auto fpsHistogramRef = game.l()->textures["histogram"];
+    auto genericHistogramRef = game.l()->textures["histogram_white"];
+    auto fontRef = game.l()->textures["font"];
 
-    Font f(game.textures, fontRef);
+    Font f(game.l()->textures, fontRef);
 
     auto crosshairText = std::make_shared<GuiText>("crosshairText");
     crosshairText->create({2, 2}, {}, {0.2, 0.2, 0.2, 0.5}, {1, 1, 1, 1}, f);
@@ -78,7 +78,7 @@ void DebugGui::positionElements(glm::vec2 bufferSize) {
     get<GuiLabelledGraph>("gpuGraph")->setPos({bufferWidth - 254, 90 + 80});
 }
 
-void DebugGui::update(LocalPlayer& player, double fps, int /*chunks*/, int drawCalls, int ssGen, int ssPack) {
+void DebugGui::update(std::shared_ptr<LocalPlayer> player, double fps, int /*chunks*/, int drawCalls, int ssGen, int ssPack) {
 
     { //Top Right Graphs
         get<GuiLabelledGraph>("fpsGraph")->pushValue(static_cast<float>(fps));
@@ -95,17 +95,17 @@ void DebugGui::update(LocalPlayer& player, double fps, int /*chunks*/, int drawC
     }
 
     { //Bottom Right Graphs
-        get<GuiLabelledGraph>("meshGraph")->pushValue(world.lastMeshUpdates);
-        get<GuiLabelledGraph>("interpGraph")->pushValue(world.mapBlocksInterpolated);
+        get<GuiLabelledGraph>("meshGraph")->pushValue(world.l()->lastMeshUpdates);
+        get<GuiLabelledGraph>("interpGraph")->pushValue(world.l()->mapBlocksInterpolated);
         get<GuiLabelledGraph>("genGraph")->pushValue(static_cast<float>(ssGen));
         get<GuiLabelledGraph>("packetGraph")->pushValue(static_cast<float>(ssPack));
     }
 
     { //Top-left Data
-        unsigned int biomeID = world.getActiveDimension().getBiome(glm::floor(player.getPos()));
-        std::string biome = game.getBiomes().biomeFromId(biomeID).identifier;
+        unsigned int biomeID = world.l()->getActiveDimension()->getBiome(glm::floor(player->getPos()));
+        std::string biome = game->getBiomes().biomeFromId(biomeID).identifier;
 
-        glm::vec3 playerPos = glm::floor(player.getPos());
+        glm::vec3 playerPos = glm::floor(player->getPos());
         glm::vec3 chunkPos = Space::Chunk::world::fromBlock(playerPos);
         glm::vec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunkPos);
         glm::vec3 regionPos = Space::Region::world::fromChunk(chunkPos);
@@ -120,22 +120,22 @@ void DebugGui::update(LocalPlayer& player, double fps, int /*chunks*/, int drawC
         using namespace Util;
 
         str << "Player: " << vecToString(playerPos);
-        str << " (" << floatVecToString(player.getPos()) << ")" << std::endl << std::endl;
+        str << " (" << floatVecToString(player->getPos()) << ")" << std::endl << std::endl;
 
         str << "Chunk: " << vecToString(posOffsetFromChunk) << " [" << vecToString(chunkPos) << "]" << std::endl;
         str << "MapBlock: " << vecToString(posOffsetFromBlock) << " [" << vecToString(mapBlockPos) << "]" << std::endl;
         str << "Region: " << vecToString(posOffsetFromRegion) << " [" << vecToString(regionPos) << "]" << std::endl << std::endl;
 
-        str << "Vel: " << floatVecToString(player.getVel()) << std::endl;
-        str << "Yaw: " << floatToString(player.getYaw()) << ", ";
-        str << "Pitch: " << floatToString(player.getPitch()) << std::endl << std::endl;
+        str << "Vel: " << floatVecToString(player->getVel()) << std::endl;
+        str << "Yaw: " << floatToString(player->getYaw()) << ", ";
+        str << "Pitch: " << floatToString(player->getPitch()) << std::endl << std::endl;
 
         str << "Biome: " << biome << std::endl << std::endl;
 
-        str << "Texture Slots: " << game.textures.textureSlotsUsed << " / " << game.textures.maxTextureSlots
-            << " (" << round(game.textures.textureSlotsUsed / static_cast<float>(game.textures.maxTextureSlots) * 100) << "%)" << std::endl << std::endl;
+        str << "Texture Slots: " << game.l()->textures.textureSlotsUsed << " / " << game.l()->textures.maxTextureSlots
+            << " (" << round(game.l()->textures.textureSlotsUsed / static_cast<float>(game.l()->textures.maxTextureSlots) * 100) << "%)" << std::endl << std::endl;
 
-        Target thing = player.getPointedThing();
+        Target thing = player->getPointedThing();
         if (thing.type == Target::Type::BLOCK) {
             std::string face =
                 thing.face == EVec::TOP    ?  "TOP"   :
@@ -146,7 +146,7 @@ void DebugGui::update(LocalPlayer& player, double fps, int /*chunks*/, int drawC
                 thing.face == EVec::BACK   ? "BACK"   :
                                              "NONE"   ;
 
-            str << "Pointing At: " << game.getDefs().blockFromId(world.getActiveDimension().getBlock(thing.pos)).identifier << std::endl;
+            str << "Pointing At: " << game->getDefs().blockFromId(world.l()->getActiveDimension()->getBlock(thing.pos)).identifier << std::endl;
             str << "Pointed Position: " << vecToString(thing.pos) << std::endl;
             str << "Pointed Face: " << face << std::endl;
         }
@@ -158,12 +158,12 @@ void DebugGui::update(LocalPlayer& player, double fps, int /*chunks*/, int drawC
     }
 
     { //Crosshair Text
-        Target target = player.getPointedThing();
+        Target target = player->getPointedThing();
 
         std::ostringstream crossText;
         if (target.type == Target::Type::BLOCK) {
-            crossText << game.getDefs().blockFromId(world.getActiveDimension().getBlock(target.pos)).name
-                      << " (" << game.getDefs().blockFromId(world.getActiveDimension().getBlock(target.pos)).identifier << ")" << std::endl;
+            crossText << game->getDefs().blockFromId(world.l()->getActiveDimension()->getBlock(target.pos)).name
+                      << " (" << game->getDefs().blockFromId(world.l()->getActiveDimension()->getBlock(target.pos)).identifier << ")" << std::endl;
         }
         get<GuiText>("crosshairText")->setText(crossText.str());
     }

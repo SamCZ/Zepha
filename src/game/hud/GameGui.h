@@ -9,7 +9,7 @@
 
 class GameGui {
 public:
-    explicit GameGui(LocalInventoryRefs& refs, glm::vec2 bufferSize, LocalSubgame& defs, Renderer& renderer);
+    explicit GameGui(InventoryRefsPtr refs, glm::vec2 bufferSize, SubgamePtr defs, Renderer& renderer);
     void winResized(glm::ivec2 win);
     void update(double delta);
 
@@ -26,7 +26,7 @@ public:
     void drawHud(Renderer& renderer);
     void drawMenu(Renderer& renderer);
 private:
-    LocalSubgame& defs;
+    SubgamePtr defs;
     Renderer& renderer;
 
     glm::ivec2 win {};
@@ -43,6 +43,6 @@ private:
 
     std::shared_ptr<GuiInventoryList> handList = std::make_shared<GuiInventoryList>("hand");
 
-    LocalInventoryRefs& refs;
+    InventoryRefsPtr refs;
 };
 

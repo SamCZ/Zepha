@@ -21,7 +21,7 @@ public:
     ServerSubgame(const std::string& subgame, unsigned int seed);
     ~ServerSubgame();
 
-    void init(ServerWorld& world);
+    void init(WorldPtr world);
     void update(double delta);
 
     std::string subgamePath;

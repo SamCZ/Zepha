@@ -17,7 +17,7 @@ class ServerPlayer;
 class ServerLuaParser : public LuaParser {
 public:
     explicit ServerLuaParser(ServerSubgame& game);
-    void init(ServerWorld& world, const std::string& rootPath);
+    void init(WorldPtr world, const std::string& rootPath);
 
     virtual void update(double delta) override;
 
@@ -27,13 +27,11 @@ public:
     void playerDisconnected(std::shared_ptr<ServerPlayer> client);
 
 private:
-    void loadApi(ServerSubgame& defs, ServerWorld& world);
-    void registerDefs(ServerSubgame &defs);
+    void loadApi(WorldPtr world);
+    void registerDefs();
 
     virtual sol::protected_function_result errorCallback(sol::protected_function_result r) const override;
     sol::protected_function_result runFileSandboxed(const std::string& file);
-
-    ServerSubgame& game;
 
     ServerModHandler handler;
     double delta = 0;

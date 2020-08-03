@@ -5,6 +5,7 @@
 #pragma once
 
 #include "../Lua.h"
+#include "../../util/CovariantPtr.h"
 #include "LocalLuaAnimationManager.h"
 #include "../../game/entity/DrawableEntity.h"
 
@@ -12,12 +13,12 @@ class LocalSubgame;
 
 class LocalLuaEntity {
 public:
-    LocalLuaEntity(std::unique_ptr<DrawableEntity> entity, unsigned int id, LocalSubgame& defs) :
-        entity(std::move(entity)), id(id), defs(defs), manager(*this->entity) {}
+    LocalLuaEntity(std::unique_ptr<DrawableEntity> entity, unsigned int id, SubgamePtr game) :
+        entity(std::move(entity)), id(id), game(game), manager(*this->entity) {}
 
     std::unique_ptr<DrawableEntity> entity = nullptr;
     unsigned int id;
-    LocalSubgame& defs;
+    SubgamePtr game;
 
     LocalLuaAnimationManager manager;
 

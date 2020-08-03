@@ -8,6 +8,7 @@
 #include <glm/vec3.hpp>
 
 #include "../../entity/Entity.h"
+#include "../../../util/CovariantPtr.h"
 #include "../../../def/DefinitionAtlas.h"
 
 class World;
@@ -24,7 +25,7 @@ public:
         ID, POS, VEL, PITCH, YAW, LOOK_OFF, FLYING,
         HAND_INV, WIELD_INV, WIELD_INDEX };
 
-    Player(Subgame& game, Dimension& dim, unsigned int id = 0) :
+    Player(SubgamePtr game, DimensionPtr dim, unsigned int id = 0) :
             game(game), dim(dim), id(id), lookOffset(0, 1.65, 0) {
         collision = {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}};
     }
@@ -56,8 +57,8 @@ public:
     virtual unsigned short getWieldIndex();
     virtual void setWieldIndex(unsigned short index, bool assert = false);
 
-    virtual Inventory& getInventory() = 0;
-    virtual Dimension& getDimension() = 0;
+    virtual InventoryPtr getInventory() = 0;
+    DimensionPtr getDimension();
 
     virtual void handleAssertion(Deserializer& d) = 0;
 protected:
@@ -65,8 +66,8 @@ protected:
 
     unsigned int id = 0;
 
-    Subgame& game;
-    Dimension& dim;
+    SubgamePtr game;
+    DimensionPtr dim;
 
     float yaw = 0;
     float pitch = 0;

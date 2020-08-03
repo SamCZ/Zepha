@@ -15,11 +15,11 @@ LocalSubgame::LocalSubgame(const std::string& texPath) :
     textures.loadDirectory(texPath);
 }
 
-void LocalSubgame::initApi(LocalWorld &world, ClientState& state) {
+void LocalSubgame::initApi(WorldPtr world, ClientState& state) {
     lua->init(world, state);
 }
 
-void LocalSubgame::loadPlayer(std::shared_ptr<LocalPlayer> player) {
+void LocalSubgame::loadPlayer(PlayerPtr player) {
     lua->loadPlayer(player);
 }
 

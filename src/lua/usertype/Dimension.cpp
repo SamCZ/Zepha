@@ -16,35 +16,35 @@
 #include "../../world/ServerDimension.h"
 
 std::string Api::Usertype::Dimension::get_block(glm::ivec3 pos) {
-    return dimension->getGame().getDefs().fromId(dimension->getBlock(pos)).identifier;
+    return dim->getGame()->getDefs().fromId(dim->getBlock(pos)).identifier;
 }
 
 void Api::Usertype::Dimension::set_block(glm::ivec3 pos, const std::string &block) {
-    dimension->setBlock(pos, dimension->getGame().getDefs().fromStr(block).index);
+    dim->setBlock(pos, dim->getGame()->getDefs().fromStr(block).index);
 }
 
 void Api::Usertype::Dimension::remove_block(glm::ivec3 pos) {
-    dimension->setBlock(pos, DefinitionAtlas::AIR);
+    dim->setBlock(pos, DefinitionAtlas::AIR);
 }
 
 double Api::Usertype::Dimension::get_block_damage(glm::ivec3 pos) {
-    return dimension->getBlockDamage(pos);
+    return dim->getBlockDamage(pos);
 }
 
 double Api::Usertype::Dimension::set_block_damage(glm::ivec3 pos, double damage) {
-    return dimension->setBlockDamage(pos, damage);
+    return dim->setBlockDamage(pos, damage);
 }
 
 double Api::Usertype::Dimension::add_block_damage(glm::ivec3 pos, double damage) {
-    return dimension->setBlockDamage(pos, dimension->getBlockDamage(pos) + damage);
+    return dim->setBlockDamage(pos, dim->getBlockDamage(pos) + damage);
 }
 
 std::string Api::Usertype::Dimension::get_biome(glm::ivec3 pos) {
-    return dimension->getGame().getBiomes().biomeFromId(dimension->getBiome(pos)).identifier;
+    return dim->getGame()->getBiomes().biomeFromId(dim->getBiome(pos)).identifier;
 }
 
 void Api::Usertype::Dimension::set_biome(glm::ivec3 pos, const std::string &biome) {
-    dimension->setBiome(pos, dimension->getGame().getBiomes().biomeFromStr(biome).index);
+    dim->setBiome(pos, dim->getGame()->getBiomes().biomeFromStr(biome).index);
 }
 
 sol::table Api::Usertype::Dimension::add_entity_c(sol::this_state s, glm::vec3 pos,
@@ -70,7 +70,7 @@ sol::table Api::Usertype::Dimension::add_entity_c(sol::this_state s, glm::vec3 p
 
     auto entity = std::make_unique<::DrawableEntity>();
     entity->setPos(pos);
-    auto ref = std::make_shared<LocalLuaEntity>(std::move(entity), dimension->nextEntityInd(), static_cast<LocalSubgame&>(dimension->getGame()));
+    auto ref = std::make_shared<LocalLuaEntity>(std::move(entity), dim->nextEntityInd(), dim->getGame().l());
 
     luaEntity["object"] = ref;
     ref->set_display_type(*displayType, *displayObject, displayTexture);
@@ -79,7 +79,7 @@ sol::table Api::Usertype::Dimension::add_entity_c(sol::this_state s, glm::vec3 p
     auto on_create = def.get<sol::optional<sol::protected_function>>("on_create");
     if (on_create) (*on_create)(luaEntity, staticData);
 
-    std::static_pointer_cast<LocalDimension>(dimension)->addLocalEntity(ref);
+    dim.l()->addLocalEntity(ref);
     return luaEntity;
 }
 
@@ -104,10 +104,10 @@ sol::table Api::Usertype::Dimension::add_entity_s(sol::this_state s, glm::vec3 p
     auto displayTexture = luaEntity.get<sol::optional<std::string>>("display_texture");
     if (strncmp(displayType->data(), "model", 5) == 0 && !displayTexture) throw std::runtime_error("entity '" + identifier + "' is missing the display_texture property.");
 
-    unsigned int ind = dimension->nextEntityInd();
+    unsigned int ind = dim->nextEntityInd();
     auto entity = std::make_unique<ServerEntity>(ind);
     entity->setPos(pos);
-    auto ref = std::make_shared<ServerLuaEntity>(std::move(entity), ind, static_cast<ServerSubgame&>(dimension->getGame()));
+    auto ref = std::make_shared<ServerLuaEntity>(std::move(entity), ind, dim->getGame());
 
     luaEntity["object"] = ref;
     ref->set_display_type(*displayType, *displayObject, displayTexture);
@@ -116,7 +116,7 @@ sol::table Api::Usertype::Dimension::add_entity_s(sol::this_state s, glm::vec3 p
     auto on_create = def.get<sol::optional<sol::protected_function>>("on_create");
     if (on_create) (*on_create)(luaEntity, staticData);
 
-    std::static_pointer_cast<ServerDimension>(dimension)->addLuaEntity(ref);
+    dim.s()->addLuaEntity(ref);
     return luaEntity;
 }
 
@@ -134,7 +134,7 @@ void Api::Usertype::Dimension::remove_entity_c(sol::this_state s, sol::table ent
     if (onDestroy) (*onDestroy)();
 
     core["entities"][(*object)->id] = sol::nil;
-    std::static_pointer_cast<LocalDimension>(dimension)->removeLocalEntity(*object);
+    dim.l()->removeLocalEntity(*object);
 }
 
 void Api::Usertype::Dimension::remove_entity_s(sol::this_state s, sol::table entity) {
@@ -151,7 +151,7 @@ void Api::Usertype::Dimension::remove_entity_s(sol::this_state s, sol::table ent
     if (onDestroy) (*onDestroy)();
 
     core["entities"][(*object)->id] = sol::nil;
-    std::static_pointer_cast<ServerDimension>(dimension)->removeLuaEntity(*object);
+    dim.s()->removeLuaEntity(*object);
 }
 
 void Api::Usertype::Dimension::bind(State state, sol::state &lua, sol::table &core) {

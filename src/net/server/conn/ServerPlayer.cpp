@@ -10,9 +10,9 @@
 #include "../world/ServerWorld.h"
 #include "../../../game/inventory/ServerInventoryRefs.h"
 
-ServerPlayer::ServerPlayer(ServerClient& client, ServerSubgame& game, ServerDimension& dim) :
+ServerPlayer::ServerPlayer(ServerClient& client, SubgamePtr game, DimensionPtr dim) :
     Player(game, dim, client.id), client(client),
-    inventory(static_cast<ServerWorld&>(dim.getWorld()).getRefs()->createInventory("player:" + std::to_string(id))) {}
+    inventory(dim->getWorld().getRefs()->createInventory("player:" + std::to_string(id))) {}
 
 void ServerPlayer::assertField(Packet packet) {
     packet.type = PacketType::THIS_PLAYER_INFO;
@@ -44,12 +44,8 @@ void ServerPlayer::setPos(glm::vec3 pos, bool assert) {
     if (newMapBlock != lastMapBlock && !changedMapBlocks) changedMapBlocks = true;
 }
 
-ServerInventory& ServerPlayer::getInventory() {
+InventoryPtr ServerPlayer::getInventory() {
     return inventory;
-}
-
-ServerDimension &ServerPlayer::getDimension() {
-    return static_cast<ServerDimension&>(dim);
 }
 
 ENetPeer* ServerPlayer::getPeer() {

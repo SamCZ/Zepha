@@ -20,14 +20,13 @@ class ClientNetworkInterpreter;
 
 class LocalInventoryRefs : public InventoryRefs {
 public:
-    LocalInventoryRefs(Subgame& game, ClientNetworkInterpreter& net);
+    LocalInventoryRefs(SubgamePtr game, ClientNetworkInterpreter& net);
     void packetReceived(std::unique_ptr<PacketView> p);
     void init();
 
     void update(double delta, ClientNetworkInterpreter& net);
 
-    virtual LocalInventory& createInventory(const std::string &inv) override;
-    virtual LocalInventory& getInventory(const std::string &inv) override;
+    virtual InventoryPtr createInventory(const std::string &inv) override;
 
     void watch(const std::string& inv, const std::string& list, bool persistant = false);
     void unWatch(const std::string& inv, const std::string& list);

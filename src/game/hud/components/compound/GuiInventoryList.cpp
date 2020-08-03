@@ -15,8 +15,8 @@
 
 GuiInventoryList::GuiInventoryList(const std::string &key) : GuiContainer(key) {}
 
-std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(const LuaGuiElement& elem, LocalSubgame &game,
-        glm::ivec2 bounds, LocalInventoryRefs& refs) {
+std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(const LuaGuiElement& elem,
+    SubgamePtr game, glm::ivec2 bounds, InventoryRefsPtr refs) {
 
     glm::vec2 pos     = SerialGui::get<glm::vec2>(elem, "position", bounds);
 //    glm::vec2 offset  = SerialGui::get<glm::vec2>(elem, "position_anchor");
@@ -29,23 +29,23 @@ std::shared_ptr<GuiInventoryList> GuiInventoryList::fromSerialized(const LuaGuiE
     unsigned short start  = static_cast<unsigned short>(elem.get_or<float>("start", 1) - 1);
     unsigned short length = static_cast<unsigned short>(elem.get_or<float>("length", 0));
 
-    auto invList = refs.getInventory(source).getListPtr(list);
+    auto invList = refs->getInventory(source)->getList(list).l();
     auto inv = std::make_shared<GuiInventoryList>(elem.key);
 
     inv->create(glm::vec2(SerialGui::SCALE_MODIFIER), padding * SerialGui::SCALE_MODIFIER,
-        slotspc * SerialGui::SCALE_MODIFIER, invList, refs.getCursorList(), game, start, length);
+        slotspc * SerialGui::SCALE_MODIFIER, invList, refs.l()->getCursorList(), game, start, length);
     inv->setPos(pos);
 
     return inv;
 }
 
 void GuiInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 innerPadding,
-    std::shared_ptr<LocalInventoryList> list, std::shared_ptr<LocalInventoryList> cursor, LocalSubgame& defs,
+    InventoryListPtr list, InventoryListPtr cursor, SubgamePtr defs,
     unsigned short start, unsigned short length) {
 
     this->list = list;
     this->cursor = cursor;
-    this->defs = &defs;
+    this->defs = defs;
 
     this->start = start;
     this->length = length;
@@ -59,7 +59,7 @@ void GuiInventoryList::create(glm::vec2 scale, glm::vec4 padding, glm::ivec2 inn
 
     drawContents();
     myCallback = std::make_shared<std::function<void()>>(std::bind(&GuiInventoryList::drawContents, this));
-    list->addGuiCallback(myCallback);
+    list.l()->addGuiCallback(myCallback);
 
     setCallback(CallbackType::PRIMARY, nullptr);
     setCallback(CallbackType::SECONDARY, nullptr);
@@ -106,7 +106,7 @@ void GuiInventoryList::interactEvent(glm::ivec2 pos, bool primary) {
 
     if (index >= list->getLength()) return;
 
-    list->interact(*cursor, primary, index);
+    list->interact(cursor, primary, index);
 }
 
 void GuiInventoryList::drawContents() {
@@ -120,8 +120,8 @@ void GuiInventoryList::drawContents() {
 
     empty();
 
-    auto fontRef = defs->textures["font"];
-    Font f(defs->textures, fontRef);
+    auto fontRef = defs.l()->textures["font"];
+    Font f(defs.l()->textures, fontRef);
 
     for (unsigned short i = 0; i < list->getLength() / list->getWidth(); i++) {
         for (unsigned short j = 0; j < list->getWidth(); j++) {
@@ -146,5 +146,5 @@ void GuiInventoryList::drawContents() {
 }
 
 GuiInventoryList::~GuiInventoryList() {
-    if (list != nullptr) list->removeGuiCallback(myCallback);
+    if (list) list.l()->removeGuiCallback(myCallback);
 }

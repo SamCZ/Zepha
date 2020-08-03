@@ -85,7 +85,7 @@ float LocalLuaEntity::get_scale() {
 
 void LocalLuaEntity::set_display_type(const std::string &type, const std::string &arg, sol::optional<std::string> arg2) {
     if (strncmp(type.data(), "gameobject", 10) == 0) {
-        ItemDef& def = defs.getDefs().fromStr(arg);
+        ItemDef& def = game->getDefs().fromStr(arg);
 
         if (def.type == ItemDef::Type::BLOCK)
             entity->setModel(static_cast<BlockDef&>(def).entityModel);
@@ -94,7 +94,7 @@ void LocalLuaEntity::set_display_type(const std::string &type, const std::string
     }
     else if (strncmp(type.data(), "model", 5) == 0 && arg2 && !arg2->empty()) {
         auto model = std::make_shared<Model>();
-        model->fromSerialized(defs.models.models[arg], {defs.textures[*arg2]});
+        model->fromSerialized(game.l()->models.models[arg], {game.l()->textures[*arg2]});
         entity->setModel(model);
     }
 }

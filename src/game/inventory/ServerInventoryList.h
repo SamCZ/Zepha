@@ -14,8 +14,8 @@ class Packet;
 
 class ServerInventoryList : public InventoryList {
 public:
-    ServerInventoryList(Subgame& defs, ServerClients& list, const std::string& name,
-                        const std::string& invName, unsigned short size, unsigned short width);
+    ServerInventoryList(SubgamePtr defs, ServerClients& list, const std::string& name,
+        const std::string& invName, unsigned short size, unsigned short width);
 
     bool addWatcher(unsigned int id);
     bool removeWatcher(unsigned int id);

@@ -18,7 +18,7 @@ public:
     enum class Callback { ALLOW_TAKE, ALLOW_PUT, ON_TAKE, ON_PUT };
 
     InventoryList(const InventoryList& o) = delete;
-    InventoryList(Subgame& game, const std::string& name, const std::string& invName, unsigned short size, unsigned short width);
+    InventoryList(SubgamePtr game, const std::string& name, const std::string& invName, unsigned short size, unsigned short width);
 
     std::string getName() const;
 
@@ -44,15 +44,15 @@ public:
     // Removes up to count items from ind, returns the items removed
     virtual ItemStack removeStack(unsigned short ind, unsigned short count);
 
-    virtual void interact(InventoryList& cursor, bool primary, unsigned short ind);
+    virtual void interact(InventoryListPtr cursor, bool primary, unsigned short ind);
 
 //    sol::protected_function getLuaCallback(Callback type);
 //    void setLuaCallback(Callback type, sol::protected_function cb);
 
-    Subgame& getGame();
+    SubgamePtr getGame();
 
 protected:
-    Subgame& game;
+    SubgamePtr game;
 
     std::string name, invName;
     unsigned short width = 0;

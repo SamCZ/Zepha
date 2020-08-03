@@ -17,10 +17,10 @@
 #include "usertype/Player.h"
 #include "usertype/Inventory.h"
 #include "usertype/Dimension.h"
+#include "usertype/ItemStack.h"
 #include "usertype/InventoryList.h"
 
 #include "usertype/LuaGuiElement.h"
-#include "usertype/cItemStack.h"
 #include "usertype/cLuaEntity.h"
 #include "usertype/cAnimationManager.h"
 
@@ -31,19 +31,19 @@
 
 #include "modules/create_structure.h"
 
-LocalLuaParser::LocalLuaParser(LocalSubgame& game): LuaParser(game), game(game), keybinds(this) {}
+LocalLuaParser::LocalLuaParser(LocalSubgame& game): LuaParser(game), keybinds(this) {}
 
-void LocalLuaParser::init(LocalWorld& world, ClientState& state) {
+void LocalLuaParser::init(WorldPtr world, ClientState& state) {
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
 
-    loadApi(game, world);
+    loadApi(world);
     handler.executeMods(std::bind(&LocalLuaParser::runFileSandboxed, this, std::placeholders::_1));
     state.renderer.window.input.setCallback(std::bind(&LuaKeybindHandler::keybindHandler, &keybinds, std::placeholders::_1, std::placeholders::_2));
 
-    registerDefs(game);
+    registerDefs();
 }
 
-void LocalLuaParser::loadPlayer(std::shared_ptr<LocalPlayer> player) {
+void LocalLuaParser::loadPlayer(PlayerPtr player) {
     core["player"] = Api::Usertype::LocalPlayer(player);
 }
 
@@ -60,7 +60,7 @@ LocalModHandler& LocalLuaParser::getHandler() {
     return handler;
 }
 
-void LocalLuaParser::loadApi(LocalSubgame &defs, LocalWorld &world) {
+void LocalLuaParser::loadApi(WorldPtr world) {
     //Create Zepha Table
     core = lua.create_table();
     lua["zepha"] = core;
@@ -69,12 +69,12 @@ void LocalLuaParser::loadApi(LocalSubgame &defs, LocalWorld &world) {
     // Types
     ClientApi::entity            (lua);
     ClientApi::animation_manager (lua);
-    ClientApi::item_stack        (lua);
     ClientApi::gui_element       (lua);
 
     Api::Usertype::Target::bind(Api::State::CLIENT, lua, core);
-    Api::Usertype::Dimension::bind(Api::State::CLIENT, lua, core);
     Api::Usertype::Inventory::bind(Api::State::CLIENT, lua, core);
+    Api::Usertype::Dimension::bind(Api::State::CLIENT, lua, core);
+    Api::Usertype::ItemStack::bind(Api::State::CLIENT, lua, core);
     Api::Usertype::LocalPlayer::bind(Api::State::CLIENT, lua, core);
     Api::Usertype::InventoryList::bind(Api::State::CLIENT, lua, core);
 
@@ -82,8 +82,8 @@ void LocalLuaParser::loadApi(LocalSubgame &defs, LocalWorld &world) {
 
     // Modules
     modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::CLIENT, lua, core));
-    modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::CLIENT, core, game, world));
-    modules.emplace_back(std::make_unique<Api::Module::Dimension>(Api::State::CLIENT, core, game, world));
+    modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::CLIENT, core, game, *world.l()));
+    modules.emplace_back(std::make_unique<Api::Module::Dimension>(Api::State::CLIENT, core, game, *world.l()));
 
     bindModules();
 
@@ -94,10 +94,11 @@ void LocalLuaParser::loadApi(LocalSubgame &defs, LocalWorld &world) {
     lua.set_function("runfile", &LocalLuaParser::runFileSandboxed, this);
 }
 
-void LocalLuaParser::registerDefs(LocalSubgame &defs) {
-    RegisterBlocks  ::client(core, defs);
-    RegisterItems   ::client(core, defs);
-    RegisterBiomes  ::client(core, defs);
+void LocalLuaParser::registerDefs() {
+    auto& local = static_cast<LocalSubgame&>(game);
+    RegisterBlocks  ::client(core, local);
+    RegisterItems   ::client(core, local);
+    RegisterBiomes  ::client(core, local);
     RegisterKeybinds::client(core, keybinds);
 }
 

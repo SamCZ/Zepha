@@ -6,8 +6,10 @@
 
 #include "Player.h"
 
-#include "LuaItemStack.h"
+#include "ItemStack.h"
 #include "InventoryList.h"
+#include "../../net/server/world/ServerWorld.h"
+#include "../../game/scene/world/LocalWorld.h"
 #include "../../game/scene/world/LocalPlayer.h"
 
 unsigned int Api::Usertype::ServerPlayer::get_id() {
@@ -54,18 +56,20 @@ Api::Usertype::Inventory Api::Usertype::ServerPlayer::get_inventory() {
     return Inventory(player->getInventory());
 }
 
+Api::Usertype::Dimension Api::Usertype::ServerPlayer::get_dimension() {
+    return Dimension(player->getDimension());
+}
+
 sol::object Api::Usertype::ServerPlayer::get_hand_list(sol::this_state s) {
     auto listStr = player->getHandList();
     if (listStr.empty()) return sol::nil;
-    return sol::make_object<InventoryList>(s,
-        InventoryList(player->getInventory().getListPtr(listStr)));
+    return sol::make_object<InventoryList>(s, InventoryList(player->getInventory()->getList(listStr)));
 }
 
 sol::object Api::Usertype::ServerPlayer::get_hand_stack(sol::this_state s) {
     auto listStr = player->getHandList();
     if (listStr.empty()) return sol::nil;
-    return sol::make_object<LuaItemStack>(s,
-        InventoryList(player->getInventory().getListPtr(listStr)).get_stack(1));
+    return sol::make_object<ItemStack>(s, InventoryList(player->getInventory()->getList(listStr)).get_stack(1));
 }
 
 void Api::Usertype::ServerPlayer::set_hand_list(sol::optional<sol::object> list) {
@@ -78,8 +82,7 @@ void Api::Usertype::ServerPlayer::set_hand_list(sol::optional<sol::object> list)
 sol::object Api::Usertype::ServerPlayer::get_wield_list(sol::this_state s) {
     auto listStr = player->getWieldList();
     if (listStr.empty()) return sol::nil;
-    return sol::make_object<InventoryList>(s,
-        InventoryList(player->getInventory().getListPtr(listStr)));
+    return sol::make_object<InventoryList>(s, InventoryList(player->getInventory()->getList(listStr)));
 }
 
 void Api::Usertype::ServerPlayer::set_wield_list(sol::optional<sol::object> list) {
@@ -100,8 +103,8 @@ void Api::Usertype::ServerPlayer::set_wield_index(unsigned int index) {
 sol::object Api::Usertype::ServerPlayer::get_wield_stack(sol::this_state s) {
     auto listStr = player->getWieldList();
     if (listStr.empty()) return sol::nil;
-    return sol::make_object<LuaItemStack>(s, InventoryList(player->getInventory()
-        .getListPtr(listStr)).get_stack(player->getWieldIndex() + 1));
+    return sol::make_object<ItemStack>(s, InventoryList(player->getInventory()
+        ->getList(listStr)).get_stack(player->getWieldIndex() + 1));
 }
 
 void Api::Usertype::ServerPlayer::set_flying(bool shouldFly) {
@@ -135,35 +138,37 @@ void Api::Usertype::ServerPlayer::bind(State state, sol::state &lua, sol::table 
         "set_wield_index", &ServerPlayer::set_wield_index,
         "get_wield_stack", &ServerPlayer::get_wield_stack,
 
+        "get_dimension", &ServerPlayer::get_dimension,
+
         "pos", sol::property(&ServerPlayer::get_pos, &ServerPlayer::set_pos),
         "block_pos", sol::property(&ServerPlayer::get_block_pos, &ServerPlayer::set_pos),
         "vel", sol::property(&ServerPlayer::get_vel, &ServerPlayer::set_vel),
         "look_yaw", sol::property(&ServerPlayer::get_look_yaw, &ServerPlayer::set_look_yaw),
         "look_pitch", sol::property(&ServerPlayer::get_look_pitch, &ServerPlayer::set_look_pitch),
+        "dim", sol::property(&ServerPlayer::get_dimension),
 
         "flying", sol::property(&ServerPlayer::set_flying, &ServerPlayer::get_flying)
     );
 }
 
 bool Api::Usertype::LocalPlayer::is_in_menu() {
-    return std::static_pointer_cast<::LocalPlayer>(player)->isInMenu();
+    return player.l()->isInMenu();
 }
 
 void Api::Usertype::LocalPlayer::show_menu(std::shared_ptr<LuaGuiElement> root) {
-    return std::static_pointer_cast<::LocalPlayer>(player)->showMenu(root);
+    return player.l()->showMenu(root);
 }
 
 void Api::Usertype::LocalPlayer::close_menu() {
-    return std::static_pointer_cast<::LocalPlayer>(player)->closeMenu();
+    return player.l()->closeMenu();
 }
 
 std::shared_ptr<LuaGuiElement> Api::Usertype::LocalPlayer::get_hud() {
-    std::cout << "Getting hud " << std::endl;
-    return std::static_pointer_cast<::LocalPlayer>(player)->getHud();
+    return player.l()->getHud();
 }
 
 void Api::Usertype::LocalPlayer::set_hud(std::shared_ptr<LuaGuiElement> hud) {
-    std::static_pointer_cast<::LocalPlayer>(player)->setHud(hud);
+    player.l()->setHud(hud);
 }
 
 void Api::Usertype::LocalPlayer::bind(State state, sol::state &lua, sol::table &core) {
@@ -188,6 +193,8 @@ void Api::Usertype::LocalPlayer::bind(State state, sol::state &lua, sol::table &
         "set_wield_index", &LocalPlayer::set_wield_index,
         "get_wield_stack", &LocalPlayer::get_wield_stack,
 
+        "get_dimension", &LocalPlayer::get_dimension,
+
         "show_menu", &LocalPlayer::show_menu,
         "close_menu", &LocalPlayer::close_menu,
         "set_hud", &LocalPlayer::set_hud,
@@ -198,6 +205,7 @@ void Api::Usertype::LocalPlayer::bind(State state, sol::state &lua, sol::table &
         "vel", sol::property(&LocalPlayer::get_vel, &LocalPlayer::set_vel),
         "look_yaw", sol::property(&LocalPlayer::get_look_yaw, &LocalPlayer::set_look_yaw),
         "look_pitch", sol::property(&LocalPlayer::get_look_pitch, &LocalPlayer::set_look_pitch),
+        "dim", sol::property(&LocalPlayer::get_dimension),
 
         "flying", sol::property(&LocalPlayer::set_flying, &LocalPlayer::get_flying),
 

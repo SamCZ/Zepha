@@ -18,11 +18,11 @@
 #include "../../../world/chunk/Chunk.h"
 #include "../../../lua/usertype/Target.h"
 #include "../../../world/chunk/MapBlock.h"
-#include "../../../lua/usertype/LuaItemStack.h"
+#include "../../../lua/usertype/ItemStack.h"
 #include "../../../lua/usertype/ServerLuaEntity.h"
 #include "../../../game/inventory/ServerInventoryRefs.h"
 
-ServerWorld::ServerWorld(unsigned int seed, ServerSubgame& game, ServerClients& clients) :
+ServerWorld::ServerWorld(unsigned int seed, SubgamePtr game, ServerClients& clients) :
     World(game),
     seed(seed),
     clients(clients),
@@ -62,12 +62,9 @@ ServerWorld::ServerWorld(unsigned int seed, ServerSubgame& game, ServerClients& 
 }
 
 void ServerWorld::init(const std::string& worldDir) {
-    genStream = std::make_unique<ServerGenStream>(seed, static_cast<ServerSubgame&>(game));
+    genStream = std::make_unique<ServerGenStream>(seed, game);
     packetStream = std::make_unique<ServerPacketStream>(*this);
 //    fileManip = std::make_shared<FileManipulator>("worlds/" + worldDir + "/");
-
-    createDimension("default"); //TODO: Do not do not
-    generateMapBlock(0, {0, 0, 0});
 }
 
 void ServerWorld::update(double delta) {
@@ -78,18 +75,18 @@ void ServerWorld::update(double delta) {
 
     auto finishedGen = genStream->update();
     for (auto& data : *finishedGen) {
-        auto& dimension = getDimension(data.pos.w);
+        auto dimension = getDimension(data.pos.w);
 
         for (const auto& chunk : data.chunks) {
             generatedMapBlocks.insert(data.pos);
             updatedChunks.insert(glm::ivec4(chunk->pos, data.pos.w));
-            dimension.setChunk(chunk);
+            dimension->setChunk(chunk);
         }
 
 //        auto resend = dimension.calculateEdgeLight(mb.pos);
 //        changed.insert(resend.begin(), resend.end());
 
-        dimension.getMapBlock(glm::ivec3(data.pos))->generated = true;
+        dimension->getMapBlock(glm::ivec3(data.pos))->generated = true;
         packetStream->queue(data.pos);
     }
 
@@ -159,38 +156,23 @@ void ServerWorld::update(double delta) {
     }
 }
 
-ServerDimension& ServerWorld::createDimension(const std::string &identifier) {
-    this->dimensions.emplace_back(std::make_shared<ServerDimension>(static_cast<ServerSubgame&>(game), *this, identifier, this->dimensions.size()));
-    return static_cast<ServerDimension&>(*dimensions[dimensions.size() - 1]);
+DimensionPtr ServerWorld::createDimension(const std::string &identifier) {
+    this->dimensions.emplace_back(std::make_shared<ServerDimension>(game, *this, identifier, this->dimensions.size()));
+    return dimensions[dimensions.size() - 1];
 }
 
-ServerDimension& ServerWorld::getDimension(unsigned int index) {
-    return static_cast<ServerDimension&>(*dimensions[index]);
+DimensionPtr ServerWorld::getDimension(unsigned int index) {
+    return dimensions[index];
 }
 
-ServerDimension& ServerWorld::getDimension(const std::string &identifier) {
+DimensionPtr ServerWorld::getDimension(const std::string &identifier) {
     for (auto& dimension : dimensions)
-        if (dimension->getIdentifier() == identifier)
-            return static_cast<ServerDimension&>(*dimension);
+        if (dimension->getIdentifier() == identifier) return dimension;
     throw std::runtime_error("No dimension named " + identifier + " found.");
 }
 
-std::shared_ptr<ServerDimension> ServerWorld::getDefaultDimensionPtr() {
-    for (auto& dimension : dimensions)
-        if (dimension->getIdentifier() == defaultDimension)
-            return std::static_pointer_cast<ServerDimension>(dimension);
-    throw std::runtime_error("No default dimension set.");
-}
-
-std::shared_ptr<ServerDimension> ServerWorld::getDimensionPtr(const std::string &identifier) {
-    for (auto& dimension : dimensions)
-        if (dimension->getIdentifier() == identifier)
-            return std::static_pointer_cast<ServerDimension>(dimension);
-    throw std::runtime_error("No dimension named " + identifier + " found.");
-}
-
-std::shared_ptr<ServerInventoryRefs> ServerWorld::getRefs() {
-    return refs;
+InventoryRefsPtr ServerWorld::getRefs() {
+    return InventoryRefsPtr(refs);
 }
 
 void ServerWorld::changedMapBlocks(ServerPlayer& player) {
@@ -205,17 +187,17 @@ void ServerWorld::generateMapBlocks(ServerPlayer& player) {
 
     for (const auto &c : generateOrder) {
         glm::ivec3 mapBlockPos = playerMapBlock + c;
-        auto existing = player.getDimension().getMapBlock(mapBlockPos);
+        auto existing = player.getDimension()->getMapBlock(mapBlockPos);
         if (existing && existing->generated) continue;
-        else generating += generateMapBlock(player.getDimension().getInd(), mapBlockPos);
+        else generating += generateMapBlock(player.getDimension()->getInd(), mapBlockPos);
     }
 
     std::cout << "Player moved, generating " << generating << " MapBlocks." << std::endl;
 }
 
 bool ServerWorld::generateMapBlock(unsigned int dim, glm::ivec3 pos) {
-    auto& dimension = getDimension(dim);
-    if(!dimension.getMapBlock(pos) || !dimension.getMapBlock(pos)->generated) return genStream->queue(glm::ivec4(pos, dim));
+    auto dimension = getDimension(dim);
+    if(!dimension->getMapBlock(pos) || !dimension->getMapBlock(pos)->generated) return genStream->queue(glm::ivec4(pos, dim));
     return false;
 }
 
@@ -235,7 +217,7 @@ void ServerWorld::sendChunksToPlayer(ServerPlayer& client) {
             for (int k = bounds.first.z; k < bounds.second.z; k++) {
                 glm::ivec3 pos {i, j, k};
                 if (isInBounds(pos, oldBounds)) continue;
-                packetStream->queue(glm::ivec4(pos, client.getDimension().getInd()));
+                packetStream->queue(glm::ivec4(pos, client.getDimension()->getInd()));
             }
         }
     }

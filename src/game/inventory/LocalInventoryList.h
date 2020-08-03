@@ -12,11 +12,11 @@ class ClientNetworkInterpreter;
 
 class LocalInventoryList : public InventoryList {
 public:
-    LocalInventoryList(Subgame& game, const std::string& name,
+    LocalInventoryList(SubgamePtr game, const std::string& name,
         const std::string& invName, unsigned short size, unsigned short width,
         ClientNetworkInterpreter& net);
 
-    void interact(InventoryList& hand, bool primary, unsigned short ind) override;
+    void interact(InventoryListPtr hand, bool primary, unsigned short ind) override;
 
     void setData(unsigned int size, unsigned int width, std::vector<ItemStack> items);
     void addGuiCallback(std::shared_ptr<std::function<void()>> cb);

@@ -10,9 +10,9 @@
 #include "../../../def/gen/LocalBiomeAtlas.h"
 #include "../../../def/LocalDefinitionAtlas.h"
 
-WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, LocalSubgame& game) {
+WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, SubgamePtr game) {
     threads.reserve(THREADS);
-    for (int i = 0; i < THREADS; i++) threads.emplace_back(game, seed);
+    for (int i = 0; i < THREADS; i++) threads.emplace_back(*game.l(), seed);
 }
 
 void WorldInterpolationStream::queuePacket(std::unique_ptr<PacketView> p) {
