@@ -24,7 +24,7 @@ MainMenuScene::MainMenuScene(ClientState& state) :
     state.renderer.setClearColor(0, 0, 0);
     state.renderer.window.input.lockMouse(false);
 
-    Font f(state.defs.textures, state.defs.textures["font"]);
+    Font f(state.game.textures, state.game.textures["font"]);
     win = state.renderer.window.getSize();
     sandboxArea = win - glm::ivec2(0, 18 * GS);
 
@@ -55,28 +55,28 @@ MainMenuScene::MainMenuScene(ClientState& state) :
     {
         auto settingsButton = std::make_shared<GuiImageButton>("settingsButton");
         settingsButton->create({16 * GS, 16 * GS}, {},
-                               state.defs.textures["crop(0, 0, 16, 16, menu_flag_settings)"],
-                               state.defs.textures["crop(16, 0, 16, 16, menu_flag_settings)"]);
+                               state.game.textures["crop(0, 0, 16, 16, menu_flag_settings)"],
+                               state.game.textures["crop(16, 0, 16, 16, menu_flag_settings)"]);
         navigationBar->get<GuiContainer>("navigationBarIcons")->add(settingsButton);
 
         auto closeButton = std::make_shared<GuiImageButton>("closeButton");
         closeButton->create({16 * GS, 16 * GS}, {},
-                            state.defs.textures["crop(0, 0, 16, 16, menu_flag_quit)"],
-                            state.defs.textures["crop(16, 0, 16, 16, menu_flag_quit)"]);
+                            state.game.textures["crop(0, 0, 16, 16, menu_flag_quit)"],
+                            state.game.textures["crop(16, 0, 16, 16, menu_flag_quit)"]);
         closeButton->setCallback(GuiComponent::CallbackType::PRIMARY, [](bool down, glm::ivec2) { if (down) exit(0); });
         navigationBar->get<GuiContainer>("navigationBarIcons")->add(closeButton);
 
         auto serversButton = std::make_shared<GuiImageButton>("serversButton");
         serversButton->create({16 * GS, 16 * GS}, {},
-                              state.defs.textures["crop(0, 0, 16, 16, menu_flag_multiplayer)"],
-                              state.defs.textures["crop(16, 0, 16, 16, menu_flag_multiplayer)"]);
+                              state.game.textures["crop(0, 0, 16, 16, menu_flag_multiplayer)"],
+                              state.game.textures["crop(16, 0, 16, 16, menu_flag_multiplayer)"]);
         serversButton->setPos({GS, GS});
         navigationBarIcons->add(serversButton);
 
         auto contentButton = std::make_shared<GuiImageButton>("contentButton");
         contentButton->create({16 * GS, 16 * GS}, {},
-                              state.defs.textures["crop(0, 0, 16, 16, menu_flag_content)"],
-                              state.defs.textures["crop(16, 0, 16, 16, menu_flag_content)"]);
+                              state.game.textures["crop(0, 0, 16, 16, menu_flag_content)"],
+                              state.game.textures["crop(16, 0, 16, 16, menu_flag_content)"]);
         contentButton->setPos({GS + GS * 18, GS});
         contentButton->setCallback(GuiComponent::CallbackType::PRIMARY, [&](bool down, glm::ivec2) { if (down) state.desiredState = "connect"; });
         navigationBarIcons->add(contentButton);
@@ -92,8 +92,8 @@ MainMenuScene::MainMenuScene(ClientState& state) :
             auto &subgame = subgames[i];
             auto button = std::make_shared<GuiImageButton>(subgame.config.name);
             button->create({16 * GS, 16 * GS}, {},
-                           state.defs.textures["crop(0, 0, 16, 16, " + subgame.iconRef->name + ")"],
-                           state.defs.textures["crop(16, 0, 16, 16, " + subgame.iconRef->name + ")"]);
+                           state.game.textures["crop(0, 0, 16, 16, " + subgame.iconRef->name + ")"],
+                           state.game.textures["crop(16, 0, 16, 16, " + subgame.iconRef->name + ")"]);
             button->setPos({GS * 7 + GS * 18 * (i + 2), GS});
             button->setCallback(GuiComponent::CallbackType::PRIMARY, [&, i](bool down, glm::ivec2) {
                 if (down) {
@@ -165,8 +165,8 @@ void MainMenuScene::findSubgames() {
             std::string description = (j["description"].is_string() ? j["description"] : "");
             std::string version = j["version"];
 
-            std::shared_ptr<AtlasRef> icon = state.defs.textures["menu_flag_missing"];
-            if (hasIcon) icon = state.defs.textures.loadImage(std::string(subgameFolder.path) + "/icon.png", name);
+            std::shared_ptr<AtlasRef> icon = state.game.textures["menu_flag_missing"];
+            if (hasIcon) icon = state.game.textures.loadImage(std::string(subgameFolder.path) + "/icon.png", name);
 
             subgames.push_back({icon, {name, description, version}, subgameFolder.path});
         }
@@ -191,7 +191,7 @@ void MainMenuScene::positionElements() {
     auto navigationBarBg = navigationBar->get<GuiContainer>("navigationBarBg");
     for (unsigned int i = 0; i < static_cast<float>(win.x) / 64.f / GS; i++) {
         auto segment = std::make_shared<GuiRect>("segment_" + std::to_string(i));
-        segment->create({64 * GS, 18 * GS}, {}, state.defs.textures["menu_bar_bg"]);
+        segment->create({64 * GS, 18 * GS}, {}, state.game.textures["menu_bar_bg"]);
         segment->setPos({i * 64 * GS, 0});
         navigationBarBg->add(segment);
     }
@@ -202,7 +202,7 @@ void MainMenuScene::positionElements() {
 }
 
 void MainMenuScene::update() {
-    state.defs.textures.update();
+    state.game.textures.update();
     sandbox.update(state.delta);
 
     components.handleMouseInput(state.renderer.window);
@@ -213,7 +213,7 @@ void MainMenuScene::draw() {
     state.renderer.endDeferredCalls();
 
     state.renderer.beginGUIDrawCalls();
-    state.renderer.enableTexture(&state.defs.textures.atlasTexture);
+    state.renderer.enableTexture(&state.game.textures.atlasTexture);
     components.draw(state.renderer);
     state.renderer.swapBuffers();
 }

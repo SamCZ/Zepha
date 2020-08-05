@@ -17,9 +17,10 @@
 
 class DrawableEntity : virtual public Entity, public Drawable {
 public:
-    DrawableEntity();
     DrawableEntity(const DrawableEntity& o) = delete;
-    explicit DrawableEntity(std::shared_ptr<Model> model);
+    DrawableEntity() = default;
+    DrawableEntity(SubgamePtr game, DimensionPtr dim);
+    explicit DrawableEntity(SubgamePtr game, DimensionPtr dim, std::shared_ptr<Model> model);
 
     void update(double delta) override;
     void setModel(std::shared_ptr<Model> model);

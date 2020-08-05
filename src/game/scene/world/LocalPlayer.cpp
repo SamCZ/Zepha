@@ -12,11 +12,12 @@
 #include "../../../def/item/BlockDef.h"
 #include "../../../world/chunk/Chunk.h"
 #include "../../../net/client/ClientNetworkInterpreter.h"
+#include "NetField.h"
 
 LocalPlayer::LocalPlayer(SubgamePtr game, LocalWorld& world, DimensionPtr dim, Renderer &renderer) :
-    Player(game, world, dim),
+    Player(game, world, dim), DrawableEntity(game, dim), Entity(game, dim),
     renderer(renderer),
-    wireframe({1, 1, 1}),
+    wireframe(game, dim, {1, 1, 1}),
     gameGui(world.getRefs().l(), renderer.window.getSize(), game.l(), renderer) {
 
     handItemModel.parent = &handModel;
@@ -49,12 +50,12 @@ void LocalPlayer::assertField(Packet packet) {
 void LocalPlayer::handleAssertion(Deserializer &d) {
     while (!d.atEnd()) {
         switch (d.readE<NetField>()) {
-            case NetField::ID:     id = d.read<unsigned int>(); break;
-            case NetField::POS:    setPos(d.read<glm::vec3>()); break;
-            case NetField::VEL:    setVel(d.read<glm::vec3>()); break;
-            case NetField::YAW:    setYaw(d.read<float>());     break;
-            case NetField::PITCH:  setPitch(d.read<float>());   break;
-            case NetField::FLYING: setFlying(d.read<bool>());   break;
+            case NetField::ID: setId(d.read<unsigned int>()); break;
+            case NetField::POS: setPos(d.read<glm::vec3>()); break;
+            case NetField::VEL: setVel(d.read<glm::vec3>()); break;
+            case NetField::LOOK_YAW: setYaw(d.read<float>()); break;
+            case NetField::LOOK_PITCH: setPitch(d.read<float>()); break;
+            case NetField::FLYING: setFlying(d.read<bool>()); break;
 
             case NetField::HAND_INV: setHandList(d.read<std::string>()); break;
             case NetField::WIELD_INV: setWieldList(d.read<std::string>()); break;
@@ -98,8 +99,8 @@ void LocalPlayer::setWieldIndex(unsigned short index, bool assert) {
     updateWieldAndHandItems();
 }
 
-void LocalPlayer::setDimension(DimensionPtr dim) {
-    Player::setDimension(dim);
+void LocalPlayer::setDim(DimensionPtr dim) {
+    Player::setDim(dim);
     static_cast<LocalWorld&>(world).setActiveDimension(dim);
 }
 

@@ -22,7 +22,7 @@ public:
 
     virtual void createList(const std::string& name, unsigned short length, unsigned short width) override;
 
-//    void sendDirtyLists();
+    void sendDirtyLists();
 private:
     ServerClients& clients;
 };

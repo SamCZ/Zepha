@@ -33,7 +33,7 @@ public:
         // World
         CHUNK, MAPBLOCK,
         // Block
-        BLOCK_PLACE, BLOCK_INTERACT,
+        BLOCK_HIT, BLOCK_PLACE, BLOCK_INTERACT,
         BLOCK_PLACE_OR_INTERACT, BLOCK_SET,
         // Entity
         ENTITY_INFO, ENTITY_REMOVED,

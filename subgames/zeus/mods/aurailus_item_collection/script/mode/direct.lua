@@ -1,7 +1,7 @@
 local get_yield = runfile("@aurailus:item_collection/get_yield")
 
 if zepha.server then
-    zepha.bind("break", function(pos, player)
+    zepha.bind("on_break", function(pos, player)
         local yields = get_yield(pos)
         if yields == nil then return end
 

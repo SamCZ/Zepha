@@ -24,7 +24,7 @@ void LocalWorld::connect() {
 
 bool LocalWorld::updatePlayerDimension() {
     if (defaultDimension.empty()) return false;
-    player->setDimension(getDefaultDimension());
+    player->setDim(getDefaultDimension());
     activeDimension = getDefaultDimension().l();
     return true;
 }

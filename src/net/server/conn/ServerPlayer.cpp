@@ -8,10 +8,11 @@
 #include "../../Serializer.h"
 #include "../../Deserializer.h"
 #include "../world/ServerWorld.h"
+#include "../../../game/scene/world/NetField.h"
 #include "../../../game/inventory/ServerInventoryRefs.h"
 
 ServerPlayer::ServerPlayer(ServerClient& client, World& world, SubgamePtr game, DimensionPtr dim) :
-    Player(game, world, dim, client.id), client(client),
+    Player(game, world, dim, client.id), Entity(game, dim), client(client),
     inventory(world.getRefs()->createInventory("player:" + std::to_string(id))) {}
 
 void ServerPlayer::assertField(Packet packet) {
@@ -22,14 +23,14 @@ void ServerPlayer::assertField(Packet packet) {
 void ServerPlayer::handleAssertion(Deserializer &d) {
     while (!d.atEnd()) {
         switch (d.readE<NetField>()) {
-            case NetField::POS:    setPos(d.read<glm::vec3>()); break;
-            case NetField::VEL:    setVel(d.read<glm::vec3>()); break;
-            case NetField::PITCH:  setPitch(d.read<float>());   break;
-            case NetField::YAW:    setYaw(d.read<float>());     break;
-            case NetField::FLYING: setFlying(d.read<bool>());   break;
+            case NetField::POS:         setPos(d.read<glm::vec3>()); break;
+            case NetField::VEL:         setVel(d.read<glm::vec3>()); break;
+            case NetField::LOOK_YAW:    setPitch(d.read<float>());   break;
+            case NetField::LOOK_PITCH:  setYaw(d.read<float>());     break;
+            case NetField::FLYING:      setFlying(d.read<bool>());   break;
 
-            case NetField::HAND_INV: setHandList(d.read<std::string>()); break;
-            case NetField::WIELD_INV: setWieldList(d.read<std::string>());   break;
+            case NetField::HAND_INV:    setHandList(d.read<std::string>()); break;
+            case NetField::WIELD_INV:   setWieldList(d.read<std::string>());   break;
             case NetField::WIELD_INDEX: setWieldIndex(d.read<unsigned short>()); break;
         }
     }

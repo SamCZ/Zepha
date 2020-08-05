@@ -8,6 +8,7 @@
 
 #include "ServerWorld.h"
 
+#include "ServerLuaEntity.h"
 #include "ServerGenStream.h"
 #include "../../Serializer.h"
 #include "ServerPacketStream.h"
@@ -17,7 +18,6 @@
 #include "../../../world/chunk/Chunk.h"
 #include "../../../lua/usertype/Target.h"
 #include "../../../world/chunk/MapBlock.h"
-#include "../../../lua/usertype/ServerLuaEntity.h"
 #include "../../../game/inventory/ServerInventoryRefs.h"
 
 ServerWorld::ServerWorld(unsigned int seed, SubgamePtr game, ServerClients& clients) :
@@ -25,6 +25,7 @@ ServerWorld::ServerWorld(unsigned int seed, SubgamePtr game, ServerClients& clie
     seed(seed),
     clients(clients),
     refs(std::make_shared<ServerInventoryRefs>(game, clients)) {
+
     clients.init(this);
 
     generateOrder.reserve(mapBlockGenRange.x * 2 + 1 * mapBlockGenRange.x * 2 + 1 * mapBlockGenRange.y * 2 + 1);
@@ -67,6 +68,8 @@ void ServerWorld::init(const std::string& worldDir) {
 
 void ServerWorld::update(double delta) {
     World::update(delta);
+
+    refs->update();
 
     std::unordered_set<glm::ivec4, Vec::ivec4> updatedChunks {};
     std::unordered_set<glm::ivec4, Vec::ivec4> generatedMapBlocks {};
@@ -133,21 +136,39 @@ void ServerWorld::update(double delta) {
 
     for (auto& d : dimensions) {
         auto dimension = std::static_pointer_cast<ServerDimension>(d);
+        unsigned int ind = dimension->getInd();
+
+        // Update clients with new entity information.
+
+        Serializer inf;
+        inf.append(ind);
 
         for (auto& entity : dimension->getLuaEntities()) {
-            if (entity->entity->checkAndResetDirty()) {
-                Packet p = entity->entity->createPacket();
-
-                for (auto& client : clients.players)
-                    p.sendTo(client->getPeer(), Packet::Channel::ENTITY);
-            }
+            auto opt = entity.entity.s()->serialize();
+            if (opt) inf.append(*opt);
         }
 
-        for (unsigned int entity : dimension->getRemovedEntities()) {
-            Packet p = Serializer().append<unsigned int>(entity).packet(Packet::Type::ENTITY_REMOVED);
+        if (inf.data.size() > 4) {
+            auto p = inf.packet(Packet::Type::ENTITY_INFO);
+            for (auto& player : clients.players)
+                if (player->getDim()->getInd() == ind)
+                    p.sendTo(player->getPeer(), Packet::Channel::ENTITY);
+        }
 
-            for (auto& client : clients.players)
-                p.sendTo(client->getPeer(), Packet::Channel::ENTITY);
+        // Update clients with removed entities.
+
+        Serializer rem;
+        rem.append(ind);
+
+        for (unsigned int entity : dimension->getRemovedEntities()) {
+            rem.append<unsigned int>(entity);
+        }
+
+        if (rem.data.size() > 4) {
+            Packet p = rem.packet(Packet::Type::ENTITY_REMOVED);
+            for (auto& player : clients.players)
+                if (player->getDim()->getInd() == ind)
+                    p.sendTo(player->getPeer(), Packet::Channel::ENTITY);
         }
 
         dimension->clearRemovedEntities();
@@ -185,9 +206,9 @@ void ServerWorld::generateMapBlocks(ServerPlayer& player) {
 
     for (const auto &c : generateOrder) {
         glm::ivec3 mapBlockPos = playerMapBlock + c;
-        auto existing = player.getDimension()->getMapBlock(mapBlockPos);
+        auto existing = player.getDim()->getMapBlock(mapBlockPos);
         if (existing && existing->generated) continue;
-        else generating += generateMapBlock(player.getDimension()->getInd(), mapBlockPos);
+        else generating += generateMapBlock(player.getDim()->getInd(), mapBlockPos);
     }
 
     std::cout << "Player moved, generating " << generating << " MapBlocks." << std::endl;
@@ -215,7 +236,7 @@ void ServerWorld::sendChunksToPlayer(ServerPlayer& client) {
             for (int k = bounds.first.z; k < bounds.second.z; k++) {
                 glm::ivec3 pos {i, j, k};
                 if (isInBounds(pos, oldBounds)) continue;
-                packetStream->queue(glm::ivec4(pos, client.getDimension()->getInd()));
+                packetStream->queue(glm::ivec4(pos, client.getDim()->getInd()));
             }
         }
     }

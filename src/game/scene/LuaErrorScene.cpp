@@ -14,7 +14,7 @@ LuaErrorScene::LuaErrorScene(ClientState &state, const std::string &err) : Scene
     state.renderer.setClearColor(0, 0, 0);
     state.renderer.window.input.lockMouse(false);
 
-    Font f(state.defs.textures, state.defs.textures["font"]);
+    Font f(state.game.textures, state.game.textures["font"]);
     glm::ivec2 win = state.renderer.window.getSize();
 
     auto container = std::make_shared<GuiRect>("container");
@@ -40,7 +40,7 @@ LuaErrorScene::LuaErrorScene(ClientState &state, const std::string &err) : Scene
 }
 
 void LuaErrorScene::update() {
-    state.defs.textures.update();
+    state.game.textures.update();
 }
 
 void LuaErrorScene::draw() {
@@ -49,7 +49,7 @@ void LuaErrorScene::draw() {
     renderer.beginChunkDeferredCalls();
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
-    renderer.enableTexture(&state.defs.textures.atlasTexture);
+    renderer.enableTexture(&state.game.textures.atlasTexture);
 
     components.draw(renderer);
 

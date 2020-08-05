@@ -6,15 +6,22 @@
 
 #include <glm/vec3.hpp>
 
+#include "../../util/CovariantPtr.h"
 #include "../../def/item/SelectionBox.h"
 
 class Entity {
 public:
+    Entity() = default;
+    Entity(SubgamePtr game, DimensionPtr dim) : game(game), dim(dim) {};
+
     virtual glm::vec3 getPos();
     virtual void setPos(glm::vec3 position);
 
     virtual glm::vec3 getVel();
     virtual void setVel(glm::vec3 velocity);
+
+    virtual glm::vec3 getRot();
+    virtual void setRot(glm::vec3 rot);
 
     virtual glm::vec3 getVisualOffset();
     virtual void setVisualOffset(glm::vec3 vs);
@@ -32,7 +39,20 @@ public:
     virtual void setScale(float scale);
     virtual void setScale(glm::vec3 scale);
 
+    virtual unsigned int getId();
+    virtual void setId(unsigned int id);
+
+    virtual DimensionPtr getDim();
+    virtual void setDim(DimensionPtr dim);
+
+    SubgamePtr getGame();
+
 protected:
+    SubgamePtr game = nullptr;
+    DimensionPtr dim = nullptr;
+
+    unsigned int id = 0;
+
     glm::vec3 pos {};
     glm::vec3 vel {};
     glm::vec3 rot {};

@@ -6,14 +6,13 @@
 
 #include "../Lua.h"
 #include "../LuaParser.h"
-#include "LocalLuaEntity.h"
 #include "../../def/gen/BiomeDef.h"
 #include "../../def/item/BlockDef.h"
-#include "../../world/LocalDimension.h"
-#include "../../net/server/world/ServerEntity.h"
 #include "../../def/ServerSubgame.h"
-#include "ServerLuaEntity.h"
+#include "../../world/LocalDimension.h"
 #include "../../world/ServerDimension.h"
+#include "../../game/entity/LocalLuaEntity.h"
+#include "../../net/server/world/ServerLuaEntity.h"
 
 std::string Api::Usertype::Dimension::get_block(glm::ivec3 pos) {
     return dim->getGame()->getDefs().fromId(dim->getBlock(pos)).identifier;
@@ -68,13 +67,14 @@ sol::table Api::Usertype::Dimension::add_entity_c(sol::this_state s, glm::vec3 p
     auto displayTexture = luaEntity.get<sol::optional<std::string>>("display_texture");
     if (strncmp(displayType->data(), "model", 5) == 0 && !displayTexture) throw std::runtime_error("entity '" + identifier + "' is missing the display_texture property.");
 
-    auto entity = std::make_unique<::DrawableEntity>();
+    auto entity = std::make_shared<::LocalLuaEntity>(dim->getGame(), dim);
+    entity->setId(dim->nextEntityInd());
     entity->setPos(pos);
-    auto ref = std::make_shared<LocalLuaEntity>(std::move(entity), dim->nextEntityInd(), dim->getGame().l());
+    Entity ref(entity);
 
     luaEntity["object"] = ref;
-    ref->set_display_type(*displayType, *displayObject, displayTexture);
-    core.get<sol::table>("entities")[ref->id] = luaEntity;
+    ref.set_display_type(*displayType, *displayObject, displayTexture);
+    core.get<sol::table>("entities")[entity->getId()] = luaEntity;
 
     auto on_create = def.get<sol::optional<sol::protected_function>>("on_create");
     if (on_create) (*on_create)(luaEntity, staticData);
@@ -105,13 +105,14 @@ sol::table Api::Usertype::Dimension::add_entity_s(sol::this_state s, glm::vec3 p
     if (strncmp(displayType->data(), "model", 5) == 0 && !displayTexture) throw std::runtime_error("entity '" + identifier + "' is missing the display_texture property.");
 
     unsigned int ind = dim->nextEntityInd();
-    auto entity = std::make_unique<ServerEntity>(ind);
+    auto entity = std::make_shared<ServerLuaEntity>(dim->getGame(), dim, ind);
     entity->setPos(pos);
-    auto ref = std::make_shared<ServerLuaEntity>(std::move(entity), ind, dim->getGame());
+    entity->setId(ind);
+    Entity ref(entity);
 
     luaEntity["object"] = ref;
-    ref->set_display_type(*displayType, *displayObject, displayTexture);
-    core.get<sol::table>("entities")[ref->id] = luaEntity;
+    ref.set_display_type(*displayType, *displayObject, displayTexture);
+    core.get<sol::table>("entities")[entity->getId()] = luaEntity;
 
     auto on_create = def.get<sol::optional<sol::protected_function>>("on_create");
     if (on_create) (*on_create)(luaEntity, staticData);
@@ -124,16 +125,16 @@ void Api::Usertype::Dimension::remove_entity_c(sol::this_state s, sol::table ent
     sol::state_view lua = sol::state_view(s);
     sol::table core = lua.get<sol::table>("zepha");
 
-    auto object = entity.get<sol::optional<std::shared_ptr<LocalLuaEntity>>>("object");
+    auto object = entity.get<sol::optional<Entity>>("object");
     if (!object) throw std::runtime_error("Attempting to remove an invalid entity.");
 
-    sol::optional<sol::table> entityTable = core["entities"][(*object)->id];
+    sol::optional<sol::table> entityTable = core["entities"][object->get_id()];
     if (!entityTable) return;
 
     sol::optional<sol::protected_function> onDestroy = (*entityTable)["on_destroy"];
     if (onDestroy) (*onDestroy)();
 
-    core["entities"][(*object)->id] = sol::nil;
+    core["entities"][object->get_id()] = sol::nil;
     dim.l()->removeLocalEntity(*object);
 }
 
@@ -141,16 +142,16 @@ void Api::Usertype::Dimension::remove_entity_s(sol::this_state s, sol::table ent
     sol::state_view lua = sol::state_view(s);
     sol::table core = lua.get<sol::table>("zepha");
 
-    auto object = entity.get<sol::optional<std::shared_ptr<ServerLuaEntity>>>("object");
+    auto object = entity.get<sol::optional<Entity>>("object");
     if (!object) throw std::runtime_error("Attempting to rmeove an invalid entity.");
 
-    sol::optional<sol::table> entityTable = core["entities"][(*object)->id];
+    sol::optional<sol::table> entityTable = core["entities"][object->get_id()];
     if (!entityTable) return;
 
     sol::optional<sol::protected_function> onDestroy = (*entityTable)["on_destroy"];
     if (onDestroy) (*onDestroy)();
 
-    core["entities"][(*object)->id] = sol::nil;
+    core["entities"][object->get_id()] = sol::nil;
     dim.s()->removeLuaEntity(*object);
 }
 

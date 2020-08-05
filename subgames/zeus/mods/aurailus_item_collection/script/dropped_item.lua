@@ -1,5 +1,5 @@
 local function collides(entity)
-    return zepha.get_block((entity.pos - V{0, 0.5, 0}):floor()) ~= "air"
+    return entity.dim:get_block((entity.pos - V{0, 0.5, 0}):floor()) ~= "air"
 end
 
 zepha.register_entity("@aurailus:item_collection:dropped_item", {
@@ -79,7 +79,7 @@ zepha.register_entity("@aurailus:item_collection:dropped_item", {
 
                 zepha.after(function()
                     p:get_inventory():get_list("main"):add_stack({self.item, 1})
-                    zepha.remove_entity(self)
+                    self.object.dim:remove_entity(self)
                 end, 2/20)
             end
         end

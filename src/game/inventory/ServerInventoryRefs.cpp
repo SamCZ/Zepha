@@ -11,8 +11,8 @@ ServerInventoryRefs::ServerInventoryRefs(SubgamePtr game, ServerClients& clients
     InventoryRefs(game), clients(clients) {}
 
 void ServerInventoryRefs::update() {
-//    for (auto& inv : inventories)
-//        std::static_pointer_cast<ServerInventory>(inv.second)->sendDirtyLists();
+    for (auto& inv : inventories)
+        std::static_pointer_cast<ServerInventory>(inv.second)->sendDirtyLists();
 }
 
 InventoryPtr ServerInventoryRefs::createInventory(const std::string &inv) {

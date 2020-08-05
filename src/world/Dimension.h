@@ -26,10 +26,10 @@ public:
     // Override setBlock to update lighting.
     bool setBlock(glm::ivec3 pos, unsigned int block) override;
 
+    virtual double blockHit(const Target &target, PlayerPtr player) = 0;
     virtual void blockPlace(const Target &target, PlayerPtr player) = 0;
     virtual void blockPlaceOrInteract(const Target &target, PlayerPtr player) = 0;
     virtual void blockInteract(const Target &target, PlayerPtr player) = 0;
-    virtual double blockHit(const Target &target, PlayerPtr player) = 0;
 
     unsigned int nextEntityInd();
 

@@ -28,6 +28,7 @@ public:
     void init(std::function<void(std::unique_ptr<PacketView>)> invCallback);
     void update();
 
+    void blockHit(const Target& target);
     void blockPlace(const Target& target);
     void blockInteract(const Target& target);
     void blockPlaceOrInteract(const Target& target);

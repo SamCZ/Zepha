@@ -11,7 +11,9 @@
 
 class WireframeEntity : public DrawableEntity {
 public:
-    WireframeEntity(glm::vec3 color) : DrawableEntity(std::make_shared<Model>()), color(color) {};
+    WireframeEntity(SubgamePtr game, DimensionPtr dim, glm::vec3 color) :
+        DrawableEntity(game, dim, std::make_shared<Model>()), Entity(game, dim),
+        color(color) {};
 
     void updateMesh(const std::vector<SelectionBox>& boxes, float width);
 private:

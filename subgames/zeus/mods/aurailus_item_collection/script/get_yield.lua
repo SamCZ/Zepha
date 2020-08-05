@@ -1,5 +1,5 @@
-return function(pos)
-    local def = zepha.registered_blocks[zepha.get_block(pos)]
+return function(dim, pos)
+    local def = zepha.registered_blocks[dim:get_block(pos)]
     if def == nil then return nil end
     local yields = def.yields
 

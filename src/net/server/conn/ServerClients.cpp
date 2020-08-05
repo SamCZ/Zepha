@@ -11,6 +11,7 @@
 #include "../../Serializer.h"
 #include "../../NetHandler.h"
 #include "../../../util/Log.h"
+#include "../../../game/scene/world/NetField.h"
 
 ServerClients::ServerClients(SubgamePtr game) :
     game(game) {}
@@ -58,10 +59,10 @@ void ServerClients::createPlayer(std::shared_ptr<ServerClient> client, Dimension
     player->setPos({0, -37, 0}, true);
 
     Serializer()
-        .appendE(Player::NetField::ID).append(player->getId())
-        .appendE(Player::NetField::POS).append(player->getPos())
-        .appendE(Player::NetField::PITCH).append(player->getPitch())
-        .appendE(Player::NetField::YAW).append(player->getYaw())
+        .appendE(NetField::ID).append(player->getId())
+        .appendE(NetField::POS).append(player->getPos())
+        .appendE(NetField::LOOK_PITCH).append(player->getPitch())
+        .appendE(NetField::LOOK_YAW).append(player->getYaw())
         .packet(Packet::Type::THIS_PLAYER_INFO).sendTo(player->getPeer(), Packet::Channel::INTERACT);
 }
 

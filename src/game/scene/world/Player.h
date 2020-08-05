@@ -21,17 +21,12 @@ class InventoryList;
 
 class Player : public virtual Entity {
 public:
-    enum class NetField {
-        ID, POS, VEL, PITCH, YAW, LOOK_OFF, FLYING,
-        HAND_INV, WIELD_INV, WIELD_INDEX };
-
     Player(SubgamePtr game, World& world, DimensionPtr dim, unsigned int id = 0) :
-        game(game), world(world), dim(dim), id(id), lookOffset(0, 1.65, 0) {
+        Entity(game, dim),
+        world(world), lookOffset(0, 1.65, 0) {
         collision = {{-0.3, 0, -0.3}, {0.3, 1.8, 0.3}};
+        this->id = id;
     }
-
-    virtual unsigned int getId();
-    virtual void setId(unsigned int id);
 
     virtual void setPos(glm::vec3 pos, bool assert = false);
     virtual void setVel(glm::vec3 vel, bool assert = false);
@@ -57,20 +52,13 @@ public:
     virtual unsigned short getWieldIndex();
     virtual void setWieldIndex(unsigned short index, bool assert = false);
 
-    DimensionPtr getDimension();
-    virtual void setDimension(DimensionPtr dim);
-
     virtual InventoryPtr getInventory() = 0;
 
     virtual void handleAssertion(Deserializer& d) = 0;
 protected:
     virtual void assertField(Packet packet) = 0;
 
-    unsigned int id = 0;
-
     World& world;
-    SubgamePtr game;
-    DimensionPtr dim;
 
     float yaw = 0;
     float pitch = 0;

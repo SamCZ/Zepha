@@ -13,6 +13,7 @@
 #include "conn/ServerPlayer.h"
 #include "../../world/Target.h"
 #include "../../def/item/BlockDef.h"
+#include "../../game/scene/world/NetField.h"
 
 Server::Server(unsigned short port, const std::string& subgame) :
     seed(69),
@@ -61,10 +62,10 @@ void Server::update() {
         if (!player) continue;
 
         Packet p = Serializer()
-            .appendE(Player::NetField::ID).append(player->getId())
-            .appendE(Player::NetField::POS).append(player->getPos())
-            .appendE(Player::NetField::PITCH).append(player->getPitch())
-            .appendE(Player::NetField::YAW).append(player->getYaw())
+            .appendE(NetField::ID).append(player->getId())
+            .appendE(NetField::POS).append(player->getPos())
+            .appendE(NetField::LOOK_YAW).append(player->getYaw())
+            .appendE(NetField::LOOK_PITCH).append(player->getPitch())
             .packet(Packet::Type::PLAYER_ENT_INFO, false);
 
         for (auto& iter : clients.players)
@@ -144,17 +145,21 @@ void Server::playerPacketReceived(PacketView& p, PlayerPtr player) {
 //            }
 //            break; }
 
+        case Packet::Type::BLOCK_HIT:
+            p.d.read(pos).readE(face);
+            player->getDim()->blockHit(Target(player->getDim(), pos, face), player); break;
+
         case Packet::Type::BLOCK_PLACE:
             p.d.read(pos).readE(face);
-            player->getDimension()->blockPlace(Target(player->getDimension(), pos, face), player); break;
+            player->getDim()->blockPlace(Target(player->getDim(), pos, face), player); break;
 
         case Packet::Type::BLOCK_INTERACT:
             p.d.read(pos).readE(face);
-            player->getDimension()->blockInteract(Target(player->getDimension(), pos, face), player); break;
+            player->getDim()->blockInteract(Target(player->getDim(), pos, face), player); break;
 
         case Packet::Type::BLOCK_PLACE_OR_INTERACT:
             p.d.read(pos).readE(face);
-            player->getDimension()->blockPlaceOrInteract(Target(player->getDimension(), pos, face), player); break;
+            player->getDim()->blockPlaceOrInteract(Target(player->getDim(), pos, face), player); break;
 
         case Packet::Type::INV_WATCH:
             p.d.read<std::string>(source).read<std::string>(list);

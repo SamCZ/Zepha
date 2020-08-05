@@ -10,6 +10,7 @@
 #include "../Serializer.h"
 #include "../NetHandler.h"
 #include "../../util/Log.h"
+#include "../../game/scene/world/NetField.h"
 #include "../../game/scene/world/LocalWorld.h"
 #include "../../game/scene/world/LocalPlayer.h"
 
@@ -50,10 +51,10 @@ void ClientNetworkInterpreter::update() {
 
     auto player = world.getPlayer();
     if (player) Serializer()
-        .appendE(Player::NetField::POS).append(player->getPos())
-        .appendE(Player::NetField::VEL).append(player->getVel())
-        .appendE(Player::NetField::PITCH).append(player->getPitch())
-        .appendE(Player::NetField::YAW).append(player->getYaw())
+        .appendE(NetField::POS).append(player->getPos())
+        .appendE(NetField::VEL).append(player->getVel())
+        .appendE(NetField::LOOK_PITCH).append(player->getPitch())
+        .appendE(NetField::LOOK_YAW).append(player->getYaw())
         .packet(Packet::Type::THIS_PLAYER_INFO, false).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
@@ -83,10 +84,10 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
             break; }
 
         case Packet::Type::ENTITY_INFO:
-            world.getActiveDimension().l()->serverEntityInfo(*p); break;
+            world.getActiveDimension().l()->serverEntitiesInfo(p->d); break;
 
         case Packet::Type::ENTITY_REMOVED:
-            world.getActiveDimension().l()->serverEntityRemoved(p->d.read<unsigned int>()); break;
+            world.getActiveDimension().l()->serverEntitiesRemoved(p->d); break;
 
         case Packet::Type::INV_DATA:
             onInvPacket(std::move(p)); break;
@@ -97,6 +98,11 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
             throw std::runtime_error("Invalid inventory " + source + ":" + list + " was request by client.");
             break; }
     }
+}
+
+void ClientNetworkInterpreter::blockHit(const Target &target) {
+    Serializer().append<glm::ivec3>(target.pos).append(static_cast<unsigned short>(target.face))
+            .packet(Packet::Type::BLOCK_HIT).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
 void ClientNetworkInterpreter::blockPlace(const Target &target) {

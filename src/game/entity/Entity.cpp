@@ -4,6 +4,14 @@
 
 #include "Entity.h"
 
+unsigned int Entity::getId() {
+    return id;
+}
+
+void Entity::setId(unsigned int id) {
+    this->id = id;
+}
+
 glm::vec3 Entity::getPos() {
     return pos;
 }
@@ -18,6 +26,14 @@ glm::vec3 Entity::getVel() {
 
 void Entity::setVel(glm::vec3 velocity) {
     this->vel = velocity;
+}
+
+glm::vec3 Entity::getRot() {
+    return rot;
+}
+
+void Entity::setRot(glm::vec3 rot) {
+    this->rot = rot;
 }
 
 glm::vec3 Entity::getVisualOffset() {
@@ -62,4 +78,16 @@ void Entity::setScale(float scale) {
 
 void Entity::setScale(glm::vec3 scale) {
     this->scale = scale;
+}
+
+DimensionPtr Entity::getDim() {
+    return dim;
+}
+
+void Entity::setDim(DimensionPtr dim) {
+    this->dim = dim;
+}
+
+SubgamePtr Entity::getGame() {
+    return game;
 }

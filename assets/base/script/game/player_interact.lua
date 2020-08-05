@@ -3,7 +3,7 @@
 -- Otherwise, calls zepha.block_place and returned the function's returned values.
 function zepha.block_interact_or_place(player, target, stack)
     local stack = stack or player:get_wield_stack()
-    local target_block = player.dim:get_block(target.pos)
+    local target_block = target.dim:get_block(target.pos)
     local target_def = zepha.registered_blocks[target_block]
     local stack_def = zepha.registered_blocks[stack and stack.name or nil]
 
@@ -24,7 +24,7 @@ end
 -- Interacts with the targeted block. Returns true if the block has an on_interact or
 -- on_interact_client callback, returns false otherwise.
 function zepha.block_interact(player, target)
-    local block = player.dim:get_block(target.pos)
+    local block = target.dim:get_block(target.pos)
     local def = zepha.registered_blocks[block]
 
     local args = { target.dim, target.pos, player }
@@ -44,12 +44,15 @@ function zepha.block_place(player, target, stack)
     local stack_def = zepha.registered_blocks[stack and stack.name or nil]
     if stack == nil or stack_def == nil then return stack, nil end
 
-    player.dim:set_block(target.pos_above, stack.name)
+    target.dim:set_block(target.pos_above, stack.name)
 
     stack.count = stack.count - 1
     return stack, target.pos_above
 end
 
+-- zepha.block_hit(player: Player, target: Target): float, float
+-- Hits the block at `target` using the player's wielded item.
+-- Returns the damage done followed by the timeout before the next hit can begin.
 function zepha.block_hit(player, target)
     local block = player.dim:get_block(target.pos)
     local def = zepha.registered_blocks[block]
@@ -58,7 +61,31 @@ function zepha.block_hit(player, target)
     if not def then return 0, 0.1 end
 
     local damage, timeout = zepha.get_hit_impact(player, block)
-    player.dim:add_block_damage(target.pos, damage)
+    local total_damage = target.dim:add_block_damage(target.pos, damage)
+
+    local health = (def.tool_props or {}).health == nil and -1 or (def.tool_props or {}).health
+    local broken = health ~= -1 and total_damage > health
+
+    if broken then zepha.block_break(player, target) end
 
     return damage, timeout
+end
+
+-- zepha.block_break(player: Player, target: Target):
+-- Breaks the block at `target`.
+function zepha.block_break(player, target)
+    local block = player.dim:get_block(target.pos)
+    local def = zepha.registered_blocks[block] or {}
+
+    local args = { target.dim, target.pos, player }
+
+    local cb = zepha.server and "on_break" or "on_break_client"
+    if type(def[cb]) == "function" then def[cb](unpack(args)) end
+    zepha.trigger(cb, unpack(args))
+
+    target.dim:set_block(target.pos, "air")
+
+    local cb = zepha.server and "after_break" or "after_break_client"
+    if type(def[cb]) == "function" then def[cb](unpack(args)) end
+    zepha.trigger(cb, unpack(args))
 end

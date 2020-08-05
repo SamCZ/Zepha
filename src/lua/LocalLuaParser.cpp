@@ -15,13 +15,13 @@
 // Usertypes
 #include "usertype/Target.h"
 #include "usertype/Player.h"
+#include "usertype/Entity.h"
 #include "usertype/Inventory.h"
 #include "usertype/Dimension.h"
 #include "usertype/ItemStack.h"
 #include "usertype/InventoryList.h"
 
 #include "usertype/LuaGuiElement.h"
-#include "usertype/cLuaEntity.h"
 #include "usertype/cAnimationManager.h"
 
 // Modules
@@ -63,11 +63,11 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
     core["__builtin"] = lua.create_table();
 
     // Types
-    ClientApi::entity            (lua);
     ClientApi::animation_manager (lua);
     ClientApi::gui_element       (lua);
 
     Api::Usertype::Target::bind(Api::State::CLIENT, lua, core);
+    Api::Usertype::Entity::bind(Api::State::CLIENT, lua, core);
     Api::Usertype::Inventory::bind(Api::State::CLIENT, lua, core);
     Api::Usertype::Dimension::bind(Api::State::CLIENT, lua, core);
     Api::Usertype::ItemStack::bind(Api::State::CLIENT, lua, core);
@@ -79,8 +79,8 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
 
     // Modules
     modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::CLIENT, lua, core));
-    modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::CLIENT, core, game, *world.l()));
-    modules.emplace_back(std::make_unique<Api::Module::Dimension>(Api::State::CLIENT, core, game, *world.l()));
+    modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::CLIENT, core, game, **world));
+    modules.emplace_back(std::make_unique<Api::Module::Dimension>(Api::State::CLIENT, core, game, **world));
 
     bindModules();
 

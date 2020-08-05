@@ -9,7 +9,8 @@
 #include "../../../def/item/BlockDef.h"
 #include "../../../def/texture/AtlasRef.h"
 
-ParticleEntity::ParticleEntity(glm::vec3 pos, BlockDef &block) : DrawableEntity(std::make_shared<Model>()) {
+ParticleEntity::ParticleEntity(SubgamePtr game, DimensionPtr dim, glm::vec3 pos, BlockDef &block) :
+    DrawableEntity(game, dim, std::make_shared<Model>()), Entity(game, dim) {
     setPos(pos + glm::vec3(.5,.3,.5));
 
     std::set<std::shared_ptr<AtlasRef>>& textureRefs = block.model.textureRefs;

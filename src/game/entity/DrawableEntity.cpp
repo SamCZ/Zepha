@@ -10,13 +10,15 @@
 #include "Model.h"
 #include "AnimationSegment.h"
 #include "../graph/Renderer.h"
-#include "../graph/meshtypes/EntityMesh.h"
 
-DrawableEntity::DrawableEntity() : model(std::make_shared<Model>()) {}
 
-DrawableEntity::DrawableEntity(std::shared_ptr<Model> model) :
-    animState(*model),
-    model(model) {}
+DrawableEntity::DrawableEntity(SubgamePtr game, DimensionPtr dim) :
+    Entity(game, dim),
+    model(std::make_shared<Model>()) {}
+
+DrawableEntity::DrawableEntity(SubgamePtr game, DimensionPtr dim, std::shared_ptr<Model> model) :
+    Entity(game, dim),
+    model(model), animState(*model) {}
 
 void DrawableEntity::setModel(std::shared_ptr<Model> model) {
     animState = AnimationState(*model);

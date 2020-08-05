@@ -6,14 +6,7 @@
 #include "Player.h"
 
 #include "../../../net/Serializer.h"
-
-unsigned int Player::getId() {
-    return id;
-}
-
-void Player::setId(unsigned int id) {
-    this->id = id;
-}
+#include "NetField.h"
 
 void Player::setPos(glm::vec3 pos, bool assert) {
     Entity::setPos(pos);
@@ -31,7 +24,7 @@ float Player::getYaw() {
 
 void Player::setYaw(float yaw, bool assert) {
     this->yaw = yaw;
-    if (assert) assertField(Serializer().appendE(NetField::YAW).append(yaw).packet());
+    if (assert) assertField(Serializer().appendE(NetField::LOOK_YAW).append(yaw).packet());
 }
 
 float Player::getPitch() {
@@ -40,7 +33,7 @@ float Player::getPitch() {
 
 void Player::setPitch(float pitch, bool assert) {
     this->pitch = pitch;
-    if (assert) assertField(Serializer().appendE(NetField::PITCH).append(pitch).packet());
+    if (assert) assertField(Serializer().appendE(NetField::LOOK_PITCH).append(pitch).packet());
 }
 
 glm::vec3 Player::getLookOffset() {
@@ -87,13 +80,4 @@ unsigned short Player::getWieldIndex() {
 void Player::setWieldIndex(unsigned short index, bool assert) {
     wieldIndex = index;
     if (assert) assertField(Serializer().appendE(NetField::WIELD_INDEX).append(index).packet());
-}
-
-void Player::setDimension(DimensionPtr dim) {
-    this->dim = dim;
-}
-
-
-DimensionPtr Player::getDimension() {
-    return dim;
 }

@@ -8,8 +8,8 @@
 
 class PlayerEntity : public DrawableEntity {
 public:
-    PlayerEntity(Subgame& game, Dimension* dim, glm::vec3 pos, unsigned int id, const std::shared_ptr<Model>& model) :
-        DrawableEntity(model), id(id) {
+    PlayerEntity(SubgamePtr game, DimensionPtr dim, glm::vec3 pos, unsigned int id, const std::shared_ptr<Model>& model) :
+        DrawableEntity(game, dim, model), Entity(game, dim), id(id) {
         setPos(pos);
     }
 

@@ -14,6 +14,10 @@ class Player;
 class LocalPlayer;
 class ServerPlayer;
 
+class LuaEntity;
+class LocalLuaEntity;
+class ServerLuaEntity;
+
 class Subgame;
 class LocalSubgame;
 class ServerSubgame;
@@ -50,6 +54,10 @@ public:
 
     std::shared_ptr<B> operator*() { return b; }
     std::shared_ptr<B> operator->() { return b; }
+
+    bool isL() const { return std::dynamic_pointer_cast<L>(b) != nullptr; }
+    bool isS() const { return std::dynamic_pointer_cast<S>(b) != nullptr; }
+
     std::shared_ptr<L> l() { auto ptr = std::dynamic_pointer_cast<L>(b); if (!ptr) throw std::bad_cast(); return ptr; }
     std::shared_ptr<S> s() { auto ptr = std::dynamic_pointer_cast<S>(b); if (!ptr) throw std::bad_cast(); return ptr; }
 };
@@ -57,6 +65,7 @@ public:
 typedef CovariantPtr<World, LocalWorld, ServerWorld> WorldPtr;
 typedef CovariantPtr<Player, LocalPlayer, ServerPlayer> PlayerPtr;
 typedef CovariantPtr<Subgame, LocalSubgame, ServerSubgame> SubgamePtr;
+typedef CovariantPtr<LuaEntity, LocalLuaEntity, ServerLuaEntity> EntityPtr;
 typedef CovariantPtr<Dimension, LocalDimension, ServerDimension> DimensionPtr;
 typedef CovariantPtr<Inventory, LocalInventory, ServerInventory> InventoryPtr;
 typedef CovariantPtr<InventoryList, LocalInventoryList, ServerInventoryList> InventoryListPtr;

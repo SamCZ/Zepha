@@ -14,7 +14,6 @@
 #include "../lua/usertype/ItemStack.h"
 #include "../net/server/conn/ServerPlayer.h"
 #include "../net/server/world/ServerWorld.h"
-#include "../lua/usertype/ServerLuaEntity.h"
 
 ServerDimension::ServerDimension(SubgamePtr game, ServerWorld& world, const std::string& identifier, unsigned int ind) :
     Dimension(game, static_cast<World&>(world), identifier, ind) {}
@@ -50,8 +49,15 @@ bool ServerDimension::setBlock(glm::ivec3 pos, unsigned int block) {
     bool manip = Dimension::setBlock(pos, block);
     if (!manip) return false;
     glm::vec3 mb = Space::MapBlock::world::fromBlock(pos);
-    mapBlockIntegrity[mb] = mapBlockIntegrity[mb] + 1;
     return true;
+}
+
+double ServerDimension::blockHit(const Target &target, PlayerPtr player) {
+    double timeout = 0, damage = 0;
+    sol::tie(damage, timeout) = game->getParser().safe_function(game->getParser().core["block_hit"],
+        Api::Usertype::ServerPlayer(player), Api::Usertype::Target(target));
+
+    return timeout;
 }
 
 void ServerDimension::blockPlace(const Target &target, PlayerPtr player) {
@@ -81,44 +87,32 @@ void ServerDimension::blockPlaceOrInteract(const Target &target, PlayerPtr playe
     if (inv->hasList(player->getWieldList())) inv->getList(player->getWieldList())->setStack(player->getWieldIndex(), ItemStack(*stack, game));
 }
 
-double ServerDimension::blockHit(const Target &target, PlayerPtr player) {
-    double timeout = 0, damage = 0;
-    sol::tie(damage, timeout) = game->getParser().safe_function(game->getParser().core["block_hit"],
-        Api::Usertype::ServerPlayer(player), Api::Usertype::Target(target));
-
-    return timeout;
-}
-
 void ServerDimension::setChunk(std::shared_ptr<Chunk> chunk) {
     std::shared_ptr<Chunk> existing = getChunk(chunk->pos);
     if (existing != nullptr) chunk = combinePartials(chunk, existing);
 
     Dimension::setChunk(chunk);
     glm::vec3 mb = Space::MapBlock::world::fromChunk(chunk->pos);
-    mapBlockIntegrity[mb] = mapBlockIntegrity[mb] + 1;
 }
 
-void ServerDimension::addLuaEntity(std::shared_ptr<ServerLuaEntity> &entity) {
-    luaEntities.push_back(entity);
-    luaEntityRefs.emplace(entity->id, --luaEntities.end());
+void ServerDimension::addLuaEntity(Api::Usertype::Entity entity) {
+    unsigned int id = entity.get_id();
+    luaEntities.push_back(std::move(entity));
+    luaEntityRefs.emplace(id, --luaEntities.end());
 }
 
-void ServerDimension::removeLuaEntity(std::shared_ptr<ServerLuaEntity> &entity) {
-    if (!luaEntityRefs.count(entity->id)) return;
-    auto refIter = luaEntityRefs.at(entity->id);
+void ServerDimension::removeLuaEntity(Api::Usertype::Entity entity) {
+    unsigned int id = entity.get_id();
+    if (!luaEntityRefs.count(id)) return;
 
-    removedEntities.push_back(entity->id);
+    auto refIter = luaEntityRefs.at(id);
+    removedEntities.push_back(id);
 
     luaEntities.erase(refIter);
-    luaEntityRefs.erase(entity->id);
+    luaEntityRefs.erase(id);
 }
 
-unsigned long long ServerDimension::getMapBlockIntegrity(glm::ivec3 mapBlock) {
-    if (mapBlockIntegrity.count(mapBlock)) return mapBlockIntegrity[mapBlock];
-    return 0;
-}
-
-std::list<std::shared_ptr<ServerLuaEntity>> &ServerDimension::getLuaEntities() {
+std::list<Api::Usertype::Entity> &ServerDimension::getLuaEntities() {
     return luaEntities;
 }
 

@@ -11,7 +11,7 @@ ClientState::ClientState(const std::string& path, Renderer& renderer) :
     defs(path + "assets\\textures") {}
 #else
 ClientState::ClientState(const std::string &path, Renderer &renderer) :
-    path(path),
-    renderer(renderer),
-    defs(path + "/assets/textures") {}
+        path(path),
+        renderer(renderer),
+        game(path + "/assets/textures") {}
 #endif

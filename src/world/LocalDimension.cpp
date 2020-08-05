@@ -11,15 +11,11 @@
 #include "../lua/usertype/Target.h"
 #include "../lua/usertype/Player.h"
 #include "../world/chunk/MapBlock.h"
-#include "../lua/usertype/ItemStack.h"
+#include "../game/scene/world/NetField.h"
+#include "../game/entity/LocalLuaEntity.h"
 #include "../game/scene/world/LocalWorld.h"
-#include "../lua/usertype/LocalLuaEntity.h"
-#include "../game/scene/world/LocalPlayer.h"
 #include "../game/scene/world/MeshGenStream.h"
 #include "../game/scene/world/graph/MeshChunk.h"
-#include "../game/scene/world/ChunkMeshDetails.h"
-#include "../lua/usertype/ServerLocalLuaEntity.h"
-//#include "../game/inventory/LocalInventoryList.h"
 
 LocalDimension::LocalDimension(SubgamePtr game, LocalWorld& world, const std::string& identifier, unsigned int ind) :
     Dimension(game, static_cast<World&>(world), identifier, ind), meshGenStream(std::make_shared<MeshGenStream>(game, *this)) {}
@@ -29,8 +25,8 @@ void LocalDimension::update(double delta) {
 
     finishMeshes();
 
-    for (auto& entity : localEntities ) entity->entity->update(delta);
-    for (auto& entity : serverEntities) entity->entity->update(delta);
+    for (auto& entity : localEntities ) entity.entity.l()->update(delta);
+    for (auto& entity : serverEntities) entity.entity.l()->update(delta);
     for (auto& entity : playerEntities) entity.update(delta);
 
     auto clientMapBlock = Space::MapBlock::world::fromBlock(static_cast<LocalWorld&>(world).getPlayer()->getPos());
@@ -131,7 +127,7 @@ double LocalDimension::blockHit(const Target &target, PlayerPtr player) {
     sol::tie(damage, timeout) = game->getParser().safe_function(game->getParser().core["block_hit"],
         Api::Usertype::LocalPlayer(player.l()), Api::Usertype::Target(target));
 
-//    net->blockHit(target);
+    static_cast<LocalWorld&>(world).getNet().blockHit(target);
 
     return timeout;
 }
@@ -152,61 +148,71 @@ void LocalDimension::removeMeshChunk(const glm::ivec3& pos) {
     }
 }
 
-void LocalDimension::addLocalEntity(std::shared_ptr<LocalLuaEntity> &entity) {
+void LocalDimension::addLocalEntity(Api::Usertype::Entity entity) {
+    unsigned int id = entity.get_id();
     localEntities.push_back(entity);
-    localEntityRefs.emplace(entity->id, --localEntities.end());
+    localEntityRefs.emplace(id, --localEntities.end());
 }
 
-void LocalDimension::removeLocalEntity(std::shared_ptr<LocalLuaEntity> &entity) {
-    if (!localEntityRefs.count(entity->id)) return;
-    auto refIter = localEntityRefs.at(entity->id);
+void LocalDimension::removeLocalEntity(Api::Usertype::Entity entity) {
+    unsigned int id = entity.get_id();
+
+    if (!localEntityRefs.count(id)) return;
+    auto refIter = localEntityRefs.at(id);
 
     localEntities.erase(refIter);
-    localEntityRefs.erase(entity->id);
+    localEntityRefs.erase(id);
 }
 
-void LocalDimension::serverEntityInfo(PacketView& p) {
-    auto id           = p.d.read<unsigned int>();
-    auto position     = p.d.read<glm::vec3>();
-    auto visualOffset = p.d.read<glm::vec3>();
-    auto rotation     = p.d.read<glm::vec3>();
-    auto scale        = p.d.read<float>();
-    auto displayMode  = p.d.read<std::string>();
-    auto displayArg1  = p.d.read<std::string>();
-    auto displayArg2  = p.d.read<std::string>();
+void LocalDimension::serverEntitiesInfo(Deserializer& d) {
+    unsigned int dim = d.read<unsigned int>();
 
-    if (serverEntityRefs.count(id)) {
-        auto& luaEntity = *serverEntityRefs.at(id)->get();
-        auto& entity = *luaEntity.entity;
+    std::shared_ptr<LocalLuaEntity> activeEntity = nullptr;
 
-        entity.interpPos(position);
-        entity.interpVisualOffset(visualOffset);
-        entity.interpRotateX(rotation.x);
-        entity.interpRotateY(rotation.y);
-        entity.interpRotateZ(rotation.z);
-        entity.interpScale(scale);
+    while (!d.atEnd()) {
+        switch (d.readE<NetField>()) {
+            case NetField::ID: {
+                unsigned int id = d.read<unsigned int>();
+                if (serverEntityRefs.count(id)) activeEntity = serverEntityRefs.at(id)->entity.l();
+                else {
+                    std::cout << "new entity" << std::endl;
+                    //TODO BEFORE COMMIT: *oh my god, please don't do this*
+                    auto ent = std::make_shared<LocalLuaEntity>(game, DimensionPtr(std::shared_ptr<LocalDimension>(this, [](LocalDimension*){})));
+                    auto entity = Api::Usertype::Entity(ent);
+                    ent->setId(id);
+                    serverEntities.push_back(entity);
+                    serverEntityRefs.emplace(id, --serverEntities.end());
+                    activeEntity = ent;
+                }
+                break; }
 
-        luaEntity.setDisplayType(displayMode, displayArg1, displayArg2);
-    }
-    else {
-        auto entity = std::make_shared<ServerLocalLuaEntity>(id, game, displayMode, displayArg1, displayArg2);
-        entity->entity->setPos(position);
-        entity->entity->setVisualOffset(visualOffset);
-        entity->entity->setRotateX(rotation.x);
-        entity->entity->setRotateY(rotation.y);
-        entity->entity->setRotateZ(rotation.z);
-        entity->entity->setScale(scale);
-        serverEntities.push_back(entity);
-        serverEntityRefs.emplace(id, --serverEntities.end());
+            case NetField::POS: activeEntity->setPos(d.read<glm::vec3>()); break;
+            case NetField::VEL: activeEntity->setVel(d.read<glm::vec3>()); break;
+            case NetField::ROT: activeEntity->setRot(d.read<glm::vec3>()); break;
+            case NetField::SCALE: activeEntity->setScale(d.read<glm::vec3>()); break;
+            case NetField::VISUAL_OFF: activeEntity->setVisualOffset(d.read<glm::vec3>()); break;
+
+            case NetField::DISPLAY: {
+                std::cout << "display update" << std::endl;
+                std::string type, a, b;
+                d.read(type).read(a).read(b);
+                activeEntity->setAppearance(type, a, b);
+                break; }
+
+        }
     }
 }
 
-void LocalDimension::serverEntityRemoved(unsigned int id) {
-    if (!serverEntityRefs.count(id)) return;
-    auto refIter = serverEntityRefs.at(id);
+void LocalDimension::serverEntitiesRemoved(Deserializer& d) {
+    unsigned int dim = d.read<unsigned int>();
 
-    serverEntities.erase(refIter);
-    serverEntityRefs.erase(id);
+    while (!d.atEnd()) {
+        unsigned int id = d.read<unsigned int>();
+        if (!serverEntityRefs.count(id)) continue;
+        auto refIter = serverEntityRefs.at(id);
+        serverEntities.erase(refIter);
+        serverEntityRefs.erase(id);
+    }
 }
 
 int LocalDimension::renderChunks(Renderer &renderer) {
@@ -222,8 +228,8 @@ int LocalDimension::renderChunks(Renderer &renderer) {
 }
 
 void LocalDimension::renderEntities(Renderer &renderer) {
-    for (auto& entity : localEntities) entity->entity->draw(renderer);
-    for (auto& entity : serverEntities) entity->entity->draw(renderer);
+    for (auto& entity : localEntities) entity.entity.l()->draw(renderer);
+    for (auto& entity : serverEntities) entity.entity.l()->draw(renderer);
     for (auto& entity : playerEntities) entity.draw(renderer);
 }
 

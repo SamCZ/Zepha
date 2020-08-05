@@ -216,27 +216,19 @@ add_library(Zepha_Core
 	lua/ServerModHandler.cpp
 	lua/ServerModHandler.h
 	lua/usertype/cAnimationManager.h
-		lua/usertype/cLuaEntity.h
-	lua/usertype/LocalLuaAnimationManager.cpp
+		lua/usertype/LocalLuaAnimationManager.cpp
 	lua/usertype/LocalLuaAnimationManager.h
-	lua/usertype/LocalLuaEntity.cpp
-	lua/usertype/LocalLuaEntity.h
-	lua/usertype/Player.cpp
+		lua/usertype/Player.cpp
 	lua/usertype/Player.h
 	lua/usertype/LuaGuiElement.cpp
 	lua/usertype/LuaGuiElement.h
         lua/usertype/ItemStack.cpp
         lua/usertype/ItemStack.h
-	lua/usertype/ServerLocalLuaEntity.cpp
-	lua/usertype/ServerLocalLuaEntity.h
-	lua/usertype/ServerLuaEntity.cpp
-	lua/usertype/ServerLuaEntity.h
-	lua/usertype/Inventory.cpp
+		lua/usertype/Inventory.cpp
 	lua/usertype/Inventory.h
 	lua/usertype/InventoryList.cpp
 	lua/usertype/InventoryList.h
-	lua/usertype/sLuaEntity.h
-	net/Address.h
+		net/Address.h
 	net/client/ClientNetworkInterpreter.cpp
 	net/client/ClientNetworkInterpreter.h
 	net/client/ServerConnection.cpp
@@ -263,8 +255,8 @@ add_library(Zepha_Core
 	net/server/LocalServerInstance.h
 	net/server/Server.cpp
 	net/server/Server.h
-	net/server/world/ServerEntity.cpp
-	net/server/world/ServerEntity.h
+        net/server/world/ServerLuaEntity.cpp
+        net/server/world/ServerLuaEntity.h
 	net/server/world/ServerGenStream.cpp
 	net/server/world/ServerGenStream.h
 	net/server/world/ServerPacketStream.cpp
@@ -321,4 +313,4 @@ add_library(Zepha_Core
 	game/entity/Collision.cpp
 	game/entity/Collision.h
 	net/server/conn/ServerClient.cpp
-	net/server/conn/ServerClient.h lua/modules/Dimension.cpp lua/modules/Dimension.h util/CovariantPtr.h)
+	net/server/conn/ServerClient.h lua/modules/Dimension.cpp lua/modules/Dimension.h util/CovariantPtr.h lua/usertype/Entity.cpp lua/usertype/Entity.h game/entity/LuaEntity.cpp game/entity/LuaEntity.h game/entity/LocalLuaEntity.cpp game/entity/LocalLuaEntity.h)

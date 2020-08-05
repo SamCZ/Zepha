@@ -21,7 +21,7 @@ ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
 
     state.renderer.setClearColor(10, 10, 10);
 
-    Font f(state.defs.textures, state.defs.textures["font"]);
+    Font f(state.game.textures, state.game.textures["font"]);
 
     auto statusText = std::make_shared<GuiText>("statusText");
     statusText->create({2, 2}, {}, {}, {1, 1, 1, 1}, f);
@@ -42,7 +42,7 @@ ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
 }
 
 void ConnectScene::update() {
-    state.defs.textures.update();
+    state.game.textures.update();
 
     switch (connectState) {
         default:
@@ -88,7 +88,7 @@ void ConnectScene::update() {
                     auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received block index-identifier table.\n");
 
-                    state.defs.getDefs().setIdentifiers(p.d.read<std::vector<std::string>>());
+                    state.game.getDefs().setIdentifiers(p.d.read<std::vector<std::string>>());
 
                     Packet resp(Packet::Type::BIOME_IDENTIFIER_LIST);
                     resp.sendTo(connection.getPeer(), Packet::Channel::CONNECT);
@@ -97,7 +97,7 @@ void ConnectScene::update() {
                     auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received biome index-identifier table.\nDownloading mods...\n");
 
-                    state.defs.getBiomes().setIdentifiers(p.d.read<std::vector<std::string>>());
+                    state.game.getBiomes().setIdentifiers(p.d.read<std::vector<std::string>>());
 
                     connectState = State::MODS;
                     Packet resp(Packet::Type::MODS);
@@ -118,10 +118,10 @@ void ConnectScene::update() {
                 if (p.type == Packet::Type::MODS) {
                     auto luaMod = LuaMod::fromPacket(p);
                     statusText->setText(statusText->getText() + "Received mod " + luaMod.config.name + ".\n");
-                    state.defs.getParser().getHandler().addLuaMod(std::move(luaMod));
+                    state.game.getParser().getHandler().addLuaMod(std::move(luaMod));
                 }
                 else if (p.type == Packet::Type::MOD_ORDER) {
-                    state.defs.getParser().getHandler().setModsOrder(p.d.read<std::vector<std::string>>());
+                    state.game.getParser().getHandler().setModsOrder(p.d.read<std::vector<std::string>>());
 
                     statusText->setText(statusText->getText() + "Done downloading mods.\nReceived the mods order.\nDownloading media...\n");
 
@@ -156,7 +156,7 @@ void ConnectScene::update() {
                             std::string data = p.d.read<std::string>();
                             std::string uncompressed = gzip::decompress(data.data(), data.length());
 
-                            state.defs.textures.addImage(
+                            state.game.textures.addImage(
                                     reinterpret_cast<unsigned char *>(const_cast<char *>(uncompressed.data())),
                                     assetName, true, width, height);
                         }
@@ -164,7 +164,7 @@ void ConnectScene::update() {
                             std::string format = p.d.read<std::string>();
                             std::string data = p.d.read<std::string>();
 
-                            state.defs.models.models.insert({assetName, SerializedModel{assetName, data, format}});
+                            state.game.models.models.insert({assetName, SerializedModel{assetName, data, format}});
                         }
 
                         t = static_cast<AssetType>(p.d.read<int>());
@@ -230,7 +230,7 @@ void ConnectScene::draw() {
     renderer.beginChunkDeferredCalls();
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
-    renderer.enableTexture(&state.defs.textures.atlasTexture);
+    renderer.enableTexture(&state.game.textures.atlasTexture);
 
     components.draw(renderer);
 

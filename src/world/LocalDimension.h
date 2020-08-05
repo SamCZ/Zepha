@@ -9,15 +9,14 @@
 #include "Dimension.h"
 
 #include "../def/LocalSubgame.h"
+#include "../lua/usertype/Entity.h"
 #include "../game/entity/engine/PlayerEntity.h"
 
 class Renderer;
 class MeshChunk;
-class PacketView;
+class Deserializer;
 class MeshGenStream;
-class LocalLuaEntity;
 class ChunkRenderElem;
-class ServerLocalLuaEntity;
 
 class LocalDimension : public Dimension {
 public:
@@ -39,11 +38,11 @@ public:
     void setMeshChunk(std::shared_ptr<MeshChunk> chunk);
     void removeMeshChunk(const glm::ivec3& pos);
 
-    void addLocalEntity(std::shared_ptr<LocalLuaEntity>& entity);
-    void removeLocalEntity(std::shared_ptr<LocalLuaEntity>& entity);
+    void addLocalEntity(Api::Usertype::Entity entity);
+    void removeLocalEntity(Api::Usertype::Entity entity);
 
-    void serverEntityInfo(PacketView& p);
-    void serverEntityRemoved(unsigned int id);
+    void serverEntitiesInfo(Deserializer& d);
+    void serverEntitiesRemoved(Deserializer& d);
 
     int renderChunks(Renderer &renderer);
     void renderEntities(Renderer &renderer);
@@ -57,9 +56,8 @@ protected:
     std::unordered_set<glm::ivec3, Vec::ivec3> propogateRemoveNodes() override;
 
 private:
+    typedef std::list<Api::Usertype::Entity>::iterator ent_ref;
     typedef std::list<std::shared_ptr<ChunkRenderElem>>::iterator chunk_ref;
-    typedef std::list<std::shared_ptr<LocalLuaEntity>>::iterator local_ent_ref;
-    typedef std::list<std::shared_ptr<ServerLocalLuaEntity>>::iterator server_ent_ref;
 
     void finishMeshes();
 
@@ -68,11 +66,11 @@ private:
 
     std::shared_ptr<MeshGenStream> meshGenStream;
 
-    std::unordered_map<unsigned int, local_ent_ref> localEntityRefs {};
-    std::list<std::shared_ptr<LocalLuaEntity>> localEntities {};
+    std::unordered_map<unsigned int, ent_ref> localEntityRefs {};
+    std::list<Api::Usertype::Entity> localEntities {};
 
-    std::unordered_map<unsigned int, server_ent_ref> serverEntityRefs {};
-    std::list<std::shared_ptr<ServerLocalLuaEntity>> serverEntities {};
+    std::unordered_map<unsigned int, ent_ref> serverEntityRefs {};
+    std::list<Api::Usertype::Entity> serverEntities {};
 
     std::unordered_map<glm::vec3, chunk_ref, Vec::vec3> renderRefs {};
     std::list<std::shared_ptr<ChunkRenderElem>> renderElems {};

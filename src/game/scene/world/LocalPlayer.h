@@ -36,7 +36,7 @@ public:
     virtual void setHandList(const std::string& list, bool assert = false) override;
     virtual void setWieldList(const std::string& list, bool assert = false) override;
     virtual void setWieldIndex(unsigned short index, bool assert = false) override;
-    virtual void setDimension(DimensionPtr dim) override;
+    virtual void setDim(DimensionPtr dim) override;
 
     bool isInMenu();
     void showMenu(std::shared_ptr<LuaGuiElement> root);

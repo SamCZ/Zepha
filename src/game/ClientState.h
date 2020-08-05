@@ -18,7 +18,7 @@ public:
 
     Renderer& renderer;
     ServerConnection connection {};
-    LocalSubgame defs;
+    LocalSubgame game;
 
     unsigned int seed = 0;
 

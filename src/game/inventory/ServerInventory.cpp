@@ -10,11 +10,9 @@ void ServerInventory::createList(const std::string &name, unsigned short length,
     lists.emplace(name, std::make_shared<ServerInventoryList>(game, clients, name, this->name, length, width));
 }
 
-//void ServerInventory::sendDirtyLists() {
-//    for (auto& list : lists) {
-//        if (list.second->dirty) {
-//            list.second->sendAll();
-//            list.second->dirty = false;
-//        }
-//    }
-//}
+void ServerInventory::sendDirtyLists() {
+    for (auto& l : lists) {
+        auto list = std::static_pointer_cast<ServerInventoryList>(l.second);
+        if (list->dirty) list->sendToAll();
+    }
+}

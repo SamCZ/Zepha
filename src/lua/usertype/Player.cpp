@@ -57,11 +57,11 @@ Api::Usertype::Inventory Api::Usertype::ServerPlayer::get_inventory() {
 }
 
 Api::Usertype::Dimension Api::Usertype::ServerPlayer::get_dimension() {
-    return Dimension(player->getDimension());
+    return Dimension(player->getDim());
 }
 
 void Api::Usertype::ServerPlayer::set_dimension(const std::string& identifier) {
-    player->setDimension(player->getDimension()->getWorld().getDimension(identifier));
+    player->setDim(player->getDim()->getWorld().getDimension(identifier));
 }
 
 sol::object Api::Usertype::ServerPlayer::get_hand_list(sol::this_state s) {
@@ -145,6 +145,7 @@ void Api::Usertype::ServerPlayer::bind(State, sol::state &lua, sol::table &core)
         "get_dimension", &ServerPlayer::get_dimension,
         "set_dimension", &ServerPlayer::set_dimension,
 
+        "id", sol::property(&ServerPlayer::get_id),
         "pos", sol::property(&ServerPlayer::get_pos, &ServerPlayer::set_pos),
         "block_pos", sol::property(&ServerPlayer::get_block_pos, &ServerPlayer::set_pos),
         "vel", sol::property(&ServerPlayer::get_vel, &ServerPlayer::set_vel),

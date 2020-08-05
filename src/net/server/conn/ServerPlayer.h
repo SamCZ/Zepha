@@ -15,7 +15,7 @@
 
 class ServerClient;
 class Deserializer;
-class ServerSubgame;
+class ServerSubgame;                                                                                    
 class ServerInventoryRefs;
 enum class NetPlayerField;
 

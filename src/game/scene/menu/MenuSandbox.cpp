@@ -18,12 +18,12 @@
 #include "../../../lua/modules/mSetGui.h"
 #include "../../../lua/modules/mStartGame.h"
 
-MenuSandbox::MenuSandbox(glm::ivec2 &win, ClientState& state, std::shared_ptr<GuiContainer> container) : LuaParser(state.defs),
+MenuSandbox::MenuSandbox(glm::ivec2 &win, ClientState& state, std::shared_ptr<GuiContainer> container) : LuaParser(state.game),
     win(win),
     state(state),
     container(container),
     luaContainer(std::dynamic_pointer_cast<GuiContainer>(container->add(std::make_shared<GuiContainer>("__lua")))),
-    builder(state.defs.textures, state.defs.models, luaContainer) {}
+    builder(state.game.textures, state.game.models, luaContainer) {}
 
 void MenuSandbox::reset() {
     container->remove("error");
@@ -149,7 +149,7 @@ void MenuSandbox::loadAndRunMod(const std::string &modPath) {
 
     std::string texPath = modPath + "/textures";
     if (cf_file_exists(texPath.data())) {
-        this->modAssets = state.defs.textures.loadDirectory(texPath, false, true);
+        this->modAssets = state.game.textures.loadDirectory(texPath, false, true);
     }
 
     this->mod = mod;
@@ -158,7 +158,7 @@ void MenuSandbox::loadAndRunMod(const std::string &modPath) {
 
 void MenuSandbox::showError(const std::string& what, const std::string& subgame) {
     const std::string errPrefixText = "Encountered an error while loading the menu for " + subgame + " ;-;";
-    Font f(state.defs.textures, state.defs.textures["font"]);
+    Font f(state.game.textures, state.game.textures["font"]);
 
     auto errWrap = std::make_shared<GuiContainer>("error");
     container->add(errWrap);

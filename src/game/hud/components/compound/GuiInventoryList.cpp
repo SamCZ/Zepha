@@ -73,7 +73,7 @@ void GuiInventoryList::setCallback(CallbackType type, const callback& cb) {
         if (cb) cb(down, pos);
 
         if (type == GuiComponent::CallbackType::HOVER) this->hoverEvent(down, pos);
-        else this->interactEvent(pos, type == GuiComponent::CallbackType::PRIMARY);
+        else if (down) this->interactEvent(pos, type == GuiComponent::CallbackType::PRIMARY);
     });
 }
 

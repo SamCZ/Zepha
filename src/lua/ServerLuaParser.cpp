@@ -18,12 +18,11 @@
 // Usertypes
 #include "usertype/Target.h"
 #include "usertype/Player.h"
+#include "usertype/Entity.h"
 #include "usertype/Inventory.h"
 #include "usertype/Dimension.h"
 #include "usertype/ItemStack.h"
 #include "usertype/InventoryList.h"
-
-#include "usertype/sLuaEntity.h"
 
 // Modules
 #include "modules/Time.h"
@@ -95,9 +94,8 @@ void ServerLuaParser::loadApi(WorldPtr world) {
     core["__builtin"] = lua.create_table();
 
     // Types
-    ServerApi::entity        (lua);
-
     Api::Usertype::Target::bind(Api::State::SERVER, lua, core);
+    Api::Usertype::Entity::bind(Api::State::CLIENT, lua, core);
     Api::Usertype::Inventory::bind(Api::State::SERVER, lua, core);
     Api::Usertype::Dimension::bind(Api::State::SERVER, lua, core);
     Api::Usertype::ItemStack::bind(Api::State::SERVER, lua, core);

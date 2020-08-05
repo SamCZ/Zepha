@@ -9,7 +9,7 @@
 #include "../../net/PacketView.h"
 
 GameScene::GameScene(ClientState& state) : Scene(state),
-    game(std::make_shared<LocalSubgame>(state.defs)),
+    game(std::make_shared<LocalSubgame>(state.game)),
     world(std::make_shared<LocalWorld>(game, state.connection, state.renderer)),
     debugGui(state.renderer.window.getSize(), game, world) {
 
