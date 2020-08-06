@@ -167,6 +167,8 @@ void LocalDimension::removeLocalEntity(Api::Usertype::Entity entity) {
 }
 
 void LocalDimension::serverEntitiesInfo(Deserializer& d) {
+    std::string type, a, b;
+
     unsigned int dim = d.read<unsigned int>();
 
     std::shared_ptr<LocalLuaEntity> activeEntity = nullptr;
@@ -177,7 +179,6 @@ void LocalDimension::serverEntitiesInfo(Deserializer& d) {
                 unsigned int id = d.read<unsigned int>();
                 if (serverEntityRefs.count(id)) activeEntity = serverEntityRefs.at(id)->entity.l();
                 else {
-                    std::cout << "new entity" << std::endl;
                     //TODO BEFORE COMMIT: *oh my god, please don't do this*
                     auto ent = std::make_shared<LocalLuaEntity>(game, DimensionPtr(std::shared_ptr<LocalDimension>(this, [](LocalDimension*){})));
                     auto entity = Api::Usertype::Entity(ent);
@@ -193,14 +194,7 @@ void LocalDimension::serverEntitiesInfo(Deserializer& d) {
             case NetField::ROT: activeEntity->setRot(d.read<glm::vec3>()); break;
             case NetField::SCALE: activeEntity->setScale(d.read<glm::vec3>()); break;
             case NetField::VISUAL_OFF: activeEntity->setVisualOffset(d.read<glm::vec3>()); break;
-
-            case NetField::DISPLAY: {
-                std::cout << "display update" << std::endl;
-                std::string type, a, b;
-                d.read(type).read(a).read(b);
-                activeEntity->setAppearance(type, a, b);
-                break; }
-
+            case NetField::DISPLAY: d.read(type).read(a).read(b); activeEntity->setAppearance(type, a, b); break;
         }
     }
 }
