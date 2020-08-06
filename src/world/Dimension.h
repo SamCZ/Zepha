@@ -35,7 +35,7 @@ public:
 
     // Calculate light propogation around MapBlock edges,
     // Called after a new mapblock is inserted into the dimension.
-    relitChunks calculateEdgeLight(glm::ivec3 mbPos);
+//    relitChunks calculateEdgeLight(glm::ivec3 mbPos);
 protected:
 
     // Lighting propagation.

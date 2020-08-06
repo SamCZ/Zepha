@@ -25,8 +25,8 @@ FileManipulator::FileManipulator(const std::string &worldPath) :
 }
 
 void FileManipulator::commitChunk(Chunk &chunk) {
-    glm::ivec3 reg = Space::Region::world::fromChunk(chunk.pos);
-    unsigned int chunkInd = Space::Chunk::index(chunk.pos);
+    glm::ivec3 reg = Space::Region::world::fromChunk(chunk.getPos());
+    unsigned int chunkInd = Space::Chunk::index(chunk.getPos());
 
     std::string fileName = std::to_string(reg.x) + "_" + std::to_string(reg.y) + "_" + std::to_string(reg.z);
     std::string filePath = path + "/" + fileName;

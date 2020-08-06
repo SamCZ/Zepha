@@ -23,6 +23,7 @@ ServerDefinitionAtlas::ServerDefinitionAtlas() {
     BlockModel nullModel {};
     BlockDef* air = new BlockDef();
     air->identifier = "air";
+    air->index = 1;
     air->name = "Air";
     air->maxStackSize = 64;
     air->model = nullModel;

@@ -9,16 +9,16 @@
 #include "SubgameUsertype.h"
 
 #include "Dimension.h"
+#include "AnimationManager.h"
 #include "../../util/CovariantPtr.h"
 
 namespace Api::Usertype {
     class Entity : public SubgameUsertype {
     public:
-        Entity(EntityPtr entity) : entity(entity) {}
+        Entity(EntityPtr entity) : entity(entity), animation(entity) {}
 
         EntityPtr entity;
-
-//        LocalLuaAnimationManager manager;
+        AnimationManager animation;
 
         unsigned int get_id();
 

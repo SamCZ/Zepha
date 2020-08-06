@@ -139,8 +139,8 @@ void Api::Usertype::Entity::bind(State, sol::state &lua, sol::table &core) {
         "yaw", sol::property(&Entity::get_yaw, &Entity::set_yaw),
         "roll", sol::property(&Entity::get_roll, &Entity::set_roll),
         "scale", sol::property(&Entity::get_scale, &Entity::set_scale),
-        "dim", sol::property(&Entity::get_dimension)
+        "dim", sol::property(&Entity::get_dimension),
 
-//        "anims", sol::readonly(&Entity::manager)
+        "anims", sol::readonly(&Entity::animation)
     );
 }

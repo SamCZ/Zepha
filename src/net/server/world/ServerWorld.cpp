@@ -80,7 +80,7 @@ void ServerWorld::update(double delta) {
 
         for (const auto& chunk : data.chunks) {
             generatedMapBlocks.insert(data.pos);
-            updatedChunks.insert(glm::ivec4(chunk->pos, data.pos.w));
+            updatedChunks.insert(glm::ivec4(chunk->getPos(), data.pos.w));
             dimension->setChunk(chunk);
         }
 
@@ -112,7 +112,7 @@ void ServerWorld::update(double delta) {
 //        Packet p(PacketType::CHUNK);
 //        auto l = chunk->aquireLock();
 //        p.data = chunk->serialize();
-//        l.release();
+//        l.unlock();
 //
 //        for (auto& client : clientList.clients) {
 //            if (!client->hasPlayer) continue;

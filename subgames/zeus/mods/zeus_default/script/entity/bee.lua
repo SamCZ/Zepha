@@ -1,7 +1,7 @@
 zepha.register_entity("zeus:default:bee", {
     display = "model",
     display_object = "zeus:default:bee",
-    display_texture = "zeus:default:bee",
+    display_texture = "zeus:default:bee_shiny",
 
     on_create = function(self)
         self.object.scale = 1/12
@@ -21,7 +21,5 @@ zepha.register_entity("zeus:default:bee", {
 zepha.register_keybind("zeus:default:spawn_bee", {
     description = "Spawn Bee",
     default = zepha.keys.b,
-    on_press = function()
-        zepha.add_entity("zeus:default:bee", vector.add(zepha.player.pos, V(0, 1.7, 0)))
-    end
+    on_press = function() zepha.player.dim:add_entity(zepha.player.pos + V(0, 1.7, 0), "zeus:default:bee") end
 })

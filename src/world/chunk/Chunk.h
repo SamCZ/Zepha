@@ -10,12 +10,14 @@
 #include <vector>
 #include <glm/vec3.hpp>
 
+#include "../../util/Lockable.h"
+
 #include "../../util/RIE.h"
 #include "../../util/Space.h"
 
 class Deserializer;
 
-class Chunk {
+class Chunk : public Lockable {
 public:
     friend class MapGen;
 
@@ -39,7 +41,20 @@ public:
     Chunk(glm::ivec3 pos, bool partial = false);
     Chunk(glm::ivec3 pos, const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes);
 
-    inline std::unique_lock<std::mutex> aquireLock();
+    inline glm::ivec3 getPos() const;
+    inline void setPos(glm::ivec3 pos);
+
+    inline bool isDirty() const;
+    inline void setDirty(bool dirty);
+
+    inline bool chunkShouldRender() const;
+    inline void setShouldRender(bool shouldRender);
+
+    inline bool isPartial() const;
+    inline void setPartial(bool partial);
+
+    inline bool isGenerated() const;
+    inline void setGenerated(bool generated);
 
     inline unsigned int getBlock(unsigned int ind) const;
     bool setBlock(unsigned int ind, unsigned int blk);
@@ -66,16 +81,14 @@ public:
     void deserialize(Deserializer& d);
 
     void countRenderableBlocks();
+private:
+    glm::ivec3 pos {};
 
     bool partial = false;
     bool generated = false;
 
     bool dirty = true;
     bool shouldRender = true;
-
-    glm::ivec3 pos {};
-private:
-    std::mutex m;
 
     std::vector<unsigned int> blocks {0, 0};
     std::vector<unsigned short> biomes {0, 0};
@@ -89,76 +102,4 @@ private:
     inline void setSunlight(unsigned int ind, unsigned char val);
 };
 
-std::unique_lock<std::mutex> Chunk::aquireLock() {
-    std::unique_lock<std::mutex> lock(m, std::defer_lock);
-    return std::move(lock);
-}
-
-inline unsigned int Chunk::getBlock(const glm::ivec3& pos) const {
-    if (pos.x > 15 || pos.x < 0 || pos.y > 15 || pos.y < 0 || pos.z > 15 || pos.z < 0) return 0; // Invalid
-    return getBlock(Space::Block::index(pos));
-}
-
-inline bool Chunk::setBlock(const glm::ivec3& pos, unsigned int blk) {
-    if (pos.x > 15 || pos.x < 0 || pos.y > 15 || pos.y < 0 || pos.z > 15 || pos.z < 0) return false;
-    return setBlock(Space::Block::index(pos), blk);
-}
-
-inline unsigned int Chunk::getBlock(unsigned int ind) const {
-    if (ind >= 4096) return 0; // Invalid
-    return RIE::read<unsigned int>(ind, blocks, 4096);
-}
-
-inline unsigned short Chunk::getBiome(unsigned int ind) const {
-    if (ind >= 4096) return 0; // Invalid
-    return RIE::read<unsigned short>(ind, biomes, 4096);
-}
-
-inline bool Chunk::setBiome(unsigned int ind, unsigned short bio) {
-    return RIE::write(ind, bio, biomes, 4096);
-}
-
-inline unsigned short Chunk::getBiome(const glm::ivec3& pos) const {
-    if (pos.x > 15 || pos.x < 0 || pos.y > 15 || pos.y < 0 || pos.z > 15 || pos.z < 0) return 0; // Invalid
-    return getBiome(Space::Block::index(pos));
-}
-
-inline bool Chunk::setBiome(const glm::ivec3& pos, unsigned short bio) {
-    if (pos.x > 15 || pos.x < 0 || pos.y > 15 || pos.y < 0 || pos.z > 15 || pos.z < 0) return false;
-    return setBiome(Space::Block::index(pos), bio);
-}
-
-inline glm::ivec4 Chunk::getLight(unsigned int ind) {
-    return { blockLight[ind].r, blockLight[ind].g, blockLight[ind].b, getSunlight(ind) };
-}
-
-inline void Chunk::setLight(unsigned int ind, glm::ivec4 l) {
-    blockLight[ind].r = l.x;
-    blockLight[ind].g = l.y;
-    blockLight[ind].b = l.z;
-    setSunlight(ind, l.w);
-}
-
-inline unsigned char Chunk::getLight(unsigned int ind, unsigned char channel) {
-    return channel == 0 ? blockLight[ind].r :
-           channel == 1 ? blockLight[ind].g :
-           channel == 2 ? blockLight[ind].b :
-           getSunlight(ind);
-}
-
-inline void Chunk::setLight(unsigned int ind, unsigned char channel, unsigned char l) {
-    channel == 0 ? blockLight[ind].r = l :
-    channel == 1 ? blockLight[ind].g = l :
-    channel == 2 ? blockLight[ind].b = l :
-    (setSunlight(ind,l), 0);
-}
-
-inline unsigned char Chunk::getSunlight(unsigned int ind) {
-    if (ind % 2 == 0) return sunLight[ind / 2].a;
-    else return sunLight[ind / 2].b;
-}
-
-inline void Chunk::setSunlight(unsigned int ind, unsigned char val) {
-    if (ind % 2 == 0) sunLight[ind / 2].a = val;
-    else sunLight[ind / 2].b = val;
-}
+#include "Chunk.inl"

@@ -291,24 +291,20 @@ void LocalPlayer::findPointedThing(Input &input) {
     static constexpr float LOOK_PRECISION = 0.01f;
 
     glm::ivec3 chunkPos = {};
-
-    std::unique_lock<std::mutex> lock {};
-    std::shared_ptr<Chunk> blockChunk = nullptr;
+    std::shared_ptr<Chunk> chunk = nullptr;
 
     for (Ray ray(*this); ray.getLength() < LOOK_DISTANCE; ray.step(LOOK_PRECISION)) {
         glm::vec3 rayEnd = ray.getEnd();
         glm::ivec3 roundedPos = glm::floor(rayEnd);
 
         glm::ivec3 currChunkPos = Space::Chunk::world::fromBlock(roundedPos);
-        if (currChunkPos != chunkPos || blockChunk == nullptr) {
+        if (currChunkPos != chunkPos || chunk == nullptr) {
             chunkPos = currChunkPos;
-            blockChunk = dim->getChunk(chunkPos);
-            if (blockChunk == nullptr) continue;
-
-            lock = blockChunk->aquireLock();
+            chunk = dim->getChunk(chunkPos);
+            if (chunk == nullptr) continue;
         }
 
-        unsigned int blockID = blockChunk->getBlock(Space::Block::relative::toChunk(roundedPos));
+        unsigned int blockID = chunk->getBlock(Space::Block::relative::toChunk(roundedPos));
         auto& boxes = game->getDefs().blockFromId(blockID).sBoxes;
 
         for (auto& sBox : boxes) {

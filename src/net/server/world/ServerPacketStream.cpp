@@ -68,8 +68,7 @@ void ServerPacketStream::Thread::exec() {
 
                 Serializer s {};
                 for (unsigned int i = 0; i < 64; i++) {
-                    auto chunk = (*j.mapBlock)[i];
-                    auto l = chunk->aquireLock();
+                    auto chunk = j.mapBlock->get(i);
                     s.append(chunk->serialize());
                 }
 

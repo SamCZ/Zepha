@@ -9,13 +9,15 @@
 #include <memory>
 #include <glm/vec3.hpp>
 
+#include "../../util/Lockable.h"
+
 class MapBlock;
 
-class Region {
+class Region : Lockable {
 public:
     Region(glm::ivec3 pos);
 
-    std::shared_ptr<MapBlock> operator[](unsigned short index);
+    std::shared_ptr<MapBlock> get(unsigned short index) const;
     void set(unsigned short index, std::shared_ptr<MapBlock> block);
     void remove(unsigned short index);
 

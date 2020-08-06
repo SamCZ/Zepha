@@ -10,49 +10,40 @@
 
 AnimationState::AnimationState(Model &source) {
     const ModelAnimation& animation = source.getAnimation();
-
-    currentFrame = 100;
     ticksPerSecond = animation.ticksPerSecond;
     duration = animation.duration;
-    endFrame = duration;
+    range = {0, duration};
 }
 
 void AnimationState::setAnimations(const std::vector<AnimationSegment> &anims) {
-    for (auto& anim : anims) {
-        defineAnimation(anim.animationName, anim.startFrame, anim.endFrame);
-    }
+    for (auto& anim : anims) defineAnimation(anim.name, anim.range);
 }
 
-void AnimationState::defineAnimation(const std::string& animationName, unsigned int startFrame, unsigned int endFrame) {
-    animations.emplace(animationName, AnimationSegment {animationName, startFrame, endFrame});
+void AnimationState::defineAnimation(const std::string& name, glm::ivec2 range) {
+    animations.emplace(name, AnimationSegment {name, range});
 }
 
 void AnimationState::update(double delta) {
     if (playing) {
         float frame = currentFrame + (delta * ticksPerSecond);
-        if (loop) frame = fmod(frame - startFrame, endFrame - startFrame) + startFrame;
-        else frame = fmin(frame, endFrame);
+        if (loop) frame = fmod(frame - range.x, range.y - range.x) + range.x;
+        else frame = fmin(frame, range.y);
 
-        if (frame == endFrame) playing = false;
+        if (frame == range.y) playing = false;
 
         currentFrame = frame;
     }
 }
 
-void AnimationState::setAnimNamed(const std::string &animationName, double interpolateTime, bool loop) {
-    auto& anim = animations[animationName];
-    setAnimRange(anim.startFrame, anim.endFrame, 0, loop);
+void AnimationState::setAnim(const std::string& name, double interp, bool loop) {
+    auto& anim = animations[name];
+    setAnim(anim.range, interp, loop);
 }
 
-void AnimationState::setAnimRange(unsigned int startFrame, unsigned int endFrame, double interpolateTime, bool loop) {
-    //TODO: Interpolate
-
-    this->startFrame = startFrame;
-    this->endFrame = endFrame;
-
-    currentFrame = startFrame;
-
+void AnimationState::setAnim(glm::ivec2 range, double interp, bool loop) {
+    this->range = range;
     this->loop = loop;
+    currentFrame = range.x;
 }
 
 void AnimationState::setPlaying(bool playing) {
@@ -68,5 +59,5 @@ double AnimationState::getFrame() {
 }
 
 glm::ivec2 AnimationState::getBounds() {
-    return {startFrame, endFrame};
+    return range;
 }

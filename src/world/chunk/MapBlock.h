@@ -10,14 +10,16 @@
 #include <vector>
 #include <glm/vec3.hpp>
 
+#include "../../util/Lockable.h"
+
 class Chunk;
 class Deserializer;
 
-class MapBlock {
+class MapBlock : Lockable {
 public:
     MapBlock(glm::ivec3 pos);
 
-    std::shared_ptr<Chunk> operator[](unsigned short index);
+    std::shared_ptr<Chunk> get(unsigned short index) const;
     void set(unsigned short index, std::shared_ptr<Chunk> chunk);
     void remove(unsigned short index);
 

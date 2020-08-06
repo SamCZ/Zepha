@@ -9,6 +9,7 @@
 #include <unordered_map>
 
 #include "../util/Vec.h"
+#include "../util/Lockable.h"
 #include "../util/CovariantPtr.h"
 
 class World;
@@ -18,7 +19,7 @@ class Subgame;
 class MapBlock;
 class DefinitionAtlas;
 
-class DimensionBase {
+class DimensionBase : protected Lockable {
 public:
     DimensionBase(SubgamePtr game, World& world, const std::string& identifier, unsigned int ind);
 
@@ -27,25 +28,25 @@ public:
 
     virtual void update(double delta);
 
-    std::shared_ptr<Region> getRegion(glm::ivec3 regionPosition);
+    std::shared_ptr<Region> getRegion(glm::ivec3 regionPosition) const;
     void removeRegion(glm::ivec3 pos);
 
-    std::shared_ptr<MapBlock> getMapBlock(glm::ivec3 mapBlockPosition);
+    std::shared_ptr<MapBlock> getMapBlock(glm::ivec3 mapBlockPosition) const;
     virtual void removeMapBlock(glm::ivec3 pos);
 
     bool mapBlockGenerated(glm::ivec3 mapBlockPosition);
 
-    std::shared_ptr<Chunk> getChunk(glm::ivec3 chunkPosition);
+    std::shared_ptr<Chunk> getChunk(glm::ivec3 chunkPosition) const;
     virtual void setChunk(std::shared_ptr<Chunk> chunk);
     virtual void removeChunk(glm::ivec3 pos);
 
-    unsigned int getBlock(glm::ivec3 pos);
+    unsigned int getBlock(glm::ivec3 pos) const;
     virtual bool setBlock(glm::ivec3 pos, unsigned int block);
 
     virtual double getBlockDamage(glm::ivec3 pos) const;
     virtual double setBlockDamage(glm::ivec3 pos, double damage);
 
-    unsigned int getBiome(glm::ivec3 pos);
+    unsigned int getBiome(glm::ivec3 pos) const;
     virtual bool setBiome(glm::ivec3 pos, unsigned int biome);
 
     SubgamePtr getGame();

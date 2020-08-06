@@ -5,14 +5,13 @@
 #include <gzip/compress.hpp>
 #include <gzip/decompress.hpp>
 #include <gzip/utils.hpp>
-#include <iostream>
 
 #include "Chunk.h"
 
-#include "../../def/DefinitionAtlas.h"
+#include "../../util/Util.h"
 #include "../../net/Serializer.h"
 #include "../../net/Deserializer.h"
-#include "../../util/Util.h"
+#include "../../def/DefinitionAtlas.h"
 
 Chunk::Chunk(const Chunk& o) :
     pos(o.pos),
@@ -35,12 +34,16 @@ Chunk::Chunk(glm::ivec3 pos, const std::vector<unsigned int>& blocks, const std:
 }
 
 bool Chunk::setBlock(unsigned int ind, unsigned int blk) {
+    auto l = getWriteLock();
     if (!RIE::write(ind, blk, blocks, 4096)) return false;
+    l.unlock();
+
     if (blk == DefinitionAtlas::AIR && !(renderableBlocks = std::max(renderableBlocks - 1, 0))) shouldRender = false;
-    else if (blk != DefinitionAtlas::AIR && getBlock(ind) == DefinitionAtlas::AIR) {
+    else if (blk != DefinitionAtlas::AIR) {
         shouldRender = true;
         renderableBlocks++;
     }
+
     return true;
 }
 
@@ -53,6 +56,8 @@ const std::vector<unsigned short> &Chunk::cGetBiomes() const {
 }
 
 std::string Chunk::serialize() {
+    auto l = getReadLock();
+
     std::vector<unsigned short> blockLight = std::vector<unsigned short>(4096);
     std::vector<unsigned char> sunLight = std::vector<unsigned char>(2048);
 
@@ -68,6 +73,8 @@ std::string Chunk::serialize() {
         sunLight[i] = sl.ch;
     }
 
+    l.unlock();
+
     Serializer s;
     std::string temp = Serializer().append(pos).append(blocks).append(biomes).append(blockLight).append(sunLight).data;
     s.append<std::string>(gzip::compress(temp.data(), temp.size()));
@@ -76,6 +83,8 @@ std::string Chunk::serialize() {
 }
 
 void Chunk::deserialize(Deserializer& d) {
+    auto l = getWriteLock();
+
     std::string gzipped = d.read<std::string>();
     if (!gzip::is_compressed(gzipped.data(), gzipped.length())) throw std::runtime_error("Chunk contains invalid gzipped data.");
 
@@ -100,10 +109,13 @@ void Chunk::deserialize(Deserializer& d) {
         this->sunLight[i] = sl.s;
     }
 
+    l.unlock();
     countRenderableBlocks();
 }
 
 void Chunk::countRenderableBlocks() {
+    auto l = getReadLock();
+
     shouldRender = false;
     renderableBlocks = 0;
 

@@ -32,13 +32,10 @@ ChunkMeshGenerator::ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefin
     meshDetails->vertices.reserve(5000);
     meshDetails->indices.reserve(7000);
 
-    // Lock the related chunks
-    std::array<std::unique_lock<std::mutex>, 7> locks;
-    locks[0] = std::move(chunk->aquireLock());
-    for (unsigned int i = 0; i < 6; i++) locks[i + 1] = std::move(adjacent[i]->aquireLock());
-
+    auto l = chunk->getReadLock();
     RIE::expand<unsigned int, 4096>(chunk->cGetBlocks(), eBlocks);
     RIE::expand<unsigned short, 4096>(chunk->cGetBiomes(), eBiomes);
+    l.unlock();
 
     BlockDef* block = nullptr;
     BiomeDef* biome = nullptr;

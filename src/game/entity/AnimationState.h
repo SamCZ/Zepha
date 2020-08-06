@@ -9,8 +9,9 @@
 #include <string>
 #include <glm/vec2.hpp>
 
+#include "AnimationSegment.h"
+
 class Model;
-class AnimationSegment;
 
 class AnimationState {
 public:
@@ -20,25 +21,25 @@ public:
     void update(double delta);
 
     void setAnimations(const std::vector<AnimationSegment>& anims);
-    void defineAnimation(const std::string& animationName, unsigned int startFrame, unsigned int endFrame);
+    void defineAnimation(const std::string& name, glm::ivec2 range);
 
-    void setAnimNamed(const std::string& animationName, double interpolateTime, bool loop);
-    void setAnimRange(unsigned int startFrame, unsigned int endFrame, double interpolateTime, bool loop);
+    void setAnim(const std::string& name, double interp, bool loop);
+    void setAnim(glm::ivec2 range, double interp, bool loop);
 
     void setPlaying(bool playing);
 
-    void setFrame(double frame);
     double getFrame();
+    void setFrame(double frame);
+
     glm::ivec2 getBounds();
 
 private:
     std::map<std::string, AnimationSegment> animations;
 
-    unsigned int startFrame = 0;
-    unsigned int endFrame = 0;
+    glm::ivec2 range;
 
-    bool playing = false;
     bool loop = false;
+    bool playing = false;
 
     double currentFrame = 0;
     double ticksPerSecond = 0;

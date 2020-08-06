@@ -18,16 +18,16 @@ DrawableEntity::DrawableEntity(SubgamePtr game, DimensionPtr dim) :
 
 DrawableEntity::DrawableEntity(SubgamePtr game, DimensionPtr dim, std::shared_ptr<Model> model) :
     Entity(game, dim),
-    model(model), animState(*model) {}
+    model(model) {}
 
 void DrawableEntity::setModel(std::shared_ptr<Model> model) {
-    animState = AnimationState(*model);
+    animation = AnimationState(*model);
     this->model = std::move(model);
-    animState.setPlaying(true);
+    animation.setPlaying(true);
 }
 
 void DrawableEntity::update(double delta) {
-    animState.update(delta);
+    animation.update(delta);
 
     float factor = static_cast<float>(fmin(delta * 8, 1));
 
@@ -102,28 +102,11 @@ void DrawableEntity::interpScale(glm::vec3 scale) {
     Entity::setScale(scale);
 }
 
-void DrawableEntity::setAnimations(const std::vector<AnimationSegment>& anims) {
-    animState.setAnimations(anims);
-}
-
-void DrawableEntity::playAnimation(const std::string &anim, bool loop) {
-    animState.setAnimNamed(anim, 0, loop);
-}
-
-void DrawableEntity::playRange(unsigned int start, unsigned int end, bool loop) {
-    animState.setAnimRange(start, end, 0, loop);
-}
-
-void DrawableEntity::setPlaying(bool playing, unsigned int offset) {
-    animState.setPlaying(playing);
-    if (offset != UINT_MAX) animState.setFrame(offset + animState.getFrame());
-}
-
 void DrawableEntity::draw(Renderer& renderer) {
     if (visible) {
         renderer.setModelMatrix(getModelMatrix());
 
-        model->getTransformsByFrame(animState.getFrame(), animState.getBounds(), transforms);
+        model->getTransformsByFrame(animation.getFrame(), animation.getBounds(), transforms);
         renderer.setBones(transforms);
 
         for (const auto& mesh : model->meshes) mesh->draw();

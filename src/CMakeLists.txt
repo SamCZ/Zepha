@@ -215,9 +215,8 @@ add_library(Zepha_Core
 	lua/ServerLuaParser.h
 	lua/ServerModHandler.cpp
 	lua/ServerModHandler.h
-	lua/usertype/cAnimationManager.h
-		lua/usertype/LocalLuaAnimationManager.cpp
-	lua/usertype/LocalLuaAnimationManager.h
+        lua/usertype/AnimationManager.cpp
+		lua/usertype/AnimationManager.h
 		lua/usertype/Player.cpp
 	lua/usertype/Player.h
 	lua/usertype/LuaGuiElement.cpp
@@ -313,4 +312,4 @@ add_library(Zepha_Core
 	game/entity/Collision.cpp
 	game/entity/Collision.h
 	net/server/conn/ServerClient.cpp
-	net/server/conn/ServerClient.h lua/modules/Dimension.cpp lua/modules/Dimension.h util/CovariantPtr.h lua/usertype/Entity.cpp lua/usertype/Entity.h game/entity/LuaEntity.cpp game/entity/LuaEntity.h game/entity/LocalLuaEntity.cpp game/entity/LocalLuaEntity.h)
+	net/server/conn/ServerClient.h lua/modules/Dimension.cpp lua/modules/Dimension.h util/CovariantPtr.h lua/usertype/Entity.cpp lua/usertype/Entity.h game/entity/LuaEntity.cpp game/entity/LuaEntity.h game/entity/LocalLuaEntity.cpp game/entity/LocalLuaEntity.h util/Lockable.h)

@@ -6,6 +6,7 @@
 
 #include <glm/vec3.hpp>
 
+#include "AnimationState.h"
 #include "../../util/CovariantPtr.h"
 #include "../../def/item/SelectionBox.h"
 
@@ -47,6 +48,7 @@ public:
 
     SubgamePtr getGame();
 
+    AnimationState animation {};
 protected:
     SubgamePtr game = nullptr;
     DimensionPtr dim = nullptr;

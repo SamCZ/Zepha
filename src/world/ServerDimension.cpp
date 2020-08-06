@@ -45,13 +45,6 @@ void ServerDimension::update(double delta) {
 //    }
 }
 
-bool ServerDimension::setBlock(glm::ivec3 pos, unsigned int block) {
-    bool manip = Dimension::setBlock(pos, block);
-    if (!manip) return false;
-    glm::vec3 mb = Space::MapBlock::world::fromBlock(pos);
-    return true;
-}
-
 double ServerDimension::blockHit(const Target &target, PlayerPtr player) {
     double timeout = 0, damage = 0;
     sol::tie(damage, timeout) = game->getParser().safe_function(game->getParser().core["block_hit"],
@@ -88,11 +81,9 @@ void ServerDimension::blockPlaceOrInteract(const Target &target, PlayerPtr playe
 }
 
 void ServerDimension::setChunk(std::shared_ptr<Chunk> chunk) {
-    std::shared_ptr<Chunk> existing = getChunk(chunk->pos);
+    std::shared_ptr<Chunk> existing = getChunk(chunk->getPos());
     if (existing != nullptr) chunk = combinePartials(chunk, existing);
-
     Dimension::setChunk(chunk);
-    glm::vec3 mb = Space::MapBlock::world::fromChunk(chunk->pos);
 }
 
 void ServerDimension::addLuaEntity(Api::Usertype::Entity entity) {

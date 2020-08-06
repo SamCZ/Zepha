@@ -43,6 +43,6 @@ zepha.register_keybind("zeus:default:spawn_raven", {
     description = "Spawn Raven",
     default = zepha.keys.z,
     on_press = function()
-        zepha.add_entity("zeus:default:raven", vector.add(zepha.player.pos, V{0, 1.7, 0}))
+        zepha.player.dim:add_entity(zepha.player.pos + V(0, 1.7, 0), "zeus:default:raven")
     end
 })

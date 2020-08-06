@@ -20,9 +20,9 @@
 #include "usertype/Dimension.h"
 #include "usertype/ItemStack.h"
 #include "usertype/InventoryList.h"
+#include "usertype/AnimationManager.h"
 
 #include "usertype/LuaGuiElement.h"
-#include "usertype/cAnimationManager.h"
 
 // Modules
 #include "modules/Time.h"
@@ -63,7 +63,6 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
     core["__builtin"] = lua.create_table();
 
     // Types
-    ClientApi::animation_manager (lua);
     ClientApi::gui_element       (lua);
 
     Api::Usertype::Target::bind(Api::State::CLIENT, lua, core);
@@ -73,6 +72,7 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
     Api::Usertype::ItemStack::bind(Api::State::CLIENT, lua, core);
     Api::Usertype::LocalPlayer::bind(Api::State::CLIENT, lua, core);
     Api::Usertype::InventoryList::bind(Api::State::CLIENT, lua, core);
+    Api::Usertype::AnimationManager::bind(Api::State::CLIENT, lua, core);
 
     core["client"] = true;
     core["player"] = Api::Usertype::LocalPlayer(player);

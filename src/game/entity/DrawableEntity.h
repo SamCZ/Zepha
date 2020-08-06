@@ -12,9 +12,6 @@
 #include "Entity.h"
 #include "../graph/drawable/Drawable.h"
 
-#include "AnimationState.h"
-#include "AnimationSegment.h"
-
 class DrawableEntity : virtual public Entity, public Drawable {
 public:
     DrawableEntity(const DrawableEntity& o) = delete;
@@ -45,17 +42,11 @@ public:
     virtual void setScale(glm::vec3 scale) override;
     virtual void interpScale(glm::vec3 scale);
 
-    void setAnimations(const std::vector<AnimationSegment>& anims);
-    void playAnimation(const std::string& anim, bool loop);
-    void playRange(unsigned int start, unsigned int end, bool loop);
-    void setPlaying(bool playing, unsigned int offset);
-
     void draw(Renderer& renderer) override;
 
     void cleanup();
     ~DrawableEntity() override;
 
-    AnimationState animState {};
     DrawableEntity* parent = nullptr;
 protected:
     glm::mat4 getModelMatrix();

@@ -21,7 +21,6 @@ public:
     virtual void update(double delta) override;
 
     void setChunk(std::shared_ptr<Chunk> chunk) override;
-    bool setBlock(glm::ivec3 pos, unsigned int block) override;
 
     virtual void blockPlace(const Target &target, PlayerPtr player) override;
     virtual void blockPlaceOrInteract(const Target &target, PlayerPtr player) override;

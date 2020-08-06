@@ -48,7 +48,7 @@ void GuiModel::update(double delta) {
 }
 
 void GuiModel::animate(glm::vec2 range) {
-    entity.playRange(range.x, range.y, true);
+    entity.animation.setAnim(range, 0, true);
 }
 
 void GuiModel::setRotationX(float x) {

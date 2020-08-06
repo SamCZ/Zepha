@@ -7,7 +7,6 @@
 #include <string>
 
 struct AnimationSegment {
-    std::string animationName;
-    unsigned int startFrame;
-    unsigned int endFrame;
+    std::string name;
+    glm::ivec2 range;
 };

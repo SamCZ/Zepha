@@ -23,6 +23,7 @@
 #include "usertype/Dimension.h"
 #include "usertype/ItemStack.h"
 #include "usertype/InventoryList.h"
+#include "usertype/AnimationManager.h"
 
 // Modules
 #include "modules/Time.h"
@@ -101,6 +102,7 @@ void ServerLuaParser::loadApi(WorldPtr world) {
     Api::Usertype::ItemStack::bind(Api::State::SERVER, lua, core);
     Api::Usertype::ServerPlayer::bind(Api::State::SERVER, lua, core);
     Api::Usertype::InventoryList::bind(Api::State::SERVER, lua, core);
+    Api::Usertype::AnimationManager::bind(Api::State::SERVER, lua, core);
 
     core["server"] = true;
     core["players"] = lua.create_table();
