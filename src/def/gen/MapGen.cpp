@@ -8,27 +8,28 @@
 
 #include "BiomeDef.h"
 #include "BiomeAtlas.h"
+#include "../Subgame.h"
 #include "MapGenProps.h"
 #include "NoiseSample.h"
 #include "../item/BlockDef.h"
 #include "../DefinitionAtlas.h"
+#include "../../world/Dimension.h"
 #include "../../world/chunk/Chunk.h"
+#include "../../game/scene/world/World.h"
 #include "../../game/scene/world/Schematic.h"
 
-MapGen::MapGen(DefinitionAtlas& defs, BiomeAtlas& biomes, unsigned int seed) :
-    defs(defs),
-    biomes(biomes),
-    props(seed) {}
+MapGen::MapGen(Subgame& game, World& world, unsigned int seed) :
+    game(game), world(world), props(seed) {}
 
-std::unique_ptr<MapGen::ChunkMap> MapGen::generateChunk(glm::ivec3 pos, unsigned int dimension) {
-    return generateArea(pos, dimension, 1);
+std::unique_ptr<MapGen::CreatedSet> MapGen::generateChunk(unsigned int dim, glm::ivec3 pos) {
+    return generateArea(dim, pos, 1);
 }
 
-std::unique_ptr<MapGen::ChunkMap> MapGen::generateMapBlock(glm::ivec3 pos, unsigned int dimension) {
-    return generateArea(Space::Chunk::world::fromMapBlock(glm::vec3(pos)), dimension, 4);
+std::unique_ptr<MapGen::CreatedSet> MapGen::generateMapBlock(unsigned int dim, glm::ivec3 pos) {
+    return generateArea(dim, Space::Chunk::world::fromMapBlock(glm::vec3(pos)), 4);
 }
 
-std::unique_ptr<MapGen::ChunkMap> MapGen::generateArea(glm::ivec3 origin, unsigned int dimension, unsigned int size) {
+std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::ivec3 origin, unsigned int size) {
 	Job job(origin, size);
 
     // Build Biome Prop Maps
@@ -53,7 +54,7 @@ std::unique_ptr<MapGen::ChunkMap> MapGen::generateArea(glm::ivec3 origin, unsign
         glm::vec3 indPos = { i / (job.size * 16 + 1), 0, i % (job.size * 16 + 1)};
         glm::vec3 queryPos = indPos / 16.f / static_cast<float>(job.size);
 
-        biomeMap[i] = this->biomes.getBiomeAt(job.temperature.get(queryPos),
+        biomeMap[i] = game.getBiomes().getBiomeAt(job.temperature.get(queryPos),
             job.humidity.get(queryPos), job.roughness.get(queryPos)).index;
     }
 
@@ -61,14 +62,14 @@ std::unique_ptr<MapGen::ChunkMap> MapGen::generateArea(glm::ivec3 origin, unsign
 
     job.heightmap.populate([&](glm::vec3 pos) {
         glm::ivec3 blockPos = glm::ivec3(pos * 16.f * static_cast<float>(job.size));
-        auto& biome = biomes.biomeFromId(biomeMap.at(blockPos.x * (job.size * 16 + 1) + blockPos.z));
+        auto& biome = game.getBiomes().biomeFromId(biomeMap.at(blockPos.x * (job.size * 16 + 1) + blockPos.z));
         glm::vec3 worldPos = glm::vec3(job.pos) + pos * static_cast<float>(job.size);
         return biome.heightmap[biome.heightmap.size() - 1]->GetValue(worldPos.x, 0, worldPos.z);
     });
 
     job.volume.populate([&](glm::vec3 pos) {
         glm::ivec3 blockPos = glm::ivec3(pos * 16.f * static_cast<float>(job.size));
-        auto& biome = biomes.biomeFromId(biomeMap.at(blockPos.x * (job.size * 16 + 1) + blockPos.z));
+        auto& biome = game.getBiomes().biomeFromId(biomeMap.at(blockPos.x * (job.size * 16 + 1) + blockPos.z));
         glm::vec3 worldPos = glm::vec3(job.pos) + pos * static_cast<float>(job.size);
         return biome.volume[biome.volume.size() - 1]->GetValue(worldPos.x, worldPos.y, worldPos.z);
     });
@@ -94,7 +95,12 @@ std::unique_ptr<MapGen::ChunkMap> MapGen::generateArea(glm::ivec3 origin, unsign
 
 //    generateSunlight(chunks, mbPos);
 
-	return std::move(job.chunks);
+    auto created = std::make_unique<CreatedSet>();
+    for (const auto& chunk : *job.chunks) {
+        created->emplace(chunk.first);
+        world.getDimension(dim)->setChunk(chunk.second);
+    }
+	return std::move(created);
 }
 
 std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDensity(MapGen::Job &job, glm::ivec3 localPos) {
@@ -157,7 +163,7 @@ void MapGen::generateChunkBlocks(Job& job, glm::ivec3 localPos, std::vector<unsi
         glm::ivec3 indPos = Space::Block::fromIndex(i);
 
         unsigned int biomeID = biomeMap[(localPos.x * 16 + indPos.x) * (job.size * 16 + 1) + (localPos.z * 16 + indPos.z)];
-        auto& biome = this->biomes.biomeFromId(biomeID);
+        auto& biome = game.getBiomes().biomeFromId(biomeID);
 
         if (partial && i >= partialNextAt) {
             partialInd++;
@@ -208,11 +214,11 @@ void MapGen::generateChunkStructures(Job& job, glm::ivec3 localPos, std::vector<
                     glm::ivec3 pos = (job.pos + localPos) * 16 + indPos;
 
                     unsigned int biomeID = biomeMap[(localPos.x * 16 + indPos.x) * (job.size * 16 + 1) + (localPos.z * 16 + indPos.z)];
-                    auto& biome = this->biomes.biomeFromId(biomeID);
+                    auto& biome = game.getBiomes().biomeFromId(biomeID);
 
                     auto schematic = biome.schematics.size() > 0 ? biome.schematics[0] : nullptr;
                     if (schematic) {
-                        if (!schematic->processed) schematic->process(defs);
+                        if (!schematic->processed) schematic->process(game.getDefs());
                         for (unsigned int j = 0; j < schematic->length(); j++) {
                             glm::ivec3 off = schematic->getOffset(j);
                             setBlock(job, pos + off - schematic->origin, schematic->blocks[j], chunk);

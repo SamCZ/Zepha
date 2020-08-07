@@ -21,39 +21,39 @@ public:
     static const int THREAD_QUEUE_SIZE = 64;
 
     struct FinishedJob {
-        FinishedJob(glm::ivec4 pos, std::unique_ptr<Packet> packet) : pos(pos), packet(std::move(packet)) {}
+        FinishedJob(glm::ivec3 pos, unsigned int dim, std::unique_ptr<Packet> packet) :
+            pos(pos), dim(dim), packet(std::move(packet)) {}
 
-        glm::ivec4 pos {};
+        glm::ivec3 pos;
+        unsigned int dim;
         std::unique_ptr<Packet> packet;
     };
 
     ServerPacketStream(ServerWorld& world);
 
-    bool queue(glm::ivec4 pos);
+    bool queue(unsigned int dim, glm::ivec3 pos);
     std::unique_ptr<std::vector<std::unique_ptr<FinishedJob>>> update();
 
     ~ServerPacketStream();
 private:
     struct Job {
         bool locked = false;
-
-        glm::ivec4 pos {};
+        glm::ivec3 pos {};
+        unsigned int dim;
         std::unique_ptr<Packet> packet = nullptr;
-        std::shared_ptr<MapBlock> mapBlock = nullptr;
     };
 
     struct Thread {
-        Thread();
-        void exec();
+        Thread(ServerWorld& world);
+        void run();
 
         bool kill = false;
 
         std::vector<Job> jobs = std::vector<Job>(THREAD_QUEUE_SIZE);
 
+        ServerWorld& world;
         std::thread thread;
     };
-
-    ServerWorld& world;
 
     std::vector<Thread> threads;
     std::queue<glm::ivec4> queuedTasks;

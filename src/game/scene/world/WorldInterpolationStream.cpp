@@ -4,14 +4,15 @@
 
 #include "WorldInterpolationStream.h"
 
+#include "LocalWorld.h"
 #include "../../../net/PacketView.h"
 #include "../../../def/LocalSubgame.h"
 #include "../../../world/chunk/Chunk.h"
 #include "../../../def/LocalDefinitionAtlas.h"
 
-WorldInterpolationStream::WorldInterpolationStream(unsigned int seed, SubgamePtr game) {
+WorldInterpolationStream::WorldInterpolationStream(LocalSubgame& game, LocalWorld& world, unsigned int seed) {
     threads.reserve(THREADS);
-    for (int i = 0; i < THREADS; i++) threads.emplace_back(*game.l(), seed);
+    for (int i = 0; i < THREADS; i++) threads.emplace_back(game, world, seed);
 }
 
 void WorldInterpolationStream::queuePacket(std::unique_ptr<PacketView> p) {
@@ -72,11 +73,11 @@ std::unique_ptr<std::vector<std::shared_ptr<Chunk>>> WorldInterpolationStream::u
     return finishedChunks;
 }
 
-WorldInterpolationStream::Thread::Thread(LocalSubgame& game, unsigned int seed) :
-    gen(game.getDefs(), game.getBiomes(), seed),
-    thread(std::bind(&WorldInterpolationStream::Thread::exec, this)) {}
+WorldInterpolationStream::Thread::Thread(LocalSubgame& game, LocalWorld& world, unsigned int seed) :
+    gen(static_cast<Subgame&>(game), static_cast<World&>(world), seed),
+    thread(std::bind(&WorldInterpolationStream::Thread::run, this)) {}
 
-void WorldInterpolationStream::Thread::exec() {
+void WorldInterpolationStream::Thread::run() {
     while (!kill) {
         bool empty = true;
         for (Job& u : jobs) {

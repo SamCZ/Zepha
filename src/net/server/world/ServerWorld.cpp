@@ -61,34 +61,26 @@ ServerWorld::ServerWorld(unsigned int seed, SubgamePtr game, ServerClients& clie
 }
 
 void ServerWorld::init(const std::string& worldDir) {
-    genStream = std::make_unique<ServerGenStream>(seed, game);
+    genStream = std::make_unique<ServerGenStream>(*game.s(), *this, seed);
     packetStream = std::make_unique<ServerPacketStream>(*this);
 //    fileManip = std::make_shared<FileManipulator>("worlds/" + worldDir + "/");
 }
 
 void ServerWorld::update(double delta) {
     World::update(delta);
-
     refs->update();
 
+    unsigned int genCount = 0;
     std::unordered_set<glm::ivec4, Vec::ivec4> updatedChunks {};
-    std::unordered_set<glm::ivec4, Vec::ivec4> generatedMapBlocks {};
 
     auto finishedGen = genStream->update();
     for (auto& data : *finishedGen) {
-        auto dimension = getDimension(data.pos.w);
+        for (const auto& pos : *data.created)
+            updatedChunks.insert(glm::ivec4(pos, data.dim));
 
-        for (const auto& chunk : data.chunks) {
-            generatedMapBlocks.insert(data.pos);
-            updatedChunks.insert(glm::ivec4(chunk->getPos(), data.pos.w));
-            dimension->setChunk(chunk);
-        }
-
-//        auto resend = dimension.calculateEdgeLight(mb.pos);
-//        changed.insert(resend.begin(), resend.end());
-
-        dimension->getMapBlock(glm::ivec3(data.pos))->generated = true;
-        packetStream->queue(data.pos);
+        getDimension(data.dim)->getMapBlock(glm::ivec3(data.pos))->generated = true;
+        packetStream->queue(data.dim, data.pos);
+        genCount++;
     }
 
     auto finishedPackets = packetStream->update();
@@ -97,7 +89,7 @@ void ServerWorld::update(double delta) {
             data->packet->sendTo(player->getPeer(), Packet::Channel::WORLD);
     }
 
-    this->generatedMapBlocks = generatedMapBlocks.size();
+    this->generatedMapBlocks = genCount;
 
 //    for (auto& chunkPos : updatedChunks) {
 //        glm::ivec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunkPos);
@@ -216,7 +208,7 @@ void ServerWorld::generateMapBlocks(ServerPlayer& player) {
 
 bool ServerWorld::generateMapBlock(unsigned int dim, glm::ivec3 pos) {
     auto dimension = getDimension(dim);
-    if(!dimension->getMapBlock(pos) || !dimension->getMapBlock(pos)->generated) return genStream->queue(glm::ivec4(pos, dim));
+    if(!dimension->getMapBlock(pos) || !dimension->getMapBlock(pos)->generated) return genStream->queue(dim, pos);
     return false;
 }
 
@@ -236,7 +228,7 @@ void ServerWorld::sendChunksToPlayer(ServerPlayer& client) {
             for (int k = bounds.first.z; k < bounds.second.z; k++) {
                 glm::ivec3 pos {i, j, k};
                 if (isInBounds(pos, oldBounds)) continue;
-                packetStream->queue(glm::ivec4(pos, client.getDim()->getInd()));
+                packetStream->queue(client.getDim()->getInd(), pos);
             }
         }
     }

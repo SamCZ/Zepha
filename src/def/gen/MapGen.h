@@ -9,12 +9,15 @@
 #include <memory>
 #include <glm/vec3.hpp>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "MapGenProps.h"
 #include "NoiseSample.h"
 #include "../../util/Vec.h"
 
+class World;
 class Chunk;
+class Subgame;
 class BiomeAtlas;
 class DefinitionAtlas;
 
@@ -24,6 +27,7 @@ public:
     constexpr static unsigned int TERP = 4; // Terrain Map Precision
 
     typedef std::unordered_map<glm::ivec3, std::shared_ptr<Chunk>, Vec::ivec3> ChunkMap;
+    typedef std::unordered_set<glm::ivec3, Vec::ivec3> CreatedSet;
 
     struct Job {
         Job(glm::ivec3 pos, unsigned int size) :
@@ -42,17 +46,12 @@ public:
 
     typedef std::array<float, 4096> ChunkData;
 
-	MapGen(DefinitionAtlas& atlas, BiomeAtlas& biome, unsigned int seed);
+	MapGen(Subgame& game, World& world, unsigned int seed);
 
-    std::unique_ptr<ChunkMap> generateChunk(glm::ivec3 pos, unsigned int dimension);
-    std::unique_ptr<ChunkMap> generateMapBlock(glm::ivec3 pos, unsigned int dimension);
-    std::unique_ptr<ChunkMap> generateArea(glm::ivec3 origin, unsigned int dimension, unsigned int size = 1);
+    std::unique_ptr<CreatedSet> generateChunk(unsigned int dim, glm::ivec3 pos);
+    std::unique_ptr<CreatedSet> generateMapBlock(unsigned int dim, glm::ivec3 pos);
+    std::unique_ptr<CreatedSet> generateArea(unsigned int dim, glm::ivec3 origin, unsigned int size = 1);
 private:
-//    struct SunlightNode {
-//        SunlightNode(unsigned short index, Chunk* chunk) : index(index), chunk(chunk) {};
-//        unsigned short index;
-//        Chunk* chunk;
-//    };
 
     static std::unique_ptr<ChunkData> populateChunkDensity(Job& job, glm::ivec3 localPos);
     static std::unique_ptr<ChunkData> populateChunkDepth(Job& job, std::unique_ptr<ChunkData>& chunkDensity, std::unique_ptr<ChunkData> chunkDensityAbove);
@@ -67,10 +66,9 @@ private:
 //    static bool containsWorldPos(Chunk *chunk, glm::ivec3 pos);
 //    void propogateSunlightNodes(ChunkMap& chunks, std::queue<SunlightNode>& queue);
 
+    MapGenProps props;
 	unsigned int seed = 0;
 
-	DefinitionAtlas& defs;
-	BiomeAtlas& biomes;
-
-    MapGenProps props;
+	Subgame& game;
+	World& world;
 };

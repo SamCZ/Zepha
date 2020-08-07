@@ -10,22 +10,23 @@
 #include "../../../world/chunk/Chunk.h"
 #include "../../../world/ServerDimension.h"
 
-ServerPacketStream::ServerPacketStream(ServerWorld& world) : world(world) {
+ServerPacketStream::ServerPacketStream(ServerWorld& world) {
     threads.reserve(THREADS);
-    for (int i = 0; i < THREADS; i++) threads.emplace_back();
+    for (int i = 0; i < THREADS; i++) threads.emplace_back(world);
 }
 
-bool ServerPacketStream::queue(glm::ivec4 pos) {
-    if (!queuedMap.count(pos)) {
-        queuedTasks.push(pos);
-        queuedMap.insert(pos);
+bool ServerPacketStream::queue(unsigned int dim, glm::ivec3 pos) {
+    auto v4 = glm::ivec4(pos, dim);
+    if (!queuedMap.count(v4)) {
+        queuedTasks.push(v4);
+        queuedMap.insert(v4);
         return true;
     }
     return false;
 }
 
-ServerPacketStream::Thread::Thread() :
-        thread(std::bind(&ServerPacketStream::Thread::exec, this)) {}
+ServerPacketStream::Thread::Thread(ServerWorld& world) :
+    world(world), thread(std::bind(&ServerPacketStream::Thread::run, this)) {}
 
 std::unique_ptr<std::vector<std::unique_ptr<ServerPacketStream::FinishedJob>>> ServerPacketStream::update() {
     auto finished = std::make_unique<std::vector<std::unique_ptr<FinishedJob>>>();
@@ -35,22 +36,15 @@ std::unique_ptr<std::vector<std::unique_ptr<ServerPacketStream::FinishedJob>>> S
             auto& j = t.jobs[i];
             if (j.locked) continue;
 
-            if (j.packet) {
-                finished->emplace_back(std::make_unique<FinishedJob>(j.pos, std::move(j.packet)));
-                j.packet = nullptr;
-                j.mapBlock = nullptr;
-            }
+            if (j.packet) finished->emplace_back(std::make_unique<FinishedJob>(j.pos, j.dim, std::move(j.packet)));
 
             if (!queuedTasks.empty()) {
                 auto pos = queuedTasks.front();
                 queuedMap.erase(pos);
                 queuedTasks.pop();
 
-                auto mapBlock = world.getDimension(pos.w)->getMapBlock(glm::ivec3(pos));
-                if (!mapBlock) continue;
-
-                j.pos = pos;
-                j.mapBlock = mapBlock;
+                j.pos = glm::vec3(pos);
+                j.dim = pos.w;
                 j.locked = true;
             }
         }
@@ -59,17 +53,23 @@ std::unique_ptr<std::vector<std::unique_ptr<ServerPacketStream::FinishedJob>>> S
     return finished;
 }
 
-void ServerPacketStream::Thread::exec() {
+void ServerPacketStream::Thread::run() {
     while (!kill) {
         bool empty = true;
         for (Job& j : jobs) {
             if (j.locked) {
                 empty = false;
 
+                auto mapBlock = world.getDimension(j.dim)->getMapBlock(j.pos);
+                if (!mapBlock) {
+                    j.locked = false;
+                    continue;
+                }
+
                 Serializer s {};
                 for (unsigned int i = 0; i < 64; i++) {
-                    auto chunk = j.mapBlock->get(i);
-                    s.append(chunk->serialize());
+                    auto chunk = mapBlock->get(i);
+                    if (chunk) s.append(chunk->serialize());
                 }
 
                 j.packet = std::make_unique<Packet>(Packet::Type::MAPBLOCK);

@@ -22,7 +22,7 @@ class LocalDimension;
 class MeshGenStream {
 public:
     static const int THREADS = 4;
-    static const int THREAD_QUEUE_SIZE = 32;
+    static const int THREAD_QUEUE_SIZE = 16;
 
     explicit MeshGenStream(SubgamePtr game, LocalDimension& dimension);
     ~MeshGenStream();

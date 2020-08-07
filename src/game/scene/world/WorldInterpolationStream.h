@@ -23,7 +23,7 @@ public:
     static const int THREADS = 4;
     static const int THREAD_QUEUE_SIZE = 16;
 
-    WorldInterpolationStream(unsigned int seed, SubgamePtr game);
+    WorldInterpolationStream(LocalSubgame& game, LocalWorld& world, unsigned int seed);
 
     // Queue parsing of packet `p`.
     void queuePacket(std::unique_ptr<PacketView> p);
@@ -53,8 +53,8 @@ private:
     };
 
     struct Thread {
-        explicit Thread(LocalSubgame& game, unsigned int seed);
-        void exec();
+        explicit Thread(LocalSubgame& game, LocalWorld& world, unsigned int seed);
+        void run();
 
         bool kill = false;
 
