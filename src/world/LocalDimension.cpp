@@ -21,8 +21,6 @@ LocalDimension::LocalDimension(SubgamePtr game, LocalWorld& world, const std::st
     Dimension(game, static_cast<World&>(world), identifier, ind), meshGenStream(std::make_shared<MeshGenStream>(game, *this)) {}
 
 void LocalDimension::update(double delta) {
-    Dimension::update(delta);
-
     finishMeshes();
 
     for (auto& entity : localEntities ) entity.entity.l()->update(delta);
@@ -168,8 +166,7 @@ void LocalDimension::removeLocalEntity(Api::Usertype::Entity entity) {
 
 void LocalDimension::serverEntitiesInfo(Deserializer& d) {
     std::string type, a, b;
-
-    unsigned int dim = d.read<unsigned int>();
+    d.read<unsigned int>();
 
     std::shared_ptr<LocalLuaEntity> activeEntity = nullptr;
 
@@ -179,8 +176,7 @@ void LocalDimension::serverEntitiesInfo(Deserializer& d) {
                 unsigned int id = d.read<unsigned int>();
                 if (serverEntityRefs.count(id)) activeEntity = serverEntityRefs.at(id)->entity.l();
                 else {
-                    //TODO BEFORE COMMIT: *oh my god, please don't do this*
-                    auto ent = std::make_shared<LocalLuaEntity>(game, DimensionPtr(std::shared_ptr<LocalDimension>(this, [](LocalDimension*){})));
+                    auto ent = std::make_shared<LocalLuaEntity>(game, world.getDimension(getInd()));
                     auto entity = Api::Usertype::Entity(ent);
                     ent->setId(id);
                     serverEntities.push_back(entity);
@@ -200,8 +196,7 @@ void LocalDimension::serverEntitiesInfo(Deserializer& d) {
 }
 
 void LocalDimension::serverEntitiesRemoved(Deserializer& d) {
-    unsigned int dim = d.read<unsigned int>();
-
+    d.read<unsigned int>();
     while (!d.atEnd()) {
         unsigned int id = d.read<unsigned int>();
         if (!serverEntityRefs.count(id)) continue;

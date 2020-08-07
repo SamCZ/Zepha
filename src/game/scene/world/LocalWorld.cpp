@@ -108,38 +108,3 @@ void LocalWorld::renderEntities(Renderer &renderer) {
     activeDimension->renderEntities(renderer);
     player.l()->draw(renderer);
 }
-
-//void LocalWorld::updateBlockDamages(double delta) {
-//    auto it = crackEntities.cbegin();
-//    while (it != crackEntities.cend()) {
-//        bool deleteMe = false;
-//
-//        auto curr = it++;
-//        auto block = curr->second;
-//
-//        block->time += delta;
-//
-//        if (block->damage >= block->maxHealth) {
-//            //Todo: Lua callback~
-//            setBlock(block->getPos(), DefinitionAtlas::AIR);
-//            setBlockDamage(block->getPos(), 0);
-//            deleteMe = true;
-//        }
-//
-//        if (block->time > 2) {
-//            block->update();
-//            block->addDamage(-1);
-//            block->time = 0;
-//        }
-//
-//        if (block->damage < 0 || block->def.index != getBlock(block->getPos())) {
-//            deleteMe = true;
-//        }
-//
-//        if (deleteMe) {
-//            delete block;
-//            it = crackEntities.erase(curr);
-//        }
-//        else block->update();
-//    }
-//}

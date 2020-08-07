@@ -26,7 +26,7 @@ public:
     std::string getIdentifier() const;
     unsigned int getInd();
 
-    virtual void update(double delta);
+    virtual void update(double delta) = 0;
 
     std::shared_ptr<Region> getRegion(glm::ivec3 regionPosition) const;
     void removeRegion(glm::ivec3 pos);
@@ -53,8 +53,6 @@ public:
     World& getWorld();
 
 protected:
-    virtual void updateBlockDamage(double delta);
-
     // Combine two chunk partials, or a chunk and a chunk partial.
     // If both are partials `b` takes preference, if one is a fully generated chunk the partial takes preference.
     // TODO: Make this more efficient using proper RIE traversal.

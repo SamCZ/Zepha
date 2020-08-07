@@ -22,10 +22,6 @@ unsigned int DimensionBase::getInd() {
     return ind;
 }
 
-void DimensionBase::update(double delta) {
-    updateBlockDamage(delta);
-}
-
 std::shared_ptr<Region> DimensionBase::getRegion(glm::ivec3 regionPosition) const {
     auto l = getReadLock();
     if (!regions.count(regionPosition)) return nullptr;
@@ -144,16 +140,6 @@ SubgamePtr DimensionBase::getGame() {
 
 World& DimensionBase::getWorld() {
     return world;
-}
-
-void DimensionBase::updateBlockDamage(double delta) {
-//    for (auto it = blockDamages.begin(); it != blockDamages.end();) {
-//        if (it->second.curr > it->second.max) {
-//            setBlock(it->first, DefinitionAtlas::AIR);
-//            it = blockDamages.erase(it);
-//        }
-//        else it++;
-//    }
 }
 
 std::shared_ptr<Chunk> DimensionBase::combinePartials(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b) {

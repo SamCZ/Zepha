@@ -19,8 +19,6 @@ ServerDimension::ServerDimension(SubgamePtr game, ServerWorld& world, const std:
     Dimension(game, static_cast<World&>(world), identifier, ind) {}
 
 void ServerDimension::update(double delta) {
-    Dimension::update(delta);
-
     //TODO: Thiss
 //    for (const auto& region : regions) {
 //        for (unsigned short i = 0; i < 64; i++) {

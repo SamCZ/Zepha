@@ -164,8 +164,7 @@ void LocalPlayer::drawMenu(Renderer &renderer) {
 }
 
 //
-// Private uncategorized.
-// TODO: Categorize and optimize.
+// Physics, camera, and player specific functionality.
 //
 
 bool LocalPlayer::getKey(Input& input, LocalPlayer::PlayerControl control) {
