@@ -86,7 +86,9 @@ bool DimensionBase::setBlock(glm::ivec3 pos, unsigned int block) {
     auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
     if (!chunk) return false;
 
-    return chunk->setBlock(Space::Block::relative::toChunk(pos), block);
+    bool manip = chunk->setBlock(Space::Block::relative::toChunk(pos), block);
+    setBlockDamage(pos, 0);
+    return manip;
 }
 
 
