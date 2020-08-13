@@ -84,7 +84,7 @@ void DebugGui::update(std::shared_ptr<LocalPlayer> player, double fps, int /*chu
     auto& onBiomeDef = game->getBiomes().biomeFromId(world.l()->getActiveDimension()->getBiome(glm::floor(player->getPos())));
     auto& targetedBlockDef = game->getDefs().blockFromId(world.l()->getActiveDimension()->getBlock(target.pos));
 
-    { // Top Right Graphs
+    /* Top-right Graphs */ {
         get<GuiLabelledGraph>("fpsGraph")->pushValue(static_cast<float>(fps));
         get<GuiLabelledGraph>("drawsGraph")->pushValue(drawCalls);
 
@@ -97,20 +97,19 @@ void DebugGui::update(std::shared_ptr<LocalPlayer> player, double fps, int /*chu
             (videoMemTotal - videoMemAvail) / static_cast<float>(videoMemTotal) * 100.0)) / 100.0f);
     }
 
-    { // Bottom Right Graphs
+    /* Bottom-right Graphs */ {
         get<GuiLabelledGraph>("meshGraph")->pushValue(world.l()->lastMeshUpdates);
         get<GuiLabelledGraph>("interpGraph")->pushValue(world.l()->mapBlocksInterpolated);
         get<GuiLabelledGraph>("genGraph")->pushValue(static_cast<float>(ssGen));
         get<GuiLabelledGraph>("packetGraph")->pushValue(static_cast<float>(ssPack));
     }
 
-    { // Top-left Data
+    /* Top-left Data */ {
         glm::vec3 playerPos = glm::floor(player->getPos());
         glm::vec3 chunkPos = Space::Chunk::world::fromBlock(playerPos);
         glm::vec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunkPos);
         glm::vec3 regionPos = Space::Region::world::fromChunk(chunkPos);
 
-        // Block Coordinates offset from respective container
         glm::vec3 posOffsetFromChunk  = Space::Block::relative::toChunk(playerPos);
         glm::vec3 posOffsetFromBlock  = Space::Block::relative::toMapBlock(playerPos);
         glm::vec3 posOffsetFromRegion = Space::Block::relative::toRegion(playerPos);
@@ -119,31 +118,32 @@ void DebugGui::update(std::shared_ptr<LocalPlayer> player, double fps, int /*chu
 
         using namespace Util;
 
-        str << "Player: " << vecToString(playerPos);
-        str << " (" << floatVecToString(player->getPos()) << ")" << std::endl << std::endl;
+        str << "Dimension: " << world.l()->getActiveDimension()->getIdentifier()
+            << " [" << world.l()->getActiveDimension()->getInd() << "]" << std::endl << std::endl;
 
-        str << "Chunk: " << vecToString(posOffsetFromChunk) << " [" << vecToString(chunkPos) << "]" << std::endl;
-        str << "MapBlock: " << vecToString(posOffsetFromBlock) << " [" << vecToString(mapBlockPos) << "]" << std::endl;
-        str << "Region: " << vecToString(posOffsetFromRegion) << " [" << vecToString(regionPos) << "]" << std::endl << std::endl;
-
+        str << "Pos: " << vecToString(playerPos) << " (" << floatVecToString(player->getPos()) << ")" << std::endl;
         str << "Vel: " << floatVecToString(player->getVel()) << std::endl;
         str << "Yaw: " << floatToString(player->getYaw()) << ", ";
         str << "Pitch: " << floatToString(player->getPitch()) << std::endl << std::endl;
 
-        str << "Biome: " << onBiomeDef.identifier << " [" << onBiomeDef.index << "]" << std::endl << std::endl;
+        str << "C: " << vecToString(posOffsetFromChunk) << " [" << vecToString(chunkPos) << "]" << std::endl;
+        str << "M: " << vecToString(posOffsetFromBlock) << " [" << vecToString(mapBlockPos) << "]" << std::endl;
+        str << "R: " << vecToString(posOffsetFromRegion) << " [" << vecToString(regionPos) << "]" << std::endl << std::endl;
 
         str << "Texture Slots: " << game.l()->textures.textureSlotsUsed << " / " << game.l()->textures.maxTextureSlots
             << " (" << round(game.l()->textures.textureSlotsUsed / static_cast<float>(game.l()->textures.maxTextureSlots) * 100) << "%)" << std::endl << std::endl;
 
+        str << "Biome: " << onBiomeDef.identifier << " [" << onBiomeDef.index << "]" << std::endl << std::endl;
+
         if (target.type == Target::Type::BLOCK) {
             std::string face =
-                    target.face == EVec::TOP ? "TOP" :
-                    target.face == EVec::BOTTOM ? "BOTTOM" :
-                    target.face == EVec::LEFT ? "LEFT" :
-                    target.face == EVec::RIGHT ? "RIGHT" :
-                    target.face == EVec::FRONT ? "FRONT" :
-                    target.face == EVec::BACK ? "BACK" :
-                    "NONE"   ;
+                target.face == EVec::TOP    ? "TOP"    :
+                target.face == EVec::BOTTOM ? "BOTTOM" :
+                target.face == EVec::LEFT   ? "LEFT"   :
+                target.face == EVec::RIGHT  ? "RIGHT"  :
+                target.face == EVec::FRONT  ? "FRONT"  :
+                target.face == EVec::BACK   ? "BACK"   :
+                                              "NONE"   ;
 
             str << "Pointing At: " << targetedBlockDef.identifier << " [" << targetedBlockDef.index << "]" << std::endl;
             str << "Pointed Position: " << vecToString(target.pos) << std::endl;
@@ -156,7 +156,7 @@ void DebugGui::update(std::shared_ptr<LocalPlayer> player, double fps, int /*chu
         get<GuiText>("dataText")->setText(str.str());
     }
 
-    { // Crosshair Text
+    /* Crosshair Text */ {
         if (target.type == Target::Type::BLOCK) get<GuiText>("crosshairText")->setText(targetedBlockDef.name + " (" +
             targetedBlockDef.identifier + ") [" + std::to_string(targetedBlockDef.index) + "]");
         else get<GuiText>("crosshairText")->setText("");

@@ -1,3 +1,5 @@
+local identifier = "zeus:world:highlands"
+
 -- local woo = "zeus:default:wood"
 -- local lea = "zeus:default:leaves"
 -- local inv = "invalid"
@@ -75,7 +77,7 @@ local noise = {
     }
 }
 
-zepha.register_biome("zeus:world:highlands", {
+zepha.register_biome(identifier, {
     environment = {
         temperature = 0/100,
         humidity = 0/100,
@@ -92,3 +94,5 @@ zepha.register_biome("zeus:world:highlands", {
         shrub
     }
 })
+
+return identifier

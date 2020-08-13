@@ -35,6 +35,10 @@ void AnimationState::update(double delta) {
     }
 }
 
+bool AnimationState::isLooping() {
+    return loop;
+}
+
 void AnimationState::setAnim(const std::string& name, double interp, bool loop) {
     auto& anim = animations[name];
     setAnim(anim.range, interp, loop);
@@ -44,6 +48,10 @@ void AnimationState::setAnim(glm::ivec2 range, double interp, bool loop) {
     this->range = range;
     this->loop = loop;
     currentFrame = range.x;
+}
+
+bool AnimationState::isPlaying() {
+    return playing;
 }
 
 void AnimationState::setPlaying(bool playing) {

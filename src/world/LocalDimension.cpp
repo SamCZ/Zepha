@@ -12,7 +12,6 @@
 #include "../lua/usertype/Player.h"
 #include "../world/chunk/MapBlock.h"
 #include "../game/scene/world/NetField.h"
-#include "../game/entity/LocalLuaEntity.h"
 #include "../game/scene/world/LocalWorld.h"
 #include "../game/scene/world/MeshGenStream.h"
 #include "../game/scene/world/graph/MeshChunk.h"
@@ -164,33 +163,40 @@ void LocalDimension::removeLocalEntity(Api::Usertype::Entity entity) {
     localEntityRefs.erase(id);
 }
 
-void LocalDimension::serverEntitiesInfo(Deserializer& d) {
+void LocalDimension::serverEntitiesInfo(Deserializer& e) {
+    bool boolean;
+    unsigned int x, y;
     std::string type, a, b;
-    d.read<unsigned int>();
 
-    std::shared_ptr<LocalLuaEntity> activeEntity = nullptr;
+    e.read<unsigned int>();
 
-    while (!d.atEnd()) {
-        switch (d.readE<NetField>()) {
-            case NetField::ID: {
-                unsigned int id = d.read<unsigned int>();
-                if (serverEntityRefs.count(id)) activeEntity = serverEntityRefs.at(id)->entity.l();
-                else {
-                    auto ent = std::make_shared<LocalLuaEntity>(game, world.getDimension(getInd()));
-                    auto entity = Api::Usertype::Entity(ent);
-                    ent->setId(id);
-                    serverEntities.push_back(entity);
-                    serverEntityRefs.emplace(id, --serverEntities.end());
-                    activeEntity = ent;
-                }
-                break; }
+    while (!e.atEnd()) {
+        std::string dat = e.read<std::string>();
+        Deserializer d(dat);
 
-            case NetField::POS: activeEntity->setPos(d.read<glm::vec3>()); break;
-            case NetField::VEL: activeEntity->setVel(d.read<glm::vec3>()); break;
-            case NetField::ROT: activeEntity->setRot(d.read<glm::vec3>()); break;
-            case NetField::SCALE: activeEntity->setScale(d.read<glm::vec3>()); break;
-            case NetField::VISUAL_OFF: activeEntity->setVisualOffset(d.read<glm::vec3>()); break;
-            case NetField::DISPLAY: d.read(type).read(a).read(b); activeEntity->setAppearance(type, a, b); break;
+        unsigned int id = d.read<unsigned int>();
+        std::shared_ptr<LocalLuaEntity> activeEntity;
+        if (serverEntityRefs.count(id)) activeEntity = serverEntityRefs.at(id)->entity.l();
+        else {
+            auto ent = std::make_shared<LocalLuaEntity>(game, world.getDimension(getInd()));
+            auto entity = Api::Usertype::Entity(ent);
+            ent->setId(id);
+            serverEntities.push_back(entity);
+            serverEntityRefs.emplace(id, --serverEntities.end());
+            activeEntity = ent;
+        }
+
+        while (!d.atEnd()) {
+            switch (d.readE<NetField>()) {
+                case NetField::POS: activeEntity->setPos(d.read<glm::vec3>()); break;
+                case NetField::VEL: activeEntity->setVel(d.read<glm::vec3>()); break;
+                case NetField::ROT: activeEntity->setRot(d.read<glm::vec3>()); break;
+                case NetField::SCALE: activeEntity->setScale(d.read<glm::vec3>()); break;
+                case NetField::VISUAL_OFF: activeEntity->setVisualOffset(d.read<glm::vec3>()); break;
+                case NetField::ANIM_STATE: d.read(boolean); activeEntity->animation.setPlaying(boolean); break;
+                case NetField::DISPLAY: d.read(type).read(a).read(b); activeEntity->setAppearance(type, a, b); break;
+                case NetField::ANIM_RANGE: d.read(x).read(y).read(boolean); activeEntity->animation.setAnim(glm::ivec2 {x, y}, 10, boolean); break;
+            }
         }
     }
 }

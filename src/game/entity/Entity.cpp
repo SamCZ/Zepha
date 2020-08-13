@@ -91,3 +91,7 @@ void Entity::setDim(DimensionPtr dim) {
 SubgamePtr Entity::getGame() {
     return game;
 }
+
+void Entity::update(double delta) {
+    animation.update(delta);
+}

@@ -5,7 +5,6 @@
 #include "Dimension.h"
 
 #include "../Lua.h"
-#include "../LuaParser.h"
 #include "../../def/gen/BiomeDef.h"
 #include "../../def/item/BlockDef.h"
 #include "../../def/ServerSubgame.h"
@@ -13,6 +12,10 @@
 #include "../../world/ServerDimension.h"
 #include "../../game/entity/LocalLuaEntity.h"
 #include "../../net/server/world/ServerLuaEntity.h"
+
+std::string Api::Usertype::Dimension::get_identifier() {
+    return dim->getIdentifier();
+}
 
 std::string Api::Usertype::Dimension::get_block(glm::ivec3 pos) {
     return dim->getGame()->getDefs().fromId(dim->getBlock(pos)).identifier;
@@ -157,6 +160,9 @@ void Api::Usertype::Dimension::remove_entity_s(sol::this_state s, sol::table ent
 
 void Api::Usertype::Dimension::bind(State state, sol::state &lua, sol::table &core) {
     lua.new_usertype<Dimension>("LocalDimension",
+        "identifier", sol::property(&Dimension::get_identifier),
+        "get_identifier", &Dimension::get_identifier,
+
         "get_block", &Dimension::get_block,
         "set_block", &Dimension::set_block,
         "remove_block", &Dimension::remove_block,

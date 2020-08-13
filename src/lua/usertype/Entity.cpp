@@ -12,6 +12,11 @@
 #include "../../game/scene/world/World.h"
 #include "../../net/server/world/ServerLuaEntity.h"
 
+sol::object Api::Usertype::Entity::get_animation_manager(sol::this_state s) {
+    if (entity.isL()) return sol::make_object(s, std::static_pointer_cast<LocalAnimationManager>(animation));
+    else return sol::make_object(s, std::static_pointer_cast<ServerAnimationManager>(animation));
+}
+
 unsigned int Api::Usertype::Entity::get_id() {
     return entity->getId();
 }
@@ -141,6 +146,6 @@ void Api::Usertype::Entity::bind(State, sol::state &lua, sol::table &core) {
         "scale", sol::property(&Entity::get_scale, &Entity::set_scale),
         "dim", sol::property(&Entity::get_dimension),
 
-        "anims", sol::readonly(&Entity::animation)
+        "anims", sol::property(&Entity::get_animation_manager)
     );
 }

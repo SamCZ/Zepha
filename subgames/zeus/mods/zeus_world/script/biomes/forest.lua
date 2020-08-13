@@ -1,3 +1,5 @@
+local identifier = "zeus:world:forest"
+
 local noise = {
    heightmap = {
        module = "add",
@@ -108,7 +110,7 @@ local tree = zepha.create_structure({
    }
 })
 
-zepha.register_biome("zeus:world:forest", {
+zepha.register_biome(identifier, {
    environment = {
        temperature = 15/100,
        humidity = 80/100,
@@ -125,3 +127,5 @@ zepha.register_biome("zeus:world:forest", {
        tree
    }
 })
+
+return identifier

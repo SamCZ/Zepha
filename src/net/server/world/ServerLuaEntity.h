@@ -17,8 +17,7 @@ class ServerLuaEntity : public LuaEntity {
 public:
     explicit ServerLuaEntity(SubgamePtr game, DimensionPtr dim, unsigned int id) :
         LuaEntity(game, dim), Entity(game, dim) {
-        setId(id);
-    };
+        setId(id); };
 
     virtual void setPos(glm::vec3 position) override;
     virtual void setVel(glm::vec3 vel) override;
@@ -31,8 +30,9 @@ public:
     virtual void setVisualOffset(glm::vec3 vs) override;
 
     void setAppearance(const std::string& dMode, const std::string& argA, const std::string& argB) override;
+    void dirtyField(NetField field);
 
-    std::optional<std::string> serialize();
+    std::string serialize();
 protected:
     std::string dMode = "";
     std::string dArgA = "";

@@ -16,8 +16,8 @@ void Api::Module::Dimension::bind() {
     core.set_function("set_default_dimension", Util::bind_this(this, &Dimension::setDefaultDimension));
 }
 
-void Api::Module::Dimension::createDimension(const std::string& identifier) {
-    world.createDimension(identifier);
+Api::Usertype::Dimension Api::Module::Dimension::createDimension(const std::string& identifier) {
+    return Api::Usertype::Dimension(world.createDimension(identifier));
 }
 
 void Api::Module::Dimension::setDefaultDimension(const std::string& identifier) {
@@ -25,9 +25,13 @@ void Api::Module::Dimension::setDefaultDimension(const std::string& identifier) 
 }
 
 sol::object Api::Module::Dimension::getDefaultDimension(const sol::this_state s) {
-    return sol::make_object(s, Api::Usertype::Dimension(world.getDefaultDimension()));
+    auto dim = world.getDefaultDimension();
+    if (!dim) return sol::nil;
+    return sol::make_object(s, Api::Usertype::Dimension(dim));
 }
 
 sol::object Api::Module::Dimension::getDimension(sol::this_state s, const std::string& identifier) {
-    return sol::make_object(s, Api::Usertype::Dimension(world.getDimension(identifier)));
+    auto dim = world.getDimension(identifier);
+    if (!dim) return sol::nil;
+    return sol::make_object(s, Api::Usertype::Dimension(dim));
 }

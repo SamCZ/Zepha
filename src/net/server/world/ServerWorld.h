@@ -32,6 +32,7 @@ public:
     virtual DimensionPtr getDimension(const std::string& identifier) override;
 
     virtual InventoryRefsPtr getRefs() override;
+    virtual ServerClients& getClients();
 private:
     void changedMapBlocks(ServerPlayer& player);
     static bool isInBounds(glm::ivec3 pos, std::pair<glm::ivec3, glm::ivec3>& bounds);

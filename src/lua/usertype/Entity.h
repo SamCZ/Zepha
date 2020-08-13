@@ -11,14 +11,19 @@
 #include "Dimension.h"
 #include "AnimationManager.h"
 #include "../../util/CovariantPtr.h"
+#include "../../game/entity/LocalLuaEntity.h"
 
 namespace Api::Usertype {
     class Entity : public SubgameUsertype {
     public:
-        Entity(EntityPtr entity) : entity(entity), animation(entity) {}
+        Entity(EntityPtr entity) : entity(entity), animation(entity.isL() ?
+             std::static_pointer_cast<AnimationManager>(std::make_shared<LocalAnimationManager>(entity)) :
+             std::static_pointer_cast<AnimationManager>(std::make_shared<ServerAnimationManager>(entity))) {}
 
         EntityPtr entity;
-        AnimationManager animation;
+        std::shared_ptr<AnimationManager> animation;
+
+        sol::object get_animation_manager(sol::this_state s);
 
         unsigned int get_id();
 

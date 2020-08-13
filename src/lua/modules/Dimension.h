@@ -6,6 +6,8 @@
 
 #include "SubgameModule.h"
 
+#include "../usertype/Dimension.h"
+
 namespace Api::Module {
     class Dimension : public Api::Module::SubgameModule {
     public:
@@ -13,7 +15,7 @@ namespace Api::Module {
         void bind() override;
 
     protected:
-        void createDimension(const std::string& identifier);
+        Api::Usertype::Dimension createDimension(const std::string& identifier);
         sol::object getDimension(sol::this_state s, const std::string& identifier);
 
         sol::object getDefaultDimension(const sol::this_state s);

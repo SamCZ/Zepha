@@ -30,12 +30,9 @@ public:
     void addLuaEntity(Api::Usertype::Entity entity);
     void removeLuaEntity(Api::Usertype::Entity entity);
 
-//    unsigned long long getMapBlockIntegrity(glm::ivec3 mapBlock);
-
     std::list<Api::Usertype::Entity>& getLuaEntities();
     const std::list<unsigned int>& getRemovedEntities() const;
     void clearRemovedEntities();
-
 private:
     typedef std::list<Api::Usertype::Entity>::iterator luaent_ref;
 
@@ -43,6 +40,6 @@ private:
     std::list<Api::Usertype::Entity> luaEntities {};
     std::list<unsigned int> removedEntities {};
 
-//    std::unordered_map<glm::ivec3, unsigned long long, Vec::ivec3> mapBlockIntegrity {};
+    const glm::ivec2 discardRange = {20, 20};
 };
 

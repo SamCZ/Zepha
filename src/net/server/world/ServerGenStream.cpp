@@ -41,7 +41,6 @@ std::unique_ptr<std::vector<ServerGenStream::FinishedJob>> ServerGenStream::upda
                 j.pos = glm::ivec3(pos);
                 j.dim = pos.w;
                 j.locked = true;
-
             }
         }
     }

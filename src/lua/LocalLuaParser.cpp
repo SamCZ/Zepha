@@ -72,7 +72,7 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
     Api::Usertype::ItemStack::bind(Api::State::CLIENT, lua, core);
     Api::Usertype::LocalPlayer::bind(Api::State::CLIENT, lua, core);
     Api::Usertype::InventoryList::bind(Api::State::CLIENT, lua, core);
-    Api::Usertype::AnimationManager::bind(Api::State::CLIENT, lua, core);
+    Api::Usertype::LocalAnimationManager::bind(Api::State::CLIENT, lua, core);
 
     core["client"] = true;
     core["player"] = Api::Usertype::LocalPlayer(player);

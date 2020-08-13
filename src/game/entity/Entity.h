@@ -15,6 +15,8 @@ public:
     Entity() = default;
     Entity(SubgamePtr game, DimensionPtr dim) : game(game), dim(dim) {};
 
+    virtual void update(double delta);
+
     virtual glm::vec3 getPos();
     virtual void setPos(glm::vec3 position);
 

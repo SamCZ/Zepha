@@ -1,3 +1,5 @@
+local identifier = "zeus:world:plains"
+
 local noise = {
    heightmap = {
        module = "add",
@@ -31,7 +33,7 @@ local noise = {
    }
 }
 
-zepha.register_biome("zeus:world:plains", {
+zepha.register_biome(identifier, {
    environment = {
        temperature = 15/100,
        humidity = 60/100,
@@ -42,9 +44,12 @@ zepha.register_biome("zeus:world:plains", {
        soil = "zeus:default:dirt",
        rock = "zeus:default:stone"
    },
+   groups = { natural = 1 },
    biome_tint = "#aaed45",
    noise = noise,
    structures = {
        tree
    }
 })
+
+return identifier

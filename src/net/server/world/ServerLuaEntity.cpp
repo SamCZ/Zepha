@@ -7,6 +7,7 @@
 #include "ServerLuaEntity.h"
 
 #include "../../Serializer.h"
+#include "../../../util/Util.h"
 
 void ServerLuaEntity::setPos(glm::vec3 position) {
     Entity::setPos(position);
@@ -60,18 +61,25 @@ void ServerLuaEntity::setAppearance(const std::string& dMode, const std::string&
     dirtyFields.emplace(NetField::DISPLAY);
 }
 
-std::optional<std::string> ServerLuaEntity::serialize() {
+void ServerLuaEntity::dirtyField(NetField field) {
+    dirtyFields.emplace(field);
+}
+
+std::string ServerLuaEntity::serialize() {
     if (dirtyFields.empty() && !fullSend) return {};
 
     Serializer s;
-    s.append(id);
+    s.append<unsigned int>(id);
 
     if (dirtyFields.count(NetField::POS)        || fullSend) s.appendE(NetField::POS)       .append(pos);
     if (dirtyFields.count(NetField::VEL)        || fullSend) s.appendE(NetField::VEL)       .append(vel);
     if (dirtyFields.count(NetField::SCALE)      || fullSend) s.appendE(NetField::SCALE)     .append(scale);
     if (dirtyFields.count(NetField::ROT)        || fullSend) s.appendE(NetField::ROT)       .append(rot);
     if (dirtyFields.count(NetField::VISUAL_OFF) || fullSend) s.appendE(NetField::VISUAL_OFF).append(visualOff);
+    if (dirtyFields.count(NetField::ANIM_STATE) || fullSend) s.appendE(NetField::ANIM_STATE).append<bool>(animation.isPlaying());
     if (dirtyFields.count(NetField::DISPLAY)    || fullSend) s.appendE(NetField::DISPLAY)   .append(dMode).append(dArgA).append(dArgB);
+    if (dirtyFields.count(NetField::ANIM_RANGE) || fullSend) s.appendE(NetField::ANIM_RANGE)
+        .append<unsigned int>(animation.getBounds().x).append<unsigned int>(animation.getBounds().y).append<bool>(animation.isLooping());
 
     dirtyFields.clear();
     fullSend = false;

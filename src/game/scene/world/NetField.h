@@ -21,6 +21,8 @@ enum class NetField {
     // Entities
     DISPLAY,
     VISUAL_OFF,
+    ANIM_RANGE,
+    ANIM_STATE,
 
     // Players
     LOOK_OFF,

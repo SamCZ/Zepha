@@ -1,3 +1,5 @@
+local identifier = "zeus:world:desert"
+
 local noise = {
     heightmap = {
         module = "add",
@@ -28,7 +30,7 @@ local noise = {
     }
 }
 
-zepha.register_biome("zeus:world:desert", {
+zepha.register_biome(identifier, {
    environment = {
        temperature = 40/100,
        humidity = 20/100,
@@ -42,3 +44,5 @@ zepha.register_biome("zeus:world:desert", {
    biome_tint = "#e6fa61",
    noise = noise
 })
+
+return identifier;

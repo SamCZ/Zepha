@@ -23,9 +23,11 @@ public:
     void setAnimations(const std::vector<AnimationSegment>& anims);
     void defineAnimation(const std::string& name, glm::ivec2 range);
 
+    bool isLooping();
     void setAnim(const std::string& name, double interp, bool loop);
     void setAnim(glm::ivec2 range, double interp, bool loop);
 
+    bool isPlaying();
     void setPlaying(bool playing);
 
     double getFrame();

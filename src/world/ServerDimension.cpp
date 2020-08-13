@@ -11,36 +11,38 @@
 #include "../def/ServerSubgame.h"
 #include "../lua/usertype/Player.h"
 #include "../lua/usertype/Target.h"
-#include "../lua/usertype/ItemStack.h"
 #include "../net/server/conn/ServerPlayer.h"
 #include "../net/server/world/ServerWorld.h"
+#include "../net/server/conn/ServerClients.h"
+#include "../net/server/world/ServerLuaEntity.h"
 
 ServerDimension::ServerDimension(SubgamePtr game, ServerWorld& world, const std::string& identifier, unsigned int ind) :
     Dimension(game, static_cast<World&>(world), identifier, ind) {}
 
 void ServerDimension::update(double delta) {
-    //TODO: Thiss
-//    for (const auto& region : regions) {
-//        for (unsigned short i = 0; i < 64; i++) {
-//            if (region.second->operator[](i) == nullptr) continue;
-//            const auto& mapBlockPos = region.second->operator[](i)->pos;
-//
-//            bool clientNearby = false;
-//            for (auto& player : players) {
-//                if (player->getDimension().getInd() == ind) {
-//                    auto clientPos = Space::MapBlock::world::fromBlock(player->getPos());
-//                    if (abs(clientPos.x - mapBlockPos.x) <= discardRange.x + 1
-//                     && abs(clientPos.y - mapBlockPos.y) <= discardRange.y + 1
-//                     && abs(clientPos.z - mapBlockPos.z) <= discardRange.x + 1) {
-//                        clientNearby = true;
-//                        break;
-//                    }
-//                }
-//            }
-//
-//            if (!clientNearby) region.second->remove(i);
-//        }
-//    }
+    for (auto& entity : luaEntities) entity.entity.s()->update(delta);
+
+    for (const auto& region : regions) {
+        for (unsigned short i = 0; i < 64; i++) {
+            auto mb = region.second->get(i);
+            if (!mb) continue;
+
+            bool clientNearby = false;
+            for (auto& player : static_cast<ServerWorld&>(world).getClients().players) {
+                if (player->getDim()->getInd() == ind) {
+                    auto clientPos = Space::MapBlock::world::fromBlock(player->getPos());
+                    if (abs(clientPos.x - mb->pos.x) <= discardRange.x + 1
+                     && abs(clientPos.y - mb->pos.y) <= discardRange.y + 1
+                     && abs(clientPos.z - mb->pos.z) <= discardRange.x + 1) {
+                        clientNearby = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!clientNearby) region.second->remove(i);
+        }
+    }
 }
 
 double ServerDimension::blockHit(const Target &target, PlayerPtr player) {

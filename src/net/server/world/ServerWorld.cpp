@@ -136,8 +136,8 @@ void ServerWorld::update(double delta) {
         inf.append(ind);
 
         for (auto& entity : dimension->getLuaEntities()) {
-            auto opt = entity.entity.s()->serialize();
-            if (opt) inf.append(*opt);
+            auto str = entity.entity.s()->serialize();
+            if (!str.empty()) inf.append(str);
         }
 
         if (inf.data.size() > 4) {
@@ -184,6 +184,10 @@ DimensionPtr ServerWorld::getDimension(const std::string &identifier) {
 
 InventoryRefsPtr ServerWorld::getRefs() {
     return InventoryRefsPtr(refs);
+}
+
+ServerClients& ServerWorld::getClients() {
+    return clients;
 }
 
 void ServerWorld::changedMapBlocks(ServerPlayer& player) {

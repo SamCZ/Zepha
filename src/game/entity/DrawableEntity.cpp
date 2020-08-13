@@ -27,7 +27,7 @@ void DrawableEntity::setModel(std::shared_ptr<Model> model) {
 }
 
 void DrawableEntity::update(double delta) {
-    animation.update(delta);
+    Entity::update(delta);
 
     float factor = static_cast<float>(fmin(delta * 8, 1));
 

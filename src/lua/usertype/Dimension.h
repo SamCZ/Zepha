@@ -19,6 +19,8 @@ namespace Api::Usertype {
 
         DimensionPtr dim;
 
+        std::string get_identifier();
+
         std::string get_block(glm::ivec3 pos);
         void set_block(glm::ivec3 pos, const std::string& block);
         void remove_block(glm::ivec3 pos);

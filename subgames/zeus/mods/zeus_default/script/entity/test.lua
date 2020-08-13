@@ -7,13 +7,13 @@ zepha.register_entity("zeus:default:test", {
         self.object.anims:define({
             walk = {0, 300}
         })
-        self.object.anims:set_anim("walk"):play()
---         self.object.scale = 1/4
+        self.object.anims:set_anim("walk")
+        self.object.anims:play()
     end,
     on_update = function(self, delta)
---        self.object.pos = self.object.pos +
---            V(0.6 * math.sin(math.rad(self.object.yaw)), 0, 0.6 * math.cos(math.rad(self.object.yaw))) * delta
---        self.object.yaw = self.object.yaw + 50 * delta
+       self.object.pos = self.object.pos +
+           V(0.6 * math.sin(math.rad(self.object.yaw)), 0, 0.6 * math.cos(math.rad(self.object.yaw))) * delta
+       self.object.yaw = self.object.yaw + 50 * delta
     end
 })
 

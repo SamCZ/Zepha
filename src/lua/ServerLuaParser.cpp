@@ -96,13 +96,13 @@ void ServerLuaParser::loadApi(WorldPtr world) {
 
     // Types
     Api::Usertype::Target::bind(Api::State::SERVER, lua, core);
-    Api::Usertype::Entity::bind(Api::State::CLIENT, lua, core);
+    Api::Usertype::Entity::bind(Api::State::SERVER, lua, core);
     Api::Usertype::Inventory::bind(Api::State::SERVER, lua, core);
     Api::Usertype::Dimension::bind(Api::State::SERVER, lua, core);
     Api::Usertype::ItemStack::bind(Api::State::SERVER, lua, core);
     Api::Usertype::ServerPlayer::bind(Api::State::SERVER, lua, core);
     Api::Usertype::InventoryList::bind(Api::State::SERVER, lua, core);
-    Api::Usertype::AnimationManager::bind(Api::State::SERVER, lua, core);
+    Api::Usertype::ServerAnimationManager::bind(Api::State::SERVER, lua, core);
 
     core["server"] = true;
     core["players"] = lua.create_table();

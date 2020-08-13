@@ -1,7 +1,7 @@
 zepha.delayed_functions = {}
 
 function zepha.after(fn, timeout)
-    table.insert(zepha.delayed_functions, {fn = fn, timeout = timeout, at = zepha.time.s()})
+    table.insert(zepha.delayed_functions, {fn = fn, timeout = timeout, at = zepha.time.s() + timeout})
 end
 
 function zepha.__builtin.update_delayed_functions()
