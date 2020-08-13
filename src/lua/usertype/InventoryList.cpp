@@ -4,9 +4,9 @@
 
 #include "InventoryList.h"
 
-#include "../../def/ItemDef.h"
-#include "../../def/DefinitionAtlas.h"
-#include "../../game/inventory/InventoryList.h"
+#include "game/def/ItemDef.h"
+#include "world/inv/InventoryList.h"
+#include "game/atlas/DefinitionAtlas.h"
 
 void Api::Usertype::InventoryList::set_length(int length) {
     list->setLength(length);

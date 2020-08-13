@@ -9,7 +9,7 @@
 #include "SubgameUsertype.h"
 
 #include "Dimension.h"
-#include "../../world/Target.h"
+#include "util/Target.h"
 
 namespace Api::Usertype {
     class Target : public SubgameUsertype {

@@ -8,9 +8,9 @@
 
 #include "ItemStack.h"
 #include "InventoryList.h"
-#include "../../net/server/world/ServerWorld.h"
-#include "../../game/scene/world/LocalWorld.h"
-#include "../../game/scene/world/LocalPlayer.h"
+#include "world/LocalWorld.h"
+#include "world/ServerWorld.h"
+#include "world/player/LocalPlayer.h"
 
 unsigned int Api::Usertype::ServerPlayer::get_id() {
     return player->getId();

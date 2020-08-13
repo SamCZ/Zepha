@@ -10,8 +10,8 @@
 
 #include "Dimension.h"
 #include "AnimationManager.h"
-#include "../../util/CovariantPtr.h"
-#include "../../game/entity/LocalLuaEntity.h"
+#include "util/CovariantPtr.h"
+#include "world/dim/ent/LocalLuaEntity.h"
 
 namespace Api::Usertype {
     class Entity : public SubgameUsertype {

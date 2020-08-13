@@ -10,7 +10,7 @@
 
 #include "Inventory.h"
 #include "Dimension.h"
-#include "../../game/scene/world/LocalPlayer.h"
+#include "world/player/LocalPlayer.h"
 
 class LuaGuiElement;
 

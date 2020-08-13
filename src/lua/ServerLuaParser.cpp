@@ -8,12 +8,12 @@
 #include "ServerLuaParser.h"
 
 #include "ErrorFormatter.h"
-#include "../net/Serializer.h"
+#include "world/ServerWorld.h"
+#include "util/net/Serializer.h"
 #include "register/RegisterItems.h"
 #include "register/RegisterBiomes.h"
 #include "register/RegisterBlocks.h"
-#include "../net/server/conn/ServerPlayer.h"
-#include "../net/server/world/ServerWorld.h"
+#include "world/player/ServerPlayer.h"
 
 // Usertypes
 #include "usertype/Target.h"

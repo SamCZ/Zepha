@@ -10,7 +10,7 @@ void Api::Module::Register::bind() {
 
     // Basic
 
-    createRegisterFn("item");
+    createRegisterFn("mesh");
     createRegisterFn("block");
     createRegisterFn("biome");
     createRegisterFn("blockmodel");

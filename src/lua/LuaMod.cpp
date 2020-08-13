@@ -6,7 +6,7 @@
 
 #include "LuaMod.h"
 
-#include "../net/PacketView.h"
+#include "util/net/PacketView.h"
 
 LuaMod LuaMod::fromPacket(PacketView& p) {
     LuaMod luaMod {};

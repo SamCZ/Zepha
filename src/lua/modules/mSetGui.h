@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "../Lua.h"
-#include "../../game/hud/GuiBuilder.h"
+#include "lua/Lua.h"
+#include "client/gui/GuiBuilder.h"
 
 class LuaGuiElement;
 

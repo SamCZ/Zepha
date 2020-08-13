@@ -11,8 +11,8 @@
 
 #include "ServerModHandler.h"
 
-#include "../net/Serializer.h"
-#include "../def/ServerSubgame.h"
+#include "game/ServerSubgame.h"
+#include "util/net/Serializer.h"
 
 void ServerModHandler::loadMods(ServerSubgame& defs, const std::string &path) {
     auto modDirs = findModDirectories(path);

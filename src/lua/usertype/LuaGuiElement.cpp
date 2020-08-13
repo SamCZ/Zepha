@@ -7,7 +7,7 @@
 
 #include "LuaGuiElement.h"
 
-#include "../../game/hud/SerialGui.h"
+#include "client/gui/SerialGui.h"
 
 std::shared_ptr<LuaGuiElement> LuaGuiElement::create(const std::string& type, sol::table data) {
     auto elem = std::make_shared<LuaGuiElement>();

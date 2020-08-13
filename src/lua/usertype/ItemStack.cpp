@@ -4,11 +4,11 @@
 
 #include "ItemStack.h"
 
-#include "../Lua.h"
-#include "../../def/ItemDef.h"
-#include "../../def/Subgame.h"
-#include "../../def/DefinitionAtlas.h"
-#include "../../game/inventory/ItemStack.h"
+#include "lua/Lua.h"
+#include "game/Subgame.h"
+#include "game/def/ItemDef.h"
+#include "world/inv/ItemStack.h"
+#include "game/atlas/DefinitionAtlas.h"
 
 Api::Usertype::ItemStack::ItemStack(const ::ItemStack& stack, SubgamePtr game) :
     name((stack.count == 0 ? "" : game->getDefs().fromId(stack.id).identifier)),

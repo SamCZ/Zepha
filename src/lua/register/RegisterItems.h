@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include "../Lua.h"
-#include "../../def/LocalSubgame.h"
-#include "../../def/gen/BiomeDef.h"
-#include "../../def/ServerSubgame.h"
-#include "../../def/item/CraftItemDef.h"
-#include "../../def/LocalDefinitionAtlas.h"
-#include "../../def/ServerDefinitionAtlas.h"
+#include "lua/Lua.h"
+#include "game/LocalSubgame.h"
+#include "game/def/BiomeDef.h"
+#include "game/ServerSubgame.h"
+#include "game/def/CraftItemDef.h"
+#include "game/atlas/LocalDefinitionAtlas.h"
+#include "game/atlas/ServerDefinitionAtlas.h"
 
 namespace RegisterItems {
     static void registerItems(sol::table source, DefinitionAtlas& defs, TextureAtlas* atlas) {

@@ -6,8 +6,8 @@
 
 #include "../Lua.h"
 #include "../usertype/Dimension.h"
-#include "../../game/scene/world/LocalWorld.h"
-#include "../../net/server/world/ServerWorld.h"
+#include "world/LocalWorld.h"
+#include "world/ServerWorld.h"
 
 void Api::Module::Dimension::bind() {
     core.set_function("create_dimension", Util::bind_this(this, &Dimension::createDimension));

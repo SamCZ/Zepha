@@ -4,18 +4,18 @@
 
 #pragma once
 
-#include "../Lua.h"
-#include "../Callback.h"
-#include "../../def/ItemDef.h"
-#include "../../def/LocalSubgame.h"
-#include "../../def/ServerSubgame.h"
-#include "../../def/gen/BiomeDef.h"
-#include "../../def/item/BlockDef.h"
-#include "../../def/item/BlockModel.h"
-#include "../../def/item/SelectionBox.h"
-#include "../../def/item/CraftItemDef.h"
-#include "../../def/LocalDefinitionAtlas.h"
-#include "../../def/ServerDefinitionAtlas.h"
+#include "lua/Lua.h"
+#include "lua/Callback.h"
+#include "game/def/ItemDef.h"
+#include "game/LocalSubgame.h"
+#include "game/def/BiomeDef.h"
+#include "game/def/BlockDef.h"
+#include "game/ServerSubgame.h"
+#include "game/def/CraftItemDef.h"
+#include "game/def/mesh/BlockModel.h"
+#include "game/def/mesh/SelectionBox.h"
+#include "game/atlas/LocalDefinitionAtlas.h"
+#include "game/atlas/ServerDefinitionAtlas.h"
 
 namespace RegisterBlocks {
 

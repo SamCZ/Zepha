@@ -4,14 +4,13 @@
 
 #include "Dimension.h"
 
-#include "../Lua.h"
-#include "../../def/gen/BiomeDef.h"
-#include "../../def/item/BlockDef.h"
-#include "../../def/ServerSubgame.h"
-#include "../../world/LocalDimension.h"
-#include "../../world/ServerDimension.h"
-#include "../../game/entity/LocalLuaEntity.h"
-#include "../../net/server/world/ServerLuaEntity.h"
+#include "lua/Lua.h"
+#include "game/def/BiomeDef.h"
+#include "game/def/BlockDef.h"
+#include "game/ServerSubgame.h"
+#include "world/dim/LocalDimension.h"
+#include "world/dim/ServerDimension.h"
+#include "world/dim/ent/ServerLuaEntity.h"
 
 std::string Api::Usertype::Dimension::get_identifier() {
     return dim->getIdentifier();

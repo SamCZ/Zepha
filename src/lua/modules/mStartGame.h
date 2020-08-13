@@ -5,7 +5,7 @@
 #pragma once
 
 #include "../Lua.h"
-#include "../../game/ClientState.h"
+#include "client/ClientState.h"
 
 namespace MenuApi {
     void start_game(ClientState& state, sol::table& core) {

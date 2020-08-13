@@ -5,8 +5,8 @@
 #include "LocalLuaParser.h"
 
 #include "ErrorFormatter.h"
-#include "../game/ClientState.h"
-#include "../game/graph/Renderer.h"
+#include "client/ClientState.h"
+#include "client/graph/Renderer.h"
 #include "register/RegisterItems.h"
 #include "register/RegisterBlocks.h"
 #include "register/RegisterBiomes.h"

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../../game/scene/world/Schematic.h"
+#include "util/Schematic.h"
 
 namespace Api {
     static void create_structure(sol::state& lua, sol::table& core) {

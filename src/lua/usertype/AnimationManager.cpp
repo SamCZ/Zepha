@@ -4,11 +4,10 @@
 
 #include "AnimationManager.h"
 
-#include "../Lua.h"
-#include "../../game/entity/LuaEntity.h"
-#include "../../game/entity/DrawableEntity.h"
-#include "../../game/entity/AnimationSegment.h"
-#include "../../net/server/world/ServerLuaEntity.h"
+#include "lua/Lua.h"
+#include "world/dim/ent/LuaEntity.h"
+#include "world/dim/ent/AnimationSegment.h"
+#include "world/dim/ent/ServerLuaEntity.h"
 
 Api::Usertype::AnimationManager::AnimationManager(EntityPtr entity) : entity(entity) {}
 

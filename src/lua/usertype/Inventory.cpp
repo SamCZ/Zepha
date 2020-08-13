@@ -4,10 +4,9 @@
 
 #include "Inventory.h"
 
-#include "../Lua.h"
-#include "InventoryList.h"
-#include "../../game/inventory/Inventory.h"
-
+#include "lua/Lua.h"
+#include "world/inv/Inventory.h"
+#include "lua/usertype/InventoryList.h"
 
 sol::object Api::Usertype::Inventory::add_list(sol::this_state s, std::string name, int size, int width) {
     inventory->createList(name, size, width);

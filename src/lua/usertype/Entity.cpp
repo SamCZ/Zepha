@@ -4,13 +4,13 @@
 
 #include "Entity.h"
 
-#include "../../world/Dimension.h"
-#include "../../def/LocalSubgame.h"
-#include "../../def/item/BlockDef.h"
-#include "../../def/DefinitionAtlas.h"
-#include "../../def/item/CraftItemDef.h"
-#include "../../game/scene/world/World.h"
-#include "../../net/server/world/ServerLuaEntity.h"
+#include "world/dim/Dimension.h"
+#include "game/LocalSubgame.h"
+#include "game/def/BlockDef.h"
+#include "game/atlas/DefinitionAtlas.h"
+#include "game/def/CraftItemDef.h"
+#include "world/World.h"
+#include "world/dim/ent/ServerLuaEntity.h"
 
 sol::object Api::Usertype::Entity::get_animation_manager(sol::this_state s) {
     if (entity.isL()) return sol::make_object(s, std::static_pointer_cast<LocalAnimationManager>(animation));

@@ -6,7 +6,7 @@
 
 #include "Ray.h"
 
-#include "../game/scene/world/LocalPlayer.h"
+#include "world/player/LocalPlayer.h"
 
 Ray::Ray(glm::vec3 pos, float yawDeg, float pitchDeg) :
     pos(pos),

@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "../Lua.h"
-#include "../../def/LocalSubgame.h"
-#include "../../def/ServerSubgame.h"
-#include "../../def/gen/BiomeDef.h"
+#include "lua/Lua.h"
+#include "game/LocalSubgame.h"
+#include "game/ServerSubgame.h"
+#include "game/def/BiomeDef.h"
 
 namespace RegisterKeybinds {
     static void registerKeybinds(sol::table source, LuaKeybindHandler& keybinds) {

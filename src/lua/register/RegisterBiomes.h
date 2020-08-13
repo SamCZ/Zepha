@@ -8,14 +8,14 @@
 #include <noise/module/add.h>
 #include <noise/module/module.h>
 
-#include "../Lua.h"
-#include "../../util/Util.h"
-#include "../../def/LocalSubgame.h"
-#include "../../def/ServerSubgame.h"
-#include "../../def/gen/BiomeDef.h"
-#include "../../def/item/BlockDef.h"
-#include "../../def/gen/LocalBiomeAtlas.h"
-#include "../../def/gen/ServerBiomeAtlas.h"
+#include "lua/Lua.h"
+#include "util/Util.h"
+#include "game/LocalSubgame.h"
+#include "game/ServerSubgame.h"
+#include "game/def/BiomeDef.h"
+#include "game/def/BlockDef.h"
+#include "game/atlas/LocalBiomeAtlas.h"
+#include "game/atlas/ServerBiomeAtlas.h"
 
 namespace RegisterBiomes {
     static noise::module::Module* parseNoise(std::vector<noise::module::Module*>& modules, sol::table noise) {
