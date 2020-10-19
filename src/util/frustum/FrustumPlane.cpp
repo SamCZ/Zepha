@@ -3,7 +3,6 @@
 //
 
 #define GLM_ENABLE_EXPERIMENTAL
-
 #include <glm/gtx/normal.hpp>
 
 #include "FrustumPlane.h"

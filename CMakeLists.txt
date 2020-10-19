@@ -15,41 +15,35 @@ endif()
 
 set(PROJECT_NAME "Zepha")
 set(MAIN_EXEC_NAME "Zepha")
-set(TEST_EXEC_NAME "ZephaTest")
+# set(TEST_EXEC_NAME "ZephaTest")
 
 project(${PROJECT_NAME})
+
 
 find_path(GLEW_HEADERS GL/glew.h)
 find_path(GLFW_HEADERS GLFW/glfw3.h)
 find_path(LUA_HEADERS lua.hpp
         /usr/include/lua5.1
-        /usr/local/include/lua5.1)
+        /usr/local/include/lua5.1
+        /usr/include/lua5.3
+        /usr/local/include/lua5.3)
 find_path(ASSIMP_HEADERS assimp/Importer.hpp)
 find_path(ENET_HEADERS enet/enet.h)
-#find_path(NOISE_HEADERS libnoise/noise.h)
+find_path(NOISE_HEADERS NAMES libnoise/noise.h libnoise/module/modulebase.h)
 find_path(GLM_HEADERS glm/glm.hpp)
 find_path(PTHREAD_HEADERS pthread.h)
 
-find_library(LUA_LIB NAMES lua lua5.1 PATHS
-        /usr/lib/x86_64-linux-gnu
-        /usr/lib
-        /usr/local/lib)
-
 find_library(ENET_LIB enet)
-find_library(NOISE_LIB NAMES libnoise noise noise-static)
+find_library(NOISE_LIB NAMES libnoise noise)
 
 if (WIN32)
-find_library(PTHREAD_LIB pthreadVC3)
+    find_library(PTHREAD_LIB pthreadVC3)
 else()
-find_library(PTHREAD_LIB pthread)
+    find_library(PTHREAD_LIB pthread)
 endif()
-
-set(SOL_HEADERS lib/header/sol/include)
-set(NOISE_HEADERS lib/static/noise/include)
 
 include_directories(
     ${GLM_HEADERS}
-    ${SOL_HEADERS}
     ${GLEW_HEADERS}
     ${LUA_HEADERS}
     ${ASSIMP_HEADERS}
@@ -61,6 +55,7 @@ include_directories(
     lib/header/cute_files/include
     lib/header/stb_image/include
     lib/header/json/include
+    lib/header/sol/include
 )
 
 add_subdirectory(src)
@@ -77,12 +72,12 @@ target_link_libraries(${MAIN_EXEC_NAME} winmm ws2_32)
 endif()
 
 # Test Build
-add_subdirectory(test)
-add_executable(${TEST_EXEC_NAME} test/Main.cpp)
-target_link_libraries(${TEST_EXEC_NAME} Zepha_Core)
-target_link_libraries(${TEST_EXEC_NAME} Zepha_Test)
+# add_subdirectory(test)
+# add_executable(${TEST_EXEC_NAME} test/Main.cpp)
+# target_link_libraries(${TEST_EXEC_NAME} Zepha_Core)
+# target_link_libraries(${TEST_EXEC_NAME} Zepha_Test)
 
-target_include_directories(${TEST_EXEC_NAME} PRIVATE ${GLFW_HEADERS})
-target_link_libraries(${TEST_EXEC_NAME} ${LUA_LIB})
-target_link_libraries (${TEST_EXEC_NAME} z)
-target_link_libraries(${TEST_EXEC_NAME} ${ENET_LIB})
+# target_include_directories(${TEST_EXEC_NAME} PRIVATE ${GLFW_HEADERS})
+# target_link_libraries(${TEST_EXEC_NAME} ${LUA_LIB})
+# target_link_libraries (${TEST_EXEC_NAME} z)
+# target_link_libraries(${TEST_EXEC_NAME} ${ENET_LIB})
