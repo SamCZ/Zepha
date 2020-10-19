@@ -1,36 +1,36 @@
 # Linux Building Manual
 
-## Guide for Debian 10 (and or apt[-get] based systems)
+## Guide for Debian 10 (and or apt\[-get\] based systems)
 
-### Install Dependancies:
+### Install Dependancies
 
 `sudo apt install freeglut3-dev liblua5.3-dev libnoise-dev libglm-dev libglew-dev libglfw3-dev libenet-dev libassimp-dev zlib1g-dev`
 
-### Configure CMake:
+### Configure CMake
 `cmake .`
 
-### Build it:
+### Build it
 `time make -j<number of cpu threads>` 
 
-##  General Instructions
+## General Instructions
 
-### Executing The Client:
+### Executing The Client
 `./Zepha`
 
-### Executing The Server With Specified Subgame:
+### Executing The Server With Specified Subgame
 `./Zepha --mode=server --subgame=subgame_name`
 
 Have fun.
 
-## Copy and Paste Template For UNIX-like systems:
+## Copy and Paste Template For UNIX-like systems
 
 ```
 ## Guide for Your Distro/Package Manager Here:
 
-### Install Dependancies:
+### Install Dependancies
 `sudo ??? ?? ?? ?? ??`
 
-### Configure CMake:
+### Configure CMake
 `cmake .`
 
 ### Build It:
