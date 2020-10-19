@@ -1,6 +1,5 @@
 # Linux Building Manual
 
-# 
 ## Guide for Debian 10 (and or apt[-get] based systems)
 
 ### Install Dependancies:
@@ -11,32 +10,29 @@
 `cmake .`
 
 ### Build it:
-`time make -j<number of cpu threads>`
-# 
+`time make -j<number of cpu threads>` 
 
-# General Instructions
+##  General Instructions
 
-## Executing The Client:
+### Executing The Client:
 `./Zepha`
 
-## Executing The Server With Specified Subgame:
+### Executing The Server With Specified Subgame:
 `./Zepha --mode=server --subgame=subgame_name`
 
 Have fun.
 
-# Copy and Paste Template For UNIX-like systems:
+## Copy and Paste Template For UNIX-like systems:
 
 ```
-# 
-# Guide for Your Distro/Package Manager Here:
+## Guide for Your Distro/Package Manager Here:
 
-## Install Dependancies:
+### Install Dependancies:
 `sudo ??? ?? ?? ?? ??`
 
-## Configure CMake:
+### Configure CMake:
 `cmake .`
 
-## Build It:
+### Build It:
 `time make -j<number of cpu threads>`
-# 
 ```
