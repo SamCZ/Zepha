@@ -4,7 +4,7 @@
 
 ## Install Dependancies:
 
-`sudo apt install freeglut3-dev liblua5.3-dev libnoise-dev libglm-dev libglew-dev libglfw3-dev libenet-dev libassimp-dev`
+`sudo apt install freeglut3-dev liblua5.3-dev libnoise-dev libglm-dev libglew-dev libglfw3-dev libenet-dev libassimp-dev zlib1g-dev`
 
 ## Configure CMake:
 `cmake .`
