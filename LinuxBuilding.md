@@ -1,5 +1,6 @@
 # Linux Building Manual
 
+# 
 ## Guide for Debian 10 (and or apt[-get] based systems)
 
 ### Install Dependancies:
@@ -11,16 +12,7 @@
 
 ### Build it:
 `time make -j<number of cpu threads>`
-
-## Guide for Your Distro/Package Manager Here:
-### Install Dependancies:
-`sudo ??? ?? ?? ?? ??`
-
-### Configure CMake:
-`cmake .`
-
-### Build It:
-`time make -j<number of cpu threads>`
+# 
 
 # General Instructions
 
@@ -35,6 +27,7 @@ Have fun.
 # Copy and Paste Template For UNIX-like systems:
 
 ```
+# 
 # Guide for Your Distro/Package Manager Here:
 
 ## Install Dependancies:
@@ -45,4 +38,5 @@ Have fun.
 
 ## Build It:
 `time make -j<number of cpu threads>`
+# 
 ```
