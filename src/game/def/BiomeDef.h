@@ -10,7 +10,7 @@
 #include <vector>
 #include <memory>
 #include <glm/glm.hpp>
-#include <noise/module/modulebase.h>
+#include <libnoise/module/modulebase.h>
 
 class Schematic;
 

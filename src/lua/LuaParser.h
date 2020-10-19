@@ -40,4 +40,3 @@ public:
     
     std::vector<std::unique_ptr<Api::Module::BaseModule>> modules;
 };
-

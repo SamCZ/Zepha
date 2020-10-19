@@ -5,7 +5,7 @@
 #pragma once
 
 #include <vector>
-#include <noise/noise.h>
+#include <libnoise/noise.h>
 
 #include "Shader.h"
 
