@@ -50,12 +50,12 @@ include_directories(
     ${ENET_HEADERS}
     ${NOISE_HEADERS}
     ${PTHREAD_HEADERS}
-    lib/header/catch2/include
-    lib/header/gzip/include
-    lib/header/cute_files/include
-    lib/header/stb_image/include
-    lib/header/json/include
-    lib/header/sol/include
+    lib/catch2/include
+    lib/gzip/include
+    lib/cute_files/include
+    lib/stb_image/include
+    lib/json/include
+    lib/sol/include
 )
 
 add_subdirectory(src)
@@ -63,8 +63,63 @@ add_executable(${MAIN_EXEC_NAME} src/Main.cpp)
 target_link_libraries(${MAIN_EXEC_NAME} Zepha_Core)
 
 target_include_directories(${MAIN_EXEC_NAME} PRIVATE ${GLFW_HEADERS})
-# Load Libraries
-include(${CMAKE_CURRENT_SOURCE_DIR}/LoadLibs.cmake)
+
+# Enet
+target_link_libraries(${MAIN_EXEC_NAME} ${ENET_LIB})
+
+# Find and Link OpenGL
+find_package(OpenGL REQUIRED)
+find_package(GLUT REQUIRED)
+
+target_link_libraries(${MAIN_EXEC_NAME} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
+
+# Build GLFW
+if (WIN32)
+    find_library(GLFW_LIB glfw3dll)
+else()
+    find_library(GLFW_LIB NAMES GLFW glfw glfw3)
+endif()
+target_link_libraries(${MAIN_EXEC_NAME} ${GLFW_LIB})
+
+# Link GLEW
+if (WIN32)
+    find_library(GLEW_LIB glew32)
+else()
+    find_library(GLEW_LIB NAMES GLEW glew3)
+endif()
+target_link_libraries(${MAIN_EXEC_NAME} ${GLEW_LIB})
+
+# Build and Link Assimp
+
+if (WIN32)
+    find_library(ASSIMP_LIB assimp-vc142-mt)
+else()
+    set(BUILD_SHARED_LIBS OFF)
+    set(ASSIMP_NO_EXPORT ON)
+    set(ASSIMP_BUILD_TESTS OFF)
+    set(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
+
+    set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF)
+    set(ASSIMP_BUILD_B3D_IMPORTER ON)
+    set(ASSIMP_BUILD_X3D_IMPORTER ON) # Doesn't compile if not defined
+
+    add_subdirectory(lib/assimp)
+    target_compile_options(assimp PRIVATE -w)
+    target_link_libraries(${MAIN_EXEC_NAME} assimp)
+endif()
+
+# Link Lua 5.3.5
+find_library(LUA_LIB NAMES lua lua5.1 lua5.3)
+target_link_libraries(${MAIN_EXEC_NAME} ${LUA_LIB})
+
+# Link Noise
+target_link_libraries(${MAIN_EXEC_NAME} ${NOISE_LIB})
+
+# Link PThread Dynamically
+target_link_libraries (${MAIN_EXEC_NAME} ${PTHREAD_LIB})
+
+# Link Z Dynamically
+target_link_libraries (${MAIN_EXEC_NAME} z)
 
 # Fix Win32 networking
 if(WIN32)
