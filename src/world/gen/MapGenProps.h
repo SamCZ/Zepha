@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <noise/noise.h>
+#include <libnoise/noise.h>
 
 class MapGenProps {
 public:

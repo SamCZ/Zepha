@@ -2,7 +2,7 @@
 // Created by aurailus on 27/03/19.
 //
 
-#include <noise/noise.h>
+#include <libnoise/noise.h>
 
 #include "MeshGenStream.h"
 

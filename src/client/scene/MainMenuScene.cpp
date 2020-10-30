@@ -120,7 +120,7 @@ MainMenuScene::MainMenuScene(ClientState& state) :
 }
 
 void MainMenuScene::findSubgames() {
-    std::string subgamesPath = state.path + "subgames";
+    std::string subgamesPath = state.path + "../subgames";
 
     cf_dir_t subgamesDir;
     cf_dir_open(&subgamesDir, subgamesPath.data());

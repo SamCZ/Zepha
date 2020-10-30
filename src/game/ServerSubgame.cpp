@@ -9,7 +9,7 @@
 #include "server/ServerClients.h"
 
 ServerSubgame::ServerSubgame(const std::string& subgame, unsigned int seed) :
-    subgamePath("subgames/" + subgame + "/"),
+    subgamePath("../subgames/" + subgame + "/"),
 
     defs(std::make_unique<ServerDefinitionAtlas>()),
     biomes(std::make_unique<ServerBiomeAtlas>(seed)),

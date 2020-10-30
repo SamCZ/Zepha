@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include <noise/module/modulebase.h>
-#include <noise/module/add.h>
-#include <noise/module/module.h>
+#include <libnoise/module/modulebase.h>
+#include <libnoise/module/add.h>
+#include <libnoise/module/module.h>
 
 #include "lua/Lua.h"
 #include "util/Util.h"
