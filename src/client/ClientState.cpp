@@ -13,5 +13,5 @@ ClientState::ClientState(const std::string& path, Renderer& renderer) :
 ClientState::ClientState(const std::string &path, Renderer &renderer) :
         path(path),
         renderer(renderer),
-        game(path + "/assets/textures") {}
+        game(path + "../assets/textures") {}
 #endif

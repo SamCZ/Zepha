@@ -11,6 +11,7 @@ void Api::Module::Register::bind() {
     // Basic
 
     createRegisterFn("mesh");
+    createRegisterFn("item");
     createRegisterFn("block");
     createRegisterFn("biome");
     createRegisterFn("blockmodel");

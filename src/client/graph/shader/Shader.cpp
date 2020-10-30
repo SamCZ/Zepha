@@ -22,6 +22,7 @@ void Shader::createFromFile(const std::string& vertexFile, const std::string& fr
 
 std::string Shader::readFile(const std::string& fileLocation) {
     std::string contents;
+
     std::ifstream fileStream(fileLocation, std::ios::in);
 
     if (!fileStream.is_open()) throw std::runtime_error("Failed to open shader file " + fileLocation + ".");

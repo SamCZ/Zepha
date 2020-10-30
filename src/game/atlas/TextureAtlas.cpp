@@ -158,8 +158,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::operator[](const std::string &name) {
     std::shared_ptr<AtlasRef> gen = generateTexture(name);
     if (gen) return gen;
 
-    throw std::runtime_error("Invalid texture name " + name + ".");
-    return textures["_missing"];
+    throw std::runtime_error("Invalid texture: '" + name + "'");
 }
 
 std::shared_ptr<AtlasRef> TextureAtlas::generateTexture(std::string req) {

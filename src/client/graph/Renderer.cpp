@@ -20,14 +20,14 @@ Renderer::Renderer(glm::ivec2 win) :
 
     camera.create(window.getSize().x, window.getSize().y, glm::vec3(0, 1, 0));
 
-    ssao.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoCalc.fs");
-    blur.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/ssaoBlur.fs");
-    light.createFromFile("./assets/shader/post/passThrough.vs", "./assets/shader/post/deferredLighting.fs");
-    world.createFromFile("./assets/shader/world/world.vs", "./assets/shader/world/world.fs", "./assets/shader/world/world.gs");
-    entity.createFromFile("./assets/shader/world/entity.vs", "./assets/shader/world/entity.fs");
+    ssao.createFromFile("../assets/shader/post/passThrough.vs", "../assets/shader/post/ssaoCalc.fs");
+    blur.createFromFile("../assets/shader/post/passThrough.vs", "../assets/shader/post/ssaoBlur.fs");
+    light.createFromFile("../assets/shader/post/passThrough.vs", "../assets/shader/post/deferredLighting.fs");
+    world.createFromFile("../assets/shader/world/world.vs", "../assets/shader/world/world.fs", "../assets/shader/world/world.gs");
+    entity.createFromFile("../assets/shader/world/entity.vs", "../assets/shader/world/entity.fs");
 
     guiShader = Shader();
-    guiShader.createFromFile("./assets/shader/ortho/hud.vs", "./assets/shader/ortho/hud.fs");
+    guiShader.createFromFile("../assets/shader/ortho/hud.vs", "../assets/shader/ortho/hud.fs");
 
     gu.matrix     = camera.getOrthographicMatrix();
     gu.ortho      = guiShader.get("ortho");
