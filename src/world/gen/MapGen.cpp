@@ -99,6 +99,7 @@ std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::
         created->emplace(chunk.first);
         world.getDimension(dim)->setChunk(chunk.second);
     }
+
 	return std::move(created);
 }
 

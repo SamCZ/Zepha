@@ -28,6 +28,7 @@ public:
         this->id = id;
     }
 
+    virtual void setDim(DimensionPtr dim, bool assert = false);
     virtual void setPos(glm::vec3 pos, bool assert = false);
     virtual void setVel(glm::vec3 vel, bool assert = false);
 

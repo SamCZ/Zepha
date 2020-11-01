@@ -50,6 +50,8 @@ void LocalPlayer::assertField(Packet packet) {
 void LocalPlayer::handleAssertion(Deserializer &d) {
     while (!d.atEnd()) {
         switch (d.readE<NetField>()) {
+            default: std::cout << "Invalid assertion." << std::endl; break;
+
             case NetField::ID: setId(d.read<unsigned int>()); break;
             case NetField::POS: setPos(d.read<glm::vec3>()); break;
             case NetField::VEL: setVel(d.read<glm::vec3>()); break;

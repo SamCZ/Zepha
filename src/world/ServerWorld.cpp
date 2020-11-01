@@ -78,7 +78,10 @@ void ServerWorld::update(double delta) {
         for (const auto& pos : *data.created)
             updatedChunks.insert(glm::ivec4(pos, data.dim));
 
-        getDimension(data.dim)->getMapBlock(glm::ivec3(data.pos))->generated = true;
+        // Mapblock might have been pruned in between generation assignment and now.
+        auto mb = getDimension(data.dim)->getMapBlock(glm::ivec3(data.pos));
+        if (mb) mb->generated = true;
+
         packetStream->queue(data.dim, data.pos);
         genCount++;
     }
@@ -202,9 +205,7 @@ void ServerWorld::generateMapBlocks(ServerPlayer& player) {
 
     for (const auto &c : generateOrder) {
         glm::ivec3 mapBlockPos = playerMapBlock + c;
-        auto existing = player.getDim()->getMapBlock(mapBlockPos);
-        if (existing && existing->generated) continue;
-        else generating += generateMapBlock(player.getDim()->getInd(), mapBlockPos);
+        generating += generateMapBlock(player.getDim()->getInd(), mapBlockPos);
     }
 
     std::cout << "Player moved, generating " << generating << " MapBlocks." << std::endl;

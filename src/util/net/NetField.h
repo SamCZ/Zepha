@@ -14,6 +14,8 @@
 enum class NetField {
     // General
     ID,
+
+    DIM,
     POS,
     VEL,
     ROT,

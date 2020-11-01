@@ -23,6 +23,8 @@ void ServerPlayer::assertField(Packet packet) {
 void ServerPlayer::handleAssertion(Deserializer &d) {
     while (!d.atEnd()) {
         switch (d.readE<NetField>()) {
+            default: std::cout << "Invalid assertion." << std::endl; break;
+
             case NetField::POS:         setPos(d.read<glm::vec3>()); break;
             case NetField::VEL:         setVel(d.read<glm::vec3>()); break;
             case NetField::LOOK_YAW:    setPitch(d.read<float>());   break;

@@ -29,8 +29,8 @@ if zepha.server then
     zepha.bind("new_player", function(player)
         local hw = player:get_inventory():get_list("hot_wheel_1")
         hw:add_stack({"zeus:default:dirt", 32})
-        hw:add_stack({"@aurailus:crazyblocks:stacker", 1})
-        hw:add_stack({"@aurailus:crazyblocks:inventory", 1})
+--         hw:add_stack({"@aurailus:crazyblocks:stacker", 1})
+--         hw:add_stack({"@aurailus:crazyblocks:inventory", 1})
         hw:add_stack({"@aurailus:crazyblocks:box", 1})
     end)
 end
