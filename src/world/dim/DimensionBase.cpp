@@ -23,7 +23,9 @@ unsigned int DimensionBase::getInd() {
 }
 
 std::shared_ptr<Region> DimensionBase::getRegion(glm::ivec3 regionPosition) const {
+//    std::cout << "region start" << std::endl;
     auto l = getReadLock();
+//    std::cout << "region mid" << std::endl;
     if (!regions.count(regionPosition)) return nullptr;
     return regions.at(regionPosition);
 }

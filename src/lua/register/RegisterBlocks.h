@@ -271,6 +271,7 @@ namespace RegisterBlocks {
             auto nameOpt = blockTable.get<sol::optional<std::string>>("name");
             if (!nameOpt) throw std::runtime_error(identifier + " is missing name property!");
 
+            bool culls = blockTable.get_or("culls", true);
             bool solid = blockTable.get_or("solid", true);
             bool lightPropagates = blockTable.get_or("light_propagates", false);
             auto maxStack = blockTable.get_or("stack", 64);
@@ -314,6 +315,7 @@ namespace RegisterBlocks {
             def->name = *nameOpt;
             def->index = defs.size();
 
+            def->culls = culls;
             def->solid = solid;
             def->lightSource = lightSource;
             def->lightPropagates = lightPropagates;

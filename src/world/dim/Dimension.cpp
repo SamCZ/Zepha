@@ -27,6 +27,7 @@ bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {
     if (newLight.x + newLight.y + newLight.z != 0) addBlockLight(pos, newLight);
 
     if (def.lightPropagates) reflowLight(pos);
+
     if (!def.lightPropagates && getLight(pos, chunk.get()).w != 0) removeSunlight(pos);
 
     propogateRemoveNodes();
@@ -67,14 +68,15 @@ unsigned int Dimension::nextEntityInd() {
 //}
 
 std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
-    auto l = getWriteLock();
-
-    //TODO: Test if I need to do additional locking here (or shared ptring)
     std::unordered_set<glm::ivec3, Vec::ivec3> chunksUpdated {};
 
-    for (unsigned int channel = 0; channel < lightAddQueue.size(); channel++) {
-        while (!lightAddQueue[channel].empty()) {
-            LightAddNode& node = lightAddQueue[channel].front();
+    for (unsigned int channel = 0; channel < 4; channel++) {
+        while (true) {
+            auto l = getWriteLock();
+            if (lightAddQueue[channel].empty()) break;
+            LightAddNode node = lightAddQueue[channel].front();
+            lightAddQueue[channel].pop();
+            l.unlock();
 
             Chunk* chunk = node.chunk;
             if (!chunksUpdated.count(chunk->getPos())) chunksUpdated.insert(chunk->getPos());
@@ -100,11 +102,12 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
                 if (game->getDefs().blockFromId(chunk->getBlock(ind)).lightPropagates && (sunDown || chunk->getLight(ind, channel) + 2 <= lightLevel)) {
                     int subtract = sunDown ? 0 : 1;
                     chunk->setLight(ind, channel, lightLevel - subtract);
+
+                    auto l = getWriteLock();
                     lightAddQueue[channel].emplace(ind, chunk);
+                    l.unlock();
                 }
             }
-
-            lightAddQueue[channel].pop();
         }
     }
 
@@ -112,13 +115,16 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
 }
 
 std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
-    auto l = getWriteLock();
-
     std::unordered_set<glm::ivec3, Vec::ivec3> chunksUpdated {};
 
-    for (unsigned int channel = 0; channel < lightRemoveQueue.size(); channel++) {
-        while (!lightRemoveQueue[channel].empty()) {
-            LightRemoveNode& node = lightRemoveQueue[channel].front();
+    for (unsigned int channel = 0; channel < 4; channel++) {
+        while (true) {
+            auto l = getWriteLock();
+            if (lightRemoveQueue[channel].empty()) break;
+            LightRemoveNode node = lightRemoveQueue[channel].front();
+            lightRemoveQueue[channel].pop();
+            l.unlock();
+
             glm::ivec3 worldPos = node.chunk->getPos() * 16 + Space::Block::fromIndex(node.index);
 
             for (const auto& i : Vec::TO_VEC) {
@@ -141,21 +147,22 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
                         game->getDefs().blockFromId(chunk->getBlock(Space::Block::index(check))).lightSource[channel]);
                     chunk->setLight(ind, channel, replaceLight);
 
+                    auto l = getWriteLock();
                     if (replaceLight) lightAddQueue[channel].emplace(ind, chunk);
                     lightRemoveQueue[channel].emplace(ind, checkLight, chunk);
+                    l.unlock();
                 }
                 else if (checkLight >= node.value) {
                     auto chunk = containsWorldPos(node.chunk, check) ? node.chunk : getChunk(Space::Chunk::world::fromBlock(check)).get();
                     if (!chunk) continue;
+
+                    auto l = getWriteLock();
                     lightAddQueue[channel].emplace(ind, chunk);
+                    l.unlock();
                 }
             }
-
-            lightRemoveQueue[channel].pop();
         }
     }
-
-    l.unlock();
 
     auto otherChunksUpdated = propogateAddNodes();
     chunksUpdated.insert(otherChunksUpdated.begin(), otherChunksUpdated.end());
