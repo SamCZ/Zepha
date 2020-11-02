@@ -35,7 +35,7 @@
 ServerLuaParser::ServerLuaParser(ServerSubgame& game) : LuaParser(game) {}
 
 void ServerLuaParser::init(WorldPtr world, const std::string& path) {
-    lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
+    lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table, sol::lib::debug);
 
     loadApi(world);
     handler.loadMods(static_cast<ServerSubgame&>(game), path + "mods");

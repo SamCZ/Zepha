@@ -34,7 +34,7 @@
 LocalLuaParser::LocalLuaParser(LocalSubgame& game): LuaParser(game), keybinds(this) {}
 
 void LocalLuaParser::init(WorldPtr world, PlayerPtr player, ClientState& state) {
-    lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
+    lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table, sol::lib::debug);
 
     loadApi(world, player);
     handler.executeMods(Util::bind_this(this, &LocalLuaParser::runFileSandboxed));

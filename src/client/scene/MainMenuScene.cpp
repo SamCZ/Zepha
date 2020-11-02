@@ -170,8 +170,8 @@ void MainMenuScene::findSubgames() {
 
             subgames.push_back({icon, {name, description, version}, subgameFolder.path});
         }
-        catch(const std::string& e) {
-            std::cout << Log::err << "Encountered an error while loading subgames:\n\t" << e << Log::endl;
+        catch(const std::runtime_error e) {
+            std::cout << Log::err << "Encountered an error while loading subgames:\n\t" << e.what() << Log::endl;
         }
 
         cf_dir_next(&subgamesDir);

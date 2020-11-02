@@ -1,4 +1,6 @@
 -- Load Libraries
+runfile(_PATH .. "modules/fenv")
+
 runfile(_PATH .. "modules/gui")
 runfile(_PATH .. "modules/dump")
 runfile(_PATH .. "modules/math")

@@ -19,12 +19,9 @@ set(MAIN_EXEC_NAME "Zepha")
 
 project(${PROJECT_NAME})
 
-
 find_path(GLEW_HEADERS GL/glew.h)
 find_path(GLFW_HEADERS GLFW/glfw3.h)
 find_path(LUA_HEADERS lua.hpp
-        /usr/include/lua5.1
-        /usr/local/include/lua5.1
         /usr/include/lua5.3
         /usr/local/include/lua5.3)
 find_path(ASSIMP_HEADERS assimp/Importer.hpp)
@@ -109,7 +106,7 @@ else()
 endif()
 
 # Link Lua 5.3.5
-find_library(LUA_LIB NAMES lua lua5.1 lua5.3)
+find_library(LUA_LIB NAMES lua lua5.3)
 target_link_libraries(${MAIN_EXEC_NAME} ${LUA_LIB})
 
 # Link Noise

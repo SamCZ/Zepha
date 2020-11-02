@@ -31,7 +31,7 @@ void MenuSandbox::reset() {
     core = {};
     mod = {};
     lua = sol::state {};
-    lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table);
+    lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table, sol::lib::debug);
 
     loadApi();
 }
