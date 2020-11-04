@@ -22,7 +22,6 @@ Address Address::fromString(const std::string &addressString) {
 
     size_t sep = addressString.find(':');
     if (sep == std::string::npos) {
-        address = address;
         port = Address::DEFAULT_PORT;
     }
     else {
