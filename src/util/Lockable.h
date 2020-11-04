@@ -6,20 +6,20 @@
 
 #include <shared_mutex>
 
-using MutexType = std::shared_timed_mutex;
-using ReadLock  = std::shared_lock<MutexType>;
-using WriteLock = std::unique_lock<MutexType>;
+using mutex_type = std::shared_timed_mutex;
+using read_lock  = std::shared_lock<mutex_type>;
+using write_lock = std::unique_lock<mutex_type>;
 
 class Lockable {
 public:
-    ReadLock getReadLock() const {
-        return ReadLock {const_cast<MutexType&>(mutex)};
+    read_lock getReadLock() const {
+        return read_lock {const_cast<mutex_type&>(mutex)};
     };
 
-    WriteLock getWriteLock() {
-        return WriteLock {mutex};
+    write_lock getWriteLock() {
+        return write_lock {mutex};
     };
 
 private:
-    MutexType mutex;
+    mutex_type mutex;
 };

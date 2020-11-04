@@ -36,7 +36,7 @@ bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {
 }
 
 unsigned int Dimension::nextEntityInd() {
-    auto l = getWriteLock();
+    auto _ = getWriteLock();
     return entityInd++;
 }
 
@@ -103,7 +103,7 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
                     int subtract = sunDown ? 0 : 1;
                     chunk->setLight(ind, channel, lightLevel - subtract);
 
-                    auto l = getWriteLock();
+                    l.lock();
                     lightAddQueue[channel].emplace(ind, chunk);
                     l.unlock();
                 }
@@ -147,7 +147,7 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
                         game->getDefs().blockFromId(chunk->getBlock(Space::Block::index(check))).lightSource[channel]);
                     chunk->setLight(ind, channel, replaceLight);
 
-                    auto l = getWriteLock();
+                    l.lock();
                     if (replaceLight) lightAddQueue[channel].emplace(ind, chunk);
                     lightRemoveQueue[channel].emplace(ind, checkLight, chunk);
                     l.unlock();
@@ -156,7 +156,7 @@ std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
                     auto chunk = containsWorldPos(node.chunk, check) ? node.chunk : getChunk(Space::Chunk::world::fromBlock(check)).get();
                     if (!chunk) continue;
 
-                    auto l = getWriteLock();
+                    l.lock();
                     lightAddQueue[channel].emplace(ind, chunk);
                     l.unlock();
                 }
@@ -219,7 +219,7 @@ void Dimension::addBlockLight(glm::ivec3 pos, glm::ivec3 light) {
     startChunk->setLight(ind, 1, light.y);
     startChunk->setLight(ind, 2, light.z);
 
-    auto l = getWriteLock();
+    auto _ = getWriteLock();
     lightAddQueue[0].emplace(ind, startChunk.get());
     lightAddQueue[1].emplace(ind, startChunk.get());
     lightAddQueue[2].emplace(ind, startChunk.get());
@@ -234,7 +234,7 @@ void Dimension::removeBlockLight(glm::ivec3 pos) {
     startChunk->setLight(ind, 1, 0);
     startChunk->setLight(ind, 2, 0);
 
-    auto l = getWriteLock();
+    auto _ = getWriteLock();
     lightRemoveQueue[0].emplace(ind, val.x, startChunk.get());
     lightRemoveQueue[1].emplace(ind, val.y, startChunk.get());
     lightRemoveQueue[2].emplace(ind, val.z, startChunk.get());
@@ -259,7 +259,7 @@ void Dimension::reflowLight(glm::ivec3 pos) {
 
     chunk->setLight(ind, placeLight);
 
-    auto l = getWriteLock();
+    auto _ = getWriteLock();
     lightAddQueue[0].emplace(ind, chunk.get());
     lightAddQueue[1].emplace(ind, chunk.get());
     lightAddQueue[2].emplace(ind, chunk.get());
@@ -272,7 +272,7 @@ void Dimension::removeSunlight(glm::ivec3 pos) {
     unsigned int light = chunk->getLight(ind, 3);
 
     chunk->setLight(ind, 3, 0);
-    auto l = getWriteLock();
+    auto _ = getWriteLock();
     lightRemoveQueue[SUNLIGHT_CHANNEL].emplace(ind, light, chunk.get());
 }
 
@@ -281,6 +281,6 @@ void Dimension::setAndReflowSunlight(glm::ivec3 pos, unsigned char level) {
     unsigned int ind = Space::Block::index(pos);
 
     chunk->setLight(ind, 3, level);
-    auto l = getWriteLock();
+    auto _ = getWriteLock();
     lightAddQueue[SUNLIGHT_CHANNEL].emplace(ind, chunk.get());
 }

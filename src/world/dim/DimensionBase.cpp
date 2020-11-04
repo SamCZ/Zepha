@@ -23,15 +23,13 @@ unsigned int DimensionBase::getInd() {
 }
 
 std::shared_ptr<Region> DimensionBase::getRegion(glm::ivec3 regionPosition) const {
-//    std::cout << "region start" << std::endl;
-    auto l = getReadLock();
-//    std::cout << "region mid" << std::endl;
+    auto _ = getReadLock();
     if (!regions.count(regionPosition)) return nullptr;
     return regions.at(regionPosition);
 }
 
 void DimensionBase::removeRegion(glm::ivec3 pos) {
-    auto l = getWriteLock();
+    auto _ = getWriteLock();
     regions.erase(pos);
 }
 
@@ -44,8 +42,8 @@ std::shared_ptr<MapBlock> DimensionBase::getMapBlock(glm::ivec3 mapBlockPosition
 void DimensionBase::removeMapBlock(glm::ivec3 pos) {
     auto region = getRegion(Space::Region::world::fromMapBlock(pos));
     if (!region) return;
-    auto ind = Space::MapBlock::index(pos);
-    region->remove(ind);
+    auto i = Space::MapBlock::index(pos);
+    region->remove(i);
     if (region->count == 0) removeRegion(Space::Region::world::fromMapBlock(pos));
 }
 
@@ -68,8 +66,8 @@ void DimensionBase::setChunk(std::shared_ptr<Chunk> chunk) {
 void DimensionBase::removeChunk(glm::ivec3 pos){
     auto mapBlock = getMapBlock(Space::MapBlock::world::fromChunk(pos));
     if (!mapBlock) return;
-    auto ind = Space::Chunk::index(pos);
-    mapBlock->remove(ind);
+    auto i = Space::Chunk::index(pos);
+    mapBlock->remove(i);
     if (mapBlock->count == 0) removeMapBlock(Space::MapBlock::world::fromChunk(pos));
 }
 
@@ -91,7 +89,7 @@ bool DimensionBase::setBlock(glm::ivec3 pos, unsigned int block) {
 
 
 double DimensionBase::getBlockDamage(glm::ivec3 pos) const {
-    auto l = getReadLock();
+    auto _ = getReadLock();
     return blockDamages.count(pos) ? blockDamages.at(pos).curr : 0;
 }
 
@@ -99,7 +97,7 @@ double DimensionBase::setBlockDamage(glm::ivec3 pos, double damage) {
     if (blockDamages.count(pos)) blockDamages[pos].curr = damage;
     else {
         double health = game->getDefs().blockFromId(getBlock(pos)).health;
-        auto l = getWriteLock();
+        auto _ = getWriteLock();
         blockDamages.insert({pos, Damage { damage, health }});
     }
 
@@ -121,7 +119,7 @@ bool DimensionBase::setBiome(glm::ivec3 pos, unsigned int biome) {
 }
 
 std::shared_ptr<Region> DimensionBase::getOrCreateRegion(glm::ivec3 pos) {
-    auto l = getWriteLock();
+    auto _ = getWriteLock();
     if (regions[pos]) return regions[pos];
     regions[pos] = std::make_shared<Region>(pos);
     return regions[pos];

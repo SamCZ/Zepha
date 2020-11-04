@@ -195,11 +195,11 @@ sol::protected_function_result MenuSandbox::errorCallback(sol::protected_functio
 
         throw std::out_of_range("Error thrown outside of handled files. [2]");
     }
-    catch (std::runtime_error e) {
+    catch (const std::runtime_error& e) {
         std::cout << Log::err << e.what() << std::endl;
         throw;
     }
-    catch (std::out_of_range e) {
+    catch (const std::out_of_range& e) {
         std::cout << Log::err << "Failed to format error, " << e.what() << Log::endl;
         throw std::runtime_error(errString);
     }

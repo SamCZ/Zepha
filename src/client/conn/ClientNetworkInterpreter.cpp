@@ -95,8 +95,7 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
         case Packet::Type::INV_INVALID: {
             std::string source = p->d.read<std::string>();
             std::string list = p->d.read<std::string>();
-            throw std::runtime_error("Invalid inventory " + source + ":" + list + " was request by client.");
-            break; }
+            throw std::runtime_error("Invalid inventory " + source + ":" + list + " was request by client."); }
     }
 }
 
