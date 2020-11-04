@@ -9,10 +9,9 @@
 #include <list>
 #include <glm/vec3.hpp>
 
+#include "lua/Lua.h"
+#include "util/CovariantPtr.h"
 #include "modules/SubgameModule.h"
-
-#include "Lua.h"
-#include "../util/CovariantPtr.h"
 
 class Subgame;
 

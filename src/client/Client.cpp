@@ -1,12 +1,8 @@
-//
-// Created by aurailus on 06/01/19.
-//
 
 #include <iostream>
 
 #include "Client.h"
 
-#include "../util/Log.h"
 #include "../util/Timer.h"
 #include "LocalServerInstance.h"
 
@@ -14,55 +10,60 @@
 #include "scene/ConnectScene.h"
 #include "scene/MainMenuScene.h"
 
-Client::Client(const std::string& path, const Address &addr, glm::ivec2 dims) :
-    state(path.substr(0, path.find_last_of('/') + 1), renderer),
-    renderer(dims),
-    addr(addr),
-    executablePath(path) {
+
+/**
+ * Creates a client window and starts the main event loop.
+ * Initially opens to the main menu.
+ * @param window - The dimensions for the created window.
+ */
+
+Client::Client(glm::ivec2 window) :
+    renderer(window) {
 
     std::cout << Log::info << "Starting Zepha Client." << Log::endl;
 
-    std::unique_ptr<Scene> scene = std::make_unique<MainMenuScene>(state);
-//    std::unique_ptr<Scene> scene = std::make_unique<LuaErrorScene>(state, "whoopsie poopsie did a fucky wucky");
-    sceneManager.setScene(std::move(scene));
-
+    scene.setScene(std::make_unique<MainMenuScene>(*this));
     while (!renderer.window.shouldClose()) loop();
 }
 
+
+/**
+ * Get the last frame's delta time.
+ * @returns the delta time.
+ */
+
+double Client::getDelta() {
+    return delta;
+}
+
+
+/**
+ * Starts a local server and connects to it.
+ * @throws runtime_error if a local server is already running.
+ * @param subgame - The subgame for the local server to run.
+ */
+
+void Client::startLocalServer(const std::string& subgame) {
+    //TODO: Implement Local Server
+//    localServer = std::make_shared<LocalServerInstance>(executablePath, addr.port, state.subgame);
+//    localServer->start();
+
+    scene.setScene(std::make_unique<ConnectScene>(*this, Address { "127.0.0.1", Address::DEFAULT_PORT }));
+}
+
+
+/**
+ * The main event loop. Polls GLFW, and updates the scene and the renderer.
+ * Will be called by the Client constructor until render.window.shouldClose() returns true.
+ */
+
 void Client::loop() {
-    Timer t("Client Loop");
-
-    if (state.desiredState == "local") {
-        state.desiredState = "connect";
-        localServer = std::make_shared<LocalServerInstance>(executablePath, addr.port, state.subgame);
-        localServer->start();
-    }
-
-    if (state.desiredState == "connect") {
-        state.desiredState = "this";
-        std::unique_ptr<Scene> scene = std::make_unique<ConnectScene>(state, addr);
-        sceneManager.setScene(std::move(scene));
-    }
-
-    if (state.desiredState == "game") {
-        state.desiredState = "this";
-        std::unique_ptr<Scene> scene = std::make_unique<GameScene>(state);
-        sceneManager.setScene(std::move(scene));
-    }
-
     double now = glfwGetTime();
-    state.delta = now - timeElapsed;
+    delta = now - timeElapsed;
     timeElapsed = now;
 
     glfwPollEvents();
 
-    sceneManager.update();
-    renderer.update(state.delta);
-
-    state.fps = 1000.0 / (t.elapsedNs() / 1000000.0);
-}
-
-Client::~Client() {
-    sceneManager.cleanupScene();
-    if (localServer) localServer->stop();
+    scene.update();
+    renderer.update(delta);
 }

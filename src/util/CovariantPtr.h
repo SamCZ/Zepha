@@ -41,6 +41,7 @@ class ServerInventoryRefs;
 template <typename B, typename L, typename S>
 class CovariantPtr {
     std::shared_ptr<B> b = nullptr;
+
 public:
     CovariantPtr() = default;
     CovariantPtr(std::nullptr_t) {};

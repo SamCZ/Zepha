@@ -10,15 +10,14 @@
 
 class SceneManager {
 public:
-    SceneManager() = default;
-
     void setScene(std::unique_ptr<Scene> scene);
-    Scene& getScene();
+    const Scene& getScene();
 
     void update();
     void cleanupScene();
 
     ~SceneManager();
+
 private:
     std::unique_ptr<Scene> scene = nullptr;
 };

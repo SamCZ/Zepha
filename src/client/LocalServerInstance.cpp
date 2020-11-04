@@ -44,3 +44,7 @@ void LocalServerInstance::stop() {
         std::cout << Log::err << "Local Server destructor not implemented on Windows!" << Log::endl;
     #endif
 }
+
+LocalServerInstance::~LocalServerInstance() {
+    stop();
+}

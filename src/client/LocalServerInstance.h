@@ -18,6 +18,8 @@ public:
 
     bool start();
     void stop();
+
+    ~LocalServerInstance();
 private:
     std::string path;
     std::string subgame;

@@ -9,15 +9,15 @@
 #include "lua/LuaMod.h"
 #include "client/gui/GuiBuilder.h"
 
+class Client;
 class Subgame;
 class AtlasRef;
 class SubgameDef;
-class ClientState;
 class GuiContainer;
 
 class MenuSandbox : LuaParser {
 public:
-    MenuSandbox(glm::ivec2& win, ClientState& state, std::shared_ptr<GuiContainer> container);
+    MenuSandbox(glm::ivec2& window, Client& client, std::shared_ptr<GuiContainer> container);
     void load(const SubgameDef& subgame);
 
     void update(double delta) override;
@@ -41,6 +41,6 @@ private:
     std::shared_ptr<GuiContainer> luaContainer = nullptr;
     GuiBuilder builder;
 
-    ClientState& state;
+    Client& client;
     glm::ivec2& win;
 };

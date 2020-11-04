@@ -1,6 +1,4 @@
-//
-// Created by aurailus on 2019-12-12.
-//
+
 #include <fstream>
 #include <iostream>
 #include <cute_files/cute_files.h>
@@ -8,6 +6,7 @@
 #include "MenuSandbox.h"
 
 #include "lua/LuaMod.h"
+#include "client/Client.h"
 #include "lua/ErrorFormatter.h"
 #include "client/menu/SubgameDef.h"
 #include "client/gui/basic/GuiText.h"
@@ -18,12 +17,13 @@
 #include "lua/modules/mSetGui.h"
 #include "lua/modules/mStartGame.h"
 
-MenuSandbox::MenuSandbox(glm::ivec2 &win, ClientState& state, std::shared_ptr<GuiContainer> container) : LuaParser(state.game),
+MenuSandbox::MenuSandbox(glm::ivec2 &win, Client& client, std::shared_ptr<GuiContainer> container) :
+    LuaParser(*client.game),
     win(win),
-    state(state),
+    client(client),
     container(container),
     luaContainer(std::dynamic_pointer_cast<GuiContainer>(container->add(std::make_shared<GuiContainer>("__lua")))),
-    builder(state.game.textures, state.game.models, luaContainer) {}
+    builder(client.game->textures, client.game->models, luaContainer) {}
 
 void MenuSandbox::reset() {
     container->remove("error");
@@ -48,7 +48,7 @@ void MenuSandbox::loadApi() {
     ClientApi::gui_element(lua);
 
     MenuApi::set_gui    (builder, win, lua, core);
-    MenuApi::start_game (state, core);
+    MenuApi::start_game (client, core);
 
     bindModules();
 
@@ -87,9 +87,10 @@ sol::protected_function_result MenuSandbox::runFileSandboxed(const std::string& 
         env["_FILE"] = f.path;
         env["_MODNAME"] = mod.config.name;
 
-        return lua.safe_script(f.file, env, std::bind(&MenuSandbox::errorCallback, this, std::placeholders::_2), "@" + f.path, sol::load_mode::text);
+        return lua.safe_script(f.file, env, std::bind(&MenuSandbox::errorCallback,
+            this, std::placeholders::_2), "@" + f.path, sol::load_mode::text);
     }
-    throw std::runtime_error("Error opening \"" + file + "\", file not found.");
+    throw std::runtime_error("Error opening '" + file + "', file not found.");
 }
 
 void MenuSandbox::loadAndRunMod(const std::string &modPath) {
@@ -149,7 +150,7 @@ void MenuSandbox::loadAndRunMod(const std::string &modPath) {
 
     std::string texPath = modPath + "/textures";
     if (cf_file_exists(texPath.data())) {
-        this->modAssets = state.game.textures.loadDirectory(texPath, false, true);
+        this->modAssets = client.game->textures.loadDirectory(texPath, false, true);
     }
 
     this->mod = mod;
@@ -158,7 +159,7 @@ void MenuSandbox::loadAndRunMod(const std::string &modPath) {
 
 void MenuSandbox::showError(const std::string& what, const std::string& subgame) {
     const std::string errPrefixText = "Encountered an error while loading the menu for " + subgame + " ;-;";
-    Font f(state.game.textures, state.game.textures["font"]);
+    Font f(client.game->textures, client.game->textures["font"]);
 
     auto errWrap = std::make_shared<GuiContainer>("error");
     container->add(errWrap);

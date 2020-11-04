@@ -43,7 +43,7 @@ DebugGui::DebugGui(glm::vec2 bufferSize, SubgamePtr game, WorldPtr world) :
     add(genGraph);
 
     auto packetGraph = std::make_shared<GuiLabelledGraph>("packetGraph");
-    packetGraph->create({244, 64}, {}, "Packets", 120, 512, genericHistogramRef, f);
+    packetGraph->create({244, 64}, {}, "Packets", 120, 32, genericHistogramRef, f);
     add(packetGraph);
 
     auto fpsGraph = std::make_shared<GuiLabelledGraph>("fpsGraph");

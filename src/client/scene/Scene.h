@@ -1,14 +1,17 @@
-//
-// Created by aurailus on 06/01/19.
-//
+/*
+ * Scene abstract superclass, provides base scene methods for use by SceneManager.
+ * Stores a reference to the client, for children.
+ *
+ * - Auri, 03/11/20
+ */
 
 #pragma once
 
-class ClientState;
+class Client;
 
 class Scene {
 public:
-    explicit Scene(ClientState& state) : state(state) {}
+    explicit Scene(Client& client) : client(client) {}
 
     virtual void update() = 0;
     virtual void draw() = 0;
@@ -16,6 +19,6 @@ public:
 
     virtual ~Scene() = default;
 
-    ClientState& state;
+    Client& client;
 };
 

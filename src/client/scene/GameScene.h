@@ -17,14 +17,14 @@ class Drawable;
 
 class GameScene : public Scene {
 public:
-    explicit GameScene(ClientState& state);
+    GameScene(Client& client);
 
     void update() override;
     void draw() override;
 
     void cleanup() override;
+
 public:
-    SubgamePtr game;
     WorldPtr world;
 
     DebugGui debugGui;

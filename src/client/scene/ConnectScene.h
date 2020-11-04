@@ -23,15 +23,14 @@ public:
         DONE
     };
 
-    ConnectScene(ClientState& state, Address addr);
+    ConnectScene(Client& state, Address addr);
 
     void update() override;
+    void draw() override;
+    void cleanup() override;
 
     void handleConnecting();
 
-    void draw() override;
-
-    void cleanup() override;
 private:
     State connectState = State::CONNECTING;
     ServerConnection& connection;

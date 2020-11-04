@@ -1,31 +1,41 @@
-//
-// Created by aurailus on 06/01/19.
-//
+/*
+ * Main Client object. Contains important properties, such as the renderer and scene manager.
+ * Also manages the local server, if there is one.
+ *
+ * - Auri, 03/11/20
+ */
 
 #pragma once
 
 #include "util/net/Address.h"
-#include "client/ClientState.h"
+#include "game/LocalSubgame.h"
 #include "client/graph/Renderer.h"
 #include "client/scene/SceneManager.h"
+#include "client/conn/ServerConnection.h"
 
 class LocalServerInstance;
 
 class Client {
 public:
-    Client(const std::string& path, const Address& addr, glm::ivec2 dims);
-    ~Client();
+    Client(const Client& o) = delete;
+    explicit Client(glm::ivec2 window);
+
+    double getDelta();
+
+    void startLocalServer(const std::string& subgame);
+
+    Renderer renderer;
+    SceneManager scene;
+    ServerConnection connection {};
+
+    std::shared_ptr<LocalSubgame> game = std::make_shared<LocalSubgame>("../assets/textures");
+
 private:
     void loop();
 
-    std::string executablePath;
-    Address addr {};
-    Renderer renderer;
-    ClientState state;
-    SceneManager sceneManager;
-
     std::shared_ptr<LocalServerInstance> localServer = nullptr;
 
-    double timeElapsed = 0.0f;
+    double delta = 0;
+    double timeElapsed = 0;
 };
 

@@ -6,22 +6,31 @@
 
 #include "ConnectScene.h"
 
+#include "client/Client.h"
 #include "util/net/Packet.h"
 #include "util/net/Address.h"
-#include "client/ClientState.h"
 #include "util/net/PacketView.h"
 #include "client/graph/Renderer.h"
 #include "client/gui/basic/GuiRect.h"
 #include "client/gui/basic/GuiText.h"
 #include "game/atlas/asset/AssetType.h"
 #include "game/atlas/LocalDefinitionAtlas.h"
+#include "GameScene.h"
 
-ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
-    connection(state.connection) {
 
-    state.renderer.setClearColor(10, 10, 10);
+/**
+ * Initializes a connection to the remote address,
+ * sets up the GUI, and attempts to download subgame assets.
+ *
+ * @param addr - The server address to connect to.
+ */
 
-    Font f(state.game.textures, state.game.textures["font"]);
+ConnectScene::ConnectScene(Client &client, Address addr) : Scene(client),
+    connection(client.connection) {
+
+    client.renderer.setClearColor(10, 10, 10);
+
+    Font f(client.game->textures, client.game->textures["font"]);
 
     auto statusText = std::make_shared<GuiText>("statusText");
     statusText->create({2, 2}, {}, {}, {1, 1, 1, 1}, f);
@@ -31,18 +40,18 @@ ConnectScene::ConnectScene(ClientState &state, Address addr) : Scene(state),
 
     auto loadBar = std::make_shared<GuiRect>("loadBar");
     loadBar->create({1, 32}, {}, {0.17, 0.75, 0.93, 1});
-    loadBar->setPos({0, state.renderer.window.getSize().y - 32});
+    loadBar->setPos({0, client.renderer.window.getSize().y - 32});
     components.add(loadBar);
 
     connection.attemptConnect(std::move(addr));
 
-    state.renderer.window.addResizeCallback("scene", [&](glm::ivec2 win) {
+    client.renderer.window.addResizeCallback("scene", [&](glm::ivec2 win) {
         components.get<GuiRect>("loadBar")->setPos({0, win.y - 32});
     });
 }
 
 void ConnectScene::update() {
-    state.game.textures.update();
+    client.game->textures.update();
 
     switch (connectState) {
         default:
@@ -57,7 +66,7 @@ void ConnectScene::update() {
             break;
 
         case State::PROPERTIES: {
-            components.get<GuiRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.1, 32});
+            components.get<GuiRect>("loadBar")->setScale({client.renderer.window.getSize().x * 0.1, 32});
 
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
@@ -67,7 +76,8 @@ void ConnectScene::update() {
                     auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received server properties.\n");
 
-                    state.seed = p.d.read<unsigned int>();
+                    // TODO: Reimplement this somewhere or something.
+//                    state.seed = p.d.read<unsigned int>();
 
                     connectState = State::IDENTIFIER_LIST;
                     Packet resp(Packet::Type::BLOCK_IDENTIFIER_LIST);
@@ -78,7 +88,7 @@ void ConnectScene::update() {
         }
 
         case State::IDENTIFIER_LIST: {
-            components.get<GuiRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.2, 32});
+            components.get<GuiRect>("loadBar")->setScale({client.renderer.window.getSize().x * 0.2, 32});
 
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
@@ -88,7 +98,7 @@ void ConnectScene::update() {
                     auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received block index-identifier table.\n");
 
-                    state.game.getDefs().setIdentifiers(p.d.read<std::vector<std::string>>());
+                    client.game->getDefs().setIdentifiers(p.d.read<std::vector<std::string>>());
 
                     Packet resp(Packet::Type::BIOME_IDENTIFIER_LIST);
                     resp.sendTo(connection.getPeer(), Packet::Channel::CONNECT);
@@ -97,7 +107,7 @@ void ConnectScene::update() {
                     auto statusText = components.get<GuiText>("statusText");
                     statusText->setText(statusText->getText() + "Received biome index-identifier table.\nDownloading mods...\n");
 
-                    state.game.getBiomes().setIdentifiers(p.d.read<std::vector<std::string>>());
+                    client.game->getBiomes().setIdentifiers(p.d.read<std::vector<std::string>>());
 
                     connectState = State::MODS;
                     Packet resp(Packet::Type::MODS);
@@ -108,7 +118,7 @@ void ConnectScene::update() {
         }
 
         case State::MODS: {
-            components.get<GuiRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.4, 32});
+            components.get<GuiRect>("loadBar")->setScale({client.renderer.window.getSize().x * 0.4, 32});
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
                 PacketView p(e.packet);
@@ -118,10 +128,10 @@ void ConnectScene::update() {
                 if (p.type == Packet::Type::MODS) {
                     auto luaMod = LuaMod::fromPacket(p);
                     statusText->setText(statusText->getText() + "Received mod " + luaMod.config.name + ".\n");
-                    state.game.getParser().getHandler().addLuaMod(std::move(luaMod));
+                    client.game->getParser().getHandler().addLuaMod(std::move(luaMod));
                 }
                 else if (p.type == Packet::Type::MOD_ORDER) {
-                    state.game.getParser().getHandler().setModsOrder(p.d.read<std::vector<std::string>>());
+                    client.game->getParser().getHandler().setModsOrder(p.d.read<std::vector<std::string>>());
 
                     statusText->setText(statusText->getText() + "Done downloading mods.\nReceived the mods order.\nDownloading media...\n");
 
@@ -134,7 +144,7 @@ void ConnectScene::update() {
         }
 
         case State::MEDIA: {
-            components.get<GuiRect>("loadBar")->setScale({state.renderer.window.getSize().x * 0.6, 32});
+            components.get<GuiRect>("loadBar")->setScale({client.renderer.window.getSize().x * 0.6, 32});
 
             ENetEvent e;
             if (connection.pollEvents(&e) && e.type == ENET_EVENT_TYPE_RECEIVE) {
@@ -156,15 +166,15 @@ void ConnectScene::update() {
                             std::string data = p.d.read<std::string>();
                             std::string uncompressed = gzip::decompress(data.data(), data.length());
 
-                            state.game.textures.addImage(
-                                    reinterpret_cast<unsigned char *>(const_cast<char *>(uncompressed.data())),
-                                    assetName, true, width, height);
+                            client.game->textures.addImage(
+                                reinterpret_cast<unsigned char *>(const_cast<char *>(uncompressed.data())),
+                                assetName, true, width, height);
                         }
                         else if (t == AssetType::MODEL) {
                             std::string format = p.d.read<std::string>();
                             std::string data = p.d.read<std::string>();
 
-                            state.game.models.models.insert({assetName, SerializedModel{assetName, data, format}});
+                            client.game->models.models.insert({assetName, SerializedModel{assetName, data, format}});
                         }
 
                         t = static_cast<AssetType>(p.d.read<int>());
@@ -174,11 +184,11 @@ void ConnectScene::update() {
                     statusText->setText(statusText->getText() + "Received " + std::to_string(count) + "x media files.\n");
                 }
                 else if (p.type == Packet::Type::MEDIA_DONE) {
-                    components.get<GuiRect>("loadBar")->setScale({state.renderer.window.getSize().x, 32});
+                    components.get<GuiRect>("loadBar")->setScale({client.renderer.window.getSize().x, 32});
                     statusText->setText(statusText->getText() + "Done downloading media.\nJoining world...\n");
 
                     connectState = State::DONE;
-                    state.desiredState = "game";
+                    client.scene.setScene(std::make_unique<GameScene>(client));
                 }
             }
             break;
@@ -206,7 +216,7 @@ void ConnectScene::handleConnecting() {
         case ServerConnection::State::ATTEMPTING_CONNECT:
             connection.processConnecting();
 
-            dotsTime += state.delta;
+            dotsTime += client.getDelta();
             if (dotsTime > 1) {
                 dotsTime -= 1;
                 statusText->setText(statusText->getText() + ".");
@@ -225,12 +235,12 @@ void ConnectScene::handleConnecting() {
 }
 
 void ConnectScene::draw() {
-    Renderer& renderer = state.renderer;
+    Renderer& renderer = client.renderer;
 
     renderer.beginChunkDeferredCalls();
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
-    renderer.enableTexture(&state.game.textures.atlasTexture);
+    renderer.enableTexture(&client.game->textures.atlasTexture);
 
     components.draw(renderer);
 
@@ -238,5 +248,5 @@ void ConnectScene::draw() {
 }
 
 void ConnectScene::cleanup() {
-    state.renderer.window.removeResizeCallback("scene");
+    client.renderer.window.removeResizeCallback("scene");
 }

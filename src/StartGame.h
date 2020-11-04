@@ -11,9 +11,18 @@
 #include "client/Client.h"
 #include "server/Server.h"
 
-enum class Mode { INVALID, CLIENT, SERVER };
+enum class Mode { CLIENT, SERVER };
 
-std::map<std::string, std::string> parseArgs(int argc, char* argv[]) {
+
+/**
+ * Parses the arg list provided by the operating system into a map of key-value strings.
+ * @throws invalid_argument if it encounters a duplicate or improperly formatted argument.
+ * @param argc - Argument array length
+ * @param argv - Argument array
+ * @returns - A map of parsed arguments.
+ */
+
+std::map<std::string, std::string> ParseArgs(int argc, char* argv[]) {
     //Collect arguments into `args` map
     std::map<std::string, std::string> args;
     for (int i = 1; i < argc; i++) {
@@ -32,76 +41,83 @@ std::map<std::string, std::string> parseArgs(int argc, char* argv[]) {
     return args;
 }
 
+
+/**
+ * Instantiates a Client or Server instance, depending on the arguments provided.
+ * @param argc - Argument array length
+ * @param argv - Argument array
+ * @returns - A numerical value indicating exit status.
+ */
+
 int StartGame(int argc, char* argv[]) {
-    std::string path = argv[0];
-
-    Address addr {"127.0.0.1", 32000};
     Mode mode = Mode::CLIENT;
-    std::string subgame = "";
-    bool ascii = true;
 
-    //Parse the arguments map
-    for (auto arg : parseArgs(argc, argv)) {
-        switch (Util::hash(arg.first.c_str())) {
-            default: {
-                std::cout << Log::err << "Invalid argument " << arg.first << "." << Log::endl;
-                return -1;
-            }
-            case Util::hash("--mode"): {
+    try {
+        unsigned short port = Address::DEFAULT_PORT;
+        std::string subgame = "";
+        bool ascii = true;
+
+        /**
+         * Handle command line arguments.
+         * @arg mode ("client" | "server") - Whether to initialize a client instance, or a server. Defaults to "client".
+         * @arg port (unsigned short) - The port that the server should listen on. Defaults to Address::DEFAULT_PORT.
+         * @arg subgame (std::string) - The subgame that the server should load.
+         * @arg noascii - Switch to disable ASCII from the console output.
+         */
+
+        for (auto arg : ParseArgs(argc, argv)) {
+            switch (Util::hash(arg.first.c_str())) {
+            default:
+                throw std::runtime_error("Invalid argument '" + arg.first + "'.");
+
+            case Util::hash("--mode"):
                 if      (arg.second == "client") mode = Mode::CLIENT;
                 else if (arg.second == "server") mode = Mode::SERVER;
-                else std::cout << Log::err << "Invalid mode argument." << Log::endl;
+                else throw std::runtime_error("Invalid mode specified.");
                 break;
-            }
-            case Util::hash("--port"): {
-                addr.port = static_cast<unsigned short>(stoi(arg.second));
+
+//            case Util::hash("--address"):
+//                addr.host = arg.second;
+//                break;
+
+            case Util::hash("--port"):
+                port = static_cast<unsigned short>(stoi(arg.second));
                 break;
-            }
-            case Util::hash("--address"): {
-                addr.host = arg.second;
-                break;
-            }
-            case Util::hash("--subgame"): {
+
+            case Util::hash("--subgame"):
                 subgame = arg.second;
                 break;
-            }
-            case Util::hash("--noascii"): {
+
+            case Util::hash("--noascii"):
                 ascii = false;
                 break;
             }
         }
-    }
 
-    // Obligatory ASCII Art is obligatory.
-    if (ascii) {
-        Log::clear();
-        std::cout << "\n"
-                     "\t\t▒███████▒▓█████  ██▓███   ██░ ██  ▄▄▄      \n"
-                     "\t\t▒ ▒ ▒ ▄▀░▓█   ▀ ▓██░  ██▒▓██░ ██▒▒████▄    \n"
-                     "\t\t░ ▒ ▄▀▒░ ▒███   ▓██░ ██▓▒▒██▀▀██░▒██  ▀█▄  \n"
-                     "\t\t  ▄▀▒   ░▒▓█  ▄ ▒██▄█▓▒ ▒░▓█ ░██ ░██▄▄▄▄██ \n"
-                     "\t\t▒███████▒░▒████▒▒██▒ ░  ░░▓█▒░██▓ ▓█   ▓██▒\n"
-                     "\t\t░▒▒ ▓░▒░▒░░ ▒░ ░▒▓▒░ ░  ░ ▒ ░░▒░▒ ▒▒   ▓▒█░\n"
-                     "\t\t░ ▒ ▒ ░ ▒ ░ ░  ░░▒ ░      ▒ ░▒░ ░  ▒   ▒▒ ░\n"
-                     "\t\t  ░ ░   ░   ░   ░░        ░  ░     ░   ▒   \n" << std::endl;
-    }
-
-    //Start the game
-    switch (mode) {
-        default: {
-            std::cout << Log::err << "Mode not set." << Log::endl;
-            return -1;
+        if (ascii) {
+            Log::clear();
+            std::cout <<
+                "\n"
+                "\t\t ____  ____  ____  _  _   __  \n"
+                "\t\t(__  )(  __)(  _ \\/ )( \\ / _\\ \n"
+                "\t\t / _/  ) _)  ) __/) __ (/    \\\n"
+                "\t\t(____)(____)(__)  \\_)(_/\\_/\\_/\n" << std::endl;
         }
+
+        switch (mode) {
         case Mode::CLIENT: {
-            Client c(path, addr, {1366, 768});
-            break;
-        }
+            Client c({1366, 768});
+            break; }
+
         case Mode::SERVER: {
-            Server s(addr.port, subgame);
-            break;
+            Server s(port, subgame);
+            break; }
         }
+
+        return 0;
     }
-
-    return 0;
-};
-
+    catch (const std::exception& e) {
+        std::cout << Log::err << "Zepha failed to start.\n" << e.what() << Log::endl;
+        return 1;
+    }
+}

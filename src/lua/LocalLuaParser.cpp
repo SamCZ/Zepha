@@ -4,8 +4,8 @@
 
 #include "LocalLuaParser.h"
 
+#include "client/Client.h"
 #include "ErrorFormatter.h"
-#include "client/ClientState.h"
 #include "client/graph/Renderer.h"
 #include "register/RegisterItems.h"
 #include "register/RegisterBlocks.h"
@@ -33,12 +33,12 @@
 
 LocalLuaParser::LocalLuaParser(LocalSubgame& game): LuaParser(game), keybinds(this) {}
 
-void LocalLuaParser::init(WorldPtr world, PlayerPtr player, ClientState& state) {
+void LocalLuaParser::init(WorldPtr world, PlayerPtr player, Client& client) {
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table, sol::lib::debug);
 
     loadApi(world, player);
     handler.executeMods(Util::bind_this(this, &LocalLuaParser::runFileSandboxed));
-    state.renderer.window.input.setCallback(Util::bind_this(&keybinds, &LuaKeybindHandler::keybindHandler));
+    client.renderer.window.input.setCallback(Util::bind_this(&keybinds, &LuaKeybindHandler::keybindHandler));
 
     registerDefs();
 }

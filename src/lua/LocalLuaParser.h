@@ -4,21 +4,21 @@
 
 #pragma once
 
-#include "LuaParser.h"
+#include "lua/LuaParser.h"
 
-#include "LocalModHandler.h"
-#include "LuaKeybindHandler.h"
-#include "../util/CovariantPtr.h"
+#include "util/CovariantPtr.h"
+#include "lua/LocalModHandler.h"
+#include "lua/LuaKeybindHandler.h"
 
-class LocalPlayer;
+class Client;
 class LocalWorld;
-class ClientState;
+class LocalPlayer;
 class LocalSubgame;
 
 class LocalLuaParser : public LuaParser {
 public:
     explicit LocalLuaParser(LocalSubgame& game);
-    void init(WorldPtr world, PlayerPtr player, ClientState& state);
+    void init(WorldPtr world, PlayerPtr player, Client& client);
 
     void update(double delta) override;
 

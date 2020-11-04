@@ -10,7 +10,7 @@
 
 class LuaErrorScene : public Scene {
 public:
-    LuaErrorScene(ClientState& state, const std::string& err);
+    LuaErrorScene(Client& client, const std::string& err);
 
     void update() override;
     void draw() override;

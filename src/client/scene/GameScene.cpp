@@ -4,36 +4,36 @@
 
 #include "GameScene.h"
 
-#include "client/ClientState.h"
+#include "client/Client.h"
 #include "util/net/PacketView.h"
 #include "client/graph/Renderer.h"
 
-GameScene::GameScene(ClientState& state) : Scene(state),
-    game(std::make_shared<LocalSubgame>(state.game)),
-    world(std::make_shared<LocalWorld>(game, state.connection, state.renderer)),
-    debugGui(state.renderer.window.getSize(), game, world) {
+GameScene::GameScene(Client& client) : Scene(client),
+    world(std::make_shared<LocalWorld>(client.game, client.connection, client.renderer)),
+    debugGui(client.renderer.window.getSize(), client.game, world) {
 
     Packet r(Packet::Type::CONNECT_DATA_RECVD);
-    r.sendTo(state.connection.getPeer(), Packet::Channel::CONNECT);
+    r.sendTo(client.connection.getPeer(), Packet::Channel::CONNECT);
 
     world.l()->connect();
-    game .l()->init(world, world.l()->getPlayer(), state);
+    client.game->init(world, world.l()->getPlayer(), client);
     world.l()->updatePlayerDimension();
 
-    state.renderer.window.addResizeCallback("gamescene", Util::bind_this(&debugGui, &DebugGui::bufferResized));
-    state.renderer.setClearColor(148, 194, 240);
-    state.renderer.window.input.lockMouse(true);
+    client.renderer.window.addResizeCallback("gamescene", Util::bind_this(&debugGui, &DebugGui::bufferResized));
+    client.renderer.setClearColor(148, 194, 240);
+    client.renderer.window.input.lockMouse(true);
 }
 
 void GameScene::update() {
-    Window& window = state.renderer.window;
+    Window& window = client.renderer.window;
 
-    game.l()->update(state.delta);
-    world->update(state.delta);
+    client.game->update(client.getDelta());
+    world->update(client.getDelta());
 
-    for (auto entity : entities) entity->update(state.delta);
+    for (auto entity : entities) entity->update(client.getDelta());
 
-    debugGui.update(world.l()->getPlayer().l(), state.fps, world.l()->getActiveDimension().l()->getMeshChunkCount(),
+    double lastFps = 1 / client.getDelta();
+    debugGui.update(world.l()->getPlayer().l(), lastFps, world.l()->getActiveDimension().l()->getMeshChunkCount(),
         drawCalls, world.l()->getNet().serverSideChunkGens, world.l()->getNet().recvPackets);
 
     world.l()->getNet().serverSideChunkGens = 0;
@@ -52,11 +52,11 @@ void GameScene::update() {
 }
 
 void GameScene::draw() {
-    Renderer& renderer = state.renderer;
+    Renderer& renderer = client.renderer;
     Camera& camera = renderer.camera;
 
     renderer.beginChunkDeferredCalls();
-    renderer.enableTexture(&game.l()->textures.atlasTexture);
+    renderer.enableTexture(&client.game->textures.atlasTexture);
 
     drawCalls = world.l()->renderChunks(renderer);
 
@@ -67,7 +67,7 @@ void GameScene::draw() {
 
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
-    renderer.enableTexture(&game.l()->textures.atlasTexture);
+    renderer.enableTexture(&client.game->textures.atlasTexture);
 
     world.l()->getPlayer().l()->drawHud(renderer);
     debugGui.draw(renderer);
@@ -77,5 +77,5 @@ void GameScene::draw() {
 }
 
 void GameScene::cleanup() {
-    state.renderer.window.removeResizeCallback("gamescene");
+    client.renderer.window.removeResizeCallback("gamescene");
 }

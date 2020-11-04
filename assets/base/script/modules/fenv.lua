@@ -1,3 +1,6 @@
+local debug = _G['debug']
+_G['debug'] = nil
+
 if not setfenv then
     _G['setfenv'] = function(fn, env)
         local i = 1

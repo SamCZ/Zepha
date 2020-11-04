@@ -1,8 +1,6 @@
 add_library(Zepha_Core
 		client/Client.cpp
 		client/Client.h
-		client/ClientState.cpp
-		client/ClientState.h
 		client/conn/ClientNetworkInterpreter.cpp
 		client/conn/ClientNetworkInterpreter.h
 		client/conn/ServerConnection.cpp
@@ -323,6 +321,6 @@ add_library(Zepha_Core
 		world/ServerWorld.h
 		world/World.cpp
 		world/World.h
-)
+        util/net/Address.cpp)
 
 target_include_directories(Zepha_Core PUBLIC .)

@@ -4,18 +4,18 @@
 
 #include "LuaErrorScene.h"
 
+#include "client/Client.h"
 #include "client/graph/Font.h"
-#include "client/ClientState.h"
 #include "client/graph/Renderer.h"
 #include "client/gui/basic/GuiRect.h"
 #include "client/gui/basic/GuiText.h"
 
-LuaErrorScene::LuaErrorScene(ClientState &state, const std::string &err) : Scene(state), err(err) {
-    state.renderer.setClearColor(0, 0, 0);
-    state.renderer.window.input.lockMouse(false);
+LuaErrorScene::LuaErrorScene(Client& client, const std::string &err) : Scene(client), err(err) {
+    client.renderer.setClearColor(0, 0, 0);
+    client.renderer.window.input.lockMouse(false);
 
-    Font f(state.game.textures, state.game.textures["font"]);
-    glm::ivec2 win = state.renderer.window.getSize();
+    Font f(client.game->textures, client.game->textures["font"]);
+    glm::ivec2 win = client.renderer.window.getSize();
 
     auto container = std::make_shared<GuiRect>("container");
     container->create({800, 500}, {}, {0.05, 0.05, 0.05, 1});
@@ -34,22 +34,22 @@ LuaErrorScene::LuaErrorScene(ClientState &state, const std::string &err) : Scene
     errorText->setPos({16, 48});
     container->add(errorText);
 
-    state.renderer.window.addResizeCallback("scene", [&](glm::ivec2 win) {
+    client.renderer.window.addResizeCallback("scene", [&](glm::ivec2 win) {
         components.get<GuiRect>("container")->setPos({win.x / 2 - 800 / 2, win.y / 2 - 500 / 2});
     });
 }
 
 void LuaErrorScene::update() {
-    state.game.textures.update();
+    client.game->textures.update();
 }
 
 void LuaErrorScene::draw() {
-    Renderer& renderer = state.renderer;
+    Renderer& renderer = client.renderer;
 
     renderer.beginChunkDeferredCalls();
     renderer.endDeferredCalls();
     renderer.beginGUIDrawCalls();
-    renderer.enableTexture(&state.game.textures.atlasTexture);
+    renderer.enableTexture(&client.game->textures.atlasTexture);
 
     components.draw(renderer);
 
@@ -57,5 +57,5 @@ void LuaErrorScene::draw() {
 }
 
 void LuaErrorScene::cleanup() {
-    state.renderer.window.removeResizeCallback("scene");
+    client.renderer.window.removeResizeCallback("scene");
 }

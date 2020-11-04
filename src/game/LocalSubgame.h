@@ -1,34 +1,31 @@
-//
-// The ClientGame class stores all of the subgame data for the client.
-// This data is used when in the GameScene. It is initialized when the client joins a game and cleared when they exit it.
-// The data within is in an undefined state until the init method is called.
-// Created by aurailus on 18/04/19.
-//
+/*
+ * The Local Subgame stores all local subgame data.
+ * Includes Block / Item definitions, biome definitions, the lua parser, models, and textures.
+ *
+ * - Auri, 03/11/20
+ */
 
 #pragma once
 
 #include "Subgame.h"
 
-#include "game/atlas/asset/ModelStore.h"
-#include "game/atlas/LocalBiomeAtlas.h"
-#include "game/atlas/LocalDefinitionAtlas.h"
-#include "game/atlas/TextureAtlas.h"
 #include "util/CovariantPtr.h"
 #include "lua/LocalLuaParser.h"
+#include "game/atlas/TextureAtlas.h"
+#include "game/atlas/LocalBiomeAtlas.h"
+#include "game/atlas/asset/ModelStore.h"
+#include "game/atlas/LocalDefinitionAtlas.h"
 
-class LocalPlayer;
+class Client;
 class LocalWorld;
-class ClientState;
+class LocalPlayer;
 
 class LocalSubgame : public Subgame {
 public:
-    explicit LocalSubgame(const std::string& texPath);
-    ~LocalSubgame();
+    explicit LocalSubgame(const std::string& baseAssets);
 
-    void init(WorldPtr world, PlayerPtr player, ClientState& state);
+    void init(WorldPtr world, PlayerPtr player, Client& client);
     void update(double delta);
-
-    std::string texPath;
 
     LocalDefinitionAtlas& getDefs() override { return *defs; };
     LocalBiomeAtlas& getBiomes() override { return *biomes; };

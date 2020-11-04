@@ -8,5 +8,9 @@
 
 struct Address {
     std::string host;
-    unsigned short port;
+    unsigned short port = Address::DEFAULT_PORT;
+
+    static Address fromString(const std::string& addressString);
+
+    constexpr static unsigned short DEFAULT_PORT = 13110;
 };
