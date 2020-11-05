@@ -124,6 +124,6 @@
             
 7. Launch Zepha
 
-With either build type completed, navigate to `Zepha_build\[Debug or Release]\` and you will find a freshly built copy of Zepha.
+    With either build type completed, navigate to `Zepha_build\[Debug or Release]\` and you will find a freshly built copy of Zepha.
 
-See [docs/Executing.md](https://github.com/Aurailus/Zepha/blob/master/docs/Executing.md) for instructions for how to run the built program.
+    See [docs/Executing.md](https://github.com/Aurailus/Zepha/blob/master/docs/Executing.md) for instructions for how to run the built program.
