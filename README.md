@@ -16,6 +16,8 @@ Zepha's full source code is currently available on this repository for viewing a
 
 Please see [docs/Building.md](https://github.com/Aurailus/Zepha/blob/master/docs/Building.md) for guides and best practices.
 
+Alternatively, check the [Releases](https://github.com/Aurailus/Zepha/releases) page for automatically built Linux binaries.
+
 ## License
 
 **(c) 2018-2020 Nicole Collings, All Rights Reserved.**
