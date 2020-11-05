@@ -18,4 +18,4 @@ Double click the Zepha.exe executable in the build directory.
 
 ### Executing The Server With a Specified Subgame
 
-Open PowerShell in the build directory (Shift + Right click the folder, and press Open PowerShell), and `.\Zepha --mode=server --subgame=subgame_name`.
+Open PowerShell in the build directory (Shift + Right click the folder, and press Open PowerShell), and run `.\Zepha --mode=server --subgame=subgame_name`.
