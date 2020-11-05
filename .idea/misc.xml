@@ -10,6 +10,7 @@
       <file path="$PROJECT_DIR$/lib" />
     </libraryRoots>
     <excludeRoots>
+      <file path="$PROJECT_DIR$/.github" />
       <file path="$PROJECT_DIR$/.idea" />
       <file path="$PROJECT_DIR$/Libraries" />
       <file path="$PROJECT_DIR$/cmake-build-install" />

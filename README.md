@@ -4,7 +4,7 @@
 [![Discord Badge](https://img.shields.io/discord/416379773976051712.svg?color=7289DA&label=discord&logo=discord&logoColor=white)](https://aurail.us/discord)
 [![GitHub Commit](https://img.shields.io/github/commit-activity/m/aurailus/zepha.svg?logo=github&label=commit%20activity)](https://github.com/Aurailus/Zepha/commits/master)
 
-### About
+## About
 
 Zepha is a powerful, extensible C++ Voxel Game with immense modding possibilities. The API provided allows everybody with even a basic knowledge of Lua to create any subgame imaginable. Though other Voxel Games like Zepha exist, none of them can match it's superior performance, graphical capabilities, and raw modding capability.
 
@@ -12,7 +12,11 @@ Zepha is very early in developement, however it already has several strengths ov
 
 Zepha's full source code is currently available on this repository for viewing and personal use, however it is important to note that this project is *not* free nor open source. Unfortunately, as my dream is to make a living off of game development this is not a viable strategy for me. Learning from the source code or exploring the source is allowed and encouraged, though. Feel free to use this repository as a reference for similar works until the repository eventually becomes private.
 
-### License
+## Building
+
+Please see [docs/Building.md](https://github.com/Aurailus/Zepha/blob/master/docs/Building.md) for guides and best practices.
+
+## License
 
 **(c) 2018-2020 Nicole Collings, All Rights Reserved.**
 
