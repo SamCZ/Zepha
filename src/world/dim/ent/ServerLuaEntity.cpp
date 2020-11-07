@@ -4,9 +4,15 @@
 
 #include <iostream>
 
+#include "world/dim/Dimension.h"
 #include "ServerLuaEntity.h"
 
 #include "util/net/Serializer.h"
+
+void ServerLuaEntity::setDim(DimensionPtr dim) {
+    Entity::setDim(dim);
+    dirtyFields.emplace(NetField::DIM);
+}
 
 void ServerLuaEntity::setPos(glm::vec3 position) {
     Entity::setPos(position);
@@ -70,6 +76,7 @@ std::string ServerLuaEntity::serialize() {
     Serializer s;
     s.append<unsigned int>(id);
 
+    if (dirtyFields.count(NetField::DIM)        || fullSend) s.appendE(NetField::DIM)       .append(dim->getInd());
     if (dirtyFields.count(NetField::POS)        || fullSend) s.appendE(NetField::POS)       .append(pos);
     if (dirtyFields.count(NetField::VEL)        || fullSend) s.appendE(NetField::VEL)       .append(vel);
     if (dirtyFields.count(NetField::SCALE)      || fullSend) s.appendE(NetField::SCALE)     .append(scale);

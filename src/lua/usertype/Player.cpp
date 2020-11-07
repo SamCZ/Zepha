@@ -61,7 +61,7 @@ Api::Usertype::Dimension Api::Usertype::ServerPlayer::get_dimension() {
 }
 
 void Api::Usertype::ServerPlayer::set_dimension(const std::string& identifier) {
-    player->setDim(player->getDim()->getWorld().getDimension(identifier));
+    player->setDim(player->getDim()->getWorld().getDimension(identifier), true);
 }
 
 sol::object Api::Usertype::ServerPlayer::get_hand_list(sol::this_state s) {

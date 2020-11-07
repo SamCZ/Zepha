@@ -53,6 +53,7 @@ void LocalPlayer::handleAssertion(Deserializer &d) {
             default: std::cout << "Invalid assertion." << std::endl; break;
 
             case NetField::ID: setId(d.read<unsigned int>()); break;
+            case NetField::DIM: setDim(world.getDimension(d.read<unsigned int>())); break;
             case NetField::POS: setPos(d.read<glm::vec3>()); break;
             case NetField::VEL: setVel(d.read<glm::vec3>()); break;
             case NetField::LOOK_YAW: setYaw(d.read<float>()); break;

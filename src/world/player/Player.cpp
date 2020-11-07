@@ -10,11 +10,9 @@
 #include "util/net/Serializer.h"
 #include "world/dim/Dimension.h"
 
-//TODO: For some reason this function being defined causes a segfault, but setPos, setVel, etc doesn't.
-
 void Player::setDim(DimensionPtr dim, bool assert) {
     Entity::setDim(dim);
-//    if (assert) assertField(Serializer().appendE(NetField::DIM).append(dim->getInd()).packet());
+    if (assert) assertField(Serializer().appendE(NetField::DIM).append(dim->getInd()).packet());
 }
 
 void Player::setPos(glm::vec3 pos, bool assert) {

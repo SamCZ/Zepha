@@ -19,6 +19,7 @@ public:
         LuaEntity(game, dim), Entity(game, dim) {
         setId(id); };
 
+    virtual void setDim(DimensionPtr dim) override;
     virtual void setPos(glm::vec3 position) override;
     virtual void setVel(glm::vec3 vel) override;
     virtual void setRot(glm::vec3 rot) override;

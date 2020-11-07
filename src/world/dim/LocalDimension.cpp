@@ -188,6 +188,7 @@ void LocalDimension::serverEntitiesInfo(Deserializer& e) {
 
         while (!d.atEnd()) {
             switch (d.readE<NetField>()) {
+                case NetField::DIM: activeEntity->setDim(world.getDimension(d.read<unsigned int>())); break;
                 case NetField::POS: activeEntity->setPos(d.read<glm::vec3>()); break;
                 case NetField::VEL: activeEntity->setVel(d.read<glm::vec3>()); break;
                 case NetField::ROT: activeEntity->setRot(d.read<glm::vec3>()); break;

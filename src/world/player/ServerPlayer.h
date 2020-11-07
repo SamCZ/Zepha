@@ -26,6 +26,7 @@ public:
     virtual void assertField(Packet packet) override;
     virtual void handleAssertion(Deserializer& d) override;
 
+    virtual void setDim(DimensionPtr dim, bool assert = false) override;
     virtual void setPos(glm::vec3 pos, bool assert = false) override;
 
     virtual InventoryPtr getInventory() override;

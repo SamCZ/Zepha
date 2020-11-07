@@ -31,6 +31,6 @@ if zepha.server then
         hw:add_stack({"zeus:default:dirt", 32})
 --         hw:add_stack({"@aurailus:crazyblocks:stacker", 1})
 --         hw:add_stack({"@aurailus:crazyblocks:inventory", 1})
-        hw:add_stack({"@aurailus:crazyblocks:box", 1})
+        hw:add_stack({"@aurailus:crazyblocks:box", 5})
     end)
 end

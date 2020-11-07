@@ -29,7 +29,8 @@ void ServerDimension::update(double delta) {
 
             bool clientNearby = false;
             for (auto& player : static_cast<ServerWorld&>(world).getClients().players) {
-                if (player->getDim()->getInd() == ind) {
+                // TODO: Re-enable then **once** file saving is implemented.
+//                if (player->getDim()->getInd() == ind) {
                     auto clientPos = Space::MapBlock::world::fromBlock(player->getPos());
                     if (abs(clientPos.x - mb->pos.x) <= discardRange.x + 1
                      && abs(clientPos.y - mb->pos.y) <= discardRange.y + 1
@@ -37,7 +38,7 @@ void ServerDimension::update(double delta) {
                         clientNearby = true;
                         break;
                     }
-                }
+//                }
             }
 
             if (!clientNearby) region.second->remove(i);

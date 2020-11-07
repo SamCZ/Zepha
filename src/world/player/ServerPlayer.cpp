@@ -38,6 +38,14 @@ void ServerPlayer::handleAssertion(Deserializer &d) {
     }
 }
 
+void ServerPlayer::setDim(DimensionPtr dim, bool assert) {
+    Player::setDim(dim, assert);
+
+    // Force a generation flush.
+    lastPos = glm::vec3(INFINITY);
+    changedMapBlocks = true;
+}
+
 void ServerPlayer::setPos(glm::vec3 pos, bool assert) {
     glm::vec3 lastMapBlock = Space::MapBlock::world::fromBlock(this->pos);
     glm::vec3 newMapBlock = Space::MapBlock::world::fromBlock(pos);
