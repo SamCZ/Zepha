@@ -1,5 +1,6 @@
 # Zepha Voxel Game
 
+[![release](https://github.com/Aurailus/Zepha/workflows/release/badge.svg)](https://github.com/Aurailus/Zepha/releases)
 [![codacy rating](https://img.shields.io/codacy/grade/8805f2cb1a454221ab70de77ec304f2d.svg?logo=codacy&labelColor=2A3037)](https://app.codacy.com/gh/Aurailus/Zepha)
 [![discord](https://img.shields.io/discord/416379773976051712.svg?color=7289DA&label=discord&logo=discord&logoColor=white&labelColor=2A3037)](https://aurail.us/discord)
 [![commit activity](https://img.shields.io/github/commit-activity/m/aurailus/zepha.svg?logo=github&labelColor=2A3037&label=commit%20activity)](https://github.com/Aurailus/Zepha/commits/master)
@@ -15,6 +16,8 @@ Zepha's full source code is currently available on this repository for viewing a
 ## Building
 
 Please see [docs/Building.md](https://github.com/Aurailus/Zepha/blob/master/docs/Building.md) for guides and best practices.
+
+Alternatively, check the [Releases](https://github.com/Aurailus/Zepha/releases) page for automatically built Linux binaries.
 
 ## License
 
