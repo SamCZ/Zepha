@@ -25,6 +25,7 @@ public:
 
     LocalDimension(SubgamePtr game, LocalWorld& world, const std::string& identifier, unsigned int ind);
 
+    void deactivate();
     void update(double delta) override;
 
     void setChunk(std::shared_ptr<Chunk> chunk) override;

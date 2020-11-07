@@ -85,6 +85,7 @@ DimensionPtr LocalWorld::getActiveDimension() {
 }
 
 void LocalWorld::setActiveDimension(DimensionPtr dim) {
+    this->activeDimension->deactivate();
     this->activeDimension = dim.l();
 }
 

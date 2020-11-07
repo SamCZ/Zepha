@@ -10,10 +10,10 @@ zepha.register_entity("zeus:default:test", {
         self.object.anims:set_anim("walk")
         self.object.anims:play()
 
-        zepha.after(function()
+--        zepha.after(function()
 --            local in_desert = self.object.dimension.identifier == 'zeus:world:endless_desert'
 --            player:set_dimension(in_desert and "zeus:world:default" or "zeus:world:endless_desert")
-        end, 2)
+--        end, 2)
     end,
     on_update = function(self, delta)
        self.object.pos = self.object.pos +

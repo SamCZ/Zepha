@@ -19,6 +19,20 @@
 LocalDimension::LocalDimension(SubgamePtr game, LocalWorld& world, const std::string& identifier, unsigned int ind) :
     Dimension(game, static_cast<World&>(world), identifier, ind), meshGenStream(std::make_shared<MeshGenStream>(game, *this)) {}
 
+
+/**
+ * Deactivates a dimension, cleaning up all mesh chunks.
+ * Called on the active dimension when the player leaves it.
+ */
+
+void LocalDimension::deactivate() {
+    while (!renderElems.empty()) {
+        auto chunk = renderElems.front();
+        renderRefs.erase(chunk->getPos());
+        renderElems.pop_front();
+    }
+}
+
 void LocalDimension::update(double delta) {
     finishMeshes();
 
