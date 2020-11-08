@@ -35,7 +35,6 @@ public:
     virtual ServerClients& getClients();
 private:
     void changedMapBlocks(ServerPlayer& player);
-    static bool isInBounds(glm::ivec3 pos, std::pair<glm::ivec3, glm::ivec3>& bounds);
 
     bool generateMapBlock(unsigned int dim, glm::ivec3 pos);
     void generateMapBlocks(ServerPlayer& player);

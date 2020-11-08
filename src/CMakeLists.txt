@@ -321,6 +321,6 @@ add_library(Zepha_Core
 		world/ServerWorld.h
 		world/World.cpp
 		world/World.h
-        util/net/Address.cpp)
+        util/net/Address.cpp util/Bounds.cpp util/Bounds.h)
 
 target_include_directories(Zepha_Core PUBLIC .)

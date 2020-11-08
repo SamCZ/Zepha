@@ -31,6 +31,10 @@ void LocalDimension::deactivate() {
         renderRefs.erase(chunk->getPos());
         renderElems.pop_front();
     }
+
+    while (!regions.empty()) {
+        removeRegion(regions.begin()->first);
+    }
 }
 
 void LocalDimension::update(double delta) {

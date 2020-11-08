@@ -75,7 +75,5 @@ private:
 
     std::unordered_map<glm::vec3, chunk_ref, Vec::vec3> renderRefs {};
     std::list<std::shared_ptr<ChunkRenderElem>> renderElems {};
-
-//    std::list<Portal> portals;
 };
 

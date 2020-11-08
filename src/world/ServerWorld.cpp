@@ -8,6 +8,7 @@
 
 #include "ServerWorld.h"
 
+#include "util/Bounds.h"
 #include "game/def/BlockDef.h"
 #include "lua/usertype/Target.h"
 #include "util/net/Serializer.h"
@@ -219,28 +220,15 @@ bool ServerWorld::generateMapBlock(unsigned int dim, glm::ivec3 pos) {
 
 void ServerWorld::sendChunksToPlayer(ServerPlayer& client) {
     glm::ivec3 playerPos = Space::MapBlock::world::fromBlock(client.getPos());
-    std::pair<glm::ivec3, glm::ivec3> bounds = {
-        {playerPos.x - sendRange.x, playerPos.y - sendRange.y, playerPos.z - sendRange.x},
-        {playerPos.x + sendRange.x, playerPos.y + sendRange.y, playerPos.z + sendRange.x}};
-
     glm::ivec3 lastPlayerPos = Space::MapBlock::world::fromBlock(client.lastPos);
-    std::pair<glm::ivec3, glm::ivec3> oldBounds = {
-        {lastPlayerPos.x - sendRange.x, lastPlayerPos.y - sendRange.y, lastPlayerPos.z - sendRange.x},
-        {lastPlayerPos.x + sendRange.x, lastPlayerPos.y + sendRange.y, lastPlayerPos.z + sendRange.x}};
 
-    for (int i = bounds.first.x; i < bounds.second.x; i++) {
-        for (int j = bounds.first.y; j < bounds.second.y; j++) {
-            for (int k = bounds.first.z; k < bounds.second.z; k++) {
-                glm::ivec3 pos {i, j, k};
-                if (isInBounds(pos, oldBounds)) continue;
-                packetStream->queue(client.getDim()->getInd(), pos);
-            }
-        }
+    Bounds newBounds = { playerPos - glm::ivec3 { sendRange.x, sendRange.y, sendRange.x },
+        playerPos + glm::ivec3 { sendRange.x, sendRange.y, sendRange.x }};
+    Bounds oldBounds = { lastPlayerPos - glm::ivec3 { sendRange.x, sendRange.y, sendRange.x },
+        lastPlayerPos + glm::ivec3 { sendRange.x, sendRange.y, sendRange.x }};
+
+    for (auto& pos : generateOrder) {
+        if (oldBounds.intersects(playerPos + pos) || !newBounds.intersects(playerPos + pos)) continue;
+        packetStream->queue(client.getDim()->getInd(), pos + playerPos);
     }
-}
-
-bool ServerWorld::isInBounds(glm::ivec3 cPos, std::pair<glm::ivec3, glm::ivec3> &bounds) {
-    return (cPos.x >= bounds.first.x && cPos.x <= bounds.second.x
-         && cPos.y >= bounds.first.y && cPos.y <= bounds.second.y
-         && cPos.z >= bounds.first.z && cPos.z <= bounds.second.z);
 }
