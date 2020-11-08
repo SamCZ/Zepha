@@ -1,6 +1,9 @@
-//
-// Created by auri on 2020-11-07.
-//
+/*
+ * Helper class containing two points representing a bounding box.
+ *
+ * - Auri, 07/11/20
+ */
+
 
 #pragma once
 

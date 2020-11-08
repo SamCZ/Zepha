@@ -35,8 +35,9 @@ private:
         bool locked = false;
         std::unique_ptr<MapGen::CreatedSet> created = nullptr;
 
-        glm::ivec3 pos {};
         unsigned int dim;
+        glm::ivec3 pos {};
+        std::shared_ptr<MapGen> gen;
     };
 
     struct Thread {
@@ -47,10 +48,10 @@ private:
 
         std::vector<Job> jobs = std::vector<Job>(THREAD_QUEUE_SIZE);
 
-        MapGen gen;
         std::thread thread;
     };
 
+    ServerWorld& world;
     std::vector<Thread> threads;
     std::queue<glm::ivec4> queuedTasks;
     std::unordered_set<glm::ivec4, Vec::ivec4> queuedMap;

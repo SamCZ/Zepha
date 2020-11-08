@@ -2,10 +2,11 @@
 // Created by aurailus on 2020-07-30.
 //
 
+#include <unordered_set>
+
 #include "Dimension.h"
 
 #include "../Lua.h"
-#include "../usertype/Dimension.h"
 #include "world/LocalWorld.h"
 #include "world/ServerWorld.h"
 
@@ -16,8 +17,18 @@ void Api::Module::Dimension::bind() {
     core.set_function("set_default_dimension", Util::bind_this(this, &Dimension::setDefaultDimension));
 }
 
-Api::Usertype::Dimension Api::Module::Dimension::createDimension(const std::string& identifier) {
-    return Api::Usertype::Dimension(world.createDimension(identifier));
+Api::Usertype::Dimension Api::Module::Dimension::createDimension(const std::string& identifier, sol::table data) {
+    std::unordered_set<std::string> biomes {};
+    auto biomesTbl = data.get<sol::optional<sol::table>>("biomes");
+
+    if (biomesTbl) {
+        for (auto &entry : *biomesTbl) {
+            if (entry.second.is<std::string>()) biomes.insert(entry.second.as<std::string>());
+        }
+    }
+    else biomes.insert("*");
+
+    return Api::Usertype::Dimension(world.createDimension(identifier, biomes));
 }
 
 void Api::Module::Dimension::setDefaultDimension(const std::string& identifier) {

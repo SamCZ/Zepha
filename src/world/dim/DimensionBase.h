@@ -14,6 +14,7 @@
 
 class World;
 class Chunk;
+class MapGen;
 class Region;
 class Subgame;
 class MapBlock;
@@ -21,7 +22,7 @@ class DefinitionAtlas;
 
 class DimensionBase : protected Lockable {
 public:
-    DimensionBase(SubgamePtr game, World& world, const std::string& identifier, unsigned int ind);
+    DimensionBase(SubgamePtr game, World& world, const std::string& identifier, unsigned int ind, std::shared_ptr<MapGen> mapGen);
 
     std::string getIdentifier() const;
     unsigned int getInd();
@@ -49,6 +50,7 @@ public:
     unsigned int getBiome(glm::ivec3 pos) const;
     virtual bool setBiome(glm::ivec3 pos, unsigned int biome);
 
+    std::shared_ptr<MapGen> getGen();
     SubgamePtr getGame();
     World& getWorld();
 
@@ -58,6 +60,7 @@ protected:
     // TODO: Make this more efficient using proper RIE traversal.
     static std::shared_ptr<Chunk> combinePartials(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b);
 
+    std::shared_ptr<MapGen> mapGen;
     SubgamePtr game;
     World& world;
 

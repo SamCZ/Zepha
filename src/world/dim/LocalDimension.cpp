@@ -16,8 +16,10 @@
 #include "client/stream/MeshGenStream.h"
 #include "client/graph/mesh/MeshChunk.h"
 
-LocalDimension::LocalDimension(SubgamePtr game, LocalWorld& world, const std::string& identifier, unsigned int ind) :
-    Dimension(game, static_cast<World&>(world), identifier, ind), meshGenStream(std::make_shared<MeshGenStream>(game, *this)) {}
+LocalDimension::LocalDimension(SubgamePtr game, LocalWorld& world, const std::string& identifier,
+    unsigned int ind, std::shared_ptr<MapGen> mapGen) :
+    Dimension(game, static_cast<World&>(world), identifier, ind, std::move(mapGen)),
+    meshGenStream(std::make_shared<MeshGenStream>(game, *this)) {}
 
 
 /**

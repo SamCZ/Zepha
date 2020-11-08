@@ -36,6 +36,6 @@ BiomeDef& BiomeAtlas::biomeFromId(unsigned int index) {
 }
 
 BiomeDef& BiomeAtlas::biomeFromStr(const std::string& identifier) {
-    if (defTable.count(identifier) <= 0) throw std::runtime_error("Undefined biome identifier " + identifier + "requested.");
+    if (defTable.count(identifier) <= 0) throw std::runtime_error("Undefined biome identifier " + identifier + " requested.");
     return *defs.at(static_cast<unsigned long>(defTable.at(identifier)));
 }

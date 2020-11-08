@@ -171,9 +171,13 @@ void ServerWorld::update(double delta) {
     }
 }
 
-DimensionPtr ServerWorld::createDimension(const std::string &identifier) {
-    this->dimensions.emplace_back(std::make_shared<ServerDimension>(game, *this, identifier, this->dimensions.size()));
-    return dimensions[dimensions.size() - 1];
+DimensionPtr ServerWorld::createDimension(const std::string &identifier, std::unordered_set<std::string>& biomes) {
+    auto mapGen = std::make_shared<MapGen>(**game, *this, seed, biomes);
+    dimensions.emplace_back(std::make_shared<ServerDimension>(
+        game, *this, identifier, this->dimensions.size(), std::move(mapGen)));
+
+    DimensionPtr d = dimensions.back();
+    return d;
 }
 
 DimensionPtr ServerWorld::getDimension(unsigned int index) {

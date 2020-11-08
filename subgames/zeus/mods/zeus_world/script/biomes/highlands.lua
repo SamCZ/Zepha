@@ -56,9 +56,10 @@ zepha.register_biome(identifier, {
         soil = "zeus:default:dirt",
         rock = "zeus:default:stone"
     },
+    tags = { natural = 1, default = 1 },
+    structures = { grass },
     biome_tint = "#c2fa61",
-    noise = noise,
-    structures = { grass }
+    noise = noise
 })
 
 return identifier

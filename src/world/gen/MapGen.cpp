@@ -17,8 +17,20 @@
 #include "world/World.h"
 #include "util/Schematic.h"
 
-MapGen::MapGen(Subgame& game, World& world, unsigned int seed) :
-    game(game), world(world), props(seed) {}
+MapGen::MapGen(Subgame& game, World& world, unsigned int seed, std::unordered_set<std::string> biomes) :
+    game(game), world(world), props(seed) {
+    std::unordered_set<unsigned int> biomeIndices {};
+    for (const auto& str : biomes) {
+        if (str[0] == '#') {
+            // Grouping
+        }
+        else {
+//            std::cout << str << std::endl;
+//            biomeIndices.insert(game.getBiomes().biomeFromStr(str).index);
+        }
+    }
+//    std::cout << "recieved " << biomes.size() << " biomes." << std::endl;
+}
 
 std::unique_ptr<MapGen::CreatedSet> MapGen::generateChunk(unsigned int dim, glm::ivec3 pos) {
     return generateArea(dim, pos, 1);

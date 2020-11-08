@@ -16,7 +16,7 @@ class ServerSubgame;
 
 class ServerDimension : public Dimension {
 public:
-    ServerDimension(SubgamePtr game, ServerWorld& world, const std::string& identifier, unsigned int ind);
+    ServerDimension(SubgamePtr game, ServerWorld& world, const std::string& identifier, unsigned int ind, std::shared_ptr<MapGen> mapGen);
 
     virtual void update(double delta) override;
 

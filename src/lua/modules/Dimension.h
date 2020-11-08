@@ -15,7 +15,7 @@ namespace Api::Module {
         void bind() override;
 
     protected:
-        Api::Usertype::Dimension createDimension(const std::string& identifier);
+        Api::Usertype::Dimension createDimension(const std::string& identifier, sol::table data);
         sol::object getDimension(sol::this_state s, const std::string& identifier);
 
         sol::object getDefaultDimension(const sol::this_state s);

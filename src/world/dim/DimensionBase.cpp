@@ -4,15 +4,17 @@
 
 #include "DimensionBase.h"
 
+#include "game/Subgame.h"
+#include "world/gen/MapGen.h"
+#include "game/def/BlockDef.h"
 #include "world/dim/chunk/Chunk.h"
 #include "world/dim/chunk/Region.h"
 #include "world/dim/chunk/MapBlock.h"
-#include "game/Subgame.h"
-#include "game/def/BlockDef.h"
 #include "game/atlas/DefinitionAtlas.h"
 
-DimensionBase::DimensionBase(SubgamePtr game, World& world, const std::string &identifier, unsigned int ind) :
-    game(game), world(world), identifier(identifier), ind(ind) {}
+DimensionBase::DimensionBase(SubgamePtr game, World& world, const std::string &identifier,
+    unsigned int ind, std::shared_ptr<MapGen> mapGen) :
+    game(game), world(world), identifier(identifier), ind(ind), mapGen(std::move(mapGen)) {}
 
 std::string DimensionBase::getIdentifier() const {
     return identifier;
@@ -163,4 +165,8 @@ std::shared_ptr<Chunk> DimensionBase::combinePartials(std::shared_ptr<Chunk> a, 
     res->setPartial(!res->isGenerated());
     res->countRenderableBlocks();
     return res;
+}
+
+std::shared_ptr<MapGen> DimensionBase::getGen() {
+    return mapGen;
 }

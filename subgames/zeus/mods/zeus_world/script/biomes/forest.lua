@@ -111,21 +111,20 @@ local tree = zepha.create_structure({
 })
 
 zepha.register_biome(identifier, {
-   environment = {
-       temperature = 15/100,
-       humidity = 80/100,
-       roughness = 20/100,
-   },
-   blocks = {
-       top = "zeus:default:grass",
-       soil = "zeus:default:dirt",
-       rock = "zeus:default:stone"
-   },
-   biome_tint = "#7beb26",
-   noise = noise,
-   structures = {
-       tree
-   }
+    environment = {
+        temperature = 15/100,
+        humidity = 80/100,
+        roughness = 20/100,
+    },
+    blocks = {
+        top = "zeus:default:grass",
+        soil = "zeus:default:dirt",
+        rock = "zeus:default:stone"
+    },
+    tags = { natural = 1, default = 1 },
+    structures = { tree },
+    biome_tint = "#7beb26",
+    noise = noise
 })
 
 return identifier

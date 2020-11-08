@@ -60,7 +60,6 @@ private:
 
         std::vector<Job> jobs = std::vector<Job>(THREAD_QUEUE_SIZE);
 
-        MapGen gen;
         std::thread thread;
     };
 

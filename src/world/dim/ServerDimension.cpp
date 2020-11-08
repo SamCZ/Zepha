@@ -16,8 +16,9 @@
 #include "world/player/ServerPlayer.h"
 #include "world/dim/ent/ServerLuaEntity.h"
 
-ServerDimension::ServerDimension(SubgamePtr game, ServerWorld& world, const std::string& identifier, unsigned int ind) :
-    Dimension(game, static_cast<World&>(world), identifier, ind) {}
+ServerDimension::ServerDimension(SubgamePtr game, ServerWorld& world, const std::string& identifier,
+    unsigned int ind, std::shared_ptr<MapGen> mapGen) :
+    Dimension(game, static_cast<World&>(world), identifier, ind, std::move(mapGen)) {}
 
 void ServerDimension::update(double delta) {
     for (auto& entity : luaEntities) entity.entity.s()->update(delta);

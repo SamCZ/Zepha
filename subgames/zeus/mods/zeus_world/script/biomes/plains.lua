@@ -65,20 +65,20 @@ local noise = {
 }
 
 zepha.register_biome(identifier, {
-   environment = {
-       temperature = 15/100,
-       humidity = 60/100,
-       roughness = 20/100,
-   },
-   blocks = {
-       top = "zeus:default:grass",
-       soil = "zeus:default:dirt",
-       rock = "zeus:default:stone"
-   },
-   groups = { natural = 1 },
-   biome_tint = "#aaed45",
-   noise = noise,
-   structures = { shrub }
+    environment = {
+        temperature = 15/100,
+        humidity = 60/100,
+        roughness = 20/100,
+    },
+    blocks = {
+        top = "zeus:default:grass",
+        soil = "zeus:default:dirt",
+        rock = "zeus:default:stone"
+    },
+    tags = { natural = 1, default = 1 },
+    structures = { shrub },
+    biome_tint = "#aaed45",
+    noise = noise
 })
 
 return identifier

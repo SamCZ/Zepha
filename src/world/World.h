@@ -6,7 +6,7 @@
 
 #include <memory>
 #include <glm/vec3.hpp>
-#include <unordered_map>
+#include <unordered_set>
 
 #include "util/Vec.h"
 #include "util/CovariantPtr.h"
@@ -21,7 +21,7 @@ public:
 
     virtual void update(double delta);
 
-    virtual DimensionPtr createDimension(const std::string& identifier) = 0;
+    virtual DimensionPtr createDimension(const std::string& identifier, std::unordered_set<std::string>& biomes) = 0;
 
     virtual DimensionPtr getDefaultDimension();
     virtual void setDefaultDimension(const std::string& defaultDimension);

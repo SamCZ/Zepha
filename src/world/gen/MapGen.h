@@ -46,7 +46,8 @@ public:
 
     typedef std::array<float, 4096> ChunkData;
 
-	MapGen(Subgame& game, World& world, unsigned int seed);
+    MapGen(const MapGen& o) = delete;
+	MapGen(Subgame& game, World& world, unsigned int seed, std::unordered_set<std::string> biomes);
 
     std::unique_ptr<CreatedSet> generateChunk(unsigned int dim, glm::ivec3 pos);
     std::unique_ptr<CreatedSet> generateMapBlock(unsigned int dim, glm::ivec3 pos);

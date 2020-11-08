@@ -26,7 +26,7 @@ public:
     void init(const std::string& worldDir);
     void update(double delta) override;
 
-    virtual DimensionPtr createDimension(const std::string& identifier) override;
+    virtual DimensionPtr createDimension(const std::string& identifier, std::unordered_set<std::string>& biomes) override;
 
     virtual DimensionPtr getDimension(unsigned int index) override;
     virtual DimensionPtr getDimension(const std::string& identifier) override;

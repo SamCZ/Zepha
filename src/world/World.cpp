@@ -2,6 +2,8 @@
 // Created by aurailus on 2020-01-09.
 //
 
+#include <unordered_map>
+
 #include "World.h"
 
 #include "world/dim/Dimension.h"
@@ -17,8 +19,8 @@ DimensionPtr World::getDefaultDimension() {
     return getDimension(defaultDimension);
 }
 
-void World::setDefaultDimension(const std::string& defaultDimension) {
-    this->defaultDimension = defaultDimension;
+void World::setDefaultDimension(const std::string& identifier) {
+    defaultDimension = identifier;
 }
 
 DimensionPtr World::getDimension(unsigned int index) {

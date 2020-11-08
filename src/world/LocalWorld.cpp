@@ -75,9 +75,13 @@ void LocalWorld::commitChunk(std::shared_ptr<Chunk> c) {
     activeDimension->setChunk(std::move(c));
 }
 
-DimensionPtr LocalWorld::createDimension(const std::string &identifier) {
-    this->dimensions.emplace_back(std::make_shared<LocalDimension>(game, *this, identifier, this->dimensions.size()));
-    return dimensions[dimensions.size() - 1];
+DimensionPtr LocalWorld::createDimension(const std::string &identifier, std::unordered_set<std::string>& biomes) {
+    auto mapGen = std::make_shared<MapGen>(**game, *this, 0 /* TODO: Get the seed here */, biomes);
+    dimensions.emplace_back(std::make_shared<LocalDimension>(
+            game, *this, identifier, this->dimensions.size(), std::move(mapGen)));
+
+    DimensionPtr d = dimensions.back();
+    return d;
 }
 
 DimensionPtr LocalWorld::getActiveDimension() {

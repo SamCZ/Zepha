@@ -28,7 +28,7 @@ public:
     void handlePlayerEntPacket(std::unique_ptr<PacketView> p);
     void commitChunk(std::shared_ptr<Chunk> chunk);
 
-    virtual DimensionPtr createDimension(const std::string& identifier) override;
+    virtual DimensionPtr createDimension(const std::string& identifier, std::unordered_set<std::string>& biomes) override;
 
     DimensionPtr getActiveDimension();
     void setActiveDimension(DimensionPtr);

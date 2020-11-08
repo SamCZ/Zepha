@@ -23,7 +23,7 @@ public:
     const static int MB_STORE_H = 6;
     const static int MB_STORE_V = 4;
 
-    LocalDimension(SubgamePtr game, LocalWorld& world, const std::string& identifier, unsigned int ind);
+    LocalDimension(SubgamePtr game, LocalWorld& world, const std::string& identifier, unsigned int ind, std::shared_ptr<MapGen> mapGen);
 
     void deactivate();
     void update(double delta) override;

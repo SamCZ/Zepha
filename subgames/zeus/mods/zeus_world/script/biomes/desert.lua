@@ -31,18 +31,19 @@ local noise = {
 }
 
 zepha.register_biome(identifier, {
-   environment = {
-       temperature = 40/100,
-       humidity = 20/100,
-       roughness = 10/100
-   },
-   blocks = {
-       top = "zeus:default:sand",
-       soil = "zeus:default:sand",
-       rock = "zeus:default:sandstone"
-   },
-   biome_tint = "#e6fa61",
-   noise = noise
+    environment = {
+        temperature = 40/100,
+        humidity = 20/100,
+        roughness = 10/100
+    },
+    blocks = {
+        top = "zeus:default:sand",
+        soil = "zeus:default:sand",
+        rock = "zeus:default:sandstone"
+    },
+    tags = { natural = 1, default = 1 },
+    biome_tint = "#e6fa61",
+    noise = noise
 })
 
 return identifier;

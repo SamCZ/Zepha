@@ -20,8 +20,8 @@ public:
     typedef std::unordered_set<glm::ivec3, Vec::ivec3> relitChunks;
 
     Dimension(const Dimension& o) = delete;
-    Dimension(SubgamePtr game, World& world, const std::string& identifier, unsigned int ind) :
-        DimensionBase(game, world, identifier, ind) {}
+    Dimension(SubgamePtr game, World& world, const std::string& identifier, unsigned int ind, std::shared_ptr<MapGen> mapGen) :
+        DimensionBase(game, world, identifier, ind, std::move(mapGen)) {}
 
     // Override setBlock to update lighting.
     bool setBlock(glm::ivec3 pos, unsigned int block) override;
