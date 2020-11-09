@@ -175,7 +175,7 @@ add_library(Zepha_Core
 		lua/register/CreateBlockModel.h
 		lua/register/RegisterBiomes.h
         lua/register/RegisterBlock.h
-		lua/register/RegisterItems.h
+        lua/register/RegisterItem.h
 		lua/register/RegisterKeybinds.h
 		lua/ServerLuaParser.cpp
 		lua/ServerLuaParser.h

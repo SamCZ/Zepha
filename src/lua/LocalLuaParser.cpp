@@ -6,7 +6,7 @@
 
 #include "client/Client.h"
 #include "ErrorFormatter.h"
-#include "register/RegisterItems.h"
+#include "register/RegisterItem.h"
 #include "register/RegisterBlock.h"
 #include "register/RegisterBiomes.h"
 #include "register/RegisterKeybinds.h"
@@ -83,10 +83,13 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
     modules.emplace_back(std::make_unique<Api::Module::Dimension>(Api::State::CLIENT, core, game, **world));
 
     // Register
+    auto& game = static_cast<LocalSubgame&>(this->game);
+    
     Api::Util::createRegister(lua, core, "mesh");
-    Api::Util::createRegister(lua, core, "item");
+    Api::Util::createRegister(lua, core, "item",
+	    [&](const auto& iden) { RegisterItem::client(core, game, iden); });
     Api::Util::createRegister(lua, core, "block",
-        [&](const std::string& iden) { RegisterBlock::client(core, static_cast<LocalSubgame&>(game), iden); });
+        [&](const auto& iden) { RegisterBlock::client(core, game, iden); });
     Api::Util::createRegister(lua, core, "biome");
     Api::Util::createRegister(lua, core, "keybind");
     Api::Util::createRegister(lua, core, "blockmodel");
@@ -115,8 +118,6 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
 
 void LocalLuaParser::registerDefs() {
     auto& local = static_cast<LocalSubgame&>(game);
-//    RegisterBlocks  ::client(core, local);
-    RegisterItems   ::client(core, local);
     RegisterBiomes  ::client(core, local);
     RegisterKeybinds::client(core, keybinds);
 }
@@ -134,7 +135,7 @@ sol::protected_function_result LocalLuaParser::errorCallback(sol::protected_func
         std::string::size_type lineNumStart = errString.find(':', slash);
         if (lineNumStart != std::string::npos) throw "lineNumStart";
         std::string::size_type lineNumEnd = errString.find(':', lineNumStart + 1);
-        if (lineNumStart != std::string::npos) throw "lineNumEnd";
+        if (lineNumEnd != std::string::npos) throw "lineNumEnd";
 
         std::string fileName = errString.substr(0, lineNumStart);
         int lineNum = std::stoi(errString.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1));

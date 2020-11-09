@@ -8,6 +8,10 @@
       <option name="FUNCTION_CALL_ARGUMENTS_ALIGN_MULTILINE" value="false" />
       <option name="CLASS_CONSTRUCTOR_INIT_LIST_ALIGN_MULTILINE" value="false" />
       <option name="ALIGN_INIT_LIST_IN_COLUMNS" value="false" />
+      <option name="SPACE_BEFORE_POINTER_IN_DECLARATION" value="false" />
+      <option name="SPACE_AFTER_POINTER_IN_DECLARATION" value="true" />
+      <option name="SPACE_BEFORE_REFERENCE_IN_DECLARATION" value="false" />
+      <option name="SPACE_AFTER_REFERENCE_IN_DECLARATION" value="true" />
       <option name="TAG_PREFIX_OF_LINE_COMMENT" value="AT" />
     </Objective-C>
     <Objective-C-extensions>

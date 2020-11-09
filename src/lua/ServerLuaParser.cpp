@@ -10,7 +10,7 @@
 #include "world/ServerWorld.h"
 #include "util/net/Serializer.h"
 #include "world/player/ServerPlayer.h"
-#include "lua/register/RegisterItems.h"
+#include "lua/register/RegisterItem.h"
 #include "lua/register/RegisterBiomes.h"
 #include "lua/register/RegisterBlock.h"
 
@@ -113,10 +113,13 @@ void ServerLuaParser::loadApi(WorldPtr world) {
     modules.emplace_back(std::make_unique<Api::Module::Dimension>(Api::State::SERVER, core, game, *world.s()));
 
     // Register
+    auto& game = static_cast<ServerSubgame&>(this->game);
+    
     Api::Util::createRegister(lua, core, "mesh");
-    Api::Util::createRegister(lua, core, "item");
+    Api::Util::createRegister(lua, core, "item",
+        [&](const auto& iden) { RegisterItem::server(core, game, iden); });
     Api::Util::createRegister(lua, core, "block",
-        [&](const std::string& iden) { RegisterBlock::server(core, static_cast<ServerSubgame&>(game), iden); });
+        [&](const auto& iden) { RegisterBlock::server(core, game, iden); });
     Api::Util::createRegister(lua, core, "biome");
     Api::Util::createRegister(lua, core, "keybind");
     Api::Util::createRegister(lua, core, "blockmodel");
@@ -145,8 +148,6 @@ void ServerLuaParser::loadApi(WorldPtr world) {
 
 void ServerLuaParser::registerDefs() {
     auto& server = static_cast<ServerSubgame&>(game);
-//    RegisterBlocks::server(core, server);
-    RegisterItems ::server(core, server);
     RegisterBiomes::server(core, server);
 }
 
