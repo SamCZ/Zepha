@@ -3,34 +3,35 @@
 //
 
 #include <gzip/compress.hpp>
-#include <enet/enet.h>
 
 #include "ServerLuaParser.h"
 
 #include "ErrorFormatter.h"
 #include "world/ServerWorld.h"
 #include "util/net/Serializer.h"
-#include "register/RegisterItems.h"
-#include "register/RegisterBiomes.h"
-#include "register/RegisterBlocks.h"
 #include "world/player/ServerPlayer.h"
+#include "lua/register/RegisterItems.h"
+#include "lua/register/RegisterBiomes.h"
+#include "lua/register/RegisterBlock.h"
 
 // Usertypes
-#include "usertype/Target.h"
-#include "usertype/Player.h"
-#include "usertype/Entity.h"
-#include "usertype/Inventory.h"
-#include "usertype/Dimension.h"
-#include "usertype/ItemStack.h"
-#include "usertype/InventoryList.h"
-#include "usertype/AnimationManager.h"
+#include "lua/usertype/Target.h"
+#include "lua/usertype/Player.h"
+#include "lua/usertype/Entity.h"
+#include "lua/usertype/Inventory.h"
+#include "lua/usertype/Dimension.h"
+#include "lua/usertype/ItemStack.h"
+#include "lua/usertype/InventoryList.h"
+#include "lua/usertype/AnimationManager.h"
 
 // Modules
-#include "modules/Time.h"
-#include "modules/Register.h"
-#include "modules/Dimension.h"
+#include "lua/modules/Time.h"
+#include "lua/modules/Dimension.h"
 
 #include "modules/create_structure.h"
+
+// Util
+#include "lua/register/CreateRegister.h"
 
 ServerLuaParser::ServerLuaParser(ServerSubgame& game) : LuaParser(game) {}
 
@@ -109,8 +110,29 @@ void ServerLuaParser::loadApi(WorldPtr world) {
 
     // Modules
     modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::SERVER, lua, core));
-    modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::SERVER, core, game, *world.s()));
     modules.emplace_back(std::make_unique<Api::Module::Dimension>(Api::State::SERVER, core, game, *world.s()));
+
+    // Register
+    Api::Util::createRegister(lua, core, "mesh");
+    Api::Util::createRegister(lua, core, "item");
+    Api::Util::createRegister(lua, core, "block",
+        [&](const std::string& iden) { RegisterBlock::server(core, static_cast<ServerSubgame&>(game), iden); });
+    Api::Util::createRegister(lua, core, "biome");
+    Api::Util::createRegister(lua, core, "keybind");
+    Api::Util::createRegister(lua, core, "blockmodel");
+    Api::Util::createRegister(lua, core, "entity", nullptr, "entities");
+
+    // Define keybind variables
+    core["keys"] = lua.create_table();
+    core["keycodes"] = lua.create_table();
+
+    for (unsigned short i = 0; i < 350; i++) {
+        auto key = ::Util::getKeyStr(i);
+        if (!key.empty()) {
+            core["keys"][key] = i;
+            core["keycodes"][i] = key;
+        }
+    }
 
     Api::create_structure (lua, core);
 
@@ -123,7 +145,7 @@ void ServerLuaParser::loadApi(WorldPtr world) {
 
 void ServerLuaParser::registerDefs() {
     auto& server = static_cast<ServerSubgame&>(game);
-    RegisterBlocks::server(core, server);
+//    RegisterBlocks::server(core, server);
     RegisterItems ::server(core, server);
     RegisterBiomes::server(core, server);
 }
@@ -141,7 +163,7 @@ sol::protected_function_result ServerLuaParser::errorCallback(sol::protected_fun
         std::string::size_type lineNumStart = errString.find(':', slash);
         if (lineNumStart != std::string::npos) throw "lineNumStart";
         std::string::size_type lineNumEnd = errString.find(':', lineNumStart + 1);
-        if (lineNumStart != std::string::npos) throw "lineNumEnd";
+        if (lineNumEnd != std::string::npos) throw "lineNumEnd";
 
         std::string fileName = errString.substr(0, lineNumStart);
         int lineNum = std::stoi(errString.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1));
@@ -181,7 +203,8 @@ sol::protected_function_result ServerLuaParser::runFileSandboxed(const std::stri
             env["_FILE"] = f.path;
             env["_MODNAME"] = mod.config.name;
 
-            return lua.safe_script(f.file, env, std::bind(&ServerLuaParser::errorCallback, this, std::placeholders::_2), "@" + f.path, sol::load_mode::text);
+            return lua.safe_script(f.file, env, std::bind(&ServerLuaParser::errorCallback, this,
+                std::placeholders::_2), "@" + f.path, sol::load_mode::text);
         }
         throw std::runtime_error("Error opening \"" + file + "\", file not found.");
     }

@@ -167,8 +167,6 @@ add_library(Zepha_Core
 		lua/modules/Dimension.h
 		lua/modules/mSetGui.h
 		lua/modules/mStartGame.h
-		lua/modules/Register.cpp
-		lua/modules/Register.h
 		lua/modules/SubgameModule.cpp
 		lua/modules/SubgameModule.h
 		lua/modules/Time.cpp
@@ -176,7 +174,7 @@ add_library(Zepha_Core
 		lua/register/CreateBlockModel.cpp
 		lua/register/CreateBlockModel.h
 		lua/register/RegisterBiomes.h
-		lua/register/RegisterBlocks.h
+        lua/register/RegisterBlock.h
 		lua/register/RegisterItems.h
 		lua/register/RegisterKeybinds.h
 		lua/ServerLuaParser.cpp
@@ -321,6 +319,6 @@ add_library(Zepha_Core
 		world/ServerWorld.h
 		world/World.cpp
 		world/World.h
-        util/net/Address.cpp util/Bounds.cpp util/Bounds.h)
+        util/net/Address.cpp util/Bounds.cpp util/Bounds.h lua/register/CreateRegister.h lua/register/CreateRegister.cpp)
 
 target_include_directories(Zepha_Core PUBLIC .)

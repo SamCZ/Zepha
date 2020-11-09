@@ -6,9 +6,8 @@
 
 #include "client/Client.h"
 #include "ErrorFormatter.h"
-#include "client/graph/Renderer.h"
 #include "register/RegisterItems.h"
-#include "register/RegisterBlocks.h"
+#include "register/RegisterBlock.h"
 #include "register/RegisterBiomes.h"
 #include "register/RegisterKeybinds.h"
 
@@ -26,10 +25,12 @@
 
 // Modules
 #include "modules/Time.h"
-#include "modules/Register.h"
 #include "modules/Dimension.h"
 
 #include "modules/create_structure.h"
+
+// Util
+#include "lua/register/CreateRegister.h"
 
 LocalLuaParser::LocalLuaParser(LocalSubgame& game): LuaParser(game), keybinds(this) {}
 
@@ -79,8 +80,29 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
 
     // Modules
     modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::CLIENT, lua, core));
-    modules.emplace_back(std::make_unique<Api::Module::Register>(Api::State::CLIENT, core, game, **world));
     modules.emplace_back(std::make_unique<Api::Module::Dimension>(Api::State::CLIENT, core, game, **world));
+
+    // Register
+    Api::Util::createRegister(lua, core, "mesh");
+    Api::Util::createRegister(lua, core, "item");
+    Api::Util::createRegister(lua, core, "block",
+        [&](const std::string& iden) { RegisterBlock::client(core, static_cast<LocalSubgame&>(game), iden); });
+    Api::Util::createRegister(lua, core, "biome");
+    Api::Util::createRegister(lua, core, "keybind");
+    Api::Util::createRegister(lua, core, "blockmodel");
+    Api::Util::createRegister(lua, core, "entity", nullptr, "entities");
+
+    // Define keybind variables
+    core["keys"] = lua.create_table();
+    core["keycodes"] = lua.create_table();
+
+    for (unsigned short i = 0; i < 350; i++) {
+        auto key = ::Util::getKeyStr(i);
+        if (!key.empty()) {
+            core["keys"][key] = i;
+            core["keycodes"][i] = key;
+        }
+    }
 
     bindModules();
 
@@ -93,7 +115,7 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
 
 void LocalLuaParser::registerDefs() {
     auto& local = static_cast<LocalSubgame&>(game);
-    RegisterBlocks  ::client(core, local);
+//    RegisterBlocks  ::client(core, local);
     RegisterItems   ::client(core, local);
     RegisterBiomes  ::client(core, local);
     RegisterKeybinds::client(core, keybinds);

@@ -55,6 +55,7 @@ sol::table Api::Usertype::Dimension::add_entity_c(sol::this_state s, glm::vec3 p
 
     if (core["registered_entities"][identifier] == sol::nil) throw std::runtime_error(identifier + " is not a valid entity identifier.");
     sol::table def = core["registered_entities"][identifier];
+    def["__index"] = def;
 
     sol::table luaEntity = lua.create_table();
     luaEntity[sol::metatable_key] = def;
@@ -92,6 +93,7 @@ sol::table Api::Usertype::Dimension::add_entity_s(sol::this_state s, glm::vec3 p
 
     if (core["registered_entities"][identifier] == sol::nil) throw std::runtime_error(identifier + " is not a valid entity identifier.");
     sol::table def = core["registered_entities"][identifier];
+    def["__index"] = def;
 
     sol::table luaEntity = lua.create_table();
     luaEntity[sol::metatable_key] = def;

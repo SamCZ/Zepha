@@ -11,8 +11,6 @@
 
 namespace MenuApi {
     void start_game(Client& client, sol::table& core) {
-        //TODO: Don't hardcode the subgame
-        
         core.set_function("game_connect", [&](std::string address) {
             client.scene.setScene(std::make_unique<ConnectScene>(client, Address::fromString(address)));
         });

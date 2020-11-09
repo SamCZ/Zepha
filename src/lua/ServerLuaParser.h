@@ -10,9 +10,9 @@
 
 #include "ServerModHandler.h"
 
-class ServerSubgame;
 class ServerWorld;
 class ServerPlayer;
+class ServerSubgame;
 
 class ServerLuaParser : public LuaParser {
 public:
