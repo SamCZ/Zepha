@@ -171,12 +171,10 @@ add_library(Zepha_Core
 		lua/modules/SubgameModule.h
 		lua/modules/Time.cpp
 		lua/modules/Time.h
-		lua/register/CreateBlockModel.cpp
-		lua/register/CreateBlockModel.h
-		lua/register/RegisterBiomes.h
+		lua/register/RegisterBiome.h
         lua/register/RegisterBlock.h
         lua/register/RegisterItem.h
-		lua/register/RegisterKeybinds.h
+		lua/register/RegisterKeybind.h
 		lua/ServerLuaParser.cpp
 		lua/ServerLuaParser.h
 		lua/ServerModHandler.cpp
