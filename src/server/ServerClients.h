@@ -33,5 +33,5 @@ public:
 
 private:
     SubgamePtr game;
-    ServerWorld* world;
+    ServerWorld* world = nullptr;
 };

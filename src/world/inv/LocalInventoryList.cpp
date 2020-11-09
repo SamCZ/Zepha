@@ -17,9 +17,9 @@ void LocalInventoryList::interact(InventoryListPtr hand, bool primary, unsigned 
     net.invInteract(invName, name, primary, ind);
 }
 
-void LocalInventoryList::setData(unsigned int size, unsigned int width, std::vector<ItemStack> items) {
-    this->width = width;
-    this->items = items;
+void LocalInventoryList::setData(unsigned int newWidth, const std::vector<ItemStack>& newItems) {
+	width = newWidth;
+    items = newItems;
     manipulated();
 }
 

@@ -54,7 +54,7 @@ void LocalInventoryRefs::packetReceived(std::unique_ptr<PacketView> p) {
         stacks.push_back({id, count});
     }
 
-    inventories[source]->getList(list).l()->setData(size, width, stacks);
+    inventories[source]->getList(list).l()->setData(width, stacks);
 }
 
 void LocalInventoryRefs::watch(const std::string &inv, const std::string &list, bool persistant) {

@@ -18,7 +18,7 @@ public:
 
     void interact(InventoryListPtr hand, bool primary, unsigned short ind) override;
 
-    void setData(unsigned int size, unsigned int width, std::vector<ItemStack> items);
+    void setData(unsigned int newWidth, const std::vector<ItemStack>& newItems);
     void addGuiCallback(std::shared_ptr<std::function<void()>> cb);
     void removeGuiCallback(std::shared_ptr<std::function<void()>> cb);
 

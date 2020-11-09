@@ -38,8 +38,8 @@ private:
     InventoryListPtr list;
     InventoryListPtr cursor;
 
-    unsigned short start;
-    unsigned short length;
+    unsigned short start = 0;
+    unsigned short length = 0;
 
     glm::ivec2 innerPadding;
 
