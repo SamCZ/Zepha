@@ -75,7 +75,7 @@ namespace RegisterBiome {
 				modules.push_back(module);
 				return module;
 			}
-				// Combiner Modules
+			// Combiner Modules
 			else if (type == "add") {
 				auto module = new noise::module::Add();
 				sol::table sources = noise["sources"];
@@ -136,7 +136,7 @@ namespace RegisterBiome {
 				modules.push_back(module);
 				return module;
 			}
-				// Generator modules
+			// Generator modules
 			else if (type == "billow") {
 				auto module = new noise::module::Billow();
 				
@@ -212,7 +212,7 @@ namespace RegisterBiome {
 				modules.push_back(module);
 				return module;
 			}
-				// Selector Modules
+			// Selector Modules
 			else if (type == "blend") {
 				auto module = new noise::module::Blend();
 				sol::table sources = noise["sources"];

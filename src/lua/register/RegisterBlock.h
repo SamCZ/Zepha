@@ -20,7 +20,6 @@
 namespace RegisterBlock {
 	namespace {
 		
-		
 		/**
 		 * Takes a lua selection box table list, and returns a vector of selection boxes.
 		 *
