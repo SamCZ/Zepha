@@ -8,8 +8,8 @@
 #include "ErrorFormatter.h"
 #include "register/RegisterItem.h"
 #include "register/RegisterBlock.h"
-#include "register/RegisterBiomes.h"
-#include "register/RegisterKeybinds.h"
+#include "register/RegisterBiome.h"
+#include "register/RegisterKeybind.h"
 
 // Usertypes
 #include "usertype/Target.h"
@@ -63,7 +63,7 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
     core["__builtin"] = lua.create_table();
 
     // Types
-    ClientApi::gui_element       (lua);
+    ClientApi::gui_element(lua);
 
     Api::Usertype::Target::bind(Api::State::CLIENT, lua, core);
     Api::Usertype::Entity::bind(Api::State::CLIENT, lua, core);
@@ -91,15 +91,12 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
         [&](const auto& iden) { RegisterBlock::client(core, game, iden); });
     Api::Util::createRegister(lua, core, "biome",
 	    [&](const auto& iden) { RegisterBiome::client(core, game, iden); });
-    Api::Util::createRegister(lua, core, "keybind");
+    Api::Util::createRegister(lua, core, "keybind",
+    	[&](const auto& iden) { RegisterKeybind::client(core, keybinds, iden); });
     Api::Util::createRegister(lua, core, "blockmodel");
     Api::Util::createRegister(lua, core, "entity", nullptr, "entities");
 	
-    //STILL NOT UPDATED
-    RegisterKeybinds::client(core, keybinds);
-	//DO NOT COMMIT
-	
-    // Define keybind variables
+    // Keybind Variables
     core["keys"] = lua.create_table();
     core["keycodes"] = lua.create_table();
 

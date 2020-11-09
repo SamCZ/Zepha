@@ -11,7 +11,7 @@
 #include "util/net/Serializer.h"
 #include "world/player/ServerPlayer.h"
 #include "lua/register/RegisterItem.h"
-#include "lua/register/RegisterBiomes.h"
+#include "lua/register/RegisterBiome.h"
 #include "lua/register/RegisterBlock.h"
 
 // Usertypes
