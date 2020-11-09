@@ -118,10 +118,9 @@ void MenuSandbox::loadAndRunMod(const std::string &modPath) {
             if (strncmp(scannedFile.name, ".", 1) != 0) {
                 if (scannedFile.is_dir) dirsToScan.emplace_back(scannedFile.path);
                 else {
-                    char *dot = strrchr(scannedFile.path, '.');
-                    if (dot && strlen(dot) >= 4 && strncmp(dot, ".lua", 4) == 0) {
+                	auto path = std::string_view(scannedFile.path);
+                    if (path.rfind('.') != std::string::npos && path.rfind('.') == path.rfind(".lua"))
                         luaFiles.emplace_back(scannedFile.path);
-                    }
                 }
             }
             cf_dir_next(&dir);

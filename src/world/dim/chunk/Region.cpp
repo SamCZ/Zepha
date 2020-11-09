@@ -12,18 +12,18 @@ Region::Region(glm::ivec3 pos) :
 }
 
 std::shared_ptr<MapBlock> Region::get(unsigned short index) const {
-    auto l = getReadLock();
+    auto _ = getReadLock();
     return mapBlocks[index];
 }
 
 void Region::set(unsigned short index, std::shared_ptr<MapBlock> block) {
-    auto l = getWriteLock();
+    auto _ = getWriteLock();
     if (mapBlocks[index] == nullptr) count++;
     mapBlocks[index] = block;
 }
 
 void Region::remove(unsigned short index) {
-    auto l = getWriteLock();
+    auto _ = getWriteLock();
     if (mapBlocks[index] != nullptr) count--;
     mapBlocks[index] = nullptr;
 }

@@ -24,16 +24,16 @@ std::string Api::Usertype::ItemStack::get_name() {
     return name;
 }
 
-void Api::Usertype::ItemStack::set_name(std::string name) {
-    this->name = name;
+void Api::Usertype::ItemStack::set_name(const std::string& newName) {
+    name = newName;
 }
 
 int Api::Usertype::ItemStack::get_count() {
     return count;
 }
 
-void Api::Usertype::ItemStack::set_count(int count) {
-    this->count = count;
+void Api::Usertype::ItemStack::set_count(int newCount) {
+    count = newCount;
 }
 
 bool Api::Usertype::ItemStack::is_empty() {

@@ -4,36 +4,36 @@
 #include "lua/Lua.h"
 
 namespace {
-
-    /**
-     * Handles a register request from Lua. Accepts an identifier and a data table,
-     * adds it to the registered table, and calls the after function, if it exists.
-     *
-     * @param core - The core table, i.e. `_G['zepha']`.
-     * @param table - The register table, e.g `_G['registered_blocks']`.
-     * @param env - The sol::environment that the function is being called from.
-     * @param after - The function to execute after the element is added to the register table.
-     * @param identifier - The identifier of the element to add.
-     * @param data - The data table of the element to add.
-     */
-
-    void registerFn(sol::table& core, const std::string& table, sol::environment env,
-        std::function<void(std::string)> after, const std::string& identifier, const sol::table& data) {
-
-        auto modName = env.get<std::string>("_MODNAME");
-
-        if (identifier[0] != ':' && strncmp(identifier.data(), modName.data(), modName.length()))
-            throw std::runtime_error(identifier + " does not match calling mod name.");
-
-        std::string iden = (identifier[0] == ':' ? modName + identifier : identifier);
-        unsigned int splitters = std::count_if(iden.begin(), iden.end(), [](char c) { return c == ':'; });
-
-        if (splitters > 2) throw std::runtime_error("Too many splitters in identifier " + iden + ".");
-
-        core[table][iden] = data;
-
-        if (after) after(iden);
-    }
+	
+	/**
+	 * Handles a register request from Lua. Accepts an identifier and a data table,
+	 * adds it to the registered table, and calls the after function, if it exists.
+	 *
+	 * @param core - The core table, i.e. `_G['zepha']`.
+	 * @param table - The register table, e.g `_G['registered_blocks']`.
+	 * @param env - The sol::environment that the function is being called from.
+	 * @param after - The function to execute after the element is added to the register table.
+	 * @param identifier - The identifier of the element to add.
+	 * @param data - The data table of the element to add.
+	 */
+	
+	void registerFn(sol::table& core, const std::string& table, sol::environment env,
+		std::function<void(std::string)> after, const std::string& identifier, const sol::table& data) {
+		
+		auto modName = env.get<std::string>("_MODNAME");
+		
+		if (identifier[0] != ':' && strncmp(identifier.data(), modName.data(), modName.length()))
+			throw std::runtime_error(identifier + " does not match calling mod name.");
+		
+		std::string iden = (identifier[0] == ':' ? modName + identifier : identifier);
+		unsigned int splitters = std::count_if(iden.begin(), iden.end(), [](char c) { return c == ':'; });
+		
+		if (splitters > 2) throw std::runtime_error("Too many splitters in identifier " + iden + ".");
+		
+		core[table][iden] = data;
+		
+		if (after) after(iden);
+	}
 }
 
 
@@ -50,12 +50,14 @@ namespace {
  */
 
 void Api::Util::createRegister(sol::state& lua, sol::table& core,
-    const std::string& name, std::function<void(std::string)> after, const std::string& table) {
-
-    std::string tableName = "registered_" + (table.empty() ? name + "s" : table);
-
-    core[tableName] = lua.create_table();
-
-    core.set_function("register_" + name, [=, &core](sol::this_environment env, std::string identifier, sol::table data)
-        { registerFn(core, tableName, static_cast<sol::environment>(env), after, identifier, data); });
+	const std::string& name, std::function<void(std::string)> after, const std::string& table) {
+	
+	std::string tableName = "registered_" + (table.empty() ? name + "s" : table);
+	
+	core[tableName] = lua.create_table();
+	
+	core.set_function("register_" + name,
+		[=, &core](sol::this_environment env, const std::string& identifier, sol::table data) {
+			registerFn(core, tableName, static_cast<sol::environment>(env), after, identifier, data);
+		});
 }

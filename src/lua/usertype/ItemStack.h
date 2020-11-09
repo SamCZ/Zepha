@@ -23,10 +23,10 @@ namespace Api::Usertype {
         ItemStack(const std::string& name, unsigned short count);
 
         std::string get_name();
-        void set_name(std::string name);
+        void set_name(const std::string& newName);
 
         int get_count();
-        void set_count(int count);
+        void set_count(int newCount);
 
         bool is_empty();
 

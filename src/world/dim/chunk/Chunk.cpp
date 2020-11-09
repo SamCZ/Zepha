@@ -38,8 +38,11 @@ bool Chunk::setBlock(unsigned int ind, unsigned int blk) {
     if (!RIE::write(ind, blk, blocks, 4096)) return false;
     l.unlock();
 
-    if (blk == DefinitionAtlas::AIR && !(renderableBlocks = std::max(renderableBlocks - 1, 0))) shouldRender = false;
-    else if (blk != DefinitionAtlas::AIR) {
+    if (blk == DefinitionAtlas::AIR) {
+	    renderableBlocks = std::max(renderableBlocks - 1, 0);
+	    if (renderableBlocks == 0) shouldRender = false;
+    }
+    else {
         shouldRender = true;
         renderableBlocks++;
     }
@@ -114,7 +117,7 @@ void Chunk::deserialize(Deserializer& d) {
 }
 
 void Chunk::countRenderableBlocks() {
-    auto l = getReadLock();
+    auto _ = getReadLock();
 
     shouldRender = false;
     renderableBlocks = 0;

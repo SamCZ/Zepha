@@ -13,18 +13,18 @@ MapBlock::MapBlock(glm::ivec3 pos) :
 }
 
 std::shared_ptr<Chunk> MapBlock::get(unsigned short index) const {
-    auto l = getReadLock();
+    auto _ = getReadLock();
     return chunks[index];
 }
 
 void MapBlock::set(unsigned short index, std::shared_ptr<Chunk> chunk) {
-    auto l = getWriteLock();
+    auto _ = getWriteLock();
     if (chunks[index] == nullptr) count++;
     chunks[index] = chunk;
 }
 
 void MapBlock::remove(unsigned short index) {
-    auto l = getWriteLock();
+    auto _ = getWriteLock();
     if (chunks[index] != nullptr) count--;
     chunks[index] = nullptr;
 }

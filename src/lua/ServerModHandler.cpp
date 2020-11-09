@@ -67,7 +67,7 @@ std::list<std::string> ServerModHandler::findModDirectories(const std::string& p
             }
 
             if (scannedFile.is_dir) subDirs.emplace_back(scannedFile.path);
-            else if (strlen(scannedFile.name) == 9 && strncmp(scannedFile.name, "conf.json", 9) == 0) {
+            else if (strlen(scannedFile.name) == 9 && std::string_view(scannedFile.name).rfind("conf.json") == 0) {
                 isModFolder = true;
                 break;
             }
