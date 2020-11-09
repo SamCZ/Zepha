@@ -41,8 +41,8 @@ void ServerLuaParser::init(WorldPtr world, const std::string& path) {
     loadApi(world);
     handler.loadMods(static_cast<ServerSubgame&>(game), path + "mods");
     handler.executeMods(std::bind(&ServerLuaParser::runFileSandboxed, this, std::placeholders::_1));
-
-    registerDefs();
+	game.getBiomes().generateVoronoi();
+	std::cout << "generated voronoi" << std::endl;
 
     std::cout << Log::info << "Loaded " << handler.cGetMods().size() << " mods: [ ";
     for (unsigned int i = 0; i < handler.cGetMods().size(); i++)
@@ -50,11 +50,11 @@ void ServerLuaParser::init(WorldPtr world, const std::string& path) {
 }
 
 void ServerLuaParser::update(double delta) {
-    this->delta += delta;
-    while (this->delta > static_cast<double>(UPDATE_STEP)) {
+    accumulatedDelta += delta;
+    while (accumulatedDelta > static_cast<double>(UPDATE_STEP)) {
         safe_function(core["__builtin"]["update_entities"], static_cast<double>(UPDATE_STEP));
         safe_function(core["__builtin"]["update_delayed_functions"]);
-        this->delta -= static_cast<double>(UPDATE_STEP);
+	    accumulatedDelta -= static_cast<double>(UPDATE_STEP);
     }
 }
 
@@ -120,7 +120,8 @@ void ServerLuaParser::loadApi(WorldPtr world) {
         [&](const auto& iden) { RegisterItem::server(core, game, iden); });
     Api::Util::createRegister(lua, core, "block",
         [&](const auto& iden) { RegisterBlock::server(core, game, iden); });
-    Api::Util::createRegister(lua, core, "biome");
+    Api::Util::createRegister(lua, core, "biome",
+    	[&](const auto& iden) { RegisterBiome::server(core, game, iden); });
     Api::Util::createRegister(lua, core, "keybind");
     Api::Util::createRegister(lua, core, "blockmodel");
     Api::Util::createRegister(lua, core, "entity", nullptr, "entities");
@@ -144,11 +145,6 @@ void ServerLuaParser::loadApi(WorldPtr world) {
     // Create sandboxed runfile()
     lua["dofile"] = lua["loadfile"] = sol::nil;
     lua.set_function("runfile", &ServerLuaParser::runFileSandboxed, this);
-}
-
-void ServerLuaParser::registerDefs() {
-    auto& server = static_cast<ServerSubgame&>(game);
-    RegisterBiomes::server(core, server);
 }
 
 sol::protected_function_result ServerLuaParser::errorCallback(sol::protected_function_result r) const {

@@ -86,7 +86,7 @@ namespace RegisterItem {
 	 * Registers an item to the DefinitionAtlas.
 	 *
 	 * @param core - The core table to index for 'registered_items', i.e. `_G['zepha']`.
-	 * @param game - The server subgame instance.
+	 * @param game - The client subgame instance.
 	 * @param identifier - The identifier of the item to register.
 	 */
 	

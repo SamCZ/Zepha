@@ -64,9 +64,11 @@ std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::
     for (unsigned short i = 0; i < biomeMap.size(); i++) {
         glm::vec3 indPos = { i / (job.size * 16 + 1), 0, i % (job.size * 16 + 1)};
         glm::vec3 queryPos = indPos / 16.f / static_cast<float>(job.size);
-
-        biomeMap[i] = game.getBiomes().getBiomeAt(job.temperature.get(queryPos),
-            job.humidity.get(queryPos), job.roughness.get(queryPos)).index;
+	
+        auto& biome = game.getBiomes().getBiomeAt(job.temperature.get(queryPos),
+	        job.humidity.get(queryPos), job.roughness.get(queryPos));
+	    
+        biomeMap[i] = biome.index;
     }
 
     // Generate Heightmap and Volume

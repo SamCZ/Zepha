@@ -25,12 +25,11 @@ public:
     LocalModHandler& getHandler();
 private:
     void loadApi(WorldPtr world, PlayerPtr player);
-    void registerDefs();
 
     virtual sol::protected_function_result errorCallback(sol::protected_function_result r) const override;
     sol::protected_function_result runFileSandboxed(const std::string& file);
 
     LuaKeybindHandler keybinds;
     LocalModHandler handler;
-    double delta = 0;
+    double accumulatedDelta = 0;
 };

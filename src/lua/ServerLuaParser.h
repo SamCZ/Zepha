@@ -28,12 +28,11 @@ public:
 
 private:
     void loadApi(WorldPtr world);
-    void registerDefs();
 
     virtual sol::protected_function_result errorCallback(sol::protected_function_result r) const override;
     sol::protected_function_result runFileSandboxed(const std::string& file);
 
     ServerModHandler handler;
-    double delta = 0;
+    double accumulatedDelta = 0;
 };
 

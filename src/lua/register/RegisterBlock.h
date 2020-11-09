@@ -436,7 +436,7 @@ namespace RegisterBlock {
 	 * Registers a block to the DefinitionAtlas.
 	 *
 	 * @param core - The core table to index for 'registered_blocks', i.e. `_G['zepha']`.
-	 * @param game - The server subgame instance.
+	 * @param game - The client subgame instance.
 	 * @param identifier - The identifier of the block to register.
 	 */
 	

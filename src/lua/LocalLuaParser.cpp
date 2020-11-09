@@ -40,16 +40,15 @@ void LocalLuaParser::init(WorldPtr world, PlayerPtr player, Client& client) {
     loadApi(world, player);
     handler.executeMods(Util::bind_this(this, &LocalLuaParser::runFileSandboxed));
     client.renderer.window.input.setCallback(Util::bind_this(&keybinds, &LuaKeybindHandler::keybindHandler));
-
-    registerDefs();
+	game.getBiomes().generateVoronoi();
 }
 
 void LocalLuaParser::update(double delta) {
-    this->delta += delta;
-    while (this->delta > static_cast<double>(UPDATE_STEP)) {
+	accumulatedDelta += delta;
+    while (accumulatedDelta > static_cast<double>(UPDATE_STEP)) {
         safe_function(core["__builtin"]["update_entities"], static_cast<double>(UPDATE_STEP));
         safe_function(core["__builtin"]["update_delayed_functions"]);
-        this->delta -= static_cast<double>(UPDATE_STEP);
+	    accumulatedDelta -= static_cast<double>(UPDATE_STEP);
     }
 }
 
@@ -90,11 +89,16 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
 	    [&](const auto& iden) { RegisterItem::client(core, game, iden); });
     Api::Util::createRegister(lua, core, "block",
         [&](const auto& iden) { RegisterBlock::client(core, game, iden); });
-    Api::Util::createRegister(lua, core, "biome");
+    Api::Util::createRegister(lua, core, "biome",
+	    [&](const auto& iden) { RegisterBiome::client(core, game, iden); });
     Api::Util::createRegister(lua, core, "keybind");
     Api::Util::createRegister(lua, core, "blockmodel");
     Api::Util::createRegister(lua, core, "entity", nullptr, "entities");
-
+	
+    //STILL NOT UPDATED
+    RegisterKeybinds::client(core, keybinds);
+	//DO NOT COMMIT
+	
     // Define keybind variables
     core["keys"] = lua.create_table();
     core["keycodes"] = lua.create_table();
@@ -114,12 +118,6 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
     // Create sandboxed runfile()
     lua["dofile"] = lua["loadfile"] = sol::nil;
     lua.set_function("runfile", &LocalLuaParser::runFileSandboxed, this);
-}
-
-void LocalLuaParser::registerDefs() {
-    auto& local = static_cast<LocalSubgame&>(game);
-    RegisterBiomes  ::client(core, local);
-    RegisterKeybinds::client(core, keybinds);
 }
 
 sol::protected_function_result LocalLuaParser::errorCallback(sol::protected_function_result r) const {
