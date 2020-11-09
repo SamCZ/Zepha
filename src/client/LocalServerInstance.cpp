@@ -15,6 +15,7 @@ LocalServerInstance::LocalServerInstance(const std::string &path, unsigned short
 bool LocalServerInstance::start() {
 #ifndef _WIN32
     pid = fork();
+    const auto sub = ("--subgame=" + subgame);
     if (pid == 0) {
         char *arr[] = {
             const_cast <char*>(""),
@@ -22,7 +23,7 @@ bool LocalServerInstance::start() {
             const_cast <char*>("-e"),
             const_cast <char*>(path.data()),
             const_cast <char*>("--mode=server"),
-            const_cast <char*>("--subgame=zeus"), //TODO: Don't hardcode this
+            const_cast <char*>(sub.data()),
             static_cast<char*>(nullptr)
         };
 
