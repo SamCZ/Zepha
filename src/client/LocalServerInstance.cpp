@@ -7,45 +7,45 @@
 #include "server/Server.h"
 #include <iostream>
 
-LocalServerInstance::LocalServerInstance(const std::string &path, unsigned short port, const std::string& subgame) :
-    port(port),
-    path(path),
-    subgame(subgame) {}
+LocalServerInstance::LocalServerInstance(const std::string& path, unsigned short port, const std::string& subgame) :
+	port(port),
+	path(path),
+	subgame(subgame) {}
 
 bool LocalServerInstance::start() {
 #ifndef _WIN32
-    pid = fork();
-    if (pid == 0) {
-	    const auto sub = ("--subgame=" + subgame);
-        char *arr[] = {
-            const_cast <char*>(""),
+	pid = fork();
+	if (pid == 0) {
+		const auto sub = ("--subgame=" + subgame);
+		char* arr[] = {
+			const_cast <char*>(""),
 //            const_cast <char*>("-iconic"),
-            const_cast <char*>("-e"),
-            const_cast <char*>(path.data()),
-            const_cast <char*>("--mode=server"),
-            const_cast <char*>(sub.data()),
-            static_cast<char*>(nullptr)
-        };
-
-        execvp("xterm", arr);
-    }
-    return true;
+			const_cast <char*>("-e"),
+			const_cast <char*>(path.data()),
+			const_cast <char*>("--mode=server"),
+			const_cast <char*>(sub.data()),
+			static_cast<char*>(nullptr)
+		};
+		
+		execvp("xterm", arr);
+	}
+	return true;
 #else
-    std::thread([&]() {
-       Server s(port, subgame);
-    }).detach();
-    return true;
+	std::thread([&]() {
+	   Server s(port, subgame);
+	}).detach();
+	return true;
 #endif
 }
 
 void LocalServerInstance::stop() {
-    #ifndef _WIN32
-        if (pid != 0) kill(pid, SIGKILL);
-    #else
-        std::cout << Log::err << "Local Server destructor not implemented on Windows!" << Log::endl;
-    #endif
+#ifndef _WIN32
+	if (pid != 0) kill(pid, SIGKILL);
+#else
+	std::cout << Log::err << "Local Server destructor not implemented on Windows!" << Log::endl;
+#endif
 }
 
 LocalServerInstance::~LocalServerInstance() {
-    stop();
+	stop();
 }

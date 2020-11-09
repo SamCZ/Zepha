@@ -16,13 +16,14 @@
 class ServerClients;
 
 class ServerInventory : public Inventory {
-public:
-    ServerInventory(SubgamePtr game, const std::string& name, ServerClients& clients) :
-        Inventory(game, name), clients(clients) {};
-
-    virtual void createList(const std::string& name, unsigned short length, unsigned short width) override;
-
-    void sendDirtyLists();
-private:
-    ServerClients& clients;
+	public:
+	ServerInventory(SubgamePtr game, const std::string& name, ServerClients& clients) :
+		Inventory(game, name), clients(clients) {};
+	
+	virtual void createList(const std::string& name, unsigned short length, unsigned short width) override;
+	
+	void sendDirtyLists();
+	
+	private:
+	ServerClients& clients;
 };

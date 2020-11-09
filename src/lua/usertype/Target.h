@@ -12,18 +12,18 @@
 #include "util/Target.h"
 
 namespace Api::Usertype {
-    class Target : public SubgameUsertype {
-    public:
-        Target(const ::Target& target);
-
-        std::string getType();
-
-        ::Target::Type type;
-
-        Dimension dim;
-        glm::ivec3 pos;
-        glm::ivec3 pos_above;
-
-        static void bind(State state, sol::state& lua, sol::table& core);
-    };
+	class Target : public SubgameUsertype {
+		public:
+		Target(const ::Target& target);
+		
+		std::string getType();
+		
+		::Target::Type type;
+		
+		Dimension dim;
+		glm::ivec3 pos;
+		glm::ivec3 pos_above;
+		
+		static void bind(State state, sol::state& lua, sol::table& core);
+	};
 }

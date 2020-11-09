@@ -16,26 +16,27 @@
 class LocalServerInstance;
 
 class Client {
-public:
-    Client(const Client& o) = delete;
-    explicit Client(glm::ivec2 window);
-
-    double getDelta();
-
-    void startLocalServer(const std::string& subgame);
-
-    Renderer renderer;
-    SceneManager scene;
-    ServerConnection connection {};
-
-    std::shared_ptr<LocalSubgame> game = std::make_shared<LocalSubgame>("../assets/textures");
-
-private:
-    void loop();
-
-    std::shared_ptr<LocalServerInstance> localServer = nullptr;
-
-    double delta = 0;
-    double timeElapsed = 0;
+	public:
+	Client(const Client& o) = delete;
+	
+	explicit Client(glm::ivec2 window);
+	
+	double getDelta();
+	
+	void startLocalServer(const std::string& subgame);
+	
+	Renderer renderer;
+	SceneManager scene;
+	ServerConnection connection{};
+	
+	std::shared_ptr<LocalSubgame> game = std::make_shared<LocalSubgame>("../assets/textures");
+	
+	private:
+	void loop();
+	
+	std::shared_ptr<LocalServerInstance> localServer = nullptr;
+	
+	double delta = 0;
+	double timeElapsed = 0;
 };
 

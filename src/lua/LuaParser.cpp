@@ -5,5 +5,5 @@
 #include "LuaParser.h"
 
 void LuaParser::bindModules() {
-    for (auto& module : modules) module->bind();
+	for (auto& module : modules) module->bind();
 }

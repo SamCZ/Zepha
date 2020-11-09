@@ -9,11 +9,12 @@
 class State;
 
 namespace Api {
-    namespace Usertype {
-        class SubgameUsertype : public BaseUsertype {
-        public:
-            SubgameUsertype() = default;
-            static void bind(State state, sol::state& lua, sol::table& core) {};
-        };
-    }
+	namespace Usertype {
+		class SubgameUsertype : public BaseUsertype {
+			public:
+			SubgameUsertype() = default;
+			
+			static void bind(State state, sol::state& lua, sol::table& core) {};
+		};
+	}
 }

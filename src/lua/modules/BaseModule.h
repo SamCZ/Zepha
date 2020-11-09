@@ -7,21 +7,23 @@
 #include "sol/forward.hpp"
 
 namespace Api {
-    enum class State { CLIENT, SERVER };
-
-    namespace Module {
-        class BaseModule {
-        public:
-            BaseModule(State state, sol::state& lua, sol::table& core) :
-                state(state), lua(lua), core(core) {}
-
-            virtual void bind() = 0;
-
-        protected:
-            State state;
-
-            sol::state& lua;
-            sol::table& core;
-        };
-    }
+	enum class State {
+		CLIENT, SERVER
+	};
+	
+	namespace Module {
+		class BaseModule {
+			public:
+			BaseModule(State state, sol::state& lua, sol::table& core) :
+				state(state), lua(lua), core(core) {}
+			
+			virtual void bind() = 0;
+			
+			protected:
+			State state;
+			
+			sol::state& lua;
+			sol::table& core;
+		};
+	}
 }

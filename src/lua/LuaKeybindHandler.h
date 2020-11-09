@@ -11,17 +11,20 @@
 class LocalLuaParser;
 
 class LuaKeybindHandler {
-public:
-    LuaKeybindHandler(LocalLuaParser* parser);
-    LuaKeybindHandler(const LuaKeybindHandler& o) = delete;
-
-    void bindOnDown(unsigned short key, const sol::protected_function& cb);
-    void bindOnUp(unsigned short key, const sol::protected_function& cb);
-
-    void keybindHandler(bool state, int i);
-private:
-    std::array<std::vector<sol::protected_function>, 1024> callbacksDown {};
-    std::array<std::vector<sol::protected_function>, 1024> callbacksUp {};
-
-    const LocalLuaParser* parser;
+	public:
+	LuaKeybindHandler(LocalLuaParser* parser);
+	
+	LuaKeybindHandler(const LuaKeybindHandler& o) = delete;
+	
+	void bindOnDown(unsigned short key, const sol::protected_function& cb);
+	
+	void bindOnUp(unsigned short key, const sol::protected_function& cb);
+	
+	void keybindHandler(bool state, int i);
+	
+	private:
+	std::array<std::vector<sol::protected_function>, 1024> callbacksDown{};
+	std::array<std::vector<sol::protected_function>, 1024> callbacksUp{};
+	
+	const LocalLuaParser* parser;
 };

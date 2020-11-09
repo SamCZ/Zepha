@@ -7,8 +7,8 @@
 #include "Entity.h"
 
 class LuaEntity : public virtual Entity {
-public:
-    LuaEntity(SubgamePtr game, DimensionPtr dim);
-
-    virtual void setAppearance(const std::string& dMode, const std::string& argA, const std::string& argB) = 0;
+	public:
+	LuaEntity(SubgamePtr game, DimensionPtr dim);
+	
+	virtual void setAppearance(const std::string& dMode, const std::string& argA, const std::string& argB) = 0;
 };

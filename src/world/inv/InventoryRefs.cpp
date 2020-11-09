@@ -8,11 +8,11 @@
 
 InventoryRefs::InventoryRefs(SubgamePtr game) : game(game) {}
 
-bool InventoryRefs::hasInventory(const std::string &inv) {
-    return inventories.count(inv);
+bool InventoryRefs::hasInventory(const std::string& inv) {
+	return inventories.count(inv);
 }
 
-InventoryPtr InventoryRefs::getInventory(const std::string &inv) {
-    if (!inventories.count(inv)) throw std::runtime_error("Inventory " + inv + " doesn't exist~!");
-    return inventories.at(inv);
+InventoryPtr InventoryRefs::getInventory(const std::string& inv) {
+	if (!inventories.count(inv)) throw std::runtime_error("Inventory " + inv + " doesn't exist~!");
+	return inventories.at(inv);
 }

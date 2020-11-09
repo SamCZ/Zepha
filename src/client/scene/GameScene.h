@@ -13,25 +13,27 @@
 #include "client/conn/ClientNetworkInterpreter.h"
 
 class LocalSubgame;
+
 class Drawable;
 
 class GameScene : public Scene {
-public:
-    GameScene(Client& client);
-
-    void update() override;
-    void draw() override;
-
-    void cleanup() override;
-
-public:
-    WorldPtr world;
-
-    DebugGui debugGui;
-    std::vector<Drawable*> entities;
-    int drawCalls = 0;
-
-    bool debugVisible = true;
-    bool hudVisible = true;
+	public:
+	GameScene(Client& client);
+	
+	void update() override;
+	
+	void draw() override;
+	
+	void cleanup() override;
+	
+	public:
+	WorldPtr world;
+	
+	DebugGui debugGui;
+	std::vector<Drawable*> entities;
+	int drawCalls = 0;
+	
+	bool debugVisible = true;
+	bool hudVisible = true;
 };
 

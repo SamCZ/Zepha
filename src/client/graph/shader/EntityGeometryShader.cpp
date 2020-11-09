@@ -5,15 +5,15 @@
 #include "EntityGeometryShader.h"
 
 EntityGeometryShader::EntityGeometryShader(glm::ivec2 windowSize, float bufferScale) : Shader(),
-    windowSize(windowSize),
-    bufferScale(bufferScale) {}
+	windowSize(windowSize),
+	bufferScale(bufferScale) {}
 
 void EntityGeometryShader::postCreate() {
-    uniforms.proj   = get("projection");
-    uniforms.model  = get("model");
-    uniforms.view   = get("view");
-
-    uniforms.bones = get("uBones");
+	uniforms.proj = get("projection");
+	uniforms.model = get("model");
+	uniforms.view = get("view");
+	
+	uniforms.bones = get("uBones");
 }
 
 

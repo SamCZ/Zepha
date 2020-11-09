@@ -75,7 +75,7 @@ namespace RegisterBiome {
 				modules.push_back(module);
 				return module;
 			}
-			// Combiner Modules
+				// Combiner Modules
 			else if (type == "add") {
 				auto module = new noise::module::Add();
 				sol::table sources = noise["sources"];
@@ -136,7 +136,7 @@ namespace RegisterBiome {
 				modules.push_back(module);
 				return module;
 			}
-			// Generator modules
+				// Generator modules
 			else if (type == "billow") {
 				auto module = new noise::module::Billow();
 				
@@ -212,7 +212,7 @@ namespace RegisterBiome {
 				modules.push_back(module);
 				return module;
 			}
-			// Selector Modules
+				// Selector Modules
 			else if (type == "blend") {
 				auto module = new noise::module::Blend();
 				sol::table sources = noise["sources"];
@@ -274,10 +274,11 @@ namespace RegisterBiome {
 			sol::table biomeTable = biomes[identifier];
 			
 			// Tags
-			std::unordered_map<std::string, unsigned short> tags {};
+			std::unordered_map<std::string, unsigned short> tags{};
 			auto tagsTbl = biomeTable.get<sol::optional<sol::table>>("tags");
-			if (tagsTbl) for (auto& tag : *tagsTbl)
-				tags.insert({ tag.first.as<std::string>(), tag.second.as<int>() });
+			if (tagsTbl)
+				for (auto& tag : *tagsTbl)
+					tags.insert({ tag.first.as<std::string>(), tag.second.as<int>() });
 			
 			// Environment Properties for Voronoi Diagram
 			auto environment = biomeTable.get<sol::optional<sol::table>>("environment");

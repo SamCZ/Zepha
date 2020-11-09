@@ -5,7 +5,7 @@
 #pragma once
 
 enum class AssetType {
-    END = 0,
-    TEXTURE,
-    MODEL
+	END = 0,
+	TEXTURE,
+	MODEL
 };

@@ -9,14 +9,16 @@
 #include "client/gui/basic/GuiContainer.h"
 
 class LuaErrorScene : public Scene {
-public:
-    LuaErrorScene(Client& client, const std::string& err);
-
-    void update() override;
-    void draw() override;
-    void cleanup() override;
-
-private:
-    GuiContainer components;
-    const std::string err;
+	public:
+	LuaErrorScene(Client& client, const std::string& err);
+	
+	void update() override;
+	
+	void draw() override;
+	
+	void cleanup() override;
+	
+	private:
+	GuiContainer components;
+	const std::string err;
 };

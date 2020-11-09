@@ -11,8 +11,8 @@
 class AtlasRef;
 
 class SubgameDef {
-public:
-    std::shared_ptr<AtlasRef> iconRef = nullptr;
-    SubgameConfig config {};
-    std::string subgamePath = "";
+	public:
+	std::shared_ptr<AtlasRef> iconRef = nullptr;
+	SubgameConfig config{};
+	std::string subgamePath = "";
 };

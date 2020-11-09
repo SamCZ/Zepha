@@ -8,4 +8,4 @@
 #include "lua/LuaParser.h"
 
 Api::Module::SubgameModule::SubgameModule(State state, sol::table& core, Subgame& game, World& world) :
-    BaseModule(state, game.getParser().lua, core), state(state), game(game), world(world) {}
+	BaseModule(state, game.getParser().lua, core), state(state), game(game), world(world) {}

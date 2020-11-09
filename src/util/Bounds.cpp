@@ -12,7 +12,7 @@ Bounds::Bounds(glm::vec3 a, glm::vec3 b) : a(a), b(b) {}
  */
 
 glm::vec3 Bounds::getA() {
-    return a;
+	return a;
 }
 
 
@@ -22,7 +22,7 @@ glm::vec3 Bounds::getA() {
  */
 
 glm::vec3 Bounds::getB() {
-    return b;
+	return b;
 }
 
 
@@ -32,7 +32,7 @@ glm::vec3 Bounds::getB() {
  */
 
 void Bounds::setA(glm::vec3 vecA) {
-    a = vecA;
+	a = vecA;
 }
 
 
@@ -42,7 +42,7 @@ void Bounds::setA(glm::vec3 vecA) {
  */
 
 void Bounds::setB(glm::vec3 vecB) {
-    b = vecB;
+	b = vecB;
 }
 
 
@@ -53,7 +53,7 @@ void Bounds::setB(glm::vec3 vecB) {
  */
 
 bool Bounds::intersects(glm::vec3 test) {
-    return (test.x >= a.x && test.x <= b.x
-         && test.y >= a.y && test.y <= b.y
-         && test.z >= a.z && test.z <= b.z);
+	return (test.x >= a.x && test.x <= b.x
+	        && test.y >= a.y && test.y <= b.y
+	        && test.z >= a.z && test.z <= b.z);
 }

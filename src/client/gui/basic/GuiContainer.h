@@ -7,10 +7,11 @@
 #include "client/gui/GuiComponent.h"
 
 class GuiContainer : public GuiComponent {
-public:
-    GuiContainer() = default;
-    explicit GuiContainer(const std::string& key);
-
-    void draw(Renderer& renderer) override;
+	public:
+	GuiContainer() = default;
+	
+	explicit GuiContainer(const std::string& key);
+	
+	void draw(Renderer& renderer) override;
 };
 

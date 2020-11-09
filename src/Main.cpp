@@ -21,12 +21,13 @@
 
 /**
  * Main entrance point to the program. (Am I really describing what the main function is?)
- * Intentionally kept minimal to allow for testing. Real startup logic is done in StartGame. *
+ * Intentionally kept minimal to allow for testing. Real startup logic is done in StartGame.
+ *
  * @param argc - Argument array length
  * @param argv - Argument array
  * @returns - A numerical value indicating exit status.
  */
 
 int main(int argc, char* argv[]) {
-    return StartGame(argc, argv);
+	return StartGame(argc, argv);
 }

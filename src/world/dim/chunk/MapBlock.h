@@ -13,19 +13,22 @@
 #include "util/Lockable.h"
 
 class Chunk;
+
 class Deserializer;
 
 class MapBlock : Lockable {
-public:
-    MapBlock(glm::ivec3 pos);
-
-    std::shared_ptr<Chunk> get(unsigned short index) const;
-    void set(unsigned short index, std::shared_ptr<Chunk> chunk);
-    void remove(unsigned short index);
-
-    glm::ivec3 pos {};
-    bool generated = false;
-    unsigned short count = 0;
-private:
-    std::array<std::shared_ptr<Chunk>, 64> chunks;
+	public:
+	MapBlock(glm::ivec3 pos);
+	
+	std::shared_ptr<Chunk> get(unsigned short index) const;
+	
+	void set(unsigned short index, std::shared_ptr<Chunk> chunk);
+	
+	void remove(unsigned short index);
+	
+	glm::ivec3 pos{};
+	bool generated = false;
+	unsigned short count = 0;
+	private:
+	std::array<std::shared_ptr<Chunk>, 64> chunks;
 };

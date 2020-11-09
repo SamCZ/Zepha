@@ -10,8 +10,8 @@
 #include "client/graph/mesh/ChunkVertex.h"
 
 struct ChunkMeshDetails {
-    std::vector<ChunkVertex> vertices;
-    std::vector<unsigned int> indices;
-
-    glm::ivec3 pos {};
+	std::vector<ChunkVertex> vertices;
+	std::vector<unsigned int> indices;
+	
+	glm::ivec3 pos{};
 };

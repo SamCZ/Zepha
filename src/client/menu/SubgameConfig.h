@@ -7,7 +7,7 @@
 #include <string>
 
 struct SubgameConfig {
-    std::string name;
-    std::string description;
-    std::string version;
+	std::string name;
+	std::string description;
+	std::string version;
 };

@@ -9,6 +9,6 @@
 #include "SerializedModel.h"
 
 class ModelStore {
-public:
-    std::map<std::string, SerializedModel> models;
+	public:
+	std::map<std::string, SerializedModel> models;
 };

@@ -9,9 +9,10 @@
 class TextureAtlas;
 
 class LocalDefinitionAtlas : public DefinitionAtlas {
-public:
-    LocalDefinitionAtlas(TextureAtlas& atlas);
-    void registerDef(ItemDef* def) override;
-
-    void setIdentifiers(const std::vector<std::string>& identifiers);
+	public:
+	LocalDefinitionAtlas(TextureAtlas& atlas);
+	
+	void registerDef(ItemDef* def) override;
+	
+	void setIdentifiers(const std::vector<std::string>& identifiers);
 };

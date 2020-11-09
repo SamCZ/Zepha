@@ -18,12 +18,12 @@
  */
 
 Client::Client(glm::ivec2 window) :
-    renderer(window) {
-
-    std::cout << Log::info << "Starting Zepha Client." << Log::endl;
-
-    scene.setScene(std::make_unique<MainMenuScene>(*this));
-    while (!renderer.window.shouldClose()) loop();
+	renderer(window) {
+	
+	std::cout << Log::info << "Starting Zepha Client." << Log::endl;
+	
+	scene.setScene(std::make_unique<MainMenuScene>(*this));
+	while (!renderer.window.shouldClose()) loop();
 }
 
 
@@ -33,7 +33,7 @@ Client::Client(glm::ivec2 window) :
  */
 
 double Client::getDelta() {
-    return delta;
+	return delta;
 }
 
 
@@ -44,11 +44,11 @@ double Client::getDelta() {
  */
 
 void Client::startLocalServer(const std::string& subgame) {
-    //TODO: Implement Local Server
+	//TODO: Implement Local Server
 //    localServer = std::make_shared<LocalServerInstance>(executablePath, addr.port, state.subgame);
 //    localServer->start();
-
-    scene.setScene(std::make_unique<ConnectScene>(*this, Address { "127.0.0.1", Address::DEFAULT_PORT }));
+	
+	scene.setScene(std::make_unique<ConnectScene>(*this, Address{ "127.0.0.1", Address::DEFAULT_PORT }));
 }
 
 
@@ -58,12 +58,12 @@ void Client::startLocalServer(const std::string& subgame) {
  */
 
 void Client::loop() {
-    double now = glfwGetTime();
-    delta = now - timeElapsed;
-    timeElapsed = now;
-
-    glfwPollEvents();
-
-    scene.update();
-    renderer.update(delta);
+	double now = glfwGetTime();
+	delta = now - timeElapsed;
+	timeElapsed = now;
+	
+	glfwPollEvents();
+	
+	scene.update();
+	renderer.update(delta);
 }

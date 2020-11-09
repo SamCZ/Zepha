@@ -11,11 +11,12 @@
 #include "Packet.h"
 
 class PacketView {
-public:
-    explicit PacketView(ENetPacket* packet);
-    PacketView(const PacketView&) = delete;
-
-    std::shared_ptr<ENetPacket> packet;
-    Deserializer d;
-    Packet::Type type;
+	public:
+	explicit PacketView(ENetPacket* packet);
+	
+	PacketView(const PacketView&) = delete;
+	
+	std::shared_ptr<ENetPacket> packet;
+	Deserializer d;
+	Packet::Type type;
 };

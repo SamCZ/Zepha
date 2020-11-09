@@ -10,8 +10,8 @@
 #include "SerializedModel.h"
 
 class AssetStorage {
-public:
-    std::vector<ServerTexture> textures;
-    std::vector<SerializedModel> models;
+	public:
+	std::vector<ServerTexture> textures;
+	std::vector<SerializedModel> models;
 };
 

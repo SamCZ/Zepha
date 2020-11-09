@@ -11,23 +11,23 @@
 World::World(SubgamePtr game) : game(game) {}
 
 void World::update(double delta) {
-    for (auto& dimension : dimensions) dimension->update(delta);
+	for (auto& dimension : dimensions) dimension->update(delta);
 }
 
 DimensionPtr World::getDefaultDimension() {
-    if (defaultDimension.empty()) throw std::runtime_error("No default dimension was set.");
-    return getDimension(defaultDimension);
+	if (defaultDimension.empty()) throw std::runtime_error("No default dimension was set.");
+	return getDimension(defaultDimension);
 }
 
 void World::setDefaultDimension(const std::string& identifier) {
-    defaultDimension = identifier;
+	defaultDimension = identifier;
 }
 
 DimensionPtr World::getDimension(unsigned int index) {
-    return dimensions[index];
+	return dimensions[index];
 }
 
-DimensionPtr World::getDimension(const std::string &identifier) {
-    for (auto& dimension : dimensions) if (dimension->getIdentifier() == identifier) return dimension;
-    throw std::runtime_error("No dimension named " + identifier + " found.");
+DimensionPtr World::getDimension(const std::string& identifier) {
+	for (auto& dimension : dimensions) if (dimension->getIdentifier() == identifier) return dimension;
+	throw std::runtime_error("No dimension named " + identifier + " found.");
 }

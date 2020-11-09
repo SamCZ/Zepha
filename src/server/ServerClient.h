@@ -11,15 +11,15 @@
 class ServerPlayer;
 
 class ServerClient {
-public:
-    ServerClient(const std::string& username, ENetPeer* peer) :
-        username(username), peer(peer), address(peer->address), id(peer->connectID) {}
-
-    std::string username;
-    unsigned int id = 0;
-
-    ENetPeer* peer;
-    ENetAddress address;
-
-    std::shared_ptr<ServerPlayer> player = nullptr;
+	public:
+	ServerClient(const std::string& username, ENetPeer* peer) :
+		username(username), peer(peer), address(peer->address), id(peer->connectID) {}
+	
+	std::string username;
+	unsigned int id = 0;
+	
+	ENetPeer* peer;
+	ENetAddress address;
+	
+	std::shared_ptr<ServerPlayer> player = nullptr;
 };

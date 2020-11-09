@@ -10,14 +10,17 @@
 #include "lua/usertype/ItemStack.h"
 
 class ItemStack {
-public:
-    ItemStack() = default;
-    ItemStack(unsigned int id, unsigned short count);
-    ItemStack(Api::Usertype::ItemStack& stack, SubgamePtr game);
-
-    bool operator!=(const ItemStack& b) const;
-    bool operator==(const ItemStack& b) const;
-
-    unsigned int id = 0; // Invalid
-    unsigned short count = 0;
+	public:
+	ItemStack() = default;
+	
+	ItemStack(unsigned int id, unsigned short count);
+	
+	ItemStack(Api::Usertype::ItemStack& stack, SubgamePtr game);
+	
+	bool operator!=(const ItemStack& b) const;
+	
+	bool operator==(const ItemStack& b) const;
+	
+	unsigned int id = 0; // Invalid
+	unsigned short count = 0;
 };

@@ -7,14 +7,14 @@
 #include <glm/vec3.hpp>
 
 class FrustumPlane {
-public:
-    glm::vec3 normal, point;
-    float d;
-
-    FrustumPlane() = default;
-
-    void setPoints(glm::vec3 &v1, glm::vec3 &v2, glm::vec3 &v3);
-
-    float distance(glm::vec3 &p);
+	public:
+	glm::vec3 normal, point;
+	float d;
+	
+	FrustumPlane() = default;
+	
+	void setPoints(glm::vec3& v1, glm::vec3& v2, glm::vec3& v3);
+	
+	float distance(glm::vec3& p);
 };
 

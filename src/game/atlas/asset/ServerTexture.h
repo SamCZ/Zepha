@@ -7,9 +7,9 @@
 #include <string>
 
 struct ServerTexture {
-    std::string name {};
-    std::string data {};
-    unsigned int width = 0;
-    unsigned int height = 0;
+	std::string name{};
+	std::string data{};
+	unsigned int width = 0;
+	unsigned int height = 0;
 };
 

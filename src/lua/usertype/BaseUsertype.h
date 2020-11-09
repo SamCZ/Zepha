@@ -9,11 +9,12 @@
 #include "../modules/BaseModule.h"
 
 namespace Api {
-    namespace Usertype {
-        class BaseUsertype {
-        public:
-            BaseUsertype() = default;
-            static void bind(State state, sol::state& lua, sol::table& core) {};
-        };
-    }
+	namespace Usertype {
+		class BaseUsertype {
+			public:
+			BaseUsertype() = default;
+			
+			static void bind(State state, sol::state& lua, sol::table& core) {};
+		};
+	}
 }

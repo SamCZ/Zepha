@@ -5,93 +5,93 @@
 #include "Entity.h"
 
 unsigned int Entity::getId() {
-    return id;
+	return id;
 }
 
 void Entity::setId(unsigned int id) {
-    this->id = id;
+	this->id = id;
 }
 
 glm::vec3 Entity::getPos() {
-    return pos;
+	return pos;
 }
 
 void Entity::setPos(glm::vec3 position) {
-    this->pos = position;
+	this->pos = position;
 }
 
 glm::vec3 Entity::getVel() {
-    return vel;
+	return vel;
 }
 
 void Entity::setVel(glm::vec3 velocity) {
-    this->vel = velocity;
+	this->vel = velocity;
 }
 
 glm::vec3 Entity::getRot() {
-    return rot;
+	return rot;
 }
 
 void Entity::setRot(glm::vec3 rot) {
-    this->rot = rot;
+	this->rot = rot;
 }
 
 glm::vec3 Entity::getVisualOffset() {
-    return visualOff;
+	return visualOff;
 }
 
 void Entity::setVisualOffset(glm::vec3 vs) {
-    this->visualOff = vs;
+	this->visualOff = vs;
 }
 
 float Entity::getRotateX() {
-    return rot.x;
+	return rot.x;
 }
 
 void Entity::setRotateX(float rotation) {
-    this->rot.x = rotation;
+	this->rot.x = rotation;
 }
 
 float Entity::getRotateY() {
-    return rot.y;
+	return rot.y;
 }
 
 void Entity::setRotateY(float rotation) {
-    this->rot.y = rotation;
+	this->rot.y = rotation;
 }
 
 float Entity::getRotateZ() {
-    return rot.z;
+	return rot.z;
 }
 
 void Entity::setRotateZ(float rotation) {
-    this->rot.z = rotation;
+	this->rot.z = rotation;
 }
 
 glm::vec3 Entity::getScale() {
-    return scale;
+	return scale;
 }
 
 void Entity::setScale(float scale) {
-    this->scale = glm::vec3(scale);
+	this->scale = glm::vec3(scale);
 }
 
 void Entity::setScale(glm::vec3 scale) {
-    this->scale = scale;
+	this->scale = scale;
 }
 
 DimensionPtr Entity::getDim() {
-    return dim;
+	return dim;
 }
 
 void Entity::setDim(DimensionPtr dim) {
-    this->dim = dim;
+	this->dim = dim;
 }
 
 SubgamePtr Entity::getGame() {
-    return game;
+	return game;
 }
 
 void Entity::update(double delta) {
-    animation.update(delta);
+	animation.update(delta);
 }

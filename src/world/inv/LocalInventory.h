@@ -15,20 +15,22 @@
 #include "game/LocalSubgame.h"
 
 class DefinitionAtlas;
+
 class ClientNetworkInterpreter;
 
 class LocalInventory : public Inventory {
-public:
-    LocalInventory(SubgamePtr game, const std::string& name, ClientNetworkInterpreter& net) :
-        Inventory(game, name), net(net) {}
-
-    virtual InventoryListPtr getList(const std::string& name) override;
-
-    virtual void createList(const std::string& name, unsigned short length, unsigned short width) override;
-
-    void setPersistant(const std::string& list, bool persistant);
-    bool pruneLists(double time);
-
-private:
-    ClientNetworkInterpreter& net;
+	public:
+	LocalInventory(SubgamePtr game, const std::string& name, ClientNetworkInterpreter& net) :
+		Inventory(game, name), net(net) {}
+	
+	virtual InventoryListPtr getList(const std::string& name) override;
+	
+	virtual void createList(const std::string& name, unsigned short length, unsigned short width) override;
+	
+	void setPersistant(const std::string& list, bool persistant);
+	
+	bool pruneLists(double time);
+	
+	private:
+	ClientNetworkInterpreter& net;
 };

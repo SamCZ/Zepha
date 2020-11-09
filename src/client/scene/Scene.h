@@ -10,15 +10,17 @@
 class Client;
 
 class Scene {
-public:
-    explicit Scene(Client& client) : client(client) {}
-
-    virtual void update() = 0;
-    virtual void draw() = 0;
-    virtual void cleanup() = 0;
-
-    virtual ~Scene() = default;
-
-    Client& client;
+	public:
+	explicit Scene(Client& client) : client(client) {}
+	
+	virtual void update() = 0;
+	
+	virtual void draw() = 0;
+	
+	virtual void cleanup() = 0;
+	
+	virtual ~Scene() = default;
+	
+	Client& client;
 };
 

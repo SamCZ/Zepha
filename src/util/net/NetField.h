@@ -12,29 +12,29 @@
 #include "game/atlas/DefinitionAtlas.h"
 
 enum class NetField {
-    // General
-    ID,
-
-    DIM,
-    POS,
-    VEL,
-    ROT,
-    SCALE,
-
-    // Entities
-    DISPLAY,
-    VISUAL_OFF,
-    ANIM_RANGE,
-    ANIM_STATE,
-
-    // Players
-    LOOK_OFF,
-    LOOK_PITCH,
-    LOOK_YAW,
-
-    FLYING,
-
-    HAND_INV,
-    WIELD_INV,
-    WIELD_INDEX,
+	// General
+	ID,
+	
+	DIM,
+	POS,
+	VEL,
+	ROT,
+	SCALE,
+	
+	// Entities
+	DISPLAY,
+	VISUAL_OFF,
+	ANIM_RANGE,
+	ANIM_STATE,
+	
+	// Players
+	LOOK_OFF,
+	LOOK_PITCH,
+	LOOK_YAW,
+	
+	FLYING,
+	
+	HAND_INV,
+	WIELD_INV,
+	WIELD_INDEX,
 };

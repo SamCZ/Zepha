@@ -12,8 +12,8 @@
  */
 
 void SceneManager::setScene(std::unique_ptr<Scene> newScene) {
-    cleanupScene();
-    scene = std::move(newScene);
+	cleanupScene();
+	scene = std::move(newScene);
 }
 
 
@@ -23,7 +23,7 @@ void SceneManager::setScene(std::unique_ptr<Scene> newScene) {
  */
 
 const Scene& SceneManager::getScene() {
-    return *scene;
+	return *scene;
 }
 
 
@@ -32,9 +32,9 @@ const Scene& SceneManager::getScene() {
  */
 
 void SceneManager::update() {
-    if (!scene) return;
-    scene->update();
-    scene->draw();
+	if (!scene) return;
+	scene->update();
+	scene->draw();
 }
 
 
@@ -44,8 +44,8 @@ void SceneManager::update() {
  */
 
 void SceneManager::cleanupScene() {
-    if (scene) scene->cleanup();
-    scene = nullptr;
+	if (scene) scene->cleanup();
+	scene = nullptr;
 }
 
 
@@ -54,5 +54,5 @@ void SceneManager::cleanupScene() {
  */
 
 SceneManager::~SceneManager() {
-    cleanupScene();
+	cleanupScene();
 }

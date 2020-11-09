@@ -5,5 +5,5 @@
 #include "AnimChannel.h"
 
 AnimChannel::AnimChannel(unsigned int index, const std::string& name) :
-    index(index),
-    name(name) {}
+	index(index),
+	name(name) {}

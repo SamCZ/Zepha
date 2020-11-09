@@ -9,21 +9,22 @@
 #include "Shader.h"
 
 class EntityGeometryShader : public Shader {
-public:
-    explicit EntityGeometryShader(glm::ivec2 windowSize, float bufferScale);
-    void postCreate() override;
-
-    struct Uniforms {
-        GLint proj;
-        GLint model;
-        GLint view;
-
-        GLint bones;
-    };
-
-    Uniforms uniforms {};
-
-private:
-    glm::ivec2 windowSize {};
-    float bufferScale = 1;
+	public:
+	explicit EntityGeometryShader(glm::ivec2 windowSize, float bufferScale);
+	
+	void postCreate() override;
+	
+	struct Uniforms {
+		GLint proj;
+		GLint model;
+		GLint view;
+		
+		GLint bones;
+	};
+	
+	Uniforms uniforms{};
+	
+	private:
+	glm::ivec2 windowSize{};
+	float bufferScale = 1;
 };

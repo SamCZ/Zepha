@@ -10,12 +10,13 @@
 #include "world/dim/ent/AnimChannel.h"
 
 class ModelAnimation {
-public:
-    ModelAnimation() = default;
-    explicit ModelAnimation(const std::string& name);
-
-    std::string name = "";
-    std::vector<AnimChannel> channels {};
-    unsigned int duration = 0;
-    double ticksPerSecond = 0;
+	public:
+	ModelAnimation() = default;
+	
+	explicit ModelAnimation(const std::string& name);
+	
+	std::string name = "";
+	std::vector<AnimChannel> channels{};
+	unsigned int duration = 0;
+	double ticksPerSecond = 0;
 };

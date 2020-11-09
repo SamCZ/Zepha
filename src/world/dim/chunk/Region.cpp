@@ -7,23 +7,23 @@
 #include "MapBlock.h"
 
 Region::Region(glm::ivec3 pos) :
-    pos(pos) {
-    for(unsigned short i = 0; i < 64; i++) mapBlocks[i] = nullptr;
+	pos(pos) {
+	for (unsigned short i = 0; i < 64; i++) mapBlocks[i] = nullptr;
 }
 
 std::shared_ptr<MapBlock> Region::get(unsigned short index) const {
-    auto _ = getReadLock();
-    return mapBlocks[index];
+	auto _ = getReadLock();
+	return mapBlocks[index];
 }
 
 void Region::set(unsigned short index, std::shared_ptr<MapBlock> block) {
-    auto _ = getWriteLock();
-    if (mapBlocks[index] == nullptr) count++;
-    mapBlocks[index] = block;
+	auto _ = getWriteLock();
+	if (mapBlocks[index] == nullptr) count++;
+	mapBlocks[index] = block;
 }
 
 void Region::remove(unsigned short index) {
-    auto _ = getWriteLock();
-    if (mapBlocks[index] != nullptr) count--;
-    mapBlocks[index] = nullptr;
+	auto _ = getWriteLock();
+	if (mapBlocks[index] != nullptr) count--;
+	mapBlocks[index] = nullptr;
 }

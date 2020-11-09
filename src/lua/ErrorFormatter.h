@@ -7,7 +7,7 @@
 #include <string>
 
 class ErrorFormatter {
-public:
-    static std::string formatError(const std::string& fileName, int line,
-            const std::string& stack, std::string file, bool ansiColors = true) noexcept;
+	public:
+	static std::string formatError(const std::string& fileName, int line,
+		const std::string& stack, std::string file, bool ansiColors = true) noexcept;
 };

@@ -7,7 +7,8 @@
 #include "DefinitionAtlas.h"
 
 class ServerDefinitionAtlas : public DefinitionAtlas {
-public:
-    ServerDefinitionAtlas();
-    void registerDef(ItemDef* def) override;
+	public:
+	ServerDefinitionAtlas();
+	
+	void registerDef(ItemDef* def) override;
 };

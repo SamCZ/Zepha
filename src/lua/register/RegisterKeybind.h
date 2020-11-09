@@ -19,7 +19,7 @@ namespace RegisterKeybind {
 		 * @param identifier - The identifier of the keybind in the table.
 		 * @param handler - The keybind handler to add the keybind to.
 		 */
-		 
+		
 		static void registerKeybind(sol::table keybinds, const std::string& identifier, LuaKeybindHandler& handler) {
 			sol::table keybindTbl = keybinds[identifier];
 			unsigned short def = keybindTbl.get<unsigned short>("default");
@@ -42,8 +42,8 @@ namespace RegisterKeybind {
 	 * @param game - The keybind handler to add the keybind to.
 	 * @param identifier - The identifier of the keybind to add.
 	 */
-	 
-    static void client(sol::table& core, LuaKeybindHandler& handler, const std::string& identifier) {
-        registerKeybind(core.get<sol::table>("registered_keybinds"), identifier, handler);
-    }
+	
+	static void client(sol::table& core, LuaKeybindHandler& handler, const std::string& identifier) {
+		registerKeybind(core.get<sol::table>("registered_keybinds"), identifier, handler);
+	}
 };

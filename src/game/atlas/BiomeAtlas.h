@@ -11,18 +11,21 @@
 class BiomeDef;
 
 class BiomeAtlas {
-public:
-    BiomeAtlas() = default;
-    virtual void registerBiome(BiomeDef* def) = 0;
-
-    BiomeDef& biomeFromId(unsigned int index);
-    BiomeDef& biomeFromStr(const std::string& identifier);
+	public:
+	BiomeAtlas() = default;
+	
+	virtual void registerBiome(BiomeDef* def) = 0;
+	
+	BiomeDef& biomeFromId(unsigned int index);
+	
+	BiomeDef& biomeFromStr(const std::string& identifier);
+	
 	std::vector<BiomeDef*> biomesFromTag(const std::string& tag);
-
-    unsigned int size();
-
-    const static unsigned int INVALID = 0;
-protected:
-    std::vector<BiomeDef*> defs;
-    std::unordered_map<std::string, unsigned int> defTable;
+	
+	unsigned int size();
+	
+	const static unsigned int INVALID = 0;
+	protected:
+	std::vector<BiomeDef*> defs;
+	std::unordered_map<std::string, unsigned int> defTable;
 };

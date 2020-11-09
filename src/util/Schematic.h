@@ -11,17 +11,18 @@
 class DefinitionAtlas;
 
 struct Schematic {
-    std::vector<std::string> stringData {};
-    bool processed = false;
-
-    std::vector<unsigned int> blocks {};
-    glm::ivec3 dimensions {};
-    glm::ivec3 origin {};
-
-    void process(DefinitionAtlas& atlas);
-
-    inline unsigned int length() { return blocks.size(); }
-
-    glm::ivec3 getOffset(unsigned int ind);
-    unsigned int index(const glm::ivec3& vec);
+	std::vector<std::string> stringData{};
+	bool processed = false;
+	
+	std::vector<unsigned int> blocks{};
+	glm::ivec3 dimensions{};
+	glm::ivec3 origin{};
+	
+	void process(DefinitionAtlas& atlas);
+	
+	inline unsigned int length() { return blocks.size(); }
+	
+	glm::ivec3 getOffset(unsigned int ind);
+	
+	unsigned int index(const glm::ivec3& vec);
 };

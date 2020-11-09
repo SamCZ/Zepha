@@ -7,7 +7,7 @@
 #include <string>
 
 struct SerializedModel {
-    std::string name {};
-    std::string data {};
-    std::string format {};
+	std::string name{};
+	std::string data{};
+	std::string format{};
 };

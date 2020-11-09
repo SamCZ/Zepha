@@ -7,42 +7,42 @@
 #include "Voronoi3D.h"
 
 Voronoi3D::Voronoi3D(unsigned short size) :
-    size(size),
-    data(voronoi_data(size)) {
-
-    for (unsigned short i = 0; i < size; i++) {
-        data[i].resize(size);
-        for (unsigned short j = 0; j < size; j++) {
-            data[i][j].resize(size);
-        }
-    }
+	size(size),
+	data(voronoi_data(size)) {
+	
+	for (unsigned short i = 0; i < size; i++) {
+		data[i].resize(size);
+		for (unsigned short j = 0; j < size; j++) {
+			data[i][j].resize(size);
+		}
+	}
 }
 
 void Voronoi3D::setPoints(const std::vector<std::pair<glm::vec3, unsigned short>>& points) {
-    this->points = points;
-
-    for (unsigned short i = 0; i < size; i++) {
-        for (unsigned short j = 0; j < size; j++) {
-            for (unsigned short k = 0; k < size; k++) {
-                float pointDistance = INFINITY;
-                unsigned short ind = 0;
-
-                for (auto& point : points) {
-                    float thisPointDistance = glm::distance(point.first, {i, j, k});
-                    if (thisPointDistance < pointDistance) {
-                        pointDistance = thisPointDistance;
-	                    ind = point.second;
-                    }
-                }
-
-                data[i][j][k] = ind;
-            }
-        }
-    }
+	this->points = points;
+	
+	for (unsigned short i = 0; i < size; i++) {
+		for (unsigned short j = 0; j < size; j++) {
+			for (unsigned short k = 0; k < size; k++) {
+				float pointDistance = INFINITY;
+				unsigned short ind = 0;
+				
+				for (auto& point : points) {
+					float thisPointDistance = glm::distance(point.first, { i, j, k });
+					if (thisPointDistance < pointDistance) {
+						pointDistance = thisPointDistance;
+						ind = point.second;
+					}
+				}
+				
+				data[i][j][k] = ind;
+			}
+		}
+	}
 }
 
 unsigned short Voronoi3D::getPoint(unsigned short x, unsigned short y, unsigned short z) {
-    return data[x][y][z];
+	return data[x][y][z];
 }
 
 //void Voronoi3D::setColorValues(const std::vector<glm::vec3>& values) {

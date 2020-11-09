@@ -12,13 +12,13 @@
  */
 
 LocalSubgame::LocalSubgame(const std::string& baseAssets) :
-    textures(2048),
-
-    lua(std::make_unique<LocalLuaParser>(*this)),
-    biomes(std::make_unique<LocalBiomeAtlas>()),
-    defs(std::make_unique<LocalDefinitionAtlas>(textures)) {
-
-    textures.loadDirectory(baseAssets);
+	textures(2048),
+	
+	lua(std::make_unique<LocalLuaParser>(*this)),
+	biomes(std::make_unique<LocalBiomeAtlas>()),
+	defs(std::make_unique<LocalDefinitionAtlas>(textures)) {
+	
+	textures.loadDirectory(baseAssets);
 }
 
 
@@ -30,7 +30,7 @@ LocalSubgame::LocalSubgame(const std::string& baseAssets) :
  */
 
 void LocalSubgame::init(WorldPtr world, PlayerPtr player, Client& client) {
-    lua->init(world, player, client);
+	lua->init(world, player, client);
 }
 
 
@@ -40,6 +40,6 @@ void LocalSubgame::init(WorldPtr world, PlayerPtr player, Client& client) {
  */
 
 void LocalSubgame::update(double delta) {
-    lua->update(delta);
-    textures.update();
+	lua->update(delta);
+	textures.update();
 }

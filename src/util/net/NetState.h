@@ -5,11 +5,11 @@
 #pragma once
 
 enum class NetState {
-    UNINITIALIZED,
-    FAILED_CONNECT,
-    ENET_ERROR,
-    CLIENT,
-    HOST,
-    CLOSED
+	UNINITIALIZED,
+	FAILED_CONNECT,
+	ENET_ERROR,
+	CLIENT,
+	HOST,
+	CLOSED
 };
 

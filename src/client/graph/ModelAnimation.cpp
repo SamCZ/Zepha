@@ -5,4 +5,4 @@
 #include "ModelAnimation.h"
 
 ModelAnimation::ModelAnimation(const std::string& name)
-    : name(name) {}
+	: name(name) {}

@@ -7,8 +7,10 @@
 #include "BiomeAtlas.h"
 
 class LocalBiomeAtlas : public BiomeAtlas {
-public:
-    LocalBiomeAtlas();
-    void registerBiome(BiomeDef* def) override;
-    void setIdentifiers(const std::vector<std::string>& identifiers);
+	public:
+	LocalBiomeAtlas();
+	
+	void registerBiome(BiomeDef* def) override;
+	
+	void setIdentifiers(const std::vector<std::string>& identifiers);
 };

@@ -14,15 +14,17 @@
 class MapBlock;
 
 class Region : Lockable {
-public:
-    Region(glm::ivec3 pos);
-
-    std::shared_ptr<MapBlock> get(unsigned short index) const;
-    void set(unsigned short index, std::shared_ptr<MapBlock> block);
-    void remove(unsigned short index);
-
-    glm::ivec3 pos {};
-    unsigned short count = 0;
-private:
-    std::array<std::shared_ptr<MapBlock>, 64> mapBlocks {};
+	public:
+	Region(glm::ivec3 pos);
+	
+	std::shared_ptr<MapBlock> get(unsigned short index) const;
+	
+	void set(unsigned short index, std::shared_ptr<MapBlock> block);
+	
+	void remove(unsigned short index);
+	
+	glm::ivec3 pos{};
+	unsigned short count = 0;
+	private:
+	std::array<std::shared_ptr<MapBlock>, 64> mapBlocks{};
 };
