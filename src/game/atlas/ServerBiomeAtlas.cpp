@@ -8,8 +8,13 @@
 
 ServerBiomeAtlas::ServerBiomeAtlas(unsigned int seed) :
     seed(seed) {
-    //Invalid Biome
-    BiomeDef* invalid = new BiomeDef("invalid", INVALID, -1, -1, -1, 0, 0, 0, {}, {}, {}, {});
+    
+	BiomeDef* invalid = new BiomeDef();
+	invalid->identifier = "invalid";
+	invalid->humidity = -1;
+	invalid->temperature = -1;
+	invalid->roughness = -1;
+	
     registerBiome(invalid);
 }
 

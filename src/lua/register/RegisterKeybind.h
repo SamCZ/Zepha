@@ -29,8 +29,6 @@ namespace RegisterKeybind {
 			
 			if (onPress) handler.bindOnDown(def, *onPress);
 			if (onRelease) handler.bindOnUp(def, *onRelease);
-			
-			std::cout << identifier << std::endl;
 		}
 	}
 	

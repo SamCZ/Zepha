@@ -15,15 +15,9 @@
 class Schematic;
 
 struct BiomeDef {
-    BiomeDef() = default;
-    BiomeDef(const std::string& identifier, unsigned int index, float temperature, float humidity, float roughness,
-            unsigned int topBlock, unsigned int soilBlock, unsigned int rockBlock,
-            const std::vector<noise::module::Module*>& heightmap, const std::vector<noise::module::Module*>& volume,
-            const std::vector<std::shared_ptr<Schematic>> schematics,
-            glm::vec3 biomeTint);
-
     std::string identifier = "";
     unsigned int index = 0;
+    std::unordered_map<std::string, unsigned short> tags {};
 
     float temperature = 0;
     float humidity = 0;

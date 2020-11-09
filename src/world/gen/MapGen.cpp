@@ -19,17 +19,40 @@
 
 MapGen::MapGen(Subgame& game, World& world, unsigned int seed, std::unordered_set<std::string> biomes) :
     game(game), world(world), props(seed) {
+	
     std::unordered_set<unsigned int> biomeIndices {};
     for (const auto& str : biomes) {
         if (str[0] == '#') {
-            // Grouping
+	        for (auto& biome : game.getBiomes().biomesFromTag(str.substr(1, str.length() - 1))) {
+	        	biomeIndices.insert(biome->index);
+	        }
         }
-        else {
-//            std::cout << str << std::endl;
-//            biomeIndices.insert(game.getBiomes().biomeFromStr(str).index);
-        }
+        else biomeIndices.insert(game.getBiomes().biomeFromStr(str).index);
     }
-//    std::cout << "recieved " << biomes.size() << " biomes." << std::endl;
+    
+    generateVoronoi(biomeIndices);
+}
+
+void MapGen::generateVoronoi(const std::unordered_set<unsigned int>& biomes) {
+	std::vector<std::pair<glm::vec3, unsigned short>> points {};
+	for (auto biomeInd : biomes) {
+		auto& biome = game.getBiomes().biomeFromId(biomeInd);
+		
+		points.emplace_back(glm::vec3 {
+			static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, (biome.temperature + 1) / 2 * voronoiSize))),
+			static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, biome.humidity * voronoiSize))),
+			static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, biome.roughness * voronoiSize)))
+		}, biomeInd);
+	}
+	
+	voronoi.setPoints(points);
+}
+
+unsigned int MapGen::getBiomeAt(float temperature, float humidity, float roughness) {
+	return voronoi.getPoint(
+		static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, (temperature + 1) / 2 * voronoiSize))),
+		static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, humidity * voronoiSize))),
+		static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, roughness * voronoiSize))));
 }
 
 std::unique_ptr<MapGen::CreatedSet> MapGen::generateChunk(unsigned int dim, glm::ivec3 pos) {
@@ -65,10 +88,8 @@ std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::
         glm::vec3 indPos = { i / (job.size * 16 + 1), 0, i % (job.size * 16 + 1)};
         glm::vec3 queryPos = indPos / 16.f / static_cast<float>(job.size);
 	
-        auto& biome = game.getBiomes().getBiomeAt(job.temperature.get(queryPos),
+        biomeMap[i] = getBiomeAt(job.temperature.get(queryPos),
 	        job.humidity.get(queryPos), job.roughness.get(queryPos));
-	    
-        biomeMap[i] = biome.index;
     }
 
     // Generate Heightmap and Volume

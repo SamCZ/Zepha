@@ -5,9 +5,8 @@
 
 #pragma once
 
+#include <vector>
 #include <unordered_map>
-
-#include "util/Voronoi3D.h"
 
 class BiomeDef;
 
@@ -15,12 +14,10 @@ class BiomeAtlas {
 public:
     BiomeAtlas() = default;
     virtual void registerBiome(BiomeDef* def) = 0;
-    void generateVoronoi();
-
-    BiomeDef& getBiomeAt(float temperature, float humidity, float roughness);
 
     BiomeDef& biomeFromId(unsigned int index);
     BiomeDef& biomeFromStr(const std::string& identifier);
+	std::vector<BiomeDef*> biomesFromTag(const std::string& tag);
 
     unsigned int size();
 
@@ -28,7 +25,4 @@ public:
 protected:
     std::vector<BiomeDef*> defs;
     std::unordered_map<std::string, unsigned int> defTable;
-private:
-    constexpr const static unsigned short voronoiSize = 64;
-    Voronoi3D voronoi {voronoiSize};
 };

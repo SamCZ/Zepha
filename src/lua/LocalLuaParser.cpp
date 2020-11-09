@@ -40,7 +40,6 @@ void LocalLuaParser::init(WorldPtr world, PlayerPtr player, Client& client) {
     loadApi(world, player);
     handler.executeMods(Util::bind_this(this, &LocalLuaParser::runFileSandboxed));
     client.renderer.window.input.setCallback(Util::bind_this(&keybinds, &LuaKeybindHandler::keybindHandler));
-	game.getBiomes().generateVoronoi();
 }
 
 void LocalLuaParser::update(double delta) {

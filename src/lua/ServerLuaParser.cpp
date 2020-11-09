@@ -41,8 +41,6 @@ void ServerLuaParser::init(WorldPtr world, const std::string& path) {
     loadApi(world);
     handler.loadMods(static_cast<ServerSubgame&>(game), path + "mods");
     handler.executeMods(std::bind(&ServerLuaParser::runFileSandboxed, this, std::placeholders::_1));
-	game.getBiomes().generateVoronoi();
-	std::cout << "generated voronoi" << std::endl;
 
     std::cout << Log::info << "Loaded " << handler.cGetMods().size() << " mods: [ ";
     for (unsigned int i = 0; i < handler.cGetMods().size(); i++)

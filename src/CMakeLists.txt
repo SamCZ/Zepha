@@ -128,8 +128,7 @@ add_library(Zepha_Core
 		game/atlas/ServerDefinitionAtlas.h
 		game/atlas/TextureAtlas.cpp
 		game/atlas/TextureAtlas.h
-		game/def/BiomeDef.cpp
-		game/def/BiomeDef.h
+        game/def/BiomeDef.h
 		game/def/BlockDef.cpp
 		game/def/BlockDef.h
 		game/def/CraftItemDef.cpp

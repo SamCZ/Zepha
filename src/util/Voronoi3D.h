@@ -12,7 +12,7 @@ public:
     Voronoi3D() = default;
     Voronoi3D(unsigned short size);
 
-    void setPoints(const std::vector<glm::vec3>& points);
+    void setPoints(const std::vector<std::pair<glm::vec3, unsigned short>>& points);
     unsigned short getPoint(unsigned short x, unsigned short y, unsigned short z);
 
 //    void setColorValues(const std::vector<glm::vec3>& values);
@@ -22,6 +22,6 @@ private:
 
     unsigned short size;
     voronoi_data data;
-    std::vector<glm::vec3> points;
+    std::vector<std::pair<glm::vec3, unsigned short>> points;
 //    std::vector<glm::vec3> colorValues;
 };

@@ -7,8 +7,12 @@
 #include "game/def/BiomeDef.h"
 
 LocalBiomeAtlas::LocalBiomeAtlas() {
-    //Invalid Biome
-    BiomeDef* invalid = new BiomeDef("invalid", 0, -1, -1, -1, 0, 0, 0, {}, {}, {}, {});
+    BiomeDef* invalid = new BiomeDef();
+    invalid->identifier = "invalid";
+    invalid->humidity = -1;
+    invalid->temperature = -1;
+    invalid->roughness = -1;
+    
     defs.push_back(invalid);
     defTable.insert({"invalid", 0});
 }

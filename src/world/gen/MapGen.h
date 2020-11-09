@@ -14,10 +14,12 @@
 #include "MapGenProps.h"
 #include "NoiseSample.h"
 #include "util/Vec.h"
+#include "util/Voronoi3D.h"
 
 class World;
 class Chunk;
 class Subgame;
+class BiomeDef;
 class BiomeAtlas;
 class DefinitionAtlas;
 
@@ -53,6 +55,8 @@ public:
     std::unique_ptr<CreatedSet> generateMapBlock(unsigned int dim, glm::ivec3 pos);
     std::unique_ptr<CreatedSet> generateArea(unsigned int dim, glm::ivec3 origin, unsigned int size = 1);
 private:
+	unsigned int getBiomeAt(float temperature, float humidity, float roughness);
+	void generateVoronoi(const std::unordered_set<unsigned int>& biomes);
 
     static std::unique_ptr<ChunkData> populateChunkDensity(Job& job, glm::ivec3 localPos);
     static std::unique_ptr<ChunkData> populateChunkDepth(Job& job, std::unique_ptr<ChunkData>& chunkDensity, std::unique_ptr<ChunkData> chunkDensityAbove);
@@ -69,6 +73,9 @@ private:
 
     MapGenProps props;
 	unsigned int seed = 0;
+	
+	constexpr const static unsigned short voronoiSize = 64;
+	Voronoi3D voronoi {voronoiSize};
 
 	Subgame& game;
 	World& world;

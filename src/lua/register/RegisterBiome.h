@@ -273,6 +273,12 @@ namespace RegisterBiome {
 		registerBiome(sol::table biomes, const std::string& identifier, DefinitionAtlas& defs, BiomeAtlas& atlas) {
 			sol::table biomeTable = biomes[identifier];
 			
+			// Tags
+			std::unordered_map<std::string, unsigned short> tags {};
+			auto tagsTbl = biomeTable.get<sol::optional<sol::table>>("tags");
+			if (tagsTbl) for (auto& tag : *tagsTbl)
+				tags.insert({ tag.first.as<std::string>(), tag.second.as<int>() });
+			
 			// Environment Properties for Voronoi Diagram
 			auto environment = biomeTable.get<sol::optional<sol::table>>("environment");
 			if (!environment) throw std::runtime_error("biome definitions require an environment table");
@@ -328,17 +334,26 @@ namespace RegisterBiome {
 					schematics.push_back(s.second.as<std::shared_ptr<Schematic>>());
 			
 			// Create biome definition
-			BiomeDef* biomeDef = new BiomeDef(
-				identifier, atlas.size(),
-				temperature, humidity, roughness,
-				defs.blockFromStr(*bTop).index,
-				defs.blockFromStr(*bSoil).index,
-				defs.blockFromStr(*bRock).index,
-				heightmapModules,
-				volumeModules,
-				schematics,
-				glm::vec3(Util::hexToColorVec((*biomeTint)))
-			);
+			BiomeDef* biomeDef = new BiomeDef();
+			
+			biomeDef->identifier = identifier;
+			biomeDef->index = atlas.size();
+			biomeDef->tags = tags;
+			
+			biomeDef->temperature = temperature;
+			biomeDef->humidity = humidity;
+			biomeDef->roughness = roughness;
+			
+			biomeDef->topBlock = defs.blockFromStr(*bTop).index;
+			biomeDef->soilBlock = defs.blockFromStr(*bSoil).index;
+			biomeDef->rockBlock = defs.blockFromStr(*bRock).index;
+			
+			biomeDef->heightmap = heightmapModules;
+			biomeDef->volume = volumeModules;
+			
+			biomeDef->schematics = schematics;
+			
+			biomeDef->tint = Util::hexToColorVec((*biomeTint));
 			
 			// Add biome to biomes
 			atlas.registerBiome(biomeDef);
@@ -357,7 +372,6 @@ namespace RegisterBiome {
 	 */
 	
 	static void server(sol::table& core, ServerSubgame& game, const std::string& identifier) {
-		std::cout << identifier << std::endl;
 		registerBiome(core.get<sol::table>("registered_biomes"), identifier, game.getDefs(), game.getBiomes());
 	}
 	

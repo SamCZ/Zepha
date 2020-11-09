@@ -2,9 +2,7 @@
 // Created by aurailus on 2019-11-12.
 //
 
-#include <string>
 #include <glm/glm.hpp>
-#include <stb_image/stb_image_write.h>
 
 #include "Voronoi3D.h"
 
@@ -20,25 +18,24 @@ Voronoi3D::Voronoi3D(unsigned short size) :
     }
 }
 
-void Voronoi3D::setPoints(const std::vector<glm::vec3>& points) {
+void Voronoi3D::setPoints(const std::vector<std::pair<glm::vec3, unsigned short>>& points) {
     this->points = points;
 
     for (unsigned short i = 0; i < size; i++) {
         for (unsigned short j = 0; j < size; j++) {
             for (unsigned short k = 0; k < size; k++) {
-
                 float pointDistance = INFINITY;
-                unsigned short pIndex = 0;
+                unsigned short ind = 0;
 
-                for (unsigned short p = 0; p < points.size(); p++) {
-                    float thisPointDistance = glm::distance(points[p], {i, j, k});
+                for (auto& point : points) {
+                    float thisPointDistance = glm::distance(point.first, {i, j, k});
                     if (thisPointDistance < pointDistance) {
                         pointDistance = thisPointDistance;
-                        pIndex = p;
+	                    ind = point.second;
                     }
                 }
 
-                data[i][j][k] = pIndex + 1; //Note: This is because of the INVALID biome
+                data[i][j][k] = ind;
             }
         }
     }
