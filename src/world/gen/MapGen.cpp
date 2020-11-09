@@ -6,57 +6,31 @@
 
 #include "MapGen.h"
 
-#include "game/def/BiomeDef.h"
-#include "game/atlas/BiomeAtlas.h"
-#include "game/Subgame.h"
-#include "MapGenProps.h"
-#include "game/def/BlockDef.h"
-#include "game/atlas/DefinitionAtlas.h"
-#include "world/dim/Dimension.h"
-#include "world/dim/chunk/Chunk.h"
 #include "world/World.h"
+#include "game/Subgame.h"
 #include "util/Schematic.h"
+#include "game/def/BiomeDef.h"
+#include "game/def/BlockDef.h"
+#include "world/dim/Dimension.h"
+#include "game/atlas/BiomeAtlas.h"
+#include "world/dim/chunk/Chunk.h"
+#include "game/atlas/DefinitionAtlas.h"
 
 MapGen::MapGen(Subgame& game, World& world, unsigned int seed, std::unordered_set<std::string> biomes) :
 	game(game), world(world), props(seed) {
 	
-	std::unordered_set<unsigned int> biomeIndices{};
+	std::unordered_set<unsigned int> biomeIndices {};
 	for (const auto& str : biomes) {
-		if (str[0] == '#') {
-			for (auto& biome : game.getBiomes().biomesFromTag(str.substr(1, str.length() - 1))) {
+		if (str[0] == '#')
+			for (auto& biome : game.getBiomes().biomesFromTag(str.substr(1, str.length() - 1)))
 				biomeIndices.insert(biome->index);
-			}
-		}
 		else biomeIndices.insert(game.getBiomes().biomeFromStr(str).index);
 	}
 	
 	generateVoronoi(biomeIndices);
 }
 
-void MapGen::generateVoronoi(const std::unordered_set<unsigned int>& biomes) {
-	std::vector<std::pair<glm::vec3, unsigned short>> points{};
-	for (auto biomeInd : biomes) {
-		auto& biome = game.getBiomes().biomeFromId(biomeInd);
-		
-		points.emplace_back(glm::vec3{
-			static_cast<unsigned short>(std::fmin(voronoiSize - 1,
-				std::fmax(0, (biome.temperature + 1) / 2 * voronoiSize))),
-			static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, biome.humidity * voronoiSize))),
-			static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, biome.roughness * voronoiSize)))
-		}, biomeInd);
-	}
-	
-	voronoi.setPoints(points);
-}
-
-unsigned int MapGen::getBiomeAt(float temperature, float humidity, float roughness) {
-	return voronoi.getPoint(
-		static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, (temperature + 1) / 2 * voronoiSize))),
-		static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, humidity * voronoiSize))),
-		static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, roughness * voronoiSize))));
-}
-
-std::unique_ptr<MapGen::CreatedSet> MapGen::generateChunk(unsigned int dim, glm::ivec3 pos) {
+[[maybe_unused]] std::unique_ptr<MapGen::CreatedSet> MapGen::generateChunk(unsigned int dim, glm::ivec3 pos) {
 	return generateArea(dim, pos, 1);
 }
 
@@ -82,7 +56,7 @@ std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::
 	
 	// Generate Biome Topmap
 	
-	std::vector<unsigned int> biomeMap{};
+	std::vector<unsigned int> biomeMap {};
 	biomeMap.resize((job.size * 16 + 1) * (job.size * 16 + 1));
 	
 	for (unsigned short i = 0; i < biomeMap.size(); i++) {
@@ -111,7 +85,7 @@ std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::
 	
 	// Generate Chunks
 	
-	glm::ivec3 pos{};
+	glm::ivec3 pos {};
 	for (pos.x = 0; pos.x < job.size; pos.x++)
 		for (pos.z = 0; pos.z < job.size; pos.z++) {
 			std::unique_ptr<ChunkData> densityAbove = nullptr;
@@ -122,7 +96,7 @@ std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::
 				}
 				
 				std::unique_ptr<ChunkData> density = populateChunkDensity(job, pos);
-				std::unique_ptr<ChunkData> depth = populateChunkDepth(job, density, std::move(densityAbove));
+				std::unique_ptr<ChunkData> depth = populateChunkDepth(density, std::move(densityAbove));
 				
 				generateChunkBlocks(job, pos, biomeMap, *depth);
 				generateChunkStructures(job, pos, biomeMap, *depth);
@@ -142,6 +116,29 @@ std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::
 	return std::move(created);
 }
 
+void MapGen::generateVoronoi(const std::unordered_set<unsigned int>& biomes) {
+	std::vector<std::pair<glm::vec3, unsigned short>> points {};
+	for (auto biomeInd : biomes) {
+		auto& biome = game.getBiomes().biomeFromId(biomeInd);
+		
+		points.emplace_back(glm::vec3 {
+			static_cast<unsigned short>(std::fmin(voronoiSize - 1,
+				std::fmax(0, (biome.temperature + 1) / 2 * voronoiSize))),
+			static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, biome.humidity * voronoiSize))),
+			static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, biome.roughness * voronoiSize)))
+		}, biomeInd);
+	}
+	
+	voronoi.setPoints(points);
+}
+
+unsigned int MapGen::getBiomeAt(float temperature, float humidity, float roughness) {
+	return voronoi.getPoint(
+		static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, (temperature + 1) / 2 * voronoiSize))),
+		static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, humidity * voronoiSize))),
+		static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, roughness * voronoiSize))));
+}
+
 std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDensity(MapGen::Job& job, glm::ivec3 localPos) {
 	auto data = std::make_unique<ChunkData>();
 	
@@ -155,8 +152,9 @@ std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDensity(MapGen::Job& job
 	return data;
 }
 
-std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDepth(Job& job, std::unique_ptr<ChunkData>& chunkDensity,
+std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDepth(std::unique_ptr<ChunkData>& chunkDensity,
 	std::unique_ptr<ChunkData> chunkDensityAbove) {
+	
 	auto data = std::make_unique<ChunkData>();
 	
 	for (unsigned short i = 0; i < 256; i++) {
@@ -215,12 +213,12 @@ MapGen::generateChunkBlocks(Job& job, glm::ivec3 localPos, std::vector<unsigned 
 		}
 		
 		float depth = depthMap[i];
-		unsigned int blockID
-			= partialBlock != DefinitionAtlas::INVALID ? partialBlock
-			                                           : depth <= 1 ? DefinitionAtlas::AIR
-			                                                        : depth <= 2 ? biome.topBlock
-			                                                                     : depth <= 4 ? biome.soilBlock
-			                                                                                  : biome.rockBlock;
+		unsigned int blockID =
+			partialBlock != DefinitionAtlas::INVALID ? partialBlock
+				: depth <= 1 ? DefinitionAtlas::AIR
+				: depth <= 2 ? biome.topBlock
+					: depth <= 4 ? biome.soilBlock
+						: biome.rockBlock;
 		
 		if (biomeID != cBiomeID) {
 			chunk.biomes.emplace_back(i);
@@ -241,6 +239,7 @@ MapGen::generateChunkBlocks(Job& job, glm::ivec3 localPos, std::vector<unsigned 
 
 void MapGen::generateChunkStructures(Job& job, glm::ivec3 localPos, std::vector<unsigned int> biomeMap,
 	ChunkData& depthMap) {
+	
 	glm::vec3 posFloat = job.pos + localPos;
 	std::default_random_engine generator(posFloat.x + posFloat.y / M_PI + posFloat.z / (M_PI * 2));
 	std::uniform_real_distribution<float> distribution(0, 1);
@@ -277,14 +276,16 @@ void MapGen::generateChunkStructures(Job& job, glm::ivec3 localPos, std::vector<
 
 void MapGen::setBlock(MapGen::Job& job, glm::ivec3 worldPos, unsigned int block, std::shared_ptr<Chunk> hint) {
 	if (block == DefinitionAtlas::INVALID) return;
-	
-	glm::ivec3 chunkPos = Space::Chunk::world::fromBlock(worldPos);
-	auto& chunk = *(*job.chunks->emplace(chunkPos, std::make_shared<Chunk>(chunkPos, true)).first).second;
-//    if (!job.chunks->count(chunkPos)) return;
-//    auto& chunk = *job.chunks->at(chunkPos);
-	
 	unsigned int ind = Space::Block::index(worldPos);
-	if (chunk.getBlock(ind) <= DefinitionAtlas::AIR) chunk.setBlock(ind, block);
+	
+	if (hint && Space::Chunk::world::fromBlock(worldPos) == hint->getPos()) {
+		if (hint->getBlock(ind) <= DefinitionAtlas::AIR) hint->setBlock(ind, block);
+	}
+	else {
+		glm::ivec3 chunkPos = Space::Chunk::world::fromBlock(worldPos);
+		auto chunk = *(*job.chunks->emplace(chunkPos, std::make_shared<Chunk>(chunkPos, true)).first).second;
+		if (chunk.getBlock(ind) <= DefinitionAtlas::AIR) chunk.setBlock(ind, block);
+	}
 }
 
 //void MapGen::generateSunlight(MapGen::chunk_partials_map &chunks, glm::ivec3 mbPos) {
