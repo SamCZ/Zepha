@@ -15,8 +15,8 @@ LocalServerInstance::LocalServerInstance(const std::string &path, unsigned short
 bool LocalServerInstance::start() {
 #ifndef _WIN32
     pid = fork();
-    const auto sub = ("--subgame=" + subgame);
     if (pid == 0) {
+	    const auto sub = ("--subgame=" + subgame);
         char *arr[] = {
             const_cast <char*>(""),
 //            const_cast <char*>("-iconic"),
