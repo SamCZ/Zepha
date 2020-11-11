@@ -8,10 +8,10 @@
 #include "game/ServerSubgame.h"
 #include "world/dim/chunk/Chunk.h"
 
-ServerGenStream::ServerGenStream(ServerSubgame& game, ServerWorld& world, unsigned int seed) :
+ServerGenStream::ServerGenStream(ServerSubgame& game, ServerWorld& world) :
 	world(world) {
 	threads.reserve(THREADS);
-	for (int i = 0; i < THREADS; i++) threads.emplace_back(game, world, seed);
+	for (int i = 0; i < THREADS; i++) threads.emplace_back(game, world);
 }
 
 bool ServerGenStream::queue(unsigned int dimension, glm::ivec3 pos) {
@@ -50,7 +50,7 @@ std::unique_ptr<std::vector<ServerGenStream::FinishedJob>> ServerGenStream::upda
 	return created;
 }
 
-ServerGenStream::Thread::Thread(ServerSubgame& game, ServerWorld& world, unsigned int seed) :
+ServerGenStream::Thread::Thread(ServerSubgame& game, ServerWorld& world) :
 	thread(std::bind(&ServerGenStream::Thread::run, this)) {}
 
 void ServerGenStream::Thread::run() {

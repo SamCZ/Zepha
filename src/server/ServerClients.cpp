@@ -59,7 +59,7 @@ void ServerClients::createPlayer(std::shared_ptr<ServerClient> client, Dimension
 	players.push_back(player);
 	game.s()->getParser().playerConnected(player);
 	
-	player->setPos({ 0, -37, 0 }, true);
+	player->setPos({ 0, -32, 0 }, true);
 	
 	Serializer()
 		.appendE(NetField::ID).append(player->getId())

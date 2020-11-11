@@ -35,6 +35,17 @@ public:
 	typedef std::unordered_set<glm::ivec3, Vec::ivec3> CreatedSet;
 	
 	/**
+	 * A struct representing a single position in a chunk at which sunlight should be updated at.
+	 */
+	
+	struct SunlightNode {
+		SunlightNode(unsigned short index, std::shared_ptr<Chunk> chunk) : index(index), chunk(chunk) {};
+		
+		unsigned short index;
+		std::shared_ptr<Chunk> chunk;
+	};
+	
+	/**
 	 * A struct containing all the information for a generation job.
 	 * Contains a list of chunks, Noise samples, and the world position of the the job's root.
 	 */
@@ -58,6 +69,7 @@ public:
 		unsigned int size {};
 		
 		std::unique_ptr<ChunkMap> chunks = std::make_unique<ChunkMap>();
+		std::queue<SunlightNode> sunlightQueue {};
 		
 		NoiseSample volume, heightmap;
 		NoiseSample temperature, humidity, roughness;
@@ -177,6 +189,7 @@ private:
 	
 	/**
 	 * Generates structures for a Chunk based on data within the generation job and an offset within it.
+	 * Also generates initial light cascade, which will later be refined by propogateSunlightNodes.
 	 * May create chunk partials, inserting them back into the Job for later completion.
 	 *
 	 * @param job - The job to pull the data from.
@@ -185,8 +198,8 @@ private:
 	 * @param depthMap - The depth map of the chunk being generated.
 	 */
 	
-	void
-	generateChunkStructures(Job& job, glm::ivec3 localPos, std::vector<unsigned int> biomeMap, ChunkData& depthMap);
+	void generateChunkDecorAndLight(Job& job, glm::ivec3 localPos,
+		std::vector<unsigned int> biomeMap, ChunkData& depthMap);
 	
 	/**
 	 * Sets a block at the position specified into the Job, if the block at said position is not filled by
@@ -200,11 +213,14 @@ private:
 	 */
 	
 	static void setBlock(Job& job, glm::ivec3 worldPos, unsigned int block, std::shared_ptr<Chunk> hint);
-
-//	// Generate sunlight on the mapgen threads to speed up perf
-//    void generateSunlight(ChunkMap& chunks, glm::ivec3 mbPos);
-//    static bool containsWorldPos(Chunk *chunk, glm::ivec3 pos);
-//    void propogateSunlightNodes(ChunkMap& chunks, std::queue<SunlightNode>& queue);
+	
+	/**
+	 * Calculates and smooths sunlight for an entire Job's chunks.
+	 *
+	 * @param job - The job to act upon.
+	 */
+	
+    void propogateSunlightNodes(Job& job);
 	
 	MapGenProps props;
 	unsigned int seed = 0;

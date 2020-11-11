@@ -14,29 +14,22 @@
 #include "game/atlas/DefinitionAtlas.h"
 
 Chunk::Chunk(const Chunk& o) :
-	pos(o.pos),
-	dirty(o.dirty),
-	blocks(o.blocks),
-	biomes(o.biomes),
-	partial(o.partial),
-	sunLight(o.sunLight),
-	generated(o.generated),
-	blockLight(o.blockLight),
-	shouldRender(o.shouldRender),
+	pos(o.pos), state(o.state),
+	blocks(o.blocks), biomes(o.biomes),
+	sunLight(o.sunLight), blockLight(o.blockLight),
+	dirty(o.dirty), shouldRender(o.shouldRender),
 	renderableBlocks(o.renderableBlocks) {}
 
-Chunk::Chunk(glm::ivec3 pos, bool partial) : pos(pos), partial(partial) {}
+Chunk::Chunk(glm::ivec3 pos, bool partial) : pos(pos), state(partial ? State::PARTIAL : State::EMPTY) {}
 
 Chunk::Chunk(glm::ivec3 pos, const std::vector<unsigned int>& blocks, const std::vector<unsigned short>& biomes) :
 	blocks(std::move(blocks)), biomes(std::move(biomes)),
-	generated(true), pos(pos) {
+	state(State::GENERATED), pos(pos) {
 	countRenderableBlocks();
 }
 
 bool Chunk::setBlock(unsigned int ind, unsigned int blk) {
-	auto l = getWriteLock();
 	if (!RIE::write(ind, blk, blocks, 4096)) return false;
-	l.unlock();
 	
 	if (blk == DefinitionAtlas::AIR) {
 		renderableBlocks = std::max(renderableBlocks - 1, 0);
@@ -58,68 +51,75 @@ const std::vector<unsigned short>& Chunk::cGetBiomes() const {
 	return biomes;
 }
 
-std::string Chunk::serialize() {
-	auto l = getReadLock();
+void Chunk::combineWith(std::shared_ptr<Chunk> o) {
+	// TODO: Leverage the RIE streams to make this more efficient.
 	
-	std::vector<unsigned short> blockLight = std::vector<unsigned short>(4096);
-	std::vector<unsigned char> sunLight = std::vector<unsigned char>(2048);
+	for (unsigned int i = 0; i < 4096; i++) {
+		if (o->getBlock(i) > DefinitionAtlas::INVALID) setBlock(i, o->getBlock(i));
+	}
+	
+	if (state == State::GENERATED || o->isGenerated()) {
+		state = State::GENERATED;
+		countRenderableBlocks();
+	}
+	
+	else state = State::PARTIAL;
+}
+
+std::string Chunk::serialize() {
+	std::vector<unsigned short> blArray = std::vector<unsigned short>(4096);
+	std::vector<unsigned char> slArray = std::vector<unsigned char>(2048);
 	
 	for (unsigned short i = 0; i < 4096; i++) {
 		blocklight_union bl;
-		bl.b = this->blockLight[i];
-		blockLight[i] = bl.sh;
+		bl.b = blockLight[i];
+		blArray[i] = bl.sh;
 	}
 	
 	for (unsigned short i = 0; i < 2048; i++) {
 		sunlight_union sl;
-		sl.s = this->sunLight[i];
-		sunLight[i] = sl.ch;
+		sl.s = sunLight[i];
+		slArray[i] = sl.ch;
 	}
 	
-	l.unlock();
-	
 	Serializer s;
-	std::string temp = Serializer().append(pos).append(blocks).append(biomes).append(blockLight).append(sunLight).data;
+	std::string temp = Serializer().append(pos).append(blocks).append(biomes).append(blArray).append(slArray).data;
 	s.append<std::string>(gzip::compress(temp.data(), temp.size()));
 	
 	return s.data;
 }
 
 void Chunk::deserialize(Deserializer& d) {
-	auto l = getWriteLock();
-	
 	std::string gzipped = d.read<std::string>();
 	if (!gzip::is_compressed(gzipped.data(), gzipped.length()))
 		throw std::runtime_error("Chunk contains invalid gzipped data.");
 	
-	std::vector<unsigned char> sunLight{};
-	std::vector<unsigned short> blockLight{};
+	std::vector<unsigned char> slArray {};
+	std::vector<unsigned short> blArray {};
+	
 	Deserializer(gzip::decompress(gzipped.data(), gzipped.length()))
 		.read<glm::ivec3>(pos)
 		.read<std::vector<unsigned int>>(blocks)
 		.read<std::vector<unsigned short>>(biomes)
-		.read<std::vector<unsigned short>>(blockLight)
-		.read<std::vector<unsigned char>>(sunLight);
+		.read<std::vector<unsigned short>>(blArray)
+		.read<std::vector<unsigned char>>(slArray);
 	
 	for (unsigned short i = 0; i < 4096; i++) {
 		blocklight_union bl;
-		bl.sh = blockLight[i];
-		this->blockLight[i] = bl.b;
+		bl.sh = blArray[i];
+		blockLight[i] = bl.b;
 	}
 	
 	for (unsigned short i = 0; i < 2048; i++) {
 		sunlight_union sl;
-		sl.ch = sunLight[i];
-		this->sunLight[i] = sl.s;
+		sl.ch = slArray[i];
+		sunLight[i] = sl.s;
 	}
 	
-	l.unlock();
 	countRenderableBlocks();
 }
 
 void Chunk::countRenderableBlocks() {
-	auto _ = getReadLock();
-	
 	shouldRender = false;
 	renderableBlocks = 0;
 	

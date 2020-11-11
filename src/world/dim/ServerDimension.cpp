@@ -87,7 +87,7 @@ void ServerDimension::blockPlaceOrInteract(const Target& target, PlayerPtr playe
 
 void ServerDimension::setChunk(std::shared_ptr<Chunk> chunk) {
 	std::shared_ptr<Chunk> existing = getChunk(chunk->getPos());
-	if (existing != nullptr) chunk = combinePartials(chunk, existing);
+	if (existing) chunk = combineChunks(chunk, existing);
 	Dimension::setChunk(chunk);
 }
 

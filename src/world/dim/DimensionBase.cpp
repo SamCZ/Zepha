@@ -144,27 +144,9 @@ World& DimensionBase::getWorld() {
 	return world;
 }
 
-std::shared_ptr<Chunk> DimensionBase::combinePartials(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b) {
-	std::shared_ptr<Chunk> src;
-	std::shared_ptr<Chunk> res;
-	
-	if (a->isGenerated()) {
-		res = a;
-		src = b;
-	}
-	else {
-		res = b;
-		src = a;
-	}
-	
-	for (unsigned int i = 0; i < 4096; i++) {
-		if (src->getBlock(i) > DefinitionAtlas::INVALID) res->setBlock(i, src->getBlock(i));
-	}
-	
-	res->setGenerated(src->isGenerated() || res->isGenerated());
-	res->setPartial(!res->isGenerated());
-	res->countRenderableBlocks();
-	return res;
+std::shared_ptr<Chunk> DimensionBase::combineChunks(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b) {
+	if (a->isGenerated()) return (a->combineWith(b), a);
+	else return (b->combineWith(a), b);
 }
 
 std::shared_ptr<MapGen> DimensionBase::getGen() {

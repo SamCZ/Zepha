@@ -351,9 +351,13 @@ namespace RegisterBlock {
 			auto collisionOpt = blockTable.get<sol::optional<sol::table>>("collision_box");
 			
 			std::vector<SelectionBox> selectionBoxes{};
-			try { if (selectionOpt) selectionBoxes = parseBoxes(*selectionOpt); }
-			catch (const char* error) { throw std::string("selection boxes " + std::string(error)).c_str(); }
-			if (selectionBoxes.size() == 0) selectionBoxes.emplace_back(glm::vec3{ 0, 0, 0 }, glm::vec3{ 1, 1, 1 });
+			try {
+				if (selectionOpt) selectionBoxes = parseBoxes(*selectionOpt);
+				else selectionBoxes.emplace_back(glm::vec3{ 0, 0, 0 }, glm::vec3{ 1, 1, 1 });
+			}
+			catch (const char* error) {
+				throw std::string("selection boxes " + std::string(error)).c_str();
+			}
 			
 			std::vector<SelectionBox> collisionBoxes{};
 			try { if (collisionOpt) collisionBoxes = parseBoxes(*collisionOpt); }

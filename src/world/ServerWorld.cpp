@@ -63,7 +63,7 @@ ServerWorld::ServerWorld(unsigned int seed, SubgamePtr game, ServerClients& clie
 }
 
 void ServerWorld::init(const std::string& worldDir) {
-	genStream = std::make_unique<ServerGenStream>(*game.s(), *this, seed);
+	genStream = std::make_unique<ServerGenStream>(*game.s(), *this);
 	packetStream = std::make_unique<ServerPacketStream>(*this);
 //    fileManip = std::make_shared<FileManipulator>("worlds/" + worldDir + "/");
 }

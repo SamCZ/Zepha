@@ -113,7 +113,7 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
 	
 	// Create sandboxed runfile()
 	lua["dofile"] = lua["loadfile"] = sol::nil;
-	lua.set_function("runfile", &LocalLuaParser::runFileSandboxed, this);
+	lua.set_function("runfile", &LocalLuaParser::runFileSandboxedWithEnv, this);
 }
 
 sol::protected_function_result LocalLuaParser::errorCallback(sol::protected_function_result r) const {
@@ -167,6 +167,32 @@ sol::protected_function_result LocalLuaParser::runFileSandboxed(const std::strin
 			if (f.path != file) continue;
 			
 			sol::environment env(lua, sol::create, lua.globals());
+			env["_PATH"] = f.path.substr(0, f.path.find_last_of('/') + 1);
+			env["_FILE"] = f.path;
+			env["_MODNAME"] = mod.config.name;
+			
+			return lua.safe_script(f.file, env, std::bind(&LocalLuaParser::errorCallback, this, std::placeholders::_2),
+				"@" + f.path, sol::load_mode::text);
+		}
+		throw std::runtime_error("Error opening \"" + file + "\", file not found.");
+	}
+	throw std::runtime_error("Error opening \"" + file + "\", mod not found.");
+}
+
+sol::protected_function_result LocalLuaParser::runFileSandboxedWithEnv(sol::this_environment cEnv, const std::string& file) {
+	size_t modname_length = file.find('/');
+	if (modname_length == std::string::npos)
+		throw std::runtime_error("Error opening \"" + file + "\", specified file is invalid.");
+	std::string modname = file.substr(0, modname_length);
+	
+	for (const LuaMod& mod : handler.cGetMods()) {
+		if (modname != mod.config.name) continue;
+		for (const LuaMod::File& f : mod.files) {
+			if (f.path != file) continue;
+			
+			sol::environment currentEnv = cEnv;
+			
+			sol::environment env(lua, sol::create, currentEnv.get<sol::table>("_G"));
 			env["_PATH"] = f.path.substr(0, f.path.find_last_of('/') + 1);
 			env["_FILE"] = f.path;
 			env["_MODNAME"] = mod.config.name;

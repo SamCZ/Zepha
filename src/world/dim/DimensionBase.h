@@ -75,7 +75,7 @@ class DimensionBase : protected Lockable {
 	// Combine two chunk partials, or a chunk and a chunk partial.
 	// If both are partials `b` takes preference, if one is a fully generated chunk the partial takes preference.
 	// TODO: Make this more efficient using proper RIE traversal.
-	static std::shared_ptr<Chunk> combinePartials(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b);
+	static std::shared_ptr<Chunk> combineChunks(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b);
 	
 	std::shared_ptr<MapGen> mapGen;
 	SubgamePtr game;

@@ -21,17 +21,17 @@ namespace {
 		std::function<void(std::string)> after, const std::string& identifier, const sol::table& data) {
 		
 		auto modName = env.get<std::string>("_MODNAME");
+		std::string iden = identifier[0] == ':' ? modName + identifier : identifier;
 		
-		if (identifier[0] != ':' && strncmp(identifier.data(), modName.data(), modName.length()))
+		if (iden[0] == '!') iden = iden.substr(1, iden.length() - 1);
+		else if (iden.length() <= modName.length() || iden.substr(0, modName.length() + 1) != modName + ":")
 			throw std::runtime_error(identifier + " does not match calling mod name.");
 		
-		std::string iden = (identifier[0] == ':' ? modName + identifier : identifier);
 		unsigned int splitters = std::count_if(iden.begin(), iden.end(), [](char c) { return c == ':'; });
 		
-		if (splitters > 2) throw std::runtime_error("Too many splitters in identifier " + iden + ".");
+		if (splitters > 2) throw std::runtime_error("Too many splitters in identifier " + identifier + ".");
 		
 		core[table][iden] = data;
-		
 		if (after) after(iden);
 	}
 }

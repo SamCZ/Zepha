@@ -25,7 +25,7 @@ class ServerGenStream {
 		std::unique_ptr<MapGen::CreatedSet> created;
 	};
 	
-	explicit ServerGenStream(ServerSubgame& game, ServerWorld& world, unsigned int seed);
+	explicit ServerGenStream(ServerSubgame& game, ServerWorld& world);
 	
 	~ServerGenStream();
 	
@@ -44,7 +44,7 @@ class ServerGenStream {
 	};
 	
 	struct Thread {
-		explicit Thread(ServerSubgame& game, ServerWorld& world, unsigned int seed);
+		explicit Thread(ServerSubgame& game, ServerWorld& world);
 		
 		void run();
 		

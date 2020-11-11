@@ -22,6 +22,7 @@ ServerDefinitionAtlas::ServerDefinitionAtlas() {
 	//Air Node
 	BlockModel nullModel{};
 	BlockDef* air = new BlockDef();
+	air->lightPropagates = true;
 	air->identifier = "air";
 	air->index = 1;
 	air->name = "Air";
