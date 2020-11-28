@@ -12,7 +12,7 @@
 #include "../Texture.h"
 
 class WorldGeometryShader : public Shader {
-	public:
+public:
 	explicit WorldGeometryShader(glm::ivec2 windowSize, float bufferScale);
 	
 	void postCreate() override;

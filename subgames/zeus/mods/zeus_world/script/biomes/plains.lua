@@ -24,6 +24,7 @@ local shrub_layer_2 = {
 
 local shrub = zepha.create_structure({
     origin = V{1, 1, 1},
+    probability = 0.01,
     schematic = {
         shrub_layer_0,
         shrub_layer_1,
@@ -31,37 +32,47 @@ local shrub = zepha.create_structure({
     }
 })
 
+local structures = { shrub }
+
+for i = 1, 5 do
+    table.insert(structures, zepha.create_structure({
+        origin = V(),
+        probability = 0.1,
+        schematic = {{{ "zeus:default:tall_grass_" .. tostring(i) }}}
+    }))
+end
+
 local noise = {
-   heightmap = {
-       module = "add",
-       sources = {{
-           module = "const",
-           value = -12
-       }, {
-           module = "add",
-           sources = {{
-               -- Elevation
-               module = "scale_bias",
-               source = {
-                   module = "perlin",
-                   frequency = 0.002,
-                   octaves = 8
-               },
-               scale = 250,
-               bias = -32
-           }, {
-               -- Features
-               module = "scale_bias",
-               source = {
-                   module = "perlin",
-                   frequency = 0.2,
-                   octaves = 3,
-               },
-               scale = 6,
-               bias = 6
-           }}
-       }}
-   }
+    heightmap = {
+        module = "add",
+        sources = {{
+            module = "const",
+            value = -12
+        }, {
+            module = "add",
+            sources = {{
+                -- Elevation
+                module = "scale_bias",
+                source = {
+                    module = "perlin",
+                    frequency = 0.002,
+                    octaves = 8
+                },
+                scale = 250,
+                bias = -32
+            }, {
+                -- Features
+                module = "scale_bias",
+                source = {
+                    module = "perlin",
+                    frequency = 0.2,
+                    octaves = 3,
+                },
+                scale = 6,
+                bias = 6
+            }}
+        }}
+    }
 }
 
 zepha.register_biome(identifier, {
@@ -76,7 +87,7 @@ zepha.register_biome(identifier, {
         rock = "zeus:default:stone"
     },
     tags = { natural = 1, default = 1 },
-    structures = { shrub },
+    structures = structures,
     biome_tint = "#aaed45",
     noise = noise
 })

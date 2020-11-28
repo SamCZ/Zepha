@@ -81,6 +81,7 @@ local leaf_layer_3 = {
 
 local tree = zepha.create_structure({
    origin = V(2, 2, 2),
+   probability = 0.01,
    schematic = {
        trunk_layer_0,
        trunk_layer_0,

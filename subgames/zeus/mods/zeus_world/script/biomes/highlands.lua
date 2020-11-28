@@ -1,12 +1,5 @@
 local identifier = "zeus:world:highlands"
 
-local grass = zepha.create_structure({
-    origin = V{1, 2, 3},
-    schematic = {
-        {{"zeus:default:tall_grass_4"}}
-    }
-})
-
 local noise = {
     volume = {
         module = "add",
@@ -57,7 +50,6 @@ zepha.register_biome(identifier, {
         rock = "zeus:default:stone"
     },
     tags = { natural = 1, default = 1 },
-    structures = { grass },
     biome_tint = "#c2fa61",
     noise = noise
 })

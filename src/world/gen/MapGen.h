@@ -39,10 +39,10 @@ public:
 	 */
 	
 	struct SunlightNode {
-		SunlightNode(unsigned short index, std::shared_ptr<Chunk> chunk) : index(index), chunk(chunk) {};
+		SunlightNode(unsigned short index, Chunk* chunk) : index(index), chunk(chunk) {};
 		
 		unsigned short index;
-		std::shared_ptr<Chunk> chunk;
+		Chunk* chunk;
 	};
 	
 	/**

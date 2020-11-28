@@ -177,7 +177,7 @@ std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDepth(std::unique_ptr<Ch
 		for (char y = 15; y >= 0; y--) {
 			unsigned int ind = Space::Block::index({ pos.x, y, pos.y });
 			depth = ((*chunkDensity)[ind] > 0 ? std::min(depth + 1, 16) : 0);
-			(*data)[ind] = depth + ((*chunkDensity)[ind] - static_cast<int>((*chunkDensity)[ind]));
+			(*data)[ind] = depth;
 		}
 	}
 	
@@ -252,32 +252,38 @@ void MapGen::generateChunkDecorAndLight(Job& job, glm::ivec3 localPos, std::vect
 		job.chunks->count(abovePos) ? job.chunks->at(abovePos) : nullptr : nullptr;
 	
 	for (unsigned short i = 0; i < 256; i++) {
-		bool structure = distribution(generator) > 0.97;
-		
 		glm::ivec3 indPos = { i / 16, 15, i % 16 };
-		unsigned char light = above ? above->getLight(Space::Block::index(
-			indPos), 3) : game.getDefs().blockFromId(chunk->getBlock(indPos)).lightPropagates ? 15 : 0;
 		
-		for (; indPos.y >= 0 && (light || structure); indPos.y--) {
+		unsigned int biomeID = biomeMap[(localPos.x * 16 + indPos.x)
+			* (job.size * 16 + 1) + (localPos.z * 16 + indPos.z)];
+		auto& biome = game.getBiomes().biomeFromId(biomeID);
+		
+		short schemID = -1;
+		for (short j = 0; j < biome.schematics.size(); j++) {
+			if (distribution(generator) > 1 - biome.schematics[j]->probability) {
+				schemID = j;
+				break;
+			}
+		}
+		
+		char light = -1;
+		
+		for (; indPos.y >= 0 && (light || schemID > -1); indPos.y--) {
 			unsigned short ind = Space::Block::index(indPos);
 			
-			if (structure && depthMap[ind] >= 1 && depthMap[ind] < 2) {
+			if (schemID > -1 && depthMap[ind] > 1 && depthMap[ind] <= 2) {
 				glm::ivec3 pos = (job.pos + localPos) * 16 + indPos;
 				pos.y++; // Compensate for the fact that we're finding solid positions.
-				
-				unsigned int biomeID = biomeMap[(localPos.x * 16 + indPos.x) * (job.size * 16 + 1) +
-					(localPos.z * 16 + indPos.z)];
-				auto& biome = game.getBiomes().biomeFromId(biomeID);
-				
-				auto schematic = biome.schematics.size() > 0 ? biome.schematics[0] : nullptr;
-				if (schematic) {
-					if (!schematic->processed) schematic->process(game.getDefs());
-					for (unsigned int j = 0; j < schematic->length(); j++) {
-						glm::ivec3 off = schematic->getOffset(j);
-						setBlock(job, pos + off - schematic->origin, schematic->blocks[j], chunk);
-					}
+				auto& schematic = biome.schematics[schemID];
+				for (unsigned int j = 0; j < schematic->length(); j++) {
+					glm::ivec3 off = schematic->getOffset(j);
+					setBlock(job, pos + off - schematic->origin, schematic->blocks[j], chunk);
 				}
+				break;
 			}
+			
+			if (light == -1) above ? above->getLight(Space::Block::index(indPos), 3) :
+				game.getDefs().blockFromId(chunk->getBlock(indPos)).lightPropagates ? 15 : 0;
 			
 			if (!light) continue;
 			
@@ -285,7 +291,7 @@ void MapGen::generateChunkDecorAndLight(Job& job, glm::ivec3 localPos, std::vect
 			if (!blockDef.lightPropagates) light = 0;
 			else {
 				chunk->setLight(ind, 3, light);
-				job.sunlightQueue.emplace(ind, chunk);
+				job.sunlightQueue.emplace(ind, chunk.get());
 			}
 		}
 	}
@@ -308,32 +314,33 @@ void MapGen::setBlock(MapGen::Job& job, glm::ivec3 worldPos, unsigned int block,
 }
 
 void MapGen::propogateSunlightNodes(Job& job) {
-	while (!job.sunlightQueue.empty()) {
-		SunlightNode& node = job.sunlightQueue.front();
-		
-		unsigned char lightLevel = node.chunk->getLight(node.index, 3);
-		glm::ivec3 worldPos = node.chunk->pos * 16 + Space::Block::fromIndex(node.index);
-		
-		for (const auto& i : Vec::TO_VEC) {
-			glm::ivec3 check = worldPos + i;
-			
-			std::shared_ptr<Chunk> chunk;
-			if (node.chunk->pos == Space::Chunk::world::fromBlock(check)) chunk = node.chunk;
-			else {
-				glm::ivec3 wp = Space::Chunk::world::fromBlock(check);
-				if (!job.chunks->count(wp)) continue;
-				chunk = job.chunks->at(wp);
-				if (!chunk) continue;
-			}
-			
-			auto ind = Space::Block::index(check);
-			if (game.getDefs().blockFromId(chunk->getBlock(ind)).lightPropagates &&
-			    chunk->getLight(ind, 3) + 2 <= lightLevel) {
-				chunk->setLight(ind, 3, lightLevel - static_cast<int>(!(lightLevel == 15 && i.y == -1)));
-				job.sunlightQueue.emplace(ind, chunk);
-			}
-		}
-		
-		job.sunlightQueue.pop();
-	}
+//	auto& defs = game.getDefs();
+//
+//	while (!job.sunlightQueue.empty()) {
+//		SunlightNode& node = job.sunlightQueue.front();
+//
+//		unsigned char lightLevel = node.chunk->getLight(node.index, 3);
+//		glm::ivec3 worldPos = node.chunk->pos * 16 + Space::Block::fromIndex(node.index);
+//
+//		for (const auto& i : Vec::TO_VEC) {
+//			glm::ivec3 check = worldPos + i;
+//
+//			Chunk* chunk;
+//			glm::ivec3 chunkPos = Space::Chunk::world::fromBlock(check);
+//			if (node.chunk->pos == chunkPos) chunk = node.chunk;
+//			else {
+//				auto found = job.chunks->find(chunkPos);
+//				if (found == job.chunks->end()) continue;
+//				chunk = found->second.get();
+//			}
+//
+//			auto ind = Space::Block::index(check);
+//			if (defs.blockFromId(chunk->getBlock(ind)).lightPropagates && chunk->getLight(ind, 3) + 2 <= lightLevel) {
+//				chunk->setLight(ind, 3, lightLevel - static_cast<int>(!(lightLevel == 15 && i.y == -1)));
+//				job.sunlightQueue.emplace(ind, chunk);
+//			}
+//		}
+//
+//		job.sunlightQueue.pop();
+//	}
 }

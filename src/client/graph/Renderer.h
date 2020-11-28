@@ -17,7 +17,7 @@
 #include "shader/GuiUniforms.h"
 
 class Renderer {
-	public:
+public:
 	Renderer();
 	
 	Renderer(glm::ivec2 win);
@@ -52,7 +52,8 @@ class Renderer {
 	
 	Window window;
 	Camera camera;
-	private:
+	
+private:
 	void renderQuad();
 	
 	unsigned int quadVAO = 0;

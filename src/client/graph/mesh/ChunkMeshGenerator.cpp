@@ -60,11 +60,11 @@ ChunkMeshGenerator::ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefin
 		for (auto& mod : model.meshMods) {
 			switch (mod.first) {
 			default: break;
-			case MeshMod::OFFSET_X: vis.x += blockOffsets[0].get(vis / 16.f) * mod.second;
+			case MeshMod::OFFSET_X: vis.x += blockOffsets[0].get(glm::vec3(off) / 16.f) * mod.second;
 				break;
-			case MeshMod::OFFSET_Y: vis.y += blockOffsets[1].get(vis / 16.f) * mod.second;
+			case MeshMod::OFFSET_Y: vis.y += blockOffsets[1].get(glm::vec3(off) / 16.f) * mod.second;
 				break;
-			case MeshMod::OFFSET_Z: vis.z += blockOffsets[2].get(vis / 16.f) * mod.second;
+			case MeshMod::OFFSET_Z: vis.z += blockOffsets[2].get(glm::vec3(off) / 16.f) * mod.second;
 				break;
 			}
 		}
@@ -88,7 +88,7 @@ ChunkMeshGenerator::ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefin
 		if (!getBlockAt(pos).culls)
 			addFaces(vis, model.parts[static_cast<int>(EVec::ZPOS)], biomeTint, getLightAt(pos));
 		
-		addFaces(vis, model.parts[static_cast<int>(EVec::NO_CULL)], biomeTint, getLightAt(vis));
+		addFaces(vis, model.parts[static_cast<int>(EVec::NO_CULL)], biomeTint, getLightAt(off));
 	}
 	
 	meshDetails->vertices.shrink_to_fit();
