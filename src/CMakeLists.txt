@@ -161,7 +161,6 @@ add_library(Zepha_Core
         lua/LuaParser.cpp
         lua/LuaParser.h
         lua/modules/BaseModule.h
-        lua/modules/create_structure.h
         lua/modules/Dimension.cpp
         lua/modules/Dimension.h
         lua/modules/mSetGui.h
@@ -316,6 +315,6 @@ add_library(Zepha_Core
         world/ServerWorld.h
         world/World.cpp
         world/World.h
-        util/net/Address.cpp util/Bounds.cpp util/Bounds.h lua/register/CreateRegister.h lua/register/CreateRegister.cpp)
+        util/net/Address.cpp util/Bounds.cpp util/Bounds.h lua/register/CreateRegister.h lua/register/CreateRegister.cpp lua/modules/Structure.cpp lua/modules/Structure.h)
 
 target_include_directories(Zepha_Core PUBLIC .)

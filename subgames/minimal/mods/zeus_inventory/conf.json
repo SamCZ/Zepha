@@ -1,0 +1,6 @@
+{
+  "name": "zeus:inventory",
+  "description": "Inventory mod for the Zeus subgame.",
+  "version": "0.0.1",
+  "depends": [ "@aurailus:hot_wheel" ]
+}

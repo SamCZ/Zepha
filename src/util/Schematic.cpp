@@ -7,17 +7,6 @@
 #include "game/def/BlockDef.h"
 #include "game/atlas/DefinitionAtlas.h"
 
-void Schematic::process(DefinitionAtlas& atlas) {
-	blocks.reserve(stringData.size());
-	
-	for (auto& string : stringData) blocks.push_back(atlas.blockFromStr(string).index);
-	
-	stringData.clear();
-	stringData.shrink_to_fit();
-	
-	processed = true;
-}
-
 glm::ivec3 Schematic::getOffset(unsigned int ind) {
 	glm::ivec3 vec{};
 	

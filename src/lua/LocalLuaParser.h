@@ -31,7 +31,6 @@ class LocalLuaParser : public LuaParser {
 	virtual sol::protected_function_result errorCallback(sol::protected_function_result r) const override;
 	
 	sol::protected_function_result runFileSandboxed(const std::string& file);
-	sol::protected_function_result runFileSandboxedWithEnv(sol::this_environment env, const std::string& file);
 	
 	LuaKeybindHandler keybinds;
 	LocalModHandler handler;

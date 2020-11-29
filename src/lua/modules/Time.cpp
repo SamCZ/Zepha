@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 2020-07-26.
-//
-
 #include "Time.h"
 
 #include "../Lua.h"
@@ -12,7 +8,7 @@ void Api::Module::Time::bind() {
 	
 	time.set_function("ns", Util::bind_this(this, &Time::ns));
 	time.set_function("ms", Util::bind_this(this, &Time::ms));
-	time.set_function("s", Util::bind_this(this, &Time::s));
+	time.set_function("s",  Util::bind_this(this, &Time::s));
 }
 
 float Api::Module::Time::ns() {

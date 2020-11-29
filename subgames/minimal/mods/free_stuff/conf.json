@@ -1,0 +1,6 @@
+{
+  "name": "@aurailus:free_stuff",
+  "description": "Minetest shim for Zepha~",
+  "version": "0.0.1",
+  "depends": ["minetest:chocolate", "minetest:zythias_lantern"]
+}

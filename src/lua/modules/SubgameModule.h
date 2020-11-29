@@ -13,12 +13,12 @@ class Subgame;
 namespace Api {
 	namespace Module {
 		class SubgameModule : public BaseModule {
-			public:
+		public:
 			SubgameModule(State state, sol::table& core, Subgame& game, World& world);
 			
 			virtual void bind() = 0;
 			
-			protected:
+		protected:
 			State state;
 			
 			World& world;

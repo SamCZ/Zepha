@@ -1,0 +1,7 @@
+{
+	"name": "minetest:chocolate",
+	"description": "Chocolate.",
+	"version": "0.0.1",
+	"depends": ["minetest:_polyfill"]
+}
+

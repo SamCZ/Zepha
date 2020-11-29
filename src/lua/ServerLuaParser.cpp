@@ -27,8 +27,7 @@
 // Modules
 #include "lua/modules/Time.h"
 #include "lua/modules/Dimension.h"
-
-#include "modules/create_structure.h"
+#include "lua/modules/Structure.h"
 
 // Util
 #include "lua/register/CreateRegister.h"
@@ -109,6 +108,7 @@ void ServerLuaParser::loadApi(WorldPtr world) {
 	// Modules
 	modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::SERVER, lua, core));
 	modules.emplace_back(std::make_unique<Api::Module::Dimension>(Api::State::SERVER, core, game, *world.s()));
+	modules.emplace_back(std::make_unique<Api::Module::Structure>(Api::State::SERVER, core, game, *world.s()));
 	
 	// Register
 	auto& game = static_cast<ServerSubgame&>(this->game);
@@ -135,8 +135,6 @@ void ServerLuaParser::loadApi(WorldPtr world) {
 			core["keycodes"][i] = key;
 		}
 	}
-	
-	Api::create_structure(lua, core);
 	
 	bindModules();
 	
