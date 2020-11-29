@@ -1,6 +1,0 @@
-{
-  "name": "@aurailus:crazyblocks",
-  "description": "Various objects for testing block interactions.",
-  "version": "1.0.0",
-  "depends": ["zeus:default", "@aurailus:inventory", "@aurailus:hot_wheel"]
-}

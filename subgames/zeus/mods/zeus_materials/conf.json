@@ -2,5 +2,5 @@
 	"name": "zeus:materials",
 	"description": "Materials and craftitems for the Zeus subgame.",
 	"version": "0.0.1",
-	"depends": ["@aurailus:crafting"]
+	"depends": ["@auri:crafting"]
 }

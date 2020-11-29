@@ -1,0 +1,6 @@
+{
+  "name": "@auri:hot_wheel",
+  "description": "A speedy way to select items from your inventory :3",
+  "version": "0.0.1",
+  "depends": [ "@auri:health" ]
+}
