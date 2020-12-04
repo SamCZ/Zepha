@@ -16,7 +16,7 @@ class Subgame;
 class Dimension;
 
 class World {
-	public:
+public:
 	World(const World& o) = delete;
 	
 	explicit World(SubgamePtr game);
@@ -33,9 +33,11 @@ class World {
 	
 	virtual DimensionPtr getDimension(const std::string& identifier);
 	
+	virtual void sendMessage(const std::string& channel, const std::string& message) = 0;
+	
 	virtual InventoryRefsPtr getRefs() = 0;
 	
-	protected:
+protected:
 	std::string defaultDimension{};
 	std::vector<std::shared_ptr<Dimension>> dimensions;
 	

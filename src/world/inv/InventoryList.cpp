@@ -9,8 +9,8 @@
 #include "lua/usertype/ItemStack.h"
 #include "game/atlas/DefinitionAtlas.h"
 
-InventoryList::InventoryList(SubgamePtr game, const std::string& name, const std::string& invName, unsigned short size,
-	unsigned short width) :
+InventoryList::InventoryList(SubgamePtr game, const std::string& name, const std::string& invName,
+	unsigned short size, unsigned short width) :
 	game(game),
 	name(name),
 	items(size),
@@ -232,11 +232,10 @@ void InventoryList::interact(InventoryListPtr cursor, bool primary, unsigned sho
 		}
 		else {
 			auto listStack = getStack(ind);
-			if (listStack.id == 0 || listStack.id == handStack.id) {
+			if (listStack.id <= 1 || listStack.id == handStack.id) {
 				auto overflow = placeStack(ind, { handStack.id, 1 }, true);
-				handStack.count -= 1;
+				handStack.count = handStack.count - 1 + overflow.count;
 				if (handStack.count == 0) handStack.id = 0;
-				if (overflow.count != 0) handStack.count += overflow.count;
 				cursor->setStack(0, handStack);
 			}
 			else {
@@ -257,7 +256,7 @@ void InventoryList::setStack(unsigned short i, const ItemStack& stack) {
 }
 
 Packet InventoryList::createPacket() {
-	Serializer s{};
+	Serializer s {};
 	
 	s.append<std::string>(invName)
 		.append<std::string>(name)

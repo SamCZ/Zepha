@@ -66,7 +66,7 @@ class InventoryList {
 	
 	std::string name, invName;
 	unsigned short width = 0;
-	std::vector<ItemStack> items{};
+	std::vector<ItemStack> items {};
 	
 	Packet createPacket();
 	

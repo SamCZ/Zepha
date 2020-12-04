@@ -315,6 +315,6 @@ add_library(Zepha_Core
         world/ServerWorld.h
         world/World.cpp
         world/World.h
-        util/net/Address.cpp util/Bounds.cpp util/Bounds.h lua/register/CreateRegister.h lua/register/CreateRegister.cpp lua/modules/Structure.cpp lua/modules/Structure.h)
+        util/net/Address.cpp util/Bounds.cpp util/Bounds.h lua/register/CreateRegister.h lua/register/CreateRegister.cpp lua/modules/Structure.cpp lua/modules/Structure.h lua/modules/Message.cpp lua/modules/Message.h)
 
 target_include_directories(Zepha_Core PUBLIC .)

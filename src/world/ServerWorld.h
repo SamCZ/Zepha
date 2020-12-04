@@ -34,6 +34,8 @@ class ServerWorld : public World {
 	
 	void update(double delta) override;
 	
+	virtual void sendMessage(const std::string& channel, const std::string& message) override;
+	
 	virtual DimensionPtr
 	createDimension(const std::string& identifier, std::unordered_set<std::string>& biomes) override;
 	

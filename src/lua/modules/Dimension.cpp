@@ -6,7 +6,7 @@
 
 #include "Dimension.h"
 
-#include "../Lua.h"
+#include "lua/Lua.h"
 #include "world/LocalWorld.h"
 #include "world/ServerWorld.h"
 

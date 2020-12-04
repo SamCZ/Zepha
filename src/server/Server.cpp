@@ -13,6 +13,7 @@
 #include "game/def/BlockDef.h"
 #include "util/net/Serializer.h"
 #include "server/ServerClient.h"
+#include "lua/usertype/Player.h"
 #include "world/player/ServerPlayer.h"
 
 Server::Server(unsigned short port, const std::string& subgame) :
@@ -45,15 +46,17 @@ void Server::update() {
 		default:
 		case ENET_EVENT_TYPE_NONE:
 			throw std::runtime_error("Unknown packet type " + std::to_string(event.type) + " received.");
+		
+		case ENET_EVENT_TYPE_CONNECT:
+			clients.handleConnect(event);
 			break;
 		
-		case ENET_EVENT_TYPE_CONNECT:clients.handleConnect(event);
+		case ENET_EVENT_TYPE_DISCONNECT:
+			clients.handleDisconnect(event);
 			break;
 		
-		case ENET_EVENT_TYPE_DISCONNECT:clients.handleDisconnect(event);
-			break;
-		
-		case ENET_EVENT_TYPE_RECEIVE:packetReceived(event);
+		case ENET_EVENT_TYPE_RECEIVE:
+			packetReceived(event);
 			break;
 		}
 	}
@@ -112,63 +115,36 @@ void Server::playerPacketReceived(PacketView& p, PlayerPtr player) {
 	case Packet::Type::THIS_PLAYER_INFO:player->handleAssertion(p.d);
 		playersUpdated.emplace(player->getId());
 		break;
-
-//        case Packet::Type::BLOCK_SET:
-//            glm::ivec3 pos = p.d.read<glm::ivec3>();
-//            unsigned int block = p.d.read<unsigned int>();
-//
-//            unsigned int worldBlock = (block == DefinitionAtlas::AIR ? world.getBlock(pos) : 0);
-//
-//            if (block == DefinitionAtlas::AIR) {
-//                auto& def = game.defs->blockFromId(worldBlock);
-//                if (def.callbacks.count(Callback::BREAK)) game.lua->safe_function(def.callbacks[Callback::BREAK], pos, ServerLuaPlayer(client));
-//                game.lua->safe_function(game.lua->core["trigger"], "break", pos, ServerLuaPlayer(client));
-//            }
-//            else {
-//                auto& def = game.defs->blockFromId(block);
-//                if (def.callbacks.count(Callback::PLACE)) game.lua->safe_function(def.callbacks[Callback::PLACE], pos, ServerLuaPlayer(client));
-//                game.lua->safe_function(game.lua->core["trigger"], "place", pos, ServerLuaPlayer(client));
-//            }
-//
-//            world.setBlock(pos, block);
-//
-//            if (block == DefinitionAtlas::AIR) {
-//                auto& def = game.defs->blockFromId(worldBlock);
-//                if (def.callbacks.count(Callback::AFTER_BREAK))
-//                    game.lua->safe_function(def.callbacks[Callback::AFTER_BREAK], pos, ServerLuaPlayer(client));
-//                game.lua->safe_function(game.lua->core["trigger"], "after_break", pos, ServerLuaPlayer(client));
-//            }
-//            else {
-//                auto& def = game.defs->blockFromId(block);
-//                if (def.callbacks.count(Callback::AFTER_PLACE))
-//                    game.lua->safe_function(def.callbacks[Callback::AFTER_PLACE], pos, ServerLuaPlayer(client));
-//                game.lua->safe_function(game.lua->core["trigger"], "after_place", pos, ServerLuaPlayer(client));
-//            }
-//            break; }
 	
-	case Packet::Type::BLOCK_HIT:p.d.read(pos).readE(face);
+	case Packet::Type::BLOCK_HIT:
+		p.d.read(pos).readE(face);
 		player->getDim()->blockHit(Target(player->getDim(), pos, face), player);
 		break;
 	
-	case Packet::Type::BLOCK_PLACE:p.d.read(pos).readE(face);
+	case Packet::Type::BLOCK_PLACE:
+		p.d.read(pos).readE(face);
 		player->getDim()->blockPlace(Target(player->getDim(), pos, face), player);
 		break;
 	
-	case Packet::Type::BLOCK_INTERACT:p.d.read(pos).readE(face);
+	case Packet::Type::BLOCK_INTERACT:
+		p.d.read(pos).readE(face);
 		player->getDim()->blockInteract(Target(player->getDim(), pos, face), player);
 		break;
 	
-	case Packet::Type::BLOCK_PLACE_OR_INTERACT:p.d.read(pos).readE(face);
+	case Packet::Type::BLOCK_PLACE_OR_INTERACT:
+		p.d.read(pos).readE(face);
 		player->getDim()->blockPlaceOrInteract(Target(player->getDim(), pos, face), player);
 		break;
 	
-	case Packet::Type::INV_WATCH:p.d.read<std::string>(source).read<std::string>(list);
+	case Packet::Type::INV_WATCH:
+		p.d.read<std::string>(source).read<std::string>(list);
 		if (!world->getRefs().s()->addWatcher(source, list, player->getId()))
 			Serializer().append(source).append(list).packet(Packet::Type::INV_INVALID)
 				.sendTo(player.s()->getPeer(), Packet::Channel::INTERACT);
 		break;
 	
-	case Packet::Type::INV_UNWATCH:p.d.read<std::string>(source).read<std::string>(list);
+	case Packet::Type::INV_UNWATCH:
+		p.d.read<std::string>(source).read<std::string>(list);
 		if (!world->getRefs().s()->removeWatcher(source, list, player->getId()))
 			Serializer().append(source).append(list).packet(Packet::Type::INV_INVALID)
 				.sendTo(player.s()->getPeer(), Packet::Channel::INTERACT);
@@ -176,7 +152,13 @@ void Server::playerPacketReceived(PacketView& p, PlayerPtr player) {
 	
 	case Packet::Type::INV_INTERACT:
 		p.d.read<unsigned short>(a).read<std::string>(source).read<std::string>(list).read<unsigned short>(ind);
-		world->getRefs().s()->interact(a, source, list, ind, player->getId());
+        world->getRefs().s()->interact(a, source, list, ind, player->getId());
+		break;
+		
+	case Packet::Type::MOD_MESSAGE:
+		p.d.read<std::string>(source).read<std::string>(list);
+		game->getParser().safe_function(game->getParser().core["trigger"], "message",
+			source, list, Api::Usertype::ServerPlayer(player));
 		break;
 	}
 }

@@ -84,6 +84,11 @@ DimensionPtr LocalWorld::createDimension(const std::string& identifier, std::uno
 	return d;
 }
 
+void LocalWorld::sendMessage(const std::string& channel, const std::string& message) {
+	net.sendPacket(Serializer().append(channel).append(message)
+		.packet(Packet::Type::MOD_MESSAGE), Packet::Channel::INTERACT);
+}
+
 DimensionPtr LocalWorld::getActiveDimension() {
 	return activeDimension;
 }

@@ -21,5 +21,12 @@ zepha.register_entity("zeus:default:bee", {
 zepha.register_keybind("zeus:default:spawn_bee", {
     description = "Spawn Bee",
     default = zepha.keys.b,
-    on_press = function() zepha.player.dim:add_entity(zepha.player.pos + V(0, 1.7, 0), "zeus:default:bee") end
+    on_press = function()
+        zepha.send_message("zeus:default:spawn", "bee");
+    end
 })
+
+zepha.bind("message", function(channel, message, player)
+    if channel ~= "zeus:default:spawn" then return end
+    player.dim:add_entity(player.pos + V(0, 1.7, 0), "zeus:default:bee")
+end)

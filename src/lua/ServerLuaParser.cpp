@@ -26,6 +26,7 @@
 
 // Modules
 #include "lua/modules/Time.h"
+#include "lua/modules/Message.h"
 #include "lua/modules/Dimension.h"
 #include "lua/modules/Structure.h"
 
@@ -107,6 +108,7 @@ void ServerLuaParser::loadApi(WorldPtr world) {
 	
 	// Modules
 	modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::SERVER, lua, core));
+	modules.emplace_back(std::make_unique<Api::Module::Message>(Api::State::SERVER, core, game, *world.s()));
 	modules.emplace_back(std::make_unique<Api::Module::Dimension>(Api::State::SERVER, core, game, *world.s()));
 	modules.emplace_back(std::make_unique<Api::Module::Structure>(Api::State::SERVER, core, game, *world.s()));
 	

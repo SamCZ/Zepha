@@ -1,6 +1,6 @@
 #include "Time.h"
 
-#include "../Lua.h"
+#include "lua/Lua.h"
 
 void Api::Module::Time::bind() {
 	auto time = lua.create_table();

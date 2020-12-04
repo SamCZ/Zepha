@@ -22,7 +22,7 @@ class LocalInventoryRefs;
 class WorldInterpolationStream;
 
 class LocalWorld : public World {
-	public:
+public:
 	LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& window);
 	
 	void connect();
@@ -36,6 +36,8 @@ class LocalWorld : public World {
 	void handlePlayerEntPacket(std::unique_ptr<PacketView> p);
 	
 	void commitChunk(std::shared_ptr<Chunk> chunk);
+	
+	virtual void sendMessage(const std::string& channel, const std::string& message) override;
 	
 	virtual DimensionPtr
 	createDimension(const std::string& identifier, std::unordered_set<std::string>& biomes) override;
@@ -56,7 +58,8 @@ class LocalWorld : public World {
 	
 	int mapBlocksInterpolated = 0;
 	int lastMeshUpdates = 0;
-	private:
+	
+private:
 	Renderer& renderer;
 	
 	ClientNetworkInterpreter net;

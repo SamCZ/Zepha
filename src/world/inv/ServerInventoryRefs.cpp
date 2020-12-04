@@ -42,16 +42,19 @@ bool ServerInventoryRefs::removeWatcher(const std::string& inv, const std::strin
 	return true;
 }
 
-bool ServerInventoryRefs::interact(bool primary, const std::string& inv, const std::string& list, unsigned short ind,
-	unsigned int id) {
-	std::string playerInv = "player:" + std::to_string(id);
-	if (!hasInventory(playerInv)) return false;
-	auto playerInventory = getInventory(playerInv);
-	
-	if (!hasInventory(inv)) return false;
-	auto inventory = getInventory(inv);
-	if (!inventory->hasList(list)) return false;
-	
-	inventory->getList(list).s()->interact(playerInventory->getList("cursor"), primary, ind);
-	return true;
+bool ServerInventoryRefs::interact(
+	bool primary, const std::string& inv, const std::string& list, unsigned short ind, unsigned int id) {
+	try {
+		std::string playerInv = "player:" + std::to_string(id);
+		auto playerInventory = getInventory(playerInv);
+		
+		std::string requestInv = inv == "current_player" ? "player:" + std::to_string(id) : inv;
+		auto requestInventory = getInventory(requestInv);
+		
+		requestInventory->getList(list).s()->interact(playerInventory->getList("cursor"), primary, ind);
+		return true;
+	}
+	catch (const std::runtime_error&) {
+		return false;
+	}
 }

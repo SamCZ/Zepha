@@ -237,3 +237,7 @@ void ServerWorld::sendChunksToPlayer(ServerPlayer& client) {
 		packetStream->queue(client.getDim()->getInd(), pos + playerPos);
 	}
 }
+
+void ServerWorld::sendMessage(const std::string& channel, const std::string& message) {
+	std::cout << channel << ":" << message << std::endl;
+}
