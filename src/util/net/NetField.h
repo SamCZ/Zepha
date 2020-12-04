@@ -24,6 +24,7 @@ enum class NetField {
 	// Entities
 	DISPLAY,
 	VISUAL_OFF,
+	COLLISION_BOX,
 	ANIM_RANGE,
 	ANIM_STATE,
 	

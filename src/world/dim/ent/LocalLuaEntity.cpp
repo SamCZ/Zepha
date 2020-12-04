@@ -7,6 +7,7 @@
 #include "game/def/ItemDef.h"
 #include "game/LocalSubgame.h"
 #include "game/atlas/DefinitionAtlas.h"
+#include "client/entity/WireframeEntity.h"
 
 LocalLuaEntity::LocalLuaEntity(SubgamePtr game, DimensionPtr dim) :
 	LuaEntity(game, dim), DrawableEntity(game, dim), Entity(game, dim) {}

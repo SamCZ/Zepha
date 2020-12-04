@@ -42,8 +42,7 @@ void LocalDimension::deactivate() {
 void LocalDimension::update(double delta) {
 	finishMeshes();
 	
-	for (auto& entity : localEntities) entity.entity.l()->update(delta);
-	for (auto& entity : serverEntities) entity.entity.l()->update(delta);
+	for (auto& entity : entities) entity.entity.l()->update(delta);
 	for (auto& entity : playerEntities) entity.update(delta);
 	
 	auto clientMapBlock = Space::MapBlock::world::fromBlock(static_cast<LocalWorld&>(world).getPlayer()->getPos());
@@ -168,69 +167,92 @@ void LocalDimension::removeMeshChunk(const glm::ivec3& pos) {
 	}
 }
 
+long long LocalDimension::nextEntityInd() {
+	auto _ = getWriteLock();
+	return entityInd--;
+}
+
 void LocalDimension::addLocalEntity(Api::Usertype::Entity entity) {
 	unsigned int id = entity.get_id();
-	localEntities.push_back(entity);
-	localEntityRefs.emplace(id, --localEntities.end());
+	entities.push_back(entity);
+	entityRefs.emplace(id, --entities.end());
 }
 
 void LocalDimension::removeLocalEntity(Api::Usertype::Entity entity) {
 	unsigned int id = entity.get_id();
 	
-	if (!localEntityRefs.count(id)) return;
-	auto refIter = localEntityRefs.at(id);
+	if (!entityRefs.count(id)) return;
+	auto refIter = entityRefs.at(id);
 	
-	localEntities.erase(refIter);
-	localEntityRefs.erase(id);
+	entities.erase(refIter);
+	entityRefs.erase(id);
 }
 
 void LocalDimension::serverEntitiesInfo(Deserializer& e) {
-	bool boolean;
-	unsigned int x, y;
-	std::string type, a, b;
-	
 	e.read<unsigned int>();
 	
 	while (!e.atEnd()) {
 		std::string dat = e.read<std::string>();
 		Deserializer d(dat);
 		
-		unsigned int id = d.read<unsigned int>();
+		long long id = d.read<long long>();
 		std::shared_ptr<LocalLuaEntity> activeEntity;
-		if (serverEntityRefs.count(id)) activeEntity = serverEntityRefs.at(id)->entity.l();
+		if (entityRefs.count(id)) activeEntity = entityRefs.at(id)->entity.l();
 		else {
 			auto ent = std::make_shared<LocalLuaEntity>(game, world.getDimension(getInd()));
 			auto entity = Api::Usertype::Entity(ent);
 			ent->setId(id);
-			serverEntities.push_back(entity);
-			serverEntityRefs.emplace(id, --serverEntities.end());
+			entities.push_back(entity);
+			entityRefs.emplace(id, --entities.end());
 			activeEntity = ent;
 		}
 		
 		while (!d.atEnd()) {
 			switch (d.readE<NetField>()) {
-			case NetField::DIM: activeEntity->setDim(world.getDimension(d.read<unsigned int>()));
+			default:
 				break;
-			case NetField::POS: activeEntity->setPos(d.read<glm::vec3>());
+			case NetField::DIM:
+				activeEntity->setDim(world.getDimension(d.read<unsigned int>()));
 				break;
-			case NetField::VEL: activeEntity->setVel(d.read<glm::vec3>());
+			case NetField::POS:
+				activeEntity->setPos(d.read<glm::vec3>());
 				break;
-			case NetField::ROT: activeEntity->setRot(d.read<glm::vec3>());
+			case NetField::VEL:
+				activeEntity->setVel(d.read<glm::vec3>());
 				break;
-			case NetField::SCALE: activeEntity->setScale(d.read<glm::vec3>());
+			case NetField::ROT:
+				activeEntity->setRot(d.read<glm::vec3>());
 				break;
-			case NetField::VISUAL_OFF: activeEntity->setVisualOffset(d.read<glm::vec3>());
+			case NetField::SCALE:
+				activeEntity->setScale(d.read<glm::vec3>());
 				break;
-			case NetField::ANIM_STATE: d.read(boolean);
-				activeEntity->animation.setPlaying(boolean);
+			case NetField::VISUAL_OFF:
+				activeEntity->setVisualOffset(d.read<glm::vec3>());
 				break;
-			case NetField::DISPLAY: d.read(type).read(a).read(b);
-				activeEntity->setAppearance(type, a, b);
-				break;
-			case NetField::ANIM_RANGE: d.read(x).read(y).read(boolean);
-				activeEntity->animation.setAnim(glm::ivec2{ x, y }, 10, boolean);
+			case NetField::COLLISION_BOX: {
+				glm::vec3 a = d.read<glm::vec3>();
+				glm::vec3 b = d.read<glm::vec3>();
+				activeEntity->setCollisionBox({ a, b });
 				break;
 			}
+			case NetField::ANIM_STATE: {
+				bool b = d.read<bool>();
+				activeEntity->animation.setPlaying(b);
+				break;
+			}
+			case NetField::DISPLAY: {
+				std::string type, a, b;
+				d.read(type).read(a).read(b);
+				activeEntity->setAppearance(type, a, b);
+				break;
+			}
+			case NetField::ANIM_RANGE: {
+				bool b;
+				unsigned int x, y;
+				d.read(x).read(y).read(b);
+				activeEntity->animation.setAnim(glm::ivec2 { x, y }, 10, b);
+				break;
+			}}
 		}
 	}
 }
@@ -239,11 +261,21 @@ void LocalDimension::serverEntitiesRemoved(Deserializer& d) {
 	d.read<unsigned int>();
 	while (!d.atEnd()) {
 		unsigned int id = d.read<unsigned int>();
-		if (!serverEntityRefs.count(id)) continue;
-		auto refIter = serverEntityRefs.at(id);
-		serverEntities.erase(refIter);
-		serverEntityRefs.erase(id);
+		if (!entityRefs.count(id)) continue;
+		auto refIter = entityRefs.at(id);
+		entities.erase(refIter);
+		entityRefs.erase(id);
 	}
+}
+
+std::vector<Api::Usertype::Entity> LocalDimension::getEntitiesInRadius(glm::vec3 pos, float radius) {
+	std::vector<Api::Usertype::Entity> found {};
+	for (auto& entity : entities) if (glm::distance(pos, entity.entity->getPos()) <= radius) found.push_back(entity);
+	return found;
+}
+
+Api::Usertype::Entity& LocalDimension::getEntityById(long long id) {
+	return *entityRefs.at(id);
 }
 
 int LocalDimension::renderChunks(Renderer& renderer) {
@@ -259,8 +291,7 @@ int LocalDimension::renderChunks(Renderer& renderer) {
 }
 
 void LocalDimension::renderEntities(Renderer& renderer) {
-	for (auto& entity : localEntities) entity.entity.l()->draw(renderer);
-	for (auto& entity : serverEntities) entity.entity.l()->draw(renderer);
+	for (auto& entity : entities) entity.entity.l()->draw(renderer);
 	for (auto& entity : playerEntities) entity.draw(renderer);
 }
 

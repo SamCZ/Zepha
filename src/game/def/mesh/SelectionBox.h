@@ -29,10 +29,8 @@ class SelectionBox {
 		this->b = b;
 	}
 	
-	EVec intersects(glm::vec3 vec, glm::vec3 blockOffset) {
+	EVec intersects(glm::vec3 vec) {
 		const float THRESH = 0.02f;
-		
-		vec -= blockOffset; //Normalize Vector Position
 		
 		if (std::abs(vec.y - b.y) < THRESH && vec.x > a.x && vec.x < b.x && vec.z > a.z && vec.z < b.z)
 			return EVec::TOP;

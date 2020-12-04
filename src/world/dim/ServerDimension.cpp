@@ -91,6 +91,11 @@ void ServerDimension::setChunk(std::shared_ptr<Chunk> chunk) {
 	Dimension::setChunk(chunk);
 }
 
+long long ServerDimension::nextEntityInd() {
+	auto _ = getWriteLock();
+	return entityInd++;
+};
+
 void ServerDimension::addLuaEntity(Api::Usertype::Entity entity) {
 	unsigned int id = entity.get_id();
 	luaEntities.push_back(std::move(entity));

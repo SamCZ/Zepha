@@ -4,91 +4,99 @@
 
 #include "Entity.h"
 
-unsigned int Entity::getId() {
+long long Entity::getId() const {
 	return id;
 }
 
-void Entity::setId(unsigned int id) {
-	this->id = id;
+void Entity::setId(long long newId) {
+	id = newId;
 }
 
-glm::vec3 Entity::getPos() {
+glm::vec3 Entity::getPos() const {
 	return pos;
 }
 
 void Entity::setPos(glm::vec3 position) {
-	this->pos = position;
+	pos = position;
 }
 
-glm::vec3 Entity::getVel() {
+glm::vec3 Entity::getVel() const {
 	return vel;
 }
 
 void Entity::setVel(glm::vec3 velocity) {
-	this->vel = velocity;
+	vel = velocity;
 }
 
-glm::vec3 Entity::getRot() {
+glm::vec3 Entity::getRot() const {
 	return rot;
 }
 
-void Entity::setRot(glm::vec3 rot) {
-	this->rot = rot;
+void Entity::setRot(glm::vec3 newRot) {
+	rot = newRot;
 }
 
-glm::vec3 Entity::getVisualOffset() {
+glm::vec3 Entity::getVisualOffset() const {
 	return visualOff;
 }
 
 void Entity::setVisualOffset(glm::vec3 vs) {
-	this->visualOff = vs;
+	visualOff = vs;
 }
 
-float Entity::getRotateX() {
+SelectionBox Entity::getCollisionBox() const {
+	return collision;
+}
+
+void Entity::setCollisionBox(const SelectionBox& box) {
+	collision = box;
+}
+
+float Entity::getRotateX() const {
 	return rot.x;
 }
 
 void Entity::setRotateX(float rotation) {
-	this->rot.x = rotation;
+	rot.x = rotation;
 }
 
-float Entity::getRotateY() {
+float Entity::getRotateY() const {
 	return rot.y;
 }
 
 void Entity::setRotateY(float rotation) {
-	this->rot.y = rotation;
+	rot.y = rotation;
 }
 
-float Entity::getRotateZ() {
+float Entity::getRotateZ() const {
 	return rot.z;
 }
 
 void Entity::setRotateZ(float rotation) {
-	this->rot.z = rotation;
+	rot.z = rotation;
 }
 
-glm::vec3 Entity::getScale() {
+glm::vec3 Entity::getScale() const {
 	return scale;
 }
 
-void Entity::setScale(float scale) {
-	this->scale = glm::vec3(scale);
+void Entity::setScale(float newScale) {
+	scale = glm::vec3(newScale);
 }
 
-void Entity::setScale(glm::vec3 scale) {
-	this->scale = scale;
+void Entity::setScale(glm::vec3 newScale) {
+	scale = newScale;
 }
 
-DimensionPtr Entity::getDim() {
+DimensionPtr Entity::getDim() const {
 	return dim;
 }
 
-void Entity::setDim(DimensionPtr dim) {
-	this->dim = dim;
+void Entity::setDim(DimensionPtr newDim) {
+	dim = newDim;
 }
 
-SubgamePtr Entity::getGame() {
+SubgamePtr Entity::getGame() const {
 	return game;
 }
 

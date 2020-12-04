@@ -8,12 +8,15 @@
 #include <memory>
 #include <glm/mat4x4.hpp>
 
-#include "client/graph/Model.h"
 #include "Entity.h"
 #include "client/graph/Drawable.h"
 
+#include "client/graph/Model.h"
+
+class WireframeEntity;
+
 class DrawableEntity : virtual public Entity, public Drawable {
-	public:
+public:
 	DrawableEntity(const DrawableEntity& o) = delete;
 	
 	DrawableEntity() = default;
@@ -61,7 +64,8 @@ class DrawableEntity : virtual public Entity, public Drawable {
 	~DrawableEntity() override;
 	
 	DrawableEntity* parent = nullptr;
-	protected:
+	
+protected:
 	glm::mat4 getModelMatrix();
 	
 	glm::mat4 getRotationMatrix();

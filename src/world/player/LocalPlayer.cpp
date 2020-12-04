@@ -164,16 +164,16 @@ Target& LocalPlayer::getTarget() {
 // Draw Functions
 //
 
-void LocalPlayer::draw(Renderer& renderer) {
+void LocalPlayer::draw(Renderer&) {
 	wireframe.draw(renderer);
 	handItemModel.draw(renderer);
 }
 
-void LocalPlayer::drawHud(Renderer& renderer) {
+void LocalPlayer::drawHud(Renderer&) {
 	gameGui.drawHud(renderer);
 }
 
-void LocalPlayer::drawMenu(Renderer& renderer) {
+void LocalPlayer::drawMenu(Renderer&) {
 	gameGui.drawMenu(renderer);
 }
 
@@ -308,9 +308,12 @@ void LocalPlayer::findPointedThing(Input& input) {
 	glm::ivec3 chunkPos = {};
 	std::shared_ptr<Chunk> chunk = nullptr;
 	
-	for (Ray ray(*this); ray.getLength() < LOOK_DISTANCE; ray.step(LOOK_PRECISION)) {
+	Target newTarget {};
+	float maxDistance = LOOK_DISTANCE;
+	
+	for (Ray ray(*this); ray.getLength() < maxDistance; ray.step(LOOK_PRECISION)) {
 		glm::vec3 rayEnd = ray.getEnd();
-		glm::ivec3 roundedPos = glm::floor(rayEnd);
+		glm::vec3 roundedPos = glm::floor(rayEnd);
 		
 		glm::ivec3 currChunkPos = Space::Chunk::world::fromBlock(roundedPos);
 		if (currChunkPos != chunkPos || chunk == nullptr) {
@@ -323,33 +326,56 @@ void LocalPlayer::findPointedThing(Input& input) {
 		auto& boxes = game->getDefs().blockFromId(blockID).sBoxes;
 		
 		for (auto& sBox : boxes) {
-			auto face = sBox.intersects(rayEnd, roundedPos);
-			
+			auto face = sBox.intersects(rayEnd - roundedPos);
 			if (face != EVec::NONE) {
-				target = Target(dim, roundedPos, face);
-				return;
+				newTarget = Target(dim, roundedPos, face);
+				maxDistance = ray.getLength();
+				break;
 			}
 		}
+		
+		if (newTarget.type != Target::Type::NOTHING) break;
 	}
 	
-	target = Target{};
+	auto entities = dim.l()->getEntitiesInRadius(pos, maxDistance + 1);
+	
+	for (Ray ray(*this); ray.getLength() < maxDistance; ray.step(LOOK_PRECISION)) {
+		for (auto& entity : entities) {
+			auto face = entity.entity->getCollisionBox().intersects(ray.getEnd() - entity.entity->getPos());
+			if (face != EVec::NONE) {
+				newTarget = Target(dim, entity.entity->getId());
+				break;
+			}
+		}
+		
+		if (newTarget.type == Target::Type::ENTITY) break;
+	}
+	
+	target = newTarget;
 }
 
 void LocalPlayer::updateWireframe() {
-	if (!gameGui.isVisible()) {
-		wireframe.setVisible(false);
-	}
-	else if (target.type == Target::Type::BLOCK) {
-		auto& boxes = game->getDefs().blockFromId(dim->getBlock(target.pos)).sBoxes;
-		float distance = glm::distance(pos, target.pos + glm::vec3(0.5));
+	if (gameGui.isVisible() && target.type != Target::Type::NOTHING) {
+		std::vector<SelectionBox> boxes {};
+		glm::vec3 renderPos {};
+		
+		if (target.type == Target::Type::BLOCK) {
+			boxes = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos)).sBoxes;
+			renderPos = target.data.block.pos;
+		}
+		else {
+			const auto& entity = **dim.l()->getEntityById(target.data.entity.id).entity;
+			boxes.push_back(entity.getCollisionBox());
+			renderPos = entity.getPos();
+		}
+		
+		float distance = glm::distance(pos, renderPos + glm::vec3(0.5));
 		
 		wireframe.updateMesh(boxes, 0.002f + distance * 0.0014f);
-		wireframe.setPos(target.pos);
+		wireframe.setPos(renderPos);
 		wireframe.setVisible(true);
 	}
-	else {
-		wireframe.setVisible(false);
-	}
+	else wireframe.setVisible(false);
 }
 
 void LocalPlayer::interact(Input& input, double delta) {

@@ -33,6 +33,8 @@ class ServerDimension : public Dimension {
 	
 	virtual double blockHit(const Target& target, PlayerPtr player) override;
 	
+	virtual long long nextEntityInd() override;
+	
 	void addLuaEntity(Api::Usertype::Entity entity);
 	
 	void removeLuaEntity(Api::Usertype::Entity entity);
@@ -51,5 +53,6 @@ class ServerDimension : public Dimension {
 	std::list<unsigned int> removedEntities{};
 	
 	const glm::ivec2 discardRange = { 20, 20 };
+	long long entityInd = 1;
 };
 

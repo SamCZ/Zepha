@@ -23,7 +23,7 @@ class MeshGenStream;
 class ChunkRenderElem;
 
 class LocalDimension : public Dimension {
-	public:
+public:
 	const static int MB_STORE_H = 6;
 	const static int MB_STORE_V = 4;
 	
@@ -50,6 +50,8 @@ class LocalDimension : public Dimension {
 	
 	void removeMeshChunk(const glm::ivec3& pos);
 	
+	virtual long long nextEntityInd() override;
+	
 	void addLocalEntity(Api::Usertype::Entity entity);
 	
 	void removeLocalEntity(Api::Usertype::Entity entity);
@@ -57,6 +59,10 @@ class LocalDimension : public Dimension {
 	void serverEntitiesInfo(Deserializer& d);
 	
 	void serverEntitiesRemoved(Deserializer& d);
+	
+	std::vector<Api::Usertype::Entity> getEntitiesInRadius(glm::vec3 pos, float radius);
+	
+	Api::Usertype::Entity& getEntityById(long long id);
 	
 	int renderChunks(Renderer& renderer);
 	
@@ -67,12 +73,12 @@ class LocalDimension : public Dimension {
 	int lastMeshUpdates = 0;
 	std::vector<PlayerEntity> playerEntities;
 	
-	protected:
+protected:
 	std::unordered_set<glm::ivec3, Vec::ivec3> propogateAddNodes() override;
 	
 	std::unordered_set<glm::ivec3, Vec::ivec3> propogateRemoveNodes() override;
 	
-	private:
+private:
 	typedef std::list<Api::Usertype::Entity>::iterator ent_ref;
 	typedef std::list<std::shared_ptr<ChunkRenderElem>>::iterator chunk_ref;
 	
@@ -84,13 +90,12 @@ class LocalDimension : public Dimension {
 	
 	std::shared_ptr<MeshGenStream> meshGenStream;
 	
-	std::unordered_map<unsigned int, ent_ref> localEntityRefs{};
-	std::list<Api::Usertype::Entity> localEntities{};
-	
-	std::unordered_map<unsigned int, ent_ref> serverEntityRefs{};
-	std::list<Api::Usertype::Entity> serverEntities{};
+	std::unordered_map<long long, ent_ref> entityRefs {};
+	std::list<Api::Usertype::Entity> entities {};
 	
 	std::unordered_map<glm::vec3, chunk_ref, Vec::vec3> renderRefs{};
 	std::list<std::shared_ptr<ChunkRenderElem>> renderElems{};
+	
+	long long entityInd = -1;
 };
 

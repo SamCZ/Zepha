@@ -40,6 +40,8 @@ class ServerLuaEntity : public LuaEntity {
 	
 	virtual void setVisualOffset(glm::vec3 vs) override;
 	
+	virtual void setCollisionBox(const SelectionBox& box) override;
+	
 	void setAppearance(const std::string& dMode, const std::string& argA, const std::string& argB) override;
 	
 	void dirtyField(NetField field);

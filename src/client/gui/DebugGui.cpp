@@ -84,7 +84,6 @@ void DebugGui::update(std::shared_ptr<LocalPlayer> player, double fps, int /*chu
 	
 	auto& onBiomeDef = game->getBiomes().biomeFromId(
 		world.l()->getActiveDimension()->getBiome(glm::floor(player->getPos())));
-	auto& targetedBlockDef = game->getDefs().blockFromId(world.l()->getActiveDimension()->getBlock(target.pos));
 	
 	/* Top-right Graphs */ {
 		get<GuiLabelledGraph>("fpsGraph")->pushValue(static_cast<float>(fps));
@@ -142,17 +141,26 @@ void DebugGui::update(std::shared_ptr<LocalPlayer> player, double fps, int /*chu
 		
 		if (target.type == Target::Type::BLOCK) {
 			std::string face =
-				target.face == EVec::TOP ? "TOP" :
-				target.face == EVec::BOTTOM ? "BOTTOM" :
-				target.face == EVec::LEFT ? "LEFT" :
-				target.face == EVec::RIGHT ? "RIGHT" :
-				target.face == EVec::FRONT ? "FRONT" :
-				target.face == EVec::BACK ? "BACK" :
+				target.data.block.face == EVec::TOP ? "TOP" :
+				target.data.block.face == EVec::BOTTOM ? "BOTTOM" :
+				target.data.block.face == EVec::LEFT ? "LEFT" :
+				target.data.block.face == EVec::RIGHT ? "RIGHT" :
+				target.data.block.face == EVec::FRONT ? "FRONT" :
+				target.data.block.face == EVec::BACK ? "BACK" :
 				"NONE";
 			
-			str << "Pointing At: " << targetedBlockDef.identifier << " [" << targetedBlockDef.index << "]" << std::endl;
-			str << "Pointed Position: " << vecToString(target.pos) << std::endl;
+			const auto& def = game->getDefs().blockFromId(world.l()->getActiveDimension()->getBlock(target.data.block.pos));
+			
+			str << "Pointing At: " << def.identifier << " [" << def.index << "]" << std::endl;
+			str << "Pointed Position: " << vecToString(target.data.block.pos) << std::endl;
 			str << "Pointed Face: " << face << std::endl;
+		}
+		else if (target.type == Target::Type::ENTITY) {
+			const auto& entity = **world.l()->getActiveDimension().l()->getEntityById(target.data.entity.id).entity;
+			
+			str << "Pointing At: " << (target.data.entity.id < 0 ? "Local" : "Server")
+				<< " Entity #" << std::fabs(target.data.entity.id) << std::endl;
+			str << "Pointed Position: " << floatVecToString(entity.getPos()) << std::endl;
 		}
 		else {
 			str << "No Target";
@@ -162,10 +170,11 @@ void DebugGui::update(std::shared_ptr<LocalPlayer> player, double fps, int /*chu
 	}
 	
 	/* Crosshair Text */ {
-		if (target.type == Target::Type::BLOCK)
-			get<GuiText>("crosshairText")->setText(targetedBlockDef.name + " (" +
-			                                       targetedBlockDef.identifier + ") [" +
-			                                       std::to_string(targetedBlockDef.index) + "]");
+		if (target.type == Target::Type::BLOCK) {
+			const auto& def = game->getDefs().blockFromId(world.l()->getActiveDimension()->getBlock(target.data.block.pos));
+			get<GuiText>("crosshairText")->setText(
+				def.name + " (" + def.identifier + ") [" + std::to_string(def.index) + "]");
+		}
 		else get<GuiText>("crosshairText")->setText("");
 	}
 }

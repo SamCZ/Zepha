@@ -13,11 +13,10 @@
 #include "DimensionBase.h"
 
 class Target;
-
 class Player;
 
 class Dimension : public DimensionBase {
-	public:
+public:
 	typedef std::unordered_set<glm::ivec3, Vec::ivec3> relitChunks;
 	
 	Dimension(const Dimension& o) = delete;
@@ -37,12 +36,12 @@ class Dimension : public DimensionBase {
 	
 	virtual void blockInteract(const Target& target, PlayerPtr player) = 0;
 	
-	unsigned int nextEntityInd();
+	virtual long long nextEntityInd() = 0;
 	
 	// Calculate light propogation around MapBlock edges,
 	// Called after a new mapblock is inserted into the dimension.
 //    relitChunks calculateEdgeLight(glm::ivec3 mbPos);
-	protected:
+protected:
 	
 	// Lighting propagation.
 	
@@ -50,7 +49,7 @@ class Dimension : public DimensionBase {
 	
 	virtual relitChunks propogateRemoveNodes();
 	
-	private:
+private:
 	
 	// Other Lighting methods.
 	
@@ -88,6 +87,4 @@ class Dimension : public DimensionBase {
 	static constexpr unsigned char SUNLIGHT_CHANNEL = 3;
 	std::array<std::queue<LightAddNode>, 4> lightAddQueue;
 	std::array<std::queue<LightRemoveNode>, 4> lightRemoveQueue;
-	
-	unsigned int entityInd = 0;
 };

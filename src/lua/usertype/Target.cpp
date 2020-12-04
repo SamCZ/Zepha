@@ -7,7 +7,7 @@
 #include "../Lua.h"
 
 Api::Usertype::Target::Target(const ::Target& target) :
-	pos(target.pos),
+	pos(target.data.block.pos),
 	type(target.type),
 	dim(Dimension(target.dim)),
 	pos_above(target.getAbovePos()) {}

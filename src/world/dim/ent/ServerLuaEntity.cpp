@@ -59,6 +59,11 @@ void ServerLuaEntity::setVisualOffset(glm::vec3 vs) {
 	dirtyFields.emplace(NetField::VISUAL_OFF);
 }
 
+void ServerLuaEntity::setCollisionBox(const SelectionBox& box) {
+	Entity::setCollisionBox(box);
+	dirtyFields.emplace(NetField::COLLISION_BOX);
+}
+
 void ServerLuaEntity::setAppearance(const std::string& dMode, const std::string& argA, const std::string& argB) {
 	this->dMode = dMode;
 	this->dArgA = argA;
@@ -74,7 +79,7 @@ std::string ServerLuaEntity::serialize() {
 	if (dirtyFields.empty() && !fullSend) return {};
 	
 	Serializer s;
-	s.append<unsigned int>(id);
+	s.append<long long>(id);
 	
 	if (dirtyFields.count(NetField::DIM) || fullSend) s.appendE(NetField::DIM).append(dim->getInd());
 	if (dirtyFields.count(NetField::POS) || fullSend) s.appendE(NetField::POS).append(pos);
@@ -82,14 +87,19 @@ std::string ServerLuaEntity::serialize() {
 	if (dirtyFields.count(NetField::SCALE) || fullSend) s.appendE(NetField::SCALE).append(scale);
 	if (dirtyFields.count(NetField::ROT) || fullSend) s.appendE(NetField::ROT).append(rot);
 	if (dirtyFields.count(NetField::VISUAL_OFF) || fullSend) s.appendE(NetField::VISUAL_OFF).append(visualOff);
+	
+	if (dirtyFields.count(NetField::COLLISION_BOX) || fullSend)
+		s.appendE(NetField::COLLISION_BOX).append(collision.a).append(collision.b);
+	
 	if (dirtyFields.count(NetField::ANIM_STATE) || fullSend)
 		s.appendE(NetField::ANIM_STATE).append<bool>(animation.isPlaying());
+	
 	if (dirtyFields.count(NetField::DISPLAY) || fullSend)
 		s.appendE(NetField::DISPLAY).append(dMode).append(dArgA).append(dArgB);
+	
 	if (dirtyFields.count(NetField::ANIM_RANGE) || fullSend)
-		s.appendE(NetField::ANIM_RANGE)
-			.append<unsigned int>(animation.getBounds().x).append<unsigned int>(animation.getBounds().y).append<bool>(
-				animation.isLooping());
+		s.appendE(NetField::ANIM_RANGE).append<unsigned int>(animation.getBounds().x)
+		    .append<unsigned int>(animation.getBounds().y).append<bool>(animation.isLooping());
 	
 	dirtyFields.clear();
 	fullSend = false;

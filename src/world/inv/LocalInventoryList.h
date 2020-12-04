@@ -11,7 +11,7 @@
 class ClientNetworkInterpreter;
 
 class LocalInventoryList : public InventoryList {
-	public:
+public:
 	LocalInventoryList(SubgamePtr game, const std::string& name,
 		const std::string& invName, unsigned short size, unsigned short width,
 		ClientNetworkInterpreter& net);
@@ -26,7 +26,7 @@ class LocalInventoryList : public InventoryList {
 	
 	bool persistant = false;
 	double decayTime = 0;
-	private:
+private:
 	void manipulated() override;
 	
 	ClientNetworkInterpreter& net;

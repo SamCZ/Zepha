@@ -97,7 +97,7 @@ void main() {
         }
 
         vec4 worldPos = model * pos;
-        worldPos.y -= pow(length(view * worldPos * 0.025) - 0, 2);
+//        worldPos.y -= pow(length(view * worldPos * 0.025) - 0, 2);
 
         gl_Position = projection * view * worldPos;
         fragPos = (view * worldPos).xyz;

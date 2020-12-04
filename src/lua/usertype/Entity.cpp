@@ -45,6 +45,19 @@ glm::vec3 Api::Usertype::Entity::get_visual_offset() {
 	return entity->getVisualOffset();
 }
 
+void Api::Usertype::Entity::set_collision_box(sol::table box) {
+	SelectionBox c(box[1], box[2]);
+	entity->setCollisionBox(c);
+}
+
+sol::object Api::Usertype::Entity::get_collision_box(sol::this_state s) {
+	auto c = entity->getCollisionBox();
+	sol::table table;
+	table[0] = c.a;
+	table[1] = c.b;
+	return sol::make_object(s, table);
+}
+
 void Api::Usertype::Entity::snap_pitch(float rot) {
 	entity->setRotateX(rot);
 }
@@ -123,6 +136,8 @@ void Api::Usertype::Entity::bind(State, sol::state& lua, sol::table& core) {
 		"snap_visual_offset", &Entity::snap_visual_offset,
 		"set_visual_offset", &Entity::set_visual_offset,
 		"get_visual_offset", &Entity::get_visual_offset,
+		"set_collision_box", &Entity::set_collision_box,
+		"get_collision_box", &Entity::get_collision_box,
 		"snap_pitch", &Entity::snap_pitch,
 		"set_pitch", &Entity::set_pitch,
 		"get_pitch", &Entity::get_pitch,
@@ -141,6 +156,7 @@ void Api::Usertype::Entity::bind(State, sol::state& lua, sol::table& core) {
 		"id", sol::property(&Entity::get_id),
 		"pos", sol::property(&Entity::get_pos, &Entity::set_pos),
 		"visual_offset", sol::property(&Entity::get_visual_offset, &Entity::set_visual_offset),
+		"collision_box", sol::property(&Entity::get_collision_box, &Entity::set_collision_box),
 		"pitch", sol::property(&Entity::get_pitch, &Entity::set_pitch),
 		"yaw", sol::property(&Entity::get_yaw, &Entity::set_yaw),
 		"roll", sol::property(&Entity::get_roll, &Entity::set_roll),

@@ -2,13 +2,13 @@
 // Created by aurailus on 25/11/18.
 //
 
+#include <memory>
 #include <utility>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "DrawableEntity.h"
 
 #include "client/graph/Model.h"
-#include "AnimationSegment.h"
 #include "client/graph/Renderer.h"
 
 

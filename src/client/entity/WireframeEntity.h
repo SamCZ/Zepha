@@ -10,14 +10,14 @@
 #include "client/graph/mesh/EntityVertex.h"
 
 class WireframeEntity : public DrawableEntity {
-	public:
+public:
 	WireframeEntity(SubgamePtr game, DimensionPtr dim, glm::vec3 color) :
 		DrawableEntity(game, dim, std::make_shared<Model>()), Entity(game, dim),
 		color(color) {};
 	
 	void updateMesh(const std::vector<SelectionBox>& boxes, float width);
 	
-	private:
+private:
 	std::vector<EntityVertex> vertices{};
 	std::vector<unsigned int> indices{};
 	

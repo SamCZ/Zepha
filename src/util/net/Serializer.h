@@ -34,6 +34,10 @@ class Serializer {
 	
 	private:
 	typedef union {
+		long long ln;
+		char bytes[8];
+	} long_long_union;
+	typedef union {
 		int in;
 		char bytes[4];
 	} int_union;
@@ -54,6 +58,20 @@ class Serializer {
 		char bytes[4];
 	} float_union;
 };
+
+template<>
+inline Serializer& Serializer::append<long long>(const long long& elem) {
+	long_long_union cv = { elem };
+	data += cv.bytes[0];
+	data += cv.bytes[1];
+	data += cv.bytes[2];
+	data += cv.bytes[3];
+	data += cv.bytes[4];
+	data += cv.bytes[5];
+	data += cv.bytes[6];
+	data += cv.bytes[7];
+	return *this;
+}
 
 template<>
 inline Serializer& Serializer::append<int>(const int& elem) {

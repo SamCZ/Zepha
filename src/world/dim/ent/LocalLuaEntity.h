@@ -8,7 +8,7 @@
 #include "DrawableEntity.h"
 
 class LocalLuaEntity : public virtual DrawableEntity, public LuaEntity {
-	public:
+public:
 	LocalLuaEntity(SubgamePtr game, DimensionPtr dim);
 	
 	virtual void setAppearance(const std::string& dMode, const std::string& argA, const std::string& argB) override;

@@ -13,17 +13,11 @@
 #include "util/CovariantPtr.h"
 
 class World;
-
 class Chunk;
-
 class MapGen;
-
 class Region;
-
 class Subgame;
-
 class MapBlock;
-
 class DefinitionAtlas;
 
 class DimensionBase : protected Lockable {

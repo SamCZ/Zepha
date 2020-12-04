@@ -11,69 +11,74 @@
 #include "game/def/mesh/SelectionBox.h"
 
 class Entity {
-	public:
+public:
 	Entity() = default;
 	
 	Entity(SubgamePtr game, DimensionPtr dim) : game(game), dim(dim) {};
 	
-	virtual void update(double delta);
+	virtual long long getId() const;
 	
-	virtual glm::vec3 getPos();
+	virtual void setId(long long newId);
+	
+	virtual glm::vec3 getPos() const;
 	
 	virtual void setPos(glm::vec3 position);
 	
-	virtual glm::vec3 getVel();
+	virtual glm::vec3 getVel() const;
 	
 	virtual void setVel(glm::vec3 velocity);
 	
-	virtual glm::vec3 getRot();
+	virtual glm::vec3 getRot() const;
 	
-	virtual void setRot(glm::vec3 rot);
+	virtual void setRot(glm::vec3 newRot);
 	
-	virtual glm::vec3 getVisualOffset();
+	virtual glm::vec3 getVisualOffset() const;
 	
 	virtual void setVisualOffset(glm::vec3 vs);
 	
-	virtual float getRotateX();
+	virtual SelectionBox getCollisionBox() const;
+	
+	virtual void setCollisionBox(const SelectionBox& box);
+	
+	virtual float getRotateX() const;
 	
 	virtual void setRotateX(float rotation);
 	
-	virtual float getRotateY();
+	virtual float getRotateY() const;
 	
 	virtual void setRotateY(float rotation);
 	
-	virtual float getRotateZ();
+	virtual float getRotateZ() const;
 	
 	virtual void setRotateZ(float rotation);
 	
-	virtual glm::vec3 getScale();
+	virtual glm::vec3 getScale() const;
 	
-	virtual void setScale(float scale);
+	virtual void setScale(float newScale);
 	
-	virtual void setScale(glm::vec3 scale);
+	virtual void setScale(glm::vec3 newScale);
 	
-	virtual unsigned int getId();
+	virtual DimensionPtr getDim() const;
 	
-	virtual void setId(unsigned int id);
+	virtual void setDim(DimensionPtr newDim);
 	
-	virtual DimensionPtr getDim();
+	SubgamePtr getGame() const;
 	
-	virtual void setDim(DimensionPtr dim);
+	virtual void update(double delta);
 	
-	SubgamePtr getGame();
+	AnimationState animation {};
 	
-	AnimationState animation{};
-	protected:
+protected:
 	SubgamePtr game = nullptr;
 	DimensionPtr dim = nullptr;
 	
-	unsigned int id = 0;
+	long long id = 0;
 	
-	glm::vec3 pos{};
-	glm::vec3 vel{};
-	glm::vec3 rot{};
-	glm::vec3 visualOff{};
-	glm::vec3 scale{ 1, 1, 1 };
+	glm::vec3 pos {};
+	glm::vec3 vel {};
+	glm::vec3 rot {};
+	glm::vec3 visualOff {};
+	glm::vec3 scale { 1, 1, 1 };
 	
-	SelectionBox collision;
+	SelectionBox collision { {}, {} };
 };

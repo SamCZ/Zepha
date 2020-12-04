@@ -15,12 +15,10 @@
 
 namespace Api::Usertype {
 	class Entity : public SubgameUsertype {
-		public:
+	public:
 		Entity(EntityPtr entity) : entity(entity), animation(entity.isL() ?
-		                                                     std::static_pointer_cast<AnimationManager>(
-			                                                     std::make_shared<LocalAnimationManager>(entity)) :
-		                                                     std::static_pointer_cast<AnimationManager>(
-			                                                     std::make_shared<ServerAnimationManager>(entity))) {}
+             std::static_pointer_cast<AnimationManager>(std::make_shared<LocalAnimationManager>(entity)) :
+             std::static_pointer_cast<AnimationManager>(std::make_shared<ServerAnimationManager>(entity))) {}
 		
 		EntityPtr entity;
 		std::shared_ptr<AnimationManager> animation;
@@ -40,6 +38,10 @@ namespace Api::Usertype {
 		void set_visual_offset(glm::vec3 vs);
 		
 		glm::vec3 get_visual_offset();
+		
+		void set_collision_box(sol::table box);
+		
+		sol::object get_collision_box(sol::this_state s);
 		
 		void snap_pitch(float rot);
 		

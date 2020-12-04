@@ -7,51 +7,28 @@
 #include <memory>
 
 class World;
-
 class LocalWorld;
-
 class ServerWorld;
-
 class Player;
-
 class LocalPlayer;
-
 class ServerPlayer;
-
 class LuaEntity;
-
 class LocalLuaEntity;
-
 class ServerLuaEntity;
-
 class Subgame;
-
 class LocalSubgame;
-
 class ServerSubgame;
-
 class Dimension;
-
 class LocalDimension;
-
 class ServerDimension;
-
 class Inventory;
-
 class LocalInventory;
-
 class ServerInventory;
-
 class InventoryList;
-
 class LocalInventoryList;
-
 class ServerInventoryList;
-
 class InventoryRefs;
-
 class LocalInventoryRefs;
-
 class ServerInventoryRefs;
 
 template<typename B, typename L, typename S>

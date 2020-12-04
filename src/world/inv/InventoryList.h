@@ -14,7 +14,7 @@
 class DefinitionAtlas;
 
 class InventoryList {
-	public:
+public:
 //	enum class Callback { ALLOW_TAKE, ALLOW_PUT, ON_TAKE, ON_PUT };
 	
 	InventoryList(const InventoryList& o) = delete;
@@ -61,7 +61,7 @@ class InventoryList {
 	
 	SubgamePtr getGame();
 	
-	protected:
+protected:
 	SubgamePtr game;
 	
 	std::string name, invName;

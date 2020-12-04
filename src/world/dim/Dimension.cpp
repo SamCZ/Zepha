@@ -35,11 +35,6 @@ bool Dimension::setBlock(glm::ivec3 pos, unsigned int block) {
 	return true;
 }
 
-unsigned int Dimension::nextEntityInd() {
-	auto _ = getWriteLock();
-	return entityInd++;
-}
-
 //std::unordered_set<glm::ivec3, Vec::ivec3> Dimension::calculateEdgeLight(glm::ivec3 mbPos) {
 //    bool ypos = mapBlockGenerated(mbPos + glm::ivec3 {0, 1, 0});
 //    bool yneg = mapBlockGenerated(mbPos + glm::ivec3 {0, -1, 0});

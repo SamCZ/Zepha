@@ -46,6 +46,10 @@ class Deserializer {
 	
 	private:
 	typedef union {
+		int ln;
+		char bytes[8];
+	} long_long_union;
+	typedef union {
 		int in;
 		char bytes[4];
 	} int_union;
@@ -66,6 +70,21 @@ class Deserializer {
 		char bytes[4];
 	} float_union;
 };
+
+template<>
+inline long long Deserializer::read<long long>() {
+	long_long_union cv;
+	cv.bytes[0] = data[ind];
+	cv.bytes[1] = data[ind + 1];
+	cv.bytes[2] = data[ind + 2];
+	cv.bytes[3] = data[ind + 3];
+	cv.bytes[4] = data[ind + 4];
+	cv.bytes[5] = data[ind + 5];
+	cv.bytes[6] = data[ind + 6];
+	cv.bytes[7] = data[ind + 7];
+	ind += 4;
+	return cv.ln;
+}
 
 template<>
 inline int Deserializer::read<int>() {

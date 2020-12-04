@@ -104,22 +104,22 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
 }
 
 void ClientNetworkInterpreter::blockHit(const Target& target) {
-	Serializer().append<glm::ivec3>(target.pos).append(static_cast<unsigned short>(target.face))
+	Serializer().append<glm::ivec3>(target.data.block.pos).append(static_cast<unsigned short>(target.data.block.face))
 		.packet(Packet::Type::BLOCK_HIT).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
 void ClientNetworkInterpreter::blockPlace(const Target& target) {
-	Serializer().append<glm::ivec3>(target.pos).append(static_cast<unsigned short>(target.face))
+	Serializer().append<glm::ivec3>(target.data.block.pos).append(static_cast<unsigned short>(target.data.block.face))
 		.packet(Packet::Type::BLOCK_PLACE).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
 void ClientNetworkInterpreter::blockInteract(const Target& target) {
-	Serializer().append<glm::ivec3>(target.pos).append(static_cast<unsigned short>(target.face))
+	Serializer().append<glm::ivec3>(target.data.block.pos).append(static_cast<unsigned short>(target.data.block.face))
 		.packet(Packet::Type::BLOCK_INTERACT).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
 void ClientNetworkInterpreter::blockPlaceOrInteract(const Target& target) {
-	Serializer().append<glm::ivec3>(target.pos).append(static_cast<unsigned short>(target.face))
+	Serializer().append<glm::ivec3>(target.data.block.pos).append(static_cast<unsigned short>(target.data.block.face))
 		.packet(Packet::Type::BLOCK_PLACE_OR_INTERACT).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
