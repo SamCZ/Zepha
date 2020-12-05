@@ -9,6 +9,7 @@ zepha.register_entity("zeus:default:test", {
         })
         self.object.anims:set_anim("walk")
         self.object.anims:play()
+        self.object.collision_box = { V { -5/16, 0/16, -5/16 }, V { 5/16, 29/16, 5/16 } }
 
 --        zepha.after(function()
 --            local in_desert = self.object.dimension.identifier == 'zeus:world:endless_desert'

@@ -82,7 +82,7 @@ inline long long Deserializer::read<long long>() {
 	cv.bytes[5] = data[ind + 5];
 	cv.bytes[6] = data[ind + 6];
 	cv.bytes[7] = data[ind + 7];
-	ind += 4;
+	ind += 8;
 	return cv.ln;
 }
 

@@ -195,7 +195,7 @@ void LocalDimension::serverEntitiesInfo(Deserializer& e) {
 		std::string dat = e.read<std::string>();
 		Deserializer d(dat);
 		
-		long long id = d.read<long long>();
+		auto id = d.read<long long>();
 		std::shared_ptr<LocalLuaEntity> activeEntity;
 		if (entityRefs.count(id)) activeEntity = entityRefs.at(id)->entity.l();
 		else {
@@ -208,51 +208,73 @@ void LocalDimension::serverEntitiesInfo(Deserializer& e) {
 		}
 		
 		while (!d.atEnd()) {
-			switch (d.readE<NetField>()) {
+			const auto field = d.readE<NetField>();
+			switch (field) {
 			default:
+				std::cout << Log::err << "Entity received unhandled NetField, Type "
+				          << static_cast<int>(field) << "." << Log::endl;
 				break;
-			case NetField::DIM:
-				activeEntity->setDim(world.getDimension(d.read<unsigned int>()));
-				break;
+			
 			case NetField::POS:
 				activeEntity->setPos(d.read<glm::vec3>());
 				break;
+				
 			case NetField::VEL:
 				activeEntity->setVel(d.read<glm::vec3>());
 				break;
+				
 			case NetField::ROT:
 				activeEntity->setRot(d.read<glm::vec3>());
 				break;
+				
 			case NetField::SCALE:
 				activeEntity->setScale(d.read<glm::vec3>());
 				break;
+				
 			case NetField::VISUAL_OFF:
 				activeEntity->setVisualOffset(d.read<glm::vec3>());
 				break;
-			case NetField::COLLISION_BOX: {
-				glm::vec3 a = d.read<glm::vec3>();
-				glm::vec3 b = d.read<glm::vec3>();
-				activeEntity->setCollisionBox({ a, b });
+				
+			case NetField::DISPLAY: {
+				std::string mode, argA, argB;
+				d.read(mode).read(argA).read(argB);
+				activeEntity->setAppearance(mode, argA, argB);
 				break;
 			}
 			case NetField::ANIM_STATE: {
-				bool b = d.read<bool>();
-				activeEntity->animation.setPlaying(b);
-				break;
-			}
-			case NetField::DISPLAY: {
-				std::string type, a, b;
-				d.read(type).read(a).read(b);
-				activeEntity->setAppearance(type, a, b);
+				bool playing = d.read<bool>();
+				activeEntity->animation.setPlaying(playing);
 				break;
 			}
 			case NetField::ANIM_RANGE: {
-				bool b;
+				bool loops;
 				unsigned int x, y;
-				d.read(x).read(y).read(b);
-				activeEntity->animation.setAnim(glm::ivec2 { x, y }, 10, b);
+				d.read(x).read(y).read(loops);
+				activeEntity->animation.setAnim(glm::ivec2 { x, y }, 10, loops);
 				break;
-			}}
+			}
+			case NetField::DIM:
+				activeEntity->setDim(world.getDimension(d.read<unsigned int>()));
+				break;
+				
+			case NetField::COLLISION_BOX: {
+				bool hasCollisionBox = d.read<bool>();
+				if (hasCollisionBox) {
+					glm::vec3 a = d.read<glm::vec3>();
+					glm::vec3 b = d.read<glm::vec3>();
+					activeEntity->setCollisionBox({ a, b });
+				}
+				else activeEntity->removeCollisionBox();
+				break;
+			}
+			case NetField::COLLIDES:
+				activeEntity->setCollides(d.read<bool>());
+				break;
+				
+			case NetField::GRAVITY:
+				activeEntity->setGravity(d.read<float>());
+				break;
+			}
 		}
 	}
 }

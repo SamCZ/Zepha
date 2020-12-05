@@ -145,6 +145,7 @@ void ServerWorld::update(double delta) {
 			if (!str.empty()) inf.append(str);
 		}
 		
+		// Contains more than just the dimension identifier.
 		if (inf.data.size() > 4) {
 			auto p = inf.packet(Packet::Type::ENTITY_INFO);
 			for (auto& player : clients.players)

@@ -1,41 +1,39 @@
-//
-// Created by aurailus on 2020-08-05.
-//
-
 #pragma once
 
-#include <memory>
-#include <glm/vec3.hpp>
-
-#include "util/CovariantPtr.h"
-#include "world/dim/ent/Entity.h"
-#include "game/atlas/DefinitionAtlas.h"
+/**
+ * An enum class containing all of the potential data sequences
+ * that may be sent over the network for players or entities.
+ * ALL is a special value that should never be sent, and instead
+ * indicates to serialization functions to include all of the available data in the packet.
+ */
 
 enum class NetField {
-	// General
-	ID,
+	ALL = 99,
+	ID = 0,
 	
-	DIM,
-	POS,
-	VEL,
-	ROT,
-	SCALE,
+	POS = 10,
+	VEL = 11,
+	ROT = 12,
+	SCALE = 13,
+	VISUAL_OFF = 14,
 	
-	// Entities
-	DISPLAY,
-	VISUAL_OFF,
-	COLLISION_BOX,
-	ANIM_RANGE,
-	ANIM_STATE,
+	DISPLAY = 20,
+	ANIM_RANGE = 21,
+	ANIM_STATE = 22,
 	
-	// Players
-	LOOK_OFF,
-	LOOK_PITCH,
-	LOOK_YAW,
+	DIM = 30,
 	
-	FLYING,
+	COLLISION_BOX = 40,
+	COLLIDES = 41,
+	GRAVITY = 42,
 	
-	HAND_INV,
-	WIELD_INV,
-	WIELD_INDEX,
+	// Player Specific
+	
+	LOOK_OFF = 50,
+	LOOK_PITCH = 51,
+	LOOK_YAW = 52,
+	FLYING = 53,
+	HAND_INV = 54,
+	WIELD_INV = 55,
+	WIELD_INDEX = 56
 };

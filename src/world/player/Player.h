@@ -30,7 +30,7 @@ class Player : public virtual Entity {
 	Player(SubgamePtr game, World& world, DimensionPtr dim, unsigned int id = 0) :
 		Entity(game, dim),
 		world(world), lookOffset(0, 1.65, 0) {
-		collision = {{ -0.3, 0, -0.3 }, { 0.3, 1.8, 0.3 }};
+		collisionBox = {{ -0.3, 0, -0.3 }, { 0.3, 1.8, 0.3 }};
 		this->id = id;
 	}
 	

@@ -5,12 +5,17 @@ zepha.register_entity("zeus:default:bee", {
 
     on_create = function(self)
         self.object.scale = 1/12
-        self.object.collision_box = { V { -3/16, 0/16, -3/16 }, V { 3/16, 4/16, 3/16 } }
+        self.object.gravity = 9.8
+        self.object.collides = true
+        self.object.collision_box = { { -3/16, 0/16, -3/16 }, { 3/16, 4/16, 3/16 } }
 
         self.object.anims:define({
             fly = {1, 45}
         })
-        self.object.anims:set_anim("fly"):play()
+        self.object.anims:set_anim("fly")
+        self.object.anims:play()
+
+        self.object.vel = V {0, -1.5, 0}
     end,
     on_update = function(self, delta)
         self.object.pos = self.object.pos +

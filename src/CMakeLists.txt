@@ -269,7 +269,6 @@ add_library(Zepha_Core
         world/dim/ent/Entity.h
         world/dim/ent/LocalLuaEntity.cpp
         world/dim/ent/LocalLuaEntity.h
-        world/dim/ent/LuaEntity.cpp
         world/dim/ent/LuaEntity.h
         world/dim/ent/ServerLuaEntity.cpp
         world/dim/ent/ServerLuaEntity.h
@@ -315,6 +314,14 @@ add_library(Zepha_Core
         world/ServerWorld.h
         world/World.cpp
         world/World.h
-        util/net/Address.cpp util/Bounds.cpp util/Bounds.h lua/register/CreateRegister.h lua/register/CreateRegister.cpp lua/modules/Structure.cpp lua/modules/Structure.h lua/modules/Message.cpp lua/modules/Message.h)
+        util/net/Address.cpp
+        util/Bounds.cpp
+        util/Bounds.h
+        lua/register/CreateRegister.h
+        lua/register/CreateRegister.cpp
+        lua/modules/Structure.cpp
+        lua/modules/Structure.h
+        lua/modules/Message.cpp
+        lua/modules/Message.h)
 
 target_include_directories(Zepha_Core PUBLIC .)

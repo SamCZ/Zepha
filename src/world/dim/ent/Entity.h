@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 2020-07-30.
-//
-
 #pragma once
 
 #include <glm/vec3.hpp>
@@ -10,68 +6,241 @@
 #include "util/CovariantPtr.h"
 #include "game/def/mesh/SelectionBox.h"
 
+/**
+ * Represents a dynamic renderable object that is not contained within block-space.
+ */
+ 
 class Entity {
 public:
 	Entity() = default;
 	
 	Entity(SubgamePtr game, DimensionPtr dim) : game(game), dim(dim) {};
 	
+	/**
+	 * Gets the unique ID of the entity.
+	 * If the entity is a server-side entity, it's ID will be positive,
+	 * if it's a client-side entity, it will be negative.
+	 * @returns the unique id.
+	 */
+	 
 	virtual long long getId() const;
 	
+	/**
+	 * Sets the unique ID of the entity.
+	 * If the entity is a server-side entity, it's ID should be positive,
+	 * if it's a client-side entity, it should be negative.
+	 * @param newId - The desired ID.
+	 */
+	 
 	virtual void setId(long long newId);
 	
+	/**
+	 * Gets the entity's current position.
+	 * @returns the entity's current position as a vector.
+	 */
+	 
 	virtual glm::vec3 getPos() const;
 	
-	virtual void setPos(glm::vec3 position);
+	/**
+	 * Moves the entity to the specified position.
+	 * @param newPos - The desired position as a vector.
+	 */
+	
+	virtual void setPos(glm::vec3 newPos);
+	
+	/**
+	 * Gets the entity's current velocity.
+	 * @returns the entity's current velocity as a vector.
+	 */
 	
 	virtual glm::vec3 getVel() const;
 	
-	virtual void setVel(glm::vec3 velocity);
+	/**
+	 * Moves the entity to the specified position.
+	 * @param newVel - The desired velocity as a vector.
+	 */
+	
+	virtual void setVel(glm::vec3 newVel);
+	
+	/**
+	 * Returns the entity's current rotation across all 3 axises as a vector.
+	 * @returns the entity's rotation.
+	 */
 	
 	virtual glm::vec3 getRot() const;
 	
+	/**
+	 * Sets the entity's rotation across all three axises.
+	 * @param newRot - The desired rotation of the entity.
+	 */
+	
 	virtual void setRot(glm::vec3 newRot);
 	
-	virtual glm::vec3 getVisualOffset() const;
-	
-	virtual void setVisualOffset(glm::vec3 vs);
-	
-	virtual SelectionBox getCollisionBox() const;
-	
-	virtual void setCollisionBox(const SelectionBox& box);
+	/**
+	 * Returns the X component of the entity's rotation vector.
+	 * @returns the entity's X rotation.
+	 */
 	
 	virtual float getRotateX() const;
 	
-	virtual void setRotateX(float rotation);
+	/**
+	 * Sets the X component of the entity's rotation vector.
+	 * @param newRotateX - The desired rotation, in radians.
+	 */
+	
+	virtual void setRotateX(float newRotateX);
+	
+	/**
+	 * Returns the Y component of the entity's rotation vector.
+	 * @returns the entity's Y rotation.
+	 */
 	
 	virtual float getRotateY() const;
 	
-	virtual void setRotateY(float rotation);
+	/**
+	 * Sets the Y component of the entity's rotation vector.
+	 * @param newRotateY - The desired rotation, in radians.
+	 */
+	
+	virtual void setRotateY(float newRotateY);
+	
+	/**
+	 * Returns the Z component of the entity's rotation vector.
+	 * @returns the entity's Z rotation.
+	 */
 	
 	virtual float getRotateZ() const;
 	
-	virtual void setRotateZ(float rotation);
+	/**
+	 * Sets the Z component of the entity's rotation vector.
+	 * @param newRotateZ - The desired rotation, in radians.
+	 */
 	
+	virtual void setRotateZ(float newRotateZ);
+	
+	/**
+	 * Gets the entity's model scale.
+	 * @returns the scale vector of the entity's model.
+	 */
+	 
 	virtual glm::vec3 getScale() const;
+	
+	/**
+	 * Sets the scale of the entity's model to a float value.
+	 * @param newScale - The desired scale multiplier.
+	 */
 	
 	virtual void setScale(float newScale);
 	
+	/**
+	 * Sets the scale of the entity's model to a vector.
+	 * @param newScale - The desired scale multiplier.
+	 */
+	
 	virtual void setScale(glm::vec3 newScale);
+	
+	/**
+	 * Gets the entity's model's display offset relative to its position.
+	 * @returns the visual offset of the entity.
+	 */
+	
+	virtual glm::vec3 getVisualOffset() const;
+	
+	/**
+	 * Sets the entity's model's display offset relative to its position.
+	 * @param newVisualOff - The desired visual offset for the entity.
+	 */
+	
+	virtual void setVisualOffset(glm::vec3 newVisualOff);
+	
+	
+	/**
+	 * Gets the entity's current dimension.
+	 * @returns a pointer to the entity's current dimension.
+	 */
 	
 	virtual DimensionPtr getDim() const;
 	
+	/**
+	 * Sets the entity's dimension pointer to the value specified.
+	 * @param newDim - The dimension to assign to the entity.
+	 */
+	
 	virtual void setDim(DimensionPtr newDim);
+	
+	
+	/**
+	 * Returns the entity's collision box, if it has one.
+	 * @returns an optional that will contain the entity's collision box, if it has one.
+	 */
+	
+	virtual std::optional<SelectionBox> getCollisionBox() const;
+	
+	/**
+	 * Sets the entity's collision box to the box specified.
+	 * @param newCollisionBox - The new collision box.
+	 */
+	
+	virtual void setCollisionBox(const SelectionBox& newCollisionBox);
+	
+	/**
+	 * Removes the entity's collision box.
+	 */
+	
+	virtual void removeCollisionBox();
+	
+	/**
+	 * Gets whether or not the entity collides with the world.
+	 * @returns true if the entity collides with the world, false otherwise.
+	 */
+	
+	virtual bool getCollides() const;
+	
+	/**
+	 * Sets whether or not the entity collides with the world.
+	 * @param newCollides - Whether or not the entity should collide with the world.
+	 */
+	
+	virtual void setCollides(bool newCollides);
+	
+	/**
+	 * Returns the entity's coefficient of gravity.
+	 * @returns the entity's coefficient of gravity.
+	 */
+	
+	virtual float getGravity() const;
+	
+	/**
+	 * Sets the entity's coefficient of gravity.
+	 * A value of 0 will disable gravity altogether.
+	 * @param newGravity - The desired coefficient of gravity.
+	 */
+	
+	virtual void setGravity(float newGravity);
+	
+	
+	/**
+	 * Gets the subgame pointer.
+	 * @returns a reference to the current subgame
+	 */
 	
 	SubgamePtr getGame() const;
 	
+	/**
+	 * Updates the entity's animations, velocity, and position.
+	 * @param delta - The last frame's delta time.
+	 */
+	
 	virtual void update(double delta);
 	
+	/** The animation state of the entity. */
 	AnimationState animation {};
 	
 protected:
 	SubgamePtr game = nullptr;
 	DimensionPtr dim = nullptr;
 	
+	/** The entity's unique id, positive if it is a server-side entity, negative if it is client-side. */
 	long long id = 0;
 	
 	glm::vec3 pos {};
@@ -80,5 +249,9 @@ protected:
 	glm::vec3 visualOff {};
 	glm::vec3 scale { 1, 1, 1 };
 	
-	SelectionBox collision { {}, {} };
+	std::optional<SelectionBox> selectionBox {};
+	std::optional<SelectionBox> collisionBox {};
+	
+	float gravity = 0;
+	bool collides = false;
 };

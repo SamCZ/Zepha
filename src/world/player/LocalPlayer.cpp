@@ -31,8 +31,8 @@ void LocalPlayer::update(Input& input, double delta, glm::vec2 mouseDelta) {
 	
 	updatePhysics(input, delta, mouseDelta);
 	
-	Collision::moveCollide(game, dim, collision, pos, vel,
-		Collision::isOnGround(game, dim, collision, pos, vel) ? 0.6 : vel.y <= 0 ? 0.1 : 0);
+	Collision::moveCollide(game, dim, *collisionBox, pos, vel,
+		Collision::isOnGround(game, dim, *collisionBox, pos, vel) ? 0.6 : vel.y <= 0 ? 0.1 : 0);
 	
 	updateCamera();
 	
@@ -49,30 +49,51 @@ void LocalPlayer::assertField(Packet packet) {
 
 void LocalPlayer::handleAssertion(Deserializer& d) {
 	while (!d.atEnd()) {
-		switch (d.readE<NetField>()) {
-		default: std::cout << "Invalid assertion." << std::endl;
+		const auto field = d.readE<NetField>();
+		switch (field) {
+		default:
+			std::cout << Log::err << "Player received unhandled NetField, Type "
+					  << static_cast<int>(field) << "." << Log::endl;
 			break;
 		
-		case NetField::ID: setId(d.read<unsigned int>());
+		case NetField::ID:
+			setId(d.read<long long>());
 			break;
-		case NetField::DIM: setDim(world.getDimension(d.read<unsigned int>()));
+			
+		case NetField::POS:
+			setPos(d.read<glm::vec3>());
 			break;
-		case NetField::POS: setPos(d.read<glm::vec3>());
-			break;
-		case NetField::VEL: setVel(d.read<glm::vec3>());
-			break;
-		case NetField::LOOK_YAW: setYaw(d.read<float>());
-			break;
-		case NetField::LOOK_PITCH: setPitch(d.read<float>());
-			break;
-		case NetField::FLYING: setFlying(d.read<bool>());
+			
+		case NetField::VEL:
+			setVel(d.read<glm::vec3>());
 			break;
 		
-		case NetField::HAND_INV: setHandList(d.read<std::string>());
+		case NetField::DIM:
+			setDim(world.getDimension(d.read<unsigned int>()));
 			break;
-		case NetField::WIELD_INV: setWieldList(d.read<std::string>());
+		
+		case NetField::LOOK_PITCH:
+			setPitch(d.read<float>());
 			break;
-		case NetField::WIELD_INDEX: setWieldIndex(d.read<unsigned short>());
+			
+		case NetField::LOOK_YAW:
+			setYaw(d.read<float>());
+			break;
+			
+		case NetField::FLYING:
+			setFlying(d.read<bool>());
+			break;
+		
+		case NetField::HAND_INV:
+			setHandList(d.read<std::string>());
+			break;
+			
+		case NetField::WIELD_INV:
+			setWieldList(d.read<std::string>());
+			break;
+			
+		case NetField::WIELD_INDEX:
+			setWieldIndex(d.read<unsigned short>());
 			break;
 		}
 	}
@@ -209,7 +230,7 @@ void LocalPlayer::updatePhysics(Input& input, double delta, glm::vec2 mouseDelta
 		friction = 0.15f;
 	}
 	else if (getKey(input, PlayerControl::JUMP) &&
-	         Collision::isOnGround(game, dim, collision, pos, vel))
+	         Collision::isOnGround(game, dim, *collisionBox, pos, vel))
 		vel.y = JUMP_VEL;
 	
 	//Calculate movement vector from camera angle.
@@ -229,7 +250,7 @@ void LocalPlayer::updatePhysics(Input& input, double delta, glm::vec2 mouseDelta
 		if (getKey(input, PlayerControl::MOD1)) mod.y -= 1;
 	}
 	else {
-		if (!Collision::isOnGround(game, dim, collision, pos, vel)) vel.y = std::fmax(vel.y - 0.0085, -3);
+		if (!Collision::isOnGround(game, dim, *collisionBox, pos, vel)) vel.y = std::fmax(vel.y - 0.0085, -3);
 		else if (vel.y < 0) vel.y = 0;
 	}
 	
@@ -341,7 +362,8 @@ void LocalPlayer::findPointedThing(Input& input) {
 	
 	for (Ray ray(*this); ray.getLength() < maxDistance; ray.step(LOOK_PRECISION)) {
 		for (auto& entity : entities) {
-			auto face = entity.entity->getCollisionBox().intersects(ray.getEnd() - entity.entity->getPos());
+			if (!entity.entity->getCollisionBox()) continue;
+			auto face = entity.entity->getCollisionBox()->intersects(ray.getEnd() - entity.entity->getPos());
 			if (face != EVec::NONE) {
 				newTarget = Target(dim, entity.entity->getId());
 				break;
@@ -357,19 +379,21 @@ void LocalPlayer::findPointedThing(Input& input) {
 void LocalPlayer::updateWireframe() {
 	if (gameGui.isVisible() && target.type != Target::Type::NOTHING) {
 		std::vector<SelectionBox> boxes {};
+		glm::vec3 thicknessOffset {};
 		glm::vec3 renderPos {};
 		
 		if (target.type == Target::Type::BLOCK) {
 			boxes = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos)).sBoxes;
 			renderPos = target.data.block.pos;
+			thicknessOffset = glm::vec3(0.5);
 		}
 		else {
 			const auto& entity = **dim.l()->getEntityById(target.data.entity.id).entity;
-			boxes.push_back(entity.getCollisionBox());
+			boxes.push_back(*entity.getCollisionBox());
 			renderPos = entity.getPos();
 		}
 		
-		float distance = glm::distance(pos, renderPos + glm::vec3(0.5));
+		float distance = glm::distance(pos, renderPos + thicknessOffset);
 		
 		wireframe.updateMesh(boxes, 0.002f + distance * 0.0014f);
 		wireframe.setPos(renderPos);

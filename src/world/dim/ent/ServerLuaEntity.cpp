@@ -1,108 +1,151 @@
-//
-// Created by aurailus on 2019-12-24.
-//
-
 #include <iostream>
 
-#include "world/dim/Dimension.h"
 #include "ServerLuaEntity.h"
 
+#include "util/Log.h"
+#include "world/dim/Dimension.h"
 #include "util/net/Serializer.h"
 
-void ServerLuaEntity::setDim(DimensionPtr dim) {
-	Entity::setDim(dim);
+void ServerLuaEntity::setDim(DimensionPtr newDim) {
+	Entity::setDim(newDim);
 	dirtyFields.emplace(NetField::DIM);
 }
 
-void ServerLuaEntity::setPos(glm::vec3 position) {
-	Entity::setPos(position);
+void ServerLuaEntity::setPos(glm::vec3 newPos) {
+	Entity::setPos(newPos);
 	dirtyFields.emplace(NetField::POS);
 }
 
-void ServerLuaEntity::setVel(glm::vec3 vel) {
-	Entity::setVel(rot);
+void ServerLuaEntity::setVel(glm::vec3 newVel) {
+	Entity::setVel(newVel);
 	dirtyFields.emplace(NetField::VEL);
 }
 
-void ServerLuaEntity::setRot(glm::vec3 rot) {
-	Entity::setRot(rot);
+void ServerLuaEntity::setRot(glm::vec3 newRot) {
+	Entity::setRot(newRot);
 	dirtyFields.emplace(NetField::ROT);
 }
 
-void ServerLuaEntity::setScale(float scale) {
-	Entity::setScale(scale);
+void ServerLuaEntity::setScale(float newScale) {
+	Entity::setScale(newScale);
 	dirtyFields.emplace(NetField::SCALE);
 }
 
-void ServerLuaEntity::setScale(glm::vec3 scale) {
-	Entity::setScale(scale);
+void ServerLuaEntity::setScale(glm::vec3 newScale) {
+	Entity::setScale(newScale);
 	dirtyFields.emplace(NetField::SCALE);
 }
 
-void ServerLuaEntity::setRotateX(float rotation) {
-	Entity::setRotateX(rotation);
+void ServerLuaEntity::setRotateX(float newRotateX) {
+	Entity::setRotateX(newRotateX);
 	dirtyFields.emplace(NetField::ROT);
 }
 
-void ServerLuaEntity::setRotateY(float rotation) {
-	Entity::setRotateY(rotation);
+void ServerLuaEntity::setRotateY(float newRotateY) {
+	Entity::setRotateY(newRotateY);
 	dirtyFields.emplace(NetField::ROT);
 }
 
-void ServerLuaEntity::setRotateZ(float rotation) {
-	Entity::setRotateZ(rotation);
+void ServerLuaEntity::setRotateZ(float newRotateZ) {
+	Entity::setRotateZ(newRotateZ);
 	dirtyFields.emplace(NetField::ROT);
 }
 
-void ServerLuaEntity::setVisualOffset(glm::vec3 vs) {
-	Entity::setVisualOffset(vs);
+void ServerLuaEntity::setVisualOffset(glm::vec3 newVisualOff) {
+	Entity::setVisualOffset(newVisualOff);
 	dirtyFields.emplace(NetField::VISUAL_OFF);
 }
 
-void ServerLuaEntity::setCollisionBox(const SelectionBox& box) {
-	Entity::setCollisionBox(box);
+void ServerLuaEntity::setCollisionBox(const SelectionBox& newCollisionBox) {
+	Entity::setCollisionBox(newCollisionBox);
 	dirtyFields.emplace(NetField::COLLISION_BOX);
 }
 
-void ServerLuaEntity::setAppearance(const std::string& dMode, const std::string& argA, const std::string& argB) {
-	this->dMode = dMode;
-	this->dArgA = argA;
-	this->dArgB = argB;
+void ServerLuaEntity::setAppearance(const std::string& mode, const std::string& argA, const std::string& argB) {
+	dMode = mode;
+	dArgA = argA;
+	dArgB = argB;
 	dirtyFields.emplace(NetField::DISPLAY);
 }
+
 
 void ServerLuaEntity::dirtyField(NetField field) {
 	dirtyFields.emplace(field);
 }
 
 std::string ServerLuaEntity::serialize() {
-	if (dirtyFields.empty() && !fullSend) return {};
+	if (dirtyFields.empty()) return {};
+	if (dirtyFields.count(NetField::ALL)) {
+		dirtyFields.clear();
+		dirtyFields.insert(NetField::ALL);
+	}
 	
 	Serializer s;
 	s.append<long long>(id);
 	
-	if (dirtyFields.count(NetField::DIM) || fullSend) s.appendE(NetField::DIM).append(dim->getInd());
-	if (dirtyFields.count(NetField::POS) || fullSend) s.appendE(NetField::POS).append(pos);
-	if (dirtyFields.count(NetField::VEL) || fullSend) s.appendE(NetField::VEL).append(vel);
-	if (dirtyFields.count(NetField::SCALE) || fullSend) s.appendE(NetField::SCALE).append(scale);
-	if (dirtyFields.count(NetField::ROT) || fullSend) s.appendE(NetField::ROT).append(rot);
-	if (dirtyFields.count(NetField::VISUAL_OFF) || fullSend) s.appendE(NetField::VISUAL_OFF).append(visualOff);
-	
-	if (dirtyFields.count(NetField::COLLISION_BOX) || fullSend)
-		s.appendE(NetField::COLLISION_BOX).append(collision.a).append(collision.b);
-	
-	if (dirtyFields.count(NetField::ANIM_STATE) || fullSend)
-		s.appendE(NetField::ANIM_STATE).append<bool>(animation.isPlaying());
-	
-	if (dirtyFields.count(NetField::DISPLAY) || fullSend)
-		s.appendE(NetField::DISPLAY).append(dMode).append(dArgA).append(dArgB);
-	
-	if (dirtyFields.count(NetField::ANIM_RANGE) || fullSend)
-		s.appendE(NetField::ANIM_RANGE).append<unsigned int>(animation.getBounds().x)
-		    .append<unsigned int>(animation.getBounds().y).append<bool>(animation.isLooping());
-	
-	dirtyFields.clear();
-	fullSend = false;
+	while (!dirtyFields.empty()) {
+		const auto field = *dirtyFields.begin();
+		dirtyFields.erase(field);
+		
+		switch (field) {
+		default:
+			std::cout << Log::err << "Entity tried to serialize unhandled NetField, Type "
+			          << static_cast<int>(field) << "." << Log::endl;
+			break;
+		
+		case NetField::ALL:
+		
+		case NetField::POS:
+			s.appendE(NetField::POS).append(pos);
+			if (field != NetField::ALL) break;
+		
+		case NetField::VEL:
+			s.appendE(NetField::VEL).append(vel);
+			if (field != NetField::ALL) break;
+		
+		case NetField::ROT:
+			s.appendE(NetField::ROT).append(rot);
+			if (field != NetField::ALL) break;
+		
+		case NetField::SCALE:
+			s.appendE(NetField::SCALE).append(scale);
+			if (field != NetField::ALL) break;
+		
+		case NetField::VISUAL_OFF:
+			s.appendE(NetField::VISUAL_OFF).append(visualOff);
+			if (field != NetField::ALL) break;
+			
+		case NetField::DISPLAY:
+			s.appendE(NetField::DISPLAY).append(dMode).append(dArgA).append(dArgB);
+			if (field != NetField::ALL) break;
+			
+		case NetField::ANIM_STATE:
+			s.appendE(NetField::ANIM_STATE).append<bool>(animation.isPlaying());
+			if (field != NetField::ALL) break;
+			
+		case NetField::ANIM_RANGE:
+			s.appendE(NetField::ANIM_RANGE).append<unsigned int>(animation.getBounds().x)
+				.append<unsigned int>(animation.getBounds().y).append<bool>(animation.isLooping());
+			if (field != NetField::ALL) break;
+			
+		case NetField::DIM:
+			s.appendE(NetField::DIM).append(dim->getInd());
+			if (field != NetField::ALL) break;
+		
+		case NetField::COLLISION_BOX:
+			s.appendE(NetField::COLLISION_BOX).append<bool>(collisionBox.has_value());
+			if (collisionBox) s.append(collisionBox->a).append(collisionBox->b);
+			if (field != NetField::ALL) break;
+		
+		case NetField::COLLIDES:
+			s.appendE(NetField::COLLIDES).append(collides);
+			if (field != NetField::ALL) break;
+			
+		case NetField::GRAVITY:
+			s.appendE(NetField::GRAVITY).append(gravity);
+			if (field != NetField::ALL) break;
+		}
+	}
 	
 	return s.data;
 }

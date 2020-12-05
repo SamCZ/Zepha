@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 2019-12-24.
-//
-
 #pragma once
 
 #include <set>
@@ -20,40 +16,48 @@ class ServerLuaEntity : public LuaEntity {
 		setId(id);
 	};
 	
-	virtual void setDim(DimensionPtr dim) override;
+	virtual void setDim(DimensionPtr newDim) override;
 	
-	virtual void setPos(glm::vec3 position) override;
+	virtual void setPos(glm::vec3 newPos) override;
 	
-	virtual void setVel(glm::vec3 vel) override;
+	virtual void setVel(glm::vec3 newVel) override;
 	
-	virtual void setRot(glm::vec3 rot) override;
+	virtual void setRot(glm::vec3 newRot) override;
 	
-	virtual void setScale(float scale) override;
+	virtual void setScale(float newScale) override;
 	
-	virtual void setScale(glm::vec3 scale) override;
+	virtual void setScale(glm::vec3 newScale) override;
 	
-	virtual void setRotateX(float rotation) override;
+	virtual void setRotateX(float newRotateX) override;
 	
-	virtual void setRotateY(float rotation) override;
+	virtual void setRotateY(float newRotateY) override;
 	
-	virtual void setRotateZ(float rotation) override;
+	virtual void setRotateZ(float newRotateX) override;
 	
-	virtual void setVisualOffset(glm::vec3 vs) override;
+	virtual void setVisualOffset(glm::vec3 newVisualOff) override;
 	
-	virtual void setCollisionBox(const SelectionBox& box) override;
+	virtual void setCollisionBox(const SelectionBox& newCollisionBox) override;
 	
-	void setAppearance(const std::string& dMode, const std::string& argA, const std::string& argB) override;
+	void setAppearance(const std::string& mode, const std::string& argA, const std::string& argB) override;
 	
+	/**
+	 * Marks a field as dirty, which will cause it to be included in the next serialize call.
+	 * @param field - The NetField that should be marked as dirty.
+	 */
+	 
 	void dirtyField(NetField field);
+	
+	/**
+	 * Serializes dirty fields into a string, for transfer to the client.
+	 * @returns an encoded string containing dirty entity data.
+	 */
 	
 	std::string serialize();
 	
-	protected:
-	std::string dMode = "";
-	std::string dArgA = "";
-	std::string dArgB = "";
-	
-	std::set<NetField> dirtyFields;
-	bool fullSend = true;
+protected:
+	/** The display properties of the entity. */
+	std::string dMode {}, dArgA {}, dArgB {};
+	/** The set of dirty fields to be resent on the next serialize call. */
+	std::set<NetField> dirtyFields { NetField::ALL };
 };
 
