@@ -31,7 +31,7 @@ void LocalPlayer::update(Input& input, double delta, glm::vec2 mouseDelta) {
 	
 	updatePhysics(input, delta, mouseDelta);
 	
-	Collision::moveCollide(game, dim, *collisionBox, pos, vel,
+	Collision::moveCollide(game, dim, *collisionBox, pos, vel, delta,
 		Collision::isOnGround(game, dim, *collisionBox, pos, vel) ? 0.6 : vel.y <= 0 ? 0.1 : 0);
 	
 	updateCamera();
@@ -215,14 +215,17 @@ bool LocalPlayer::getKey(Input& input, LocalPlayer::PlayerControl control) {
 }
 
 void LocalPlayer::updatePhysics(Input& input, double delta, glm::vec2 mouseDelta) {
-	static constexpr float JUMP_VEL = 0.14f;
-	static constexpr float BASE_MOVE_SPEED = 4.3f;
+	static constexpr float JUMP_VEL = 10.0f;
+	static constexpr float MOVE_VEL = 5.5f;
+	static constexpr float GRAVITY_ACCELERATION = 40.0f;
+	static constexpr float TERMINAL_VELOCITY = 150.f;
+	
 	static constexpr float MOUSE_SENSITIVITY = 0.1f;
 	
 	//Position movement
 	bool sprinting = getKey(input, PlayerControl::MOD2);
 	
-	double moveSpeed = BASE_MOVE_SPEED * delta * (sprinting ? 1.6 : 1);
+	double moveSpeed = MOVE_VEL * (sprinting ? 1.6 : 1);
 	float friction = 0.3f;
 	
 	if (flying) {
@@ -250,7 +253,8 @@ void LocalPlayer::updatePhysics(Input& input, double delta, glm::vec2 mouseDelta
 		if (getKey(input, PlayerControl::MOD1)) mod.y -= 1;
 	}
 	else {
-		if (!Collision::isOnGround(game, dim, *collisionBox, pos, vel)) vel.y = std::fmax(vel.y - 0.0085, -3);
+		if (!Collision::isOnGround(game, dim, *collisionBox, pos, vel))
+			vel.y = std::fmax(vel.y - (GRAVITY_ACCELERATION * delta), -TERMINAL_VELOCITY);
 		else if (vel.y < 0) vel.y = 0;
 	}
 	
@@ -318,7 +322,7 @@ void LocalPlayer::updateCamera() {
 		handItemModel.setRotateZ(0);
 	}
 	
-	handItemModel.setPos(handPos + vel * 0.1f);
+	handItemModel.setPos(handPos + vel * 0.002f);
 	handItemModel.setScale((type == ItemDef::Type::CRAFTITEM ? 0.2f : 0.12f));
 }
 

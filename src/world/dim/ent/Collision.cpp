@@ -18,12 +18,12 @@ bool Collision::isOnGround(SubgamePtr game, DimensionPtr dim, SelectionBox& coll
 }
 
 void Collision::moveCollide(SubgamePtr game, DimensionPtr dim, SelectionBox& collision, glm::vec3& pos, glm::vec3& vel,
-	float stepUpAmount) {
+	float delta, float stepUpAmount) {
 	const static double increment = 0.05;
 	
 	double moved = 0;
-	for (int i = 0; i < std::abs(vel.y) / increment; i++) {
-		double move = std::max(std::min(increment, std::abs(vel.y) - moved), 0.);
+	for (int i = 0; i < std::abs(vel.y * delta) / increment; i++) {
+		double move = std::max(std::min(increment, std::abs(vel.y * delta) - moved), 0.);
 		moved += increment;
 		
 		glm::vec3 newPos = pos;
@@ -34,8 +34,8 @@ void Collision::moveCollide(SubgamePtr game, DimensionPtr dim, SelectionBox& col
 	}
 	
 	moved = 0;
-	for (int i = 0; i < std::abs(vel.x) / increment; i++) {
-		double move = std::max(std::min(increment, std::abs(vel.x) - moved), 0.);
+	for (int i = 0; i < std::abs(vel.x * delta) / increment; i++) {
+		double move = std::max(std::min(increment, std::abs(vel.x * delta) - moved), 0.);
 		moved += increment;
 		
 		glm::vec3 newPos = pos;
@@ -46,8 +46,8 @@ void Collision::moveCollide(SubgamePtr game, DimensionPtr dim, SelectionBox& col
 	}
 	
 	moved = 0;
-	for (int i = 0; i < std::abs(vel.z) / increment; i++) {
-		double move = std::max(std::min(increment, std::abs(vel.z) - moved), 0.);
+	for (int i = 0; i < std::abs(vel.z * delta) / increment; i++) {
+		double move = std::max(std::min(increment, std::abs(vel.z * delta) - moved), 0.);
 		moved += increment;
 		
 		glm::vec3 newPos = pos;

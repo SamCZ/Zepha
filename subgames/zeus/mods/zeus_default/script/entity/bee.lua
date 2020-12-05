@@ -15,12 +15,14 @@ zepha.register_entity("zeus:default:bee", {
         self.object.anims:set_anim("fly")
         self.object.anims:play()
 
-        self.object.vel = V {0, -1.5, 0}
+        self.object.vel = V {0, -0.25, 0}
     end,
     on_update = function(self, delta)
-        self.object.pos = self.object.pos +
-            V(0.03 * math.sin(math.rad(self.object.yaw + 90)), 0, 0.03 * math.cos(math.rad(self.object.yaw + 90)))
-        self.object.yaw = self.object.yaw + 2
+        self.object.yaw = self.object.yaw + (180 * delta)
+        self.object.vel = V(
+            0.5 * math.sin(math.rad(self.object.yaw + 90)),
+            self.object.vel.y,
+            0.5 * math.cos(math.rad(self.object.yaw + 90)))
     end
 })
 
