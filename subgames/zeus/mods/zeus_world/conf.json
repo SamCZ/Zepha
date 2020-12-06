@@ -2,6 +2,6 @@
 	"name": "zeus:world",
 	"description": "World and Mapgen definitions for the Zeus subgame.",
 	"version": "0.0.1",
-	"depends": ["zeus:default"]
+	"depends": [ "zeus:default", "zeus:flowers" ]
 }
 

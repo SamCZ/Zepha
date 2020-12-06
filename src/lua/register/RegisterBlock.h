@@ -1,11 +1,6 @@
-//
-// Created by aurailus on 2020-01-10.
-//
-
 #pragma once
 
 #include "lua/Lua.h"
-#include "lua/Callback.h"
 #include "game/def/ItemDef.h"
 #include "game/LocalSubgame.h"
 #include "game/def/BiomeDef.h"
@@ -298,9 +293,9 @@ namespace RegisterBlock {
 		 */
 		
 		static void
-		addCallback(BlockDef* blockDef, sol::table& blockTable, const std::string& name, Callback cbType) {
+		addCallback(BlockDef& blockDef, sol::table& blockTable, const std::string& name, BlockDef::Callback cbType) {
 			auto cb = blockTable.get<sol::optional<sol::protected_function>>(name);
-			if (cb) blockDef->callbacks.insert({ cbType, *cb });
+			if (cb) blockDef.callbacks.insert({ cbType, *cb });
 		}
 		
 		
@@ -392,26 +387,26 @@ namespace RegisterBlock {
 			if (atlas) def->createModel();
 			
 			// Bind Callbacks
-			addCallback(def, blockTable, "on_construct", Callback::CONSTRUCT);
-			addCallback(def, blockTable, "after_construct", Callback::AFTER_CONSTRUCT);
+			addCallback(*def, blockTable, "on_construct", BlockDef::Callback::CONSTRUCT);
+			addCallback(*def, blockTable, "after_construct", BlockDef::Callback::AFTER_CONSTRUCT);
 			
-			addCallback(def, blockTable, "on_destruct", Callback::DESTRUCT);
-			addCallback(def, blockTable, "after_destruct", Callback::AFTER_DESTRUCT);
+			addCallback(*def, blockTable, "on_destruct", BlockDef::Callback::DESTRUCT);
+			addCallback(*def, blockTable, "after_destruct", BlockDef::Callback::AFTER_DESTRUCT);
 			
-			addCallback(def, blockTable, "on_place", Callback::PLACE);
-			addCallback(def, blockTable, "on_place_client", Callback::PLACE_CLIENT);
+			addCallback(*def, blockTable, "on_place", BlockDef::Callback::PLACE);
+			addCallback(*def, blockTable, "on_place_client", BlockDef::Callback::PLACE_CLIENT);
 			
-			addCallback(def, blockTable, "after_place", Callback::AFTER_PLACE);
-			addCallback(def, blockTable, "after_place_client", Callback::AFTER_PLACE_CLIENT);
+			addCallback(*def, blockTable, "after_place", BlockDef::Callback::AFTER_PLACE);
+			addCallback(*def, blockTable, "after_place_client", BlockDef::Callback::AFTER_PLACE_CLIENT);
 			
-			addCallback(def, blockTable, "on_break", Callback::BREAK);
-			addCallback(def, blockTable, "on_break_client", Callback::BREAK_CLIENT);
+			addCallback(*def, blockTable, "on_break", BlockDef::Callback::BREAK);
+			addCallback(*def, blockTable, "on_break_client", BlockDef::Callback::BREAK_CLIENT);
 			
-			addCallback(def, blockTable, "after_break", Callback::AFTER_BREAK);
-			addCallback(def, blockTable, "after_break_client", Callback::AFTER_BREAK_CLIENT);
+			addCallback(*def, blockTable, "after_break", BlockDef::Callback::AFTER_BREAK);
+			addCallback(*def, blockTable, "after_break_client", BlockDef::Callback::AFTER_BREAK_CLIENT);
 			
-			addCallback(def, blockTable, "on_interact", Callback::INTERACT);
-			addCallback(def, blockTable, "on_interact_client", Callback::INTERACT_CLIENT);
+			addCallback(*def, blockTable, "on_interact", BlockDef::Callback::INTERACT);
+			addCallback(*def, blockTable, "on_interact_client", BlockDef::Callback::INTERACT_CLIENT);
 			
 			// Add Block Definition to the Atlas
 			defs.registerDef(def);

@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 10/06/19.
-//
-
 #include "BlockDef.h"
 
 void BlockDef::createModel() {
@@ -35,5 +31,5 @@ void BlockDef::createModel() {
 }
 
 bool BlockDef::hasInteraction() {
-	return callbacks.count(Callback::INTERACT) || callbacks.count(Callback::INTERACT_CLIENT);
+	return callbacks.count(BlockDef::Callback::INTERACT) || callbacks.count(BlockDef::Callback::INTERACT_CLIENT);
 }

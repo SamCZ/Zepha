@@ -118,15 +118,23 @@ SubgamePtr Entity::getGame() const {
 }
 
 void Entity::update(double delta) {
+	static constexpr float TERMINAL_VELOCITY = 150.f;
+	
 	animation.update(delta);
 	
 	if (vel.length() != 0) {
 		if (collides) {
-			Collision::moveCollide(game, dim, *collisionBox, pos, vel,
-				Collision::isOnGround(game, dim, *collisionBox, pos, vel) ? 0.6 : vel.y <= 0 ? 0.1 : 0);
+			glm::vec3 newPos, newVel;
+			std::tie(newPos, newVel) = Collision::applyVel(game, dim, *collisionBox, pos, vel, delta);
+			setPos(newPos);
+			setVel(newVel);
 		}
-		else {
-			setPos(getPos() + vel * static_cast<float>(delta));
-		}
+		else setPos(getPos() + vel * static_cast<float>(delta));
+	}
+	
+	if (gravity) {
+		if (!Collision::isOnGround(game, dim, *collisionBox, pos, vel))
+			setVel({ vel.x, std::fmax(vel.y - (gravity * delta), -TERMINAL_VELOCITY), vel.z });
+		else if (vel.y < 0) setVel({ vel.x, 0, vel.z });
 	}
 }

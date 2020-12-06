@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 2020-01-10.
-//
-
 #pragma once
 
 #include "lua/Lua.h"
@@ -14,6 +10,25 @@
 
 namespace RegisterItem {
 	namespace {
+		
+		
+		/**
+		 * Attempts to add a callback of the type specified from the block table provided
+		 * to the block definition provided. Does nothing if the block table doesn't have a callback of said type.
+		 *
+		 * @param blockDef - The block definition to add the callback to.
+		 * @param blockTable - The lua block table to get the callback from.
+		 * @param name - The name of the callback to look for in the lua table.
+		 * @param cbType - The type to register the callback as.
+		 */
+		
+		static void addCallback(CraftItemDef& itemDef, sol::table& itemTable,
+			const std::string& name, CraftItemDef::Callback cbType) {
+			
+			auto cb = itemTable.get<sol::optional<sol::protected_function>>(name);
+			if (cb) itemDef.callbacks.insert({ cbType, *cb });
+		}
+		
 		
 		/**
 		 * Registers an item from the items table to the Definition Atlas.
@@ -52,7 +67,7 @@ namespace RegisterItem {
 			}
 			
 			// Creat the definition
-			CraftItemDef* itemDef = new CraftItemDef(
+			CraftItemDef* def = new CraftItemDef(
 				identifier,
 				defs.size(),
 				*nameOpt,
@@ -61,8 +76,16 @@ namespace RegisterItem {
 				textureRefs
 			);
 			
-			if (atlas) itemDef->createModel(*atlas);
-			defs.registerDef(itemDef);
+			// Bind Callbacks
+			addCallback(*def, itemTable, "on_use", CraftItemDef::Callback::USE);
+			addCallback(*def, itemTable, "on_use_client", CraftItemDef::Callback::USE_CLIENT);
+			
+			addCallback(*def, itemTable, "on_hit", CraftItemDef::Callback::HIT);
+			addCallback(*def, itemTable, "on_hit_client", CraftItemDef::Callback::HIT_CLIENT);
+			
+			// Add Item Definition to the Atlas
+			if (atlas) def->createModel(*atlas);
+			defs.registerDef(def);
 		}
 	}
 	

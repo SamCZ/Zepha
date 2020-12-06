@@ -31,86 +31,27 @@ void LocalPlayer::update(Input& input, double delta, glm::vec2 mouseDelta) {
 	
 	updatePhysics(input, delta, mouseDelta);
 	
-	Collision::moveCollide(game, dim, *collisionBox, pos, vel, delta,
-		Collision::isOnGround(game, dim, *collisionBox, pos, vel) ? 0.6 : vel.y <= 0 ? 0.1 : 0);
+	glm::vec3 newPos, newVel;
+	std::tie(newPos, newVel) = Collision::applyVel(game, dim, *collisionBox, pos, vel, delta);
+	setPos(newPos);
+	setVel(newVel);
 	
 	updateCamera();
 	
-	findPointedThing(input);
+	findTarget(input);
 	updateWireframe();
 	
 	if (!gameGui.isInMenu()) interact(input, delta);
 }
 
-void LocalPlayer::assertField(Packet packet) {
-	packet.type = Packet::Type::THIS_PLAYER_INFO;
-	static_cast<LocalWorld&>(world).getNet().sendPacket(packet, Packet::Channel::INTERACT);
-}
-
-void LocalPlayer::handleAssertion(Deserializer& d) {
-	while (!d.atEnd()) {
-		const auto field = d.readE<NetField>();
-		switch (field) {
-		default:
-			std::cout << Log::err << "Player received unhandled NetField, Type "
-					  << static_cast<int>(field) << "." << Log::endl;
-			break;
-		
-		case NetField::ID:
-			setId(d.read<long long>());
-			break;
-			
-		case NetField::POS:
-			setPos(d.read<glm::vec3>());
-			break;
-			
-		case NetField::VEL:
-			setVel(d.read<glm::vec3>());
-			break;
-		
-		case NetField::DIM:
-			setDim(world.getDimension(d.read<unsigned int>()));
-			break;
-		
-		case NetField::LOOK_PITCH:
-			setPitch(d.read<float>());
-			break;
-			
-		case NetField::LOOK_YAW:
-			setYaw(d.read<float>());
-			break;
-			
-		case NetField::FLYING:
-			setFlying(d.read<bool>());
-			break;
-		
-		case NetField::HAND_INV:
-			setHandList(d.read<std::string>());
-			break;
-			
-		case NetField::WIELD_INV:
-			setWieldList(d.read<std::string>());
-			break;
-			
-		case NetField::WIELD_INDEX:
-			setWieldIndex(d.read<unsigned short>());
-			break;
-		}
-	}
-}
-
-//
-// Overridden Setters
-//
-
 void LocalPlayer::setPos(glm::vec3 pos, bool assert) {
 	Player::setPos(pos, assert);
-	this->renderer.camera.setPos(pos + getLookOffset());
+	renderer.camera.setPos(pos + getLookOffset());
 }
 
 void LocalPlayer::setLookOffset(glm::vec3 eyeOffset, bool assert) {
 	Player::setLookOffset(eyeOffset, assert);
-	this->renderer.camera.setPos(pos + getLookOffset());
+	renderer.camera.setPos(pos + getLookOffset());
 }
 
 
@@ -139,9 +80,13 @@ void LocalPlayer::setDim(DimensionPtr dim) {
 	static_cast<LocalWorld&>(world).setActiveDimension(dim);
 }
 
-//
-// UI Related
-//
+Target& LocalPlayer::getTarget() {
+	return target;
+}
+
+InventoryPtr LocalPlayer::getInventory() {
+	return dim->getWorld().getRefs()->getInventory("current_player");
+}
 
 bool LocalPlayer::isInMenu() {
 	return gameGui.isInMenu();
@@ -157,33 +102,17 @@ void LocalPlayer::closeMenu() {
 	renderer.window.input.lockMouse(true);
 }
 
-void LocalPlayer::setHud(std::shared_ptr<LuaGuiElement> hud) {
-	gameGui.setHud(hud);
-}
-
 std::shared_ptr<LuaGuiElement> LocalPlayer::getHud() {
 	return gameGui.getHud();
+}
+
+void LocalPlayer::setHud(std::shared_ptr<LuaGuiElement> hud) {
+	gameGui.setHud(hud);
 }
 
 void LocalPlayer::setHudVisible(bool hudVisible) {
 	gameGui.setVisible(hudVisible);
 }
-
-//
-// Misc Getters
-//
-
-InventoryPtr LocalPlayer::getInventory() {
-	return dim->getWorld().getRefs()->getInventory("current_player");
-}
-
-Target& LocalPlayer::getTarget() {
-	return target;
-}
-
-//
-// Draw Functions
-//
 
 void LocalPlayer::draw(Renderer&) {
 	wireframe.draw(renderer);
@@ -198,9 +127,62 @@ void LocalPlayer::drawMenu(Renderer&) {
 	gameGui.drawMenu(renderer);
 }
 
-//
-// Physics, camera, and player specific functionality.
-//
+void LocalPlayer::assertField(Packet packet) {
+	packet.type = Packet::Type::THIS_PLAYER_INFO;
+	static_cast<LocalWorld&>(world).getNet().sendPacket(packet, Packet::Channel::INTERACT);
+}
+
+void LocalPlayer::handleAssertion(Deserializer& d) {
+	while (!d.atEnd()) {
+		const auto field = d.readE<NetField>();
+		switch (field) {
+		default:
+			std::cout << Log::err << "Player received unhandled NetField, Type "
+			          << static_cast<int>(field) << "." << Log::endl;
+			break;
+		
+		case NetField::ID:
+			setId(d.read<long long>());
+			break;
+		
+		case NetField::POS:
+			setPos(d.read<glm::vec3>());
+			break;
+		
+		case NetField::VEL:
+			setVel(d.read<glm::vec3>());
+			break;
+		
+		case NetField::DIM:
+			setDim(world.getDimension(d.read<unsigned int>()));
+			break;
+		
+		case NetField::LOOK_PITCH:
+			setPitch(d.read<float>());
+			break;
+		
+		case NetField::LOOK_YAW:
+			setYaw(d.read<float>());
+			break;
+		
+		case NetField::FLYING:
+			setFlying(d.read<bool>());
+			break;
+		
+		case NetField::HAND_INV:
+			setHandList(d.read<std::string>());
+			break;
+		
+		case NetField::WIELD_INV:
+			setWieldList(d.read<std::string>());
+			break;
+		
+		case NetField::WIELD_INDEX:
+			setWieldIndex(d.read<unsigned short>());
+			break;
+		}
+	}
+}
 
 bool LocalPlayer::getKey(Input& input, LocalPlayer::PlayerControl control) {
 	if (gameGui.isInMenu()) return false;
@@ -222,7 +204,7 @@ void LocalPlayer::updatePhysics(Input& input, double delta, glm::vec2 mouseDelta
 	
 	static constexpr float MOUSE_SENSITIVITY = 0.1f;
 	
-	//Position movement
+	// Position movement
 	bool sprinting = getKey(input, PlayerControl::MOD2);
 	
 	double moveSpeed = MOVE_VEL * (sprinting ? 1.6 : 1);
@@ -233,10 +215,10 @@ void LocalPlayer::updatePhysics(Input& input, double delta, glm::vec2 mouseDelta
 		friction = 0.15f;
 	}
 	else if (getKey(input, PlayerControl::JUMP) &&
-	         Collision::isOnGround(game, dim, *collisionBox, pos, vel))
+        Collision::isOnGround(game, dim, *collisionBox, pos, vel))
 		vel.y = JUMP_VEL;
 	
-	//Calculate movement vector from camera angle.
+	// Calculate movement vector from camera angle.
 	auto& camera = renderer.camera;
 	glm::vec3 frontFlat = glm::normalize(glm::vec3(camera.getFront().x, 0, camera.getFront().z));
 	glm::vec3 rightFlat = glm::normalize(glm::vec3(camera.getRight().x, 0, camera.getRight().z));
@@ -263,18 +245,18 @@ void LocalPlayer::updatePhysics(Input& input, double delta, glm::vec2 mouseDelta
 	
 	if (!flying) {
 		glm::vec3 velFlat = { vel.x, 0, vel.z };
-		//Add movement vector with friction.
+		// Add movement vector with friction.
 		velFlat = velFlat * (1.0f - friction) + mod * friction;
 		
 		vel.x = velFlat.x;
 		vel.z = velFlat.z;
 	}
 	else {
-		//If flying factor in vertical mod values.
+		// If flying factor in vertical mod values.
 		vel = vel * (1.0f - friction) + mod * friction;
 	}
 	
-	//View movement
+	// View movement
 	mouseDelta.x *= MOUSE_SENSITIVITY;
 	mouseDelta.y *= MOUSE_SENSITIVITY;
 	
@@ -326,7 +308,44 @@ void LocalPlayer::updateCamera() {
 	handItemModel.setScale((type == ItemDef::Type::CRAFTITEM ? 0.2f : 0.12f));
 }
 
-void LocalPlayer::findPointedThing(Input& input) {
+void LocalPlayer::updateWireframe() {
+	if (gameGui.isVisible() && target.type != Target::Type::NOTHING) {
+		std::vector<SelectionBox> boxes {};
+		glm::vec3 thicknessOffset {};
+		glm::vec3 renderPos {};
+		
+		if (target.type == Target::Type::BLOCK) {
+			boxes = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos)).sBoxes;
+			renderPos = target.data.block.pos;
+			thicknessOffset = glm::vec3(0.5);
+		}
+		else {
+			const auto& entity = **dim.l()->getEntityById(target.data.entity.id).entity;
+			boxes.push_back(*entity.getCollisionBox());
+			renderPos = entity.getPos();
+		}
+		
+		float distance = glm::distance(pos, renderPos + thicknessOffset);
+		
+		wireframe.updateMesh(boxes, 0.002f + distance * 0.0014f);
+		wireframe.setPos(renderPos);
+		wireframe.setVisible(true);
+	}
+	else wireframe.setVisible(false);
+}
+
+void LocalPlayer::updateWieldAndHandItems() {
+	auto handList = world.getRefs().l()->getHandList();
+	auto wieldList = world.getRefs().l()->getWieldList();
+	
+	handItem = handList && handList->getLength() > 0 ? handList->getStack(0).id : 0;
+	wieldItem = wieldList && wieldList->getLength() > wieldIndex ? wieldList->getStack(wieldIndex).id : 0;
+	
+	auto& model = game->getDefs().fromId(wieldItem <= DefinitionAtlas::AIR ? handItem : wieldItem).entityModel;
+	handItemModel.setModel(model);
+}
+
+void LocalPlayer::findTarget(Input& input) {
 	static constexpr float LOOK_DISTANCE = 6.5f;
 	static constexpr float LOOK_PRECISION = 0.01f;
 	
@@ -380,32 +399,6 @@ void LocalPlayer::findPointedThing(Input& input) {
 	target = newTarget;
 }
 
-void LocalPlayer::updateWireframe() {
-	if (gameGui.isVisible() && target.type != Target::Type::NOTHING) {
-		std::vector<SelectionBox> boxes {};
-		glm::vec3 thicknessOffset {};
-		glm::vec3 renderPos {};
-		
-		if (target.type == Target::Type::BLOCK) {
-			boxes = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos)).sBoxes;
-			renderPos = target.data.block.pos;
-			thicknessOffset = glm::vec3(0.5);
-		}
-		else {
-			const auto& entity = **dim.l()->getEntityById(target.data.entity.id).entity;
-			boxes.push_back(*entity.getCollisionBox());
-			renderPos = entity.getPos();
-		}
-		
-		float distance = glm::distance(pos, renderPos + thicknessOffset);
-		
-		wireframe.updateMesh(boxes, 0.002f + distance * 0.0014f);
-		wireframe.setPos(renderPos);
-		wireframe.setVisible(true);
-	}
-	else wireframe.setVisible(false);
-}
-
 void LocalPlayer::interact(Input& input, double delta) {
 	if (target.type == Target::Type::BLOCK) {
 		if (input.mouseDown(GLFW_MOUSE_BUTTON_LEFT) && breakTime == 0) {
@@ -418,17 +411,6 @@ void LocalPlayer::interact(Input& input, double delta) {
 	
 	if (breakTime > 0) breakTime += delta;
 	if (breakTime > breakInterval) breakTime = 0;
-}
-
-void LocalPlayer::updateWieldAndHandItems() {
-	auto handList = world.getRefs().l()->getHandList();
-	auto wieldList = world.getRefs().l()->getWieldList();
-	
-	handItem = handList && handList->getLength() > 0 ? handList->getStack(0).id : 0;
-	wieldItem = wieldList && wieldList->getLength() > wieldIndex ? wieldList->getStack(wieldIndex).id : 0;
-	
-	auto& model = game->getDefs().fromId(wieldItem <= DefinitionAtlas::AIR ? handItem : wieldItem).entityModel;
-	handItemModel.setModel(model);
 }
 
 LocalPlayer::~LocalPlayer() {

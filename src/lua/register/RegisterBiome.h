@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 2020-01-10.
-//
-
 #pragma once
 
 #include <libnoise/module/add.h>

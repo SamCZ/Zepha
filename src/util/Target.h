@@ -12,7 +12,7 @@ class Target {
 public:
 	
 	/** A struct containing data for a targeted entity. */
-	struct EntityData { unsigned int id; };
+	struct EntityData { long long id; };
 	/** A struct containing data for a targeted block & face. */
 	struct BlockData { glm::ivec3 pos; EVec face; };
 	/** A struct containing no data for targets pointing to nothing. */

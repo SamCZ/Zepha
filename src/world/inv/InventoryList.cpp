@@ -44,19 +44,19 @@ ItemStack InventoryList::placeStack(unsigned short i, const ItemStack& stack, bo
 	
 	unsigned short allowedTake = otherStack.count;
 //    if (playerInitiated) {
-//        auto allowTake = luaCallbacks[static_cast<int>(Callback::ALLOW_TAKE)];
+//        auto allowTake = luaCallbacks[static_cast<int>(BlockDef::Callback::ALLOW_TAKE)];
 //        if (allowTake) allowedTake = std::min(static_cast<unsigned short>(
 //          allowTake(i+1, LuaItemStack(otherStack, defs))), allowedTake);
 //    }
 	unsigned short allowedPut = stack.count;
 //    if (playerInitiated) {
-//        auto allowPut = luaCallbacks[static_cast<int>(Callback::ALLOW_PUT)];
+//        auto allowPut = luaCallbacks[static_cast<int>(BlockDef::Callback::ALLOW_PUT)];
 //        if (allowPut) allowedPut = std::min(static_cast<unsigned short>(
 //          allowPut(i+1, LuaItemStack(stack, defs))), allowedPut);
 //    }
 
-//    sol::function on_put = luaCallbacks[static_cast<int>(Callback::ON_PUT)];
-//    sol::function on_take = luaCallbacks[static_cast<int>(Callback::ON_TAKE)];
+//    sol::function on_put = luaCallbacks[static_cast<int>(BlockDef::Callback::ON_PUT)];
+//    sol::function on_take = luaCallbacks[static_cast<int>(BlockDef::Callback::ON_TAKE)];
 	
 	if (stack.count == 0) {
 		if (allowedTake == otherStack.count) setStack(i, { DefinitionAtlas::AIR, 0 });
@@ -111,7 +111,7 @@ ItemStack InventoryList::splitStack(unsigned short i, bool playerInitiated) {
 	
 	unsigned short allowedTake = stack.count;
 //    if (playerInitiated) {
-//        auto allowTake = luaCallbacks[static_cast<int>(Callback::ALLOW_TAKE)];
+//        auto allowTake = luaCallbacks[static_cast<int>(BlockDef::Callback::ALLOW_TAKE)];
 //        if (allowTake) allowedTake = std::min(static_cast<unsigned short>(
 //          allowTake(i + 1, LuaItemStack(stack, defs))), allowedTake);
 //    }
@@ -120,7 +120,7 @@ ItemStack InventoryList::splitStack(unsigned short i, bool playerInitiated) {
 	unsigned short takeCount = std::min(static_cast<unsigned short>(ceil(initialCount / 2.f)), allowedTake);
 	
 	setStack(i, { stack.id, static_cast<unsigned short>(initialCount - takeCount) });
-//    sol::function on_take = luaCallbacks[static_cast<int>(Callback::ON_TAKE)];
+//    sol::function on_take = luaCallbacks[static_cast<int>(BlockDef::Callback::ON_TAKE)];
 //    if (on_take) on_take(i+1, stack);
 	return { stack.id, takeCount };
 }

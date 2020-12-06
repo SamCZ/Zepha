@@ -1,15 +1,16 @@
-//
-// Created by aurailus on 11/08/19.
-//
-
 #pragma once
 
 #include <string>
 
 #include "client/graph/Model.h"
 
+/**
+ * Base definition class, contains properties that all definition types use.
+ * Inherited by BlockDef and CraftItemDef, which have specialized properties.
+ */
+
 class ItemDef {
-	public:
+public:
 	ItemDef(const ItemDef& o) = delete;
 	
 	enum class Type {

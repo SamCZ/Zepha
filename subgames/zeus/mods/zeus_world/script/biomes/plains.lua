@@ -42,6 +42,18 @@ for i = 1, 5 do
     }))
 end
 
+table.insert(structures, zepha.create_structure({
+    origin = V(),
+    probability = 0.025,
+    schematic = {{{ "zeus:flowers:flower_geranium" }}}
+}))
+
+table.insert(structures, zepha.create_structure({
+    origin = V(),
+    probability = 0.025,
+    schematic = {{{ "zeus:flowers:flower_white_dandelion" }}}
+}))
+
 local noise = {
     heightmap = {
         module = "add",

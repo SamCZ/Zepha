@@ -2,7 +2,16 @@ zepha.register_item("@auri:basic_tools:flint_pickaxe", {
     name = "Flint Pick",
     textures = {
         "@auri:basic_tools:flint_pickaxe"
-    }
+    },
+    tool_props = {
+        interval = 0.4,
+        damage_groups = {
+            smash = 3,
+            crack = 7
+        }
+    },
+    on_hit = function(dim, pos) if dim:get_block(pos) == 'zeus:default:grass' then dim:set_block(pos, 'zeus:default:dirt') end end,
+    on_hit_client = function(dim, pos) if dim:get_block(pos) == 'zeus:default:grass' then dim:set_block(pos, 'zeus:default:dirt') end end
 })
 
 crafting.register_recipe({

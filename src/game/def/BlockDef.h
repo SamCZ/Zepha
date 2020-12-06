@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 10/06/19.
-//
-
 #pragma once
 
 #include <string>
@@ -10,12 +6,30 @@
 
 #include "lua/Lua.h"
 #include "util/Util.h"
-#include "lua/Callback.h"
 #include "game/def/mesh/BlockModel.h"
 #include "game/def/mesh/SelectionBox.h"
 
+/**
+ * Represents a block definition, defined by Lua.
+ * Contains all the necessary information about a block.
+ */
+ 
 class BlockDef : public ItemDef {
-	public:
+public:
+	enum class Callback {
+		CONSTRUCT, AFTER_CONSTRUCT,
+		DESTRUCT, AFTER_DESTRUCT,
+		
+		PLACE, PLACE_CLIENT,
+		AFTER_PLACE, AFTER_PLACE_CLIENT,
+		
+		BREAK, BREAK_CLIENT,
+		AFTER_BREAK, AFTER_BREAK_CLIENT,
+		
+		INTERACT, INTERACT_CLIENT,
+		HIT, HIT_CLIENT
+	};
+	
 	BlockDef() : ItemDef{ "", "", 0, 0, ItemDef::Type::BLOCK } {};
 	
 	void createModel();
@@ -37,5 +51,5 @@ class BlockDef : public ItemDef {
 	std::vector<SelectionBox> sBoxes{};
 	std::vector<SelectionBox> cBoxes{};
 	
-	std::unordered_map<Callback, sol::protected_function, Util::EnumClassHash> callbacks{};
+	std::unordered_map<Callback, sol::protected_function, Util::EnumClassHash> callbacks {};
 };
