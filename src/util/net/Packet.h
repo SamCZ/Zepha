@@ -35,6 +35,8 @@ class Packet {
 		// Block
 		BLOCK_HIT, BLOCK_PLACE, BLOCK_INTERACT,
 		BLOCK_PLACE_OR_INTERACT, BLOCK_SET,
+		// Item
+		WIELD_ITEM_USE,
 		// Entity
 		ENTITY_INFO, ENTITY_REMOVED,
 		// Inventory

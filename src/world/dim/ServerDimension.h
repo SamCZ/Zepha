@@ -33,6 +33,8 @@ class ServerDimension : public Dimension {
 	
 	virtual double blockHit(const Target& target, PlayerPtr player) override;
 	
+	virtual void wieldItemUse(const Target& target, PlayerPtr player) override;
+	
 	virtual long long nextEntityInd() override;
 	
 	void addLuaEntity(Api::Usertype::Entity entity);

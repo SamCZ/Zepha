@@ -8,9 +8,12 @@
 #include "world/LocalWorld.h"
 #include "game/def/BlockDef.h"
 #include "util/net/NetField.h"
+#include "lua/usertype/Player.h"
+#include "lua/usertype/Target.h"
 #include "client/graph/Renderer.h"
 #include "world/dim/chunk/Chunk.h"
 #include "util/net/Deserializer.h"
+#include "game/def/CraftItemDef.h"
 #include "world/dim/ent/Collision.h"
 #include "client/conn/ClientNetworkInterpreter.h"
 
@@ -41,7 +44,7 @@ void LocalPlayer::update(Input& input, double delta, glm::vec2 mouseDelta) {
 	findTarget(input);
 	updateWireframe();
 	
-	if (!gameGui.isInMenu()) interact(input, delta);
+	if (!gameGui.isInMenu()) updateInteract(input, delta);
 }
 
 void LocalPlayer::setPos(glm::vec3 pos, bool assert) {
@@ -399,18 +402,40 @@ void LocalPlayer::findTarget(Input& input) {
 	target = newTarget;
 }
 
-void LocalPlayer::interact(Input& input, double delta) {
-	if (target.type == Target::Type::BLOCK) {
-		if (input.mouseDown(GLFW_MOUSE_BUTTON_LEFT) && breakTime == 0) {
+void LocalPlayer::updateInteract(Input& input, double delta) {
+	if (breakTime > 0) breakTime += delta;
+	if (breakTime > breakInterval) breakTime = 0;
+	
+	if (input.mouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
+		if (target.type == Target::Type::BLOCK && breakTime == 0) {
+			auto& targetedBlock = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos));
 			breakInterval = dim->blockHit(target, static_cast<LocalWorld&>(dim->getWorld()).getPlayer());
 			breakTime += delta;
 		}
-		else if (input.mousePressed(GLFW_MOUSE_BUTTON_RIGHT))
-			dim->blockPlaceOrInteract(target, static_cast<LocalWorld&>(dim->getWorld()).getPlayer());
 	}
-	
-	if (breakTime > 0) breakTime += delta;
-	if (breakTime > breakInterval) breakTime = 0;
+	else if (input.mousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
+		if (target.type == Target::Type::BLOCK) {
+			auto& wieldItem = game->getDefs().fromId(this->wieldItem);
+			auto& targetedBlock = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos));
+			
+			if (targetedBlock.hasInteraction())
+				dim->blockInteract(target, static_cast<LocalWorld&>(dim->getWorld()).getPlayer());
+			else if (wieldItem.type == ItemDef::Type::CRAFTITEM && static_cast<CraftItemDef&>(wieldItem).hasUse())
+				dim->wieldItemUse(target, static_cast<LocalWorld&>(dim->getWorld()).getPlayer());
+			else if (wieldItem.type == ItemDef::Type::BLOCK)
+				dim->blockPlace(target, static_cast<LocalWorld&>(dim->getWorld()).getPlayer());
+		}
+		else if (target.type == Target::Type::ENTITY) {
+			auto& wieldItem = game->getDefs().fromId(this->wieldItem);
+			if (wieldItem.type == ItemDef::Type::CRAFTITEM && static_cast<CraftItemDef&>(wieldItem).hasUse())
+				dim->wieldItemUse(target, static_cast<LocalWorld&>(dim->getWorld()).getPlayer());
+		}
+		else {
+			auto& wieldItem = game->getDefs().fromId(this->wieldItem);
+			if (wieldItem.type == ItemDef::Type::CRAFTITEM && static_cast<CraftItemDef&>(wieldItem).hasUse())
+				dim->wieldItemUse(target, static_cast<LocalWorld&>(dim->getWorld()).getPlayer());
+		}
+	}
 }
 
 LocalPlayer::~LocalPlayer() {

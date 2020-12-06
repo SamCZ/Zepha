@@ -71,7 +71,7 @@ namespace Api::Usertype {
 	};
 	
 	class LocalPlayer : public ServerPlayer {
-		public:
+	public:
 		LocalPlayer(PlayerPtr player) : ServerPlayer(player) {}
 		
 		bool is_in_menu();

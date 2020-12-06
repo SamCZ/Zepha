@@ -6,24 +6,28 @@
 
 #include "../Lua.h"
 
-Api::Usertype::Target::Target(const ::Target& target) :
-	pos(target.data.block.pos),
-	type(target.type),
-	dim(Dimension(target.dim)),
-	pos_above(target.getAbovePos()) {}
-
-std::string Api::Usertype::Target::getType() {
-	return type == ::Target::Type::BLOCK ? "block" :
-	       type == ::Target::Type::ENTITY ? "entity" :
-	       "nothing";
+Api::Usertype::Target::Target(const ::Target& target) {
+	if (target.type == ::Target::Type::BLOCK) {
+		type = "block";
+		dim = target.dim;
+		pos = target.data.block.pos;
+		pos_above = target.getAbovePos();
+	}
+	else if (target.type == ::Target::Type::ENTITY) {
+		type = "entity";
+		dim = target.dim;
+		id = target.data.entity.id;
+	}
+	else type = "nothing";
 }
 
 void Api::Usertype::Target::bind(State, sol::state& lua, sol::table& core) {
 	lua.new_usertype<Target>("Target",
-		"type", sol::property(&Target::getType),
+		"type", sol::readonly(&Target::type),
 		
-		"pos", sol::readonly(&Target::pos),
+		"id", sol::readonly(&Target::id),
 		"dim", sol::readonly(&Target::dim),
+		"pos", sol::readonly(&Target::pos),
 		"pos_above", sol::readonly(&Target::pos_above)
 	);
 }

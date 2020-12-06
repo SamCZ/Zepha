@@ -151,6 +151,17 @@ double LocalDimension::blockHit(const Target& target, PlayerPtr player) {
 	return timeout;
 }
 
+void LocalDimension::wieldItemUse(const Target& target, PlayerPtr player) {
+	sol::optional<Api::Usertype::ItemStack> stack = game->getParser().safe_function(
+		game->getParser().core["item_use"], Api::Usertype::LocalPlayer(player.l()), Api::Usertype::Target(target));
+	
+	static_cast<LocalWorld&>(world).getNet().wieldItemUse(target);
+	
+	auto inv = player->getInventory();
+	if (stack && inv->hasList(player->getWieldList()))
+		inv->getList(player->getWieldList())->setStack(player->getWieldIndex(), ItemStack(*stack, game));
+}
+
 void LocalDimension::setMeshChunk(std::shared_ptr<MeshChunk> meshChunk) {
 	if (renderRefs.count(meshChunk->getPos())) removeMeshChunk(meshChunk->getPos());
 	renderElems.push_back(std::static_pointer_cast<ChunkRenderElem>(meshChunk));

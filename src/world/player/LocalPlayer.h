@@ -216,7 +216,7 @@ private:
 	 * @param delta - The delta time elapsed in the last frame.
 	 */
 	
-	void interact(Input& input, double delta);
+	void updateInteract(Input& input, double delta);
 	
 	GameGui gameGui;
 	Renderer& renderer;

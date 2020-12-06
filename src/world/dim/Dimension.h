@@ -36,6 +36,8 @@ public:
 	
 	virtual void blockInteract(const Target& target, PlayerPtr player) = 0;
 	
+	virtual void wieldItemUse(const Target& target, PlayerPtr player) = 0;
+	
 	virtual long long nextEntityInd() = 0;
 	
 	// Calculate light propogation around MapBlock edges,

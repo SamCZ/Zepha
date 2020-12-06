@@ -69,22 +69,9 @@ zepha.register_entity("zeus:default:rabbit", {
 })
 
 if zepha.server then
-    zepha.bind("message", function(channel, message, player)
-        if channel ~= "zeus:default:spawn" or message ~= "rabbit" then return end
-        player.dim:add_entity(player.pos + V(0, 1.7, 0), "zeus:default:rabbit")
-    end)
-
     zepha.bind("new_player", function(player)
         for i = 0, 5 do
             player.dim:add_entity(player.pos + V { math.random(-100, 100), 30, math.random(-100, 100) }, "zeus:default:rabbit")
         end
     end)
-else
-    zepha.register_keybind("zeus:default:spawn_rabbit", {
-        description = "Spawn Rabbit",
-        default = zepha.keys.v,
-        on_press = function()
-            zepha.send_message("zeus:default:spawn", "rabbit");
-        end
-    })
 end

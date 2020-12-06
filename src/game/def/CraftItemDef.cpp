@@ -104,3 +104,7 @@ void CraftItemDef::createModel(TextureAtlas& atlas) {
 	mesh->create(vertices, indices);
 	entityModel->fromMesh(std::move(mesh));
 }
+
+bool CraftItemDef::hasUse() {
+	return callbacks.count(CraftItemDef::Callback::USE) || callbacks.count(CraftItemDef::Callback::USE_CLIENT);
+}

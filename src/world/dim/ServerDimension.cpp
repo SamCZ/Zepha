@@ -85,6 +85,15 @@ void ServerDimension::blockPlaceOrInteract(const Target& target, PlayerPtr playe
 		inv->getList(player->getWieldList())->setStack(player->getWieldIndex(), ItemStack(*stack, game));
 }
 
+void ServerDimension::wieldItemUse(const Target& target, PlayerPtr player) {
+	sol::optional<Api::Usertype::ItemStack> stack = game->getParser().safe_function(
+		game->getParser().core["item_use"], Api::Usertype::ServerPlayer(player), Api::Usertype::Target(target));
+	
+	auto inv = player->getInventory();
+	if (stack && inv->hasList(player->getWieldList()))
+		inv->getList(player->getWieldList())->setStack(player->getWieldIndex(), ItemStack(*stack, game));
+}
+
 void ServerDimension::setChunk(std::shared_ptr<Chunk> chunk) {
 	std::shared_ptr<Chunk> existing = getChunk(chunk->getPos());
 	if (existing) chunk = combineChunks(chunk, existing);

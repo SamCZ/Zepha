@@ -136,6 +136,10 @@ void Server::playerPacketReceived(PacketView& p, PlayerPtr player) {
 		player->getDim()->blockPlaceOrInteract(Target(player->getDim(), pos, face), player);
 		break;
 	
+	case Packet::Type::WIELD_ITEM_USE:
+		player->getDim()->wieldItemUse(Target(), player);
+		break;
+	
 	case Packet::Type::INV_WATCH:
 		p.d.read<std::string>(source).read<std::string>(list);
 		if (!world->getRefs().s()->addWatcher(source, list, player->getId()))

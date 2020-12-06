@@ -31,6 +31,8 @@ public:
 	
 	void createModel(TextureAtlas& atlas);
 	
+	bool hasUse();
+	
 	std::vector<std::string> textures {};
 	std::vector<std::shared_ptr<AtlasRef>> textureRefs {};
 	

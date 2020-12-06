@@ -46,6 +46,8 @@ public:
 	
 	virtual double blockHit(const Target& target, PlayerPtr player) override;
 	
+	virtual void wieldItemUse(const Target& target, PlayerPtr player) override;
+	
 	void setMeshChunk(std::shared_ptr<MeshChunk> chunk);
 	
 	void removeMeshChunk(const glm::ivec3& pos);

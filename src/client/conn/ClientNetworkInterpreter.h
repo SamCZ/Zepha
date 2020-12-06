@@ -44,6 +44,8 @@ class ClientNetworkInterpreter {
 	
 	void blockPlaceOrInteract(const Target& target);
 	
+	void wieldItemUse(const Target& target);
+	
 	void invWatch(const std::string& inv, const std::string& list);
 	
 	void invUnwatch(const std::string& inv, const std::string& list);

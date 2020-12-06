@@ -123,6 +123,10 @@ void ClientNetworkInterpreter::blockPlaceOrInteract(const Target& target) {
 		.packet(Packet::Type::BLOCK_PLACE_OR_INTERACT).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
+void ClientNetworkInterpreter::wieldItemUse(const Target& target) {
+	Serializer().packet(Packet::Type::WIELD_ITEM_USE).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
+}
+
 void ClientNetworkInterpreter::invWatch(const std::string& inv, const std::string& list) {
 	Serializer().append(inv).append(list).packet(Packet::Type::INV_WATCH)
 		.sendTo(connection.getPeer(), Packet::Channel::INTERACT);

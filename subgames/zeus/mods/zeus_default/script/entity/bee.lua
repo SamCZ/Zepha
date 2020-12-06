@@ -57,7 +57,7 @@ zepha.register_entity("zeus:default:bee", {
             }
 
             local fly = false
-            local def = zepha.registered_blocks[self.object.dim:get_block(self.object.pos - V{ 0, 2, 0 })]
+            local def = zepha.registered_blocks[self.object.dim:get_block(self.object.pos:floor() - V{ 0, 2, 0 })]
             if def and (def.solid == nil or def.solid ~= false) then fly = true end
 
             if fly and self.object.vel.y <= 0 then
@@ -68,22 +68,9 @@ zepha.register_entity("zeus:default:bee", {
 })
 
 if zepha.server then
-    zepha.bind("message", function(channel, message, player)
-        if channel ~= "zeus:default:spawn" or message ~= "bee" then return end
-        player.dim:add_entity(player.pos + V(0, 1.7, 0), "zeus:default:bee")
-    end)
-
     zepha.bind("new_player", function(player)
         for i = 0, 10 do
             player.dim:add_entity(player.pos + V { math.random(-100, 100), 30, math.random(-100, 100) }, "zeus:default:bee")
         end
     end)
-else
-    zepha.register_keybind("zeus:default:spawn_bee", {
-        description = "Spawn Bee",
-        default = zepha.keys.b,
-        on_press = function()
-            zepha.send_message("zeus:default:spawn", "bee");
-        end
-    })
 end
