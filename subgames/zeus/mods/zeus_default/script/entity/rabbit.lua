@@ -1,4 +1,4 @@
-local friendly = false
+local ATTACK_INTERVAL = 1
 
 zepha.register_entity("zeus:default:rabbit", {
     display = "model",
@@ -21,8 +21,14 @@ zepha.register_entity("zeus:default:rabbit", {
 
         self.object.anims:set_anim("run")
         self.object.anims:play()
+
+        self.attack_timer = 0
     end,
     on_update = function(self, delta)
+        if self.attack_timer > 0 then
+            self.attack_timer = math.max(self.attack_timer - delta, 0)
+        end
+
         local closest_player = nil
         for _, player in pairs(zepha.players) do
             if not closest_player or vector.dist(self.object.pos, player.pos)
@@ -32,9 +38,13 @@ zepha.register_entity("zeus:default:rabbit", {
         end
 
         if not closest_player then return end
+
         local offset = closest_player.pos - self.object.pos
         local dist = offset:length()
-        if dist > 16 then return end
+        if dist > 16 then
+            self.attack_timer = ATTACK_INTERVAL
+            return
+        end
 
         if dist > 0.5 then
             local dir = offset:unit()
@@ -54,7 +64,11 @@ zepha.register_entity("zeus:default:rabbit", {
                 3 * math.cos(math.rad(self.object.yaw + 90))
             }
         else
-            self.object.vel = V{}
+            self.object.vel = V {}
+            if self.attack_timer == 0 then
+                health.damage_player(closest_player, 1)
+                self.attack_timer = ATTACK_INTERVAL
+            end
         end
     end
 })

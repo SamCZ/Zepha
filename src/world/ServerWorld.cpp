@@ -240,5 +240,7 @@ void ServerWorld::sendChunksToPlayer(ServerPlayer& client) {
 }
 
 void ServerWorld::sendMessage(const std::string& channel, const std::string& message) {
-	std::cout << channel << ":" << message << std::endl;
+	auto p = Serializer().append(channel).append(message).packet(Packet::Type::MOD_MESSAGE);
+	for (auto& player : clients.players)
+		p.sendTo(player->getPeer(), Packet::Channel::ENTITY);
 }

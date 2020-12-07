@@ -71,6 +71,11 @@ void LocalWorld::handlePlayerEntPacket(std::unique_ptr<PacketView> p) {
 //    getActiveDimension().playerEntities.emplace_back(p->d.read<glm::vec3>(), id, playerModel);
 }
 
+void LocalWorld::handleModMessage(const std::string& channel, const std::string& message) {
+	game->getParser().safe_function(game->getParser().core["trigger"], "message",
+		channel, game->getParser().safe_function(game->getParser().core["deserialize"], message));
+}
+
 void LocalWorld::commitChunk(std::shared_ptr<Chunk> c) {
 	activeDimension->setChunk(std::move(c));
 }

@@ -13,15 +13,10 @@
 #include "client/conn/ServerConnection.h"
 
 class Model;
-
 class Target;
-
 class LocalWorld;
-
 class PacketView;
-
 class LocalPlayer;
-
 class LocalSubgame;
 
 enum class NetPlayerField;

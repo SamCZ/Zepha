@@ -9,6 +9,7 @@ runfile(_PATH .. "modules/after")
 runfile(_PATH .. "modules/vector")
 runfile(_PATH .. "modules/entity")
 runfile(_PATH .. "modules/callbacks")
+runfile(_PATH .. "modules/serialization")
 
 -- Register base models (if not on main menu)
 if zepha.client or zepha.server then runfile(_PATH .. "game/init") end

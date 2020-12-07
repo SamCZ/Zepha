@@ -66,17 +66,21 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
 		          << ". Is the server on a different protocol version?" << Log::endl;
 		break;
 	
-	case Packet::Type::SERVER_INFO:serverSideChunkGens = p->d.read<unsigned int>();
+	case Packet::Type::SERVER_INFO:
+		serverSideChunkGens = p->d.read<unsigned int>();
 		break;
 	
-	case Packet::Type::THIS_PLAYER_INFO:world.getPlayer()->handleAssertion(p->d);
+	case Packet::Type::THIS_PLAYER_INFO:
+		world.getPlayer()->handleAssertion(p->d);
 		break;
 	
-	case Packet::Type::PLAYER_ENT_INFO:world.handlePlayerEntPacket(std::move(p));
+	case Packet::Type::PLAYER_ENT_INFO:
+		world.handlePlayerEntPacket(std::move(p));
 		break;
 	
 	case Packet::Type::CHUNK:
-	case Packet::Type::MAPBLOCK:world.handleWorldPacket(std::move(p));
+	case Packet::Type::MAPBLOCK:
+		world.handleWorldPacket(std::move(p));
 		break;
 	
 	case Packet::Type::BLOCK_SET: {
@@ -86,19 +90,28 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
 		break;
 	}
 	
-	case Packet::Type::ENTITY_INFO:world.getActiveDimension().l()->serverEntitiesInfo(p->d);
+	case Packet::Type::ENTITY_INFO:
+		world.getActiveDimension().l()->serverEntitiesInfo(p->d);
 		break;
 	
-	case Packet::Type::ENTITY_REMOVED:world.getActiveDimension().l()->serverEntitiesRemoved(p->d);
+	case Packet::Type::ENTITY_REMOVED:
+		world.getActiveDimension().l()->serverEntitiesRemoved(p->d);
 		break;
 	
-	case Packet::Type::INV_DATA:onInvPacket(std::move(p));
+	case Packet::Type::INV_DATA:
+		onInvPacket(std::move(p));
 		break;
 	
 	case Packet::Type::INV_INVALID: {
 		std::string source = p->d.read<std::string>();
 		std::string list = p->d.read<std::string>();
 		throw std::runtime_error("Invalid inventory " + source + ":" + list + " was request by client.");
+	}
+	case Packet::Type::MOD_MESSAGE: {
+		std::string channel = p->d.read<std::string>();
+		std::string message = p->d.read<std::string>();
+		world.handleModMessage(channel, message);
+		break;
 	}
 	}
 }

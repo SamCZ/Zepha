@@ -35,6 +35,8 @@ public:
 	
 	void handlePlayerEntPacket(std::unique_ptr<PacketView> p);
 	
+	void handleModMessage(const std::string& channel, const std::string& message);
+	
 	void commitChunk(std::shared_ptr<Chunk> chunk);
 	
 	virtual void sendMessage(const std::string& channel, const std::string& message) override;

@@ -12,7 +12,7 @@ namespace Api::Module {
 		void bind() override;
 	
 	protected:
-		void send_message(const std::string& channel, const std::string& message);
+		void send_message(const std::string& channel, sol::object message);
 	};
 }
 

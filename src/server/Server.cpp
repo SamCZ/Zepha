@@ -162,7 +162,7 @@ void Server::playerPacketReceived(PacketView& p, PlayerPtr player) {
 	case Packet::Type::MOD_MESSAGE:
 		p.d.read<std::string>(source).read<std::string>(list);
 		game->getParser().safe_function(game->getParser().core["trigger"], "message",
-			source, list, Api::Usertype::ServerPlayer(player));
+			source, game->getParser().safe_function(game->getParser().core["deserialize"], list));
 		break;
 	}
 }
