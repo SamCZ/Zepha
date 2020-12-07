@@ -21,57 +21,40 @@ zepha.register_entity("zeus:default:rabbit", {
 
         self.object.anims:set_anim("run")
         self.object.anims:play()
-
-        self.resting = false
-        self.rest_timer = 0
-        self.next_rest = 45 + math.random() * 30
-        self.orient_timer = 0
-        self.next_orient = 5 + math.random() * 3
     end,
     on_update = function(self, delta)
-        self.rest_timer = self.rest_timer + delta
-        self.orient_timer = self.orient_timer + delta
-
-        if self.rest_timer > self.next_rest then
-            self.resting = not self.resting
-
-            if self.resting then
-                self.object.vel = V {}
-                self.object.anims:set_anim("idle")
-                self.object.anims:play()
-            else
-                self.object.anims:set_anim("run")
-                self.object.anims:play()
+        local closest_player = nil
+        for _, player in pairs(zepha.players) do
+            if not closest_player or vector.dist(self.object.pos, player.pos)
+                < vector.dist(self.object.pos, closest_player.pos) then
+                closest_player = player
             end
-
-            self.rest_timer = 0
-            self.next_rest = self.resting and (3 + math.random() * 2) or (45 + math.random() * 30)
         end
 
-        if self.orient_timer > self.next_orient then
-            self.orient_timer = 0
-            self.next_orient = 5 + math.random() * 3
-            self.object.yaw = math.random(0, 360)
-        end
+        if not closest_player then return end
+        local offset = closest_player.pos - self.object.pos
+        local dist = offset:length()
+        if dist > 16 then return end
 
-        if not self.resting then
+        if dist > 0.5 then
+            local dir = offset:unit()
+
+            local yaw = math.atan2(dir.x, dir.z)
+            self.object.yaw = math.round(math.deg(yaw) + 270)
+
             if self.object.vel:length() < 2.8 and self.object.vel.y == 0 then
                 self.object:set_vel(V { self.object.vel.x, 9, self.object.vel.z })
             end
+        end
 
+        if dist > 0.25 then
             self.object.vel = V {
                 3 * math.sin(math.rad(self.object.yaw + 90)),
                 self.object.vel.y,
                 3 * math.cos(math.rad(self.object.yaw + 90))
             }
+        else
+            self.object.vel = V{}
         end
     end
 })
-
-if zepha.server then
-    zepha.bind("new_player", function(player)
-        for i = 0, 5 do
-            player.dim:add_entity(player.pos + V { math.random(-100, 100), 30, math.random(-100, 100) }, "zeus:default:rabbit")
-        end
-    end)
-end

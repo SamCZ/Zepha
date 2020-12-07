@@ -148,6 +148,17 @@ function vector.distance(v1, v2)
     return math.sqrt(vector.distance2(v1, v2))
 end
 
+-- vector.normalize
+-- Normalizes a vecotr
+function vector.normalize(v)
+    assert(vector.is_vector(v))
+    return v / v:length()
+end
+
+-- vector.unit
+-- An alias to vector.normalize
+vector.unit = vector.normalize
+
 -- Alias x, y, z to 1, 2, 3
 
 function vector:__index(key)
