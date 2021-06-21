@@ -66,7 +66,7 @@ zepha.register_entity("zeus:default:rabbit", {
         else
             self.object.vel = V {}
             if self.attack_timer == 0 then
-                health.damage_player(closest_player, 1)
+                health.player_damage(closest_player, 0.5)
                 self.attack_timer = ATTACK_INTERVAL
             end
         end

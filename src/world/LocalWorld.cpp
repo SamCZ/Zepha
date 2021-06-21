@@ -11,8 +11,9 @@
 
 LocalWorld::LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& renderer) :
 	World(game),
-	net(conn, *this),
 	renderer(renderer),
+	net(conn, *this),
+	debugGui(renderer.window.getSize(), game, *this),
 	refs(std::make_shared<LocalInventoryRefs>(game, net)),
 	worldGenStream(std::make_shared<WorldInterpolationStream>(*game.l(), *this, 55)),
 	player(std::make_shared<LocalPlayer>(game, *this, DimensionPtr(nullptr), renderer)) {}
@@ -32,13 +33,41 @@ bool LocalWorld::updatePlayerDimension() {
 void LocalWorld::update(double delta) {
 	World::update(delta);
 	
+	// Update children
+	
 	if (*player) player.l()->update(renderer.window.input, delta, renderer.window.input.mouseDelta());
 	refs->update(delta, net);
 	net.update();
 	
+	// Commit interpolated mapblocks
+	
 	auto finishedChunks = worldGenStream->update();
-	mapBlocksInterpolated = finishedChunks->size() / 64;
+	lastInterpolations = finishedChunks->size() / 64;
 	for (const auto& chunk : *finishedChunks) commitChunk(chunk);
+	
+	// Update debug interface
+	
+	debugGui.update(
+		player.l(), delta,
+		lastInterpolations,
+		net.serverSideChunkGens, net.recvPackets,
+		activeDimension->getMeshChunksDrawn(),
+		activeDimension->getMeshChunksCommitted());
+	
+	// Toggle regular interface
+	
+	if (renderer.window.input.keyPressed(GLFW_KEY_F1)) {
+		hudVisible = !hudVisible;
+		debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
+		player.l()->setHudVisible(hudVisible);
+	}
+	
+	// Toggle debug interface
+	
+	if (renderer.window.input.keyPressed(GLFW_KEY_F3)) {
+		debugVisible = !debugVisible;
+		debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
+	}
 }
 
 void LocalWorld::handleWorldPacket(std::unique_ptr<PacketView> p) {
@@ -115,11 +144,17 @@ InventoryRefsPtr LocalWorld::getRefs() {
 	return refs;
 }
 
-int LocalWorld::renderChunks(Renderer& renderer) {
-	return activeDimension->renderChunks(renderer);
+void LocalWorld::drawWorld() {
+	activeDimension->renderChunks(renderer);
 }
 
-void LocalWorld::renderEntities(Renderer& renderer) {
+void LocalWorld::drawEntities() {
 	activeDimension->renderEntities(renderer);
 	player.l()->draw(renderer);
+}
+
+void LocalWorld::drawInterface() {
+	player.l()->drawHud(renderer);
+	debugGui.draw(renderer);
+	player.l()->drawMenu(renderer);
 }

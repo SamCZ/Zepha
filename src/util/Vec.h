@@ -12,8 +12,8 @@
 #include "Space.h"
 
 enum class EVec {
-	LEFT = 0, RIGHT = 1, BOTTOM = 2, TOP = 3, FRONT = 4, BACK = 5,
-	XNEG = 0, XPOS = 1, YNEG = 2, YPOS = 3, ZPOS = 4, ZNEG = 5,
+	LEFT = 0, RIGHT = 1, BOTTOM = 2, TOP = 3, BACK = 4, FRONT = 5,
+	XNEG = 0, XPOS = 1, YNEG = 2, YPOS = 3, ZNEG = 4, ZPOS = 5,
 	
 	INVALID = -1, NONE = -1,
 	NO_CULL = 6,
@@ -44,17 +44,29 @@ namespace Vec {
 	// Adjacent Arrays & Maps
 	
 	const static std::array<glm::ivec3, 6> TO_VEC = {
-		glm::ivec3{ -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 }, { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 }};
+		glm::ivec3 { -1, 0, 0 },
+		glm::ivec3 { 1, 0, 0 },
+		glm::ivec3 { 0, -1, 0 },
+		glm::ivec3 { 0, 1, 0 },
+		glm::ivec3 { 0, 0, -1 },
+		glm::ivec3 { 0, 0, 1 }
+	};
 	
 	const static std::array<glm::ivec3, 6> TO_VEC_R = {
-		glm::ivec3{ 1, 0, 0 }, { -1, 0, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 0, 1 }, { 0, 0, -1 }};
+		glm::ivec3 { 1, 0, 0 },
+		glm::ivec3 { -1, 0, 0 },
+		glm::ivec3 { 0, 1, 0 },
+		glm::ivec3 { 0, -1, 0 },
+		glm::ivec3 { 0, 0, 1 },
+		glm::ivec3 { 0, 0, -1 }
+	};
 	
 	const static std::unordered_map<glm::ivec3, EVec, Vec::ivec3> TO_ENUM = {
-		{ TO_VEC[0], EVec::LEFT }, { TO_VEC[1], EVec::RIGHT }, { TO_VEC[2], EVec::BOTTOM },
-		{ TO_VEC[3], EVec::TOP }, { TO_VEC[4], EVec::FRONT }, { TO_VEC[5], EVec::BACK }};
+		{ TO_VEC[0], EVec::XNEG }, { TO_VEC[1], EVec::XPOS }, { TO_VEC[2], EVec::YNEG },
+		{ TO_VEC[3], EVec::YPOS }, { TO_VEC[4], EVec::ZNEG }, { TO_VEC[5], EVec::ZPOS }};
 	
 	const static std::unordered_map<glm::ivec3, EVec, Vec::ivec3> TO_ENUM_R = {
-		{ TO_VEC[0], EVec::RIGHT }, { TO_VEC[1], EVec::LEFT }, { TO_VEC[2], EVec::TOP },
-		{ TO_VEC[3], EVec::BOTTOM }, { TO_VEC[4], EVec::BACK }, { TO_VEC[5], EVec::FRONT }};
+		{ TO_VEC[0], EVec::XPOS }, { TO_VEC[1], EVec::XNEG }, { TO_VEC[2], EVec::YPOS },
+		{ TO_VEC[3], EVec::YNEG }, { TO_VEC[4], EVec::ZPOS }, { TO_VEC[5], EVec::ZNEG }};
 };
 

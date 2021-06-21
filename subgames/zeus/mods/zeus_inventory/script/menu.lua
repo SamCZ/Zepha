@@ -131,6 +131,6 @@ end
 
 zepha.register_keybind("zeus:inventory:open_inventory", {
     description = "Open Inventory",
-    default = zepha.keys.e,
+    default = zepha.keys.p,
     on_press = inventory.open_inventory
 })

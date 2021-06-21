@@ -1,90 +1,56 @@
 local identifier = "zeus:world:plains"
 
-local woo = "zeus:default:wood"
-local lea = "zeus:default:leaves"
-local inv = "invalid"
+local wood = "zeus:default:wood"
+local leaf = "zeus:default:leaves"
+local none = "invalid"
 
-local shrub_layer_0 = {
-    { inv, inv, inv },
-    { inv, woo, inv },
-    { inv, inv, inv }
-}
+local structures = {}
 
-local shrub_layer_1 = {
-    { inv, lea, inv },
-    { lea, woo, lea },
-    { inv, lea, inv }
-}
-
-local shrub_layer_2 = {
-    { inv, inv, inv },
-    { inv, lea, inv },
-    { inv, inv, inv }
-}
-
-local shrub = zepha.create_structure({
+table.insert(structures, zepha.create_structure({
+    noise = {
+        module = "perlin",
+        frequency = 0.002,
+        octaves = 8
+    },
+    region_size = 4,
     origin = V{1, 1, 1},
-    probability = 0.01,
-    schematic = {
-        shrub_layer_0,
-        shrub_layer_1,
-        shrub_layer_2,
-    }
-})
-
-local structures = { shrub }
-
-for i = 1, 5 do
-    table.insert(structures, zepha.create_structure({
-        origin = V(),
-        probability = 0.1,
-        schematic = {{{ "zeus:default:tall_grass_" .. tostring(i) }}}
-    }))
-end
-
-table.insert(structures, zepha.create_structure({
-    origin = V(),
-    probability = 0.025,
-    schematic = {{{ "zeus:flowers:flower_geranium" }}}
+    layout = {{
+        { none, none, none },
+        { none, wood, none },
+        { none, none, none }
+    }, {
+        { none, leaf, none },
+        { leaf, wood, leaf },
+        { none, leaf, none }
+    }, {
+        { none, none, none },
+        { none, leaf, none },
+        { none, none, none }
+    }}
 }))
 
-table.insert(structures, zepha.create_structure({
-    origin = V(),
-    probability = 0.025,
-    schematic = {{{ "zeus:flowers:flower_white_dandelion" }}}
-}))
+--for i = 1, 5 do
+--    table.insert(structures, zepha.create_structure({
+--        origin = V(),
+--        probability = 0.1,
+--        layout = {{{ "zeus:default:tall_grass_" .. tostring(i) }}}
+--    }))
+--end
+--
+--table.insert(structures, zepha.create_structure({
+--    origin = V(),
+--    probability = 0.025,
+--    layout = {{{ "zeus:flowers:flower_geranium" }}}
+--}))
+--
+--table.insert(structures, zepha.create_structure({
+--    origin = V(),
+--    probability = 0.025,
+--    layout = {{{ "zeus:flowers:flower_white_dandelion" }}}
+--}))
 
 local noise = {
-    heightmap = {
-        module = "add",
-        sources = {{
-            module = "const",
-            value = -12
-        }, {
-            module = "add",
-            sources = {{
-                -- Elevation
-                module = "scale_bias",
-                source = {
-                    module = "perlin",
-                    frequency = 0.002,
-                    octaves = 8
-                },
-                scale = 250,
-                bias = -32
-            }, {
-                -- Features
-                module = "scale_bias",
-                source = {
-                    module = "perlin",
-                    frequency = 0.2,
-                    octaves = 3,
-                },
-                scale = 6,
-                bias = 6
-            }}
-        }}
-    }
+    heightmap = runfile(_PATH .. 'world_noise')
 }
 
 zepha.register_biome(identifier, {

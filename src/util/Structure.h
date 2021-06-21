@@ -10,16 +10,14 @@
 
 class DefinitionAtlas;
 
-struct Schematic {
+struct Structure {
 	glm::ivec3 origin {};
 	glm::ivec3 dimensions {};
-	std::vector<unsigned int> blocks {};
+	std::vector<unsigned int> layout {};
 	
 	float probability = 0;
 	
-	inline unsigned int length() {
-		return blocks.size();
-	}
+	inline unsigned int length() { return layout.size(); }
 	
 	glm::ivec3 getOffset(unsigned int ind);
 	

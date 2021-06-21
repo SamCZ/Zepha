@@ -87,10 +87,8 @@ zepha.register_item("@auri:basic_tools:wooden_shovel", {
 
 if zepha.server then
     zepha.bind("new_player", function(player)
-        local inv = player:get_inventory():get_list("hot_wheel_1");
-        inv:add_stack({"@auri:basic_tools:flint_pickaxe", 1})
---         inv:add_stack({"@auri:basic_tools:wooden_hatchet", 1})
---         inv:add_stack({"@auri:basic_tools:wooden_shovel", 1})
-        inv:add_stack({"@auri:basic_tools:flint_shovel", 1})
+        local hw = player:get_inventory():get_list("hot_wheel_1");
+        hw:add_stack({"@auri:basic_tools:flint_pickaxe", 1})
+        hw:add_stack({"@auri:basic_tools:flint_shovel", 1})
     end)
 end

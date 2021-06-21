@@ -12,7 +12,7 @@
 #include <glm/glm.hpp>
 #include <libnoise/module/modulebase.h>
 
-class Schematic;
+class Structure;
 
 struct BiomeDef {
 	std::string identifier = "";
@@ -30,7 +30,7 @@ struct BiomeDef {
 	std::vector<noise::module::Module*> heightmap;
 	std::vector<noise::module::Module*> volume;
 	
-	std::vector<std::shared_ptr<Schematic>> schematics;
+	std::vector<std::shared_ptr<Structure>> schematics;
 	
 	glm::vec3 tint{};
 };

@@ -9,10 +9,10 @@ local flowers = {
     "yellow_dandelion"
 }
 
-local tchelper = function(first, rest) return first:upper()..rest:lower() end
+local titlecase = function(first, rest) return first:upper()..rest:lower() end
 
 for _,flower in pairs(flowers) do
-    local name = flower:gsub("_", " "):gsub("(%a)([%w_']*)", tchelper)
+    local name = flower:gsub("_", " "):gsub("(%a)([%w_']*)", titlecase)
 
     zepha.register_block("zeus:flowers:flower_" .. flower, {
         culls = false,

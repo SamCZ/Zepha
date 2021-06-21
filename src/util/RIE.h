@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include <iostream>
+#include <array>
 #include <vector>
+#include <iostream>
 #include <type_traits>
 
 struct RIE {
@@ -164,6 +165,25 @@ struct RIE {
 	
 	template<typename T, int L, typename = typename std::enable_if<std::is_integral<T>::value>::type>
 	static void encode(const std::array<T, L>& array, std::vector<T>& out) {
+		T len = 1;
+		T block = array[0];
+		
+		for (unsigned int i = 1; i < array.size(); i++) {
+			T newBlock = array[i];
+			if (newBlock != block) {
+				out.push_back(len);
+				out.push_back(block);
+				block = newBlock;
+				len = 0;
+			}
+			len++;
+		}
+		out.push_back(len);
+		out.push_back(block);
+	}
+	
+	template<typename T, typename = typename std::enable_if<std::is_integral<T>::value>::type>
+	static void encode(const std::vector<T>& array, std::vector<T>& out) {
 		T len = 1;
 		T block = array[0];
 		

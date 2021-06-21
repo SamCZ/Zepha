@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <array>
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -11,7 +12,7 @@
 #include <glm/vec3.hpp>
 
 class Deserializer {
-	public:
+public:
 	Deserializer(const std::string& data) : data(&data[0]), len(data.length()) {};
 	
 	Deserializer(const char* start, size_t len) : data(start), len(len) {};
@@ -25,13 +26,45 @@ class Deserializer {
 		return *this;
 	};
 	
+	template<typename T, int L>
+	inline std::array<T, L> readArr() {
+		auto oldInd = ind;
+		ind += L * sizeof(T);
+		
+		std::array<T, L> res;
+		for (int i = 0; i < L; i++) res[i] = *reinterpret_cast<const T*>(&data[oldInd + i * sizeof(T)]);
+		return res;
+	}
+	
+	template<typename T, int L>
+	inline Deserializer& readArr(std::array<T, L>& ref) {
+		ref = readArr<T, L>();
+		return *this;
+	}
+	
+	template<typename T>
+	inline std::vector<T> readVec() {
+		unsigned int len = read<unsigned int>();
+		auto oldInd = ind;
+		ind += len * sizeof(T);
+		return std::vector<T>(
+			reinterpret_cast<const T*>(&data[oldInd]),
+			reinterpret_cast<const T*>(&data[ind]));
+	}
+	
+	template<typename T>
+	inline Deserializer& readVec(std::vector<T>& ref) {
+		ref = readVec<T>();
+		return *this;
+	}
+	
 	template<typename E, typename = typename std::enable_if<std::is_enum<E>::value>::type>
-	inline E readE() {
+	inline E readEnum() {
 		return static_cast<E>(read<unsigned short>());
 	};
 	
 	template<typename E, typename = typename std::enable_if<std::is_enum<E>::value>::type>
-	inline Deserializer& readE(E& ref) {
+	inline Deserializer& readEnum(E& ref) {
 		ref = static_cast<E>(read<unsigned short>());
 		return *this;
 	};
@@ -44,27 +77,32 @@ class Deserializer {
 	size_t len;
 	size_t ind = 0;
 	
-	private:
+private:
 	typedef union {
 		int ln;
 		char bytes[8];
 	} long_long_union;
+	
 	typedef union {
 		int in;
 		char bytes[4];
 	} int_union;
+	
 	typedef union {
 		unsigned int in;
 		char bytes[4];
 	} uint_union;
+	
 	typedef union {
 		short sh;
 		char bytes[2];
 	} short_union;
+	
 	typedef union {
 		unsigned short sh;
 		char bytes[2];
 	} ushort_union;
+	
 	typedef union {
 		float fl;
 		char bytes[4];
@@ -192,85 +230,4 @@ inline glm::ivec3 Deserializer::read<glm::ivec3>() {
 		read<int>(),
 		read<int>()
 	};
-}
-
-template<>
-inline std::vector<int> Deserializer::read<std::vector<int>>() {
-	unsigned int len = read<unsigned int>();
-	auto oldInd = ind;
-	ind += len * 4;
-	return std::vector<int>(
-		reinterpret_cast<const int*>(&data[oldInd]),
-		reinterpret_cast<const int*>(&data[ind]));
-}
-
-template<>
-inline std::vector<unsigned int> Deserializer::read<std::vector<unsigned int>>() {
-	unsigned int len = read<unsigned int>();
-	auto oldInd = ind;
-	ind += len * 4;
-	return std::vector<unsigned int>(
-		reinterpret_cast<const unsigned int*>(&data[oldInd]),
-		reinterpret_cast<const unsigned int*>(&data[ind]));
-}
-
-template<>
-inline std::vector<short> Deserializer::read<std::vector<short>>() {
-	unsigned int len = read<unsigned int>();
-	auto oldInd = ind;
-	ind += len * 2;
-	return std::vector<short>(
-		reinterpret_cast<const short*>(&data[oldInd]),
-		reinterpret_cast<const short*>(&data[ind]));
-}
-
-template<>
-inline std::vector<unsigned short> Deserializer::read<std::vector<unsigned short>>() {
-	unsigned int len = read<unsigned int>();
-	auto oldInd = ind;
-	ind += len * 2;
-	return std::vector<unsigned short>(
-		reinterpret_cast<const unsigned short*>(&data[oldInd]),
-		reinterpret_cast<const unsigned short*>(&data[ind]));
-}
-
-template<>
-inline std::vector<char> Deserializer::read<std::vector<char>>() {
-	unsigned int len = read<unsigned int>();
-	auto oldInd = ind;
-	ind += len;
-	return std::vector<char>(
-		reinterpret_cast<const char*>(&data[oldInd]),
-		reinterpret_cast<const char*>(&data[ind]));
-}
-
-template<>
-inline std::vector<unsigned char> Deserializer::read<std::vector<unsigned char>>() {
-	unsigned int len = read<unsigned int>();
-	auto oldInd = ind;
-	ind += len;
-	return std::vector<unsigned char>(
-		reinterpret_cast<const unsigned char*>(&data[oldInd]),
-		reinterpret_cast<const unsigned char*>(&data[ind]));
-}
-
-template<>
-inline std::vector<float> Deserializer::read<std::vector<float>>() {
-	unsigned int len = read<unsigned int>();
-	auto oldInd = ind;
-	ind += len * 4;
-	return std::vector<float>(
-		reinterpret_cast<const float*>(&data[oldInd]),
-		reinterpret_cast<const float*>(&data[ind]));
-}
-
-template<>
-inline std::vector<std::string> Deserializer::read<std::vector<std::string>>() {
-	unsigned int len = read<unsigned int>();
-	std::vector<std::string> v{};
-	v.reserve(len);
-	for (unsigned int i = 0; i < len; i++) {
-		v.push_back(read<std::string>());
-	}
-	return std::move(v);
 }

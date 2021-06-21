@@ -8,15 +8,13 @@
 
 #include "util/CovariantPtr.h"
 
+class LocalWorld;
 class LocalPlayer;
-
 class LocalSubgame;
 
-class LocalWorld;
-
 class DebugGui : public GuiContainer {
-	public:
-	DebugGui(glm::vec2 bufferSize, SubgamePtr game, WorldPtr world);
+public:
+	DebugGui(glm::vec2 bufferSize, SubgamePtr game, LocalWorld& world);
 	
 	void bufferResized(glm::vec2 bufferSize);
 	
@@ -24,11 +22,13 @@ class DebugGui : public GuiContainer {
 	
 	void positionElements(glm::vec2 bufferSize);
 	
-	void update(std::shared_ptr<LocalPlayer> player, double fps, int chunks, int drawCalls, int ssGen, int ssPack);
+	void update(std::shared_ptr<LocalPlayer> player, double delta,
+		uint32_t interpolatedChunks, uint32_t generatedChunks, uint32_t recievedPackets,
+		uint32_t drawnMeshChunks, uint32_t generatedMeshChunks);
 	
-	private:
+private:
 	int displayMode;
 	
-	WorldPtr world;
+	LocalWorld& world;
 	SubgamePtr game;
 };

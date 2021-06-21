@@ -95,54 +95,43 @@ std::string ServerLuaEntity::serialize() {
 		
 		case NetField::ALL:
 		
-		case NetField::POS:
-			s.appendE(NetField::POS).append(pos);
+		case NetField::POS: s.appendEnum(NetField::POS).append(pos);
 			if (field != NetField::ALL) break;
 		
-		case NetField::VEL:
-			s.appendE(NetField::VEL).append(vel);
+		case NetField::VEL: s.appendEnum(NetField::VEL).append(vel);
 			if (field != NetField::ALL) break;
 		
-		case NetField::ROT:
-			s.appendE(NetField::ROT).append(rot);
+		case NetField::ROT: s.appendEnum(NetField::ROT).append(rot);
 			if (field != NetField::ALL) break;
 		
-		case NetField::SCALE:
-			s.appendE(NetField::SCALE).append(scale);
+		case NetField::SCALE: s.appendEnum(NetField::SCALE).append(scale);
 			if (field != NetField::ALL) break;
 		
-		case NetField::VISUAL_OFF:
-			s.appendE(NetField::VISUAL_OFF).append(visualOff);
+		case NetField::VISUAL_OFF: s.appendEnum(NetField::VISUAL_OFF).append(visualOff);
 			if (field != NetField::ALL) break;
 			
-		case NetField::DISPLAY:
-			s.appendE(NetField::DISPLAY).append(dMode).append(dArgA).append(dArgB);
+		case NetField::DISPLAY: s.appendEnum(NetField::DISPLAY).append(dMode).append(dArgA).append(dArgB);
 			if (field != NetField::ALL) break;
 			
-		case NetField::ANIM_STATE:
-			s.appendE(NetField::ANIM_STATE).append<bool>(animation.isPlaying());
+		case NetField::ANIM_STATE: s.appendEnum(NetField::ANIM_STATE).append<bool>(animation.isPlaying());
 			if (field != NetField::ALL) break;
 			
 		case NetField::ANIM_RANGE:
-			s.appendE(NetField::ANIM_RANGE).append<unsigned int>(animation.getBounds().x)
+			s.appendEnum(NetField::ANIM_RANGE).append<unsigned int>(animation.getBounds().x)
 				.append<unsigned int>(animation.getBounds().y).append<bool>(animation.isLooping());
 			if (field != NetField::ALL) break;
 			
-		case NetField::DIM:
-			s.appendE(NetField::DIM).append(dim->getInd());
+		case NetField::DIM: s.appendEnum(NetField::DIM).append(dim->getInd());
 			if (field != NetField::ALL) break;
 		
-		case NetField::COLLISION_BOX:
-			s.appendE(NetField::COLLISION_BOX).append<bool>(collisionBox.has_value());
+		case NetField::COLLISION_BOX: s.appendEnum(NetField::COLLISION_BOX).append<bool>(collisionBox.has_value());
 			if (collisionBox) s.append(collisionBox->a).append(collisionBox->b);
 			if (field != NetField::ALL) break;
 		
-		case NetField::COLLIDES:
-			s.appendE(NetField::COLLIDES).append(collides);
+		case NetField::COLLIDES: s.appendEnum(NetField::COLLIDES).append(collides);
 			if (field != NetField::ALL) break;
 			
-		case NetField::GRAVITY:
-			s.appendE(NetField::GRAVITY).append(gravity);
+		case NetField::GRAVITY: s.appendEnum(NetField::GRAVITY).append(gravity);
 			if (field != NetField::ALL) break;
 		}
 	}

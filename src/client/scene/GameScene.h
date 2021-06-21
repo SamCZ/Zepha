@@ -7,17 +7,12 @@
 #include "Scene.h"
 
 #include "world/LocalWorld.h"
-#include "client/gui/DebugGui.h"
-#include "world/player/LocalPlayer.h"
-#include "world/inv/LocalInventoryRefs.h"
-#include "client/conn/ClientNetworkInterpreter.h"
 
 class LocalSubgame;
-
 class Drawable;
 
 class GameScene : public Scene {
-	public:
+public:
 	GameScene(Client& client);
 	
 	void update() override;
@@ -26,14 +21,7 @@ class GameScene : public Scene {
 	
 	void cleanup() override;
 	
-	public:
+public:
 	WorldPtr world;
-	
-	DebugGui debugGui;
-	std::vector<Drawable*> entities;
-	int drawCalls = 0;
-	
-	bool debugVisible = true;
-	bool hudVisible = true;
 };
 

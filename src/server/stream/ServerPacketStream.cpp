@@ -69,7 +69,7 @@ void ServerPacketStream::Thread::run() {
 				Serializer s{};
 				for (unsigned int i = 0; i < 64; i++) {
 					auto chunk = mapBlock->get(i);
-					if (chunk) s.append(chunk->serialize());
+					if (chunk) s.append(chunk->compress());
 				}
 				
 				j.packet = std::make_unique<Packet>(Packet::Type::MAPBLOCK);

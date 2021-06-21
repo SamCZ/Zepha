@@ -2,12 +2,12 @@
 // Created by aurailus on 2020-02-01.
 //
 
-#include "Schematic.h"
+#include "Structure.h"
 
 #include "game/def/BlockDef.h"
 #include "game/atlas/DefinitionAtlas.h"
 
-glm::ivec3 Schematic::getOffset(unsigned int ind) {
+glm::ivec3 Structure::getOffset(unsigned int ind) {
 	glm::ivec3 vec{};
 	
 	vec.z = ind / (dimensions.x * dimensions.y);
@@ -18,6 +18,6 @@ glm::ivec3 Schematic::getOffset(unsigned int ind) {
 	return vec;
 }
 
-unsigned int Schematic::index(const glm::ivec3& vec) {
+unsigned int Structure::index(const glm::ivec3& vec) {
 	return static_cast<unsigned int>(vec.x + dimensions.x * (vec.y + dimensions.y * vec.z));
 }

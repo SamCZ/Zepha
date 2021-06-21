@@ -6,19 +6,15 @@
 
 #include "World.h"
 
+#include "client/gui/DebugGui.h"
 #include "world/dim/LocalDimension.h"
 #include "client/conn/ClientNetworkInterpreter.h"
 
 class Window;
-
 class Renderer;
-
 class LocalPlayer;
-
 class LocalSubgame;
-
 class LocalInventoryRefs;
-
 class WorldInterpolationStream;
 
 class LocalWorld : public World {
@@ -54,12 +50,12 @@ public:
 	
 	ClientNetworkInterpreter& getNet();
 	
-	int renderChunks(Renderer& render);
-	
-	void renderEntities(Renderer& renderer);
-	
-	int mapBlocksInterpolated = 0;
-	int lastMeshUpdates = 0;
+	/** Renders the visible block chunks to the screen. */
+	void drawWorld();
+	/** Renders the visible entities to the screen. */
+	void drawEntities();
+	/** Renders non-diagetic (UI) elements to the screen using an orthographic projection. */
+	void drawInterface();
 	
 private:
 	Renderer& renderer;
@@ -68,7 +64,12 @@ private:
 	std::shared_ptr<LocalInventoryRefs> refs;
 	PlayerPtr player;
 	
-	std::shared_ptr<LocalDimension> activeDimension = nullptr;
+	DebugGui debugGui;
+	uint32_t lastInterpolations = 0;
 	
+	bool hudVisible = true;
+	bool debugVisible = true;
+	
+	std::shared_ptr<LocalDimension> activeDimension = nullptr;
 	std::shared_ptr<WorldInterpolationStream> worldGenStream = nullptr;
 };

@@ -1,9 +1,11 @@
 -- Load Libraries
 runfile(_PATH .. "modules/fenv")
 
+runfile(_PATH .. "modules/math")
+runfile(_PATH .. "modules/string")
+
 runfile(_PATH .. "modules/gui")
 runfile(_PATH .. "modules/dump")
-runfile(_PATH .. "modules/math")
 runfile(_PATH .. "modules/table")
 runfile(_PATH .. "modules/after")
 runfile(_PATH .. "modules/vector")

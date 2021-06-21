@@ -36,8 +36,8 @@ class MeshGenStream {
 	std::vector<ChunkMeshDetails*> update();
 	
 	struct Job {
-		std::shared_ptr<Chunk> thisChunk = nullptr;
-		std::array<std::shared_ptr<Chunk>, 6> adjacentChunks{};
+		std::unique_ptr<Chunk> thisChunk = nullptr;
+		std::array<std::unique_ptr<Chunk>, 6> adjacentChunks {};
 		
 		ChunkMeshDetails* meshDetails = new ChunkMeshDetails();
 		

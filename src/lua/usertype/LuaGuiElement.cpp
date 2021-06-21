@@ -15,8 +15,7 @@ std::shared_ptr<LuaGuiElement> LuaGuiElement::create(const std::string& type, so
 	
 	for (const auto& pair : data) {
 		if (pair.first.is<float>()) {
-			if (!pair.second.is<std::shared_ptr<LuaGuiElement>>())
-				throw std::runtime_error("Child is not a GuiElement.");
+			if (!pair.second.is<std::shared_ptr<LuaGuiElement>>()) continue;
 			elem->children.push_back(pair.second.as<std::shared_ptr<LuaGuiElement>>());
 			elem->children.back()->parent = elem.get();
 		}
@@ -107,8 +106,7 @@ void LuaGuiElement::remove(sol::this_state s, sol::object elem) {
 	}
 	else if (elem.is<std::string>()) {
 		auto child = this->get_child(s, sol::make_object<std::string>(s, elem.as<std::string>()));
-		if (!child) throw std::runtime_error("Can't find child of key " + elem.as<std::string>());
-		remove(s, child);
+		if (child) remove(s, child);
 	}
 	else if (elem.is<std::shared_ptr<LuaGuiElement>>()) {
 		auto parent = elem.as<std::shared_ptr<LuaGuiElement>>()->parent;

@@ -22,7 +22,7 @@ void ServerPlayer::assertField(Packet packet) {
 
 void ServerPlayer::handleAssertion(Deserializer& d) {
 	while (!d.atEnd()) {
-		const auto field = d.readE<NetField>();
+		const auto field = d.readEnum<NetField>();
 		switch (field) {
 		default:
 			std::cout << Log::err << "Player received unhandled NetField, Type "

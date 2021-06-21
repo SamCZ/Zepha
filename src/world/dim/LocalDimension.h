@@ -66,13 +66,15 @@ public:
 	
 	Api::Usertype::Entity& getEntityById(long long id);
 	
-	int renderChunks(Renderer& renderer);
+	void renderChunks(Renderer& renderer);
 	
 	void renderEntities(Renderer& renderer);
 	
-	int getMeshChunkCount();
+	uint32_t getMeshChunksDrawn();
+	uint32_t getMeshChunksCommitted();
 	
-	int lastMeshUpdates = 0;
+	int lastMeshesDrawn = 0;
+	int lastMeshesCommitted = 0;
 	std::vector<PlayerEntity> playerEntities;
 	
 protected:

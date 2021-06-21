@@ -66,10 +66,10 @@ void Server::update() {
 		if (!player) continue;
 		
 		Packet p = Serializer()
-			.appendE(NetField::ID).append(player->getId())
-			.appendE(NetField::POS).append(player->getPos())
-			.appendE(NetField::LOOK_YAW).append(player->getYaw())
-			.appendE(NetField::LOOK_PITCH).append(player->getPitch())
+			.appendEnum(NetField::ID).append(player->getId())
+			.appendEnum(NetField::POS).append(player->getPos())
+			.appendEnum(NetField::LOOK_YAW).append(player->getYaw())
+			.appendEnum(NetField::LOOK_PITCH).append(player->getPitch())
 			.packet(Packet::Type::PLAYER_ENT_INFO, false);
 		
 		for (auto& iter : clients.players)
@@ -116,23 +116,19 @@ void Server::playerPacketReceived(PacketView& p, PlayerPtr player) {
 		playersUpdated.emplace(player->getId());
 		break;
 	
-	case Packet::Type::BLOCK_HIT:
-		p.d.read(pos).readE(face);
+	case Packet::Type::BLOCK_HIT: p.d.read(pos).readEnum(face);
 		player->getDim()->blockHit(Target(player->getDim(), pos, face), player);
 		break;
 	
-	case Packet::Type::BLOCK_PLACE:
-		p.d.read(pos).readE(face);
+	case Packet::Type::BLOCK_PLACE: p.d.read(pos).readEnum(face);
 		player->getDim()->blockPlace(Target(player->getDim(), pos, face), player);
 		break;
 	
-	case Packet::Type::BLOCK_INTERACT:
-		p.d.read(pos).readE(face);
+	case Packet::Type::BLOCK_INTERACT: p.d.read(pos).readEnum(face);
 		player->getDim()->blockInteract(Target(player->getDim(), pos, face), player);
 		break;
 	
-	case Packet::Type::BLOCK_PLACE_OR_INTERACT:
-		p.d.read(pos).readE(face);
+	case Packet::Type::BLOCK_PLACE_OR_INTERACT: p.d.read(pos).readEnum(face);
 		player->getDim()->blockPlaceOrInteract(Target(player->getDim(), pos, face), player);
 		break;
 	

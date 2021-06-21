@@ -8,7 +8,7 @@
 
 #include "world/World.h"
 #include "game/Subgame.h"
-#include "util/Schematic.h"
+#include "util/Structure.h"
 #include "game/def/BiomeDef.h"
 #include "game/def/BlockDef.h"
 #include "world/dim/Dimension.h"
@@ -210,8 +210,8 @@ void MapGen::generateChunkBlocks(Job& job, glm::ivec3 localPos,
 		
 		if (partial && i >= partialNextAt) {
 			partialInd++;
-			partialBlock = partial->blocks[partialInd * 2 + 1];
-			partialNextAt = (partialInd * 2 + 2 >= partial->blocks.size()) ? 4096 : partial->blocks[partialInd * 2 + 2];
+			partialBlock = partial->d->blocks[partialInd * 2 + 1];
+			partialNextAt = (partialInd * 2 + 2 >= partial->d->blocks.size()) ? 4096 : partial->d->blocks[partialInd * 2 + 2];
 		}
 		
 		float depth = depthMap[i];
@@ -223,14 +223,15 @@ void MapGen::generateChunkBlocks(Job& job, glm::ivec3 localPos,
 				: biome.rockBlock;
 		
 		if (biomeID != cBiomeID) {
-			chunk.biomes.emplace_back(i);
-			chunk.biomes.emplace_back(biomeID);
+			//TODO: Fix MapGen
+//			chunk.d->biomes.emplace_back(i);
+//			chunk.d->biomes.emplace_back(biomeID);
 			cBiomeID = biomeID;
 		}
 		
 		if (blockID != cBlockID) {
-			chunk.blocks.emplace_back(i);
-			chunk.blocks.emplace_back(blockID);
+//			chunk.d->blocks.emplace_back(i);
+//			chunk.d->blocks.emplace_back(blockID);
 			cBlockID = blockID;
 		}
 	}
@@ -277,7 +278,7 @@ void MapGen::generateChunkDecorAndLight(Job& job, glm::ivec3 localPos, std::vect
 				auto& schematic = biome.schematics[schemID];
 				for (unsigned int j = 0; j < schematic->length(); j++) {
 					glm::ivec3 off = schematic->getOffset(j);
-					setBlock(job, pos + off - schematic->origin, schematic->blocks[j], chunk);
+					setBlock(job, pos + off - schematic->origin, schematic->layout[j], chunk);
 				}
 				break;
 			}
@@ -296,7 +297,7 @@ void MapGen::generateChunkDecorAndLight(Job& job, glm::ivec3 localPos, std::vect
 		}
 	}
 	
-	chunk->state = Chunk::State::GENERATED;
+	chunk->generationState = Chunk::GenerationState::GENERATED;
 }
 
 void MapGen::setBlock(MapGen::Job& job, glm::ivec3 worldPos, unsigned int block, std::shared_ptr<Chunk> hint) {

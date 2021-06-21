@@ -32,7 +32,7 @@ void FileManipulator::commitChunk(Chunk& chunk) {
 	std::string filePath = path + "/" + fileName;
 	createRegionFileIfNotExists(reg);
 	
-	std::string chunkData = chunk.serialize();
+	std::string chunkData = chunk.compress();
 	unsigned int dataBlockSize = floor(chunkData.length() / BLOCK_SIZE);
 	
 	std::fstream file(filePath, std::ios::in | std::ios::out | std::ios::binary);

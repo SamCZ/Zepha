@@ -137,7 +137,7 @@ void LocalPlayer::assertField(Packet packet) {
 
 void LocalPlayer::handleAssertion(Deserializer& d) {
 	while (!d.atEnd()) {
-		const auto field = d.readE<NetField>();
+		const auto field = d.readEnum<NetField>();
 		switch (field) {
 		default:
 			std::cout << Log::err << "Player received unhandled NetField, Type "
@@ -190,10 +190,10 @@ void LocalPlayer::handleAssertion(Deserializer& d) {
 bool LocalPlayer::getKey(Input& input, LocalPlayer::PlayerControl control) {
 	if (gameGui.isInMenu()) return false;
 	return input.keyDown(
-		control == PlayerControl::FORWARD ? GLFW_KEY_W :
-		control == PlayerControl::BACKWARD ? GLFW_KEY_S :
+		control == PlayerControl::FORWARD ? GLFW_KEY_COMMA :
+		control == PlayerControl::BACKWARD ? GLFW_KEY_O :
 		control == PlayerControl::LEFT ? GLFW_KEY_A :
-		control == PlayerControl::RIGHT ? GLFW_KEY_D :
+		control == PlayerControl::RIGHT ? GLFW_KEY_E :
 		control == PlayerControl::JUMP ? GLFW_KEY_SPACE :
 		control == PlayerControl::MOD1 ? GLFW_KEY_LEFT_SHIFT :
 		GLFW_KEY_LEFT_CONTROL);

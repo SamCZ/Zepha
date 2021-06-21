@@ -1,5 +1,6 @@
 runfile(_PATH .. "bush_stem")
 runfile(_PATH .. "cobblestone")
+runfile(_PATH .. "podzol")
 runfile(_PATH .. "dirt")
 runfile(_PATH .. "grass")
 runfile(_PATH .. "leaves")

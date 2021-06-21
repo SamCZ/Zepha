@@ -219,7 +219,7 @@ void LocalDimension::serverEntitiesInfo(Deserializer& e) {
 		}
 		
 		while (!d.atEnd()) {
-			const auto field = d.readE<NetField>();
+			const auto field = d.readEnum<NetField>();
 			switch (field) {
 			default:
 				std::cout << Log::err << "Entity received unhandled NetField, Type "
@@ -311,16 +311,15 @@ Api::Usertype::Entity& LocalDimension::getEntityById(long long id) {
 	return *entityRefs.at(id);
 }
 
-int LocalDimension::renderChunks(Renderer& renderer) {
-	int count = 0;
+void LocalDimension::renderChunks(Renderer& renderer) {
+	lastMeshesDrawn = 0;
 	for (auto& renderElement : renderElems) {
 		FrustumAABB bbox(renderElement->getPos() * glm::vec3(16), glm::vec3(16));
 		if (renderer.camera.inFrustum(bbox) != Frustum::OUTSIDE) {
 			renderElement->draw(renderer);
-			count++;
+			lastMeshesDrawn++;
 		}
 	}
-	return count;
 }
 
 void LocalDimension::renderEntities(Renderer& renderer) {
@@ -328,8 +327,12 @@ void LocalDimension::renderEntities(Renderer& renderer) {
 	for (auto& entity : playerEntities) entity.draw(renderer);
 }
 
-int LocalDimension::getMeshChunkCount() {
-	return static_cast<int>(renderElems.size());
+uint32_t LocalDimension::getMeshChunksDrawn() {
+	return lastMeshesDrawn;
+}
+
+uint32_t LocalDimension::getMeshChunksCommitted() {
+	return lastMeshesCommitted;
 }
 
 std::unordered_set<glm::ivec3, Vec::ivec3> LocalDimension::propogateAddNodes() {
@@ -345,7 +348,7 @@ std::unordered_set<glm::ivec3, Vec::ivec3> LocalDimension::propogateRemoveNodes(
 }
 
 void LocalDimension::finishMeshes() {
-	lastMeshUpdates = 0;
+	lastMeshesCommitted = 0;
 	auto finishedMeshes = meshGenStream->update();
 	
 	for (ChunkMeshDetails* meshDetails : finishedMeshes) {
@@ -355,7 +358,7 @@ void LocalDimension::finishMeshes() {
 			meshChunk->setPos(meshDetails->pos);
 			
 			setMeshChunk(meshChunk);
-			lastMeshUpdates++;
+			lastMeshesCommitted++;
 		}
 		else removeMeshChunk(meshDetails->pos);
 		

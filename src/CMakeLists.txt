@@ -235,8 +235,8 @@ add_library(Zepha_Core
         util/Ray.cpp
         util/Ray.h
         util/RIE.h
-        util/Schematic.cpp
-        util/Schematic.h
+        util/Structure.cpp
+        util/Structure.h
         util/Space.h
         util/Target.cpp
         util/Target.h
@@ -322,6 +322,8 @@ add_library(Zepha_Core
         lua/modules/Structure.cpp
         lua/modules/Structure.h
         lua/modules/Message.cpp
-        lua/modules/Message.h)
+        lua/modules/Message.h
+        lua/NoiseFromLua.cpp
+        lua/NoiseFromLua.h)
 
 target_include_directories(Zepha_Core PUBLIC .)

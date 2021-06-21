@@ -1,10 +1,6 @@
-local api = {}
-_G['health'] = api
+_G['health'] = {}
+health.internal = {}
 
 runfile(_PATH .. 'api')
-runfile(_PATH .. 'core')
-
-if zepha.client then
-    runfile(_PATH .. 'interface')
-    api.default_render(true)
-end
+runfile(_PATH .. 'interface')
+runfile(_PATH .. 'hooks')

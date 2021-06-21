@@ -59,13 +59,13 @@ void ServerClients::createPlayer(std::shared_ptr<ServerClient> client, Dimension
 	players.push_back(player);
 	game.s()->getParser().playerConnected(player);
 	
-	player->setPos({ 0, -32, 0 }, true);
+	player->setPos({ 32, -20, 32 }, true);
 	
 	Serializer()
-		.appendE(NetField::ID).append(player->getId())
-		.appendE(NetField::POS).append(player->getPos())
-		.appendE(NetField::LOOK_PITCH).append(player->getPitch())
-		.appendE(NetField::LOOK_YAW).append(player->getYaw())
+		.appendEnum(NetField::ID).append(player->getId())
+		.appendEnum(NetField::POS).append(player->getPos())
+		.appendEnum(NetField::LOOK_PITCH).append(player->getPitch())
+		.appendEnum(NetField::LOOK_YAW).append(player->getYaw())
 		.packet(Packet::Type::THIS_PLAYER_INFO).sendTo(player->getPeer(), Packet::Channel::INTERACT);
 }
 

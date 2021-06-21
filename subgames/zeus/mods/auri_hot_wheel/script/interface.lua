@@ -3,8 +3,8 @@ local hud = zepha.player:get_hud()
 
 local health_elem = nil
 if health then
-    health.default_render(false)
-    health_elem = health.get_component()
+    health.render_default(false)
+    health_elem = health.get_element()
 end
 
 hud:append(function()

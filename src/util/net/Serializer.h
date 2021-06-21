@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <array>
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -14,14 +15,29 @@
 #include "Packet.h"
 
 class Serializer {
-	public:
+public:
 	std::string data{};
 	
 	template<typename T>
 	inline Serializer& append(const T& elem) { throw std::runtime_error("Tried to append a non-serializable type"); };
 	
+	template<typename T, size_t L>
+	inline Serializer& appendArr(const std::array<T, L>& elem) {
+		data.reserve(data.length() + elem.size() * sizeof(T));
+		data += std::string { reinterpret_cast<const char*>(&elem[0]), elem.size() * sizeof(T) };
+		return *this;
+	}
+	
+	template<typename T>
+	inline Serializer& appendVec(const std::vector<T>& elem) {
+		data.reserve(data.length() + elem.size() * sizeof(T) + 4);
+		append<unsigned int>(elem.size());
+		data += std::string { reinterpret_cast<const char*>(&elem[0]), elem.size() * sizeof(T) };
+		return *this;
+	}
+	
 	template<typename E, typename = typename std::enable_if<std::is_enum<E>::value>::type>
-	inline Serializer& appendE(const E& elem) {
+	inline Serializer& appendEnum(const E& elem) {
 		append<unsigned short>(static_cast<unsigned short>(elem));
 		return *this;
 	}
@@ -32,27 +48,32 @@ class Serializer {
 		return std::move(packet);
 	};
 	
-	private:
+private:
 	typedef union {
 		long long ln;
 		char bytes[8];
 	} long_long_union;
+	
 	typedef union {
 		int in;
 		char bytes[4];
 	} int_union;
+	
 	typedef union {
 		unsigned int in;
 		char bytes[4];
 	} uint_union;
+	
 	typedef union {
 		short sh;
 		char bytes[2];
 	} short_union;
+	
 	typedef union {
 		unsigned short sh;
 		char bytes[2];
 	} ushort_union;
+	
 	typedef union {
 		float fl;
 		char bytes[4];
@@ -171,70 +192,5 @@ inline Serializer& Serializer::append<glm::ivec3>(const glm::ivec3& elem) {
 	append<int>(elem.x);
 	append<int>(elem.y);
 	append<int>(elem.z);
-	return *this;
-}
-
-template<>
-inline Serializer& Serializer::append<std::vector<int>>(const std::vector<int>& elem) {
-	data.reserve(data.length() + elem.size() * 4 + 4);
-	append<unsigned int>(elem.size());
-	data += std::string{ reinterpret_cast<const char*>(&elem[0]), elem.size() * 4 };
-	return *this;
-}
-
-template<>
-inline Serializer& Serializer::append<std::vector<unsigned int>>(const std::vector<unsigned int>& elem) {
-	data.reserve(data.length() + elem.size() * 4 + 4);
-	append<unsigned int>(elem.size());
-	data += std::string{ reinterpret_cast<const char*>(&elem[0]), elem.size() * 4 };
-	return *this;
-}
-
-template<>
-inline Serializer& Serializer::append<std::vector<short>>(const std::vector<short>& elem) {
-	data.reserve(data.length() + elem.size() * 2 + 4);
-	append<unsigned int>(elem.size());
-	data += std::string{ reinterpret_cast<const char*>(&elem[0]), elem.size() * 2 };
-	return *this;
-}
-
-template<>
-inline Serializer& Serializer::append<std::vector<unsigned short>>(const std::vector<unsigned short>& elem) {
-	data.reserve(data.length() + elem.size() * 2 + 4);
-	append<unsigned int>(elem.size());
-	data += std::string{ reinterpret_cast<const char*>(&elem[0]), elem.size() * 2 };
-	return *this;
-}
-
-template<>
-inline Serializer& Serializer::append<std::vector<char>>(const std::vector<char>& elem) {
-	data.reserve(data.length() + elem.size() + 4);
-	append<unsigned int>(elem.size());
-	data += std::string{ reinterpret_cast<const char*>(&elem[0]), elem.size() };
-	return *this;
-}
-
-template<>
-inline Serializer& Serializer::append<std::vector<unsigned char>>(const std::vector<unsigned char>& elem) {
-	data.reserve(data.length() + elem.size() + 4);
-	append<unsigned int>(elem.size());
-	data += std::string{ reinterpret_cast<const char*>(&elem[0]), elem.size() };
-	return *this;
-}
-
-template<>
-inline Serializer& Serializer::append<std::vector<float>>(const std::vector<float>& elem) {
-	data.reserve(data.length() + elem.size() * 4 + 4);
-	append<unsigned int>(elem.size());
-	data += std::string{ reinterpret_cast<const char*>(&elem[0]), elem.size() * 4 };
-	return *this;
-}
-
-template<>
-inline Serializer& Serializer::append<std::vector<std::string>>(const std::vector<std::string>& elem) {
-	append<unsigned int>(elem.size());
-	for (unsigned int i = 0; i < elem.size(); i++) {
-		append<std::string>(elem[i]);
-	}
 	return *this;
 }

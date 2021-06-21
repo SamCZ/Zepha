@@ -52,10 +52,10 @@ void ClientNetworkInterpreter::update() {
 	auto player = world.getPlayer();
 	if (player)
 		Serializer()
-			.appendE(NetField::POS).append(player->getPos())
-			.appendE(NetField::VEL).append(player->getVel())
-			.appendE(NetField::LOOK_PITCH).append(player->getPitch())
-			.appendE(NetField::LOOK_YAW).append(player->getYaw())
+			.appendEnum(NetField::POS).append(player->getPos())
+			.appendEnum(NetField::VEL).append(player->getVel())
+			.appendEnum(NetField::LOOK_PITCH).append(player->getPitch())
+			.appendEnum(NetField::LOOK_YAW).append(player->getYaw())
 			.packet(Packet::Type::THIS_PLAYER_INFO, false).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 

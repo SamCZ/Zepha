@@ -9,28 +9,21 @@
 #include <memory>
 
 class Chunk;
-
 class MeshPart;
-
 class BlockDef;
-
 class NoiseSample;
-
 class LocalBiomeAtlas;
-
 class ChunkMeshDetails;
-
 class LocalDefinitionAtlas;
 
 class ChunkMeshGenerator {
-	public:
+public:
 	ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefinitionAtlas& defs, LocalBiomeAtlas& biomes,
-		std::shared_ptr<Chunk> chunk, std::array<std::shared_ptr<Chunk>, 6> adjacent,
+		std::unique_ptr<Chunk> chunk, std::array<std::unique_ptr<Chunk>, 6> adjacent,
 		std::array<NoiseSample, 3>& blockOffsets);
 	
-	private:
-	inline BlockDef& getBlockAt(const glm::ivec3& pos);
-	
+private:
+	inline unsigned int getBlockAt(const glm::ivec3& pos);
 	inline glm::vec4 getLightAt(const glm::ivec3& pos);
 	
 	void
@@ -42,9 +35,6 @@ class ChunkMeshGenerator {
 	unsigned int indOffset = 0;
 	ChunkMeshDetails* meshDetails;
 	
-	std::shared_ptr<Chunk> chunk;
-	std::array<std::shared_ptr<Chunk>, 6> adjacent;
-	
-	std::array<unsigned int, 4096> eBlocks;
-	std::array<unsigned short, 4096> eBiomes;
+	std::unique_ptr<Chunk> chunk;
+	std::array<std::unique_ptr<Chunk>, 6> adjacent;
 };
