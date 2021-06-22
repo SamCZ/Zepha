@@ -26,20 +26,19 @@ ServerWorld::ServerWorld(unsigned int seed, SubgamePtr game, ServerClients& clie
 	seed(seed),
 	clients(clients),
 	refs(std::make_shared<ServerInventoryRefs>(game, clients)) {
-	
 	clients.init(this);
 	
 	generateOrder.reserve(mapBlockGenRange.x * 2 + 1 * mapBlockGenRange.x * 2 + 1 * mapBlockGenRange.y * 2 + 1);
-	std::unordered_set<glm::ivec3, Vec::ivec3> found{};
-	std::queue<glm::ivec3> queue{};
+	std::unordered_set<glm::ivec3, Vec::ivec3> found {};
+	std::queue<glm::ivec3> queue {};
 	
 	queue.emplace(0, 0, 0);
 	found.emplace(0, 0, 0);
 	
 	const std::vector<glm::ivec3> dirs{
-		glm::ivec3{ 1, 0, 0 }, glm::ivec3{ -1, 0, 0 },
-		glm::ivec3{ 0, 1, 0 }, glm::ivec3{ 0, -1, 0 },
-		glm::ivec3{ 0, 0, 1 }, glm::ivec3{ 0, 0, -1 }};
+		ivec3 { 1, 0, 0 }, ivec3{ -1, 0, 0 },
+		ivec3 { 0, 1, 0 }, ivec3{ 0, -1, 0 },
+		ivec3 { 0, 0, 1 }, ivec3{ 0, 0, -1 }};
 	
 	while (!queue.empty()) {
 		glm::ivec3 pos = queue.front();
@@ -72,13 +71,13 @@ void ServerWorld::update(double delta) {
 	World::update(delta);
 	refs->update();
 	
-	unsigned int genCount = 0;
-	std::unordered_set<glm::ivec4, Vec::ivec4> updatedChunks{};
+	u32 genCount = 0;
+	std::unordered_set<ivec4, Vec::ivec4> updatedChunks{};
 	
 	auto finishedGen = genStream->update();
 	for (auto& data : *finishedGen) {
 		for (const auto& pos : *data.created)
-			updatedChunks.insert(glm::ivec4(pos, data.dim));
+			updatedChunks.insert(ivec4(pos, data.dim));
 		
 		// Mapblock might have been pruned in between generation assignment and now.
 		auto mb = getDimension(data.dim)->getMapBlock(glm::ivec3(data.pos));
@@ -133,7 +132,7 @@ void ServerWorld::update(double delta) {
 	
 	for (auto& d : dimensions) {
 		auto dimension = std::static_pointer_cast<ServerDimension>(d);
-		unsigned int ind = dimension->getInd();
+		u16 ind = dimension->getInd();
 		
 		// Update clients with new entity information.
 		
@@ -146,7 +145,7 @@ void ServerWorld::update(double delta) {
 		}
 		
 		// Contains more than just the dimension identifier.
-		if (inf.data.size() > 4) {
+		if (inf.data.size() > sizeof(u16)) {
 			auto p = inf.packet(Packet::Type::ENTITY_INFO);
 			for (auto& player : clients.players)
 				if (player->getDim()->getInd() == ind)
@@ -158,11 +157,11 @@ void ServerWorld::update(double delta) {
 		Serializer rem;
 		rem.append(ind);
 		
-		for (unsigned int entity : dimension->getRemovedEntities()) {
-			rem.append<unsigned int>(entity);
+		for (i64 entity : dimension->getRemovedEntities()) {
+			rem.append<i64>(entity);
 		}
 		
-		if (rem.data.size() > 4) {
+		if (rem.data.size() > sizeof(u16)) {
 			Packet p = rem.packet(Packet::Type::ENTITY_REMOVED);
 			for (auto& player : clients.players)
 				if (player->getDim()->getInd() == ind)
@@ -239,7 +238,7 @@ void ServerWorld::sendChunksToPlayer(ServerPlayer& client) {
 	}
 }
 
-void ServerWorld::sendMessage(const std::string& channel, const std::string& message) {
+void ServerWorld::sendMessage(const string& channel, const string& message) {
 	auto p = Serializer().append(channel).append(message).packet(Packet::Type::MOD_MESSAGE);
 	for (auto& player : clients.players)
 		p.sendTo(player->getPeer(), Packet::Channel::ENTITY);

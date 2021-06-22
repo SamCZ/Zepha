@@ -77,15 +77,15 @@ void LocalWorld::handleWorldPacket(std::unique_ptr<PacketView> p) {
 void LocalWorld::handlePlayerEntPacket(std::unique_ptr<PacketView> p) {
 	if (!player) throw std::runtime_error("Received playerEnt info *before* the player was created.");
 	
-	unsigned int id = p->d.read<unsigned int>();
+	u32 id = p->d.read<u32>();
 	if (player->getId() == id) return;
 	
 	bool found = false;
 	for (auto& entity : getActiveDimension().l()->playerEntities) {
 		if (entity.getId() == id) {
-			entity.interpPos(p->d.read<glm::vec3>());
-			entity.interpRotateZ(-p->d.read<float>() + 90);
-			entity.interpRotateY(-p->d.read<float>() + 90);
+			entity.interpPos(p->d.read<vec3>());
+			entity.interpRotateZ(-p->d.read<f32>() + 90);
+			entity.interpRotateY(-p->d.read<f32>() + 90);
 			
 			found = true;
 			break;

@@ -21,45 +21,44 @@ class MapBlock;
 class DefinitionAtlas;
 
 class DimensionBase : protected Lockable {
-	public:
-	DimensionBase(SubgamePtr game, World& world, const std::string& identifier, unsigned int ind,
-		std::shared_ptr<MapGen> mapGen);
+public:
+	DimensionBase(SubgamePtr game, World& world, const string& identifier, u16 ind, sptr<MapGen> mapGen);
 	
-	std::string getIdentifier() const;
+	string getIdentifier() const;
 	
-	unsigned int getInd();
+	u16 getInd();
 	
-	virtual void update(double delta) = 0;
+	virtual void update(f64 delta) = 0;
 	
-	std::shared_ptr<Region> getRegion(glm::ivec3 regionPosition) const;
+	sptr<Region> getRegion(ivec3 regionPosition) const;
 	
-	void removeRegion(glm::ivec3 pos);
+	void removeRegion(ivec3 pos);
 	
-	std::shared_ptr<MapBlock> getMapBlock(glm::ivec3 mapBlockPosition) const;
+	sptr<MapBlock> getMapBlock(ivec3 mapBlockPosition) const;
 	
-	virtual void removeMapBlock(glm::ivec3 pos);
+	virtual void removeMapBlock(ivec3 pos);
 	
-	bool mapBlockGenerated(glm::ivec3 mapBlockPosition);
+	bool mapBlockGenerated(ivec3 mapBlockPosition);
 	
-	std::shared_ptr<Chunk> getChunk(glm::ivec3 chunkPosition) const;
+	sptr<Chunk> getChunk(ivec3 chunkPosition) const;
 	
-	virtual void setChunk(std::shared_ptr<Chunk> chunk);
+	virtual void setChunk(sptr<Chunk> chunk);
 	
-	virtual void removeChunk(glm::ivec3 pos);
+	virtual void removeChunk(ivec3 pos);
 	
-	unsigned int getBlock(glm::ivec3 pos) const;
+	u16 getBlock(ivec3 pos) const;
 	
-	virtual bool setBlock(glm::ivec3 pos, unsigned int block);
+	virtual bool setBlock(ivec3 pos, u16 block);
 	
-	virtual double getBlockDamage(glm::ivec3 pos) const;
+	virtual f64 getBlockDamage(ivec3 pos) const;
 	
-	virtual double setBlockDamage(glm::ivec3 pos, double damage);
+	virtual f64 setBlockDamage(ivec3 pos, f64 damage);
 	
-	unsigned int getBiome(glm::ivec3 pos) const;
+	u16 getBiome(ivec3 pos) const;
 	
-	virtual bool setBiome(glm::ivec3 pos, unsigned int biome);
+	virtual bool setBiome(ivec3 pos, u16 biome);
 	
-	std::shared_ptr<MapGen> getGen();
+	sptr<MapGen> getGen();
 	
 	SubgamePtr getGame();
 	
@@ -68,26 +67,26 @@ class DimensionBase : protected Lockable {
 	protected:
 	// Combine two chunk partials, or a chunk and a chunk partial.
 	// If both are partials `b` takes preference, if one is a fully generated chunk the partial takes preference.
-	// TODO: Make this more efficient using proper RIE traversal.
-	static std::shared_ptr<Chunk> combineChunks(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b);
+	static sptr<Chunk> combineChunks(sptr<Chunk> a, sptr<Chunk> b);
 	
-	std::shared_ptr<MapGen> mapGen;
+	sptr<MapGen> mapGen;
 	SubgamePtr game;
 	World& world;
 	
-	typedef std::unordered_map<glm::ivec3, std::shared_ptr<Region>, Vec::ivec3> block_region_map;
+	typedef std::unordered_map<ivec3, sptr<Region>, Vec::ivec3> block_region_map;
 	block_region_map regions;
 	
-	std::string identifier;
-	unsigned int ind;
+	u16 ind;
+	string identifier;
 	
 	struct Damage {
-		double curr, max;
+		f64 curr;
+		f64 max;
 	};
-	std::unordered_map<glm::ivec3, Damage, Vec::ivec3> blockDamages;
+	std::unordered_map<ivec3, Damage, Vec::ivec3> blockDamages;
 	
 	private:
-	inline std::shared_ptr<Region> getOrCreateRegion(glm::ivec3 pos);
+	inline sptr<Region> getOrCreateRegion(ivec3 pos);
 	
-	inline std::shared_ptr<MapBlock> getOrCreateMapBlock(glm::ivec3 mapBlockPosition);
+	inline sptr<MapBlock> getOrCreateMapBlock(ivec3 mapBlockPosition);
 };

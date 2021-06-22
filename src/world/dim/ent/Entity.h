@@ -241,17 +241,17 @@ protected:
 	DimensionPtr dim = nullptr;
 	
 	/** The entity's unique id, positive if it is a server-side entity, negative if it is client-side. */
-	long long id = 0;
+	i64 id = 0;
 	
-	glm::vec3 pos {};
-	glm::vec3 vel {};
-	glm::vec3 rot {};
-	glm::vec3 visualOff {};
-	glm::vec3 scale { 1, 1, 1 };
+	vec3 pos {};
+	vec3 vel {};
+	vec3 rot {};
+	vec3 visualOff {};
+	vec3 scale { 1, 1, 1 };
 	
 	std::optional<SelectionBox> selectionBox {};
 	std::optional<SelectionBox> collisionBox {};
 	
-	float gravity = 0;
+	f32 gravity = 0;
 	bool collides = false;
 };

@@ -27,7 +27,7 @@ class ServerGenStream;
 class ServerPacketStream;
 
 class ServerWorld : public World {
-	public:
+public:
 	explicit ServerWorld(unsigned int seed, SubgamePtr game, ServerClients& clients);
 	
 	void init(const std::string& worldDir);
@@ -47,7 +47,7 @@ class ServerWorld : public World {
 	
 	virtual ServerClients& getClients();
 	
-	private:
+private:
 	void changedMapBlocks(ServerPlayer& player);
 	
 	bool generateMapBlock(unsigned int dim, glm::ivec3 pos);
@@ -59,18 +59,18 @@ class ServerWorld : public World {
 	std::shared_ptr<ServerGenStream> genStream = nullptr;
 	std::shared_ptr<ServerPacketStream> packetStream = nullptr;
 	
-	unsigned int seed;
+	u32 seed;
 	ServerClients& clients;
 	std::shared_ptr<ServerInventoryRefs> refs;
 
 //    std::string worldDir;
 //    std::shared_ptr<FileManipulator> fileManip;
 	
-	unsigned int generatedMapBlocks = 0;
-	std::vector<glm::ivec3> generateOrder;
+	u32 generatedMapBlocks = 0;
+	std::vector<ivec3> generateOrder;
 	
-	const glm::ivec2 mapBlockGenRange = { 4, 4 };
-	const glm::ivec2 sendRange = { 4, 4 };
-	const glm::ivec2 activeChunkRange = { 16, 16 };
+	const ivec2 mapBlockGenRange = { 4, 4 };
+	const ivec2 sendRange = { 4, 4 };
+	const ivec2 activeChunkRange = { 16, 16 };
 };
 

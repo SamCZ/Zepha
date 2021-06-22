@@ -324,6 +324,6 @@ add_library(Zepha_Core
         lua/modules/Message.cpp
         lua/modules/Message.h
         lua/NoiseFromLua.cpp
-        lua/NoiseFromLua.h)
+        lua/NoiseFromLua.h util/Types.h)
 
 target_include_directories(Zepha_Core PUBLIC .)

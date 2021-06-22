@@ -95,12 +95,12 @@ void ServerDimension::wieldItemUse(const Target& target, PlayerPtr player) {
 }
 
 void ServerDimension::setChunk(std::shared_ptr<Chunk> chunk) {
-	std::shared_ptr<Chunk> existing = getChunk(chunk->getPos());
-	if (existing) chunk = combineChunks(chunk, existing);
+//	std::shared_ptr<Chunk> existing = getChunk(chunk->getPos());
+//	if (existing) chunk = combineChunks(chunk, existing);
 	Dimension::setChunk(chunk);
 }
 
-long long ServerDimension::nextEntityInd() {
+i64 ServerDimension::nextEntityInd() {
 	auto _ = getWriteLock();
 	return entityInd++;
 };
@@ -126,7 +126,7 @@ std::list<Api::Usertype::Entity>& ServerDimension::getLuaEntities() {
 	return luaEntities;
 }
 
-const std::list<unsigned int>& ServerDimension::getRemovedEntities() const {
+const std::list<i64>& ServerDimension::getRemovedEntities() const {
 	return removedEntities;
 }
 

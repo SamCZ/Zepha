@@ -1,33 +1,35 @@
-//
-// Created by aurailus on 10/06/19.
-//
-
 #pragma once
 
 #include <memory>
 
 #include "Subgame.h"
 
+#include "util/Types.h"
 #include "lua/ServerLuaParser.h"
 #include "game/atlas/ServerBiomeAtlas.h"
 #include "game/atlas/asset/AssetStorage.h"
 #include "game/atlas/ServerDefinitionAtlas.h"
 
 class ServerWorld;
-
 class ServerClients;
 
+/**
+ * Stores all subgame data for a server instance, including
+ * block & item definitions, the lua sandbox, assets, and textures.
+ */
+ 
 class ServerSubgame : public Subgame {
-	public:
-	ServerSubgame(const std::string& subgame, unsigned int seed);
+public:
+	
+	ServerSubgame(const string& subgame, usize seed);
 	
 	~ServerSubgame();
 	
 	void init(WorldPtr world);
 	
-	void update(double delta);
+	void update(f64 delta);
 	
-	std::string subgamePath;
+	string subgamePath;
 	
 	ServerDefinitionAtlas& getDefs() override { return *defs; };
 	
@@ -37,10 +39,10 @@ class ServerSubgame : public Subgame {
 	
 	AssetStorage assets;
 	
-	private:
+private:
 	
-	std::unique_ptr<ServerLuaParser> lua;
-	std::unique_ptr<ServerBiomeAtlas> biomes;
-	std::unique_ptr<ServerDefinitionAtlas> defs;
+	uptr<ServerLuaParser> lua;
+	uptr<ServerBiomeAtlas> biomes;
+	uptr<ServerDefinitionAtlas> defs;
 };
 

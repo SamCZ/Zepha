@@ -16,27 +16,47 @@
 class LocalServerInstance;
 
 class Client {
-	public:
+public:
+	
 	Client(const Client& o) = delete;
 	
-	explicit Client(glm::ivec2 window);
+	/**
+	 * Creates a client window and starts the main event loop.
+	 * Initially opens to the main menu.
+	 * @param window - The dimensions for the created window.
+	 */
 	
-	double getDelta();
+	explicit Client(ivec2 window);
 	
-	void startLocalServer(const std::string& subgame);
+	/** Returns the last frame's delta time. */
+	f64 getDelta();
+
+	/**
+	 * Starts a local server and connects to it.
+	 * @throws runtime_error if a local server is already running.
+	 * @param subgame - The subgame for the local server to run.
+	 */
+	 
+	void startLocalServer(const string& subgame);
 	
 	Renderer renderer;
 	SceneManager scene;
 	ServerConnection connection{};
 	
-	std::shared_ptr<LocalSubgame> game = std::make_shared<LocalSubgame>("../assets/textures");
+	sptr<LocalSubgame> game = make_shared<LocalSubgame>("../assets/textures");
 	
-	private:
+private:
+	
+	/**
+	 * The main event loop. Polls GLFW, and updates the scene and the renderer.
+	 * Will be called by the Client constructor until render.window.shouldClose() returns true.
+	 */
+	 
 	void loop();
 	
-	std::shared_ptr<LocalServerInstance> localServer = nullptr;
+	sptr<LocalServerInstance> localServer = nullptr;
 	
-	double delta = 0;
-	double timeElapsed = 0;
+	f64 delta = 0;
+	f64 timeElapsed = 0;
 };
 

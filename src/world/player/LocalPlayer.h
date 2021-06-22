@@ -44,19 +44,19 @@ public:
 	 * @param mouseDelta - The mouse offset from the center of the screen.
 	 */
 	
-	void update(Input& input, double delta, glm::vec2 mouseDelta);
+	void update(Input& input, f64 delta, vec2 mouseDelta);
 	
 	/** The following setters call Player setters, but updates some rendering-related information. */
 	
-	virtual void setPos(glm::vec3 pos, bool assert = false) override;
+	virtual void setPos(vec3 pos, bool assert = false) override;
 	
-	virtual void setLookOffset(glm::vec3 eyeOffset, bool assert = false) override;
+	virtual void setLookOffset(vec3 eyeOffset, bool assert = false) override;
 	
-	virtual void setHandList(const std::string& list, bool assert = false) override;
+	virtual void setHandList(const string& list, bool assert = false) override;
 	
-	virtual void setWieldList(const std::string& list, bool assert = false) override;
+	virtual void setWieldList(const string& list, bool assert = false) override;
 	
-	virtual void setWieldIndex(unsigned short index, bool assert = false) override;
+	virtual void setWieldIndex(u16 index, bool assert = false) override;
 	
 	virtual void setDim(DimensionPtr dim) override;
 	
@@ -86,7 +86,7 @@ public:
 	 * @param root - The root GUI element to display.
 	 */
 	
-	void showMenu(std::shared_ptr<LuaGuiElement> root);
+	void showMenu(sptr<LuaGuiElement> root);
 	
 	/**
 	 * Closes the currently open menu.
@@ -99,7 +99,7 @@ public:
 	 * @returns the root GUI element of the hud.
 	 */
 	
-	std::shared_ptr<LuaGuiElement> getHud();
+	sptr<LuaGuiElement> getHud();
 	
 	/**
 	 * Sets the HUD to the specified GUI tree. The hud does not constitute
@@ -108,7 +108,7 @@ public:
 	 * @param hud - The root GUI element to display.
 	 */
 	
-	void setHud(std::shared_ptr<LuaGuiElement> hud);
+	void setHud(sptr<LuaGuiElement> hud);
 	
 	/**
 	 * Sets the visibility state of the HUD.
@@ -180,7 +180,7 @@ private:
 	 * @param mouseDelta - The offset of the mouse from the center of the screen.
 	 */
 	
-	void updatePhysics(Input& input, double delta, glm::vec2 mouseDelta);
+	void updatePhysics(Input& input, f64 delta, vec2 mouseDelta);
 	
 	/**
 	 * Moves the camera to the player's position, and updates the wield model.
@@ -216,22 +216,26 @@ private:
 	 * @param delta - The delta time elapsed in the last frame.
 	 */
 	
-	void updateInteract(Input& input, double delta);
+	void updateInteract(Input& input, f64 delta);
 	
 	GameGui gameGui;
 	Renderer& renderer;
 	
 	/** The player's current target. */
 	Target target;
+	
 	/** The time remaining until the next hit. */
-	double breakTime = 0;
+	f64 breakTime = 0;
+	
 	/** The interval at which the currently wielded tool can hit. */
-	double breakInterval = 0;
+	f64 breakInterval = 0;
 	
 	/** The targeted wireframe entity. */
 	WireframeEntity wireframe;
+	
 	/** A wrapper for the wield-item, translated to the bottom right of the player's viewport. */
 	DrawableEntity handModel;
+	
 	/** The actual wield-item model, set to the currently held item. */
 	DrawableEntity handItemModel;
 };

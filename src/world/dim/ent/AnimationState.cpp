@@ -4,9 +4,9 @@
 
 #include "AnimationState.h"
 
+#include "AnimationSegment.h"
 #include "client/graph/Model.h"
 #include "client/graph/ModelAnimation.h"
-#include "AnimationSegment.h"
 
 AnimationState::AnimationState(Model& source) {
 	const ModelAnimation& animation = source.getAnimation();
@@ -15,15 +15,15 @@ AnimationState::AnimationState(Model& source) {
 	range = { 0, duration };
 }
 
-void AnimationState::setAnimations(const std::vector<AnimationSegment>& anims) {
+void AnimationState::setAnimations(const vec<AnimationSegment>& anims) {
 	for (auto& anim : anims) defineAnimation(anim.name, anim.range);
 }
 
-void AnimationState::defineAnimation(const std::string& name, glm::ivec2 range) {
+void AnimationState::defineAnimation(const string& name, uvec2 range) {
 	animations.emplace(name, AnimationSegment{ name, range });
 }
 
-void AnimationState::update(double delta) {
+void AnimationState::update(f64 delta) {
 	if (playing) {
 		float frame = currentFrame + (delta * ticksPerSecond);
 		if (loop) frame = fmod(frame - range.x, range.y - range.x) + range.x;
@@ -39,12 +39,12 @@ bool AnimationState::isLooping() {
 	return loop;
 }
 
-void AnimationState::setAnim(const std::string& name, double interp, bool loop) {
+void AnimationState::setAnim(const string& name, f64 interp, bool loop) {
 	auto& anim = animations[name];
 	setAnim(anim.range, interp, loop);
 }
 
-void AnimationState::setAnim(glm::ivec2 range, double interp, bool loop) {
+void AnimationState::setAnim(uvec2 range, f64 interp, bool loop) {
 	this->range = range;
 	this->loop = loop;
 	currentFrame = range.x;
@@ -58,7 +58,7 @@ void AnimationState::setPlaying(bool playing) {
 	this->playing = playing;
 }
 
-void AnimationState::setFrame(double frame) {
+void AnimationState::setFrame(f64 frame) {
 	currentFrame = frame;
 }
 
@@ -66,6 +66,6 @@ double AnimationState::getFrame() {
 	return currentFrame;
 }
 
-glm::ivec2 AnimationState::getBounds() {
+uvec2 AnimationState::getBounds() {
 	return range;
 }

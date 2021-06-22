@@ -8,6 +8,7 @@
 #include <vector>
 #include <iostream>
 #include <type_traits>
+#include "Util.h"
 
 struct RIE {
 	template<typename T, typename = typename std::enable_if<std::is_integral<T>::value>::type>
@@ -152,52 +153,51 @@ struct RIE {
 	template<typename T, int L, typename = typename std::enable_if<std::is_integral<T>::value>::type>
 	static void expand(const std::vector<T>& rie, std::array<T, L>& expand) {
 		
-		unsigned int rieI = 0;
-		unsigned int i = 0;
+		usize index = 0;
+		usize rieIndex = 0;
 		
-		while (rieI * 2 < rie.size()) {
-			T nI = ((rieI * 2) + 2 < rie.size()) ? rie[(rieI * 2) + 2] : L;
-			T value = rie[(rieI * 2) + 1];
-			while (i < nI) expand[i++] = value;
-			rieI++;
+		while (rieIndex * 2 < rie.size()) {
+			usize endIndex = ((rieIndex * 2) + 2 < rie.size()) ? rie[(rieIndex * 2) + 2] : L;
+			T value = rie[(rieIndex * 2) + 1];
+			while (index < endIndex) expand[index++] = value;
+//			std::cout << index - 1 << ", " << expand[index - 1] << std::endl;
+			rieIndex++;
 		}
 	}
 	
 	template<typename T, int L, typename = typename std::enable_if<std::is_integral<T>::value>::type>
 	static void encode(const std::array<T, L>& array, std::vector<T>& out) {
-		T len = 1;
 		T block = array[0];
 		
-		for (unsigned int i = 1; i < array.size(); i++) {
+		out.push_back(0);
+		out.push_back(array[0]);
+		
+		for (T i = 0; i < L; i++) {
 			T newBlock = array[i];
 			if (newBlock != block) {
-				out.push_back(len);
-				out.push_back(block);
+				out.push_back(i);
+				out.push_back(newBlock);
 				block = newBlock;
-				len = 0;
 			}
-			len++;
 		}
-		out.push_back(len);
-		out.push_back(block);
 	}
 	
-	template<typename T, typename = typename std::enable_if<std::is_integral<T>::value>::type>
-	static void encode(const std::vector<T>& array, std::vector<T>& out) {
-		T len = 1;
-		T block = array[0];
-		
-		for (unsigned int i = 1; i < array.size(); i++) {
-			T newBlock = array[i];
-			if (newBlock != block) {
-				out.push_back(len);
-				out.push_back(block);
-				block = newBlock;
-				len = 0;
-			}
-			len++;
-		}
-		out.push_back(len);
-		out.push_back(block);
-	}
+//	template<typename T, typename = typename std::enable_if<std::is_integral<T>::value>::type>
+//	static void encode(const std::vector<T>& array, std::vector<T>& out) {
+//		T len = 1;
+//		T block = array[0];
+//
+//		for (unsigned int i = 1; i < array.size(); i++) {
+//			T newBlock = array[i];
+//			if (newBlock != block) {
+//				out.push_back(len);
+//				out.push_back(block);
+//				block = newBlock;
+//				len = 0;
+//			}
+//			len++;
+//		}
+//		out.push_back(len);
+//		out.push_back(block);
+//	}
 };

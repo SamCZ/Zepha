@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 04/04/19.
-//
-
 #include "LocalDimension.h"
 
 #include "world/LocalWorld.h"
@@ -16,8 +12,8 @@
 #include "client/stream/MeshGenStream.h"
 #include "client/graph/mesh/MeshChunk.h"
 
-LocalDimension::LocalDimension(SubgamePtr game, LocalWorld& world, const std::string& identifier,
-	unsigned int ind, std::shared_ptr<MapGen> mapGen) :
+LocalDimension::LocalDimension(SubgamePtr game, LocalWorld& world,
+	const string& identifier, u16 ind, sptr<MapGen> mapGen) :
 	Dimension(game, static_cast<World&>(world), identifier, ind, std::move(mapGen)),
 	meshGenStream(std::make_shared<MeshGenStream>(game, *this)) {}
 
@@ -81,7 +77,7 @@ void LocalDimension::setChunk(std::shared_ptr<Chunk> chunk) {
 	attemptMeshChunk(chunk);
 }
 
-bool LocalDimension::setBlock(glm::ivec3 pos, unsigned int block) {
+bool LocalDimension::setBlock(ivec3 pos, u16 block) {
 	bool exists = Dimension::setBlock(pos, block);
 	if (!exists) return false;
 	
@@ -94,12 +90,12 @@ bool LocalDimension::setBlock(glm::ivec3 pos, unsigned int block) {
 	auto cp = Space::Chunk::world::fromBlock(pos);
 	
 	std::shared_ptr<Chunk> tempChunk;
-	if (lp.x == 15 && (tempChunk = getChunk(cp + glm::ivec3{ 1, 0, 0 }))) tempChunk->setDirty(true);
-	else if (lp.x == 0 && (tempChunk = getChunk(cp + glm::ivec3{ -1, 0, 0 }))) tempChunk->setDirty(true);
-	if (lp.y == 15 && (tempChunk = getChunk(cp + glm::ivec3{ 0, 1, 0 }))) tempChunk->setDirty(true);
-	else if (lp.y == 0 && (tempChunk = getChunk(cp + glm::ivec3{ 0, -1, 0 }))) tempChunk->setDirty(true);
-	if (lp.z == 15 && (tempChunk = getChunk(cp + glm::ivec3{ 0, 0, 1 }))) tempChunk->setDirty(true);
-	else if (lp.z == 0 && (tempChunk = getChunk(cp + glm::ivec3{ 0, 0, -1 }))) tempChunk->setDirty(true);
+	if (lp.x == 15 && (tempChunk = getChunk(cp + ivec3{ 1, 0, 0 }))) tempChunk->setDirty(true);
+	else if (lp.x == 0 && (tempChunk = getChunk(cp + ivec3{ -1, 0, 0 }))) tempChunk->setDirty(true);
+	if (lp.y == 15 && (tempChunk = getChunk(cp + ivec3{ 0, 1, 0 }))) tempChunk->setDirty(true);
+	else if (lp.y == 0 && (tempChunk = getChunk(cp + ivec3{ 0, -1, 0 }))) tempChunk->setDirty(true);
+	if (lp.z == 15 && (tempChunk = getChunk(cp + ivec3{ 0, 0, 1 }))) tempChunk->setDirty(true);
+	else if (lp.z == 0 && (tempChunk = getChunk(cp + ivec3{ 0, 0, -1 }))) tempChunk->setDirty(true);
 	
 	attemptMeshChunk(chunk, true);
 	return true;
@@ -178,7 +174,7 @@ void LocalDimension::removeMeshChunk(const glm::ivec3& pos) {
 	}
 }
 
-long long LocalDimension::nextEntityInd() {
+i64 LocalDimension::nextEntityInd() {
 	auto _ = getWriteLock();
 	return entityInd--;
 }
@@ -200,13 +196,13 @@ void LocalDimension::removeLocalEntity(Api::Usertype::Entity entity) {
 }
 
 void LocalDimension::serverEntitiesInfo(Deserializer& e) {
-	e.read<unsigned int>();
+	e.read<u16>();
 	
 	while (!e.atEnd()) {
-		std::string dat = e.read<std::string>();
+		string dat = e.read<string>();
 		Deserializer d(dat);
 		
-		auto id = d.read<long long>();
+		auto id = d.read<i64>();
 		std::shared_ptr<LocalLuaEntity> activeEntity;
 		if (entityRefs.count(id)) activeEntity = entityRefs.at(id)->entity.l();
 		else {
@@ -219,7 +215,7 @@ void LocalDimension::serverEntitiesInfo(Deserializer& e) {
 		}
 		
 		while (!d.atEnd()) {
-			const auto field = d.readEnum<NetField>();
+			const auto field = d.read<NetField>();
 			switch (field) {
 			default:
 				std::cout << Log::err << "Entity received unhandled NetField, Type "
@@ -227,27 +223,27 @@ void LocalDimension::serverEntitiesInfo(Deserializer& e) {
 				break;
 			
 			case NetField::POS:
-				activeEntity->setPos(d.read<glm::vec3>());
+				activeEntity->setPos(d.read<vec3>());
 				break;
 				
 			case NetField::VEL:
-				activeEntity->setVel(d.read<glm::vec3>());
+				activeEntity->setVel(d.read<vec3>());
 				break;
 				
 			case NetField::ROT:
-				activeEntity->setRot(d.read<glm::vec3>());
+				activeEntity->setRot(d.read<vec3>());
 				break;
 				
 			case NetField::SCALE:
-				activeEntity->setScale(d.read<glm::vec3>());
+				activeEntity->setScale(d.read<vec3>());
 				break;
 				
 			case NetField::VISUAL_OFF:
-				activeEntity->setVisualOffset(d.read<glm::vec3>());
+				activeEntity->setVisualOffset(d.read<vec3>());
 				break;
 				
 			case NetField::DISPLAY: {
-				std::string mode, argA, argB;
+				string mode, argA, argB;
 				d.read(mode).read(argA).read(argB);
 				activeEntity->setAppearance(mode, argA, argB);
 				break;
@@ -259,13 +255,13 @@ void LocalDimension::serverEntitiesInfo(Deserializer& e) {
 			}
 			case NetField::ANIM_RANGE: {
 				bool loops;
-				unsigned int x, y;
-				d.read(x).read(y).read(loops);
-				activeEntity->animation.setAnim(glm::ivec2 { x, y }, 10, loops);
+				uvec2 range;
+				d.read(range).read(loops);
+				activeEntity->animation.setAnim(range, 10, loops);
 				break;
 			}
 			case NetField::DIM:
-				activeEntity->setDim(world.getDimension(d.read<unsigned int>()));
+				activeEntity->setDim(world.getDimension(d.read<u16>()));
 				break;
 				
 			case NetField::COLLISION_BOX: {
@@ -291,9 +287,9 @@ void LocalDimension::serverEntitiesInfo(Deserializer& e) {
 }
 
 void LocalDimension::serverEntitiesRemoved(Deserializer& d) {
-	d.read<unsigned int>();
+	d.read<u16>();
 	while (!d.atEnd()) {
-		unsigned int id = d.read<unsigned int>();
+		i64 id = d.read<i64>();
 		if (!entityRefs.count(id)) continue;
 		auto refIter = entityRefs.at(id);
 		entities.erase(refIter);
@@ -301,20 +297,20 @@ void LocalDimension::serverEntitiesRemoved(Deserializer& d) {
 	}
 }
 
-std::vector<Api::Usertype::Entity> LocalDimension::getEntitiesInRadius(glm::vec3 pos, float radius) {
-	std::vector<Api::Usertype::Entity> found {};
+vec<Api::Usertype::Entity> LocalDimension::getEntitiesInRadius(vec3 pos, f32 radius) {
+	vec<Api::Usertype::Entity> found {};
 	for (auto& entity : entities) if (glm::distance(pos, entity.entity->getPos()) <= radius) found.push_back(entity);
 	return found;
 }
 
-Api::Usertype::Entity& LocalDimension::getEntityById(long long id) {
+Api::Usertype::Entity& LocalDimension::getEntityById(i64 id) {
 	return *entityRefs.at(id);
 }
 
 void LocalDimension::renderChunks(Renderer& renderer) {
 	lastMeshesDrawn = 0;
 	for (auto& renderElement : renderElems) {
-		FrustumAABB bbox(renderElement->getPos() * glm::vec3(16), glm::vec3(16));
+		FrustumAABB bbox(renderElement->getPos() * vec3(16), vec3(16));
 		if (renderer.camera.inFrustum(bbox) != Frustum::OUTSIDE) {
 			renderElement->draw(renderer);
 			lastMeshesDrawn++;
@@ -327,21 +323,21 @@ void LocalDimension::renderEntities(Renderer& renderer) {
 	for (auto& entity : playerEntities) entity.draw(renderer);
 }
 
-uint32_t LocalDimension::getMeshChunksDrawn() {
+u32 LocalDimension::getMeshChunksDrawn() {
 	return lastMeshesDrawn;
 }
 
-uint32_t LocalDimension::getMeshChunksCommitted() {
+u32 LocalDimension::getMeshChunksCommitted() {
 	return lastMeshesCommitted;
 }
 
-std::unordered_set<glm::ivec3, Vec::ivec3> LocalDimension::propogateAddNodes() {
+std::unordered_set<ivec3, Vec::ivec3> LocalDimension::propogateAddNodes() {
 	auto updated = Dimension::propogateAddNodes();
 	for (auto& update : updated) attemptMeshChunk(getChunk(update));
 	return {};
 }
 
-std::unordered_set<glm::ivec3, Vec::ivec3> LocalDimension::propogateRemoveNodes() {
+std::unordered_set<ivec3, Vec::ivec3> LocalDimension::propogateRemoveNodes() {
 	auto updated = Dimension::propogateRemoveNodes();
 	for (auto& update : updated) attemptMeshChunk(getChunk(update));
 	return {};
@@ -366,7 +362,7 @@ void LocalDimension::finishMeshes() {
 	}
 }
 
-void LocalDimension::attemptMeshChunk(const std::shared_ptr<Chunk>& chunk, bool priority, bool updateAdjacents) {
+void LocalDimension::attemptMeshChunk(const sptr<Chunk>& chunk, bool priority, bool updateAdjacents) {
 	bool renderable = true;
 	for (auto dir : Vec::TO_VEC) if (!getAdjacentExists(chunk->getPos() + dir, updateAdjacents)) renderable = false;
 	if (!renderable) return;
@@ -378,7 +374,7 @@ void LocalDimension::attemptMeshChunk(const std::shared_ptr<Chunk>& chunk, bool 
 	chunk->setDirty(false);
 }
 
-bool LocalDimension::getAdjacentExists(glm::vec3 pos, bool updateAdjacents) {
+bool LocalDimension::getAdjacentExists(vec3 pos, bool updateAdjacents) {
 	auto chunk = getChunk(pos);
 	if (chunk == nullptr) return false;
 	if (updateAdjacents) attemptMeshChunk(chunk, false, false);

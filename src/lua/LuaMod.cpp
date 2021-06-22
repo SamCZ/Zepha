@@ -11,7 +11,7 @@
 LuaMod LuaMod::fromPacket(PacketView& p) {
 	LuaMod luaMod{};
 	
-	auto serialized = p.d.read<std::string>();
+	auto serialized = p.d.read<string>();
 	std::string mod = gzip::decompress(serialized.c_str(), serialized.length());
 	luaMod.serialized = serialized;
 	

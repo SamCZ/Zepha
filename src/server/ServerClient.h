@@ -4,19 +4,19 @@
 
 #pragma once
 
-#include <string>
-#include <memory>
 #include <enet/enet.h>
+
+#include "util/Types.h"
 
 class ServerPlayer;
 
 class ServerClient {
 	public:
-	ServerClient(const std::string& username, ENetPeer* peer) :
+	ServerClient(const string& username, ENetPeer* peer) :
 		username(username), peer(peer), address(peer->address), id(peer->connectID) {}
 	
-	std::string username;
-	unsigned int id = 0;
+	u32 id = 0;
+	string username;
 	
 	ENetPeer* peer;
 	ENetAddress address;

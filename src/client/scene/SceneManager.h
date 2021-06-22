@@ -1,26 +1,29 @@
-//
-// Created by aurailus on 06/01/19.
-//
-
 #pragma once
 
-#include <memory>
-
 #include "Scene.h"
+#include "util/Types.h"
+
+/**
+ * Handles updating and switching scenes.
+ */
 
 class SceneManager {
-	public:
-	void setScene(std::unique_ptr<Scene> scene);
+public:
 	
-	const Scene& getScene();
+	/** Sets the current scene to the one provided. */
+	void setScene(uptr<Scene> scene);
 	
+	/** Updates the current scene. */
 	void update();
-	
-	void cleanupScene();
 	
 	~SceneManager();
 	
-	private:
+private:
+	
+	/** Cleans up the current scene, and removes it. */
+	void cleanupScene();
+	
+	/** A pointer to the current scene. */
 	std::unique_ptr<Scene> scene = nullptr;
 };
 

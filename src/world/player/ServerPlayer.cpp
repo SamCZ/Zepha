@@ -22,27 +22,27 @@ void ServerPlayer::assertField(Packet packet) {
 
 void ServerPlayer::handleAssertion(Deserializer& d) {
 	while (!d.atEnd()) {
-		const auto field = d.readEnum<NetField>();
+		const auto field = d.read<NetField>();
 		switch (field) {
 		default:
 			std::cout << Log::err << "Player received unhandled NetField, Type "
-			          << static_cast<int>(field) << "." << Log::endl;
+			          << static_cast<u32>(field) << "." << Log::endl;
 			break;
 		
 		case NetField::POS:
-			setPos(d.read<glm::vec3>());
+			setPos(d.read<vec3>());
 			break;
 			
 		case NetField::VEL:
-			setVel(d.read<glm::vec3>());
+			setVel(d.read<vec3>());
 			break;
 			
 		case NetField::LOOK_YAW:
-			setPitch(d.read<float>());
+			setPitch(d.read<f32>());
 			break;
 			
 		case NetField::LOOK_PITCH:
-			setYaw(d.read<float>());
+			setYaw(d.read<f32>());
 			break;
 			
 		case NetField::FLYING:
@@ -50,15 +50,15 @@ void ServerPlayer::handleAssertion(Deserializer& d) {
 			break;
 		
 		case NetField::HAND_INV:
-			setHandList(d.read<std::string>());
+			setHandList(d.read<string>());
 			break;
 			
 		case NetField::WIELD_INV:
-			setWieldList(d.read<std::string>());
+			setWieldList(d.read<string>());
 			break;
 			
 		case NetField::WIELD_INDEX:
-			setWieldIndex(d.read<unsigned short>());
+			setWieldIndex(d.read<u16>());
 			break;
 		}
 	}
@@ -68,13 +68,13 @@ void ServerPlayer::setDim(DimensionPtr dim, bool assert) {
 	Player::setDim(dim, assert);
 	
 	// Force a generation flush.
-	lastPos = glm::vec3(INFINITY);
+	lastPos = vec3(INFINITY);
 	changedMapBlocks = true;
 }
 
-void ServerPlayer::setPos(glm::vec3 pos, bool assert) {
-	glm::vec3 lastMapBlock = Space::MapBlock::world::fromBlock(this->pos);
-	glm::vec3 newMapBlock = Space::MapBlock::world::fromBlock(pos);
+void ServerPlayer::setPos(vec3 pos, bool assert) {
+	vec3 lastMapBlock = Space::MapBlock::world::fromBlock(this->pos);
+	vec3 newMapBlock = Space::MapBlock::world::fromBlock(pos);
 	
 	Player::setPos(pos, assert);
 	

@@ -12,23 +12,24 @@
 
 #include "DimensionBase.h"
 
+#include "util/Types.h"
+
 class Target;
 class Player;
 
 class Dimension : public DimensionBase {
 public:
-	typedef std::unordered_set<glm::ivec3, Vec::ivec3> relitChunks;
+	typedef std::unordered_set<ivec3, Vec::ivec3> relitChunks;
 	
 	Dimension(const Dimension& o) = delete;
 	
-	Dimension(SubgamePtr game, World& world, const std::string& identifier, unsigned int ind,
-		std::shared_ptr<MapGen> mapGen) :
+	Dimension(SubgamePtr game, World& world, const string& identifier, u16 ind, sptr<MapGen> mapGen) :
 		DimensionBase(game, world, identifier, ind, std::move(mapGen)) {}
 	
 	// Override setBlock to update lighting.
-	bool setBlock(glm::ivec3 pos, unsigned int block) override;
+	bool setBlock(ivec3 pos, u16 block) override;
 	
-	virtual double blockHit(const Target& target, PlayerPtr player) = 0;
+	virtual f64 blockHit(const Target& target, PlayerPtr player) = 0;
 	
 	virtual void blockPlace(const Target& target, PlayerPtr player) = 0;
 	
@@ -38,7 +39,7 @@ public:
 	
 	virtual void wieldItemUse(const Target& target, PlayerPtr player) = 0;
 	
-	virtual long long nextEntityInd() = 0;
+	virtual i64 nextEntityInd() = 0;
 	
 	// Calculate light propogation around MapBlock edges,
 	// Called after a new mapblock is inserted into the dimension.
@@ -57,36 +58,36 @@ private:
 	
 	static inline bool containsWorldPos(Chunk* chunk, glm::ivec3 pos);
 	
-	inline glm::ivec4 getLight(glm::ivec3 worldPos, Chunk* chunk = nullptr);
+	inline u8vec4 getLight(ivec3 worldPos, Chunk* chunk = nullptr);
 	
-	void calculateHorizontalEdge(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b);
+	void calculateHorizontalEdge(sptr<Chunk> a, sptr<Chunk> b);
 	
-	void calculateVerticalEdge(std::shared_ptr<Chunk> above, std::shared_ptr<Chunk> below);
+	void calculateVerticalEdge(sptr<Chunk> above, sptr<Chunk> below);
 	
-	inline void addBlockLight(glm::ivec3 pos, glm::ivec3 light);
+	inline void addBlockLight(ivec3 pos, ivec3 light);
 	
-	inline void removeBlockLight(glm::ivec3 pos);
+	inline void removeBlockLight(ivec3 pos);
 	
-	inline void reflowLight(glm::ivec3 pos);
+	inline void reflowLight(ivec3 pos);
 	
-	inline void removeSunlight(glm::ivec3 pos);
+	inline void removeSunlight(ivec3 pos);
 	
-	inline void setAndReflowSunlight(glm::ivec3 pos, unsigned char level);
+	inline void setAndReflowSunlight(ivec3 pos, u8 level);
 	
 	struct LightAddNode {
-		LightAddNode(unsigned short index, Chunk* chunk) : index(index), chunk(chunk) {};
-		unsigned short index;
+		LightAddNode(u16 index, Chunk* chunk) : index(index), chunk(chunk) {};
+		u16 index;
 		Chunk* chunk;
 	};
 	
 	struct LightRemoveNode {
-		LightRemoveNode(unsigned short index, unsigned short value, Chunk* chunk) : index(index), value(value),
-			chunk(chunk) {};
-		unsigned short index, value;
+		LightRemoveNode(u16 index, u16 value, Chunk* chunk) : index(index), value(value), chunk(chunk) {};
+		u16 index;
+		u16 value;
 		Chunk* chunk;
 	};
 	
-	static constexpr unsigned char SUNLIGHT_CHANNEL = 3;
-	std::array<std::queue<LightAddNode>, 4> lightAddQueue;
-	std::array<std::queue<LightRemoveNode>, 4> lightRemoveQueue;
+	static constexpr u8 SUNLIGHT_CHANNEL = 3;
+	array<std::queue<LightAddNode>, 4> lightAddQueue;
+	array<std::queue<LightRemoveNode>, 4> lightRemoveQueue;
 };

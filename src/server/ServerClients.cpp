@@ -62,10 +62,10 @@ void ServerClients::createPlayer(std::shared_ptr<ServerClient> client, Dimension
 	player->setPos({ 32, -20, 32 }, true);
 	
 	Serializer()
-		.appendEnum(NetField::ID).append(player->getId())
-		.appendEnum(NetField::POS).append(player->getPos())
-		.appendEnum(NetField::LOOK_PITCH).append(player->getPitch())
-		.appendEnum(NetField::LOOK_YAW).append(player->getYaw())
+		.append(NetField::ID).append(player->getId())
+		.append(NetField::POS).append(player->getPos())
+		.append(NetField::LOOK_PITCH).append(player->getPitch())
+		.append(NetField::LOOK_YAW).append(player->getYaw())
 		.packet(Packet::Type::THIS_PLAYER_INFO).sendTo(player->getPeer(), Packet::Channel::INTERACT);
 }
 

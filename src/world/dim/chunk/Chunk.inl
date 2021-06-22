@@ -1,11 +1,11 @@
 
-#include "Chunk.h"
+//#include "Chunk.h"
 
-glm::ivec3 Chunk::getPos() const {
+ivec3 Chunk::getPos() const {
 	return pos;
 }
 
-void Chunk::setPos(glm::ivec3 newPos) {
+void Chunk::setPos(ivec3 newPos) {
 	pos = newPos;
 }
 
@@ -29,31 +29,31 @@ bool Chunk::isGenerated() const {
 	return generationState == GenerationState::GENERATED;
 }
 
-inline unsigned int Chunk::getBlock(unsigned int ind) const {
+inline u16 Chunk::getBlock(u16 ind) const {
 	assertDecompressed();
 	if (ind >= 4096) throw ChunkException(pos, "Index out of range.");
 	return d->blocks[ind];
 }
 
-inline unsigned int Chunk::getBlock(const glm::ivec3& reqPos) const {
+inline u16 Chunk::getBlock(const ivec3& reqPos) const {
 	return getBlock(Space::Block::index(reqPos));
 }
 
-inline bool Chunk::setBlock(const glm::ivec3& newPos, unsigned int blk) {
+inline bool Chunk::setBlock(const ivec3& newPos, u16 blk) {
 	return setBlock(Space::Block::index(newPos), blk);
 }
 
-inline unsigned short Chunk::getBiome(unsigned int ind) const {
+inline u16 Chunk::getBiome(u16 ind) const {
 	assertDecompressed();
 	if (ind >= 4096) throw ChunkException(pos, "Index out of range.");
 	return d->biomes[ind];
 }
 
-inline unsigned short Chunk::getBiome(const glm::ivec3& reqPos) const {
+inline u16 Chunk::getBiome(const ivec3& reqPos) const {
 	return getBiome(Space::Block::index(reqPos));
 }
 
-inline bool Chunk::setBiome(unsigned int ind, unsigned short bio) {
+inline bool Chunk::setBiome(u16 ind, u16 bio) {
 	assertDecompressed();
 	if (ind > 4096) throw ChunkException(pos, "Index out of range.");
 	
@@ -62,28 +62,28 @@ inline bool Chunk::setBiome(unsigned int ind, unsigned short bio) {
 	return true;
 }
 
-inline bool Chunk::setBiome(const glm::ivec3& newPos, unsigned short bio) {
+inline bool Chunk::setBiome(const ivec3& newPos, u16 bio) {
 	return setBiome(Space::Block::index(newPos), bio);
 }
 
-inline glm::ivec4 Chunk::getLight(unsigned int ind) {
+inline u8vec4 Chunk::getLight(u16 ind) {
 	assertDecompressed();
 	return { d->blockLight[ind].r, d->blockLight[ind].g, d->blockLight[ind].b, getSunlight(ind) };
 }
 
-inline void Chunk::setLight(unsigned int ind, glm::ivec4 light) {
+inline void Chunk::setLight(u16 ind, u8vec4 light) {
 	assertDecompressed();
 	if (ind > 4096) throw ChunkException(pos, "Index out of range.");
 	if (light.x > 31 || light.y > 31 || light.z > 31 || light.w > 15)
 		throw ChunkException(pos, "Light value out of range.");
 	
-	d->blockLight[ind].r = static_cast<unsigned char>(light.x);
-	d->blockLight[ind].g = static_cast<unsigned char>(light.y);
-	d->blockLight[ind].b = static_cast<unsigned char>(light.z);
-	setSunlight(ind, static_cast<unsigned char>(light.w));
+	d->blockLight[ind].r = light.x;
+	d->blockLight[ind].g = light.y;
+	d->blockLight[ind].b = light.z;
+	setSunlight(ind, light.w);
 }
 
-inline unsigned char Chunk::getLight(unsigned int ind, unsigned char channel) {
+inline u8 Chunk::getLight(u16 ind, u8 channel) {
 	assertDecompressed();
 	if (ind > 4096) throw ChunkException(pos, "Index out of range.");
 	
@@ -93,7 +93,7 @@ inline unsigned char Chunk::getLight(unsigned int ind, unsigned char channel) {
 		                  getSunlight(ind);
 }
 
-inline void Chunk::setLight(unsigned int ind, unsigned char channel, unsigned char light) {
+inline void Chunk::setLight(u16 ind, u8 channel, u8 light) {
 	assertDecompressed();
 	if (ind > 4096) throw ChunkException(pos, "Index out of range.");
 	if ((channel < 4 && light > 31) || (channel == 4 && light > 15))
@@ -110,12 +110,12 @@ void Chunk::assertDecompressed() const {
 		throw ChunkException(pos, "Chunk is compressed.");
 }
 
-inline unsigned char Chunk::getSunlight(unsigned int ind) {
+inline u8 Chunk::getSunlight(u16 ind) {
 	if (ind % 2 == 0) return d->sunLight[ind / 2].a;
 	else return d->sunLight[ind / 2].b;
 }
 
-inline void Chunk::setSunlight(unsigned int ind, unsigned char val) {
+inline void Chunk::setSunlight(u16 ind, u8 val) {
 	if (ind % 2 == 0) d->sunLight[ind / 2].a = val;
 	else d->sunLight[ind / 2].b = val;
 }

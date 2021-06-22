@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 04/04/19.
-//
-
 #pragma once
 
 #include <list>
@@ -13,30 +9,30 @@
 #include "client/entity/PlayerEntity.h"
 
 class Renderer;
-
 class MeshChunk;
-
 class Deserializer;
-
 class MeshGenStream;
-
 class ChunkRenderElem;
+
+/**
+ * A local representation of a dimension,
+ * contains all of the blocks and entities.
+ */
 
 class LocalDimension : public Dimension {
 public:
-	const static int MB_STORE_H = 6;
-	const static int MB_STORE_V = 4;
+	const static u8 MB_STORE_H = 6;
+	const static u8 MB_STORE_V = 4;
 	
-	LocalDimension(SubgamePtr game, LocalWorld& world, const std::string& identifier, unsigned int ind,
-		std::shared_ptr<MapGen> mapGen);
+	LocalDimension(SubgamePtr game, LocalWorld& world, const string& identifier, u16 ind, sptr<MapGen> mapGen);
 	
 	void deactivate();
 	
-	void update(double delta) override;
+	void update(f64 delta) override;
 	
-	void setChunk(std::shared_ptr<Chunk> chunk) override;
+	void setChunk(sptr<Chunk> chunk) override;
 	
-	bool setBlock(glm::ivec3 pos, unsigned int block) override;
+	bool setBlock(ivec3 pos, u16 block) override;
 	
 	virtual void blockPlace(const Target& target, PlayerPtr player) override;
 	
@@ -48,11 +44,11 @@ public:
 	
 	virtual void wieldItemUse(const Target& target, PlayerPtr player) override;
 	
-	void setMeshChunk(std::shared_ptr<MeshChunk> chunk);
+	void setMeshChunk(sptr<MeshChunk> chunk);
 	
-	void removeMeshChunk(const glm::ivec3& pos);
+	void removeMeshChunk(const ivec3& pos);
 	
-	virtual long long nextEntityInd() override;
+	virtual i64 nextEntityInd() override;
 	
 	void addLocalEntity(Api::Usertype::Entity entity);
 	
@@ -62,25 +58,25 @@ public:
 	
 	void serverEntitiesRemoved(Deserializer& d);
 	
-	std::vector<Api::Usertype::Entity> getEntitiesInRadius(glm::vec3 pos, float radius);
+	std::vector<Api::Usertype::Entity> getEntitiesInRadius(vec3 pos, f32 radius);
 	
-	Api::Usertype::Entity& getEntityById(long long id);
+	Api::Usertype::Entity& getEntityById(i64 id);
 	
 	void renderChunks(Renderer& renderer);
 	
 	void renderEntities(Renderer& renderer);
 	
-	uint32_t getMeshChunksDrawn();
-	uint32_t getMeshChunksCommitted();
+	u32 getMeshChunksDrawn();
+	u32 getMeshChunksCommitted();
 	
-	int lastMeshesDrawn = 0;
-	int lastMeshesCommitted = 0;
-	std::vector<PlayerEntity> playerEntities;
+	u32 lastMeshesDrawn = 0;
+	u32 lastMeshesCommitted = 0;
+	vec<PlayerEntity> playerEntities;
 	
 protected:
-	std::unordered_set<glm::ivec3, Vec::ivec3> propogateAddNodes() override;
+	std::unordered_set<ivec3, Vec::ivec3> propogateAddNodes() override;
 	
-	std::unordered_set<glm::ivec3, Vec::ivec3> propogateRemoveNodes() override;
+	std::unordered_set<ivec3, Vec::ivec3> propogateRemoveNodes() override;
 	
 private:
 	typedef std::list<Api::Usertype::Entity>::iterator ent_ref;
@@ -88,18 +84,18 @@ private:
 	
 	void finishMeshes();
 	
-	void attemptMeshChunk(const std::shared_ptr<Chunk>& chunk, bool priority = false, bool updateAdjacents = true);
+	void attemptMeshChunk(const sptr<Chunk>& chunk, bool priority = false, bool updateAdjacents = true);
 	
-	bool getAdjacentExists(glm::vec3 pos, bool updateAdjacents);
+	bool getAdjacentExists(vec3 pos, bool updateAdjacents);
 	
-	std::shared_ptr<MeshGenStream> meshGenStream;
+	sptr<MeshGenStream> meshGenStream;
 	
-	std::unordered_map<long long, ent_ref> entityRefs {};
+	std::unordered_map<i64, ent_ref> entityRefs {};
 	std::list<Api::Usertype::Entity> entities {};
 	
-	std::unordered_map<glm::vec3, chunk_ref, Vec::vec3> renderRefs{};
-	std::list<std::shared_ptr<ChunkRenderElem>> renderElems{};
+	std::unordered_map<vec3, chunk_ref, Vec::vec3> renderRefs{};
+	std::list<sptr<ChunkRenderElem>> renderElems{};
 	
-	long long entityInd = -1;
+	i64 entityInd = -1;
 };
 

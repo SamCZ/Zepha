@@ -6,10 +6,11 @@
 
 #include <array>
 #include <functional>
-#include <glm/vec3.hpp>
+#include <glm/glm.hpp>
 #include <unordered_map>
 
-#include "Space.h"
+#include "util/Types.h"
+#include "util/Space.h"
 
 enum class EVec {
 	LEFT = 0, RIGHT = 1, BOTTOM = 2, TOP = 3, BACK = 4, FRONT = 5,
@@ -25,19 +26,19 @@ namespace Vec {
 	
 	struct vec3 {
 		size_t operator()(const glm::vec3& k) const {
-			return std::hash<float>()(k.x) ^ std::hash<float>()(k.y) ^ std::hash<float>()(k.z);
+			return std::hash<f32>()(k.x) ^ std::hash<f32>()(k.y) ^ std::hash<f32>()(k.z);
 		}
 	};
 	
 	struct ivec3 {
 		size_t operator()(const glm::ivec3& k) const {
-			return std::hash<int>()(k.x) ^ std::hash<int>()(k.y) ^ std::hash<int>()(k.z);
+			return std::hash<u32>()(k.x) ^ std::hash<u32>()(k.y) ^ std::hash<u32>()(k.z);
 		}
 	};
 	
 	struct ivec4 {
 		size_t operator()(const glm::ivec4& k) const {
-			return std::hash<int>()(k.x) ^ std::hash<int>()(k.y) ^ std::hash<int>()(k.z) ^ std::hash<int>()(k.w);
+			return std::hash<u32>()(k.x) ^ std::hash<u32>()(k.y) ^ std::hash<u32>()(k.z) ^ std::hash<u32>()(k.w);
 		}
 	};
 	

@@ -22,12 +22,12 @@ class LocalSubgame;
 enum class NetPlayerField;
 
 class ClientNetworkInterpreter {
-	public:
+public:
 	ClientNetworkInterpreter(const ClientNetworkInterpreter& other) = delete;
 	
 	ClientNetworkInterpreter(ServerConnection& connection, LocalWorld& world);
 	
-	void init(std::function<void(std::unique_ptr<PacketView>)> invCallback);
+	void init(std::function<void(uptr<PacketView>)> invCallback);
 	
 	void update();
 	
@@ -41,22 +41,23 @@ class ClientNetworkInterpreter {
 	
 	void wieldItemUse(const Target& target);
 	
-	void invWatch(const std::string& inv, const std::string& list);
+	void invWatch(const string& inv, const string& list);
 	
-	void invUnwatch(const std::string& inv, const std::string& list);
+	void invUnwatch(const string& inv, const string& list);
 	
-	void invInteract(const std::string& inv, const std::string& list, bool primary, unsigned short ind);
+	void invInteract(const string& inv, const string& list, bool primary, u16 ind);
 	
 	void sendPacket(const Packet& packet, Packet::Channel channel);
 	
-	int recvPackets = 0;
-	int serverSideChunkGens = 0;
-	private:
-	void receivedPacket(std::unique_ptr<PacketView> ePacket);
+	u32 recvPackets = 0;
+	u32 serverSideChunkGens = 0;
+
+private:
+	void receivedPacket(uptr<PacketView> ePacket);
 	
 	LocalWorld& world;
 	ServerConnection& connection;
 	
-	std::function<void(std::unique_ptr<PacketView>)> onInvPacket;
+	std::function<void(uptr<PacketView>)> onInvPacket;
 };
 

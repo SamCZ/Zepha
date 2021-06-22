@@ -5,10 +5,8 @@
 #pragma once
 
 #include <map>
-#include <vector>
-#include <string>
-#include <glm/vec2.hpp>
 
+#include "util/Types.h"
 #include "AnimationSegment.h"
 
 class Model;
@@ -21,35 +19,35 @@ class AnimationState {
 	
 	void update(double delta);
 	
-	void setAnimations(const std::vector<AnimationSegment>& anims);
+	void setAnimations(const vec<AnimationSegment>& anims);
 	
-	void defineAnimation(const std::string& name, glm::ivec2 range);
+	void defineAnimation(const string& name, uvec2 range);
 	
 	bool isLooping();
 	
-	void setAnim(const std::string& name, double interp, bool loop);
+	void setAnim(const string& name, f64 interp, bool loop);
 	
-	void setAnim(glm::ivec2 range, double interp, bool loop);
+	void setAnim(uvec2 range, f64 interp, bool loop);
 	
 	bool isPlaying();
 	
 	void setPlaying(bool playing);
 	
-	double getFrame();
+	f64 getFrame();
 	
-	void setFrame(double frame);
+	void setFrame(f64 frame);
 	
-	glm::ivec2 getBounds();
+	uvec2 getBounds();
 	
-	private:
-	std::map<std::string, AnimationSegment> animations;
+private:
+	std::map<string, AnimationSegment> animations;
 	
-	glm::ivec2 range;
+	uvec2 range;
 	
 	bool loop = false;
 	bool playing = false;
 	
-	double currentFrame = 0;
-	double ticksPerSecond = 0;
-	unsigned int duration = 0;
+	f64 currentFrame = 0;
+	f64 ticksPerSecond = 0;
+	u32 duration = 0;
 };

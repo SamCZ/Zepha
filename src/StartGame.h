@@ -5,6 +5,7 @@
 #pragma once
 
 #include <iostream>
+#include <execinfo.h>
 
 #include "util/Log.h"
 #include "util/Util.h"
@@ -26,10 +27,10 @@ enum class Mode {
 
 std::map<std::string, std::string> ParseArgs(int argc, char* argv[]) {
 	std::map<std::string, std::string> args;
-	for (int i = 1; i < argc; i++) {
+	for (usize i = 1; i < argc; i++) {
 		
 		std::string arg(argv[i]);
-		size_t equals = arg.find('=');
+		usize equals = arg.find('=');
 		std::string first = (equals == -1) ? arg : arg.substr(0, equals);
 		
 		if (args.count(first)) throw std::invalid_argument("Duplicate argument " + first + ".");
@@ -53,8 +54,9 @@ std::map<std::string, std::string> ParseArgs(int argc, char* argv[]) {
 int StartGame(int argc, char* argv[]) {
 	Mode mode = Mode::CLIENT;
 	
-	try {
-		unsigned short port = Address::DEFAULT_PORT;
+//	try
+	{
+		u16 port = Address::DEFAULT_PORT;
 		std::string subgame = "";
 		bool ascii = true;
 		
@@ -80,13 +82,16 @@ int StartGame(int argc, char* argv[]) {
 //                addr.host = arg.second;
 //                break;
 			
-			case Util::hash("--port"): port = static_cast<unsigned short>(stoi(arg.second));
+			case Util::hash("--port"):
+				port = static_cast<u16>(stoi(arg.second));
 				break;
 			
-			case Util::hash("--subgame"): subgame = arg.second;
+			case Util::hash("--subgame"):
+				subgame = arg.second;
 				break;
 			
-			case Util::hash("--noascii"): ascii = false;
+			case Util::hash("--noascii"):
+				ascii = false;
 				break;
 			}
 		}
@@ -106,8 +111,13 @@ int StartGame(int argc, char* argv[]) {
 		
 		return 0;
 	}
-	catch (const std::exception& e) {
-		std::cout << Log::err << "Zepha failed to start.\n" << e.what() << Log::endl;
-		return 1;
-	}
+//	catch (const std::exception& e) {
+//		void *array[10];
+//		size_t size;
+//		size = backtrace(array, 10);
+//		std::cout << Log::err << "Zepha crashed unexpectedly.\n" << e.what() << std::endl;
+//		backtrace_symbols_fd(array, size, STDERR_FILENO);
+//		std::cout << Log::endl;
+//		return 1;
+//	}
 }

@@ -26,8 +26,8 @@ class Deserializer;
 class InventoryList;
 
 class Player : public virtual Entity {
-	public:
-	Player(SubgamePtr game, World& world, DimensionPtr dim, unsigned int id = 0) :
+public:
+	Player(SubgamePtr game, World& world, DimensionPtr dim, u32 id = 0) :
 		Entity(game, dim),
 		world(world), lookOffset(0, 1.65, 0) {
 		collisionBox = {{ -0.3, 0, -0.3 }, { 0.3, 1.8, 0.3 }};
@@ -72,23 +72,23 @@ class Player : public virtual Entity {
 	
 	virtual void handleAssertion(Deserializer& d) = 0;
 	
-	protected:
+protected:
 	virtual void assertField(Packet packet) = 0;
 	
 	World& world;
 	
-	float yaw = 0;
-	float pitch = 0;
+	f32 yaw = 0;
+	f32 pitch = 0;
 	
-	glm::vec3 lookOffset{};
+	vec3 lookOffset{};
 	
 	bool flying = false;
 	
-	std::string handList = "";
-	std::string wieldList = "";
+	string handList = "";
+	string wieldList = "";
 	
-	unsigned int handItem = DefinitionAtlas::AIR;
-	unsigned int wieldItem = DefinitionAtlas::AIR;
+	u16 handItem = DefinitionAtlas::AIR;
+	u16 wieldItem = DefinitionAtlas::AIR;
 	
-	unsigned int wieldIndex = 0;
+	u16 wieldIndex = 0;
 };

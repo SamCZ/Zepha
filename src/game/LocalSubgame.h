@@ -1,14 +1,8 @@
-/*
- * The Local Subgame stores all local subgame data.
- * Includes Block / Item definitions, biome definitions, the lua parser, models, and textures.
- *
- * - Auri, 03/11/20
- */
-
 #pragma once
 
 #include "Subgame.h"
 
+#include "util/Types.h"
 #include "util/CovariantPtr.h"
 #include "lua/LocalLuaParser.h"
 #include "game/atlas/TextureAtlas.h"
@@ -17,13 +11,17 @@
 #include "game/atlas/LocalDefinitionAtlas.h"
 
 class Client;
-
 class LocalWorld;
-
 class LocalPlayer;
 
+/**
+ * Stores all subgame data for a local client, including
+ * block & item definitions, the lua sandbox, models, and textures.
+ */
+ 
 class LocalSubgame : public Subgame {
-	public:
+public:
+	
 	explicit LocalSubgame(const std::string& baseAssets);
 	
 	void init(WorldPtr world, PlayerPtr player, Client& client);
@@ -39,9 +37,10 @@ class LocalSubgame : public Subgame {
 	ModelStore models;
 	TextureAtlas textures;
 	
-	private:
-	std::shared_ptr<LocalLuaParser> lua;
-	std::shared_ptr<LocalBiomeAtlas> biomes;
-	std::shared_ptr<LocalDefinitionAtlas> defs;
+private:
+	
+	uptr<LocalLuaParser> lua;
+	uptr<LocalBiomeAtlas> biomes;
+	uptr<LocalDefinitionAtlas> defs;
 };
 

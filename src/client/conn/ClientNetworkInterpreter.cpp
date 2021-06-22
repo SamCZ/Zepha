@@ -37,7 +37,7 @@ void ClientNetworkInterpreter::update() {
 			break;
 		}
 		case ENET_EVENT_TYPE_RECEIVE: {
-			std::unique_ptr<PacketView> p = std::make_unique<PacketView>(event.packet);
+			auto p = make_unique<PacketView>(event.packet);
 			receivedPacket(std::move(p));
 			break;
 		}
@@ -50,16 +50,18 @@ void ClientNetworkInterpreter::update() {
 	}
 	
 	auto player = world.getPlayer();
-	if (player)
+	if (player) {
 		Serializer()
-			.appendEnum(NetField::POS).append(player->getPos())
-			.appendEnum(NetField::VEL).append(player->getVel())
-			.appendEnum(NetField::LOOK_PITCH).append(player->getPitch())
-			.appendEnum(NetField::LOOK_YAW).append(player->getYaw())
-			.packet(Packet::Type::THIS_PLAYER_INFO, false).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
+			.append(NetField::POS).append(player->getPos())
+			.append(NetField::VEL).append(player->getVel())
+			.append(NetField::LOOK_PITCH).append(player->getPitch())
+			.append(NetField::LOOK_YAW).append(player->getYaw())
+			.packet(Packet::Type::THIS_PLAYER_INFO, false)
+			.sendTo(connection.getPeer(), Packet::Channel::INTERACT);
+	}
 }
 
-void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
+void ClientNetworkInterpreter::receivedPacket(uptr<PacketView> p) {
 	switch (p->type) {
 	default:
 		std::cout << Log::err << "Received unknown packet of type " << static_cast<int>(p->type)
@@ -67,7 +69,7 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
 		break;
 	
 	case Packet::Type::SERVER_INFO:
-		serverSideChunkGens = p->d.read<unsigned int>();
+		serverSideChunkGens = p->d.read<u32>();
 		break;
 	
 	case Packet::Type::THIS_PLAYER_INFO:
@@ -83,12 +85,12 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
 		world.handleWorldPacket(std::move(p));
 		break;
 	
-	case Packet::Type::BLOCK_SET: {
-		auto pos = p->d.read<glm::ivec3>();
-		auto block = p->d.read<unsigned int>();
-		world.getActiveDimension()->setBlock(pos, block);
-		break;
-	}
+//	case Packet::Type::BLOCK_SET: {
+//		auto pos = p->d.read<ivec3>();
+//		auto block = p->d.read<u16>();
+//		world.getActiveDimension()->setBlock(pos, block);
+//		break;
+//	}
 	
 	case Packet::Type::ENTITY_INFO:
 		world.getActiveDimension().l()->serverEntitiesInfo(p->d);
@@ -107,6 +109,7 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
 		std::string list = p->d.read<std::string>();
 		throw std::runtime_error("Invalid inventory " + source + ":" + list + " was request by client.");
 	}
+	
 	case Packet::Type::MOD_MESSAGE: {
 		std::string channel = p->d.read<std::string>();
 		std::string message = p->d.read<std::string>();
@@ -117,22 +120,22 @@ void ClientNetworkInterpreter::receivedPacket(std::unique_ptr<PacketView> p) {
 }
 
 void ClientNetworkInterpreter::blockHit(const Target& target) {
-	Serializer().append<glm::ivec3>(target.data.block.pos).append(static_cast<unsigned short>(target.data.block.face))
+	Serializer().append<ivec3>(target.data.block.pos).append(static_cast<unsigned short>(target.data.block.face))
 		.packet(Packet::Type::BLOCK_HIT).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
 void ClientNetworkInterpreter::blockPlace(const Target& target) {
-	Serializer().append<glm::ivec3>(target.data.block.pos).append(static_cast<unsigned short>(target.data.block.face))
+	Serializer().append<ivec3>(target.data.block.pos).append(static_cast<unsigned short>(target.data.block.face))
 		.packet(Packet::Type::BLOCK_PLACE).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
 void ClientNetworkInterpreter::blockInteract(const Target& target) {
-	Serializer().append<glm::ivec3>(target.data.block.pos).append(static_cast<unsigned short>(target.data.block.face))
+	Serializer().append<ivec3>(target.data.block.pos).append(static_cast<unsigned short>(target.data.block.face))
 		.packet(Packet::Type::BLOCK_INTERACT).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 
 void ClientNetworkInterpreter::blockPlaceOrInteract(const Target& target) {
-	Serializer().append<glm::ivec3>(target.data.block.pos).append(static_cast<unsigned short>(target.data.block.face))
+	Serializer().append<ivec3>(target.data.block.pos).append(static_cast<unsigned short>(target.data.block.face))
 		.packet(Packet::Type::BLOCK_PLACE_OR_INTERACT).sendTo(connection.getPeer(), Packet::Channel::INTERACT);
 }
 

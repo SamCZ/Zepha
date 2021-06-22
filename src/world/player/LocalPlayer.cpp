@@ -28,14 +28,15 @@ LocalPlayer::LocalPlayer(SubgamePtr game, LocalWorld& world, DimensionPtr dim, R
 	renderer.window.addResizeCallback("player", [&](glm::ivec2 win) { gameGui.winResized(win); });
 }
 
-void LocalPlayer::update(Input& input, double delta, glm::vec2 mouseDelta) {
+void LocalPlayer::update(Input& input, f64 delta, vec2 mouseDelta) {
 	gameGui.update(delta);
 	handItemModel.setVisible(gameGui.isVisible());
 	
 	updatePhysics(input, delta, mouseDelta);
 	
-	glm::vec3 newPos, newVel;
-	std::tie(newPos, newVel) = Collision::applyVel(game, dim, *collisionBox, pos, vel, delta);
+	vec3 newPos, newVel;
+	std::tie(newPos, newVel) =
+		Collision::applyVel(game, dim, *collisionBox, pos, vel, delta);
 	setPos(newPos);
 	setVel(newVel);
 	
@@ -47,31 +48,31 @@ void LocalPlayer::update(Input& input, double delta, glm::vec2 mouseDelta) {
 	if (!gameGui.isInMenu()) updateInteract(input, delta);
 }
 
-void LocalPlayer::setPos(glm::vec3 pos, bool assert) {
+void LocalPlayer::setPos(vec3 pos, bool assert) {
 	Player::setPos(pos, assert);
 	renderer.camera.setPos(pos + getLookOffset());
 }
 
-void LocalPlayer::setLookOffset(glm::vec3 eyeOffset, bool assert) {
+void LocalPlayer::setLookOffset(vec3 eyeOffset, bool assert) {
 	Player::setLookOffset(eyeOffset, assert);
 	renderer.camera.setPos(pos + getLookOffset());
 }
 
 
-void LocalPlayer::setHandList(const std::string& list, bool assert) {
+void LocalPlayer::setHandList(const string& list, bool assert) {
 	Player::setHandList(list, assert);
 	world.getRefs().l()->setHandList(list);
 	updateWieldAndHandItems();
 }
 
-void LocalPlayer::setWieldList(const std::string& list, bool assert) {
+void LocalPlayer::setWieldList(const string& list, bool assert) {
 	Player::setWieldList(list, assert);
 	world.getRefs().l()->setWieldList(list);
 	setWieldIndex(wieldIndex);
 	updateWieldAndHandItems();
 }
 
-void LocalPlayer::setWieldIndex(unsigned short index, bool assert) {
+void LocalPlayer::setWieldIndex(u16 index, bool assert) {
 	auto wieldList = world.getRefs().l()->getWieldList();
 	wieldIndex = index % std::max((wieldList ? wieldList->getLength() : 1), 1);
 	Player::setWieldIndex(wieldIndex, assert);
@@ -95,7 +96,7 @@ bool LocalPlayer::isInMenu() {
 	return gameGui.isInMenu();
 }
 
-void LocalPlayer::showMenu(std::shared_ptr<LuaGuiElement> root) {
+void LocalPlayer::showMenu(sptr<LuaGuiElement> root) {
 	gameGui.showMenu(root);
 	renderer.window.input.lockMouse(false);
 }
@@ -105,11 +106,11 @@ void LocalPlayer::closeMenu() {
 	renderer.window.input.lockMouse(true);
 }
 
-std::shared_ptr<LuaGuiElement> LocalPlayer::getHud() {
+sptr<LuaGuiElement> LocalPlayer::getHud() {
 	return gameGui.getHud();
 }
 
-void LocalPlayer::setHud(std::shared_ptr<LuaGuiElement> hud) {
+void LocalPlayer::setHud(sptr<LuaGuiElement> hud) {
 	gameGui.setHud(hud);
 }
 
@@ -137,35 +138,35 @@ void LocalPlayer::assertField(Packet packet) {
 
 void LocalPlayer::handleAssertion(Deserializer& d) {
 	while (!d.atEnd()) {
-		const auto field = d.readEnum<NetField>();
+		const auto field = d.read<NetField>();
 		switch (field) {
 		default:
 			std::cout << Log::err << "Player received unhandled NetField, Type "
-			          << static_cast<int>(field) << "." << Log::endl;
+			          << static_cast<u32>(field) << "." << Log::endl;
 			break;
 		
 		case NetField::ID:
-			setId(d.read<long long>());
+			setId(d.read<u32>());
 			break;
 		
 		case NetField::POS:
-			setPos(d.read<glm::vec3>());
+			setPos(d.read<vec3>());
 			break;
 		
 		case NetField::VEL:
-			setVel(d.read<glm::vec3>());
+			setVel(d.read<vec3>());
 			break;
 		
 		case NetField::DIM:
-			setDim(world.getDimension(d.read<unsigned int>()));
+			setDim(world.getDimension(d.read<u16>()));
 			break;
 		
 		case NetField::LOOK_PITCH:
-			setPitch(d.read<float>());
+			setPitch(d.read<f32>());
 			break;
 		
 		case NetField::LOOK_YAW:
-			setYaw(d.read<float>());
+			setYaw(d.read<f32>());
 			break;
 		
 		case NetField::FLYING:
@@ -173,15 +174,15 @@ void LocalPlayer::handleAssertion(Deserializer& d) {
 			break;
 		
 		case NetField::HAND_INV:
-			setHandList(d.read<std::string>());
+			setHandList(d.read<string>());
 			break;
 		
 		case NetField::WIELD_INV:
-			setWieldList(d.read<std::string>());
+			setWieldList(d.read<string>());
 			break;
 		
 		case NetField::WIELD_INDEX:
-			setWieldIndex(d.read<unsigned short>());
+			setWieldIndex(d.read<u16>());
 			break;
 		}
 	}
@@ -199,7 +200,7 @@ bool LocalPlayer::getKey(Input& input, LocalPlayer::PlayerControl control) {
 		GLFW_KEY_LEFT_CONTROL);
 }
 
-void LocalPlayer::updatePhysics(Input& input, double delta, glm::vec2 mouseDelta) {
+void LocalPlayer::updatePhysics(Input& input, f64 delta, vec2 mouseDelta) {
 	static constexpr float JUMP_VEL = 10.0f;
 	static constexpr float MOVE_VEL = 5.5f;
 	static constexpr float GRAVITY_ACCELERATION = 40.0f;
@@ -278,19 +279,19 @@ void LocalPlayer::updateCamera() {
 	
 	auto type = game->getDefs().fromId(wieldItem).type;
 	
-	glm::vec3 eyesPos = pos + getLookOffset();
+	vec3 eyesPos = pos + getLookOffset();
 	renderer.camera.setPos(eyesPos);
 	
 	float pitch = std::min(std::max(this->pitch, -89.9f), 89.9f);
 	
-	glm::vec3 front = glm::normalize(glm::vec3{
+	vec3 front = glm::normalize(vec3{
 		cos(glm::radians(yaw)) * cos(glm::radians(pitch)),
 		sin(glm::radians(pitch)),
 		sin(glm::radians(yaw)) * cos(glm::radians(pitch)) });
 	
-	glm::vec3 right = glm::normalize(glm::cross(front, { 0, 1, 0 }));
-	glm::vec3 up = glm::normalize(glm::cross(right, front));
-	glm::vec3 handPos =
+	vec3 right = glm::normalize(glm::cross(front, { 0, 1, 0 }));
+	vec3 up = glm::normalize(glm::cross(right, front));
+	vec3 handPos =
 		eyesPos + front * 0.25f + right * 0.25f + up * (type == ItemDef::Type::CRAFTITEM ? -0.15f : -0.2f);
 	
 	handModel.setRotateY(-yaw);
@@ -314,13 +315,13 @@ void LocalPlayer::updateCamera() {
 void LocalPlayer::updateWireframe() {
 	if (gameGui.isVisible() && target.type != Target::Type::NOTHING) {
 		std::vector<SelectionBox> boxes {};
-		glm::vec3 thicknessOffset {};
-		glm::vec3 renderPos {};
+		vec3 thicknessOffset {};
+		vec3 renderPos {};
 		
 		if (target.type == Target::Type::BLOCK) {
 			boxes = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos)).sBoxes;
 			renderPos = target.data.block.pos;
-			thicknessOffset = glm::vec3(0.5);
+			thicknessOffset = vec3(0.5);
 		}
 		else {
 			const auto& entity = **dim.l()->getEntityById(target.data.entity.id).entity;
@@ -359,10 +360,10 @@ void LocalPlayer::findTarget(Input& input) {
 	float maxDistance = LOOK_DISTANCE;
 	
 	for (Ray ray(*this); ray.getLength() < maxDistance; ray.step(LOOK_PRECISION)) {
-		glm::vec3 rayEnd = ray.getEnd();
-		glm::vec3 roundedPos = glm::floor(rayEnd);
+		vec3 rayEnd = ray.getEnd();
+		vec3 roundedPos = glm::floor(rayEnd);
 		
-		glm::ivec3 currChunkPos = Space::Chunk::world::fromBlock(roundedPos);
+		ivec3 currChunkPos = Space::Chunk::world::fromBlock(roundedPos);
 		if (currChunkPos != chunkPos || chunk == nullptr) {
 			chunkPos = currChunkPos;
 			chunk = dim->getChunk(chunkPos);
@@ -402,7 +403,7 @@ void LocalPlayer::findTarget(Input& input) {
 	target = newTarget;
 }
 
-void LocalPlayer::updateInteract(Input& input, double delta) {
+void LocalPlayer::updateInteract(Input& input, f64 delta) {
 	if (breakTime > 0) breakTime += delta;
 	if (breakTime > breakInterval) breakTime = 0;
 	

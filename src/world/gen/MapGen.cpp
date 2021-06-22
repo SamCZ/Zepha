@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 28/01/19.
-//
-
 #include <random>
 
 #include "MapGen.h"
@@ -90,18 +86,24 @@ std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::
 		for (pos.z = 0; pos.z < job.size; pos.z++) {
 			std::unique_ptr<ChunkData> densityAbove = nullptr;
 			for (pos.y = job.size; pos.y >= 0; pos.y--) {
-				if (pos.y == job.size) {
-					densityAbove = populateChunkDensity(job, pos);
-					continue;
-				}
+//				if (pos.y == job.size) {
+//					densityAbove = populateChunkDensity(job, pos);
+//					continue;
+//				}
+//
+//				std::unique_ptr<ChunkData> density = populateChunkDensity(job, pos);
+//				std::unique_ptr<ChunkData> depth = populateChunkDepth(density, std::move(densityAbove));
+//
+//				std::cout << "were out da function " << pos.x << ", " << pos.y << ", " << pos.z << std::endl;
+//				std::cout << &job << " " << &pos << " " << &biomeMap << " " << &depth << std::endl;
+//
+//				generateChunkBlocks(job, pos, biomeMap, *depth);
+//				generateChunkDecorAndLight(job, pos, biomeMap, *depth);
 				
-				std::unique_ptr<ChunkData> density = populateChunkDensity(job, pos);
-				std::unique_ptr<ChunkData> depth = populateChunkDepth(density, std::move(densityAbove));
-				
-				generateChunkBlocks(job, pos, biomeMap, *depth);
-				generateChunkDecorAndLight(job, pos, biomeMap, *depth);
-				
-				densityAbove = std::move(density);
+				glm::ivec3 chunkPos = job.pos + pos;
+				job.chunks->emplace(chunkPos, std::make_shared<Chunk>(chunkPos));
+
+//				densityAbove = std::move(density);
 			}
 		}
 	}
@@ -111,7 +113,7 @@ std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::
 	auto created = std::make_unique<CreatedSet>();
 	for (const auto& chunk : *job.chunks) {
 		created->emplace(chunk.first);
-		world.getDimension(dim)->setChunk(chunk.second);
+//		world.getDimension(dim)->setChunk(chunk.second);
 	}
 	
 	return std::move(created);
@@ -186,6 +188,7 @@ std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDepth(std::unique_ptr<Ch
 
 void MapGen::generateChunkBlocks(Job& job, glm::ivec3 localPos,
 	std::vector<unsigned int> biomeMap, ChunkData& depthMap) {
+	std::cout << "were in da function " << std::endl;
 	
 	glm::ivec3 chunkPos = job.pos + localPos;
 	
@@ -194,25 +197,20 @@ void MapGen::generateChunkBlocks(Job& job, glm::ivec3 localPos,
 	
 	auto& chunk = *(*job.chunks->emplace(chunkPos, std::make_shared<Chunk>(chunkPos)).first).second;
 	
-	unsigned int cBlockID = 0;
-	unsigned int cBiomeID = 0;
-	
 	unsigned int partialBlock = DefinitionAtlas::INVALID;
-	int partialInd = -1;
-	unsigned int partialNextAt = 0;
 	
 	for (unsigned short i = 0; i < 4096; i++) {
-		glm::ivec3 indPos = Space::Block::fromIndex(i);
+		ivec3 indPos = Space::Block::fromIndex(i);
 		
 		unsigned int biomeID = biomeMap[(localPos.x * 16 + indPos.x) *
 			(job.size * 16 + 1) + (localPos.z * 16 + indPos.z)];
 		auto& biome = game.getBiomes().biomeFromId(biomeID);
-		
-		if (partial && i >= partialNextAt) {
-			partialInd++;
-			partialBlock = partial->d->blocks[partialInd * 2 + 1];
-			partialNextAt = (partialInd * 2 + 2 >= partial->d->blocks.size()) ? 4096 : partial->d->blocks[partialInd * 2 + 2];
-		}
+//
+//		if (partial && i >= partialNextAt) {
+//			partialInd++;
+//			partialBlock = partial->d->blocks[partialInd * 2 + 1];
+//			partialNextAt = (partialInd * 2 + 2 >= partial->d->blocks.size()) ? 4096 : partial->d->blocks[partialInd * 2 + 2];
+//		}
 		
 		float depth = depthMap[i];
 		unsigned int blockID =
@@ -222,18 +220,9 @@ void MapGen::generateChunkBlocks(Job& job, glm::ivec3 localPos,
 				: depth <= 4 ? biome.soilBlock
 				: biome.rockBlock;
 		
-		if (biomeID != cBiomeID) {
-			//TODO: Fix MapGen
-//			chunk.d->biomes.emplace_back(i);
-//			chunk.d->biomes.emplace_back(biomeID);
-			cBiomeID = biomeID;
-		}
+		if (chunk.d == nullptr) std::cout << "THE DATA ISNT LOADED." << std::endl;
+		chunk.d->blocks[i] = blockID;
 		
-		if (blockID != cBlockID) {
-//			chunk.d->blocks.emplace_back(i);
-//			chunk.d->blocks.emplace_back(blockID);
-			cBlockID = blockID;
-		}
 	}
 	
 	chunk.countRenderableBlocks();

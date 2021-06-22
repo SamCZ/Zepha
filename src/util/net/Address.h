@@ -1,16 +1,29 @@
-//
-// Created by aurailus on 11/07/19.
-//
-
 #pragma once
 
 #include <string>
 
-struct Address {
-	std::string host;
-	unsigned short port = Address::DEFAULT_PORT;
+#include "util/Types.h"
+
+/**
+ * Represents an IP address + Port pair.
+ */
+
+class Address {
+public:
+
+	/**
+	 * Returns an Address object from the provided address string.
+	 * Address string should be in standard dot + optional colon notation, e.g: 192.168.0.1:8000, 127.0.0.1.
+	 * @throws std::invalid_argument - There is a value after a colon that cannot be converted into a valid numeric value.
+	 * @throws std::out_of_range - There is a numeric port specified, but it is greater than the maximum unsigned short.
+	 * @param addressString - The string to parse.
+	 * @returns - An Address object with the specified address.
+	 */
+	 
+	static Address fromString(const string& addressString);
 	
-	static Address fromString(const std::string& addressString);
+	string host;
+	u16 port = Address::DEFAULT_PORT;
 	
-	constexpr static unsigned short DEFAULT_PORT = 13110;
+	constexpr static u16 DEFAULT_PORT = 13110;
 };

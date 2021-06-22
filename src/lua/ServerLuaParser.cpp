@@ -107,10 +107,10 @@ void ServerLuaParser::loadApi(WorldPtr world) {
 	core["players"] = lua.create_table();
 	
 	// Modules
-	modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::SERVER, lua, core));
-	modules.emplace_back(std::make_unique<Api::Module::Message>(Api::State::SERVER, core, game, *world.s()));
-	modules.emplace_back(std::make_unique<Api::Module::Dimension>(Api::State::SERVER, core, game, *world.s()));
-	modules.emplace_back(std::make_unique<Api::Module::Structure>(Api::State::SERVER, core, game, *world.s()));
+	modules.emplace_back(make_unique<Api::Module::Time>(Api::State::SERVER, lua, core));
+	modules.emplace_back(make_unique<Api::Module::Message>(Api::State::SERVER, core, game, *world.s()));
+	modules.emplace_back(make_unique<Api::Module::Dimension>(Api::State::SERVER, core, game, *world.s()));
+	modules.emplace_back(make_unique<Api::Module::Structure>(Api::State::SERVER, core, game, *world.s()));
 	
 	// Register
 	auto& game = static_cast<ServerSubgame&>(this->game);

@@ -12,36 +12,35 @@
 #include "world/dim/chunk/MapBlock.h"
 #include "game/atlas/DefinitionAtlas.h"
 
-DimensionBase::DimensionBase(SubgamePtr game, World& world, const std::string& identifier,
-	unsigned int ind, std::shared_ptr<MapGen> mapGen) :
+DimensionBase::DimensionBase(SubgamePtr game, World& world, const string& identifier, u16 ind, sptr<MapGen> mapGen) :
 	game(game), world(world), identifier(identifier), ind(ind), mapGen(std::move(mapGen)) {}
 
-std::string DimensionBase::getIdentifier() const {
+string DimensionBase::getIdentifier() const {
 	return identifier;
 }
 
-unsigned int DimensionBase::getInd() {
+u16 DimensionBase::getInd() {
 	return ind;
 }
 
-std::shared_ptr<Region> DimensionBase::getRegion(glm::ivec3 regionPosition) const {
+sptr<Region> DimensionBase::getRegion(ivec3 regionPosition) const {
 	auto _ = getReadLock();
 	if (!regions.count(regionPosition)) return nullptr;
 	return regions.at(regionPosition);
 }
 
-void DimensionBase::removeRegion(glm::ivec3 pos) {
+void DimensionBase::removeRegion(ivec3 pos) {
 	auto _ = getWriteLock();
 	regions.erase(pos);
 }
 
-std::shared_ptr<MapBlock> DimensionBase::getMapBlock(glm::ivec3 mapBlockPosition) const {
+sptr<MapBlock> DimensionBase::getMapBlock(ivec3 mapBlockPosition) const {
 	auto region = getRegion(Space::Region::world::fromMapBlock(mapBlockPosition));
 	if (!region) return nullptr;
 	return region->get(Space::MapBlock::index(mapBlockPosition));
 }
 
-void DimensionBase::removeMapBlock(glm::ivec3 pos) {
+void DimensionBase::removeMapBlock(ivec3 pos) {
 	auto region = getRegion(Space::Region::world::fromMapBlock(pos));
 	if (!region) return;
 	auto i = Space::MapBlock::index(pos);
@@ -49,23 +48,23 @@ void DimensionBase::removeMapBlock(glm::ivec3 pos) {
 	if (region->count == 0) removeRegion(Space::Region::world::fromMapBlock(pos));
 }
 
-bool DimensionBase::mapBlockGenerated(glm::ivec3 mapBlockPosition) {
+bool DimensionBase::mapBlockGenerated(ivec3 mapBlockPosition) {
 	auto mb = getMapBlock(mapBlockPosition);
 	return mb && mb->generated;
 }
 
-std::shared_ptr<Chunk> DimensionBase::getChunk(glm::ivec3 chunkPosition) const {
+sptr<Chunk> DimensionBase::getChunk(ivec3 chunkPosition) const {
 	auto mapBlock = getMapBlock(Space::MapBlock::world::fromChunk(chunkPosition));
 	if (!mapBlock) return nullptr;
 	return mapBlock->get(Space::Chunk::index(chunkPosition));
 }
 
-void DimensionBase::setChunk(std::shared_ptr<Chunk> chunk) {
+void DimensionBase::setChunk(sptr<Chunk> chunk) {
 	auto mapBlock = getOrCreateMapBlock(Space::MapBlock::world::fromChunk(chunk->getPos()));
 	mapBlock->set(Space::Chunk::index(chunk->getPos()), chunk);
 }
 
-void DimensionBase::removeChunk(glm::ivec3 pos) {
+void DimensionBase::removeChunk(ivec3 pos) {
 	auto mapBlock = getMapBlock(Space::MapBlock::world::fromChunk(pos));
 	if (!mapBlock) return;
 	auto i = Space::Chunk::index(pos);
@@ -73,14 +72,14 @@ void DimensionBase::removeChunk(glm::ivec3 pos) {
 	if (mapBlock->count == 0) removeMapBlock(Space::MapBlock::world::fromChunk(pos));
 }
 
-unsigned int DimensionBase::getBlock(glm::ivec3 pos) const {
+u16 DimensionBase::getBlock(ivec3 pos) const {
 	auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
 	if (!chunk) return 0;
 	
 	return chunk->getBlock(Space::Block::relative::toChunk(pos));
 }
 
-bool DimensionBase::setBlock(glm::ivec3 pos, unsigned int block) {
+bool DimensionBase::setBlock(ivec3 pos, u16 block) {
 	auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
 	if (!chunk) return false;
 	
@@ -90,12 +89,12 @@ bool DimensionBase::setBlock(glm::ivec3 pos, unsigned int block) {
 }
 
 
-double DimensionBase::getBlockDamage(glm::ivec3 pos) const {
+f64 DimensionBase::getBlockDamage(ivec3 pos) const {
 	auto _ = getReadLock();
 	return blockDamages.count(pos) ? blockDamages.at(pos).curr : 0;
 }
 
-double DimensionBase::setBlockDamage(glm::ivec3 pos, double damage) {
+f64 DimensionBase::setBlockDamage(ivec3 pos, f64 damage) {
 	if (blockDamages.count(pos)) blockDamages[pos].curr = damage;
 	else {
 		double health = game->getDefs().blockFromId(getBlock(pos)).health;
@@ -106,33 +105,33 @@ double DimensionBase::setBlockDamage(glm::ivec3 pos, double damage) {
 	return getBlockDamage(pos);
 }
 
-unsigned int DimensionBase::getBiome(glm::ivec3 pos) const {
+u16 DimensionBase::getBiome(ivec3 pos) const {
 	auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
 	if (!chunk) return 0;
 	
 	return chunk->getBiome(Space::Block::relative::toChunk(pos));
 }
 
-bool DimensionBase::setBiome(glm::ivec3 pos, unsigned int biome) {
+bool DimensionBase::setBiome(ivec3 pos, u16 biome) {
 	auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
 	if (!chunk) return false;
 	
 	return chunk->setBiome(Space::Block::relative::toChunk(pos), biome);
 }
 
-std::shared_ptr<Region> DimensionBase::getOrCreateRegion(glm::ivec3 pos) {
+sptr<Region> DimensionBase::getOrCreateRegion(ivec3 pos) {
 	auto _ = getWriteLock();
 	if (regions[pos]) return regions[pos];
-	regions[pos] = std::make_shared<Region>(pos);
+	regions[pos] = make_shared<Region>(pos);
 	return regions[pos];
 }
 
-std::shared_ptr<MapBlock> DimensionBase::getOrCreateMapBlock(glm::ivec3 mapBlockPosition) {
+sptr<MapBlock> DimensionBase::getOrCreateMapBlock(ivec3 mapBlockPosition) {
 	auto region = getOrCreateRegion(Space::Region::world::fromMapBlock(mapBlockPosition));
 	unsigned int index = Space::MapBlock::index(mapBlockPosition);
 	
 	if (region->get(index) != nullptr) return region->get(index);
-	region->set(index, std::make_shared<MapBlock>(mapBlockPosition));
+	region->set(index, make_shared<MapBlock>(mapBlockPosition));
 	return region->get(index);
 }
 
@@ -144,11 +143,11 @@ World& DimensionBase::getWorld() {
 	return world;
 }
 
-std::shared_ptr<Chunk> DimensionBase::combineChunks(std::shared_ptr<Chunk> a, std::shared_ptr<Chunk> b) {
+sptr<Chunk> DimensionBase::combineChunks(sptr<Chunk> a, sptr<Chunk> b) {
 	if (a->isGenerated()) return (a->combineWith(b), a);
 	else return (b->combineWith(a), b);
 }
 
-std::shared_ptr<MapGen> DimensionBase::getGen() {
+sptr<MapGen> DimensionBase::getGen() {
 	return mapGen;
 }

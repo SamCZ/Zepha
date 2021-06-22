@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 01/10/19.
-//
-
 #pragma once
 
 #include <list>
@@ -11,13 +7,16 @@
 #include "lua/usertype/Entity.h"
 
 class ServerWorld;
-
 class ServerPlayer;
-
 class ServerSubgame;
 
+/**
+ * A server representation of a dimension,
+ * contains all of the blocks and entities.
+ */
+ 
 class ServerDimension : public Dimension {
-	public:
+public:
 	ServerDimension(SubgamePtr game, ServerWorld& world, const std::string& identifier, unsigned int ind,
 		std::shared_ptr<MapGen> mapGen);
 	
@@ -35,7 +34,7 @@ class ServerDimension : public Dimension {
 	
 	virtual void wieldItemUse(const Target& target, PlayerPtr player) override;
 	
-	virtual long long nextEntityInd() override;
+	virtual i64 nextEntityInd() override;
 	
 	void addLuaEntity(Api::Usertype::Entity entity);
 	
@@ -43,18 +42,18 @@ class ServerDimension : public Dimension {
 	
 	std::list<Api::Usertype::Entity>& getLuaEntities();
 	
-	const std::list<unsigned int>& getRemovedEntities() const;
+	const std::list<i64>& getRemovedEntities() const;
 	
 	void clearRemovedEntities();
 	
-	private:
+private:
 	typedef std::list<Api::Usertype::Entity>::iterator luaent_ref;
 	
-	std::unordered_map<unsigned int, luaent_ref> luaEntityRefs{};
+	std::unordered_map<i64, luaent_ref> luaEntityRefs{};
 	std::list<Api::Usertype::Entity> luaEntities{};
-	std::list<unsigned int> removedEntities{};
+	std::list<i64> removedEntities{};
 	
-	const glm::ivec2 discardRange = { 20, 20 };
-	long long entityInd = 1;
+	const ivec2 discardRange = { 20, 20 };
+	i64 entityInd = 1;
 };
 

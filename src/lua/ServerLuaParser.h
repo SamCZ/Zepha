@@ -17,7 +17,7 @@ class ServerPlayer;
 class ServerSubgame;
 
 class ServerLuaParser : public LuaParser {
-	public:
+public:
 	explicit ServerLuaParser(ServerSubgame& game);
 	
 	void init(WorldPtr world, const std::string& rootPath);
@@ -30,7 +30,7 @@ class ServerLuaParser : public LuaParser {
 	
 	void playerDisconnected(std::shared_ptr<ServerPlayer> client);
 	
-	private:
+private:
 	void loadApi(WorldPtr world);
 	
 	virtual sol::protected_function_result errorCallback(sol::protected_function_result r) const override;

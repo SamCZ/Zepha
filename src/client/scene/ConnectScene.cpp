@@ -95,7 +95,7 @@ void ConnectScene::update() {
 				auto statusText = components.get<GuiText>("statusText");
 				statusText->setText(statusText->getText() + "Received block index-identifier table.\n");
 				
-				client.game->getDefs().setIdentifiers(p.d.read<std::vector<std::string>>());
+				client.game->getDefs().setIdentifiers(p.d.read<vec<string>>());
 				
 				Packet resp(Packet::Type::BIOME_IDENTIFIER_LIST);
 				resp.sendTo(connection.getPeer(), Packet::Channel::CONNECT);
@@ -105,7 +105,7 @@ void ConnectScene::update() {
 				statusText->setText(
 					statusText->getText() + "Received biome index-identifier table.\nDownloading mods...\n");
 				
-				client.game->getBiomes().setIdentifiers(p.d.read<std::vector<std::string>>());
+				client.game->getBiomes().setIdentifiers(p.d.read<vec<string>>());
 				
 				connectState = State::MODS;
 				Packet resp(Packet::Type::MODS);
@@ -129,7 +129,7 @@ void ConnectScene::update() {
 				client.game->getParser().getHandler().addLuaMod(std::move(luaMod));
 			}
 			else if (p.type == Packet::Type::MOD_ORDER) {
-				client.game->getParser().getHandler().setModsOrder(p.d.read<std::vector<std::string>>());
+				client.game->getParser().getHandler().setModsOrder(p.d.read<vec<string>>());
 				
 				statusText->setText(
 					statusText->getText() + "Done downloading mods.\nReceived the mods order.\nDownloading media...\n");
@@ -156,7 +156,7 @@ void ConnectScene::update() {
 				unsigned int count = 0;
 				
 				while (t != AssetType::END) {
-					std::string assetName = p.d.read<std::string>();
+					std::string assetName = p.d.read<string>();
 					
 					if (t == AssetType::TEXTURE) {
 						int width = p.d.read<unsigned int>();
@@ -202,14 +202,17 @@ void ConnectScene::handleConnecting() {
 	switch (connection.getConnectionStatus()) {
 	default:throw std::runtime_error("Uncaught connection error.");
 	
-	case ServerConnection::State::ENET_ERROR:throw std::runtime_error("Enet Initialization error.");
+	case ServerConnection::State::ENET_ERROR:
+		throw std::runtime_error("Enet Initialization error.");
 		break;
 	
-	case ServerConnection::State::FAILED_CONNECT:connectState = State::FAILED_CONNECT;
+	case ServerConnection::State::FAILED_CONNECT:
+		connectState = State::FAILED_CONNECT;
 		statusText->setText(statusText->getText() + "\nFailed to connect :(\n");
 		break;
 	
-	case ServerConnection::State::ATTEMPTING_CONNECT:connection.processConnecting();
+	case ServerConnection::State::ATTEMPTING_CONNECT:
+		connection.processConnecting();
 		
 		dotsTime += client.getDelta();
 		if (dotsTime > 1) {

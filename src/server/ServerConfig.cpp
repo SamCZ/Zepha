@@ -29,7 +29,8 @@ void ServerConfig::init() {
 bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
 	switch (r.type) {
 	default: break;
-	case Packet::Type::CONNECT_DATA_RECVD:return true;
+	case Packet::Type::CONNECT_DATA_RECVD:
+		return true;
 	
 	case Packet::Type::SERVER_INFO: {
 		Serializer()
@@ -64,7 +65,7 @@ bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
 		const unsigned int MAX_PACKET_SIZE = 32 * 1024;
 		unsigned int packetSize = 0;
 		
-		Serializer s{};
+		Serializer s {};
 		
 		for (ServerTexture& texture : game.s()->assets.textures) {
 			if (packetSize + 20 + texture.data.length() > MAX_PACKET_SIZE && packetSize != 0) {

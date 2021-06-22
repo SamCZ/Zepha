@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "util/Types.h"
 #include "world/ServerWorld.h"
 #include "game/ServerSubgame.h"
 #include "util/net/NetHandler.h"
@@ -16,8 +17,8 @@ class ServerPlayer;
 class Packet;
 
 class Server {
-	public:
-	explicit Server(unsigned short port, const std::string& subgame);
+public:
+	explicit Server(u16 port, const std::string& subgame);
 	
 	void update();
 	
@@ -30,20 +31,37 @@ class Server {
 	
 	void playerPacketReceived(PacketView& p, PlayerPtr player);
 	
-	unsigned short port = 0;
-	unsigned int seed = 0;
+	/** The server's port. */
+	u16 port = 0;
 	
+	/** The server's seed. */
+	u32 seed = 0;
+	
+	/** The subgame instance, must be listed before world. */
 	SubgamePtr game;
-	ServerClients clients;
+	
+	/** The world instance, needs to be after the subgame. */
 	WorldPtr world;
+	
+	/** The network handler, manages client connections. */
 	NetHandler handler;
+	
+	/** Handles passing data to newly connecting clients. TODO: Rename. */
 	ServerConfig config;
 	
-	std::unordered_set<unsigned int> playersUpdated{};
+	/** A list of connected clients. */
+	ServerClients clients;
 	
-	double elapsed = 0;
-	double delta = 0;
+	/** A list of players who have been updated, to send to the other clients. */
+	std::unordered_set<u32> playersUpdated{};
 	
+	/** The time elapsed since the start of the server. */
+	f64 elapsed = 0;
+	
+	/** The delta time of the last frame. */
+	f64 delta = 0;
+	
+	/** Whether or not the server should be kept running. */
 	bool alive = true;
 };
 

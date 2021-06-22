@@ -11,70 +11,89 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
-#include "Log.h"
+#include "util/Log.h"
+#include "util/Types.h"
 
 namespace Util {
 	struct EnumClassHash {
 		template<typename T>
-		std::size_t operator()(T t) const {
-			return static_cast<std::size_t>(t);
+		usize operator()(T t) const {
+			return static_cast<usize>(t);
 		}
 	};
 	
-	static std::string floatToString(float val) {
+	static string floatToString(f32 val, u8 precision = 2) {
 		std::ostringstream out;
-		out.precision(2);
+		out.precision(precision);
 		out << std::fixed << val;
 		return out.str();
 	}
 	
-	inline static std::string doubleToString(double val) {
-		return floatToString((float) val);
+	inline static string f(f64 val, u8 precision = 2) {
+		return floatToString(static_cast<f32>(val));
 	}
 	
-	static std::string vecToString(glm::ivec3 vec) {
+	template <typename T, std::enable_if_t<std::is_fundamental_v<T>, bool> = true>
+	static string vectorToString(vec<T> vec) {
+		std::ostringstream out;
+		out << "[ ";
+		for (usize i = 0; i < vec.size(); i++) out << (i == 0 ? "" : ", ") << vec[i];
+		out << " ]";
+		return out.str();
+	}
+	
+	template <typename T, usize L, std::enable_if_t<std::is_fundamental_v<T>, bool> = true>
+	static string arrayToString(array<T, L> arr) {
+		std::ostringstream out;
+		out << "[ ";
+		for (usize i = 0; i < arr.size(); i++) out << (i == 0 ? "" : ", ") << arr[i];
+		out << " ]";
+		return out.str();
+	}
+	
+	static string vecToString(ivec3 vec) {
 		std::ostringstream out;
 		out << vec.x << ", " << vec.y << ", " << vec.z;
 		return out.str();
 	}
 	
-	static std::string vecToString(glm::vec3 vec) {
+	static string vecToString(vec3 vec) {
 		std::ostringstream out;
 		out << vec.x << ", " << vec.y << ", " << vec.z;
 		return out.str();
 	}
 	
-	static std::string floatVecToString(glm::vec3 vec) {
+	static string floatVecToString(vec3 vec, u8 precision = 2) {
 		std::ostringstream out;
-		out.precision(2);
+		out.precision(precision);
 		out << std::fixed << vec.x << ", " << std::fixed << vec.y << ", " << std::fixed << vec.z;
 		return out.str();
 	}
 	
-	inline static float packFloat(const glm::vec3& vec) {
-		auto charX = static_cast<unsigned char>((vec.x + 1.0f) * 0.5f * 255.f);
-		auto charY = static_cast<unsigned char>((vec.y + 1.0f) * 0.5f * 255.f);
-		auto charZ = static_cast<unsigned char>((vec.z + 1.0f) * 0.5f * 255.f);
+	inline static f32 packFloat(const vec3& vec) {
+		auto charX = static_cast<u8>((vec.x + 1.0f) * 0.5f * 255.f);
+		auto charY = static_cast<u8>((vec.y + 1.0f) * 0.5f * 255.f);
+		auto charZ = static_cast<u8>((vec.z + 1.0f) * 0.5f * 255.f);
 		
-		unsigned int packedInt = (charX << 16) | (charY << 8) | charZ;
-		return static_cast<float>(static_cast<double>(packedInt) / static_cast<double>(1 << 24));
+		u32 packedInt = (charX << 16) | (charY << 8) | charZ;
+		return static_cast<f32>(static_cast<f64>(packedInt) / static_cast<f64>(1 << 24));
 	}
 	
-	inline static unsigned int intFromHexSegment(const std::string& t) {
-		unsigned int x;
+	inline static u32 intFromHexSegment(const string& t) {
+		u32 x;
 		std::stringstream ss;
 		ss << std::hex << t;
 		ss >> x;
 		return x;
 	}
 	
-	static glm::vec4 hexToColorVec(std::string hex) {
-		glm::vec4 color{};
+	static vec4 hexToColorVec(string hex) {
+		vec4 color{};
 		
 		if (hex[0] == '#') hex.erase(0, 1);
 		else std::cout << Log::err << "Color string does not begin with hash!" << Log::endl;
 		
-		std::string r, g, b, a;
+		string r, g, b, a;
 		
 		if (hex.length() == 3 || hex.length() == 4) {
 			r = hex.substr(0, 1);
@@ -105,7 +124,7 @@ namespace Util {
 		return color;
 	}
 	
-	static std::string getKeyStr(unsigned short key) {
+	static string getKeyStr(u16 key) {
 		switch (key) {
 		default: return "";
 		
@@ -244,12 +263,12 @@ namespace Util {
 	}
 	
 	namespace {
-		constexpr static uint64_t mix(char m, uint64_t s) {
+		constexpr static u64 mix(char m, u64 s) {
 			return ((s << 7) + ~(s >> 3)) + ~m;
 		}
 	}
 	
-	constexpr static uint64_t hash(const char* m) {
+	constexpr static u64 hash(const char* m) {
 		return (*m) ? mix(*m, hash(m + 1)) : 0;
 	}
 	
