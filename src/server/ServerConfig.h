@@ -8,22 +8,25 @@
 #include "util/net/PacketView.h"
 
 class PacketView;
-
 class ServerClient;
-
 class ServerSubgame;
 
 class ServerConfig {
-	public:
+public:
 	explicit ServerConfig(SubgamePtr game);
 	
 	void init();
 	
-	//Bool: Create player
+	/**
+	 * Handles a packet requesting subgame data.
+	 * Returns a boolean indicating if the client is done receiving all data.
+	 */
+	 
 	bool handlePacket(ServerClient& client, PacketView& p);
 	
-	private:
+private:
 	SubgamePtr game;
-	std::vector<std::string> blockIdentifierList{};
-	std::vector<std::string> biomeIdentifierList{};
+	
+	vec<string> blockIdentifierList {};
+	vec<string> biomeIdentifierList {};
 };

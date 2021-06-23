@@ -60,7 +60,7 @@ void ServerLuaParser::sendModsPacket(ENetPeer* peer) const {
 	for (const LuaMod& mod : handler.cGetMods())
 		Serializer().append(mod.serialized).packet(Packet::Type::MODS).sendTo(peer, Packet::Channel::CONNECT);
 	
-	std::vector<std::string> order{};
+	vec<string> order {};
 	for (const LuaMod& mod : handler.cGetMods()) order.push_back(mod.config.name);
 	Serializer().append(order).packet(Packet::Type::MOD_ORDER).sendTo(peer, Packet::Channel::CONNECT);
 }

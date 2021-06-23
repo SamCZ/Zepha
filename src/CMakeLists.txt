@@ -199,7 +199,6 @@ add_library(Zepha_Core
         lua/usertype/Target.h
         server/Server.cpp
         server/Server.h
-        server/ServerClient.cpp
         server/ServerClient.h
         server/ServerClients.cpp
         server/ServerClients.h
@@ -324,6 +323,7 @@ add_library(Zepha_Core
         lua/modules/Message.cpp
         lua/modules/Message.h
         lua/NoiseFromLua.cpp
-        lua/NoiseFromLua.h util/Types.h)
+        lua/NoiseFromLua.h
+        util/Types.h)
 
 target_include_directories(Zepha_Core PUBLIC .)

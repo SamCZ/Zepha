@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 02/12/18.
-//
-
 #include <iostream>
 
 #include "Timer.h"
@@ -12,9 +8,9 @@ Timer::Timer() :
 Timer::Timer(const std::string& name) :
 	name(name), start(std::chrono::high_resolution_clock::now()) {}
 
-long Timer::elapsedNs() const {
+u64 Timer::elapsedNs() const {
 	auto finish = std::chrono::high_resolution_clock::now();
-	long elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start).count();
+	u64 elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start).count();
 	return elapsed;
 };
 

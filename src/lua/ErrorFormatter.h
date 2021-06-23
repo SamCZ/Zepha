@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <string>
+#include "util/Types.h"
 
 class ErrorFormatter {
-	public:
-	static std::string formatError(const std::string& fileName, int line,
-		const std::string& stack, std::string file, bool ansiColors = true) noexcept;
+public:
+	static string formatError(const string& fileName, usize line,
+		const string& stack, string file, bool ansiColors = true) noexcept;
 };

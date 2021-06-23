@@ -9,6 +9,7 @@
 #include "game/ServerSubgame.h"
 #include "lua/usertype/Player.h"
 #include "lua/usertype/Target.h"
+#include "server/ServerClient.h"
 #include "server/ServerClients.h"
 #include "world/dim/chunk/Chunk.h"
 #include "world/dim/chunk/Region.h"
@@ -29,10 +30,11 @@ void ServerDimension::update(double delta) {
 			if (!mb) continue;
 			
 			bool clientNearby = false;
-			for (auto& player : static_cast<ServerWorld&>(world).getClients().players) {
+			for (auto& client : static_cast<ServerWorld&>(world).getClients().getClients()) {
+				if (!client.second->player) continue;
 				// TODO: Re-enable then **once** file saving is implemented.
 //                if (player->getDim()->getInd() == ind) {
-				auto clientPos = Space::MapBlock::world::fromBlock(player->getPos());
+				auto clientPos = Space::MapBlock::world::fromBlock(client.second->player->getPos());
 				if (abs(clientPos.x - mb->pos.x) <= discardRange.x + 1
 				    && abs(clientPos.y - mb->pos.y) <= discardRange.y + 1
 				    && abs(clientPos.z - mb->pos.z) <= discardRange.x + 1) {

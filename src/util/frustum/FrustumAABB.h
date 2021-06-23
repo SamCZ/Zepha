@@ -1,22 +1,19 @@
-//
-// Created by aurailus on 03/03/19.
-//
-
 #pragma once
 
-#include <glm/vec3.hpp>
+#include "util/Types.h"
 
+/** An axis-aligned bounding box used in frustum calculations. */
 class FrustumAABB {
-	public:
-	glm::vec3 corner;
-	glm::vec3 size;
+public:
+	vec3 corner;
+	vec3 size;
 	
-	FrustumAABB(glm::vec3 a, glm::vec3 b);
+	FrustumAABB(vec3 a, vec3 b);
 	
-	void set(glm::vec3 a, glm::vec3 b);
+	void set(vec3 a, vec3 b);
 	
-	glm::vec3 getVertexP(glm::vec3& normal);
+	vec3 getVertexP(vec3& normal);
 	
-	glm::vec3 getVertexN(glm::vec3& normal);
+	vec3 getVertexN(vec3& normal);
 };
 

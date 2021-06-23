@@ -6,56 +6,57 @@
 
 #include "Frustum.h"
 
-void Frustum::setCamInternals(float fov, float ratio, float nearD, float farD) {
-	this->nearD = nearD;
-	this->farD = farD;
+void Frustum::setCamInternals(f32 fov, f32 ratio, f32 nearDistance, f32 farDistance) {
+	this->nearDistance = nearDistance;
+	this->farDistance = farDistance;
 	
-	nearH = std::tan(fov) * nearD;
-	nearW = nearH * ratio;
+	nearHeight = std::tan(fov) * nearDistance;
+	nearWidth = nearHeight * ratio;
 	
-	farH = std::tan(fov) * farD;
-	farW = farH * ratio;
+	farHeight = std::tan(fov) * farDistance;
+	farWidth = farHeight * ratio;
 }
 
-void Frustum::update(glm::vec3& pos, glm::vec3& look, glm::vec3& up, glm::vec3& right) {
-	glm::vec3 fc = pos + (look * farD);
+void Frustum::update(vec3& pos, vec3& look, vec3& up, vec3& right) {
+	glm::vec3 fc = pos + (look * farDistance);
 	
-	ftl = fc + (up * (farH / 2.0f)) - (right * (farW / 2.0f));
-	ftr = fc + (up * (farH / 2.0f)) + (right * (farW / 2.0f));
-	fbl = fc - (up * (farH / 2.0f)) - (right * (farW / 2.0f));
-	fbr = fc - (up * (farH / 2.0f)) + (right * (farW / 2.0f));
+	ftl = fc + (up * (farHeight / 2.f)) - (right * (farWidth / 2.f));
+	ftr = fc + (up * (farHeight / 2.f)) + (right * (farWidth / 2.f));
+	fbl = fc - (up * (farHeight / 2.f)) - (right * (farWidth / 2.f));
+	fbr = fc - (up * (farHeight / 2.f)) + (right * (farWidth / 2.f));
 	
-	glm::vec3 nc = pos + (look * nearD);
+	glm::vec3 nc = pos + (look * nearDistance);
 	
-	ntl = nc + (up * (nearH / 2.0f)) - (right * (nearW / 2.0f));
-	ntr = nc + (up * (nearH / 2.0f)) + (right * (nearW / 2.0f));
-	nbl = nc - (up * (nearH / 2.0f)) - (right * (nearW / 2.0f));
-	nbr = nc - (up * (nearH / 2.0f)) + (right * (nearW / 2.0f));
+	ntl = nc + (up * (nearHeight / 2.f)) - (right * (nearWidth / 2.f));
+	ntr = nc + (up * (nearHeight / 2.f)) + (right * (nearWidth / 2.f));
+	nbl = nc - (up * (nearHeight / 2.f)) - (right * (nearWidth / 2.f));
+	nbr = nc - (up * (nearHeight / 2.f)) + (right * (nearWidth / 2.f));
 	
-	planes[TOP].setPoints(ntr, ntl, ftl);
-	planes[BOTTOM].setPoints(nbl, nbr, fbr);
-	planes[LEFT].setPoints(ntl, nbl, fbl);
-	planes[RIGHT].setPoints(nbr, ntr, fbr);
-	planes[FNEAR].setPoints(ntl, ntr, nbr);
-	planes[FFAR].setPoints(ftr, ftl, fbl);
+	planes[static_cast<u8>(Direction::TOP   )].setPoints(ntr, ntl, ftl);
+	planes[static_cast<u8>(Direction::BOTTOM)].setPoints(nbl, nbr, fbr);
+	planes[static_cast<u8>(Direction::LEFT  )].setPoints(ntl, nbl, fbl);
+	planes[static_cast<u8>(Direction::RIGHT )].setPoints(nbr, ntr, fbr);
+	planes[static_cast<u8>(Direction::NEAR  )].setPoints(ntl, ntr, nbr);
+	planes[static_cast<u8>(Direction::FAR   )].setPoints(ftr, ftl, fbl);
 }
 
-int Frustum::pointInFrustum(glm::vec3& p) {
+Frustum::Intersection Frustum::pointInFrustum(vec3& p) {
 	for (FrustumPlane& plane : planes) {
-		if (plane.distance(p) < 0) return OUTSIDE;
+		if (plane.distance(p) < 0) return Intersection::OUTSIDE;
 	}
-	return INSIDE;
+	return Intersection::INSIDE;
 }
 
-int Frustum::boxInFrustum(FrustumAABB& b) {
-	int result = INSIDE;
+Frustum::Intersection Frustum::boxInFrustum(FrustumAABB& b) {
+	Intersection res = Intersection::INSIDE;
 	
 	for (auto& plane : planes) {
-		glm::vec3 vertexP = b.getVertexP(plane.normal);
-		if (plane.distance(vertexP) < 0) return OUTSIDE;
+		vec3 vertexP = b.getVertexP(plane.normal);
+		if (plane.distance(vertexP) < 0) return Intersection::OUTSIDE;
 		
-		glm::vec3 vertexN = b.getVertexN(plane.normal);
-		if (plane.distance(vertexN) < 0) result = INTERSECT;
+		vec3 vertexN = b.getVertexN(plane.normal);
+		if (plane.distance(vertexN) < 0) res = Intersection::INTERSECTS;
 	}
-	return result;
+	
+	return res;
 }

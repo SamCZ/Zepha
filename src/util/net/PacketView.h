@@ -1,22 +1,30 @@
-//
-// Created by aurailus on 2020-03-07.
-//
-
 #pragma once
 
-#include <memory>
 #include <enet/enet.h>
 
-#include "Deserializer.h"
 #include "Packet.h"
+#include "util/Types.h"
+#include "Deserializer.h"
+
+/**
+ * Provides a read-only view into a packet.
+ * Manages the internal ENetPacket's memory, only deleting it when the PacketView is destroyed.
+ * Initializes a deserializer instance with the packet's data.
+ */
 
 class PacketView {
-	public:
-	explicit PacketView(ENetPacket* packet);
-	
+public:
 	PacketView(const PacketView&) = delete;
 	
-	std::shared_ptr<ENetPacket> packet;
+	explicit PacketView(ENetPacket* packet);
+	
+	/** A deserializer to read the packet's data. */
 	Deserializer d;
+	
+	/** The packet's type. */
 	Packet::Type type;
+	
+private:
+	/** An internal reference to the raw packet. */
+	sptr<ENetPacket> packet;
 };

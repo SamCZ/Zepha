@@ -1,12 +1,8 @@
-//
-// Created by aurailus on 2019-11-18.
-//
-
 #include "ServerBiomeAtlas.h"
 
 #include "game/def/BiomeDef.h"
 
-ServerBiomeAtlas::ServerBiomeAtlas(unsigned int seed) :
+ServerBiomeAtlas::ServerBiomeAtlas(u32 seed) :
 	seed(seed) {
 	
 	BiomeDef* invalid = new BiomeDef();
@@ -20,5 +16,9 @@ ServerBiomeAtlas::ServerBiomeAtlas(unsigned int seed) :
 
 void ServerBiomeAtlas::registerBiome(BiomeDef* def) {
 	defs.push_back(def);
-	defTable.insert({ def->identifier, def->index });
+	defTable.emplace(def->identifier, def->index);
+}
+
+u32 ServerBiomeAtlas::getSeed() {
+	return seed;
 }

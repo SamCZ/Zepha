@@ -1,28 +1,16 @@
-//
-// Created by aurailus on 2020-07-28.
-//
-
 #pragma once
 
-#include <memory>
-#include <glm/vec3.hpp>
-
+#include "util/Types.h"
 #include "util/CovariantPtr.h"
 #include "world/dim/ent/Entity.h"
 #include "game/atlas/DefinitionAtlas.h"
 
 class World;
-
 class Packet;
-
 class Subgame;
-
 class Inventory;
-
 class Dimension;
-
 class Deserializer;
-
 class InventoryList;
 
 class Player : public virtual Entity {
@@ -36,37 +24,37 @@ public:
 	
 	virtual void setDim(DimensionPtr dim, bool assert = false);
 	
-	virtual void setPos(glm::vec3 pos, bool assert = false);
+	virtual void setPos(vec3 pos, bool assert = false);
 	
-	virtual void setVel(glm::vec3 vel, bool assert = false);
+	virtual void setVel(vec3 vel, bool assert = false);
 	
 	virtual float getYaw();
 	
-	virtual void setYaw(float yaw, bool assert = false);
+	virtual void setYaw(f32 yaw, bool assert = false);
 	
-	virtual float getPitch();
+	virtual f32 getPitch();
 	
-	virtual void setPitch(float pitch, bool assert = false);
+	virtual void setPitch(f32 pitch, bool assert = false);
 	
-	virtual glm::vec3 getLookOffset();
+	virtual vec3 getLookOffset();
 	
-	virtual void setLookOffset(glm::vec3 lookOffset, bool assert = false);
+	virtual void setLookOffset(vec3 lookOffset, bool assert = false);
 	
 	virtual bool isFlying();
 	
 	virtual void setFlying(bool flying, bool assert = false);
 	
-	virtual std::string getHandList();
+	virtual string getHandList();
 	
-	virtual void setHandList(const std::string& list, bool assert = false);
+	virtual void setHandList(const string& list, bool assert = false);
 	
-	virtual std::string getWieldList();
+	virtual string getWieldList();
 	
-	virtual void setWieldList(const std::string& list, bool assert = false);
+	virtual void setWieldList(const string& list, bool assert = false);
 	
-	virtual unsigned short getWieldIndex();
+	virtual u16 getWieldIndex();
 	
-	virtual void setWieldIndex(unsigned short index, bool assert = false);
+	virtual void setWieldIndex(u16 index, bool assert = false);
 	
 	virtual InventoryPtr getInventory() = 0;
 	

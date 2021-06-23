@@ -206,7 +206,7 @@ void LocalDimension::serverEntitiesInfo(Deserializer& e) {
 		std::shared_ptr<LocalLuaEntity> activeEntity;
 		if (entityRefs.count(id)) activeEntity = entityRefs.at(id)->entity.l();
 		else {
-			auto ent = std::make_shared<LocalLuaEntity>(game, world.getDimension(getInd()));
+			auto ent = make_shared<LocalLuaEntity>(game, world.getDimension(getInd()));
 			auto entity = Api::Usertype::Entity(ent);
 			ent->setId(id);
 			entities.push_back(entity);
@@ -217,70 +217,82 @@ void LocalDimension::serverEntitiesInfo(Deserializer& e) {
 		while (!d.atEnd()) {
 			const auto field = d.read<NetField>();
 			switch (field) {
-			default:
+			default: {
 				std::cout << Log::err << "Entity received unhandled NetField, Type "
 				          << static_cast<int>(field) << "." << Log::endl;
 				break;
+			}
 			
-			case NetField::POS:
+			case NetField::POS: {
 				activeEntity->setPos(d.read<vec3>());
 				break;
-				
-			case NetField::VEL:
+			}
+			
+			case NetField::VEL: {
 				activeEntity->setVel(d.read<vec3>());
 				break;
-				
-			case NetField::ROT:
+			}
+			
+			case NetField::ROT: {
 				activeEntity->setRot(d.read<vec3>());
 				break;
-				
-			case NetField::SCALE:
+			}
+			
+			case NetField::SCALE: {
 				activeEntity->setScale(d.read<vec3>());
 				break;
-				
-			case NetField::VISUAL_OFF:
+			}
+			
+			case NetField::VISUAL_OFF: {
 				activeEntity->setVisualOffset(d.read<vec3>());
 				break;
-				
+			}
+			
 			case NetField::DISPLAY: {
 				string mode, argA, argB;
 				d.read(mode).read(argA).read(argB);
 				activeEntity->setAppearance(mode, argA, argB);
 				break;
 			}
+			
 			case NetField::ANIM_STATE: {
 				bool playing = d.read<bool>();
 				activeEntity->animation.setPlaying(playing);
 				break;
 			}
+			
 			case NetField::ANIM_RANGE: {
-				bool loops;
-				uvec2 range;
-				d.read(range).read(loops);
+				uvec2 range = d.read<uvec2>();
+				bool loops = d.read<bool>();
 				activeEntity->animation.setAnim(range, 10, loops);
 				break;
 			}
-			case NetField::DIM:
+			
+			case NetField::DIM: {
 				activeEntity->setDim(world.getDimension(d.read<u16>()));
 				break;
-				
+			}
+			
 			case NetField::COLLISION_BOX: {
 				bool hasCollisionBox = d.read<bool>();
 				if (hasCollisionBox) {
-					glm::vec3 a = d.read<glm::vec3>();
-					glm::vec3 b = d.read<glm::vec3>();
+					vec3 a = d.read<vec3>();
+					vec3 b = d.read<vec3>();
 					activeEntity->setCollisionBox({ a, b });
 				}
 				else activeEntity->removeCollisionBox();
 				break;
 			}
-			case NetField::COLLIDES:
+			
+			case NetField::COLLIDES: {
 				activeEntity->setCollides(d.read<bool>());
 				break;
-				
-			case NetField::GRAVITY:
-				activeEntity->setGravity(d.read<float>());
+			}
+			
+			case NetField::GRAVITY: {
+				activeEntity->setGravity(d.read<f32>());
 				break;
+			}
 			}
 		}
 	}
@@ -311,7 +323,7 @@ void LocalDimension::renderChunks(Renderer& renderer) {
 	lastMeshesDrawn = 0;
 	for (auto& renderElement : renderElems) {
 		FrustumAABB bbox(renderElement->getPos() * vec3(16), vec3(16));
-		if (renderer.camera.inFrustum(bbox) != Frustum::OUTSIDE) {
+		if (renderer.camera.inFrustum(bbox) != Frustum::Intersection::OUTSIDE) {
 			renderElement->draw(renderer);
 			lastMeshesDrawn++;
 		}

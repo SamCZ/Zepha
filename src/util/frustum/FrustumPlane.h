@@ -1,20 +1,16 @@
-//
-// Created by aurailus on 02/03/19.
-//
-
 #pragma once
 
-#include <glm/vec3.hpp>
+#include "util/Types.h"
 
+/** Represents a frustum plane. */
 class FrustumPlane {
-	public:
-	glm::vec3 normal, point;
-	float d;
+public:
+	vec3 normal;
+	vec3 point;
+	f32 d;
 	
-	FrustumPlane() = default;
+	void setPoints(vec3& v1, vec3& v2, vec3& v3);
 	
-	void setPoints(glm::vec3& v1, glm::vec3& v2, glm::vec3& v3);
-	
-	float distance(glm::vec3& p);
+	f32 distance(vec3& p);
 };
 

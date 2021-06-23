@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <string>
+#include "util/Types.h"
 
 struct SerializedModel {
-	std::string name{};
-	std::string data{};
-	std::string format{};
+	string name;
+	string data;
+	string format;
 };

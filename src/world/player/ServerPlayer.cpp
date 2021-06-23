@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 29/06/19.
-//
-
 #include "ServerPlayer.h"
 
 #include "world/ServerWorld.h"
@@ -13,7 +9,10 @@
 
 ServerPlayer::ServerPlayer(ServerClient& client, World& world, SubgamePtr game, DimensionPtr dim) :
 	Player(game, world, dim, client.id), Entity(game, dim), client(client),
-	inventory(world.getRefs()->createInventory("player:" + std::to_string(id))) {}
+	inventory(world.getRefs()->createInventory("player:" + std::to_string(id))) {
+	
+	inventory->createList("cursor", 1, 1);
+}
 
 void ServerPlayer::assertField(Packet packet) {
 	packet.type = Packet::Type::THIS_PLAYER_INFO;

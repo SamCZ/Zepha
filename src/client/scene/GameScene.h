@@ -1,18 +1,15 @@
-//
-// Created by aurailus on 17/12/18.
-//
-
 #pragma once
 
 #include "Scene.h"
 
 #include "world/LocalWorld.h"
 
-class LocalSubgame;
 class Drawable;
+class LocalSubgame;
 
 class GameScene : public Scene {
 public:
+	
 	GameScene(Client& client);
 	
 	void update() override;
@@ -22,6 +19,7 @@ public:
 	void cleanup() override;
 	
 public:
+	
 	WorldPtr world;
 };
 

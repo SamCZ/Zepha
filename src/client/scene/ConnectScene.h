@@ -13,7 +13,7 @@ class ServerConnection;
 class Address;
 
 class ConnectScene : public Scene {
-	public:
+public:
 	enum class State {
 		CONNECTING,
 		FAILED_CONNECT,
@@ -34,7 +34,7 @@ class ConnectScene : public Scene {
 	
 	void handleConnecting();
 	
-	private:
+private:
 	State connectState = State::CONNECTING;
 	ServerConnection& connection;
 	

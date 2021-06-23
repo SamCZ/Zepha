@@ -196,8 +196,8 @@ void ServerModHandler::loadTextures(ServerSubgame& defs, const std::vector<LuaMo
 							std::string comp = gzip::compress(str.data(), str.length());
 							free(data);
 							
-							defs.assets.textures.push_back({ std::move(name), comp, static_cast<unsigned int>(width),
-								static_cast<unsigned int>(height) });
+							defs.assets.textures.emplace_back(
+								std::move(name), comp, static_cast<u16>(width), static_cast<u16>(height));
 						}
 					}
 				}
@@ -282,26 +282,17 @@ void ServerModHandler::organizeDependencies(std::vector<LuaMod>& mods) {
 
 void ServerModHandler::serializeMods(std::vector<LuaMod>& mods) {
 	for (LuaMod& mod : mods) {
-		Serializer s = {};
+		Serializer s;
 		s.append(mod.config.name)
-			.append(mod.config.description)
-			.append(mod.config.version);
-		
-		std::string depends;
-		bool delimiter = false;
-		for (const std::string& dep : mod.config.depends) {
-			if (delimiter) depends.append(",");
-			else delimiter = true;
-			depends.append(dep);
-		}
-		
-		s.append(depends);
+		 .append(mod.config.description)
+		 .append(mod.config.version)
+		 .append(mod.config.depends);
 		
 		for (LuaMod::File& file : mod.files) {
 			s.append(file.path).append(file.file);
 		}
 		
-		std::string comp = gzip::compress(s.data.c_str(), s.data.length());
+		string comp = gzip::compress(s.data.c_str(), s.data.length());
 		mod.serialized = comp;
 	}
 }

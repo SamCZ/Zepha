@@ -26,10 +26,10 @@ public:
 	
 	~Server();
 	
-	private:
-	void packetReceived(ENetEvent& e);
-	
-	void playerPacketReceived(PacketView& p, PlayerPtr player);
+private:
+
+	/** Handles a player packet. */
+	void playerPacketReceived(PacketView& p, sptr<ServerPlayer> player);
 	
 	/** The server's port. */
 	u16 port = 0;
@@ -53,7 +53,7 @@ public:
 	ServerClients clients;
 	
 	/** A list of players who have been updated, to send to the other clients. */
-	std::unordered_set<u32> playersUpdated{};
+	std::unordered_set<u32> playersUpdated {};
 	
 	/** The time elapsed since the start of the server. */
 	f64 elapsed = 0;

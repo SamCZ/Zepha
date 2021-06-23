@@ -140,50 +140,61 @@ void LocalPlayer::handleAssertion(Deserializer& d) {
 	while (!d.atEnd()) {
 		const auto field = d.read<NetField>();
 		switch (field) {
-		default:
+		default: {
 			std::cout << Log::err << "Player received unhandled NetField, Type "
 			          << static_cast<u32>(field) << "." << Log::endl;
 			break;
+		}
 		
-		case NetField::ID:
+		case NetField::ID: {
 			setId(d.read<u32>());
 			break;
+		}
 		
-		case NetField::POS:
+		case NetField::POS: {
 			setPos(d.read<vec3>());
 			break;
+		}
 		
-		case NetField::VEL:
+		case NetField::VEL: {
 			setVel(d.read<vec3>());
 			break;
+		}
 		
-		case NetField::DIM:
+		case NetField::DIM: {
 			setDim(world.getDimension(d.read<u16>()));
 			break;
+		}
 		
-		case NetField::LOOK_PITCH:
+		case NetField::LOOK_PITCH: {
 			setPitch(d.read<f32>());
 			break;
+		}
 		
-		case NetField::LOOK_YAW:
+		case NetField::LOOK_YAW: {
 			setYaw(d.read<f32>());
 			break;
+		}
 		
-		case NetField::FLYING:
+		case NetField::FLYING: {
 			setFlying(d.read<bool>());
 			break;
+		}
 		
-		case NetField::HAND_INV:
+		case NetField::HAND_INV: {
 			setHandList(d.read<string>());
 			break;
+		}
 		
-		case NetField::WIELD_INV:
+		case NetField::WIELD_INV: {
 			setWieldList(d.read<string>());
 			break;
+		}
 		
-		case NetField::WIELD_INDEX:
+		case NetField::WIELD_INDEX: {
 			setWieldIndex(d.read<u16>());
 			break;
+		}
 		}
 	}
 }

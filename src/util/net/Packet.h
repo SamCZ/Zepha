@@ -1,16 +1,19 @@
-//
-// Packet implentation for easy manipulation.
-// Can be converted into an ENet packet, or deserialized from one.
-// Created by aurailus on 10/01/19.
-//
-
 #pragma once
 
-#include <string>
 #include <enet/enet.h>
 
+#include "util/Types.h"
+
+/**
+ * A packet stores data to send across a connection,
+ * allowing data transmission between the client and server.
+ * This class is used to create a packet,
+ * if the ability to read a sent packet is needed, use PacketView.
+ */
+
 class Packet {
-	public:
+public:
+	/** An enum of packet channels that can be used. */
 	enum class Channel {
 		UNDEFINED = 0,
 		// Authentication
@@ -21,6 +24,7 @@ class Packet {
 		WORLD, ENTITY, INTERACT
 	};
 	
+	/** An enum of packet types that can be used. */
 	enum class Type {
 		UNDEFINED = 0,
 		// Information Request Types
@@ -45,15 +49,24 @@ class Packet {
 	
 	Packet() = default;
 	
+	/** Creates a packet with the type specified. */
 	explicit Packet(Type type, bool reliable = true);
 	
+	/** Converts the packet into a raw packet to transfer. */
 	ENetPacket* toENetPacket() const;
-	
+
+	/** Sends the packet to the peer specified. */
 	void sendTo(ENetPeer* peer, Channel channel) const;
 	
+	/** Sends the packet to the peer specified. */
 	void sendTo(const ENetPeer& peer, Channel channel) const;
+
+	/** The internal packet data. */
+	string data {};
 	
-	Type type = Type::UNDEFINED;
-	std::string data{};
+	/** Whether or not the packet should be reliably sequenced. */
 	bool reliable = true;
+	
+	/** The packet's type. */
+	Type type = Type::UNDEFINED;
 };

@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 17/12/18.
-//
-
 #include "GameScene.h"
 
 #include "client/Client.h"
@@ -9,7 +5,7 @@
 #include "client/graph/Renderer.h"
 
 GameScene::GameScene(Client& client) : Scene(client),
-	world(std::make_shared<LocalWorld>(client.game, client.connection, client.renderer)) {
+	world(make_shared<LocalWorld>(client.game, client.connection, client.renderer)) {
 	
 	Packet r(Packet::Type::CONNECT_DATA_RECVD);
 	r.sendTo(client.connection.getPeer(), Packet::Channel::CONNECT);

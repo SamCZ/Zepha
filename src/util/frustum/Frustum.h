@@ -1,47 +1,39 @@
-//
-// Created by aurailus on 02/03/19.
-//
-
 #pragma once
 
 #include <glm/vec3.hpp>
-#include "FrustumPlane.h"
-#include "FrustumAABB.h"
 
+#include "util/Types.h"
+#include "FrustumAABB.h"
+#include "FrustumPlane.h"
+
+/** Checks if boxes or points are within the camera's frustum cone. */
 class Frustum {
-	private:
-	enum {
+private:
+	enum class Direction {
 		TOP = 0,
 		BOTTOM,
 		LEFT,
 		RIGHT,
-		FNEAR,
-		FFAR
+		NEAR,
+		FAR
 	};
 	
-	public:
-	enum {
-		OUTSIDE,
-		INSIDE,
-		INTERSECT
-	};
+public:
+	enum class Intersection { OUTSIDE, INSIDE, INTERSECTS };
 	
-	Frustum() = default;
+	void setCamInternals(f32 angle, f32 ratio, f32 nearDistance, f32 farDistance);
 	
-	void setCamInternals(float angle, float ratio, float nearD, float farD);
+	void update(vec3& pos, vec3& look, vec3& up, vec3& right);
 	
-	void update(glm::vec3& pos, glm::vec3& look, glm::vec3& up, glm::vec3& right);
+	Intersection pointInFrustum(vec3& p);
 	
-	int pointInFrustum(glm::vec3& p);
-	
-	int boxInFrustum(FrustumAABB& b);
+	Intersection boxInFrustum(FrustumAABB& b);
 	
 	FrustumPlane planes[6];
 	
-	float nearD, farD;
-	float nearW, nearH, farW, farH;
+	f32 nearDistance, farDistance;
+	f32 nearWidth, nearHeight, farWidth, farHeight;
 	
-	glm::vec3 ntl, ntr, nbl, nbr,
-		ftl, ftr, fbl, fbr;
+	vec3 ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr;
 };
 

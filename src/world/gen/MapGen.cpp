@@ -12,10 +12,10 @@
 #include "world/dim/chunk/Chunk.h"
 #include "game/atlas/DefinitionAtlas.h"
 
-MapGen::MapGen(Subgame& game, World& world, unsigned int seed, std::unordered_set<std::string> biomes) :
+MapGen::MapGen(Subgame& game, World& world, u32 seed, std::unordered_set<string> biomes) :
 	game(game), world(world), props(seed) {
 	
-	std::unordered_set<unsigned int> biomeIndices {};
+	std::unordered_set<u16> biomeIndices {};
 	for (const auto& str : biomes) {
 		if (str[0] == '#')
 			for (auto& biome : game.getBiomes().biomesFromTag(str.substr(1, str.length() - 1)))
@@ -26,22 +26,22 @@ MapGen::MapGen(Subgame& game, World& world, unsigned int seed, std::unordered_se
 	generateVoronoi(biomeIndices);
 }
 
-[[maybe_unused]] std::unique_ptr<MapGen::CreatedSet> MapGen::generateChunk(unsigned int dim, glm::ivec3 pos) {
+[[maybe_unused]] uptr<MapGen::CreatedSet> MapGen::generateChunk(u16 dim, ivec3 pos) {
 	return generateArea(dim, pos, 1);
 }
 
-std::unique_ptr<MapGen::CreatedSet> MapGen::generateMapBlock(unsigned int dim, glm::ivec3 pos) {
-	return generateArea(dim, Space::Chunk::world::fromMapBlock(glm::vec3(pos)), 4);
+uptr<MapGen::CreatedSet> MapGen::generateMapBlock(u16 dim, ivec3 pos) {
+	return generateArea(dim, Space::Chunk::world::fromMapBlock(pos), 4);
 }
 
-std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::ivec3 origin, unsigned int size) {
+std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(u16 dim, ivec3 origin, u16 size) {
 	Job job(origin, size);
 	
 	// Build Biome Prop Maps
 	
 	const auto fill = [&](const noise::module::Module& s) {
-		return [&](glm::vec3 pos) {
-			glm::vec3 worldPos = glm::vec3(job.pos) + pos * static_cast<float>(job.size);
+		return [&](vec3 pos) {
+			vec3 worldPos = vec3(job.pos) + pos * static_cast<f32>(job.size);
 			return s.GetValue(worldPos.x, 0, worldPos.z);
 		};
 	};
@@ -52,12 +52,12 @@ std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::
 	
 	// Generate Biome Topmap
 	
-	std::vector<unsigned int> biomeMap {};
+	vec<u16> biomeMap {};
 	biomeMap.resize((job.size * 16 + 1) * (job.size * 16 + 1));
 	
-	for (unsigned short i = 0; i < biomeMap.size(); i++) {
-		glm::vec3 indPos = { i / (job.size * 16 + 1), 0, i % (job.size * 16 + 1) };
-		glm::vec3 queryPos = indPos / 16.f / static_cast<float>(job.size);
+	for (usize i = 0; i < biomeMap.size(); i++) {
+		vec3 indPos = { i / (job.size * 16 + 1), 0, i % (job.size * 16 + 1) };
+		vec3 queryPos = indPos / 16.f / static_cast<f32>(job.size);
 		
 		biomeMap[i] = getBiomeAt(job.temperature.get(queryPos),
 			job.humidity.get(queryPos), job.roughness.get(queryPos));
@@ -65,34 +65,34 @@ std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::
 	
 	// Generate Heightmap and Volume
 	
-	job.heightmap.populate([&](glm::vec3 pos) {
-		glm::ivec3 blockPos = glm::ivec3(pos * 16.f * static_cast<float>(job.size));
+	job.heightmap.populate([&](vec3 pos) {
+		ivec3 blockPos = ivec3(pos * 16.f * static_cast<f32>(job.size));
 		auto& biome = game.getBiomes().biomeFromId(biomeMap.at(blockPos.x * (job.size * 16 + 1) + blockPos.z));
-		glm::vec3 worldPos = glm::vec3(job.pos) + pos * static_cast<float>(job.size);
+		vec3 worldPos = vec3(job.pos) + pos * static_cast<f32>(job.size);
 		return biome.heightmap[biome.heightmap.size() - 1]->GetValue(worldPos.x, 0, worldPos.z);
 	});
 	
-	job.volume.populate([&](glm::vec3 pos) {
-		glm::ivec3 blockPos = glm::ivec3(pos * 16.f * static_cast<float>(job.size));
+	job.volume.populate([&](vec3 pos) {
+		ivec3 blockPos = ivec3(pos * 16.f * static_cast<f32>(job.size));
 		auto& biome = game.getBiomes().biomeFromId(biomeMap.at(blockPos.x * (job.size * 16 + 1) + blockPos.z));
-		glm::vec3 worldPos = glm::vec3(job.pos) + pos * static_cast<float>(job.size);
+		vec3 worldPos = vec3(job.pos) + pos * static_cast<f32>(job.size);
 		return biome.volume[biome.volume.size() - 1]->GetValue(worldPos.x, worldPos.y, worldPos.z);
 	});
 	
 	// Generate Chunks
 	
-	glm::ivec3 pos {};
+	u16vec3 pos {};
 	for (pos.x = 0; pos.x < job.size; pos.x++) {
 		for (pos.z = 0; pos.z < job.size; pos.z++) {
-			std::unique_ptr<ChunkData> densityAbove = nullptr;
+			uptr<ChunkData> densityAbove = nullptr;
 			for (pos.y = job.size; pos.y >= 0; pos.y--) {
-//				if (pos.y == job.size) {
-//					densityAbove = populateChunkDensity(job, pos);
-//					continue;
-//				}
+				if (pos.y == job.size) {
+					densityAbove = populateChunkDensity(job, pos);
+					continue;
+				}
 //
-//				std::unique_ptr<ChunkData> density = populateChunkDensity(job, pos);
-//				std::unique_ptr<ChunkData> depth = populateChunkDepth(density, std::move(densityAbove));
+				uptr<ChunkData> density = populateChunkDensity(job, pos);
+//				uptr<ChunkData> depth = populateChunkDepth(density, std::move(densityAbove));
 //
 //				std::cout << "were out da function " << pos.x << ", " << pos.y << ", " << pos.z << std::endl;
 //				std::cout << &job << " " << &pos << " " << &biomeMap << " " << &depth << std::endl;
@@ -100,8 +100,8 @@ std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::
 //				generateChunkBlocks(job, pos, biomeMap, *depth);
 //				generateChunkDecorAndLight(job, pos, biomeMap, *depth);
 				
-				glm::ivec3 chunkPos = job.pos + pos;
-				job.chunks->emplace(chunkPos, std::make_shared<Chunk>(chunkPos));
+				ivec3 chunkPos = job.pos + ivec3(pos);
+				job.chunks->emplace(chunkPos, make_shared<Chunk>(chunkPos));
 
 //				densityAbove = std::move(density);
 			}
@@ -110,7 +110,7 @@ std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::
 	
 	propogateSunlightNodes(job);
 	
-	auto created = std::make_unique<CreatedSet>();
+	auto created = make_unique<CreatedSet>();
 	for (const auto& chunk : *job.chunks) {
 		created->emplace(chunk.first);
 //		world.getDimension(dim)->setChunk(chunk.second);
@@ -119,53 +119,51 @@ std::unique_ptr<MapGen::CreatedSet> MapGen::generateArea(unsigned int dim, glm::
 	return std::move(created);
 }
 
-void MapGen::generateVoronoi(const std::unordered_set<unsigned int>& biomes) {
-	std::vector<std::pair<glm::vec3, unsigned short>> points {};
+void MapGen::generateVoronoi(const std::unordered_set<u16>& biomes) {
+	vec<std::pair<vec3, u16>> points {};
 	for (auto biomeInd : biomes) {
 		auto& biome = game.getBiomes().biomeFromId(biomeInd);
 		
-		points.emplace_back(glm::vec3 {
-			static_cast<unsigned short>(std::fmin(voronoiSize - 1,
+		points.emplace_back(vec3 {
+			static_cast<u16>(std::fmin(voronoiSize - 1,
 				std::fmax(0, (biome.temperature + 1) / 2 * voronoiSize))),
-			static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, biome.humidity * voronoiSize))),
-			static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, biome.roughness * voronoiSize)))
+			static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, biome.humidity * voronoiSize))),
+			static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, biome.roughness * voronoiSize)))
 		}, biomeInd);
 	}
 	
 	voronoi.setPoints(points);
 }
 
-unsigned int MapGen::getBiomeAt(float temperature, float humidity, float roughness) {
+u16 MapGen::getBiomeAt(f32 temperature, f32 humidity, f32 roughness) {
 	return voronoi.getPoint(
-		static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, (temperature + 1) / 2 * voronoiSize))),
-		static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, humidity * voronoiSize))),
-		static_cast<unsigned short>(std::fmin(voronoiSize - 1, std::fmax(0, roughness * voronoiSize))));
+		static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, (temperature + 1) / 2 * voronoiSize))),
+		static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, humidity * voronoiSize))),
+		static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, roughness * voronoiSize))));
 }
 
-std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDensity(MapGen::Job& job, glm::ivec3 localPos) {
-	auto data = std::make_unique<ChunkData>();
+uptr<MapGen::ChunkData> MapGen::populateChunkDensity(MapGen::Job& job, ivec3 localPos) {
+	auto data = make_unique<ChunkData>();
 	
-	for (unsigned short i = 0; i < 4096; i++) {
-		glm::ivec3 indPos = Space::Block::fromIndex(i);
-		glm::vec3 queryPos = (glm::vec3(localPos) + glm::vec3(indPos) / 16.f) / static_cast<float>(job.size);
-		(*data)[i] = (job.volume.get(queryPos) + job.heightmap.get({ queryPos.x, 0, queryPos.z })) -
-		             ((job.pos.y + localPos.y) * 16 + indPos.y);
+	for (u16 i = 0; i < 4096; i++) {
+		ivec3 indPos = Space::Block::fromIndex(i);
+		vec3 queryPos = (vec3(localPos) + vec3(indPos) / 16.f) / static_cast<f32>(job.size);
+		(*data)[i] = (job.volume.get(queryPos) + job.heightmap.get({ queryPos.x, 0, queryPos.z }))
+			- ((job.pos.y + localPos.y) * 16 + indPos.y);
 	}
 	
 	return data;
 }
 
-std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDepth(std::unique_ptr<ChunkData>& chunkDensity,
-	std::unique_ptr<ChunkData> chunkDensityAbove) {
+uptr<MapGen::ChunkData> MapGen::populateChunkDepth(uptr<ChunkData>& chunkDensity, uptr<ChunkData> chunkDensityAbove) {
+	auto data = make_unique<ChunkData>();
 	
-	auto data = std::make_unique<ChunkData>();
-	
-	for (unsigned short i = 0; i < 256; i++) {
-		glm::ivec2 pos = { i / 16, i % 16 };
+	for (u16 i = 0; i < 256; i++) {
+		ivec2 pos = { i / 16, i % 16 };
 		short depth = 16;
 		
 		if ((*chunkDensity)[Space::Block::index({ pos.x, 15, pos.y })] > 0) {
-			for (unsigned char j = 0; j < 16; j++) {
+			for (u8 j = 0; j < 16; j++) {
 				if ((*chunkDensityAbove)[Space::Block::index({ pos.x, j, pos.y })] <= 0) {
 					depth = j;
 					break;
@@ -176,8 +174,8 @@ std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDepth(std::unique_ptr<Ch
 			depth = 0;
 		}
 		
-		for (char y = 15; y >= 0; y--) {
-			unsigned int ind = Space::Block::index({ pos.x, y, pos.y });
+		for (i8 y = 15; y >= 0; y--) {
+			u16 ind = Space::Block::index({ pos.x, y, pos.y });
 			depth = ((*chunkDensity)[ind] > 0 ? std::min(depth + 1, 16) : 0);
 			(*data)[ind] = depth;
 		}
@@ -186,34 +184,26 @@ std::unique_ptr<MapGen::ChunkData> MapGen::populateChunkDepth(std::unique_ptr<Ch
 	return data;
 }
 
-void MapGen::generateChunkBlocks(Job& job, glm::ivec3 localPos,
-	std::vector<unsigned int> biomeMap, ChunkData& depthMap) {
+void MapGen::generateChunkBlocks(Job& job, ivec3 localPos, vec<u16> biomeMap, ChunkData& depthMap) {
 	std::cout << "were in da function " << std::endl;
 	
-	glm::ivec3 chunkPos = job.pos + localPos;
+	ivec3 chunkPos = job.pos + localPos;
 	
 	auto partial = (job.chunks->count(chunkPos) ? job.chunks->at(chunkPos) : nullptr);
 	if (partial) job.chunks->erase(chunkPos);
 	
 	auto& chunk = *(*job.chunks->emplace(chunkPos, std::make_shared<Chunk>(chunkPos)).first).second;
 	
-	unsigned int partialBlock = DefinitionAtlas::INVALID;
+	u16 partialBlock = DefinitionAtlas::INVALID;
 	
-	for (unsigned short i = 0; i < 4096; i++) {
+	for (u16 i = 0; i < 4096; i++) {
 		ivec3 indPos = Space::Block::fromIndex(i);
 		
-		unsigned int biomeID = biomeMap[(localPos.x * 16 + indPos.x) *
-			(job.size * 16 + 1) + (localPos.z * 16 + indPos.z)];
+		u16 biomeID = biomeMap[(localPos.x * 16 + indPos.x) * (job.size * 16 + 1) + (localPos.z * 16 + indPos.z)];
 		auto& biome = game.getBiomes().biomeFromId(biomeID);
-//
-//		if (partial && i >= partialNextAt) {
-//			partialInd++;
-//			partialBlock = partial->d->blocks[partialInd * 2 + 1];
-//			partialNextAt = (partialInd * 2 + 2 >= partial->d->blocks.size()) ? 4096 : partial->d->blocks[partialInd * 2 + 2];
-//		}
 		
-		float depth = depthMap[i];
-		unsigned int blockID =
+		f32 depth = depthMap[i];
+		u16 blockID =
 			partialBlock > DefinitionAtlas::INVALID ? partialBlock
 				: depth <= 1 ? DefinitionAtlas::AIR
 				: depth <= 2 ? biome.topBlock
@@ -228,45 +218,45 @@ void MapGen::generateChunkBlocks(Job& job, glm::ivec3 localPos,
 	chunk.countRenderableBlocks();
 }
 
-void MapGen::generateChunkDecorAndLight(Job& job, glm::ivec3 localPos, std::vector<unsigned int> biomeMap,
+void MapGen::generateChunkDecorAndLight(Job& job, ivec3 localPos, vec<u16> biomeMap,
 	ChunkData& depthMap) {
 	
-	glm::vec3 posFloat = job.pos + localPos;
+	vec3 posFloat = job.pos + localPos;
 	std::default_random_engine generator(posFloat.x + posFloat.y * M_PI + posFloat.z * (M_PI * 2));
-	std::uniform_real_distribution<float> distribution(0, 1);
+	std::uniform_real_distribution<f32> distribution(0, 1);
 	
 	auto& chunk = job.chunks->at(job.pos + localPos);
 	
-	glm::ivec3 abovePos = job.pos + localPos + glm::ivec3 { 0, 1, 0 };
-	std::shared_ptr<Chunk> above = (localPos.y != job.size - 1) ?
+	ivec3 abovePos = job.pos + localPos + ivec3 { 0, 1, 0 };
+	sptr<Chunk> above = (localPos.y != job.size - 1) ?
 		job.chunks->count(abovePos) ? job.chunks->at(abovePos) : nullptr : nullptr;
 	
-	for (unsigned short i = 0; i < 256; i++) {
-		glm::ivec3 indPos = { i / 16, 15, i % 16 };
+	for (u16 i = 0; i < 256; i++) {
+		ivec3 indPos = { i / 16, 15, i % 16 };
 		
-		unsigned int biomeID = biomeMap[(localPos.x * 16 + indPos.x)
+		u16 biomeID = biomeMap[(localPos.x * 16 + indPos.x)
 			* (job.size * 16 + 1) + (localPos.z * 16 + indPos.z)];
 		auto& biome = game.getBiomes().biomeFromId(biomeID);
 		
-		short schemID = -1;
-		for (short j = 0; j < biome.schematics.size(); j++) {
+		u16 schemID = -1;
+		for (u16 j = 0; j < biome.schematics.size(); j++) {
 			if (distribution(generator) > 1 - biome.schematics[j]->probability) {
 				schemID = j;
 				break;
 			}
 		}
 		
-		char light = -1;
+		i8 light = -1;
 		
 		for (; indPos.y >= 0 && (light || schemID > -1); indPos.y--) {
-			unsigned short ind = Space::Block::index(indPos);
+			u16 ind = Space::Block::index(indPos);
 			
-			if (schemID > -1 && depthMap[ind] > 1 && depthMap[ind] <= 2) {
-				glm::ivec3 pos = (job.pos + localPos) * 16 + indPos;
+			if (schemID > UINT16_MAX && depthMap[ind] > 1 && depthMap[ind] <= 2) {
+				ivec3 pos = (job.pos + localPos) * 16 + indPos;
 				pos.y++; // Compensate for the fact that we're finding solid positions.
 				auto& schematic = biome.schematics[schemID];
-				for (unsigned int j = 0; j < schematic->length(); j++) {
-					glm::ivec3 off = schematic->getOffset(j);
+				for (usize j = 0; j < schematic->length(); j++) {
+					ivec3 off = schematic->getOffset(j);
 					setBlock(job, pos + off - schematic->origin, schematic->layout[j], chunk);
 				}
 				break;
@@ -289,15 +279,15 @@ void MapGen::generateChunkDecorAndLight(Job& job, glm::ivec3 localPos, std::vect
 	chunk->generationState = Chunk::GenerationState::GENERATED;
 }
 
-void MapGen::setBlock(MapGen::Job& job, glm::ivec3 worldPos, unsigned int block, std::shared_ptr<Chunk> hint) {
+void MapGen::setBlock(MapGen::Job& job, ivec3 worldPos, u16 block, sptr<Chunk> hint) {
 	if (block == DefinitionAtlas::INVALID) return;
-	unsigned int ind = Space::Block::index(worldPos);
+	u16 ind = Space::Block::index(worldPos);
 	
 	if (hint && Space::Chunk::world::fromBlock(worldPos) == hint->getPos()) {
 		if (hint->getBlock(ind) <= DefinitionAtlas::AIR) hint->setBlock(ind, block);
 	}
 	else {
-		glm::ivec3 chunkPos = Space::Chunk::world::fromBlock(worldPos);
+		ivec3 chunkPos = Space::Chunk::world::fromBlock(worldPos);
 		auto& chunk = *(*job.chunks->emplace(chunkPos, std::make_shared<Chunk>(chunkPos, true)).first).second;
 		if (chunk.getBlock(ind) <= DefinitionAtlas::AIR) chunk.setBlock(ind, block);
 	}

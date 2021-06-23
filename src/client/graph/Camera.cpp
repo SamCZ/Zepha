@@ -89,10 +89,10 @@ glm::vec2 Camera::getBufferDimensions() {
 }
 
 bool Camera::inFrustum(glm::vec3& p) {
-	return frustum.pointInFrustum(p) == Frustum::INSIDE;
+	return frustum.pointInFrustum(p) == Frustum::Intersection::INSIDE;
 }
 
-int Camera::inFrustum(FrustumAABB& b) {
+Frustum::Intersection Camera::inFrustum(FrustumAABB& b) {
 	return frustum.boxInFrustum(b);
 }
 

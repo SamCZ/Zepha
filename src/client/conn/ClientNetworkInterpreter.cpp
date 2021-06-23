@@ -63,27 +63,32 @@ void ClientNetworkInterpreter::update() {
 
 void ClientNetworkInterpreter::receivedPacket(uptr<PacketView> p) {
 	switch (p->type) {
-	default:
+	default: {
 		std::cout << Log::err << "Received unknown packet of type " << static_cast<int>(p->type)
-		          << ". Is the server on a different protocol version?" << Log::endl;
+			<< ". Is the server on a different protocol version?" << Log::endl;
 		break;
+	}
 	
-	case Packet::Type::SERVER_INFO:
+	case Packet::Type::SERVER_INFO: {
 		serverSideChunkGens = p->d.read<u32>();
 		break;
+	}
 	
-	case Packet::Type::THIS_PLAYER_INFO:
+	case Packet::Type::THIS_PLAYER_INFO: {
 		world.getPlayer()->handleAssertion(p->d);
 		break;
+	}
 	
-	case Packet::Type::PLAYER_ENT_INFO:
+	case Packet::Type::PLAYER_ENT_INFO: {
 		world.handlePlayerEntPacket(std::move(p));
 		break;
+	}
 	
 	case Packet::Type::CHUNK:
-	case Packet::Type::MAPBLOCK:
+	case Packet::Type::MAPBLOCK: {
 		world.handleWorldPacket(std::move(p));
 		break;
+	}
 	
 //	case Packet::Type::BLOCK_SET: {
 //		auto pos = p->d.read<ivec3>();
@@ -92,27 +97,29 @@ void ClientNetworkInterpreter::receivedPacket(uptr<PacketView> p) {
 //		break;
 //	}
 	
-	case Packet::Type::ENTITY_INFO:
+	case Packet::Type::ENTITY_INFO: {
 		world.getActiveDimension().l()->serverEntitiesInfo(p->d);
 		break;
+	}
 	
-	case Packet::Type::ENTITY_REMOVED:
+	case Packet::Type::ENTITY_REMOVED: {
 		world.getActiveDimension().l()->serverEntitiesRemoved(p->d);
 		break;
+	}
 	
 	case Packet::Type::INV_DATA:
 		onInvPacket(std::move(p));
 		break;
 	
 	case Packet::Type::INV_INVALID: {
-		std::string source = p->d.read<std::string>();
-		std::string list = p->d.read<std::string>();
+		string source = p->d.read<string>();
+		string list = p->d.read<string>();
 		throw std::runtime_error("Invalid inventory " + source + ":" + list + " was request by client.");
 	}
 	
 	case Packet::Type::MOD_MESSAGE: {
-		std::string channel = p->d.read<std::string>();
-		std::string message = p->d.read<std::string>();
+		string channel = p->d.read<string>();
+		string message = p->d.read<string>();
 		world.handleModMessage(channel, message);
 		break;
 	}

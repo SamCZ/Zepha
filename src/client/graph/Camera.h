@@ -40,7 +40,7 @@ class Camera {
 	
 	bool inFrustum(glm::vec3& p);
 	
-	int inFrustum(FrustumAABB& b);
+	Frustum::Intersection inFrustum(FrustumAABB& b);
 	
 	~Camera();
 	

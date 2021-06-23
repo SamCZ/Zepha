@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 2020-07-30.
-//
-
 #pragma once
 
 #include <enet/enet.h>
@@ -10,10 +6,17 @@
 
 class ServerPlayer;
 
+/**
+ * A connected client, containing a reference
+ * to the raw ENet data it was initialized with.
+ * The ENetPeer is given a pointer to an instance of this struct on connection.
+ */
+
 class ServerClient {
-	public:
-	ServerClient(const string& username, ENetPeer* peer) :
-		username(username), peer(peer), address(peer->address), id(peer->connectID) {}
+public:
+	
+	ServerClient(const string& username, u32 id, ENetPeer* peer) :
+		username(username), peer(peer), address(peer->address), id(id) {}
 	
 	u32 id = 0;
 	string username;
@@ -21,5 +24,5 @@ class ServerClient {
 	ENetPeer* peer;
 	ENetAddress address;
 	
-	std::shared_ptr<ServerPlayer> player = nullptr;
+	sptr<ServerPlayer> player = nullptr;
 };

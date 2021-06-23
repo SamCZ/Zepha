@@ -71,6 +71,7 @@ void LocalWorld::update(double delta) {
 }
 
 void LocalWorld::handleWorldPacket(std::unique_ptr<PacketView> p) {
+	std::cout << "world packet" << std::endl;
 	worldGenStream->queuePacket(std::move(p));
 }
 

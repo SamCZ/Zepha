@@ -52,7 +52,7 @@ Renderer::Renderer(glm::ivec2 win) :
 
 void Renderer::update(double delta) {
 	//VSync 1 = On, 0 = Off
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 	elapsedTime += delta;
 	
 	window.update();

@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 10/01/19.
-//
-
 #include "Packet.h"
 
 #include "Serializer.h"
@@ -9,7 +5,7 @@
 Packet::Packet(Type type, bool reliable) : type(type), reliable(reliable) {}
 
 ENetPacket* Packet::toENetPacket() const {
-	std::string serialized = Serializer().append(static_cast<unsigned int>(type)).data + data;
+	string serialized = Serializer().append(static_cast<u8>(type)).data + data;
 	
 	ENetPacket* enet = enet_packet_create(serialized.data(), serialized.length(),
 		(reliable ? ENET_PACKET_FLAG_RELIABLE : 0));

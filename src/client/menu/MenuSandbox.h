@@ -43,7 +43,7 @@ class MenuSandbox : LuaParser {
 	
 	virtual sol::protected_function_result errorCallback(sol::protected_function_result r) const override;
 	
-	LuaMod mod{};
+	LuaMod mod {};
 	std::vector<std::shared_ptr<AtlasRef>> modAssets{};
 	
 	std::shared_ptr<GuiContainer> container = nullptr;

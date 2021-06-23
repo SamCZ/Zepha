@@ -1,37 +1,23 @@
-//
-// Created by aurailus on 05/08/19.
-//
-
 #include <gzip/decompress.hpp>
 
 #include "LuaMod.h"
 
 #include "util/net/PacketView.h"
 
-LuaMod LuaMod::fromPacket(PacketView& p) {
-	LuaMod luaMod{};
-	
+LuaMod::LuaMod(PacketView& p) {
 	auto serialized = p.d.read<string>();
-	std::string mod = gzip::decompress(serialized.c_str(), serialized.length());
-	luaMod.serialized = serialized;
+	string mod = gzip::decompress(serialized.c_str(), serialized.length());
 	
-	std::string name, description, version, dependsStr;
+	vec<string> depends;
+	string name, description, version;
+	
 	Deserializer d(mod);
-	d.read(name).read(description).read(version).read(dependsStr);
+	d.read(name).read(description).read(version).read(depends);
+	config = { name, description, version, depends };
 	
-	std::vector<std::string> depends;
-	size_t pos = 0;
-	std::string token;
-	while ((pos = dependsStr.find(',')) != std::string::npos) {
-		token = dependsStr.substr(0, pos);
-		depends.push_back(token);
-		dependsStr.erase(0, pos + 1);
+	while (!d.atEnd()) {
+		string path, contents;
+		d.read(path).read(contents);
+		files.emplace_back(path, contents);
 	}
-	depends.push_back(dependsStr);
-	
-	luaMod.config = { name, description, version, depends };
-	
-	while (!d.atEnd()) luaMod.files.push_back({ d.read<std::string>(), d.read<std::string>() });
-	
-	return std::move(luaMod);
 }

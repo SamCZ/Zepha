@@ -15,39 +15,39 @@ void Player::setDim(DimensionPtr dim, bool assert) {
 	if (assert) assertField(Serializer().append(NetField::DIM).append(dim->getInd()).packet());
 }
 
-void Player::setPos(glm::vec3 pos, bool assert) {
+void Player::setPos(vec3 pos, bool assert) {
 	Entity::setPos(pos);
 	if (assert) assertField(Serializer().append(NetField::POS).append(pos).packet());
 }
 
-void Player::setVel(glm::vec3 vel, bool assert) {
+void Player::setVel(vec3 vel, bool assert) {
 	Entity::setVel(vel);
 	if (assert) assertField(Serializer().append(NetField::VEL).append(vel).packet());
 }
 
-float Player::getYaw() {
+f32 Player::getYaw() {
 	return yaw;
 }
 
-void Player::setYaw(float yaw, bool assert) {
+void Player::setYaw(f32 yaw, bool assert) {
 	this->yaw = yaw;
 	if (assert) assertField(Serializer().append(NetField::LOOK_YAW).append(yaw).packet());
 }
 
-float Player::getPitch() {
+f32 Player::getPitch() {
 	return pitch;
 }
 
-void Player::setPitch(float pitch, bool assert) {
+void Player::setPitch(f32 pitch, bool assert) {
 	this->pitch = pitch;
 	if (assert) assertField(Serializer().append(NetField::LOOK_PITCH).append(pitch).packet());
 }
 
-glm::vec3 Player::getLookOffset() {
+vec3 Player::getLookOffset() {
 	return this->lookOffset;
 }
 
-void Player::setLookOffset(glm::vec3 lookOffset, bool assert) {
+void Player::setLookOffset(vec3 lookOffset, bool assert) {
 	this->lookOffset = lookOffset;
 	if (assert) assertField(Serializer().append(NetField::LOOK_OFF).append(lookOffset).packet());
 }
@@ -62,29 +62,29 @@ void Player::setFlying(bool flying, bool assert) {
 	if (assert) assertField(Serializer().append(NetField::FLYING).append(flying).packet());
 }
 
-std::string Player::getHandList() {
+string Player::getHandList() {
 	return handList;
 }
 
-void Player::setHandList(const std::string& list, bool assert) {
+void Player::setHandList(const string& list, bool assert) {
 	handList = list;
 	if (assert) assertField(Serializer().append(NetField::HAND_INV).append(handList).packet());
 }
 
-std::string Player::getWieldList() {
+string Player::getWieldList() {
 	return wieldList;
 }
 
-void Player::setWieldList(const std::string& list, bool assert) {
+void Player::setWieldList(const string& list, bool assert) {
 	wieldList = list;
 	if (assert) assertField(Serializer().append(NetField::WIELD_INV).append(wieldList).packet());
 }
 
-unsigned short Player::getWieldIndex() {
+u16 Player::getWieldIndex() {
 	return wieldIndex;
 }
 
-void Player::setWieldIndex(unsigned short index, bool assert) {
+void Player::setWieldIndex(u16 index, bool assert) {
 	wieldIndex = index;
 	if (assert) assertField(Serializer().append(NetField::WIELD_INDEX).append(index).packet());
 }

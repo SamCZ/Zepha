@@ -5,6 +5,7 @@
 #include "ServerInventoryList.h"
 
 #include "util/net/Packet.h"
+#include "server/ServerClient.h"
 #include "server/ServerClients.h"
 #include "lua/usertype/ItemStack.h"
 #include "world/player/ServerPlayer.h"
@@ -19,10 +20,12 @@ void ServerInventoryList::manipulated() {
 }
 
 bool ServerInventoryList::addWatcher(unsigned int id) {
-	auto& client = clients.getPlayer(id);
-	if (!client || watchers.count(id)) return false;
+	if (watchers.count(id)) return false;
+	auto& client = clients.getClient(id);
+	if (!client || !client->player) return false;
+	
+	sendTo(client->player);
 	watchers.insert(id);
-	sendTo(client);
 	return true;
 }
 
@@ -41,10 +44,10 @@ void ServerInventoryList::sendToAll() {
 	auto p = createPacket();
 	
 	for (auto it = watchers.cbegin(); it != watchers.cend();) {
-		auto& player = clients.getPlayer(*it);
-		if (!player) it = watchers.erase(it);
+		auto& client = clients.getClient(*it);
+		if (!client || !client->player) it = watchers.erase(it);
 		else {
-			p.sendTo(player->getPeer(), Packet::Channel::INTERACT);
+			p.sendTo(client->peer, Packet::Channel::INTERACT);
 			it++;
 		}
 	}

@@ -2,10 +2,12 @@
 // Created by aurailus on 11/07/19.
 //
 
+#include <thread>
 #include <gzip/decompress.hpp>
 
 #include "ConnectScene.h"
 
+#include "GameScene.h"
 #include "client/Client.h"
 #include "util/net/Packet.h"
 #include "util/net/Address.h"
@@ -14,8 +16,6 @@
 #include "client/gui/basic/GuiRect.h"
 #include "client/gui/basic/GuiText.h"
 #include "game/atlas/asset/AssetType.h"
-#include "game/atlas/LocalDefinitionAtlas.h"
-#include "GameScene.h"
 
 
 /**
@@ -54,12 +54,15 @@ void ConnectScene::update() {
 	client.game->textures.update();
 	
 	switch (connectState) {
-	default:throw std::runtime_error("Invalid connection state.");
+	default:
+		throw std::runtime_error("Invalid connection state.");
 	
 	case State::DONE:
-	case State::FAILED_CONNECT:break;
+	case State::FAILED_CONNECT:
+		break;
 	
-	case State::CONNECTING:handleConnecting();
+	case State::CONNECTING:
+		handleConnecting();
 		break;
 	
 	case State::PROPERTIES: {
@@ -73,8 +76,8 @@ void ConnectScene::update() {
 				auto statusText = components.get<GuiText>("statusText");
 				statusText->setText(statusText->getText() + "Received server properties.\n");
 				
-				// TODO: Reimplement this somewhere or something.
-//                    state.seed = p.d.read<unsigned int>();
+				const u32 seed = p.d.read<u32>();
+//				std::cout << seed << std::endl;
 				
 				connectState = State::IDENTIFIER_LIST;
 				Packet resp(Packet::Type::BLOCK_IDENTIFIER_LIST);
@@ -124,15 +127,15 @@ void ConnectScene::update() {
 			auto statusText = components.get<GuiText>("statusText");
 			
 			if (p.type == Packet::Type::MODS) {
-				auto luaMod = LuaMod::fromPacket(p);
+				auto luaMod = LuaMod(p);
 				statusText->setText(statusText->getText() + "Received mod " + luaMod.config.name + ".\n");
 				client.game->getParser().getHandler().addLuaMod(std::move(luaMod));
 			}
 			else if (p.type == Packet::Type::MOD_ORDER) {
 				client.game->getParser().getHandler().setModsOrder(p.d.read<vec<string>>());
 				
-				statusText->setText(
-					statusText->getText() + "Done downloading mods.\nReceived the mods order.\nDownloading media...\n");
+				statusText->setText(statusText->getText() +
+					"Done downloading mods.\nReceived the mods order.\nReceiving media");
 				
 				connectState = State::MEDIA;
 				Packet resp(Packet::Type::MEDIA);
@@ -152,42 +155,42 @@ void ConnectScene::update() {
 			auto statusText = components.get<GuiText>("statusText");
 			
 			if (p.type == Packet::Type::MEDIA) {
-				AssetType t = static_cast<AssetType>(p.d.read<int>());
-				unsigned int count = 0;
+				AssetType t = p.d.read<AssetType>();
+				usize count = 0;
 				
 				while (t != AssetType::END) {
-					std::string assetName = p.d.read<string>();
+					string assetName = p.d.read<string>();
+					statusText->setText(statusText->getText() + ".");
 					
 					if (t == AssetType::TEXTURE) {
-						int width = p.d.read<unsigned int>();
-						int height = p.d.read<unsigned int>();
+						u16 width = p.d.read<u16>();
+						u16 height = p.d.read<u16>();
 						
-						std::string data = p.d.read<std::string>();
-						std::string uncompressed = gzip::decompress(data.data(), data.length());
+						string data = p.d.read<string>();
+						string uncompressed = gzip::decompress(data.data(), data.length());
 						
 						client.game->textures.addImage(
 							reinterpret_cast<unsigned char*>(const_cast<char*>(uncompressed.data())),
 							assetName, true, width, height);
 					}
 					else if (t == AssetType::MODEL) {
-						std::string format = p.d.read<std::string>();
-						std::string data = p.d.read<std::string>();
+						string format = p.d.read<string>();
+						string data = p.d.read<string>();
 						
 						client.game->models.models.insert({ assetName, SerializedModel{ assetName, data, format }});
 					}
 					
-					t = static_cast<AssetType>(p.d.read<int>());
+					t = p.d.read<AssetType>();
 					count++;
 				}
 				
-				statusText->setText(statusText->getText() + "Received " + std::to_string(count) + "x media files.\n");
 			}
 			else if (p.type == Packet::Type::MEDIA_DONE) {
+				statusText->setText(statusText->getText() + " Done.\nDone receiving media.\nJoining world...\n");
 				components.get<GuiRect>("loadBar")->setScale({ client.renderer.window.getSize().x, 32 });
-				statusText->setText(statusText->getText() + "Done downloading media.\nJoining world...\n");
 				
 				connectState = State::DONE;
-				client.scene.setScene(std::make_unique<GameScene>(client));
+				client.scene.setScene(make_unique<GameScene>(client));
 			}
 		}
 		break;
@@ -196,15 +199,14 @@ void ConnectScene::update() {
 }
 
 void ConnectScene::handleConnecting() {
-	Packet resp(Packet::Type::SERVER_INFO);
 	auto statusText = components.get<GuiText>("statusText");
 	
 	switch (connection.getConnectionStatus()) {
-	default:throw std::runtime_error("Uncaught connection error.");
+	default:
+		throw std::runtime_error("Uncaught connection error.");
 	
 	case ServerConnection::State::ENET_ERROR:
 		throw std::runtime_error("Enet Initialization error.");
-		break;
 	
 	case ServerConnection::State::FAILED_CONNECT:
 		connectState = State::FAILED_CONNECT;
@@ -222,12 +224,14 @@ void ConnectScene::handleConnecting() {
 		
 		break;
 	
-	case ServerConnection::State::CONNECTED:connectState = State::PROPERTIES;
+	case ServerConnection::State::CONNECTED: {
+		connectState = State::PROPERTIES;
 		statusText->setText(statusText->getText() + " Connected!~\n");
 		
+		Packet resp(Packet::Type::SERVER_INFO);
 		resp.sendTo(connection.getPeer(), Packet::Channel::CONNECT);
-		
 		break;
+	}
 	}
 }
 

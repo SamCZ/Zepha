@@ -12,6 +12,7 @@
 #include "game/def/BlockDef.h"
 #include "lua/usertype/Target.h"
 #include "util/net/Serializer.h"
+#include "server/ServerClient.h"
 #include "server/ServerClients.h"
 #include "world/dim/chunk/Chunk.h"
 #include "world/dim/chunk/MapBlock.h"
@@ -89,11 +90,13 @@ void ServerWorld::update(double delta) {
 	
 	auto finishedPackets = packetStream->update();
 	for (auto& data : *finishedPackets) {
-		for (auto& player : clients.players)
-			data->packet->sendTo(player->getPeer(), Packet::Channel::WORLD);
+		for (auto& client : clients.getClients()) {
+			if (!client.second->player) continue;
+			data->packet->sendTo(client.second->peer, Packet::Channel::WORLD);
+		}
 	}
 	
-	this->generatedMapBlocks = genCount;
+	generatedMapBlocks = genCount;
 
 //    for (auto& chunkPos : updatedChunks) {
 //        glm::ivec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunkPos);
@@ -123,11 +126,12 @@ void ServerWorld::update(double delta) {
 //        }
 //    }
 	
-	Packet r = Serializer().append(this->generatedMapBlocks).packet(Packet::Type::SERVER_INFO);
+	Packet r = Serializer().append(generatedMapBlocks).packet(Packet::Type::SERVER_INFO);
 	
-	for (auto& player : clients.players) {
-		r.sendTo(player->getPeer(), Packet::Channel::SERVER);
-		if (player->changedMapBlocks) changedMapBlocks(*player);
+	for (auto& client : clients.getClients()) {
+		if (!client.second->player) return;
+		r.sendTo(client.second->player->getPeer(), Packet::Channel::SERVER);
+		if (client.second->player->changedMapBlocks) changedMapBlocks(*client.second->player);
 	}
 	
 	for (auto& d : dimensions) {
@@ -147,25 +151,22 @@ void ServerWorld::update(double delta) {
 		// Contains more than just the dimension identifier.
 		if (inf.data.size() > sizeof(u16)) {
 			auto p = inf.packet(Packet::Type::ENTITY_INFO);
-			for (auto& player : clients.players)
-				if (player->getDim()->getInd() == ind)
-					p.sendTo(player->getPeer(), Packet::Channel::ENTITY);
+			for (auto& client : clients.getClients())
+				if (client.second->player && client.second->player->getDim()->getInd() == ind)
+					p.sendTo(client.second->peer, Packet::Channel::ENTITY);
 		}
 		
 		// Update clients with removed entities.
 		
 		Serializer rem;
 		rem.append(ind);
-		
-		for (i64 entity : dimension->getRemovedEntities()) {
-			rem.append<i64>(entity);
-		}
+		for (i64 entity : dimension->getRemovedEntities()) rem.append<i64>(entity);
 		
 		if (rem.data.size() > sizeof(u16)) {
 			Packet p = rem.packet(Packet::Type::ENTITY_REMOVED);
-			for (auto& player : clients.players)
-				if (player->getDim()->getInd() == ind)
-					p.sendTo(player->getPeer(), Packet::Channel::ENTITY);
+			for (auto& client : clients.getClients())
+				if (client.second->player && client.second->player->getDim()->getInd() == ind)
+					p.sendTo(client.second->player->getPeer(), Packet::Channel::ENTITY);
 		}
 		
 		dimension->clearRemovedEntities();
@@ -240,6 +241,7 @@ void ServerWorld::sendChunksToPlayer(ServerPlayer& client) {
 
 void ServerWorld::sendMessage(const string& channel, const string& message) {
 	auto p = Serializer().append(channel).append(message).packet(Packet::Type::MOD_MESSAGE);
-	for (auto& player : clients.players)
-		p.sendTo(player->getPeer(), Packet::Channel::ENTITY);
+	for (auto& client : clients.getClients())
+		if (client.second->player)
+			p.sendTo(client.second->player->getPeer(), Packet::Channel::ENTITY);
 }

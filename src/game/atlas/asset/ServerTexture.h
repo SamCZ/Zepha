@@ -4,12 +4,15 @@
 
 #pragma once
 
-#include <string>
+#include "util/Types.h"
 
 struct ServerTexture {
-	std::string name{};
-	std::string data{};
-	unsigned int width = 0;
-	unsigned int height = 0;
+	ServerTexture(string name, string data, u16 width, u16 height) :
+		name(name), data(data), width(width), height(height) {};
+	
+	string name;
+	string data;
+	u16 width;
+	u16 height;
 };
 

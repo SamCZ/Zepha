@@ -1,35 +1,31 @@
-//
-// Created by aurailus on 15/02/19.
-//
-
 #pragma once
 
-#include <vector>
 #include <functional>
-#include <glm/glm.hpp>
 
+#include "util/Types.h"
 #include "util/Interp.h"
 
 class NoiseSample {
-	public:
-	typedef std::function<float(glm::vec3 pos)> fill_function;
+public:
+	typedef std::function<f32(vec3 pos)> fill_function;
 	
-	NoiseSample(unsigned int precision, float scaleBy = 1);
+	NoiseSample(u16 precision, f32 scaleBy = 1);
 	
-	NoiseSample(glm::ivec2 precision, glm::vec2 scaleBy = { 1, 1 });
+	NoiseSample(u16vec2 precision, vec2 scaleBy = vec2(1));
 	
 	void populate(const fill_function& fn);
 	
-	inline float get(glm::vec3 pos) {
-		glm::vec3 scaled = pos * glm::vec3(precision) / scaleBy;
+	inline f32 get(vec3 pos) {
+		vec3 scaled = pos * vec3(precision) / scaleBy;
 		
-		glm::ivec3 a = { scaled.x, scaled.y, scaled.z };
-		glm::vec3 factor = { scaled.x - a.x, scaled.y - a.y, scaled.z - a.z };
-		glm::ivec3 b = { NoiseSample::min(int(std::ceil(scaled.x)), precision.x),
-			NoiseSample::min(int(std::ceil(scaled.y)), precision.y),
-			NoiseSample::min(int(std::ceil(scaled.z)), precision.z) };
+		ivec3 a = { scaled.x, scaled.y, scaled.z };
+		vec3 factor = { scaled.x - a.x, scaled.y - a.y, scaled.z - a.z };
+		ivec3 b = {
+			(std::min)(static_cast<i32>(std::ceil(scaled.x)), precision.x),
+			(std::min)(static_cast<i32>(std::ceil(scaled.y)), precision.y),
+			(std::min)(static_cast<i32>(std::ceil(scaled.z)), precision.z) };
 
-//        assert(a.x + factor.x <= precision.x && a.y + factor.y <= precision.y && a.z + factor.z <= precision.z);
+		assert(index(b.x, b.y, b.z) < data.size());
 		
 		// No vertical interpolation
 		if (precision.y == 0)
@@ -46,17 +42,13 @@ class NoiseSample {
 			factor.x, factor.z, factor.y);
 	}
 	
-	private:
-	inline unsigned int index(int x, int y, int z) {
+private:
+	inline u16 index(u16 x, u16 y, u16 z) {
 		return x * (precision.x + 1) * (precision.y + 1) + y * (precision.x + 1) + z;
 	};
 	
-	static inline int min(int a, int b) {
-		return (a < b ? a : b);
-	}
-	
-	std::vector<float> data{};
-	glm::ivec3 precision{};
-	glm::vec3 scaleBy;
+	std::vector<f32> data {};
+	ivec3 precision {};
+	vec3 scaleBy;
 };
 

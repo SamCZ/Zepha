@@ -1,7 +1,6 @@
 #pragma once
 
-#include <glm/vec3.hpp>
-
+#include "util/Types.h"
 #include "AnimationState.h"
 #include "util/CovariantPtr.h"
 #include "game/def/mesh/SelectionBox.h"
@@ -23,7 +22,7 @@ public:
 	 * @returns the unique id.
 	 */
 	 
-	virtual long long getId() const;
+	virtual i64 getId() const;
 	
 	/**
 	 * Sets the unique ID of the entity.
@@ -32,126 +31,126 @@ public:
 	 * @param newId - The desired ID.
 	 */
 	 
-	virtual void setId(long long newId);
+	virtual void setId(i64 newId);
 	
 	/**
 	 * Gets the entity's current position.
 	 * @returns the entity's current position as a vector.
 	 */
 	 
-	virtual glm::vec3 getPos() const;
+	virtual vec3 getPos() const;
 	
 	/**
 	 * Moves the entity to the specified position.
 	 * @param newPos - The desired position as a vector.
 	 */
 	
-	virtual void setPos(glm::vec3 newPos);
+	virtual void setPos(vec3 newPos);
 	
 	/**
 	 * Gets the entity's current velocity.
 	 * @returns the entity's current velocity as a vector.
 	 */
 	
-	virtual glm::vec3 getVel() const;
+	virtual vec3 getVel() const;
 	
 	/**
 	 * Moves the entity to the specified position.
 	 * @param newVel - The desired velocity as a vector.
 	 */
 	
-	virtual void setVel(glm::vec3 newVel);
+	virtual void setVel(vec3 newVel);
 	
 	/**
 	 * Returns the entity's current rotation across all 3 axises as a vector.
 	 * @returns the entity's rotation.
 	 */
 	
-	virtual glm::vec3 getRot() const;
+	virtual vec3 getRot() const;
 	
 	/**
 	 * Sets the entity's rotation across all three axises.
 	 * @param newRot - The desired rotation of the entity.
 	 */
 	
-	virtual void setRot(glm::vec3 newRot);
+	virtual void setRot(vec3 newRot);
 	
 	/**
 	 * Returns the X component of the entity's rotation vector.
 	 * @returns the entity's X rotation.
 	 */
 	
-	virtual float getRotateX() const;
+	virtual f32 getRotateX() const;
 	
 	/**
 	 * Sets the X component of the entity's rotation vector.
 	 * @param newRotateX - The desired rotation, in radians.
 	 */
 	
-	virtual void setRotateX(float newRotateX);
+	virtual void setRotateX(f32 newRotateX);
 	
 	/**
 	 * Returns the Y component of the entity's rotation vector.
 	 * @returns the entity's Y rotation.
 	 */
 	
-	virtual float getRotateY() const;
+	virtual f32 getRotateY() const;
 	
 	/**
 	 * Sets the Y component of the entity's rotation vector.
 	 * @param newRotateY - The desired rotation, in radians.
 	 */
 	
-	virtual void setRotateY(float newRotateY);
+	virtual void setRotateY(f32 newRotateY);
 	
 	/**
 	 * Returns the Z component of the entity's rotation vector.
 	 * @returns the entity's Z rotation.
 	 */
 	
-	virtual float getRotateZ() const;
+	virtual f32 getRotateZ() const;
 	
 	/**
 	 * Sets the Z component of the entity's rotation vector.
 	 * @param newRotateZ - The desired rotation, in radians.
 	 */
 	
-	virtual void setRotateZ(float newRotateZ);
+	virtual void setRotateZ(f32 newRotateZ);
 	
 	/**
 	 * Gets the entity's model scale.
 	 * @returns the scale vector of the entity's model.
 	 */
 	 
-	virtual glm::vec3 getScale() const;
+	virtual vec3 getScale() const;
 	
 	/**
 	 * Sets the scale of the entity's model to a float value.
 	 * @param newScale - The desired scale multiplier.
 	 */
 	
-	virtual void setScale(float newScale);
+	virtual void setScale(f32 newScale);
 	
 	/**
 	 * Sets the scale of the entity's model to a vector.
 	 * @param newScale - The desired scale multiplier.
 	 */
 	
-	virtual void setScale(glm::vec3 newScale);
+	virtual void setScale(vec3 newScale);
 	
 	/**
 	 * Gets the entity's model's display offset relative to its position.
 	 * @returns the visual offset of the entity.
 	 */
 	
-	virtual glm::vec3 getVisualOffset() const;
+	virtual vec3 getVisualOffset() const;
 	
 	/**
 	 * Sets the entity's model's display offset relative to its position.
 	 * @param newVisualOff - The desired visual offset for the entity.
 	 */
 	
-	virtual void setVisualOffset(glm::vec3 newVisualOff);
+	virtual void setVisualOffset(vec3 newVisualOff);
 	
 	
 	/**
@@ -208,7 +207,7 @@ public:
 	 * @returns the entity's coefficient of gravity.
 	 */
 	
-	virtual float getGravity() const;
+	virtual f32 getGravity() const;
 	
 	/**
 	 * Sets the entity's coefficient of gravity.
@@ -216,7 +215,7 @@ public:
 	 * @param newGravity - The desired coefficient of gravity.
 	 */
 	
-	virtual void setGravity(float newGravity);
+	virtual void setGravity(f32 newGravity);
 	
 	
 	/**
@@ -231,7 +230,7 @@ public:
 	 * @param delta - The last frame's delta time.
 	 */
 	
-	virtual void update(double delta);
+	virtual void update(f64 delta);
 	
 	/** The animation state of the entity. */
 	AnimationState animation {};

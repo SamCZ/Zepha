@@ -1,79 +1,79 @@
 #include "Entity.h"
 #include "Collision.h"
 
-long long Entity::getId() const {
+i64 Entity::getId() const {
 	return id;
 }
 
-void Entity::setId(long long newId) {
+void Entity::setId(i64 newId) {
 	id = newId;
 }
 
-glm::vec3 Entity::getPos() const {
+vec3 Entity::getPos() const {
 	return pos;
 }
 
-void Entity::setPos(glm::vec3 newPos) {
+void Entity::setPos(vec3 newPos) {
 	pos = newPos;
 }
 
-glm::vec3 Entity::getVel() const {
+vec3 Entity::getVel() const {
 	return vel;
 }
 
-void Entity::setVel(glm::vec3 newVel) {
+void Entity::setVel(vec3 newVel) {
 	vel = newVel;
 }
 
-glm::vec3 Entity::getRot() const {
+vec3 Entity::getRot() const {
 	return rot;
 }
 
-void Entity::setRot(glm::vec3 newRot) {
+void Entity::setRot(vec3 newRot) {
 	rot = newRot;
 }
 
-float Entity::getRotateX() const {
+f32 Entity::getRotateX() const {
 	return rot.x;
 }
 
-void Entity::setRotateX(float newRotateX) {
+void Entity::setRotateX(f32 newRotateX) {
 	rot.x = newRotateX;
 }
 
-float Entity::getRotateY() const {
+f32 Entity::getRotateY() const {
 	return rot.y;
 }
 
-void Entity::setRotateY(float newRotateY) {
+void Entity::setRotateY(f32 newRotateY) {
 	rot.y = newRotateY;
 }
 
-float Entity::getRotateZ() const {
+f32 Entity::getRotateZ() const {
 	return rot.z;
 }
 
-void Entity::setRotateZ(float newRotateZ) {
+void Entity::setRotateZ(f32 newRotateZ) {
 	rot.z = newRotateZ;
 }
 
-glm::vec3 Entity::getScale() const {
+vec3 Entity::getScale() const {
 	return scale;
 }
 
-void Entity::setScale(float newScale) {
+void Entity::setScale(f32 newScale) {
 	scale = glm::vec3(newScale);
 }
 
-void Entity::setScale(glm::vec3 newScale) {
+void Entity::setScale(vec3 newScale) {
 	scale = newScale;
 }
 
-glm::vec3 Entity::getVisualOffset() const {
+vec3 Entity::getVisualOffset() const {
 	return visualOff;
 }
 
-void Entity::setVisualOffset(glm::vec3 newVisualOff) {
+void Entity::setVisualOffset(vec3 newVisualOff) {
 	visualOff = newVisualOff;
 }
 
@@ -105,11 +105,11 @@ void Entity::setCollides(bool newCollides) {
 	collides = newCollides;
 }
 
-float Entity::getGravity() const {
+f32 Entity::getGravity() const {
 	return gravity;
 }
 
-void Entity::setGravity(float newGravity) {
+void Entity::setGravity(f32 newGravity) {
 	gravity = newGravity;
 }
 
@@ -117,19 +117,20 @@ SubgamePtr Entity::getGame() const {
 	return game;
 }
 
-void Entity::update(double delta) {
-	static constexpr float TERMINAL_VELOCITY = 150.f;
+void Entity::update(f64 delta) {
+	static constexpr f32 TERMINAL_VELOCITY = 150.f;
 	
 	animation.update(delta);
 	
 	if (vel.length() != 0) {
 		if (collides) {
-			glm::vec3 newPos, newVel;
-			std::tie(newPos, newVel) = Collision::applyVel(game, dim, *collisionBox, pos, vel, delta);
+			vec3 newPos, newVel;
+			std::tie(newPos, newVel) = Collision::applyVel(
+				game, dim, *collisionBox, pos, vel, delta);
 			setPos(newPos);
 			setVel(newVel);
 		}
-		else setPos(getPos() + vel * static_cast<float>(delta));
+		else setPos(getPos() + vel * static_cast<f32>(delta));
 	}
 	
 	if (gravity) {
