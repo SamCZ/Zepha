@@ -3,6 +3,7 @@
 //
 
 #include <glm/gtc/type_ptr.hpp>
+#include <util/Timer.h>
 
 #include "Renderer.h"
 
@@ -48,11 +49,12 @@ Renderer::Renderer(glm::ivec2 win) :
 		
 		gu.matrix = camera.getOrthographicMatrix();
 	});
+	
+	//VSync 1 = On, 0 = Off
+	glfwSwapInterval(1);
 }
 
 void Renderer::update(double delta) {
-	//VSync 1 = On, 0 = Off
-	glfwSwapInterval(0);
 	elapsedTime += delta;
 	
 	window.update();

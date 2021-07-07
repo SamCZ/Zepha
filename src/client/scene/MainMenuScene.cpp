@@ -239,7 +239,6 @@ void MainMenuScene::draw() {
 	client.renderer.beginGUIDrawCalls();
 	client.renderer.enableTexture(&client.game->textures.atlasTexture);
 	components->draw(client.renderer);
-	client.renderer.swapBuffers();
 }
 
 void MainMenuScene::cleanup() {

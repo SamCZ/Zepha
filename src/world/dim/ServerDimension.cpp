@@ -26,25 +26,31 @@ void ServerDimension::update(double delta) {
 	
 	for (const auto& region : regions) {
 		for (unsigned short i = 0; i < 64; i++) {
-			auto mb = region.second->get(i);
-			if (!mb) continue;
+			auto mapBlock = region.second->get(i);
+			if (!mapBlock) continue;
 			
 			bool clientNearby = false;
 			for (auto& client : static_cast<ServerWorld&>(world).getClients().getClients()) {
 				if (!client.second->player) continue;
-				// TODO: Re-enable then **once** file saving is implemented.
-//                if (player->getDim()->getInd() == ind) {
-				auto clientPos = Space::MapBlock::world::fromBlock(client.second->player->getPos());
-				if (abs(clientPos.x - mb->pos.x) <= discardRange.x + 1
-				    && abs(clientPos.y - mb->pos.y) <= discardRange.y + 1
-				    && abs(clientPos.z - mb->pos.z) <= discardRange.x + 1) {
-					clientNearby = true;
-					break;
-				}
-//                }
+                if (client.second->player->getDim()->getInd() == ind) {
+					auto clientPos = Space::MapBlock::world::fromBlock(client.second->player->getPos());
+					if (abs(clientPos.x - mapBlock->pos.x) <= discardRange.x + 1
+					    && abs(clientPos.y - mapBlock->pos.y) <= discardRange.y + 1
+					    && abs(clientPos.z - mapBlock->pos.z) <= discardRange.x + 1) {
+						clientNearby = true;
+						break;
+					}
+                }
 			}
 			
 			if (!clientNearby) region.second->remove(i);
+			else {
+				for (unsigned short c = 0; c < 64; c++) {
+					auto chunk = mapBlock->get(c);
+					if (!chunk) continue;
+					chunk->compressIfIdle();
+				}
+			}
 		}
 	}
 }
@@ -103,7 +109,6 @@ void ServerDimension::setChunk(std::shared_ptr<Chunk> chunk) {
 }
 
 i64 ServerDimension::nextEntityInd() {
-	auto _ = getWriteLock();
 	return entityInd++;
 };
 

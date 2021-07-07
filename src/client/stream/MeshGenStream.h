@@ -21,9 +21,9 @@ class LocalSubgame;
 class LocalDimension;
 
 class MeshGenStream {
-	public:
-	static const int THREADS = 4;
-	static const int THREAD_QUEUE_SIZE = 16;
+public:
+	static const u16 THREADS = 4;
+	static const u16 THREAD_QUEUE_SIZE = 16;
 	
 	explicit MeshGenStream(SubgamePtr game, LocalDimension& dimension);
 	
@@ -58,7 +58,8 @@ class MeshGenStream {
 	};
 	
 	std::vector<Thread> threads;
-	private:
+
+private:
 	
 	LocalDimension& dimension;
 	

@@ -10,32 +10,32 @@
  */
 
 namespace Space {
-	const static u16f CHUNK_SIZE = 16;
-	const static u16f MAPBLOCK_SIZE = 4;
-	const static u16f REGION_SIZE = 4;
+	const static i16f CHUNK_SIZE = 16;
+	const static i16f MAPBLOCK_SIZE = 4;
+	const static i16f REGION_SIZE = 4;
 	
-	const static u16f CHUNK_BLOCK_LENGTH = CHUNK_SIZE;
-	const static u16f MAPBLOCK_BLOCK_LENGTH = CHUNK_BLOCK_LENGTH * MAPBLOCK_SIZE;
-	const static u16f REGION_BLOCK_LENGTH = MAPBLOCK_BLOCK_LENGTH * REGION_SIZE;
+	const static i16f CHUNK_BLOCK_LENGTH = CHUNK_SIZE;
+	const static i16f MAPBLOCK_BLOCK_LENGTH = CHUNK_BLOCK_LENGTH * MAPBLOCK_SIZE;
+	const static i16f REGION_BLOCK_LENGTH = MAPBLOCK_BLOCK_LENGTH * REGION_SIZE;
 	
-	const static u16f MAPBLOCK_CHUNK_LENGTH = MAPBLOCK_SIZE;
-	const static u16f REGION_CHUNK_LENGTH = MAPBLOCK_CHUNK_LENGTH * REGION_SIZE;
+	const static i16f MAPBLOCK_CHUNK_LENGTH = MAPBLOCK_SIZE;
+	const static i16f REGION_CHUNK_LENGTH = MAPBLOCK_CHUNK_LENGTH * REGION_SIZE;
 	
 	// Private helper methods
 	namespace {
-		inline u16vec3 localFromGlobal(const ivec3& pos, u32 size) {
+		inline u16vec3 localFromGlobal(const ivec3& pos, i16 size) {
 			return u16vec3 {
-				size - 1 + (pos.x + (pos.x < 0 ? 1 : 0)) % size,
-				size - 1 + (pos.y + (pos.y < 0 ? 1 : 0)) % size,
-				size - 1 + (pos.z + (pos.z < 0 ? 1 : 0)) % size
+				pos.x < 0 ? size - 1 + (pos.x + 1) % size : pos.x % size,
+				pos.y < 0 ? size - 1 + (pos.y + 1) % size : pos.y % size,
+				pos.z < 0 ? size - 1 + (pos.z + 1) % size : pos.z % size
 			};
 		}
 		
 		inline ivec3 sectionFromGlobal(ivec3 pos, f32 size) {
 			return {
-				std::floor(static_cast<float>(pos.x) / size),
-				std::floor(static_cast<float>(pos.y) / size),
-				std::floor(static_cast<float>(pos.z) / size)
+				std::floor(static_cast<f32>(pos.x) / size),
+				std::floor(static_cast<f32>(pos.y) / size),
+				std::floor(static_cast<f32>(pos.z) / size)
 			};
 		}
 	}
@@ -95,12 +95,12 @@ namespace Space {
 		namespace relative {
 			// Get a Chunk's relative position in its MapBlock from its world position.
 			static inline u8vec3 toMapBlock(const ivec3& pos) {
-				return localFromGlobal(pos, MAPBLOCK_CHUNK_LENGTH);
+				return u8vec3(localFromGlobal(pos, MAPBLOCK_CHUNK_LENGTH));
 			}
 			
 			// Get a Chunk's relative position in its Region from its world position.
 			static inline u8vec3 toRegion(const ivec3& pos) {
-				return localFromGlobal(pos, REGION_CHUNK_LENGTH);
+				return u8vec3(localFromGlobal(pos, REGION_CHUNK_LENGTH));
 			}
 		}
 		
@@ -144,7 +144,7 @@ namespace Space {
 		namespace relative {
 			// Get a Block's relative position to its Chunk from its world position.
 			static inline u8vec3 toChunk(const ivec3& pos) {
-				return localFromGlobal(pos, CHUNK_BLOCK_LENGTH);
+				return u8vec3(localFromGlobal(pos, CHUNK_BLOCK_LENGTH));
 			}
 			
 			// Get a Block's relative position to its MapBlock from its world position.

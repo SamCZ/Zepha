@@ -21,7 +21,7 @@ class ChunkRenderElem;
 
 class LocalDimension : public Dimension {
 public:
-	const static u8 MB_STORE_H = 6;
+	const static u8 MB_STORE_H = 4;
 	const static u8 MB_STORE_V = 4;
 	
 	LocalDimension(SubgamePtr game, LocalWorld& world, const string& identifier, u16 ind, sptr<MapGen> mapGen);

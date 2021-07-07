@@ -13,7 +13,7 @@
 
 class MapBlock;
 
-class Region : Lockable {
+class Region {
 	public:
 	Region(glm::ivec3 pos);
 	

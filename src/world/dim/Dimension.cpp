@@ -10,9 +10,7 @@
 #include "game/atlas/DefinitionAtlas.h"
 
 bool Dimension::setBlock(ivec3 pos, u16 block) {
-	auto l = getReadLock();
 	auto chunk = getChunk(Space::Chunk::world::fromBlock(pos));
-	l.unlock();
 	
 	if (!chunk) return false;
 	
@@ -67,11 +65,9 @@ std::unordered_set<ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
 	
 	for (u8 channel = 0; channel < 4; channel++) {
 		while (true) {
-			auto l = getWriteLock();
 			if (lightAddQueue[channel].empty()) break;
 			LightAddNode node = lightAddQueue[channel].front();
 			lightAddQueue[channel].pop();
-			l.unlock();
 			
 			Chunk* chunk = node.chunk;
 			if (!chunksUpdated.count(chunk->getPos())) chunksUpdated.insert(chunk->getPos());
@@ -99,9 +95,7 @@ std::unordered_set<ivec3, Vec::ivec3> Dimension::propogateAddNodes() {
 					int subtract = sunDown ? 0 : 1;
 					chunk->setLight(ind, channel, lightLevel - subtract);
 					
-					l.lock();
 					lightAddQueue[channel].emplace(ind, chunk);
-					l.unlock();
 				}
 			}
 		}
@@ -115,11 +109,9 @@ std::unordered_set<ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
 	
 	for (u8 channel = 0; channel < 4; channel++) {
 		while (true) {
-			auto l = getWriteLock();
 			if (lightRemoveQueue[channel].empty()) break;
 			LightRemoveNode node = lightRemoveQueue[channel].front();
 			lightRemoveQueue[channel].pop();
-			l.unlock();
 			
 			ivec3 worldPos = node.chunk->getPos() * 16 + ivec3(Space::Block::fromIndex(node.index));
 			
@@ -145,19 +137,15 @@ std::unordered_set<ivec3, Vec::ivec3> Dimension::propogateRemoveNodes() {
 							chunk->getBlock(Space::Block::index(check))).lightSource[channel]);
 					chunk->setLight(ind, channel, replaceLight);
 					
-					l.lock();
 					if (replaceLight) lightAddQueue[channel].emplace(ind, chunk);
 					lightRemoveQueue[channel].emplace(ind, checkLight, chunk);
-					l.unlock();
 				}
 				else if (checkLight >= node.value) {
 					auto chunk = containsWorldPos(node.chunk, check) ? node.chunk : getChunk(
 						Space::Chunk::world::fromBlock(check)).get();
 					if (!chunk) continue;
 					
-					l.lock();
 					lightAddQueue[channel].emplace(ind, chunk);
-					l.unlock();
 				}
 			}
 		}
@@ -218,7 +206,6 @@ void Dimension::addBlockLight(ivec3 pos, ivec3 light) {
 	startChunk->setLight(ind, 1, light.y);
 	startChunk->setLight(ind, 2, light.z);
 	
-	auto _ = getWriteLock();
 	lightAddQueue[0].emplace(ind, startChunk.get());
 	lightAddQueue[1].emplace(ind, startChunk.get());
 	lightAddQueue[2].emplace(ind, startChunk.get());
@@ -233,7 +220,6 @@ void Dimension::removeBlockLight(ivec3 pos) {
 	startChunk->setLight(ind, 1, 0);
 	startChunk->setLight(ind, 2, 0);
 	
-	auto _ = getWriteLock();
 	lightRemoveQueue[0].emplace(ind, val.x, startChunk.get());
 	lightRemoveQueue[1].emplace(ind, val.y, startChunk.get());
 	lightRemoveQueue[2].emplace(ind, val.z, startChunk.get());
@@ -259,7 +245,6 @@ void Dimension::reflowLight(glm::ivec3 pos) {
 	
 	chunk->setLight(ind, placeLight);
 	
-	auto _ = getWriteLock();
 	lightAddQueue[0].emplace(ind, chunk.get());
 	lightAddQueue[1].emplace(ind, chunk.get());
 	lightAddQueue[2].emplace(ind, chunk.get());
@@ -272,7 +257,6 @@ void Dimension::removeSunlight(glm::ivec3 pos) {
 	unsigned int light = chunk->getLight(ind, 3);
 	
 	chunk->setLight(ind, 3, 0);
-	auto _ = getWriteLock();
 	lightRemoveQueue[SUNLIGHT_CHANNEL].emplace(ind, light, chunk.get());
 }
 
@@ -281,6 +265,5 @@ void Dimension::setAndReflowSunlight(glm::ivec3 pos, unsigned char level) {
 	unsigned int ind = Space::Block::index(pos);
 	
 	chunk->setLight(ind, 3, level);
-	auto _ = getWriteLock();
 	lightAddQueue[SUNLIGHT_CHANNEL].emplace(ind, chunk.get());
 }

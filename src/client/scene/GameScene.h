@@ -2,6 +2,7 @@
 
 #include "Scene.h"
 
+#include "util/PerfTimer.h"
 #include "world/LocalWorld.h"
 
 class Drawable;
@@ -18,7 +19,10 @@ public:
 	
 	void cleanup() override;
 	
-public:
+private:
+	vec<string> perfSections = { "update:mods", "update:world", "update:player", "update:net", "update:chunks",
+		"draw:world", "draw:entities", "draw:interface", "update:debug", "idle" };
+	PerfTimer perf { perfSections };
 	
 	WorldPtr world;
 };

@@ -15,7 +15,7 @@ class TextureAtlas;
 class LuaGuiElement;
 
 class GuiRect : public GuiComponent {
-	public:
+public:
 	GuiRect() = default;
 	
 	GuiRect(const std::string& key);
@@ -31,7 +31,7 @@ class GuiRect : public GuiComponent {
 	
 	void create(glm::vec2 scale, glm::vec4 padding, std::shared_ptr<AtlasRef> texture, glm::vec4 tint);
 	
-	protected:
+protected:
 	std::shared_ptr<AtlasRef> texture = nullptr;
 };
 

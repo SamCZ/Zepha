@@ -14,7 +14,6 @@
 
 #include <stb_image/stb_image.h>
 #include <cute_files/cute_files.h>
-#include <world/dim/chunk/Chunk.h>
 
 #pragma clang diagnostic pop
 

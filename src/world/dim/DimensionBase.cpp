@@ -24,13 +24,11 @@ u16 DimensionBase::getInd() {
 }
 
 sptr<Region> DimensionBase::getRegion(ivec3 regionPosition) const {
-	auto _ = getReadLock();
 	if (!regions.count(regionPosition)) return nullptr;
 	return regions.at(regionPosition);
 }
 
 void DimensionBase::removeRegion(ivec3 pos) {
-	auto _ = getWriteLock();
 	regions.erase(pos);
 }
 
@@ -90,7 +88,6 @@ bool DimensionBase::setBlock(ivec3 pos, u16 block) {
 
 
 f64 DimensionBase::getBlockDamage(ivec3 pos) const {
-	auto _ = getReadLock();
 	return blockDamages.count(pos) ? blockDamages.at(pos).curr : 0;
 }
 
@@ -98,7 +95,6 @@ f64 DimensionBase::setBlockDamage(ivec3 pos, f64 damage) {
 	if (blockDamages.count(pos)) blockDamages[pos].curr = damage;
 	else {
 		double health = game->getDefs().blockFromId(getBlock(pos)).health;
-		auto _ = getWriteLock();
 		blockDamages.insert({ pos, Damage{ damage, health }});
 	}
 	
@@ -120,7 +116,6 @@ bool DimensionBase::setBiome(ivec3 pos, u16 biome) {
 }
 
 sptr<Region> DimensionBase::getOrCreateRegion(ivec3 pos) {
-	auto _ = getWriteLock();
 	if (regions[pos]) return regions[pos];
 	regions[pos] = make_shared<Region>(pos);
 	return regions[pos];

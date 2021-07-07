@@ -7,7 +7,7 @@
 #include "client/gui/GuiComponent.h"
 
 class GuiContainer : public GuiComponent {
-	public:
+public:
 	GuiContainer() = default;
 	
 	explicit GuiContainer(const std::string& key);

@@ -72,12 +72,16 @@ void ServerPlayer::setDim(DimensionPtr dim, bool assert) {
 }
 
 void ServerPlayer::setPos(vec3 pos, bool assert) {
-	vec3 lastMapBlock = Space::MapBlock::world::fromBlock(this->pos);
-	vec3 newMapBlock = Space::MapBlock::world::fromBlock(pos);
+	ivec3 lastMapBlock = Space::MapBlock::world::fromBlock(this->pos);
+	ivec3 newMapBlock = Space::MapBlock::world::fromBlock(pos);
+	
+	if (newMapBlock != lastMapBlock && !changedMapBlocks) {
+		changedMapBlocks = true;
+		lastPos = this->pos;
+	}
 	
 	Player::setPos(pos, assert);
 	
-	if (newMapBlock != lastMapBlock && !changedMapBlocks) changedMapBlocks = true;
 }
 
 InventoryPtr ServerPlayer::getInventory() {

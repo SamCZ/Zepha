@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 28/04/19.
-//
-
 #pragma once
 
 #include "util/Util.h"

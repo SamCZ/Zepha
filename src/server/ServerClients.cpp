@@ -33,11 +33,10 @@ void ServerClients::handleDisconnect(ENetEvent e) {
 }
 
 void ServerClients::createPlayer(sptr<ServerClient> client, DimensionPtr dimension) {
-	std::cout << "PLAYER CREATING" << std::endl;
 	client->player = make_shared<ServerPlayer>(*client, dimension->getWorld(), game, dimension);
 	
 	game.s()->getParser().playerConnected(client->player);
-	client->player->setPos({ 32, -20, 32 }, true);
+	client->player->setPos({ 256, -20, 256 }, true);
 	
 	Serializer()
 		.append(NetField::ID).append(static_cast<u32>(client->player->getId()))

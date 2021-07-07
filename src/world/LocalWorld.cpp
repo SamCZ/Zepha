@@ -9,11 +9,11 @@
 #include "world/player/LocalPlayer.h"
 #include "client/stream/WorldInterpolationStream.h"
 
-LocalWorld::LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& renderer) :
+LocalWorld::LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& renderer, vec<string>& perfSections) :
 	World(game),
 	renderer(renderer),
 	net(conn, *this),
-	debugGui(renderer.window.getSize(), game, *this),
+	debugGui(renderer.window.getSize(), game, *this, perfSections),
 	refs(std::make_shared<LocalInventoryRefs>(game, net)),
 	worldGenStream(std::make_shared<WorldInterpolationStream>(*game.l(), *this, 55)),
 	player(std::make_shared<LocalPlayer>(game, *this, DimensionPtr(nullptr), renderer)) {}
@@ -30,27 +30,32 @@ bool LocalWorld::updatePlayerDimension() {
 	return true;
 }
 
-void LocalWorld::update(double delta) {
+void LocalWorld::update(double delta, vec<usize>& perfTimings, PerfTimer& perf) {
+	perf.start("update:world");
 	World::update(delta);
 	
 	// Update children
 	
+	perf.start("update:player");
 	if (*player) player.l()->update(renderer.window.input, delta, renderer.window.input.mouseDelta());
 	refs->update(delta, net);
+	perf.start("update:net");
 	net.update();
 	
 	// Commit interpolated mapblocks
 	
+	perf.start("update:chunks");
 	auto finishedChunks = worldGenStream->update();
 	lastInterpolations = finishedChunks->size() / 64;
 	for (const auto& chunk : *finishedChunks) commitChunk(chunk);
 	
 	// Update debug interface
 	
+	perf.start("update:debug");
 	debugGui.update(
 		player.l(), delta,
-		lastInterpolations,
-		net.serverSideChunkGens, net.recvPackets,
+		lastInterpolations, net.serverSideChunkGens, net.recvPackets,
+		perfTimings,
 		activeDimension->getMeshChunksDrawn(),
 		activeDimension->getMeshChunksCommitted());
 	
@@ -58,7 +63,8 @@ void LocalWorld::update(double delta) {
 	
 	if (renderer.window.input.keyPressed(GLFW_KEY_F1)) {
 		hudVisible = !hudVisible;
-		debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
+		debugGui.changeVisibility(hudVisible ? debugVisible ? DebugGui::Visibility::OFF :
+			DebugGui::Visibility::FPS_ONLY : DebugGui::Visibility::ON);
 		player.l()->setHudVisible(hudVisible);
 	}
 	
@@ -66,12 +72,12 @@ void LocalWorld::update(double delta) {
 	
 	if (renderer.window.input.keyPressed(GLFW_KEY_F3)) {
 		debugVisible = !debugVisible;
-		debugGui.changeVisibilityState(hudVisible ? debugVisible ? 0 : 2 : 1);
+		debugGui.changeVisibility(hudVisible ? debugVisible ? DebugGui::Visibility::OFF :
+			DebugGui::Visibility::FPS_ONLY : DebugGui::Visibility::ON);
 	}
 }
 
 void LocalWorld::handleWorldPacket(std::unique_ptr<PacketView> p) {
-	std::cout << "world packet" << std::endl;
 	worldGenStream->queuePacket(std::move(p));
 }
 

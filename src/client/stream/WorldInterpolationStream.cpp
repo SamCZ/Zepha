@@ -85,15 +85,15 @@ void WorldInterpolationStream::Thread::run() {
 				if (u.packet->type == Packet::Type::CHUNK) {
 					u.chunks.reserve(1);
 					u.chunks.emplace_back(std::make_shared<Chunk>());
-					u.chunks.back()->decompress(u.packet->d.data);
+					u.chunks.back()->decompressFromString(u.packet->d.data);
 				}
 				else if (u.packet->type == Packet::Type::MAPBLOCK) {
 					u.chunks.reserve(64);
 					while (!u.packet->d.atEnd()) {
-						std::string dat = u.packet->d.read<std::string>();
-						Deserializer d(dat);
-						u.chunks.emplace_back(std::make_shared<Chunk>());
-						u.chunks.back()->decompress(d.data);
+						string data = u.packet->d.read<string>();
+//						std::cout << Util::toString(Deserializer(data).read<ivec3>()) << std::endl;
+						u.chunks.emplace_back(make_shared<Chunk>());
+						u.chunks.back()->decompressFromString(data);
 					}
 				}
 				

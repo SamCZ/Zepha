@@ -1,8 +1,4 @@
-//
-// Created by aurailus on 2020-07-16.
-//
-
-#pragma once
+	#pragma once
 
 #include <queue>
 #include <thread>
@@ -18,7 +14,7 @@ class ServerWorld;
 class ServerPacketStream {
 	public:
 	static const int THREADS = 4;
-	static const int THREAD_QUEUE_SIZE = 64;
+	static const int THREAD_QUEUE_SIZE = 4;
 	
 	struct FinishedJob {
 		FinishedJob(glm::ivec3 pos, unsigned int dim, std::unique_ptr<Packet> packet) :
@@ -40,13 +36,13 @@ class ServerPacketStream {
 	private:
 	struct Job {
 		bool locked = false;
-		glm::ivec3 pos{};
 		unsigned int dim;
 		std::unique_ptr<Packet> packet = nullptr;
+		std::unique_ptr<MapBlock> mapBlock = nullptr;
 	};
 	
 	struct Thread {
-		Thread(ServerWorld& world);
+		Thread();
 		
 		void run();
 		
@@ -54,11 +50,13 @@ class ServerPacketStream {
 		
 		std::vector<Job> jobs = std::vector<Job>(THREAD_QUEUE_SIZE);
 		
-		ServerWorld& world;
 		std::thread thread;
 	};
+	
+	ServerWorld& world;
 	
 	std::vector<Thread> threads;
 	std::queue<glm::ivec4> queuedTasks;
 	std::unordered_set<glm::ivec4, Vec::ivec4> queuedMap;
+	std::unordered_set<glm::ivec4, Vec::ivec4> inProgressMap;
 };

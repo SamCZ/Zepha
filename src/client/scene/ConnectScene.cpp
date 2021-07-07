@@ -244,8 +244,6 @@ void ConnectScene::draw() {
 	renderer.enableTexture(&client.game->textures.atlasTexture);
 	
 	components.draw(renderer);
-	
-	renderer.swapBuffers();
 }
 
 void ConnectScene::cleanup() {

@@ -9,7 +9,7 @@
 class AtlasRef;
 
 class GuiGraph : public GuiComponent {
-	public:
+public:
 	GuiGraph() = default;
 	
 	GuiGraph(const std::string& key);
@@ -22,7 +22,7 @@ class GuiGraph : public GuiComponent {
 	
 	void pushValue(float value);
 	
-	private:
+private:
 	void buildHistogramMesh();
 	
 	bool editInPlace = false;

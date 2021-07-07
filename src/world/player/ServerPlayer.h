@@ -35,7 +35,7 @@ public:
 	
 	ENetPeer* getPeer();
 	
-	bool changedMapBlocks = true;
+	bool changedMapBlocks = false;
 	vec3 lastPos = vec3(INFINITY);
 	
 private:

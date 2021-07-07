@@ -62,9 +62,15 @@ void LocalDimension::update(double delta) {
 				it->second->remove(m);
 				if (it->second->count <= 0) {
 					remove = true;
-					auto l = getWriteLock();
 					it = regions.erase(it);
 					break;
+				}
+			}
+			else {
+				for (unsigned short c = 0; c < 64; c++) {
+					auto chunk = mapBlock->get(c);
+					if (!chunk) continue;
+					chunk->compressIfIdle();
 				}
 			}
 		}
@@ -175,7 +181,6 @@ void LocalDimension::removeMeshChunk(const glm::ivec3& pos) {
 }
 
 i64 LocalDimension::nextEntityInd() {
-	auto _ = getWriteLock();
 	return entityInd--;
 }
 

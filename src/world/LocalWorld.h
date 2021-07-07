@@ -6,6 +6,7 @@
 
 #include "World.h"
 
+#include "util/PerfTimer.h"
 #include "client/gui/DebugGui.h"
 #include "world/dim/LocalDimension.h"
 #include "client/conn/ClientNetworkInterpreter.h"
@@ -19,13 +20,13 @@ class WorldInterpolationStream;
 
 class LocalWorld : public World {
 public:
-	LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& window);
+	LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& window, vec<string>& perfSections);
 	
 	void connect();
 	
 	bool updatePlayerDimension();
 	
-	void update(double delta) override;
+	void update(double delta, vec<usize>& perfTimings, PerfTimer& perf);
 	
 	void handleWorldPacket(std::unique_ptr<PacketView> p);
 	

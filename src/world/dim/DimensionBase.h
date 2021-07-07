@@ -20,7 +20,7 @@ class Subgame;
 class MapBlock;
 class DefinitionAtlas;
 
-class DimensionBase : protected Lockable {
+class DimensionBase {
 public:
 	DimensionBase(SubgamePtr game, World& world, const string& identifier, u16 ind, sptr<MapGen> mapGen);
 	

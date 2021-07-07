@@ -11,19 +11,12 @@
 #include "world/dim/ServerDimension.h"
 
 class Target;
-
 class ItemStack;
-
-class ServerClients;
-
 class ServerPlayer;
-
-class ServerInventoryRefs;
-
+class ServerClients;
 class ServerSubgame;
-
 class ServerGenStream;
-
+class ServerInventoryRefs;
 class ServerPacketStream;
 
 class ServerWorld : public World {

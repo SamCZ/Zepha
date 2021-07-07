@@ -9,38 +9,42 @@
 #include <shared_mutex>
 #include <unordered_set>
 
+#include "util/Types.h"
 #include "world/gen/MapGen.h"
 #include "util/CovariantPtr.h"
 
 class ServerSubgame;
 
 class ServerGenStream {
-	public:
-	static const int THREADS = 6;
-	static const int THREAD_QUEUE_SIZE = 6;
+public:
+	static const usize THREADS = 6;
+	static const usize THREAD_QUEUE_SIZE = 6;
 	
 	struct FinishedJob {
-		glm::ivec3 pos;
-		unsigned int dim;
-		std::unique_ptr<MapGen::CreatedSet> created;
+		FinishedJob(u16 dim, ivec3 pos, uptr<MapGen::ChunkMap> created) :
+			dim(dim), pos(pos), created(std::move(created)) {};
+		
+		u16 dim;
+		ivec3 pos;
+		uptr<MapGen::ChunkMap> created;
 	};
 	
 	explicit ServerGenStream(ServerSubgame& game, ServerWorld& world);
 	
 	~ServerGenStream();
 	
-	bool queue(unsigned int dim, glm::ivec3 pos);
+	bool queue(u16 dim, ivec3 pos);
 	
 	std::unique_ptr<std::vector<FinishedJob>> update();
 	
 	private:
 	struct Job {
 		bool locked = false;
-		std::unique_ptr<MapGen::CreatedSet> created = nullptr;
+		uptr<MapGen::ChunkMap> created = nullptr;
 		
-		unsigned int dim;
-		glm::ivec3 pos{};
-		std::shared_ptr<MapGen> gen;
+		u16 dim;
+		ivec3 pos{};
+		sptr<MapGen> gen;
 	};
 	
 	struct Thread {
@@ -50,13 +54,14 @@ class ServerGenStream {
 		
 		bool kill = false;
 		
-		std::vector<Job> jobs = std::vector<Job>(THREAD_QUEUE_SIZE);
+		vec<Job> jobs = vec<Job>(THREAD_QUEUE_SIZE);
 		
 		std::thread thread;
 	};
 	
 	ServerWorld& world;
-	std::vector<Thread> threads;
-	std::queue<glm::ivec4> queuedTasks;
-	std::unordered_set<glm::ivec4, Vec::ivec4> queuedMap;
+	vec<Thread> threads;
+	std::queue<ivec4> queuedTasks;
+	std::unordered_set<ivec4, Vec::ivec4> queuedMap;
+	std::unordered_set<ivec4, Vec::ivec4> inProgressMap;
 };

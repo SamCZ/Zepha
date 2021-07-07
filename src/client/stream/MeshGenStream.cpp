@@ -36,12 +36,12 @@ MeshGenStream::MeshGenStream(SubgamePtr game, LocalDimension& dimension) :
 std::vector<ChunkMeshDetails*> MeshGenStream::update() {
 	std::vector<ChunkMeshDetails*> finishedChunks;
 	
-	for (unsigned int i = 0; i < THREAD_QUEUE_SIZE; i++) {
+	for (u16 i = 0; i < THREAD_QUEUE_SIZE; i++) {
 		for (Thread& t : threads) {
 			auto& j = t.jobs[i];
 			if (j.busy) continue;
 			
-			if (j.thisChunk) {
+			if (j.meshDetails->vertices.size()) {
 				j.thisChunk = nullptr;
 				finishedChunks.push_back(j.meshDetails);
 				j.meshDetails = new ChunkMeshDetails();
@@ -53,7 +53,7 @@ std::vector<ChunkMeshDetails*> MeshGenStream::update() {
 				queuedTasks.pop_front();
 				
 				std::shared_ptr<Chunk> chunk = dimension.getChunk(pos);
-				if (chunk == nullptr) goto breakAddTask;
+				if (!chunk) goto breakAddTask;
 				
 				
 				j.meshDetails->pos = pos;
@@ -63,9 +63,9 @@ std::vector<ChunkMeshDetails*> MeshGenStream::update() {
 				int ind = 0;
 				for (const glm::ivec3& dir : Vec::TO_VEC) {
 					std::shared_ptr<Chunk> adjacent = dimension.getChunk(pos + dir);
+					if (!adjacent) goto breakAddTask;
 					// TODO: Here too
 					j.adjacentChunks[ind++] = std::make_unique<Chunk>(Chunk(*adjacent));
-					if (adjacent == nullptr) goto breakAddTask;
 				}
 				
 				j.busy = true;
@@ -90,6 +90,8 @@ void MeshGenStream::Thread::exec() {
 			auto& u = jobs[i];
 			if (!u.busy) continue;
 			
+			assert(u.thisChunk);
+			for (int i = 0; i < u.adjacentChunks.size(); i++) assert(u.adjacentChunks[i]);
 			ChunkMeshGenerator m(u.meshDetails, game.getDefs(), game.getBiomes(),
 				std::move(u.thisChunk), std::move(u.adjacentChunks), offsetSamplers);
 			empty = false;

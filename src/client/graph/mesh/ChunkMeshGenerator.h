@@ -1,12 +1,8 @@
-//
-// Created by aurailus on 01/12/18.
-//
-
 #pragma once
 
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include <memory>
+#include "util/Types.h"
 
 class Chunk;
 class MeshPart;
@@ -19,22 +15,20 @@ class LocalDefinitionAtlas;
 class ChunkMeshGenerator {
 public:
 	ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefinitionAtlas& defs, LocalBiomeAtlas& biomes,
-		std::unique_ptr<Chunk> chunk, std::array<std::unique_ptr<Chunk>, 6> adjacent,
-		std::array<NoiseSample, 3>& blockOffsets);
+		uptr<Chunk> chunk, array<uptr<Chunk>, 6> adjacent, array<NoiseSample, 3>& blockOffsets);
 	
 private:
-	inline unsigned int getBlockAt(const glm::ivec3& pos);
-	inline glm::vec4 getLightAt(const glm::ivec3& pos);
+	inline u16 getBlockAt(const ivec3& pos);
+	inline u8vec4 getLightAt(const ivec3& pos);
 	
-	void
-	addFaces(const glm::vec3& offset, const std::vector<MeshPart>& meshParts, const glm::vec3& tint, glm::vec4 light);
+	void addFaces(const vec3& offset, const vec<MeshPart>& meshParts, const vec3& tint, u8vec4 light);
 	
 	LocalDefinitionAtlas& defs;
 	LocalBiomeAtlas& biomes;
 	
-	unsigned int indOffset = 0;
+	usize indOffset = 0;
 	ChunkMeshDetails* meshDetails;
 	
-	std::unique_ptr<Chunk> chunk;
-	std::array<std::unique_ptr<Chunk>, 6> adjacent;
+	uptr<Chunk> chunk;
+	array<uptr<Chunk>, 6> adjacent;
 };

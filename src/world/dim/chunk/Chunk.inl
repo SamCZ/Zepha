@@ -1,5 +1,4 @@
-
-//#include "Chunk.h"
+#include "Chunk.h"
 
 ivec3 Chunk::getPos() const {
 	return pos;
@@ -29,13 +28,18 @@ bool Chunk::isGenerated() const {
 	return generationState == GenerationState::GENERATED;
 }
 
-inline u16 Chunk::getBlock(u16 ind) const {
-	assertDecompressed();
+bool Chunk::isCompressed() const {
+	return compressionState == CompressionState::COMPRESSED;
+}
+
+inline u16 Chunk::getBlock(u16 ind) {
+	useDecompressed();
+	
 	if (ind >= 4096) throw ChunkException(pos, "Index out of range.");
 	return d->blocks[ind];
 }
 
-inline u16 Chunk::getBlock(const ivec3& reqPos) const {
+inline u16 Chunk::getBlock(const ivec3& reqPos) {
 	return getBlock(Space::Block::index(reqPos));
 }
 
@@ -43,18 +47,20 @@ inline bool Chunk::setBlock(const ivec3& newPos, u16 blk) {
 	return setBlock(Space::Block::index(newPos), blk);
 }
 
-inline u16 Chunk::getBiome(u16 ind) const {
-	assertDecompressed();
+inline u16 Chunk::getBiome(u16 ind) {
+	useDecompressed();
+	
 	if (ind >= 4096) throw ChunkException(pos, "Index out of range.");
 	return d->biomes[ind];
 }
 
-inline u16 Chunk::getBiome(const ivec3& reqPos) const {
+inline u16 Chunk::getBiome(const ivec3& reqPos) {
 	return getBiome(Space::Block::index(reqPos));
 }
 
 inline bool Chunk::setBiome(u16 ind, u16 bio) {
-	assertDecompressed();
+	useDecompressed();
+	
 	if (ind > 4096) throw ChunkException(pos, "Index out of range.");
 	
 	if (d->biomes[ind] == bio) return false;
@@ -67,12 +73,14 @@ inline bool Chunk::setBiome(const ivec3& newPos, u16 bio) {
 }
 
 inline u8vec4 Chunk::getLight(u16 ind) {
-	assertDecompressed();
+	useDecompressed();
+	
 	return { d->blockLight[ind].r, d->blockLight[ind].g, d->blockLight[ind].b, getSunlight(ind) };
 }
 
 inline void Chunk::setLight(u16 ind, u8vec4 light) {
-	assertDecompressed();
+	useDecompressed();
+	
 	if (ind > 4096) throw ChunkException(pos, "Index out of range.");
 	if (light.x > 31 || light.y > 31 || light.z > 31 || light.w > 15)
 		throw ChunkException(pos, "Light value out of range.");
@@ -84,7 +92,8 @@ inline void Chunk::setLight(u16 ind, u8vec4 light) {
 }
 
 inline u8 Chunk::getLight(u16 ind, u8 channel) {
-	assertDecompressed();
+	useDecompressed();
+	
 	if (ind > 4096) throw ChunkException(pos, "Index out of range.");
 	
 	return channel == 0 ? d->blockLight[ind].r :
@@ -94,7 +103,8 @@ inline u8 Chunk::getLight(u16 ind, u8 channel) {
 }
 
 inline void Chunk::setLight(u16 ind, u8 channel, u8 light) {
-	assertDecompressed();
+	useDecompressed();
+	
 	if (ind > 4096) throw ChunkException(pos, "Index out of range.");
 	if ((channel < 4 && light > 31) || (channel == 4 && light > 15))
 		throw ChunkException(pos, "Light value out of range.");
@@ -105,9 +115,23 @@ inline void Chunk::setLight(u16 ind, u8 channel, u8 light) {
 	else setSunlight(ind, light);
 }
 
-void Chunk::assertDecompressed() const {
-	if (compressionState == CompressionState::COMPRESSED)
-		throw ChunkException(pos, "Chunk is compressed.");
+const string& Chunk::compress() {
+	if (isCompressed()) throw ChunkException(pos, "Chunk is compressed.");
+	c = compressToString();
+	d = nullptr;
+	compressionState = CompressionState::COMPRESSED;
+	return c;
+}
+
+void Chunk::decompress() {
+	if (!isCompressed()) throw ChunkException(pos, "Chunk is not compressed.");
+	d = nullptr;
+	decompressFromString(c);
+}
+
+void Chunk::useDecompressed() {
+	lastUsed = time(0);
+	if (isCompressed()) decompress();
 }
 
 inline u8 Chunk::getSunlight(u16 ind) {

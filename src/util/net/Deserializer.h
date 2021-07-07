@@ -57,6 +57,7 @@ public:
 		std::is_same_v<vec<typename V::value_type>, V>, bool> = true>
 	inline V read() {
 		usize vecLen = read<usize>();
+		assert(vecLen < 100000000); // Sanity check
 		auto startInd = ind;
 		ind += vecLen * sizeof(typename V::value_type);
 		return vec<typename V::value_type>(

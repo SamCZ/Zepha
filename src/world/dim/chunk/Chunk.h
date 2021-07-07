@@ -1,10 +1,6 @@
 #pragma once
 
 #include <mutex>
-#include <array>
-#include <vector>
-#include <memory>
-#include <glm/vec3.hpp>
 
 #include "util/Types.h"
 #include "util/Space.h"
@@ -27,8 +23,8 @@ public:
 
 /**
  * A block chunk that stores a 16^3 region of world data.
- * Can be compressed, any attempts to access data in the chunk will decompress it,
- * and the dimension will automatically compress inactive chunks.
+ * Can be compressed, any attempts to access data in the chunk will decompressFromString it,
+ * and the dimension will automatically compressToString inactive chunks.
  */
 
 class Chunk {
@@ -40,6 +36,9 @@ public:
 	
 	/** An enum for indicating the generation state of a Chunk. */
 	enum class GenerationState { EMPTY, PARTIAL, GENERATED };
+	
+	/** How long the chunk should wait before being compressed, in seconds */
+	constexpr static f64 COMPRESS_DELAY = 2;
 	
 	/**
 	 * A struct for storing Block lighting at a position.
@@ -82,10 +81,7 @@ public:
 	Chunk(ivec3 pos = { 0, 0, 0 }, bool partial = false);
 	
 	/** Creates a chunk with the compressed data specified. */
-	Chunk(const string& data);
-	
-	/** Destroys chunk data pointer. */
-	~Chunk();
+	Chunk(ivec3 pos, const string& data);
 	
 	/** Returns the position of the chunk. */
 	inline ivec3 getPos() const;
@@ -118,8 +114,11 @@ public:
 	
 	inline bool isGenerated() const;
 	
+	/** Returns a boolean indicating if the chunk is compressed. */
+	inline bool isCompressed() const;
+	
 	/** Returns the block ID at the index specified. */
-	inline u16 getBlock(u16 ind) const;
+	inline u16 getBlock(u16 ind);
 	
 	/**
 	 * Sets the block ID at the index specified.
@@ -129,7 +128,7 @@ public:
 	bool setBlock(u16 ind, u16 blk);
 	
 	/** Returns the block ID at the position specified, wrapping to local coordinates. */
-	inline u16 getBlock(const ivec3& pos) const;
+	inline u16 getBlock(const ivec3& pos);
 	
 	/**
 	 * Sets the block ID at the position specified, wrapping to local coordinates.
@@ -139,7 +138,7 @@ public:
 	inline bool setBlock(const ivec3& pos, u16 blk);
 	
 	/** Gets the biome ID at the index specified. */
-	inline u16 getBiome(u16 ind) const;
+	inline u16 getBiome(u16 ind);
 	
 	/**
 	 * Sets the biome ID at the index specified.
@@ -149,7 +148,7 @@ public:
 	inline bool setBiome(u16 ind, u16 bio);
 	
 	/** Returns the biome ID at the position specified, wrapping to local coordinates. */
-	inline u16 getBiome(const ivec3& pos) const;
+	inline u16 getBiome(const ivec3& pos);
 	
 	/**
 	 * Sets the biome ID at the position specified, wrapping to local coordinates.
@@ -159,10 +158,10 @@ public:
 	inline bool setBiome(const ivec3& pos, u16 bio);
 	
 	/** Returns a constant reference to the chunk's raw blocks array. */
-	const array<u16, 4096>& getBlocksArray() const;
+	const array<u16, 4096>& getBlocksArray();
 	
 	/** Returns a constant reference to the chunk's raw biomes array. */
-	const array<u16, 4096>& getBiomesArray() const;
+	const array<u16, 4096>& getBiomesArray();
 	
 	/** Returns the light value at the specified index as a vector in R, G, B, Sunlight format. */
 	inline u8vec4 getLight(u16 ind);
@@ -184,15 +183,31 @@ public:
 	
 	void combineWith(sptr<Chunk> o);
 	
-	/** Compresses the chunk, returning a string representing it. */
-	string compress();
+	/** Compresses the chunk without modifying it, returning a string representing it. */
+	string compressToString() const;
 	
-	/** Decompresses a compressed chunk string, or itself. */
-	void decompress(const string& data = "");
+	/** Compresses the chunk in-place, returning a read-only reference to the compressed data. */
+	inline const string& compress();
+	
+	/** Decompresses a compressed chunk string into the chunk itself. */
+	void decompressFromString(const string& data);
+	
+	/** Deompresses the chunk in-place from internal data. */
+	inline void decompress();
+	
+	/** Decompresses the chunk if it isn't already, and marks the current time of use. */
+	inline void useDecompressed();
+	
+	/** Compresses the chunk if it hasn't been used for COMPRESS_DELAY seconds. */
+	void compressIfIdle();
 
 private:
 	/** Internal data of a decompressed chunk. */
 	struct ChunkData {
+		ChunkData() = default;
+		ChunkData(const ChunkData& o) : blocks(o.blocks), biomes(o.biomes),
+			sunLight(o.sunLight), blockLight(o.blockLight) {}
+			
 		/** Internal block data. */
 		array<u16, 4096> blocks {};
 		
@@ -205,9 +220,6 @@ private:
 		/** Internal blocklight data. */
 		array<BlockLight, 4096> blockLight {};
 	};
-	
-	/** Throws an exception if the chunk is compressed. */
-	inline void assertDecompressed() const;
 	
 	/** Gets the sunlight intensity at the specified index. */
 	inline u8 getSunlight(u16 ind);
@@ -234,11 +246,14 @@ private:
 	/** Whether or not the chunk needs to be remeshed. */
 	bool dirty = true;
 	
+	/** The last time the uncompressed chunk is used. */
+	time_t lastUsed = 0;
+	
 	/** The number of non-transparent blocks in the chunk. */
 	u16 renderableBlocks = 0;
 
 	/** Internal decompressed chunk data. */
-	ChunkData* d = nullptr;
+	uptr<ChunkData> d = nullptr;
 	
 	/** Internal compressed chunk data. */
 	string c = "";

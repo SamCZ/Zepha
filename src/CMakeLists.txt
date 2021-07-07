@@ -57,6 +57,8 @@ add_library(Zepha_Core
         client/gui/basic/GuiContainer.h
         client/gui/basic/GuiGraph.cpp
         client/gui/basic/GuiGraph.h
+        client/gui/basic/GuiMeter.cpp
+        client/gui/basic/GuiMeter.h
         client/gui/basic/GuiInventoryItem.cpp
         client/gui/basic/GuiInventoryItem.h
         client/gui/basic/GuiModel.cpp
@@ -324,6 +326,6 @@ add_library(Zepha_Core
         lua/modules/Message.h
         lua/NoiseFromLua.cpp
         lua/NoiseFromLua.h
-        util/Types.h)
+        util/Types.h util/PerfTimer.cpp util/PerfTimer.h client/gui/compound/GuiPerfGraph.cpp client/gui/compound/GuiPerfGraph.h client/gui/compound/GuiCellGraph.cpp client/gui/compound/GuiCellGraph.h client/gui/basic/GuiCells.cpp client/gui/basic/GuiCells.h)
 
 target_include_directories(Zepha_Core PUBLIC .)

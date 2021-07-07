@@ -11,35 +11,40 @@
 ServerGenStream::ServerGenStream(ServerSubgame& game, ServerWorld& world) :
 	world(world) {
 	threads.reserve(THREADS);
-	for (int i = 0; i < THREADS; i++) threads.emplace_back(game, world);
+	for (usize i = 0; i < THREADS; i++) threads.emplace_back(game, world);
 }
 
-bool ServerGenStream::queue(unsigned int dimension, glm::ivec3 pos) {
-	auto v4 = glm::ivec4(pos, dimension);
-	if (!queuedMap.count(v4)) {
+bool ServerGenStream::queue(u16 dimension, ivec3 pos) {
+	auto v4 = ivec4(pos, dimension);
+//	if (!queuedMap.count(v4)) {
+	if (queuedMap.find(v4) == queuedMap.end() && inProgressMap.find(v4) == inProgressMap.end()) {
 		queuedTasks.push(v4);
-		queuedMap.insert(v4);
+		queuedMap.emplace(v4);
 		return true;
 	}
 	return false;
 }
 
-std::unique_ptr<std::vector<ServerGenStream::FinishedJob>> ServerGenStream::update() {
-	auto created = std::make_unique<std::vector<FinishedJob>>();
+uptr<vec<ServerGenStream::FinishedJob>> ServerGenStream::update() {
+	auto created = make_unique<vec<FinishedJob>>();
 	
-	for (unsigned int i = 0; i < THREAD_QUEUE_SIZE; i++) {
+	for (usize i = 0; i < THREAD_QUEUE_SIZE; i++) {
 		for (auto& t : threads) {
 			auto& j = t.jobs[i];
 			if (j.locked) continue;
 			
-			if (j.created) created->push_back({ j.pos, j.dim, std::move(j.created) });
+			if (j.created) {
+				inProgressMap.erase(ivec4(j.pos, j.dim));
+				created->emplace_back(j.dim, j.pos, std::move(j.created));
+			}
 			
 			if (!queuedTasks.empty()) {
 				auto pos = queuedTasks.front();
 				queuedMap.erase(pos);
+				inProgressMap.emplace(pos);
 				queuedTasks.pop();
 				
-				j.pos = glm::ivec3(pos);
+				j.pos = ivec3(pos);
 				j.gen = world.getDimension(pos.w)->getGen();
 				j.dim = pos.w;
 				j.locked = true;

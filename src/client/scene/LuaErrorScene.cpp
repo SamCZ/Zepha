@@ -52,8 +52,6 @@ void LuaErrorScene::draw() {
 	renderer.enableTexture(&client.game->textures.atlasTexture);
 	
 	components.draw(renderer);
-	
-	renderer.swapBuffers();
 }
 
 void LuaErrorScene::cleanup() {

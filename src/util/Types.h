@@ -4,6 +4,8 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedTypeAliasInspection"
 
+#define let auto
+
 #include <vector>
 #include <string>
 #include <memory>

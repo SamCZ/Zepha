@@ -22,8 +22,8 @@ void GuiLabelledGraph::create(glm::vec2 scale, glm::vec4 padding, const std::str
 	this->graphTextureRef = std::move(graphTextureRef);
 	
 	auto background = std::make_shared<GuiRect>("background");
-	background->create(scale, {}, { 0.1, 0.1, 0.1, 0.2 }, { 0.1, 0.1, 0.1, 0.2 }, { 0.1, 0.1, 0.1, 0.7 },
-		{ 0.1, 0.1, 0.1, 0.7 });
+	background->create(scale, {}, { 0.1, 0.1, 0.1, 0.2 }, { 0.1, 0.1, 0.1, 0.2 },
+		{ 0.1, 0.1, 0.1, 0.7 },{ 0.1, 0.1, 0.1, 0.7 });
 	add(background);
 	background->setPos({ 0, 0 });
 	
@@ -49,8 +49,8 @@ void GuiLabelledGraph::pushValue(float value) {
 		ind = 0;
 		
 		std::string stringVal = (value == static_cast<int>(value))
-		                        ? std::to_string(static_cast<int>(value))
-		                        : Util::floatToString(value);
+	        ? std::to_string(static_cast<int>(value))
+	        : Util::toString(value);
 		
 		get<GuiText>("label")->setText(title + ": " + stringVal);
 	}

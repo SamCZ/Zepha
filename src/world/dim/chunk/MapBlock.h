@@ -16,9 +16,11 @@ class Chunk;
 
 class Deserializer;
 
-class MapBlock : Lockable {
-	public:
+class MapBlock {
+public:
 	MapBlock(glm::ivec3 pos);
+	
+	MapBlock(const MapBlock& o);
 	
 	std::shared_ptr<Chunk> get(unsigned short index) const;
 	
@@ -26,9 +28,10 @@ class MapBlock : Lockable {
 	
 	void remove(unsigned short index);
 	
-	glm::ivec3 pos{};
+	glm::ivec3 pos {};
 	bool generated = false;
 	unsigned short count = 0;
-	private:
+
+private:
 	std::array<std::shared_ptr<Chunk>, 64> chunks;
 };

@@ -41,4 +41,5 @@ void Client::loop() {
 	
 	scene.update();
 	renderer.update(delta);
+	renderer.swapBuffers();
 }

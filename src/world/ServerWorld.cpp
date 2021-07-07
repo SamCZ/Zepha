@@ -73,12 +73,15 @@ void ServerWorld::update(double delta) {
 	refs->update();
 	
 	u32 genCount = 0;
-	std::unordered_set<ivec4, Vec::ivec4> updatedChunks{};
+	std::unordered_set<ivec4, Vec::ivec4> updatedChunks {};
 	
 	auto finishedGen = genStream->update();
+//	if (finishedGen->size()) std::cout << finishedGen->size() << " finished gens" << std::endl;
 	for (auto& data : *finishedGen) {
-		for (const auto& pos : *data.created)
-			updatedChunks.insert(ivec4(pos, data.dim));
+		for (const auto& chunkPair : *data.created) {
+			updatedChunks.insert(ivec4(chunkPair.first, data.dim));
+			getDimension(data.dim)->setChunk(sptr<Chunk>(chunkPair.second));
+		}
 		
 		// Mapblock might have been pruned in between generation assignment and now.
 		auto mb = getDimension(data.dim)->getMapBlock(glm::ivec3(data.pos));
@@ -89,6 +92,7 @@ void ServerWorld::update(double delta) {
 	}
 	
 	auto finishedPackets = packetStream->update();
+//	if (finishedPackets->size()) std::cout << finishedPackets->size() << " finished packets" << std::endl;
 	for (auto& data : *finishedPackets) {
 		for (auto& client : clients.getClients()) {
 			if (!client.second->player) continue;
@@ -99,30 +103,31 @@ void ServerWorld::update(double delta) {
 	generatedMapBlocks = genCount;
 
 //    for (auto& chunkPos : updatedChunks) {
-//        glm::ivec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunkPos);
-//        auto chunk = dimension.getChunk(chunkPos);
+//    	std::cout << Util::toString(chunkPos) << std::endl;
+//        ivec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunkPos);
+//        auto dim = getDimension(chunkPos.w);
+//        auto chunk = dim->getChunk(ivec3(chunkPos));
 //
 //        assert(chunk != nullptr);
 //
-//        bool sentAlready = false;
-//        for (auto& mapBlock : generatedMapBlocks) if (mapBlock == mapBlockPos) { sentAlready = true; break; }
-//        if (sentAlready) continue;
+////        bool sentAlready = false;
+////        for (auto& mapBlock : generatedMapBlocks) if (mapBlock == mapBlockPos) { sentAlready = true; break; }
+////        if (sentAlready) continue;
 //
-//        Packet p(PacketType::CHUNK);
-//        auto l = chunk->aquireLock();
-//        p.data = chunk->serialize();
-//        l.unlock();
+//        Packet p(Packet::Type::CHUNK);
+//        p.data = chunk->compress();
 //
-//        for (auto& client : clientList.clients) {
-//            if (!client->hasPlayer) continue;
+//        for (auto& client : clients.getClients()) {
+//            if (!client.second->player) continue;
 //
-//            auto myChunk = Space::Chunk::world::fromBlock(client->getPos());
+//            auto myChunk = Space::Chunk::world::fromBlock(client.second->player->getPos());
 //
-//            std::pair<glm::ivec3, glm::ivec3> bounds = {
+//            std::pair<ivec3, ivec3> bounds = {
 //                {myChunk.x - activeChunkRange.x, myChunk.y - activeChunkRange.y, myChunk.z - activeChunkRange.x},
 //                {myChunk.x + activeChunkRange.x, myChunk.y + activeChunkRange.y, myChunk.z + activeChunkRange.x}};
 //
-//            if (isInBounds(chunkPos, bounds)) p.sendTo(client->peer, PacketChannel::WORLD);
+////            if (isInBounds(chunkPos, bounds))
+//            p.sendTo(client.second->peer, Packet::Channel::WORLD);
 //        }
 //    }
 	
@@ -209,12 +214,12 @@ void ServerWorld::changedMapBlocks(ServerPlayer& player) {
 void ServerWorld::generateMapBlocks(ServerPlayer& player) {
 	unsigned int generating = 0;
 	glm::ivec3 playerMapBlock = Space::MapBlock::world::fromBlock(player.getPos());
-	
+
 	for (const auto& c : generateOrder) {
 		glm::ivec3 mapBlockPos = playerMapBlock + c;
 		generating += generateMapBlock(player.getDim()->getInd(), mapBlockPos);
 	}
-	
+
 	std::cout << "Player moved, generating " << generating << " MapBlocks." << std::endl;
 }
 
@@ -225,13 +230,13 @@ bool ServerWorld::generateMapBlock(unsigned int dim, glm::ivec3 pos) {
 }
 
 void ServerWorld::sendChunksToPlayer(ServerPlayer& client) {
-	glm::ivec3 playerPos = Space::MapBlock::world::fromBlock(client.getPos());
-	glm::ivec3 lastPlayerPos = Space::MapBlock::world::fromBlock(client.lastPos);
+	ivec3 playerPos = Space::MapBlock::world::fromBlock(client.getPos());
+	ivec3 lastPlayerPos = Space::MapBlock::world::fromBlock(client.lastPos);
 	
-	Bounds newBounds = { playerPos - glm::ivec3{ sendRange.x, sendRange.y, sendRange.x },
-		playerPos + glm::ivec3{ sendRange.x, sendRange.y, sendRange.x }};
-	Bounds oldBounds = { lastPlayerPos - glm::ivec3{ sendRange.x, sendRange.y, sendRange.x },
-		lastPlayerPos + glm::ivec3{ sendRange.x, sendRange.y, sendRange.x }};
+	Bounds newBounds = { playerPos - ivec3{ sendRange.x, sendRange.y, sendRange.x },
+		playerPos + ivec3{ sendRange.x, sendRange.y, sendRange.x }};
+	Bounds oldBounds = { lastPlayerPos - ivec3{ sendRange.x, sendRange.y, sendRange.x },
+		lastPlayerPos + ivec3{ sendRange.x, sendRange.y, sendRange.x }};
 	
 	for (auto& pos : generateOrder) {
 		if (oldBounds.intersects(playerPos + pos) || !newBounds.intersects(playerPos + pos)) continue;

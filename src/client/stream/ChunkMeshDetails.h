@@ -13,5 +13,5 @@ struct ChunkMeshDetails {
 	std::vector<ChunkVertex> vertices;
 	std::vector<unsigned int> indices;
 	
-	glm::ivec3 pos{};
+	glm::ivec3 pos {};
 };

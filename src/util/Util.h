@@ -10,6 +10,8 @@
 #include <functional>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
+#include <vector>
+#include <array>
 
 #include "util/Log.h"
 #include "util/Types.h"
@@ -22,19 +24,27 @@ namespace Util {
 		}
 	};
 	
-	static string floatToString(f32 val, u8 precision = 2) {
+	template <typename T, std::enable_if_t<std::is_floating_point_v<T>, bool> = true>
+	inline static string toFixed(T val, u8 precision = 2) {
 		std::ostringstream out;
 		out.precision(precision);
 		out << std::fixed << val;
 		return out.str();
 	}
 	
-	inline static string f(f64 val, u8 precision = 2) {
-		return floatToString(static_cast<f32>(val));
+	template <typename T, std::enable_if_t<std::is_integral_v<T>, bool> = true>
+	static string toString(T val) {
+		return std::to_string(val);
 	}
 	
-	template <typename T, std::enable_if_t<std::is_fundamental_v<T>, bool> = true>
-	static string vectorToString(vec<T> vec) {
+	template <typename T, std::enable_if_t<std::is_floating_point_v<T>, bool> = true>
+	static string toString(T val) {
+		return toFixed<T>(val);
+	}
+	
+	template <typename V, std::enable_if_t<std::is_trivially_copyable_v<typename V::value_type> &&
+		std::is_same_v<vec<typename V::value_type>, V>, bool> = true>
+	static string toString(V vec) {
 		std::ostringstream out;
 		out << "[ ";
 		for (usize i = 0; i < vec.size(); i++) out << (i == 0 ? "" : ", ") << vec[i];
@@ -42,31 +52,27 @@ namespace Util {
 		return out.str();
 	}
 	
-	template <typename T, usize L, std::enable_if_t<std::is_fundamental_v<T>, bool> = true>
-	static string arrayToString(array<T, L> arr) {
+	template <typename A, std::enable_if_t<std::is_trivially_copyable_v<typename A::value_type> &&
+		std::is_same_v<array<typename A::value_type, A::size_type>, A>, bool> = true>
+	static string toString(A arr) {
 		std::ostringstream out;
-		out << "[ ";
 		for (usize i = 0; i < arr.size(); i++) out << (i == 0 ? "" : ", ") << arr[i];
-		out << " ]";
 		return out.str();
 	}
 	
-	static string vecToString(ivec3 vec) {
+	template <typename T, std::enable_if_t<std::is_integral_v<typename T::value_type> &&
+		std::is_integral_v<typename T::length_type>, bool> = true>
+	static string toString(T vec) {
 		std::ostringstream out;
-		out << vec.x << ", " << vec.y << ", " << vec.z;
+		for (usize i = 0; i < T::length(); i++) out << (i == 0 ? "" : ", ") << vec[i];
 		return out.str();
 	}
 	
-	static string vecToString(vec3 vec) {
+	template <typename T, std::enable_if_t<std::is_floating_point_v<typename T::value_type> &&
+	    std::is_integral_v<typename T::length_type>, bool> = true>
+	static string toString(T vec) {
 		std::ostringstream out;
-		out << vec.x << ", " << vec.y << ", " << vec.z;
-		return out.str();
-	}
-	
-	static string floatVecToString(vec3 vec, u8 precision = 2) {
-		std::ostringstream out;
-		out.precision(precision);
-		out << std::fixed << vec.x << ", " << std::fixed << vec.y << ", " << std::fixed << vec.z;
+		for (usize i = 0; i < T::length(); i++) out << (i == 0 ? "" : ", ") << toString<typename T::value_type>(vec[i]);
 		return out.str();
 	}
 	
@@ -283,3 +289,8 @@ namespace Util {
 	}
 };
 
+template <typename T, std::enable_if_t<std::is_trivial_v<T>
+    || (std::is_trivial_v<typename T::value_type> && std::is_integral_v<typename T::length_type>), bool> = true>
+std::ostream& operator<<(std::ostream& out, const T& t) {
+	return out << Util::toString(t);
+}
