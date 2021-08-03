@@ -15,10 +15,10 @@
 #include "world/dim/chunk/Chunk.h"
 #include "game/def/mesh/BlockModel.h"
 #include "game/atlas/LocalBiomeAtlas.h"
-#include "client/stream/ChunkMeshDetails.h"
+#include "client/stream/MeshChunkDetails.h"
 #include "game/atlas/LocalDefinitionAtlas.h"
 
-ChunkMeshGenerator::ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefinitionAtlas& defs,
+ChunkMeshGenerator::ChunkMeshGenerator(MeshChunkDetails* meshDetails, LocalDefinitionAtlas& defs,
 	LocalBiomeAtlas& biomes, uptr<Chunk> chk, array<uptr<Chunk>, 6> adj, array<NoiseSample, 3>& blockOffsets) :
 	defs(defs),
 	biomes(biomes),

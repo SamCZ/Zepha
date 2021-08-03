@@ -6,7 +6,7 @@
 
 #include "MeshGenStream.h"
 
-#include "ChunkMeshDetails.h"
+#include "MeshChunkDetails.h"
 #include "client/graph/mesh/ChunkMeshGenerator.h"
 #include "world/dim/chunk/Chunk.h"
 #include "world/dim/LocalDimension.h"
@@ -33,8 +33,8 @@ MeshGenStream::MeshGenStream(SubgamePtr game, LocalDimension& dimension) :
 	for (int i = 0; i < THREADS; i++) threads.emplace_back(*game.l(), noiseSampler);
 }
 
-std::vector<ChunkMeshDetails*> MeshGenStream::update() {
-	std::vector<ChunkMeshDetails*> finishedChunks;
+std::vector<MeshChunkDetails*> MeshGenStream::update() {
+	std::vector<MeshChunkDetails*> finishedChunks;
 	
 	for (u16 i = 0; i < THREAD_QUEUE_SIZE; i++) {
 		for (Thread& t : threads) {
@@ -44,7 +44,7 @@ std::vector<ChunkMeshDetails*> MeshGenStream::update() {
 			if (j.meshDetails->vertices.size()) {
 				j.thisChunk = nullptr;
 				finishedChunks.push_back(j.meshDetails);
-				j.meshDetails = new ChunkMeshDetails();
+				j.meshDetails = new MeshChunkDetails();
 			}
 			
 			if (!queuedTasks.empty()) {

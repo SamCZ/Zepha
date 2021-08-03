@@ -23,9 +23,9 @@ local shrub_layer_2 = {
 }
 
 local shrub = zepha.create_structure({
-    origin = V{1, 1, 1},
+    origin = V {1, 1, 1},
     probability = 0.01,
-    schematic = {
+    layout = {
         shrub_layer_0,
         shrub_layer_1,
         shrub_layer_2,
@@ -38,7 +38,7 @@ for i = 1, 5 do
     table.insert(structures, zepha.create_structure({
         origin = V {1, 1, 1},
         probability = 0.04,
-        schematic = {{{ "zeus:default:tall_grass_" .. tostring(i) }}}
+        layout = {{{ "zeus:default:tall_grass_" .. tostring(i) }}}
     }))
 end
 

@@ -17,12 +17,9 @@ add_library(Zepha_Core
         client/graph/DrawableGroup.h
         client/graph/Font.cpp
         client/graph/Font.h
-        client/graph/mesh/ChunkMesh.cpp
-        client/graph/mesh/ChunkMesh.h
         client/graph/mesh/ChunkMeshGenerator.cpp
         client/graph/mesh/ChunkMeshGenerator.h
         client/graph/mesh/ChunkRenderElem.h
-        client/graph/mesh/ChunkVertex.h
         client/graph/mesh/EntityMesh.cpp
         client/graph/mesh/EntityMesh.h
         client/graph/mesh/EntityVertex.h
@@ -103,7 +100,7 @@ add_library(Zepha_Core
         client/scene/Scene.h
         client/scene/SceneManager.cpp
         client/scene/SceneManager.h
-        client/stream/ChunkMeshDetails.h
+        client/stream/MeshChunkDetails.h
         client/stream/MeshGenStream.cpp
         client/stream/MeshGenStream.h
         client/stream/WorldInterpolationStream.cpp
@@ -326,6 +323,14 @@ add_library(Zepha_Core
         lua/modules/Message.h
         lua/NoiseFromLua.cpp
         lua/NoiseFromLua.h
-        util/Types.h util/PerfTimer.cpp util/PerfTimer.h client/gui/compound/GuiPerfGraph.cpp client/gui/compound/GuiPerfGraph.h client/gui/compound/GuiCellGraph.cpp client/gui/compound/GuiCellGraph.h client/gui/basic/GuiCells.cpp client/gui/basic/GuiCells.h)
+        util/Types.h
+        util/PerfTimer.cpp
+        util/PerfTimer.h
+        client/gui/compound/GuiPerfGraph.cpp
+        client/gui/compound/GuiPerfGraph.h
+        client/gui/compound/GuiCellGraph.cpp
+        client/gui/compound/GuiCellGraph.h
+        client/gui/basic/GuiCells.cpp
+        client/gui/basic/GuiCells.h)
 
 target_include_directories(Zepha_Core PUBLIC .)

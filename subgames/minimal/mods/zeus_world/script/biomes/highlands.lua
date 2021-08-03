@@ -2,7 +2,7 @@ local identifier = "zeus:world:highlands"
 
 local grass = zepha.create_structure({
     origin = V{1, 2, 3},
-    schematic = {
+    layout = {
         {{"zeus:default:tall_grass_4"}}
     }
 })

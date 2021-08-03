@@ -18,8 +18,8 @@ bool Dimension::setBlock(ivec3 pos, u16 block) {
 	
 	auto& def = game->getDefs().blockFromId(block);
 	
-	glm::ivec4 oldLight = chunk->getLight(Space::Block::index(pos));
-	glm::ivec3 newLight = def.lightSource;
+	ivec4 oldLight = chunk->getLight(Space::Block::index(pos));
+	ivec3 newLight = def.lightSource;
 	
 	if (oldLight.x + oldLight.y + oldLight.z != 0) removeBlockLight(pos);
 	if (newLight.x + newLight.y + newLight.z != 0) addBlockLight(pos, newLight);

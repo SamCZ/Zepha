@@ -22,36 +22,49 @@ ServerDimension::ServerDimension(SubgamePtr game, ServerWorld& world, const std:
 	Dimension(game, static_cast<World&>(world), identifier, ind, std::move(mapGen)) {}
 
 void ServerDimension::update(double delta) {
+	
+	/* Update server entities. */
 	for (auto& entity : luaEntities) entity.entity.s()->update(delta);
 	
-	for (const auto& region : regions) {
-		for (unsigned short i = 0; i < 64; i++) {
-			auto mapBlock = region.second->get(i);
+	/*
+	 * Delete mapblocks and regions that are outside of the retain range,
+	 * and compress chunks if they are idle.
+	 */
+	
+	for (let it = regions.cbegin(); it != regions.cend();) {
+		for (u16 m = 0; m < 64; m++) {
+			let mapBlock = it->second->get(m);
 			if (!mapBlock) continue;
 			
 			bool clientNearby = false;
 			for (auto& client : static_cast<ServerWorld&>(world).getClients().getClients()) {
-				if (!client.second->player) continue;
-                if (client.second->player->getDim()->getInd() == ind) {
-					auto clientPos = Space::MapBlock::world::fromBlock(client.second->player->getPos());
-					if (abs(clientPos.x - mapBlock->pos.x) <= discardRange.x + 1
-					    && abs(clientPos.y - mapBlock->pos.y) <= discardRange.y + 1
-					    && abs(clientPos.z - mapBlock->pos.z) <= discardRange.x + 1) {
-						clientNearby = true;
-						break;
-					}
-                }
+				if (!client.second->player || client.second->player->getDim()->getInd() != ind) continue;
+				auto clientMapBlock = Space::MapBlock::world::fromBlock(client.second->player->getPos());
+				if (abs(clientMapBlock.x - mapBlock->pos.x) <= retainMapBlockRange.x &&
+				    abs(clientMapBlock.y - mapBlock->pos.y) <= retainMapBlockRange.y &&
+				    abs(clientMapBlock.z - mapBlock->pos.z) <= retainMapBlockRange.x) {
+					clientNearby = true;
+					break;
+				}
 			}
 			
-			if (!clientNearby) region.second->remove(i);
+			if (!clientNearby) {
+				it->second->remove(m);
+				if (it->second->count <= 0) goto erase_region_and_continue;
+			}
 			else {
-				for (unsigned short c = 0; c < 64; c++) {
-					auto chunk = mapBlock->get(c);
-					if (!chunk) continue;
-					chunk->compressIfIdle();
+				for (u16 c = 0; c < 64; c++) {
+					let chunk = mapBlock->get(c);
+					if (chunk) chunk->compressIfIdle();
 				}
 			}
 		}
+		
+		it++;
+		continue;
+		
+		erase_region_and_continue:
+		it = regions.erase(it);
 	}
 }
 
@@ -103,8 +116,8 @@ void ServerDimension::wieldItemUse(const Target& target, PlayerPtr player) {
 }
 
 void ServerDimension::setChunk(std::shared_ptr<Chunk> chunk) {
-//	std::shared_ptr<Chunk> existing = getChunk(chunk->getPos());
-//	if (existing) chunk = combineChunks(chunk, existing);
+	std::shared_ptr<Chunk> existing = getChunk(chunk->getPos());
+	if (existing) chunk = combineChunks(chunk, existing);
 	Dimension::setChunk(chunk);
 }
 

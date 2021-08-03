@@ -35,75 +35,79 @@ void LocalDimension::deactivate() {
 	}
 }
 
-void LocalDimension::update(double delta) {
+void LocalDimension::update(f64 delta) {
 	finishMeshes();
 	
+	/* Update local entities and player entities. */
 	for (auto& entity : entities) entity.entity.l()->update(delta);
 	for (auto& entity : playerEntities) entity.update(delta);
 	
-	auto clientMapBlock = Space::MapBlock::world::fromBlock(static_cast<LocalWorld&>(world).getPlayer()->getPos());
+	/*
+	 * Delete mapblocks and regions that are outside of the retain range,
+	 * and compress chunks if they are idle.
+	 */
 	
-	for (auto it = regions.cbegin(); it != regions.cend();) {
-		bool remove = false;
-		for (unsigned short m = 0; m < 64; m++) {
-			auto mapBlock = it->second->get(m);
+	let clientMapBlock = Space::MapBlock::world::fromBlock(static_cast<LocalWorld&>(world).getPlayer()->getPos());
+	
+	for (let it = regions.cbegin(); it != regions.cend();) {
+		for (u16 m = 0; m < 64; m++) {
+			let mapBlock = it->second->get(m);
 			if (!mapBlock) continue;
 			
-			if (abs(clientMapBlock.x - mapBlock->pos.x) > LocalDimension::MB_STORE_H + 1
-			    || abs(clientMapBlock.y - mapBlock->pos.y) > LocalDimension::MB_STORE_V + 1
-			    || abs(clientMapBlock.z - mapBlock->pos.z) > LocalDimension::MB_STORE_H + 1) {
+			if (abs(clientMapBlock.x - mapBlock->pos.x) > retainMapBlockRange.x ||
+			    abs(clientMapBlock.y - mapBlock->pos.y) > retainMapBlockRange.y ||
+			    abs(clientMapBlock.z - mapBlock->pos.z) > retainMapBlockRange.x) {
 				
-				for (unsigned short c = 0; c < 64; c++) {
-					auto chunk = mapBlock->get(c);
-					if (!chunk) continue;
-					removeMeshChunk(chunk->getPos());
+				for (u16 c = 0; c < 64; c++) {
+					let chunk = mapBlock->get(c);
+					if (chunk) removeMeshChunk(chunk->getPos());
 				}
 				
 				it->second->remove(m);
-				if (it->second->count <= 0) {
-					remove = true;
-					it = regions.erase(it);
-					break;
-				}
+				if (it->second->count <= 0) goto erase_region_and_continue;
 			}
 			else {
-				for (unsigned short c = 0; c < 64; c++) {
-					auto chunk = mapBlock->get(c);
-					if (!chunk) continue;
-					chunk->compressIfIdle();
+				for (u16 c = 0; c < 64; c++) {
+					let chunk = mapBlock->get(c);
+					if (chunk) chunk->compressIfIdle();
 				}
 			}
 		}
-		if (!remove) it++;
+		
+		it++;
+		continue;
+		
+		erase_region_and_continue:
+		it = regions.erase(it);
 	}
 }
 
-void LocalDimension::setChunk(std::shared_ptr<Chunk> chunk) {
+void LocalDimension::setChunk(sptr<Chunk> chunk) {
 	Dimension::setChunk(chunk);
-	attemptMeshChunk(chunk);
+	meshChunk(chunk);
 }
 
 bool LocalDimension::setBlock(ivec3 pos, u16 block) {
-	bool exists = Dimension::setBlock(pos, block);
-	if (!exists) return false;
+	bool modified = Dimension::setBlock(pos, block);
+	if (!modified) return false;
 	
-	auto chunkPos = Space::Chunk::world::fromBlock(pos);
-	auto chunk = getChunk(chunkPos);
+	let chunkPos = Space::Chunk::world::fromBlock(pos);
+	let chunk = getChunk(chunkPos);
 	
 	chunk->setDirty(true);
 	
-	auto lp = Space::Block::relative::toChunk(pos);
-	auto cp = Space::Chunk::world::fromBlock(pos);
+	let lp = Space::Block::relative::toChunk(pos);
+	let cp = Space::Chunk::world::fromBlock(pos);
 	
-	std::shared_ptr<Chunk> tempChunk;
-	if (lp.x == 15 && (tempChunk = getChunk(cp + ivec3{ 1, 0, 0 }))) tempChunk->setDirty(true);
-	else if (lp.x == 0 && (tempChunk = getChunk(cp + ivec3{ -1, 0, 0 }))) tempChunk->setDirty(true);
-	if (lp.y == 15 && (tempChunk = getChunk(cp + ivec3{ 0, 1, 0 }))) tempChunk->setDirty(true);
-	else if (lp.y == 0 && (tempChunk = getChunk(cp + ivec3{ 0, -1, 0 }))) tempChunk->setDirty(true);
-	if (lp.z == 15 && (tempChunk = getChunk(cp + ivec3{ 0, 0, 1 }))) tempChunk->setDirty(true);
-	else if (lp.z == 0 && (tempChunk = getChunk(cp + ivec3{ 0, 0, -1 }))) tempChunk->setDirty(true);
+	sptr<Chunk> adjacent;
+	if (lp.x == 15 && (adjacent = getChunk(cp + ivec3 { 1, 0, 0 }))) adjacent->setDirty(true);
+	else if (lp.x == 0 && (adjacent = getChunk(cp + ivec3 { -1, 0, 0 }))) adjacent->setDirty(true);
+	if (lp.y == 15 && (adjacent = getChunk(cp + ivec3 { 0, 1, 0 }))) adjacent->setDirty(true);
+	else if (lp.y == 0 && (adjacent = getChunk(cp + ivec3 { 0, -1, 0 }))) adjacent->setDirty(true);
+	if (lp.z == 15 && (adjacent = getChunk(cp + ivec3 { 0, 0, 1 }))) adjacent->setDirty(true);
+	else if (lp.z == 0 && (adjacent = getChunk(cp + ivec3 { 0, 0, -1 }))) adjacent->setDirty(true);
 	
-	attemptMeshChunk(chunk, true);
+	meshChunk(chunk, true);
 	return true;
 }
 
@@ -129,7 +133,7 @@ void LocalDimension::blockInteract(const Target& target, PlayerPtr player) {
 }
 
 void LocalDimension::blockPlaceOrInteract(const Target& target, PlayerPtr player) {
-	std::tuple<sol::optional<Api::Usertype::ItemStack>, sol::optional<glm::vec3>> res = game->getParser().safe_function(
+	std::tuple<sol::optional<Api::Usertype::ItemStack>, sol::optional<vec3>> res = game->getParser().safe_function(
 		game->getParser().core["block_interact_or_place"], Api::Usertype::LocalPlayer(player.l()),
 		Api::Usertype::Target(target));
 	
@@ -144,7 +148,7 @@ void LocalDimension::blockPlaceOrInteract(const Target& target, PlayerPtr player
 }
 
 double LocalDimension::blockHit(const Target& target, PlayerPtr player) {
-	double timeout = 0, damage = 0;
+	f64 timeout = 0, damage = 0;
 	sol::tie(damage, timeout) = game->getParser().safe_function(game->getParser().core["block_hit"],
 		Api::Usertype::LocalPlayer(player.l()), Api::Usertype::Target(target));
 	
@@ -164,13 +168,13 @@ void LocalDimension::wieldItemUse(const Target& target, PlayerPtr player) {
 		inv->getList(player->getWieldList())->setStack(player->getWieldIndex(), ItemStack(*stack, game));
 }
 
-void LocalDimension::setMeshChunk(std::shared_ptr<MeshChunk> meshChunk) {
+void LocalDimension::setMeshChunk(sptr<MeshChunk> meshChunk) {
 	if (renderRefs.count(meshChunk->getPos())) removeMeshChunk(meshChunk->getPos());
 	renderElems.push_back(std::static_pointer_cast<ChunkRenderElem>(meshChunk));
 	renderRefs.emplace(meshChunk->getPos(), --renderElems.end());
 }
 
-void LocalDimension::removeMeshChunk(const glm::ivec3& pos) {
+void LocalDimension::removeMeshChunk(const ivec3& pos) {
 	if (!renderRefs.count(pos)) return;
 	auto refIter = renderRefs.at(pos);
 	
@@ -185,13 +189,13 @@ i64 LocalDimension::nextEntityInd() {
 }
 
 void LocalDimension::addLocalEntity(Api::Usertype::Entity entity) {
-	unsigned int id = entity.get_id();
+	i64 id = entity.get_id();
 	entities.push_back(entity);
 	entityRefs.emplace(id, --entities.end());
 }
 
 void LocalDimension::removeLocalEntity(Api::Usertype::Entity entity) {
-	unsigned int id = entity.get_id();
+	i64 id = entity.get_id();
 	
 	if (!entityRefs.count(id)) return;
 	auto refIter = entityRefs.at(id);
@@ -303,7 +307,7 @@ void LocalDimension::serverEntitiesInfo(Deserializer& e) {
 	}
 }
 
-void LocalDimension::serverEntitiesRemoved(Deserializer& d) {
+void LocalDimension::removeServerEntities(Deserializer& d) {
 	d.read<u16>();
 	while (!d.atEnd()) {
 		i64 id = d.read<i64>();
@@ -350,13 +354,13 @@ u32 LocalDimension::getMeshChunksCommitted() {
 
 std::unordered_set<ivec3, Vec::ivec3> LocalDimension::propogateAddNodes() {
 	auto updated = Dimension::propogateAddNodes();
-	for (auto& update : updated) attemptMeshChunk(getChunk(update));
+	for (auto& update : updated) meshChunk(getChunk(update));
 	return {};
 }
 
 std::unordered_set<ivec3, Vec::ivec3> LocalDimension::propogateRemoveNodes() {
 	auto updated = Dimension::propogateRemoveNodes();
-	for (auto& update : updated) attemptMeshChunk(getChunk(update));
+	for (auto& update : updated) meshChunk(getChunk(update));
 	return {};
 }
 
@@ -364,36 +368,38 @@ void LocalDimension::finishMeshes() {
 	lastMeshesCommitted = 0;
 	auto finishedMeshes = meshGenStream->update();
 	
-	for (ChunkMeshDetails* meshDetails : finishedMeshes) {
-		if (!meshDetails->vertices.empty()) {
-			auto meshChunk = std::make_shared<MeshChunk>();
-			meshChunk->create(meshDetails->vertices, meshDetails->indices);
-			meshChunk->setPos(meshDetails->pos);
-			
-			setMeshChunk(meshChunk);
+	for (MeshChunkDetails* details : finishedMeshes) {
+		if (!details->vertices.empty()) {
+			setMeshChunk(make_shared<MeshChunk>(details->pos, details->vertices, details->indices));
 			lastMeshesCommitted++;
 		}
-		else removeMeshChunk(meshDetails->pos);
+		else removeMeshChunk(details->pos);
 		
-		delete meshDetails;
+		delete details;
 	}
 }
 
-void LocalDimension::attemptMeshChunk(const sptr<Chunk>& chunk, bool priority, bool updateAdjacents) {
-	bool renderable = true;
-	for (auto dir : Vec::TO_VEC) if (!getAdjacentExists(chunk->getPos() + dir, updateAdjacents)) renderable = false;
-	if (!renderable) return;
+void LocalDimension::meshChunk(const sptr<Chunk>& chunk, bool priority, bool updateAdjacents) {
+	// Run this loop first, because even if this chunk shouldn't render, the adjacents maybe should.
+	bool render = true;
+	for (let dir : Vec::TO_VEC)
+		if (!adjacentExists(chunk->getPos() + dir, updateAdjacents, priority))
+			render = false;
+	if (!render) return;
 	
 	if (!chunk->isDirty()) return;
-	if (!chunk->chunkShouldRender()) removeMeshChunk(chunk->getPos());
+	if (!chunk->chunkShouldRender()) {
+		removeMeshChunk(chunk->getPos());
+		return;
+	}
 	
 	meshGenStream->queue(chunk->getPos(), priority);
 	chunk->setDirty(false);
 }
 
-bool LocalDimension::getAdjacentExists(vec3 pos, bool updateAdjacents) {
-	auto chunk = getChunk(pos);
-	if (chunk == nullptr) return false;
-	if (updateAdjacents) attemptMeshChunk(chunk, false, false);
+bool LocalDimension::adjacentExists(ivec3 pos, bool update, bool priority) {
+	let chunk = getChunk(pos);
+	if (!chunk) return false;
+	if (update) meshChunk(chunk, priority, false);
 	return true;
 }

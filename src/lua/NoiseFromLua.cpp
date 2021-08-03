@@ -184,6 +184,7 @@ noise::module::Module* NoiseFromLua::parseNoise(std::vector<noise::module::Modul
 		auto module = new noise::module::Voronoi();
 		
 		module->SetSeed(noise.get_or<float>("seed", 0));
+//		module->EnableDistance(noise.get_or<u32>("distance", false));
 		module->SetDisplacement(noise.get_or<float>("displacement", 0));
 		module->SetFrequency(noise.get_or<float>("frequency", 0));
 		
@@ -229,6 +230,20 @@ noise::module::Module* NoiseFromLua::parseNoise(std::vector<noise::module::Modul
 		module->SetPower(noise.get_or<float>("power", noise::module::DEFAULT_TURBULENCE_POWER));
 		module->SetFrequency(noise.get_or<float>("frequency", noise::module::DEFAULT_TURBULENCE_FREQUENCY));
 		module->SetRoughness(noise.get_or<float>("roughness", noise::module::DEFAULT_TURBULENCE_ROUGHNESS));
+		
+		modules.push_back(module);
+		return module;
+	}
+	
+	else if (type == "scale_point") {
+		auto module = new noise::module::ScalePoint();
+		sol::table source = noise["source"];
+		
+		auto mod0 = parseNoise(modules, source);
+		module->SetSourceModule(0, *mod0);
+		module->SetXScale(noise.get_or<float>("x_scale", 1));
+		module->SetYScale(noise.get_or<float>("y_scale", 1));
+		module->SetZScale(noise.get_or<float>("z_scale", 1));
 		
 		modules.push_back(module);
 		return module;

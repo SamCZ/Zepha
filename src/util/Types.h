@@ -40,17 +40,25 @@ using vec2 = glm::f32vec2;
 using vec3 = glm::f32vec3;
 using vec4 = glm::f32vec4;
 
+using glm::i8vec2;
+using glm::i8vec3;
+using glm::i8vec4;
+using glm::i16vec2;
+using glm::i16vec3;
+using glm::i16vec4;
 using ivec2 = glm::i32vec2;
 using ivec3 = glm::i32vec3;
 using ivec4 = glm::i32vec4;
-using glm::i16vec2, glm::i16vec3, glm::i16vec4;
-using glm::i8vec2, glm::i8vec3, glm::i8vec4;
 
+using glm::u8vec2;
+using glm::u8vec3;
+using glm::u8vec4;
+using glm::u16vec2;
+using glm::u16vec3;
+using glm::u16vec4;
 using uvec2 = glm::u32vec2;
 using uvec3 = glm::u32vec3;
 using uvec4 = glm::u32vec4;
-using glm::u16vec2, glm::u16vec3, glm::u16vec4;
-using glm::u8vec2, glm::u8vec3, glm::u8vec4;
 
 using std::array;
 using std::string;
@@ -63,6 +71,7 @@ using sptr = std::shared_ptr<T>;
 template <typename T>
 using uptr = std::unique_ptr<T>;
 
-using std::make_shared, std::make_unique;
+using std::make_shared;
+using std::make_unique;
 
 #pragma clang diagnostic pop

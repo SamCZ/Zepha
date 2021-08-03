@@ -1,10 +1,7 @@
-//
-// Created by aurailus on 05/03/19.
-//
-
 #include <iostream>
 #include <glm/glm.hpp>
 #include <unordered_map>
+#include <util/Timer.h>
 
 #include "ServerWorld.h"
 
@@ -22,33 +19,28 @@
 #include "server/stream/ServerGenStream.h"
 #include "server/stream/ServerPacketStream.h"
 
-ServerWorld::ServerWorld(unsigned int seed, SubgamePtr game, ServerClients& clients) :
+ServerWorld::ServerWorld(u32 seed, SubgamePtr game, ServerClients& clients) :
 	World(game),
 	seed(seed),
 	clients(clients),
-	refs(std::make_shared<ServerInventoryRefs>(game, clients)) {
+	refs(make_shared<ServerInventoryRefs>(game, clients)) {
 	clients.init(this);
 	
 	generateOrder.reserve(mapBlockGenRange.x * 2 + 1 * mapBlockGenRange.x * 2 + 1 * mapBlockGenRange.y * 2 + 1);
-	std::unordered_set<glm::ivec3, Vec::ivec3> found {};
-	std::queue<glm::ivec3> queue {};
+	std::unordered_set<ivec3, Vec::ivec3> found {};
+	std::queue<ivec3> queue {};
 	
 	queue.emplace(0, 0, 0);
 	found.emplace(0, 0, 0);
 	
-	const std::vector<glm::ivec3> dirs{
-		ivec3 { 1, 0, 0 }, ivec3{ -1, 0, 0 },
-		ivec3 { 0, 1, 0 }, ivec3{ 0, -1, 0 },
-		ivec3 { 0, 0, 1 }, ivec3{ 0, 0, -1 }};
-	
 	while (!queue.empty()) {
-		glm::ivec3 pos = queue.front();
+		ivec3 pos = queue.front();
 		queue.pop();
 		
 		generateOrder.push_back(pos);
 		
-		for (auto dir : dirs) {
-			glm::ivec3 offset = pos + dir;
+		for (auto dir : Vec::TO_VEC) {
+			ivec3 offset = pos + dir;
 			if (offset.x < -mapBlockGenRange.x || offset.x > mapBlockGenRange.x ||
 			    offset.y < -mapBlockGenRange.y || offset.y > mapBlockGenRange.y ||
 			    offset.z < -mapBlockGenRange.x || offset.z > mapBlockGenRange.x ||
@@ -62,43 +54,67 @@ ServerWorld::ServerWorld(unsigned int seed, SubgamePtr game, ServerClients& clie
 	}
 }
 
-void ServerWorld::init(const std::string& worldDir) {
-	genStream = std::make_unique<ServerGenStream>(*game.s(), *this);
-	packetStream = std::make_unique<ServerPacketStream>(*this);
+void ServerWorld::init(const string& worldDir) {
+	genStream = make_unique<ServerGenStream>(*game.s(), *this);
+//	packetStream = make_unique<ServerPacketStream>(*this);
 //    fileManip = std::make_shared<FileManipulator>("worlds/" + worldDir + "/");
 }
 
-void ServerWorld::update(double delta) {
-	World::update(delta);
+void ServerWorld::update(f64 delta) {
+	for (auto& dimension : dimensions) dimension->update(delta);
+	
 	refs->update();
 	
 	u32 genCount = 0;
 	std::unordered_set<ivec4, Vec::ivec4> updatedChunks {};
 	
 	auto finishedGen = genStream->update();
-//	if (finishedGen->size()) std::cout << finishedGen->size() << " finished gens" << std::endl;
+
+	Timer t("Finishing Generation");
 	for (auto& data : *finishedGen) {
+		let dim = getDimension(data.dim);
 		for (const auto& chunkPair : *data.created) {
 			updatedChunks.insert(ivec4(chunkPair.first, data.dim));
-			getDimension(data.dim)->setChunk(sptr<Chunk>(chunkPair.second));
+			dim->setChunk(sptr<Chunk>(chunkPair.second));
 		}
 		
-		// Mapblock might have been pruned in between generation assignment and now.
-		auto mb = getDimension(data.dim)->getMapBlock(glm::ivec3(data.pos));
-		if (mb) mb->generated = true;
+		auto mapBlock = dim->getMapBlock(ivec3(data.pos));
 		
-		packetStream->queue(data.dim, data.pos);
-		genCount++;
+		if (!mapBlock->generated) {
+			mapBlock->generated = true;
+			assert(mapBlock);
+
+			Serializer s {};
+			for (u16 i = 0; i < 64; i++) {
+				auto chunk = mapBlock->get(i);
+				assert(chunk);
+				if (chunk) s.append(chunk->compressToString());
+			}
+			
+			let packet = s.packet(Packet::Type::MAPBLOCK);
+			
+			for (auto& client : clients.getClients()) {
+				if (!client.second->player) continue;
+				packet.sendTo(client.second->peer, Packet::Channel::WORLD);
+			}
+			
+			genCount++;
+			totalGens++;
+		}
+	}
+	if (!finishedGen->empty()) {
+		t.printElapsedMs();
+		std::cout << totalGens << std::endl;
 	}
 	
-	auto finishedPackets = packetStream->update();
+//	auto finishedPackets = packetStream->update();
 //	if (finishedPackets->size()) std::cout << finishedPackets->size() << " finished packets" << std::endl;
-	for (auto& data : *finishedPackets) {
-		for (auto& client : clients.getClients()) {
-			if (!client.second->player) continue;
-			data->packet->sendTo(client.second->peer, Packet::Channel::WORLD);
-		}
-	}
+//	for (auto& data : *finishedPackets) {
+//		for (auto& client : clients.getClients()) {
+//			if (!client.second->player) continue;
+//			data->packet->sendTo(client.second->peer, Packet::Channel::WORLD);
+//		}
+//	}
 	
 	generatedMapBlocks = genCount;
 
@@ -178,23 +194,14 @@ void ServerWorld::update(double delta) {
 	}
 }
 
-DimensionPtr ServerWorld::createDimension(const std::string& identifier, std::unordered_set<std::string>& biomes) {
-	auto mapGen = std::make_shared<MapGen>(**game, *this, seed, biomes);
-	dimensions.emplace_back(std::make_shared<ServerDimension>(
-		game, *this, identifier, this->dimensions.size(), std::move(mapGen)));
+DimensionPtr ServerWorld::createDimension(const string& identifier, std::unordered_set<string>& biomes) {
+	dimensions.emplace_back(make_shared<ServerDimension>(
+		game, *this, identifier, this->dimensions.size(),
+		make_shared<MapGen>(**game, *this, seed, biomes)));
 	
+	dimensionIndexes[identifier] = dimensions.size() - 1;
 	DimensionPtr d = dimensions.back();
 	return d;
-}
-
-DimensionPtr ServerWorld::getDimension(unsigned int index) {
-	return dimensions[index];
-}
-
-DimensionPtr ServerWorld::getDimension(const std::string& identifier) {
-	for (auto& dimension : dimensions)
-		if (dimension->getIdentifier() == identifier) return dimension;
-	throw std::runtime_error("No dimension named " + identifier + " found.");
 }
 
 InventoryRefsPtr ServerWorld::getRefs() {
@@ -212,18 +219,18 @@ void ServerWorld::changedMapBlocks(ServerPlayer& player) {
 }
 
 void ServerWorld::generateMapBlocks(ServerPlayer& player) {
-	unsigned int generating = 0;
-	glm::ivec3 playerMapBlock = Space::MapBlock::world::fromBlock(player.getPos());
+	u32 generating = 0;
+	ivec3 playerMapBlock = Space::MapBlock::world::fromBlock(player.getPos());
 
 	for (const auto& c : generateOrder) {
-		glm::ivec3 mapBlockPos = playerMapBlock + c;
+		ivec3 mapBlockPos = playerMapBlock + c;
 		generating += generateMapBlock(player.getDim()->getInd(), mapBlockPos);
 	}
 
-	std::cout << "Player moved, generating " << generating << " MapBlocks." << std::endl;
+//	std::cout << "Player moved, generating " << generating << " MapBlocks." << std::endl;
 }
 
-bool ServerWorld::generateMapBlock(unsigned int dim, glm::ivec3 pos) {
+bool ServerWorld::generateMapBlock(u16 dim, ivec3 pos) {
 	auto dimension = getDimension(dim);
 	if (!dimension->getMapBlock(pos) || !dimension->getMapBlock(pos)->generated) return genStream->queue(dim, pos);
 	return false;
@@ -240,7 +247,25 @@ void ServerWorld::sendChunksToPlayer(ServerPlayer& client) {
 	
 	for (auto& pos : generateOrder) {
 		if (oldBounds.intersects(playerPos + pos) || !newBounds.intersects(playerPos + pos)) continue;
-		packetStream->queue(client.getDim()->getInd(), pos + playerPos);
+//		packetStream->queue(client.getDim()->getInd(), pos + playerPos);
+		
+//		auto dim = client.getDim();
+//		std::cout << dim->getInd() << std::endl;
+//		auto mb = dim->getMapBlock(pos);
+//		std::cout << mb << std::endl;
+//		if (!mb) return;
+//		Serializer s {};
+//		for (u16 i = 0; i < 64; i++) {
+//			auto chunk = mb->get(i);
+//			if (chunk) s.append(chunk->compressToString());
+//		}
+//
+//		let packet = make_unique<Packet>(Packet::Type::MAPBLOCK);
+//
+//		for (auto& client : clients.getClients()) {
+//			if (!client.second->player) continue;
+//			packet->sendTo(client.second->peer, Packet::Channel::WORLD);
+//		}
 	}
 }
 

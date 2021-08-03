@@ -1,9 +1,6 @@
-//
-// Created by aurailus on 14/12/18.
-//
-
 #include "LocalWorld.h"
 
+#include "util/PerfTimer.h"
 #include "util/net/PacketView.h"
 #include "client/graph/Renderer.h"
 #include "world/player/LocalPlayer.h"
@@ -13,12 +10,12 @@ LocalWorld::LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& render
 	World(game),
 	renderer(renderer),
 	net(conn, *this),
+	refs(make_shared<LocalInventoryRefs>(game, net)),
 	debugGui(renderer.window.getSize(), game, *this, perfSections),
-	refs(std::make_shared<LocalInventoryRefs>(game, net)),
-	worldGenStream(std::make_shared<WorldInterpolationStream>(*game.l(), *this, 55)),
-	player(std::make_shared<LocalPlayer>(game, *this, DimensionPtr(nullptr), renderer)) {}
+	worldGenStream(make_shared<WorldInterpolationStream>(*game.l(), *this, 55)),
+	player(make_shared<LocalPlayer>(game, *this, DimensionPtr(nullptr), renderer)) {}
 
-void LocalWorld::connect() {
+void LocalWorld::init() {
 	net.init(Util::bind_this(&(*refs), &LocalInventoryRefs::packetReceived));
 	refs->init();
 }
@@ -30,27 +27,28 @@ bool LocalWorld::updatePlayerDimension() {
 	return true;
 }
 
-void LocalWorld::update(double delta, vec<usize>& perfTimings, PerfTimer& perf) {
+void LocalWorld::update(f64 delta, vec<usize>& perfTimings, PerfTimer& perf) {
+	
+	// Updates the dimensions.
 	perf.start("update:world");
-	World::update(delta);
+	for (auto& dimension : dimensions) dimension->update(delta);
 	
 	// Update children
-	
 	perf.start("update:player");
 	if (*player) player.l()->update(renderer.window.input, delta, renderer.window.input.mouseDelta());
 	refs->update(delta, net);
+	
+	// Update the network
 	perf.start("update:net");
 	net.update();
 	
 	// Commit interpolated mapblocks
-	
 	perf.start("update:chunks");
 	auto finishedChunks = worldGenStream->update();
 	lastInterpolations = finishedChunks->size() / 64;
 	for (const auto& chunk : *finishedChunks) commitChunk(chunk);
 	
 	// Update debug interface
-	
 	perf.start("update:debug");
 	debugGui.update(
 		player.l(), delta,
@@ -60,7 +58,6 @@ void LocalWorld::update(double delta, vec<usize>& perfTimings, PerfTimer& perf) 
 		activeDimension->getMeshChunksCommitted());
 	
 	// Toggle regular interface
-	
 	if (renderer.window.input.keyPressed(GLFW_KEY_F1)) {
 		hudVisible = !hudVisible;
 		debugGui.changeVisibility(hudVisible ? debugVisible ? DebugGui::Visibility::OFF :
@@ -69,7 +66,6 @@ void LocalWorld::update(double delta, vec<usize>& perfTimings, PerfTimer& perf) 
 	}
 	
 	// Toggle debug interface
-	
 	if (renderer.window.input.keyPressed(GLFW_KEY_F3)) {
 		debugVisible = !debugVisible;
 		debugGui.changeVisibility(hudVisible ? debugVisible ? DebugGui::Visibility::OFF :
@@ -77,11 +73,11 @@ void LocalWorld::update(double delta, vec<usize>& perfTimings, PerfTimer& perf) 
 	}
 }
 
-void LocalWorld::handleWorldPacket(std::unique_ptr<PacketView> p) {
+void LocalWorld::handleWorldPacket(uptr<PacketView> p) {
 	worldGenStream->queuePacket(std::move(p));
 }
 
-void LocalWorld::handlePlayerEntPacket(std::unique_ptr<PacketView> p) {
+void LocalWorld::handlePlayerEntPacket(uptr<PacketView> p) {
 	if (!player) throw std::runtime_error("Received playerEnt info *before* the player was created.");
 	
 	u32 id = p->d.read<u32>();
@@ -107,25 +103,26 @@ void LocalWorld::handlePlayerEntPacket(std::unique_ptr<PacketView> p) {
 //    getActiveDimension().playerEntities.emplace_back(p->d.read<glm::vec3>(), id, playerModel);
 }
 
-void LocalWorld::handleModMessage(const std::string& channel, const std::string& message) {
+void LocalWorld::handleModMessage(const string& channel, const string& message) {
 	game->getParser().safe_function(game->getParser().core["trigger"], "message",
 		channel, game->getParser().safe_function(game->getParser().core["deserialize"], message));
 }
 
-void LocalWorld::commitChunk(std::shared_ptr<Chunk> c) {
+void LocalWorld::commitChunk(sptr<Chunk> c) {
 	activeDimension->setChunk(std::move(c));
 }
 
-DimensionPtr LocalWorld::createDimension(const std::string& identifier, std::unordered_set<std::string>& biomes) {
+DimensionPtr LocalWorld::createDimension(const string& identifier, std::unordered_set<string>& biomes) {
 	auto mapGen = std::make_shared<MapGen>(**game, *this, 0 /* TODO: Get the seed here */, biomes);
 	dimensions.emplace_back(std::make_shared<LocalDimension>(
 		game, *this, identifier, this->dimensions.size(), std::move(mapGen)));
 	
+	dimensionIndexes[identifier] = dimensions.size() - 1;
 	DimensionPtr d = dimensions.back();
 	return d;
 }
 
-void LocalWorld::sendMessage(const std::string& channel, const std::string& message) {
+void LocalWorld::sendMessage(const string& channel, const string& message) {
 	net.sendPacket(Serializer().append(channel).append(message)
 		.packet(Packet::Type::MOD_MESSAGE), Packet::Channel::INTERACT);
 }
@@ -135,8 +132,8 @@ DimensionPtr LocalWorld::getActiveDimension() {
 }
 
 void LocalWorld::setActiveDimension(DimensionPtr dim) {
-	this->activeDimension->deactivate();
-	this->activeDimension = dim.l();
+	activeDimension->deactivate();
+	activeDimension = dim.l();
 }
 
 ClientNetworkInterpreter& LocalWorld::getNet() {
@@ -151,7 +148,7 @@ InventoryRefsPtr LocalWorld::getRefs() {
 	return refs;
 }
 
-void LocalWorld::drawWorld() {
+void LocalWorld::drawChunks() {
 	activeDimension->renderChunks(renderer);
 }
 

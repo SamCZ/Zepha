@@ -4,14 +4,10 @@
 
 #pragma once
 
-#include <string>
 #include <sstream>
 #include <iostream>
 #include <functional>
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-#include <vector>
-#include <array>
+#include <type_traits>
 
 #include "util/Log.h"
 #include "util/Types.h"
@@ -23,7 +19,7 @@ namespace Util {
 			return static_cast<usize>(t);
 		}
 	};
-	
+
 	template <typename T, std::enable_if_t<std::is_floating_point_v<T>, bool> = true>
 	inline static string toFixed(T val, u8 precision = 2) {
 		std::ostringstream out;
@@ -31,17 +27,17 @@ namespace Util {
 		out << std::fixed << val;
 		return out.str();
 	}
-	
+
 	template <typename T, std::enable_if_t<std::is_integral_v<T>, bool> = true>
 	static string toString(T val) {
 		return std::to_string(val);
 	}
-	
+
 	template <typename T, std::enable_if_t<std::is_floating_point_v<T>, bool> = true>
 	static string toString(T val) {
 		return toFixed<T>(val);
 	}
-	
+
 	template <typename V, std::enable_if_t<std::is_trivially_copyable_v<typename V::value_type> &&
 		std::is_same_v<vec<typename V::value_type>, V>, bool> = true>
 	static string toString(V vec) {
@@ -51,7 +47,7 @@ namespace Util {
 		out << " ]";
 		return out.str();
 	}
-	
+
 	template <typename A, std::enable_if_t<std::is_trivially_copyable_v<typename A::value_type> &&
 		std::is_same_v<array<typename A::value_type, A::size_type>, A>, bool> = true>
 	static string toString(A arr) {
@@ -59,7 +55,7 @@ namespace Util {
 		for (usize i = 0; i < arr.size(); i++) out << (i == 0 ? "" : ", ") << arr[i];
 		return out.str();
 	}
-	
+
 	template <typename T, std::enable_if_t<std::is_integral_v<typename T::value_type> &&
 		std::is_integral_v<typename T::length_type>, bool> = true>
 	static string toString(T vec) {
@@ -67,7 +63,7 @@ namespace Util {
 		for (usize i = 0; i < T::length(); i++) out << (i == 0 ? "" : ", ") << vec[i];
 		return out.str();
 	}
-	
+
 	template <typename T, std::enable_if_t<std::is_floating_point_v<typename T::value_type> &&
 	    std::is_integral_v<typename T::length_type>, bool> = true>
 	static string toString(T vec) {
@@ -75,16 +71,16 @@ namespace Util {
 		for (usize i = 0; i < T::length(); i++) out << (i == 0 ? "" : ", ") << toString<typename T::value_type>(vec[i]);
 		return out.str();
 	}
-	
+
 	inline static f32 packFloat(const vec3& vec) {
 		auto charX = static_cast<u8>((vec.x + 1.0f) * 0.5f * 255.f);
 		auto charY = static_cast<u8>((vec.y + 1.0f) * 0.5f * 255.f);
 		auto charZ = static_cast<u8>((vec.z + 1.0f) * 0.5f * 255.f);
-		
+
 		u32 packedInt = (charX << 16) | (charY << 8) | charZ;
 		return static_cast<f32>(static_cast<f64>(packedInt) / static_cast<f64>(1 << 24));
 	}
-	
+
 	inline static u32 intFromHexSegment(const string& t) {
 		u32 x;
 		std::stringstream ss;
@@ -92,15 +88,15 @@ namespace Util {
 		ss >> x;
 		return x;
 	}
-	
+
 	static vec4 hexToColorVec(string hex) {
-		vec4 color{};
-		
+		vec4 color {};
+
 		if (hex[0] == '#') hex.erase(0, 1);
 		else std::cout << Log::err << "Color string does not begin with hash!" << Log::endl;
-		
+
 		string r, g, b, a;
-		
+
 		if (hex.length() == 3 || hex.length() == 4) {
 			r = hex.substr(0, 1);
 			r += r;
@@ -121,19 +117,19 @@ namespace Util {
 			std::cout << Log::err << "Color string \"" + hex + "\" is of incorrect length!" << Log::endl;
 			return color;
 		}
-		
+
 		color.r = intFromHexSegment(r) / 255.f;
 		color.g = intFromHexSegment(g) / 255.f;
 		color.b = intFromHexSegment(b) / 255.f;
 		color.a = intFromHexSegment(a) / 255.f;
-		
+
 		return color;
 	}
-	
+
 	static string getKeyStr(u16 key) {
 		switch (key) {
 		default: return "";
-		
+
 		case 0: return "mouse0";
 		case 1: return "mouse1";
 		case 2: return "mouse2";
@@ -146,7 +142,7 @@ namespace Util {
 		case 9: return "scrolldown";
 		case 10: return "scrollleft";
 		case 11: return "scrollright";
-		
+
 		case 32: return "space";
 		case 39: return "'";
 		case 44: return ",";
@@ -267,22 +263,22 @@ namespace Util {
 		case 348: return "menu";
 		}
 	}
-	
+
 	namespace {
 		constexpr static u64 mix(char m, u64 s) {
 			return ((s << 7) + ~(s >> 3)) + ~m;
 		}
 	}
-	
+
 	constexpr static u64 hash(const char* m) {
 		return (*m) ? mix(*m, hash(m + 1)) : 0;
 	}
-	
+
 	template<class C, typename Ret, typename ... Ts>
 	std::function<Ret(Ts...)> bind_this(C* c, Ret (C::*m)(Ts...)) {
 		return [=](auto&& ... args) { return (c->*m)(std::forward<decltype(args)>(args)...); };
 	}
-	
+
 	template<class C, typename Ret, typename ... Ts>
 	std::function<Ret(Ts...)> bind_this(const C* c, Ret (C::*m)(Ts...) const) {
 		return [=](auto&& ... args) { return (c->*m)(std::forward<decltype(args)>(args)...); };

@@ -22,7 +22,7 @@
  * Initializes a connection to the remote address,
  * sets up the GUI, and attempts to download subgame assets.
  *
- * @param addr - The server address to connect to.
+ * @param addr - The server address to init to.
  */
 
 ConnectScene::ConnectScene(Client& client, Address addr) : Scene(client),
@@ -210,7 +210,7 @@ void ConnectScene::handleConnecting() {
 	
 	case ServerConnection::State::FAILED_CONNECT:
 		connectState = State::FAILED_CONNECT;
-		statusText->setText(statusText->getText() + "\nFailed to connect :(\n");
+		statusText->setText(statusText->getText() + "\nFailed to init :(\n");
 		break;
 	
 	case ServerConnection::State::ATTEMPTING_CONNECT:

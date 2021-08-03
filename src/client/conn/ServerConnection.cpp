@@ -65,12 +65,12 @@ void ServerConnection::processConnecting() {
 		else {
 			enet_peer_reset(peer);
 			if (attempt < attempts) {
-				std::cout << Log::info << "Failed to connect to server, retrying." << Log::endl;
+				std::cout << Log::info << "Failed to init to server, retrying." << Log::endl;
 				connectionTime = std::chrono::high_resolution_clock::now();
 				attempt++;
 			}
 			else {
-				std::cout << Log::err << "Failed to connect to server." << Log::endl;
+				std::cout << Log::err << "Failed to init to server." << Log::endl;
 				state = State::FAILED_CONNECT;
 			}
 		}

@@ -91,7 +91,6 @@ void WorldInterpolationStream::Thread::run() {
 					u.chunks.reserve(64);
 					while (!u.packet->d.atEnd()) {
 						string data = u.packet->d.read<string>();
-//						std::cout << Util::toString(Deserializer(data).read<ivec3>()) << std::endl;
 						u.chunks.emplace_back(make_shared<Chunk>());
 						u.chunks.back()->decompressFromString(data);
 					}

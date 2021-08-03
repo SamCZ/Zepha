@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 09/01/19.
-//
-
 #pragma once
 
 #include "util/Types.h"
@@ -12,9 +8,8 @@
 #include "server/ServerClients.h"
 #include "world/inv/ServerInventoryRefs.h"
 
-class ServerPlayer;
-
 class Packet;
+class ServerPlayer;
 
 class Server {
 public:

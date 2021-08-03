@@ -1,9 +1,3 @@
-//
-// World subclass for the server.
-// Handles blocks, entities, and clients.
-// Created by aurailus on 05/03/19.
-//
-
 #pragma once
 
 #include "world/World.h"
@@ -19,51 +13,77 @@ class ServerGenStream;
 class ServerInventoryRefs;
 class ServerPacketStream;
 
+/**
+ * Manages server dimensions and players.
+ * Handles sending chunk and entity data to clients.
+ */
+
 class ServerWorld : public World {
 public:
-	explicit ServerWorld(unsigned int seed, SubgamePtr game, ServerClients& clients);
 	
-	void init(const std::string& worldDir);
+	explicit ServerWorld(u32 seed, SubgamePtr game, ServerClients& clients);
 	
-	void update(double delta) override;
+	/** Initializes the map and packet thread pools. */
+	void init(const string& worldDir);
 	
-	virtual void sendMessage(const std::string& channel, const std::string& message) override;
+	/** Updates dimensions, and sends new or dirty chunks to clients. */
+	void update(double delta);
+
+	/** Sends a mod message to the channel provided. */
+	virtual void sendMessage(const string& channel, const string& message) override;
 	
-	virtual DimensionPtr
-	createDimension(const std::string& identifier, std::unordered_set<std::string>& biomes) override;
+	/** Creates a new dimension with the identifier and biomes provided. */
+	virtual DimensionPtr createDimension(const string& identifier, std::unordered_set<string>& biomes) override;
 	
-	virtual DimensionPtr getDimension(unsigned int index) override;
-	
-	virtual DimensionPtr getDimension(const std::string& identifier) override;
-	
+	/** Returns a reference to the world's inventory refs. */
 	virtual InventoryRefsPtr getRefs() override;
 	
+	/** Gets the list of connected clients. */
 	virtual ServerClients& getClients();
 	
 private:
+	
+	/** Called when a player changes mapblocks, to generate and send new chunks. */
 	void changedMapBlocks(ServerPlayer& player);
 	
-	bool generateMapBlock(unsigned int dim, glm::ivec3 pos);
+	/** Generates a single mapblock, if it doesn't exist already. */
+	bool generateMapBlock(u16 dim, ivec3 pos);
 	
+	/** Generates mapblocks around the player specified. */
 	void generateMapBlocks(ServerPlayer& player);
 	
+	/** Sends all of the surrounding chunks to the specified player. */
 	void sendChunksToPlayer(ServerPlayer& client);
 	
-	std::shared_ptr<ServerGenStream> genStream = nullptr;
-	std::shared_ptr<ServerPacketStream> packetStream = nullptr;
-	
+	/** Generates new chunks. */
+	sptr<ServerGenStream> genStream = nullptr;
+
+	/** The seed for generating the world. */
 	u32 seed;
+	
+	/** A reference to the client list. */
 	ServerClients& clients;
-	std::shared_ptr<ServerInventoryRefs> refs;
+	
+	/** The server inventories. */
+	sptr<ServerInventoryRefs> refs;
 
 //    std::string worldDir;
 //    std::shared_ptr<FileManipulator> fileManip;
 	
-	u32 generatedMapBlocks = 0;
-	std::vector<ivec3> generateOrder;
-	
-	const ivec2 mapBlockGenRange = { 4, 4 };
-	const ivec2 sendRange = { 4, 4 };
-	const ivec2 activeChunkRange = { 16, 16 };
-};
+	usize totalGens = 0;
 
+	/** The amount of mapblocks that were generated last frame. */
+	u32 generatedMapBlocks = 0;
+	
+	/** A vector of positions for the order to generate mapblocks in. */
+	vec<ivec3> generateOrder;
+
+	/** The range in mapblocks to generate around clients. */
+	const ivec2 mapBlockGenRange = { 4, 4 };
+	
+	/** The range in mapblocks to send to clients. */
+	const ivec2 sendRange = { 4, 4 };
+
+	/** The range around clients that chunks should be updated. */
+	const ivec2 activeChunkRange = { 4, 4 };
+};

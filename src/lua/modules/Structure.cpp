@@ -12,7 +12,7 @@ void Api::Module::Structure::bind() {
 
 sol::object Api::Module::Structure::create_structure(sol::table data) {
 	auto origin = data.get<sol::optional<glm::vec3>>("origin");
-//	auto probability = data.get<float>("probability");
+	auto probability = data.get<float>("probability");
 	auto layout = data.get<sol::table>("layout");
 	
 	unsigned int yWid = layout.size();
@@ -24,7 +24,7 @@ sol::object Api::Module::Structure::create_structure(sol::table data) {
 	s->dimensions = { xWid, yWid, zWid };
 	s->origin = origin ? glm::ivec3 { *origin } : glm::ivec3 {};
 	s->layout.reserve(xWid * yWid * zWid);
-//	s->probability = probability;
+	s->probability = probability;
 	
 	for (unsigned int x = 1; x <= xWid; x++)
 		for (unsigned int y = 1; y <= yWid; y++)

@@ -53,7 +53,7 @@ private:
 	std::list<Api::Usertype::Entity> luaEntities{};
 	std::list<i64> removedEntities{};
 	
-	const ivec2 discardRange = { 20, 20 };
+	const ivec2 retainMapBlockRange = { 4, 4 };
 	i64 entityInd = 1;
 };
 

@@ -1,76 +1,109 @@
-//
-// Created by aurailus on 14/12/18.
-//
-
 #pragma once
 
 #include "World.h"
 
-#include "util/PerfTimer.h"
 #include "client/gui/DebugGui.h"
 #include "world/dim/LocalDimension.h"
 #include "client/conn/ClientNetworkInterpreter.h"
 
 class Window;
 class Renderer;
+class PerfTimer;
 class LocalPlayer;
 class LocalSubgame;
 class LocalInventoryRefs;
 class WorldInterpolationStream;
 
+/**
+ * Manages the local active dimension,
+ * and communication between the client and the server.
+ */
+
 class LocalWorld : public World {
 public:
+	
 	LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& window, vec<string>& perfSections);
 	
-	void connect();
+	/** Initializes the world, binding callbacks to the network handler. */
+	void init();
 	
+	/** Sets the player's dimension to the default one, if it exists. TODO: Could this be done in init()? */
 	bool updatePlayerDimension();
 	
-	void update(double delta, vec<usize>& perfTimings, PerfTimer& perf);
+	/** Updates the dimension and the player, reads incoming packets, and commits decoded chunks. TODO: Decoding all the chunks from the getgo seems unnecessary... */
+	void update(f64 delta, vec<usize>& perfTimings, PerfTimer& perf);
 	
-	void handleWorldPacket(std::unique_ptr<PacketView> p);
+	/** Queues a packet to be read. */
+	void handleWorldPacket(uptr<PacketView> p);
 	
-	void handlePlayerEntPacket(std::unique_ptr<PacketView> p);
+	/** Reads a player entity packet, and updates the required entity. */
+	void handlePlayerEntPacket(uptr<PacketView> p);
 	
-	void handleModMessage(const std::string& channel, const std::string& message);
+	/** Triggers a callback in lua for the provided mod message. */
+	void handleModMessage(const string& channel, const string& message);
 	
-	void commitChunk(std::shared_ptr<Chunk> chunk);
+	/** Sets a chunk in the current dimension. */
+	void commitChunk(sptr<Chunk> chunk);
 	
-	virtual void sendMessage(const std::string& channel, const std::string& message) override;
+	/** Sends a mod message to the server on the channel specified. */
+	virtual void sendMessage(const string& channel, const string& message) override;
 	
-	virtual DimensionPtr
-	createDimension(const std::string& identifier, std::unordered_set<std::string>& biomes) override;
+	/** Creates a new dimension with the identifier and biomes provided. */
+	virtual DimensionPtr createDimension(const string& identifier, std::unordered_set<string>& biomes) override;
 	
+	/** Gets the active dimension. */
 	DimensionPtr getActiveDimension();
 	
+	/** Sets the active dimension. */
 	void setActiveDimension(DimensionPtr);
 	
+	/** Gets the local player. */
 	PlayerPtr getPlayer();
 	
+	/** Returns a reference to the local inventory refs. */
 	virtual InventoryRefsPtr getRefs() override;
 	
+	/** Returns a reference to the network handler. */
 	ClientNetworkInterpreter& getNet();
 	
-	/** Renders the visible block chunks to the screen. */
-	void drawWorld();
-	/** Renders the visible entities to the screen. */
+	/** Renders the visible chunks to the screen. */
+	void drawChunks();
+	
+	/** Renders the entities to the screen. */
 	void drawEntities();
-	/** Renders non-diagetic (UI) elements to the screen using an orthographic projection. */
+	
+	/** Renders the interface to the screen using an orthographic projection. */
 	void drawInterface();
 	
 private:
+
+	/** A reference to the renderer. */
 	Renderer& renderer;
 	
+	/** The network handler. */
 	ClientNetworkInterpreter net;
-	std::shared_ptr<LocalInventoryRefs> refs;
+	
+	/** The local inventories. */
+	sptr<LocalInventoryRefs> refs;
+	
+	/** The local player. */
 	PlayerPtr player;
 	
+	/** The debug interface. */
 	DebugGui debugGui;
-	uint32_t lastInterpolations = 0;
 	
+	/** The number of chunks that were interpolated last frome. */
+	u32 lastInterpolations = 0;
+	
+	/** Whether or not the hud should be visible. */
 	bool hudVisible = true;
+	
+	/** Whether or not the debug interface should be visible. */
 	bool debugVisible = true;
 	
-	std::shared_ptr<LocalDimension> activeDimension = nullptr;
-	std::shared_ptr<WorldInterpolationStream> worldGenStream = nullptr;
+	/** A pointer to the active dimension. */
+	sptr<LocalDimension> activeDimension = nullptr;
+	
+	/** A reference to the world gen stream. */
+	sptr<WorldInterpolationStream> worldGenStream;
 };

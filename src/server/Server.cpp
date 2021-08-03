@@ -33,7 +33,7 @@ void Server::update() {
 	const static i64 interval_ns = static_cast<i64>((1000 / 60.f) * 1000000L);
 	Timer loop("");
 	
-	world->update(delta);
+	world.s()->update(delta);
 	game.s()->update(delta);
 	
 	// Read incoming events.

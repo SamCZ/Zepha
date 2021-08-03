@@ -7,7 +7,7 @@
 class Renderer;
 
 class Drawable {
-	public:
+public:
 	virtual void update(double delta) {};
 	
 	virtual void draw(Renderer& renderer) {};
@@ -18,7 +18,7 @@ class Drawable {
 	
 	virtual ~Drawable() = default;
 	
-	protected:
+protected:
 	bool visible = true;
 };
 

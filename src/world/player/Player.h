@@ -70,7 +70,7 @@ protected:
 	
 	vec3 lookOffset{};
 	
-	bool flying = false;
+	bool flying = true;
 	
 	string handList = "";
 	string wieldList = "";

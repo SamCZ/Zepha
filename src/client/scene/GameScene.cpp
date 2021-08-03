@@ -12,7 +12,7 @@ GameScene::GameScene(Client& client) : Scene(client),
 	Packet r(Packet::Type::CONNECT_DATA_RECVD);
 	r.sendTo(client.connection.getPeer(), Packet::Channel::CONNECT);
 	
-	world.l()->connect();
+	world.l()->init();
 	client.game->init(world, world.l()->getPlayer(), client);
 	world.l()->updatePlayerDimension();
 	
@@ -41,7 +41,7 @@ void GameScene::draw() {
 	perf.start("draw:world");
 	renderer.beginChunkDeferredCalls();
 	renderer.enableTexture(&client.game->textures.atlasTexture);
-	world.l()->drawWorld();
+	world.l()->drawChunks();
 	
 	perf.start("draw:entities");
 	renderer.beginEntityDeferredCalls();

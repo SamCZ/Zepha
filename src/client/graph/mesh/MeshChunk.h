@@ -1,34 +1,51 @@
-//
-// Created by aurailus on 15/12/18.
-//
-
 #pragma once
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include <memory>
-#include <vector>
-
+#include "Mesh.h"
+#include "util/Types.h"
 #include "ChunkRenderElem.h"
 #include "client/graph/Drawable.h"
 
-class ChunkMesh;
-
-class ChunkVertex;
+/**
+ * A drawable mesh of a single chunk.
+ */
 
 class MeshChunk : public ChunkRenderElem, Drawable {
-	public:
-	MeshChunk() = default;
+public:
 	
-	void create(std::vector<ChunkVertex>& vertices, std::vector<unsigned int>& indices);
+	/** A single vertex of a ChunkMesh. */
+	struct Vertex {
+		vec3 position;
+		
+		vec2 texCoords;
+		vec3 blendColor;
+		vec2 blendMaskCoords;
+		
+		f32  normal;
+		vec4 light;
+		
+		f32  shaderMod;
+		vec3 modValues;
+	};
+	
+	/** Represents a MeshChunk's underlying mesh. */
+	struct Mesh : public ::Mesh {
+		Mesh(const Mesh&) = delete;
+		Mesh(const vec<Vertex>& vertices, const vec<u32>& indices);
+	};
+	
+	/** Creates a new MeshChunk with the data provided. */
+	MeshChunk(const vec3 pos, const vec<Vertex>& vertices, const vec<u32>& indices);
 	
 	void draw(Renderer& renderer) override;
 	
-	bool updateChunkUse(glm::vec3 chunk, bool used) override;
+	bool updateChunkUse(ivec3 chunk, bool used) override;
+
+private:
 	
-	void setPos(glm::vec3 pos);
-	
-	glm::vec3 getPos() override;
-	
-	private:
-	std::shared_ptr<ChunkMesh> mesh = nullptr;
-	glm::vec3 pos{};
+	/** The underlying mesh used by this chunk. */
+	uptr<Mesh> mesh = nullptr;
 };
+
+#pragma clang diagnostic pop

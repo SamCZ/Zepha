@@ -52,8 +52,11 @@ const array<u16, 4096>& Chunk::getBiomesArray() {
 }
 
 void Chunk::combineWith(sptr<Chunk> o) {
+	useDecompressed();
+	o->useDecompressed();
+	
 	for (u16 i = 0; i < 4096; i++)
-		if (o->getBlock(i) > DefinitionAtlas::INVALID) setBlock(i, o->getBlock(i));
+		if (o->getBlock(i) > DefinitionAtlas::INVALID) d->blocks[i] = o->d->blocks[i];
 	
 	if (generationState == GenerationState::GENERATED || o->isGenerated()) {
 		generationState = GenerationState::GENERATED;

@@ -44,8 +44,11 @@ std::unique_ptr<std::vector<std::unique_ptr<ServerPacketStream::FinishedJob>>> S
 				inProgressMap.emplace(pos);
 				queuedTasks.pop();
 				
+//				std::cout << "going going" << std::endl;
 				auto mapBlock = world.getDimension(pos.w)->getMapBlock(ivec3(pos));
-				if (!mapBlock) continue;
+//				std::cout << Util::toString(pos) << ": gone, " << mapBlock << std::endl;
+				if (mapBlock == nullptr) continue;
+//				std::cout << "mappi: " << Util::toString(j.mapBlock->pos) << std::endl;
 				j.mapBlock = make_unique<MapBlock>(*mapBlock);
 				j.dim = pos.w;
 				j.locked = true;
@@ -62,6 +65,7 @@ void ServerPacketStream::Thread::run() {
 		for (Job& j : jobs) {
 			if (j.locked) {
 				empty = false;
+				std::cout << "run: " << Util::toString(j.mapBlock->pos) << std::endl;
 				
 				Serializer s {};
 				for (u16 i = 0; i < 64; i++) {

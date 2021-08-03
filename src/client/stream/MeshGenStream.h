@@ -11,7 +11,7 @@
 
 #include "util/Vec.h"
 #include "util/CovariantPtr.h"
-#include "ChunkMeshDetails.h"
+#include "MeshChunkDetails.h"
 #include "world/gen/NoiseSample.h"
 
 class Chunk;
@@ -22,8 +22,8 @@ class LocalDimension;
 
 class MeshGenStream {
 public:
-	static const u16 THREADS = 4;
-	static const u16 THREAD_QUEUE_SIZE = 16;
+	static const u16 THREADS = 6;
+	static const u16 THREAD_QUEUE_SIZE = 12;
 	
 	explicit MeshGenStream(SubgamePtr game, LocalDimension& dimension);
 	
@@ -33,13 +33,13 @@ public:
 	
 	//Will return a vector of MeshDetails pointers containing finished meshes.
 	//Frees up the threads and starts new tasks.
-	std::vector<ChunkMeshDetails*> update();
+	std::vector<MeshChunkDetails*> update();
 	
 	struct Job {
 		std::unique_ptr<Chunk> thisChunk = nullptr;
 		std::array<std::unique_ptr<Chunk>, 6> adjacentChunks {};
 		
-		ChunkMeshDetails* meshDetails = new ChunkMeshDetails();
+		MeshChunkDetails* meshDetails = new MeshChunkDetails();
 		
 		bool busy = false;
 	};

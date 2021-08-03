@@ -87,13 +87,13 @@ void NetHandler::initClient(Address hostAddress, int attempts, int timeout) {
 		else {
 			enet_peer_reset(peer);
 			if (attempt < attempts) {
-				std::cout << Log::info << "Failed to connect to peer, retrying." << Log::endl;
+				std::cout << Log::info << "Failed to init to peer, retrying." << Log::endl;
 			}
 		}
 	}
 	
 	if (state == NetState::FAILED_CONNECT) {
-		std::cout << Log::err << "Failed to connect to peer." << Log::endl;
+		std::cout << Log::err << "Failed to init to peer." << Log::endl;
 		return;
 	}
 }

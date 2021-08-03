@@ -81,7 +81,7 @@ local leaf_layer_3 = {
 
 local tree = zepha.create_structure({
    origin = V(2, 2, 2),
-   schematic = {
+   layout = {
        trunk_layer_0,
        trunk_layer_0,
        trunk_layer_0,

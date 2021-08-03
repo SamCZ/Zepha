@@ -21,17 +21,17 @@ class ChunkRenderElem;
 
 class LocalDimension : public Dimension {
 public:
-	const static u8 MB_STORE_H = 4;
-	const static u8 MB_STORE_V = 4;
-	
 	LocalDimension(SubgamePtr game, LocalWorld& world, const string& identifier, u16 ind, sptr<MapGen> mapGen);
 	
 	void deactivate();
 	
+	/** Updates chunks and entities. */
 	void update(f64 delta) override;
 	
+	/** Sets the chunk, and then queues it to be meshed. */
 	void setChunk(sptr<Chunk> chunk) override;
 	
+	/** Sets the block, and queues the relevant chunks for remeshing. */
 	bool setBlock(ivec3 pos, u16 block) override;
 	
 	virtual void blockPlace(const Target& target, PlayerPtr player) override;
@@ -56,7 +56,7 @@ public:
 	
 	void serverEntitiesInfo(Deserializer& d);
 	
-	void serverEntitiesRemoved(Deserializer& d);
+	void removeServerEntities(Deserializer& d);
 	
 	std::vector<Api::Usertype::Entity> getEntitiesInRadius(vec3 pos, f32 radius);
 	
@@ -84,9 +84,11 @@ private:
 	
 	void finishMeshes();
 	
-	void attemptMeshChunk(const sptr<Chunk>& chunk, bool priority = false, bool updateAdjacents = true);
+	/** Queues a chunk to be meshed if its dirty and the adjacent chunks exist. */
+	void meshChunk(const sptr<Chunk>& chunk, bool priority = false, bool updateAdjacents = true);
 	
-	bool getAdjacentExists(vec3 pos, bool updateAdjacents);
+	/** Checks if a chunk exists and optionally meshes it if dirty. */
+	bool adjacentExists(ivec3 pos, bool update, bool priority = false);
 	
 	sptr<MeshGenStream> meshGenStream;
 	
@@ -96,6 +98,7 @@ private:
 	std::unordered_map<vec3, chunk_ref, Vec::vec3> renderRefs{};
 	std::list<sptr<ChunkRenderElem>> renderElems{};
 	
+	const ivec2 retainMapBlockRange = { 4, 4 };
 	i64 entityInd = -1;
 };
 

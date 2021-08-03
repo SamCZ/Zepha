@@ -103,7 +103,7 @@ void ClientNetworkInterpreter::receivedPacket(uptr<PacketView> p) {
 	}
 	
 	case Packet::Type::ENTITY_REMOVED: {
-		world.getActiveDimension().l()->serverEntitiesRemoved(p->d);
+		world.getActiveDimension().l()->removeServerEntities(p->d);
 		break;
 	}
 	

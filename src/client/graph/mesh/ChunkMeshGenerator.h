@@ -9,12 +9,12 @@ class MeshPart;
 class BlockDef;
 class NoiseSample;
 class LocalBiomeAtlas;
-class ChunkMeshDetails;
+class MeshChunkDetails;
 class LocalDefinitionAtlas;
 
 class ChunkMeshGenerator {
 public:
-	ChunkMeshGenerator(ChunkMeshDetails* meshDetails, LocalDefinitionAtlas& defs, LocalBiomeAtlas& biomes,
+	ChunkMeshGenerator(MeshChunkDetails* meshDetails, LocalDefinitionAtlas& defs, LocalBiomeAtlas& biomes,
 		uptr<Chunk> chunk, array<uptr<Chunk>, 6> adjacent, array<NoiseSample, 3>& blockOffsets);
 	
 private:
@@ -27,7 +27,7 @@ private:
 	LocalBiomeAtlas& biomes;
 	
 	usize indOffset = 0;
-	ChunkMeshDetails* meshDetails;
+	MeshChunkDetails* meshDetails;
 	
 	uptr<Chunk> chunk;
 	array<uptr<Chunk>, 6> adjacent;

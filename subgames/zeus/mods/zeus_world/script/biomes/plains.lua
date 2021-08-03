@@ -5,15 +5,43 @@ local leaf = "zeus:default:leaves"
 local none = "invalid"
 
 local structures = {}
+--
+-- table.insert(structures, zepha.create_structure({
+-- --     noise = {
+-- --         module = "perlin",
+-- --         frequency = 0.002,
+-- --         octaves = 8
+-- --     },
+-- --     region_size = 4,
+--     probability = 0.1,
+-- --     origin = V{1, 1, 1},
+--     origin = V(),
+--    layout = {{{ "zeus:flowers:flower_geranium" }}}
+-- }))
+
+for i = 1, 5 do
+   table.insert(structures, zepha.create_structure({
+       origin = V(),
+       probability = 0.1,
+       layout = {{{ "zeus:default:tall_grass_" .. tostring(i) }}}
+   }))
+end
+--
+table.insert(structures, zepha.create_structure({
+   origin = V(),
+   probability = 0.025,
+   layout = {{{ "zeus:flowers:flower_geranium" }}}
+}))
 
 table.insert(structures, zepha.create_structure({
-    noise = {
-        module = "perlin",
-        frequency = 0.002,
-        octaves = 8
-    },
-    region_size = 4,
-    origin = V{1, 1, 1},
+   origin = V(),
+   probability = 0.025,
+   layout = {{{ "zeus:flowers:flower_white_dandelion" }}}
+}))
+
+table.insert(structures, zepha.create_structure({
+    origin = V(),
+    probability = 0.025,
     layout = {{
         { none, none, none },
         { none, wood, none },
@@ -29,28 +57,105 @@ table.insert(structures, zepha.create_structure({
     }}
 }))
 
---for i = 1, 5 do
---    table.insert(structures, zepha.create_structure({
---        origin = V(),
---        probability = 0.1,
---        layout = {{{ "zeus:default:tall_grass_" .. tostring(i) }}}
---    }))
---end
---
---table.insert(structures, zepha.create_structure({
---    origin = V(),
---    probability = 0.025,
---    layout = {{{ "zeus:flowers:flower_geranium" }}}
---}))
---
---table.insert(structures, zepha.create_structure({
---    origin = V(),
---    probability = 0.025,
---    layout = {{{ "zeus:flowers:flower_white_dandelion" }}}
---}))
+local woo = "zeus:default:wood"
+local lea = "zeus:default:leaves"
+local inv = "invalid"
+
+local trunk_layer_0 = {
+  { inv, inv, inv, inv, inv },
+  { inv, woo, woo, woo, inv },
+  { inv, woo, woo, woo, inv },
+  { inv, woo, woo, woo, inv },
+  { inv, inv, inv, inv, inv }
+}
+
+local trunk_layer_1 = {
+  { inv, inv, inv, inv, inv },
+  { inv, inv, woo, inv, inv },
+  { inv, woo, woo, woo, inv },
+  { inv, inv, woo, inv, inv },
+  { inv, inv, inv, inv, inv }
+}
+
+local trunk_layer_2 = {
+  { inv, inv, inv, inv, inv },
+  { inv, inv, inv, inv, inv },
+  { inv, inv, woo, inv, inv },
+  { inv, inv, inv, inv, inv },
+  { inv, inv, inv, inv, inv }
+}
+
+local leaf_layer_1 = {
+  { inv, lea, lea, lea, inv },
+  { lea, lea, lea, lea, lea },
+  { lea, lea, woo, lea, lea },
+  { lea, lea, lea, lea, lea },
+  { inv, lea, lea, lea, inv }
+}
+
+local leaf_layer_2 = {
+  { inv, inv, inv, inv, inv },
+  { inv, lea, lea, lea, inv },
+  { inv, lea, woo, lea, inv },
+  { inv, lea, lea, lea, inv },
+  { inv, inv, inv, inv, inv }
+}
+
+local leaf_layer_3 = {
+  { inv, inv, inv, inv, inv },
+  { inv, lea, lea, inv, inv },
+  { inv, lea, lea, lea, inv },
+  { inv, inv, lea, lea, inv },
+  { inv, inv, inv, inv, inv }
+}
+
+table.insert(structures, zepha.create_structure({
+  origin = V(2, 2, 2),
+  probability = 0.0005,
+  layout = {
+      trunk_layer_0,
+      trunk_layer_0,
+      trunk_layer_0,
+      trunk_layer_0,
+      trunk_layer_1,
+      trunk_layer_1,
+      trunk_layer_1,
+      trunk_layer_2,
+      trunk_layer_2,
+      trunk_layer_2,
+      trunk_layer_2,
+      trunk_layer_2,
+      trunk_layer_2,
+      trunk_layer_2,
+      trunk_layer_2,
+      trunk_layer_2,
+      trunk_layer_2,
+      trunk_layer_2,
+      leaf_layer_2,
+      leaf_layer_1,
+      leaf_layer_1,
+      leaf_layer_1,
+      leaf_layer_1,
+      leaf_layer_2,
+      leaf_layer_3
+  }
+}))
 
 local noise = {
-    heightmap = runfile(_PATH .. 'world_noise')
+--     heightmap = runfile(_PATH .. 'world_noise'),
+    volume = {
+        module = "scale_bias",
+        scale = 3000,
+        bias = -3500,
+        source = {
+            module = "scale_point",
+            y_scale = 2,
+            source = {
+                module = "perlin",
+                frequency = 0.1
+            }
+        }
+    }
 }
 
 zepha.register_biome(identifier, {
