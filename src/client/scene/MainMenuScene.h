@@ -3,6 +3,7 @@
 #include "Scene.h"
 
 #include "util/Types.h"
+#include "client/Window.h"
 #include "client/menu/SubgameDef.h"
 #include "client/menu/MenuSandbox.h"
 
@@ -55,5 +56,7 @@ private:
 	
 	/** A reference to the currently selected subgame. */
 	SubgameDef* selectedSubgame = nullptr;
+	
+	Window::RCBLock lock;
 };
 

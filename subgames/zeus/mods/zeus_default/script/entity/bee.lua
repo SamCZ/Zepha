@@ -66,11 +66,11 @@ zepha.register_entity("zeus:default:bee", {
         end
     end
 })
-
-if zepha.server then
-    zepha.bind("new_player", function(player)
-        for i = 0, 10 do
-            player.dim:add_entity(player.pos + V { math.random(-100, 100), 30, math.random(-100, 100) }, "zeus:default:bee")
-        end
-    end)
-end
+--
+-- if zepha.server then
+--     zepha.bind("new_player", function(player)
+--         for i = 0, 10 do
+--             player.dim:add_entity(player.pos + V { math.random(-100, 100), 30, math.random(-100, 100) }, "zeus:default:bee")
+--         end
+--     end)
+-- end

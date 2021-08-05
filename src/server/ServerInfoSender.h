@@ -11,9 +11,9 @@ class PacketView;
 class ServerClient;
 class ServerSubgame;
 
-class ServerConfig {
+class ServerInfoSender {
 public:
-	explicit ServerConfig(SubgamePtr game);
+	explicit ServerInfoSender(SubgamePtr game);
 	
 	void init();
 	

@@ -8,7 +8,7 @@
 
 Window::Window() : Window({ 800, 600 }) {};
 
-Window::Window(glm::ivec2 win) :
+Window::Window(ivec2 win) :
 	win(win), center(win.x / 2, win.y / 2) {
 	
 	if (!glfwInit()) {
@@ -61,6 +61,11 @@ Window::Window(glm::ivec2 win) :
 
 void Window::update() {
 	input.update();
+	
+	for (let it = resizeCallbacks.begin(); it != resizeCallbacks.end();) {
+		if (it->first.unique()) it = resizeCallbacks.erase(it);
+		else it++;
+	}
 }
 
 bool Window::shouldClose() {
@@ -71,15 +76,13 @@ void Window::swapBuffers() {
 	glfwSwapBuffers(mainWindow);
 }
 
-void Window::addResizeCallback(const std::string& identifier, std::function<void(glm::ivec2)> cb) {
-	resizeCallbacks.emplace(identifier, cb);
+Window::RCBLock Window::onResize(std::function<void(ivec2)> cb) {
+	RCBLock lock = make_shared<bool>(true);
+	resizeCallbacks.emplace_back(std::pair(lock, cb));
+	return lock;
 }
 
-void Window::removeResizeCallback(const std::string& identifier) {
-	resizeCallbacks.erase(identifier);
-}
-
-glm::ivec2 Window::getSize() {
+ivec2 Window::getSize() {
 	return win;
 }
 
@@ -87,13 +90,12 @@ void Window::setCursorHand(bool hand) {
 	glfwSetCursor(mainWindow, hand ? handCursor : nullptr);
 }
 
-void Window::scrollCallback(GLFWwindow* window, double xO, double yO) {
+void Window::scrollCallback(GLFWwindow* window, f64 xO, f64 yO) {
 //    auto w = static_cast<Window*>(glfwGetWindowUserPointer(window));
-
 }
 
-void Window::resizeCallback(GLFWwindow* window, int width, int height) {
-	auto w = static_cast<Window*>(glfwGetWindowUserPointer(window));
+void Window::resizeCallback(GLFWwindow* window, i32 width, i32 height) {
+	let w = static_cast<Window*>(glfwGetWindowUserPointer(window));
 	
 	glfwGetFramebufferSize(window, &w->win.x, &w->win.y);
 	glViewport(0, 0, w->win.x, w->win.y);

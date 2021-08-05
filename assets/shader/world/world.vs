@@ -8,11 +8,11 @@ layout (location = 4) in float aNormal;
 
 layout (location = 3) in vec2  aBlendMaskCoords;
 layout (location = 1) in vec2  aTexCoords;
-layout (location = 2) in vec3  aBlend;
-layout (location = 5) in vec4  aLight;
+layout (location = 2) in ivec3 aBlend;
+layout (location = 5) in ivec4 aLight;
 
-layout (location = 6) in float aShaderMod;
-layout (location = 7) in vec3  aModValues;
+layout (location = 6) in int   aShaderMod;
+layout (location = 7) in ivec3 aModValues;
 
 out VS_OUT {
     vec3 pos;
@@ -40,7 +40,7 @@ void main() {
 
     vs_out.blendMaskCoords = aBlendMaskCoords;
     vs_out.texCoords = aTexCoords;
-    vs_out.blend = aBlend;
+    vs_out.blend = vec3(aBlend / 255.0);
     vs_out.light = light;
 
     vs_out.modType = aShaderMod;

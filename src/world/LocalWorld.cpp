@@ -3,6 +3,7 @@
 #include "util/PerfTimer.h"
 #include "util/net/PacketView.h"
 #include "client/graph/Renderer.h"
+#include "world/dim/chunk/Chunk.h"
 #include "world/player/LocalPlayer.h"
 #include "client/stream/WorldInterpolationStream.h"
 
@@ -12,8 +13,11 @@ LocalWorld::LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& render
 	net(conn, *this),
 	refs(make_shared<LocalInventoryRefs>(game, net)),
 	debugGui(renderer.window.getSize(), game, *this, perfSections),
-	worldGenStream(make_shared<WorldInterpolationStream>(*game.l(), *this, 55)),
-	player(make_shared<LocalPlayer>(game, *this, DimensionPtr(nullptr), renderer)) {}
+//	worldGenStream(make_shared<WorldInterpolationStream>(*game.l(), *this, 55)),
+	player(make_shared<LocalPlayer>(game, *this, DimensionPtr(nullptr), renderer)) {
+	
+	renderer.window.onResize(Util::bind_this(&debugGui, &DebugGui::bufferResized));
+}
 
 void LocalWorld::init() {
 	net.init(Util::bind_this(&(*refs), &LocalInventoryRefs::packetReceived));
@@ -44,9 +48,9 @@ void LocalWorld::update(f64 delta, vec<usize>& perfTimings, PerfTimer& perf) {
 	
 	// Commit interpolated mapblocks
 	perf.start("update:chunks");
-	auto finishedChunks = worldGenStream->update();
-	lastInterpolations = finishedChunks->size() / 64;
-	for (const auto& chunk : *finishedChunks) commitChunk(chunk);
+//	auto finishedChunks = worldGenStream->update();
+//	lastInterpolations = finishedChunks->size() / 64;
+//	for (const auto& chunk : *finishedChunks) commitChunk(chunk);
 	
 	// Update debug interface
 	perf.start("update:debug");
@@ -74,7 +78,11 @@ void LocalWorld::update(f64 delta, vec<usize>& perfTimings, PerfTimer& perf) {
 }
 
 void LocalWorld::handleWorldPacket(uptr<PacketView> p) {
-	worldGenStream->queuePacket(std::move(p));
+	if (p->type == Packet::Type::CHUNK)
+		commitChunk(make_shared<Chunk>(p->d.data));
+	else if (p->type == Packet::Type::MAPBLOCK)
+		while (!p->d.atEnd())
+			commitChunk(make_shared<Chunk>(p->d.read<string>()));
 }
 
 void LocalWorld::handlePlayerEntPacket(uptr<PacketView> p) {

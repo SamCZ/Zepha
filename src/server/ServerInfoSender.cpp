@@ -2,7 +2,7 @@
 // Created by aurailus on 03/07/19.
 //
 
-#include "ServerConfig.h"
+#include "ServerInfoSender.h"
 
 #include "game/def/ItemDef.h"
 #include "game/def/BiomeDef.h"
@@ -12,9 +12,9 @@
 #include "server/ServerClient.h"
 #include "game/atlas/asset/AssetType.h"
 
-ServerConfig::ServerConfig(SubgamePtr game) : game(game) {}
+ServerInfoSender::ServerInfoSender(SubgamePtr game) : game(game) {}
 
-void ServerConfig::init() {
+void ServerInfoSender::init() {
 	blockIdentifierList.reserve(game->getDefs().size());
 	for (usize i = 0; i < game->getDefs().size(); i++)
 		blockIdentifierList.push_back(game->getDefs().fromId(i).identifier);
@@ -24,7 +24,7 @@ void ServerConfig::init() {
 		biomeIdentifierList.push_back(game->getBiomes().biomeFromId(i).identifier);
 }
 
-bool ServerConfig::handlePacket(ServerClient& client, PacketView& r) {
+bool ServerInfoSender::handlePacket(ServerClient& client, PacketView& r) {
 	switch (r.type) {
 	default:
 		break;

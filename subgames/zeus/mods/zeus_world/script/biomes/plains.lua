@@ -40,7 +40,7 @@ table.insert(structures, zepha.create_structure({
 }))
 
 table.insert(structures, zepha.create_structure({
-    origin = V(),
+    origin = V(1),
     probability = 0.025,
     layout = {{
         { none, none, none },

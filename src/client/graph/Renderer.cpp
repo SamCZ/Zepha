@@ -39,7 +39,7 @@ Renderer::Renderer(glm::ivec2 win) :
 	
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
-	window.addResizeCallback("renderer", [&](glm::ivec2 win) {
+	lock = window.onResize([&](glm::ivec2 win) {
 		ssao.windowResized(win);
 		blur.windowResized(win);
 		light.windowResized(win);

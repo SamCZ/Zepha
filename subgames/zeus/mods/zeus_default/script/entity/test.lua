@@ -45,10 +45,10 @@ zepha.register_entity("zeus:default:test", {
 --    end, 0)
 --end
 
-if zepha.server then
-    zepha.bind("player_join", function(player)
-        for i = 0, 4 do
-            player.dim:add_entity(V(-145, -32, -30), "zeus:default:test")
-        end
-    end)
-end
+-- if zepha.server then
+--     zepha.bind("player_join", function(player)
+--         for i = 0, 4 do
+--             player.dim:add_entity(V(-145, -32, -30), "zeus:default:test")
+--         end
+--     end)
+-- end

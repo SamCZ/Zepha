@@ -26,8 +26,8 @@ void Mesh::genArrays(usize vboLength, usize iboLength, const void* vertices, con
 	glBufferData(GL_ARRAY_BUFFER, vboLength, vertices, GL_STATIC_DRAW);
 }
 
-void Mesh::createVertexAttrib(u32 offset, u32 size, GLenum type, u32 stride, const void* pointer) {
+void Mesh::createVertexAttrib(u32 offset, u32 size, GLenum type, bool integral, u32 stride, const void* pointer) {
 	glEnableVertexAttribArray(offset);
-	if (type == GL_INT) glVertexAttribIPointer(offset, size, type, stride, pointer);
+	if (integral) glVertexAttribIPointer(offset, size, type, stride, pointer);
 	else glVertexAttribPointer(offset, size, type, GL_FALSE, stride, pointer);
 }

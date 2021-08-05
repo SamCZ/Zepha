@@ -16,17 +16,17 @@ public:
 	
 	/** A single vertex of a ChunkMesh. */
 	struct Vertex {
-		vec3 position;
+		vec3   position;
 		
-		vec2 texCoords;
-		vec3 blendColor;
-		vec2 blendMaskCoords;
+		vec2   texCoords;
+		u8vec3 blendColor;
+		vec2   blendMaskCoords;
 		
-		f32  normal;
-		vec4 light;
+		f32    normal; // packed vec3
+		u8vec4 light;
 		
-		f32  shaderMod;
-		vec3 modValues;
+		u8     shaderMod;
+		u8vec3 modValues;
 	};
 	
 	/** Represents a MeshChunk's underlying mesh. */

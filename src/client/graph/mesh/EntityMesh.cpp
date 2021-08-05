@@ -27,13 +27,13 @@ void EntityMesh::initModel() {
 		&vertices.front(), &indices.front());
 	
 	unsigned int idx = 0;
-	createVertexAttrib(idx++, 3, GL_FLOAT, STRIDE_OFFSET_ENTITY(position));
-	createVertexAttrib(idx++, 4, GL_FLOAT, STRIDE_OFFSET_ENTITY(colorData));
-	createVertexAttrib(idx++, 3, GL_FLOAT, STRIDE_OFFSET_ENTITY(colorBlend));
-	createVertexAttrib(idx++, 1, GL_FLOAT, STRIDE_OFFSET_ENTITY(useTex));
-	createVertexAttrib(idx++, 3, GL_FLOAT, STRIDE_OFFSET_ENTITY(normal));
-	createVertexAttrib(idx++, 4, GL_INT, STRIDE_OFFSET_ENTITY(boneIDs));
-	createVertexAttrib(idx, 4, GL_FLOAT, STRIDE_OFFSET_ENTITY(boneWeights));
+	createVertexAttrib(idx++, 3, GL_FLOAT, false, STRIDE_OFFSET_ENTITY(position));
+	createVertexAttrib(idx++, 4, GL_FLOAT, false, STRIDE_OFFSET_ENTITY(colorData));
+	createVertexAttrib(idx++, 3, GL_FLOAT, false, STRIDE_OFFSET_ENTITY(colorBlend));
+	createVertexAttrib(idx++, 1, GL_FLOAT, false, STRIDE_OFFSET_ENTITY(useTex));
+	createVertexAttrib(idx++, 3, GL_FLOAT, false, STRIDE_OFFSET_ENTITY(normal));
+	createVertexAttrib(idx++, 4, GL_INT, true, STRIDE_OFFSET_ENTITY(boneIDs));
+	createVertexAttrib(idx, 4, GL_FLOAT, false, STRIDE_OFFSET_ENTITY(boneWeights));
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

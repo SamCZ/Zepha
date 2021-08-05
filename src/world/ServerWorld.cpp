@@ -75,7 +75,7 @@ void ServerWorld::update(f64 delta) {
 		let dim = getDimension(data.dim);
 		for (const auto& chunkPair : *data.created) {
 			updatedChunks.insert(ivec4(chunkPair.first, data.dim));
-			dim->setChunk(sptr<Chunk>(chunkPair.second));
+			dim->setChunk(chunkPair.second);
 		}
 		
 		auto mapBlock = dim->getMapBlock(ivec3(data.pos));

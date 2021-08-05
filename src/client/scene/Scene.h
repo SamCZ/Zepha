@@ -13,13 +13,13 @@ public:
 	explicit Scene(Client& client) : client(client) {}
 	
 	/** Called every game loop to update internal state. */
-	virtual void update() = 0;
+	virtual void update() {};
 	
 	/** Called every game loop to draw objects. */
-	virtual void draw() = 0;
+	virtual void draw() {};
 	
 	/** Called when the scene will be destroyed. */
-	virtual void cleanup() = 0;
+	virtual void cleanup() {};
 	
 	virtual ~Scene() = default;
 	

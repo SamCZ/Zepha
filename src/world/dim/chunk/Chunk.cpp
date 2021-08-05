@@ -25,7 +25,10 @@ Chunk::Chunk(ivec3 pos, bool partial) :
 	compressionState(CompressionState::DECOMPRESSED),
 	generationState(partial ? GenerationState::PARTIAL : GenerationState::EMPTY) {}
 
-Chunk::Chunk(ivec3 pos, const string& data) : pos(pos), c(data) {}
+Chunk::Chunk(const string& data) : c(data) {
+	Deserializer raw(data);
+	pos = raw.read<ivec3>();
+}
 
 bool Chunk::setBlock(u16 ind, u16 blk) {
 	useDecompressed();
@@ -89,7 +92,6 @@ string Chunk::compressToString() const {
 }
 
 void Chunk::decompressFromString(const string& data) {
-	
 	Deserializer raw(data);
 	pos = raw.read<ivec3>();
 	

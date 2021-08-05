@@ -4,17 +4,21 @@
 
 #pragma once
 
-#include <map>
+#include <list>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
+#include "util/Types.h"
 
 #include "Input.h"
 
 class Window {
-	public:
+public:
+	using RCBLock = sptr<bool>;
+	
 	Window();
 	
-	Window(glm::ivec2 win);
+	Window(ivec2 win);
 	
 	void update();
 	
@@ -22,11 +26,9 @@ class Window {
 	
 	void swapBuffers();
 	
-	void addResizeCallback(const std::string& identifier, std::function<void(glm::ivec2)> cb);
+	RCBLock onResize(std::function<void(ivec2)> cb);
 	
-	void removeResizeCallback(const std::string& identifier);
-	
-	glm::ivec2 getSize();
+	ivec2 getSize();
 	
 	void setCursorHand(bool hand);
 	
@@ -34,19 +36,20 @@ class Window {
 	
 	Input input;
 	GLFWwindow* mainWindow = nullptr;
-	private:
-	static void scrollCallback(GLFWwindow* window, double xO, double yO);
+
+private:
+	static void scrollCallback(GLFWwindow* window, f64 xO, f64 yO);
 	
-	static void resizeCallback(GLFWwindow* window, int width, int height);
+	static void resizeCallback(GLFWwindow* window, i32 width, i32 height);
 	
 	GLFWcursor* handCursor = nullptr;
 	
-	glm::ivec2 win;
-	glm::ivec2 center;
+	ivec2 win;
+	ivec2 center;
 	
-	bool keys[1024]{};
+	bool keys[1024] {};
 	
-	std::map<std::string, std::function<void(glm::ivec2)>> resizeCallbacks;
+	std::list<std::pair<RCBLock, std::function<void(ivec2)>>> resizeCallbacks {};
 	
 };
 

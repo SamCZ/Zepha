@@ -6,6 +6,7 @@
 
 #include "Scene.h"
 
+#include "client/Window.h"
 #include "client/gui/basic/GuiContainer.h"
 
 class LuaErrorScene : public Scene {
@@ -16,9 +17,9 @@ class LuaErrorScene : public Scene {
 	
 	void draw() override;
 	
-	void cleanup() override;
-	
 	private:
 	GuiContainer components;
 	const std::string err;
+	
+	Window::RCBLock lock;
 };

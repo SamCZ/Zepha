@@ -17,8 +17,6 @@ public:
 	
 	void draw() override;
 	
-	void cleanup() override;
-	
 private:
 	vec<string> perfSections = { "update:mods", "update:world", "update:player", "update:net", "update:chunks",
 		"draw:world", "draw:entities", "draw:interface", "update:debug", "idle" };

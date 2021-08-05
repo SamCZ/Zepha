@@ -25,12 +25,12 @@ MeshChunk::Mesh::Mesh(const vec<Vertex>& vertices, const vec<u32>& indices) {
 	genArrays(vertices.size() * sizeof(Vertex), indices.size() * sizeof(u32), &vertices.front(), &indices.front());
 
 	u32 idx = 0;
-	createVertexAttrib(idx++, 3, GL_FLOAT, STRIDE_OFFSET(Vertex, position));
-	createVertexAttrib(idx++, 2, GL_FLOAT, STRIDE_OFFSET(Vertex, texCoords));
-	createVertexAttrib(idx++, 3, GL_FLOAT, STRIDE_OFFSET(Vertex, blendColor));
-	createVertexAttrib(idx++, 2, GL_FLOAT, STRIDE_OFFSET(Vertex, blendMaskCoords));
-	createVertexAttrib(idx++, 1, GL_FLOAT, STRIDE_OFFSET(Vertex, normal));
-	createVertexAttrib(idx++, 4, GL_FLOAT, STRIDE_OFFSET(Vertex, light));
-	createVertexAttrib(idx++, 1, GL_FLOAT, STRIDE_OFFSET(Vertex, shaderMod));
-	createVertexAttrib(idx,   3, GL_FLOAT, STRIDE_OFFSET(Vertex, modValues));
+	createVertexAttrib(idx++, 3, GL_FLOAT,         false, STRIDE_OFFSET(Vertex, position));
+	createVertexAttrib(idx++, 2, GL_FLOAT,         false, STRIDE_OFFSET(Vertex, texCoords));
+	createVertexAttrib(idx++, 3, GL_UNSIGNED_BYTE, true,  STRIDE_OFFSET(Vertex, blendColor));
+	createVertexAttrib(idx++, 2, GL_FLOAT,         false, STRIDE_OFFSET(Vertex, blendMaskCoords));
+	createVertexAttrib(idx++, 1, GL_FLOAT,         false, STRIDE_OFFSET(Vertex, normal));
+	createVertexAttrib(idx++, 4, GL_UNSIGNED_BYTE, true,  STRIDE_OFFSET(Vertex, light));
+	createVertexAttrib(idx++, 1, GL_UNSIGNED_BYTE, true,  STRIDE_OFFSET(Vertex, shaderMod));
+	createVertexAttrib(idx,   3, GL_UNSIGNED_BYTE, true,  STRIDE_OFFSET(Vertex, modValues));
 }

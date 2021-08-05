@@ -2,11 +2,11 @@
 
 #include "World.h"
 
+#include "client/Window.h"
 #include "client/gui/DebugGui.h"
 #include "world/dim/LocalDimension.h"
 #include "client/conn/ClientNetworkInterpreter.h"
 
-class Window;
 class Renderer;
 class PerfTimer;
 class LocalPlayer;
@@ -27,10 +27,10 @@ public:
 	/** Initializes the world, binding callbacks to the network handler. */
 	void init();
 	
-	/** Sets the player's dimension to the default one, if it exists. TODO: Could this be done in init()? */
+	/** Sets the player's dimension to the default one, if it exists. */
 	bool updatePlayerDimension();
 	
-	/** Updates the dimension and the player, reads incoming packets, and commits decoded chunks. TODO: Decoding all the chunks from the getgo seems unnecessary... */
+	/** Updates the dimension and the player, reads incoming packets, and commits decoded chunks. */
 	void update(f64 delta, vec<usize>& perfTimings, PerfTimer& perf);
 	
 	/** Queues a packet to be read. */
@@ -104,6 +104,8 @@ private:
 	/** A pointer to the active dimension. */
 	sptr<LocalDimension> activeDimension = nullptr;
 	
+	Window::RCBLock lock;
+	
 	/** A reference to the world gen stream. */
-	sptr<WorldInterpolationStream> worldGenStream;
+//	sptr<WorldInterpolationStream> worldGenStream;
 };

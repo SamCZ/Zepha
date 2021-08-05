@@ -1,8 +1,3 @@
-//
-// Generates terrain in the form of MapBlocks.
-// Created by aurailus on 28/01/19.
-//
-
 #pragma once
 
 #include <queue>
@@ -11,9 +6,9 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "util/Vec.h"
 #include "MapGenProps.h"
 #include "NoiseSample.h"
-#include "util/Vec.h"
 #include "util/Voronoi3D.h"
 
 class World;
@@ -32,7 +27,7 @@ public:
 	constexpr static u8 TERP = 4;
 
 	/** A type alias for the type the map of Chunks stored in the Job. */
-	typedef std::unordered_map<ivec3, Chunk*, Vec::ivec3> ChunkMap;
+	typedef std::unordered_map<ivec3, sptr<Chunk>, Vec::ivec3> ChunkMap;
 
 	/**
 	 * A struct representing a single position in a chunk at which sunlight should be updated at.
@@ -208,7 +203,7 @@ private:
 	 * @param hint - An optional parameter that may speed up the function if set to the chunk to set to.
 	 */
 
-	static void setBlock(Job& job, ivec3 worldPos, u16 block, Chunk* hint);
+	static void setBlock(Job& job, ivec3 worldPos, u16 block, sptr<Chunk> hint);
 
 	/**
 	 * Calculates and smooths sunlight for an entire Job's chunks.

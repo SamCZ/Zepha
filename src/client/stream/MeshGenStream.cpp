@@ -57,15 +57,15 @@ std::vector<MeshChunkDetails*> MeshGenStream::update() {
 				
 				
 				j.meshDetails->pos = pos;
-				// TODO: Is it necessary to construct the new chunk in there?
-				j.thisChunk = std::make_unique<Chunk>(Chunk(*chunk));
+				j.detail = glm::distance(vec3 {}, vec3(pos)) <= HIGH_DETAIL_RANGE ?
+					ChunkMeshGenerator::Detail::HIGH : ChunkMeshGenerator::Detail::LOW;
+				j.thisChunk = make_unique<Chunk>(*chunk);
 				
 				int ind = 0;
 				for (const glm::ivec3& dir : Vec::TO_VEC) {
 					std::shared_ptr<Chunk> adjacent = dimension.getChunk(pos + dir);
 					if (!adjacent) goto breakAddTask;
-					// TODO: Here too
-					j.adjacentChunks[ind++] = std::make_unique<Chunk>(Chunk(*adjacent));
+					j.adjacentChunks[ind++] = std::make_unique<Chunk>(*adjacent);
 				}
 				
 				j.busy = true;
@@ -93,7 +93,7 @@ void MeshGenStream::Thread::exec() {
 			assert(u.thisChunk);
 			for (int i = 0; i < u.adjacentChunks.size(); i++) assert(u.adjacentChunks[i]);
 			ChunkMeshGenerator m(u.meshDetails, game.getDefs(), game.getBiomes(),
-				std::move(u.thisChunk), std::move(u.adjacentChunks), offsetSamplers);
+				std::move(u.thisChunk), std::move(u.adjacentChunks), offsetSamplers, u.detail);
 			empty = false;
 			u.busy = false;
 		}
@@ -104,7 +104,8 @@ void MeshGenStream::Thread::exec() {
 
 void MeshGenStream::queue(glm::ivec3 pos, bool priority) {
 	if (!queuedMap.count(pos)) {
-		priority ? queuedTasks.push_front(pos) : queuedTasks.push_back(pos);
+		if (priority) queuedTasks.push_front(pos);
+		else queuedTasks.push_back(pos);
 		queuedMap.insert(pos);
 	}
 }

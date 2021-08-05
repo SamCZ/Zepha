@@ -8,7 +8,7 @@ zepha.register_block(":grass", {
         "tint(0, zeus:default:grass_side_under, zeus:default:grass_side_under_mask)",
         "tint(0, zeus:default:grass_floating)",
     },
-    far_textures = {
+    lowdef_textures = {
         "tint(0, zeus:default:grass_top)",
         "zeus:default:dirt",
         "tint(0, zeus:default:grass_side_ld, zeus:default:grass_side_ld_mask)"

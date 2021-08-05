@@ -34,7 +34,7 @@ LuaErrorScene::LuaErrorScene(Client& client, const std::string& err) : Scene(cli
 	errorText->setPos({ 16, 48 });
 	container->add(errorText);
 	
-	client.renderer.window.addResizeCallback("scene", [&](glm::ivec2 win) {
+	lock = client.renderer.window.onResize([&](glm::ivec2 win) {
 		components.get<GuiRect>("container")->setPos({ win.x / 2 - 800 / 2, win.y / 2 - 500 / 2 });
 	});
 }
@@ -52,8 +52,4 @@ void LuaErrorScene::draw() {
 	renderer.enableTexture(&client.game->textures.atlasTexture);
 	
 	components.draw(renderer);
-}
-
-void LuaErrorScene::cleanup() {
-	client.renderer.window.removeResizeCallback("scene");
 }

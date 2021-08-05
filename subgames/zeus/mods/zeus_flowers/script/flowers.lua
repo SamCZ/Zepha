@@ -22,6 +22,7 @@ for _,flower in pairs(flowers) do
         textures = {
             "zeus:flowers:" .. flower
         },
+        light_propagates = true,
         lowdef_render = false,
         selection_box = {
             {4/16, 0, 4/16, 12/16, 14/16, 12/16}

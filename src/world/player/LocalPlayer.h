@@ -4,6 +4,7 @@
 #include "client/graph/Drawable.h"
 
 #include "util/Target.h"
+#include "client/Window.h"
 #include "client/gui/GameGui.h"
 #include "world/dim/LocalDimension.h"
 #include "client/entity/WireframeEntity.h"
@@ -152,14 +153,6 @@ public:
 	
 	virtual void handleAssertion(Deserializer& d) override;
 	
-	/**
-	 * Removes the resize callback from the callbacks.
-	 * TODO: The resize callbacks should be stored in a shared pointer member, instead of string identified,
-	 * to reduce the chance of forgetting to unbind it, and to not require explicit destructors.
-	 */
-	
-	~LocalPlayer();
-	
 private:
 	
 	/**
@@ -238,5 +231,7 @@ private:
 	
 	/** The actual wield-item model, set to the currently held item. */
 	DrawableEntity handItemModel;
+	
+	Window::RCBLock lock;
 };
 

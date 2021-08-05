@@ -15,7 +15,7 @@
 Server::Server(u16 port, const std::string& subgame) :
 	seed(69),
 	port(port),
-	config(game),
+	infoSender(game),
 	clients(game),
 	handler(port, 32),
 	game(make_shared<ServerSubgame>(subgame, seed)),
@@ -23,7 +23,7 @@ Server::Server(u16 port, const std::string& subgame) :
 	
 	game.s()->init(world);
 	world.s()->init("world");
-	config.init();
+	infoSender.init();
 	
 	std::cout << Log::info << "Server started successfully, listening for clients." << Log::endl;
 	while (alive) update();
@@ -60,7 +60,7 @@ void Server::update() {
 			auto client = static_cast<ServerClient*>(event.peer->data);
 			if (client->player) return playerPacketReceived(p, clients.getClient(client->id)->player);
 			
-			if (config.handlePacket(*client, p)) {
+			if (infoSender.handlePacket(*client, p)) {
 				auto clientShr = clients.getClient(client->id);
 				clients.createPlayer(clientShr, world->getDefaultDimension());
 			}

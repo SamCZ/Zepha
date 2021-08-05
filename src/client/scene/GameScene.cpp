@@ -16,8 +16,8 @@ GameScene::GameScene(Client& client) : Scene(client),
 	client.game->init(world, world.l()->getPlayer(), client);
 	world.l()->updatePlayerDimension();
 	
-//	client.renderer.window.addResizeCallback("gamescene", Util::bind_this(&debugGui, &DebugGui::bufferResized));
 	client.renderer.setClearColor(148, 194, 240);
+//	client.renderer.setClearColor(16, 24, 32);
 	client.renderer.window.input.lockMouse(true);
 }
 
@@ -55,8 +55,4 @@ void GameScene::draw() {
 	world.l()->drawInterface();
 	
 	perf.start("idle");
-}
-
-void GameScene::cleanup() {
-//	client.renderer.window.removeResizeCallback("gamescene");
 }

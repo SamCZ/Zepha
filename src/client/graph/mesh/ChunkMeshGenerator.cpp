@@ -19,7 +19,8 @@
 #include "game/atlas/LocalDefinitionAtlas.h"
 
 ChunkMeshGenerator::ChunkMeshGenerator(MeshChunkDetails* meshDetails, LocalDefinitionAtlas& defs,
-	LocalBiomeAtlas& biomes, uptr<Chunk> chk, array<uptr<Chunk>, 6> adj, array<NoiseSample, 3>& blockOffsets) :
+	LocalBiomeAtlas& biomes, uptr<Chunk> chk, array<uptr<Chunk>, 6> adj, array<NoiseSample, 3>& blockOffsets,
+	Detail detail) :
 	defs(defs),
 	biomes(biomes),
 	chunk(std::move(chk)),
@@ -43,8 +44,8 @@ ChunkMeshGenerator::ChunkMeshGenerator(MeshChunkDetails* meshDetails, LocalDefin
 		if (!biome || biome->index != biomesArr[i])
 			biome = &biomes.biomeFromId(biomesArr[i]);
 		
-		BlockModel& model = block->model;
-		vec3 biomeTint = biome->tint;
+		BlockModel& model = detail == Detail::HIGH ? block->model : block->farModel;
+		u8vec3 biomeTint = u8vec3(biome->tint * 255.f);
 		
 		if (!model.visible) continue;
 		
@@ -96,16 +97,16 @@ u16 ChunkMeshGenerator::getBlockAt(const ivec3& pos) {
 }
 
 u8vec4 ChunkMeshGenerator::getLightAt(const ivec3& pos) {
-//	auto dir = glm::floor(vec3(pos) / 16.f);
-//	if (dir.x != 0 || dir.y != 0 || dir.z != 0) {
-//		u8 ind = static_cast<u8>(Vec::TO_ENUM.at(dir));
-//		return adjacent[ind]->getLight(Space::Block::index(pos));
-//	}
-	return u8vec4 { 0, 0, 0, 15 };
-//	return chunk->getLight(Space::Block::index(pos));
+	auto dir = glm::floor(vec3(pos) / 16.f);
+	if (dir.x != 0 || dir.y != 0 || dir.z != 0) {
+		u8 ind = static_cast<u8>(Vec::TO_ENUM.at(dir));
+		return adjacent[ind]->getLight(Space::Block::index(pos));
+	}
+	return chunk->getLight(Space::Block::index(pos));
 }
 
-void ChunkMeshGenerator::addFaces(const vec3& offset, const vec<MeshPart>& meshParts, const vec3& tint, u8vec4 light) {
+void ChunkMeshGenerator::addFaces(const vec3& offset,
+	const vec<MeshPart>& meshParts, const u8vec3& tint, const u8vec4& light) {
 	for (const MeshPart& mp : meshParts) {
 		vec3 modData = {};
 		
@@ -122,14 +123,14 @@ void ChunkMeshGenerator::addFaces(const vec3& offset, const vec<MeshPart>& meshP
 		}
 		
 		for (const BlockModelVertex& vertex : mp.vertices) {
-			meshDetails->vertices.push_back({
+			meshDetails->vertices.push_back(MeshChunk::Vertex {
 				vertex.pos + offset,
 				vertex.tex,
-				mp.blendInd ? tint : vec3 { 1, 1, 1 },
+				mp.blendInd ? tint : u8vec3(255),
 				mp.blendInd ? vertex.blendMask : vec2 { -1, -1 },
 				Util::packFloat(vertex.nml),
-				glm::vec4(light),
-				static_cast<float>(mp.shaderMod),
+				light,
+				static_cast<u8>(mp.shaderMod),
 				modData
 			});
 		}

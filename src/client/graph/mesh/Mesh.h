@@ -20,7 +20,7 @@ protected:
 	void genArrays(usize vboLength, usize iboLength, const void* vertices, const void* indices);
 	
 	/** Creates a vertex attribute on the VBO. */
-	void createVertexAttrib(u32 offset, u32 size, GLenum type, u32 stride, const void* pointer);
+	void createVertexAttrib(u32 offset, u32 size, GLenum type, bool integral, u32 stride, const void* pointer);
 	
 	usize indCount = 0;
 	u32 VAO = 0, VBO = 0, IBO = 0;

@@ -4,7 +4,7 @@
 #include "world/ServerWorld.h"
 #include "game/ServerSubgame.h"
 #include "util/net/NetHandler.h"
-#include "server/ServerConfig.h"
+#include "server/ServerInfoSender.h"
 #include "server/ServerClients.h"
 #include "world/inv/ServerInventoryRefs.h"
 
@@ -41,8 +41,8 @@ private:
 	/** The network handler, manages client connections. */
 	NetHandler handler;
 	
-	/** Handles passing data to newly connecting clients. TODO: Rename. */
-	ServerConfig config;
+	/** Handles passing data to newly connecting clients. */
+	ServerInfoSender infoSender;
 	
 	/** A list of connected clients. */
 	ServerClients clients;

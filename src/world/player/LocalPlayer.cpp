@@ -25,7 +25,7 @@ LocalPlayer::LocalPlayer(SubgamePtr game, LocalWorld& world, DimensionPtr dim, R
 	
 	handItemModel.parent = &handModel;
 	
-	renderer.window.addResizeCallback("player", [&](glm::ivec2 win) { gameGui.winResized(win); });
+	lock = renderer.window.onResize([&](glm::ivec2 win) { gameGui.winResized(win); });
 }
 
 void LocalPlayer::update(Input& input, f64 delta, vec2 mouseDelta) {
@@ -448,8 +448,4 @@ void LocalPlayer::updateInteract(Input& input, f64 delta) {
 				dim->wieldItemUse(target, static_cast<LocalWorld&>(dim->getWorld()).getPlayer());
 		}
 	}
-}
-
-LocalPlayer::~LocalPlayer() {
-	renderer.window.removeResizeCallback("player");
 }

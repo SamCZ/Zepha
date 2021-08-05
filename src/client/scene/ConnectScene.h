@@ -6,6 +6,7 @@
 
 #include "Scene.h"
 
+#include "client/Window.h"
 #include "client/gui/basic/GuiContainer.h"
 
 class ServerConnection;
@@ -30,8 +31,6 @@ public:
 	
 	void draw() override;
 	
-	void cleanup() override;
-	
 	void handleConnecting();
 	
 private:
@@ -41,4 +40,6 @@ private:
 	GuiContainer components;
 	
 	double dotsTime = 0;
+	
+	Window::RCBLock lock;
 };

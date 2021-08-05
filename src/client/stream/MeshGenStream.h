@@ -8,6 +8,7 @@
 #include <thread>
 #include <glm/vec3.hpp>
 #include <unordered_set>
+#include <client/graph/mesh/ChunkMeshGenerator.h>
 
 #include "util/Vec.h"
 #include "util/CovariantPtr.h"
@@ -36,6 +37,7 @@ public:
 	std::vector<MeshChunkDetails*> update();
 	
 	struct Job {
+		ChunkMeshGenerator::Detail detail;
 		std::unique_ptr<Chunk> thisChunk = nullptr;
 		std::array<std::unique_ptr<Chunk>, 6> adjacentChunks {};
 		
@@ -66,5 +68,7 @@ private:
 	std::array<NoiseSample, 3> noiseSampler;
 	std::deque<glm::ivec3> queuedTasks;
 	std::unordered_set<glm::vec3, Vec::vec3> queuedMap;
+	
+	constexpr const static u8 HIGH_DETAIL_RANGE = 4;
 };
 

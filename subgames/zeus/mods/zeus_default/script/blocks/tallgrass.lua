@@ -6,7 +6,7 @@ for i = 1, 5, 1 do
         solid = false,
         model = "base:cross_plant",
         textures = { "tint(0, zeus:default:tallgrass_"..i..")" },
-        far_render = false,
+        lowdef_render = false,
 
         selection_box = {{1/16, 0, 1/16, 15/16, 0.30 + i * 0.1, 15/16}},
 

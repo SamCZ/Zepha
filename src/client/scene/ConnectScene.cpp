@@ -45,7 +45,7 @@ ConnectScene::ConnectScene(Client& client, Address addr) : Scene(client),
 	
 	connection.attemptConnect(std::move(addr));
 	
-	client.renderer.window.addResizeCallback("scene", [&](glm::ivec2 win) {
+	client.renderer.window.onResize([&](glm::ivec2 win) {
 		components.get<GuiRect>("loadBar")->setPos({ 0, win.y - 32 });
 	});
 }
@@ -244,8 +244,4 @@ void ConnectScene::draw() {
 	renderer.enableTexture(&client.game->textures.atlasTexture);
 	
 	components.draw(renderer);
-}
-
-void ConnectScene::cleanup() {
-	client.renderer.window.removeResizeCallback("scene");
 }

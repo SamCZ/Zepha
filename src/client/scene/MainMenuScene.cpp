@@ -123,7 +123,7 @@ MainMenuScene::MainMenuScene(Client& client) :
 	
 	positionElements();
 	
-	client.renderer.window.addResizeCallback("mainmenu", [&](ivec2 newWin) {
+	lock = client.renderer.window.onResize([&](ivec2 newWin) {
 		win = newWin;
 		sandboxArea = newWin - ivec2(0, 18 * GS);
 		positionElements();
@@ -243,5 +243,4 @@ void MainMenuScene::draw() {
 
 void MainMenuScene::cleanup() {
 	client.renderer.window.setCursorHand(false);
-	client.renderer.window.removeResizeCallback("mainmenu");
 }

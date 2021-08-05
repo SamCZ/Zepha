@@ -81,7 +81,7 @@ public:
 	Chunk(ivec3 pos = { 0, 0, 0 }, bool partial = false);
 	
 	/** Creates a chunk with the compressed data specified. */
-	Chunk(ivec3 pos, const string& data);
+	Chunk(const string& data);
 	
 	/** Returns the position of the chunk. */
 	inline ivec3 getPos() const;
@@ -250,7 +250,7 @@ private:
 	time_t lastUsed = 0;
 	
 	/** The number of non-transparent blocks in the chunk. */
-	u16 renderableBlocks = 0;
+	u16 renderableBlocks = 1; // TODO: Don't hack this.
 
 	/** Internal decompressed chunk data. */
 	uptr<ChunkData> d = nullptr;

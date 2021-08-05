@@ -201,8 +201,8 @@ add_library(Zepha_Core
         server/ServerClient.h
         server/ServerClients.cpp
         server/ServerClients.h
-        server/ServerConfig.cpp
-        server/ServerConfig.h
+        server/ServerInfoSender.cpp
+        server/ServerInfoSender.h
         server/stream/ServerGenStream.cpp
         server/stream/ServerGenStream.h
         server/stream/ServerPacketStream.cpp
