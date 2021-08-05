@@ -1,0 +1,6 @@
+{
+  "name": "minetest:_polyfill",
+  "description": "A Minetest compatibility polyfill for Zepha~",
+  "version": "0.0.1",
+  "depends": ["@aurailus:item_collection", "@aurailus:crafting"]
+}
