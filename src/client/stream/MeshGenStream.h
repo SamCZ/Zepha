@@ -70,5 +70,7 @@ private:
 	std::unordered_set<glm::vec3, Vec::vec3> queuedMap;
 	
 	constexpr const static u8 HIGH_DETAIL_RANGE = 4;
+	
+	FastNoise::SmartNode<> generator;
 };
 

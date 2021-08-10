@@ -144,15 +144,20 @@ table.insert(structures, zepha.create_structure({
 local noise = {
 --     heightmap = runfile(_PATH .. 'world_noise'),
     volume = {
-        module = "scale_bias",
-        scale = 3000,
-        bias = -3500,
+        module = "scale",
+        y_scale = 2,
         source = {
-            module = "scale_point",
-            y_scale = 2,
+            module = "add",
+            scalar = -2200,
             source = {
-                module = "perlin",
-                frequency = 0.1
+                module = "multiply",
+                scalar = 3000,
+                source = {
+                    module = "simplex",
+                    frequency = 0.0025,
+                    octaves = 6,
+                    lacunarity = 2
+                }
             }
         }
     }

@@ -6,31 +6,27 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
-#include <memory>
-#include <glm/glm.hpp>
-#include <libnoise/module/modulebase.h>
+#include <FastNoise/FastNoise.h>
 
 class Structure;
 
 struct BiomeDef {
-	std::string identifier = "";
-	unsigned int index = 0;
-	std::unordered_map<std::string, unsigned short> tags{};
+	u32 index = 0;
+	string identifier = "";
+	std::unordered_map<string, u16> tags {};
 	
-	float temperature = 0;
-	float humidity = 0;
-	float roughness = 0;
+	f32 temperature = 0;
+	f32 humidity = 0;
+	f32 roughness = 0;
 	
-	unsigned int topBlock = 0;
-	unsigned int soilBlock = 0;
-	unsigned int rockBlock = 0;
+	u16 topBlock = 0;
+	u16 soilBlock = 0;
+	u16 rockBlock = 0;
 	
-	std::vector<noise::module::Module*> heightmap;
-	std::vector<noise::module::Module*> volume;
+	FastNoise::SmartNode<> heightmap;
+	FastNoise::SmartNode<> volume;
 	
-	std::vector<std::shared_ptr<Structure>> schematics;
+	vec<sptr<Structure>> schematics;
 	
-	glm::vec3 tint {};
+	vec3 tint {};
 };

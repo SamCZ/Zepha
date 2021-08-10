@@ -8,7 +8,6 @@
 #include "world/LocalWorld.h"
 #include "game/def/BlockDef.h"
 #include "util/net/NetField.h"
-#include "lua/usertype/Player.h"
 #include "lua/usertype/Target.h"
 #include "client/graph/Renderer.h"
 #include "world/dim/chunk/Chunk.h"

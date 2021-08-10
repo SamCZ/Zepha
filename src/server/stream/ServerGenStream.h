@@ -17,8 +17,8 @@ class ServerSubgame;
 
 class ServerGenStream {
 public:
-	static const usize THREADS = 6;
-	static const usize THREAD_QUEUE_SIZE = 6;
+	static const usize THREADS = 4;
+	static const usize THREAD_QUEUE_SIZE = 16;
 	
 	struct FinishedJob {
 		FinishedJob(u16 dim, ivec3 pos, uptr<MapGen::ChunkMap> created) :

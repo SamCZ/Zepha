@@ -21,10 +21,10 @@ class DefinitionAtlas;
 class MapGen {
 public:
 	/** The precision of the Biome map, as a divisor of the chunk size. */
-	constexpr static u8 BIOP = 4;
+//	constexpr static u8 BIOP = 4;
 
 	/** The precision of the Terrain maps, as a divisor of the chunk size. */
-	constexpr static u8 TERP = 4;
+//	constexpr static u8 TERP = 4;
 
 	/** A type alias for the type the map of Chunks stored in the Job. */
 	typedef std::unordered_map<ivec3, sptr<Chunk>, Vec::ivec3> ChunkMap;
@@ -55,16 +55,20 @@ public:
 
 		Job(ivec3 pos, u16 size) :
 			pos(pos), size(size),
-			volume {{ size * TERP, (size + 1) * TERP }, { 1, 1.25 }}, heightmap {{ size * TERP, 0 }},
-			temperature {{ size * BIOP, 0 }}, roughness {{ size * BIOP, 0 }}, humidity {{ size * BIOP, 0 }} {}
+			volume(u16vec3(size * 16), 4),
+			heightmap(u16vec2(size * 16), 4),
+			
+			temperature(u16vec2(size * 16), 4),
+			humidity(u16vec2(size * 16), 4),
+			roughness(u16vec2(size * 16), 4) {}
 
 		ivec3 pos {};
 		u16 size {};
 
 		uptr<ChunkMap> chunks = make_unique<ChunkMap>();
 		std::queue<SunlightNode> sunlightQueue {};
-
-		NoiseSample volume, heightmap;
+		
+		NoiseSample heightmap, volume;
 		NoiseSample temperature, humidity, roughness;
 	};
 
@@ -218,6 +222,8 @@ private:
 
 	constexpr const static u16 voronoiSize = 64;
 	Voronoi3D voronoi { voronoiSize };
+	
+	FastNoise::SmartNode<> biomeGenerator;
 
 	Subgame& game;
 	World& world;

@@ -66,21 +66,18 @@ namespace RegisterBiome {
 			if (!biomeTint) throw identifier + "biome definitions require a biome_tint";
 			
 			// Get noise parameters
+			let constGenerator = FastNoise::New<FastNoise::Constant>();
+			constGenerator->SetValue(0);
+			FastNoise::SmartNode<> heightmap = constGenerator, volume = constGenerator;
+			
 			auto noiseList = biomeTable.get<sol::optional<sol::table>>("noise");
-			std::vector<noise::module::Module*> volumeModules, heightmapModules;
 			
 			if (noiseList) {
-				if (noiseList->get<sol::optional<sol::table>>("heightmap"))
-					NoiseFromLua::parseNoise(heightmapModules, noiseList->get<sol::table>("heightmap"));
-				else heightmapModules.push_back(new noise::module::Const);
+				let heightTable = noiseList->get<sol::optional<sol::table>>("heightmap");
+				if (heightTable) heightmap = NoiseFromLua::parse(*heightTable);
 				
-				if (noiseList->get<sol::optional<sol::table>>("volume"))
-					NoiseFromLua::parseNoise(volumeModules, noiseList->get<sol::table>("volume"));
-				else volumeModules.push_back(new noise::module::Const);
-			}
-			else {
-				volumeModules.push_back(new noise::module::Const);
-				heightmapModules.push_back(new noise::module::Const);
+				let volumeTable = noiseList->get<sol::optional<sol::table>>("volume");
+				if (volumeTable) volume = NoiseFromLua::parse(*volumeTable);
 			}
 			
 			std::vector<std::shared_ptr<Structure>> schematics {};
@@ -103,8 +100,8 @@ namespace RegisterBiome {
 			biomeDef->soilBlock = defs.blockFromStr(*bSoil).index;
 			biomeDef->rockBlock = defs.blockFromStr(*bRock).index;
 			
-			biomeDef->heightmap = heightmapModules;
-			biomeDef->volume = volumeModules;
+			biomeDef->heightmap = heightmap;
+			biomeDef->volume = volume;
 			
 			biomeDef->schematics = schematics;
 			

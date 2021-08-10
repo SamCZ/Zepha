@@ -57,15 +57,15 @@ ChunkMeshGenerator::ChunkMeshGenerator(MeshChunkDetails* meshDetails, LocalDefin
 			default: break;
 			
 			case MeshMod::OFFSET_X:
-				vis.x += blockOffsets[0].get(vec3(off) / 16.f) * mod.second;
+//				vis.x += blockOffsets[0][vec3(off) / 16.f] * mod.second;
 				break;
 			
 			case MeshMod::OFFSET_Y:
-				vis.y += blockOffsets[1].get(vec3(off) / 16.f) * mod.second;
+//				vis.y += blockOffsets[1][vec3(off) / 16.f] * mod.second;
 				break;
 				
 			case MeshMod::OFFSET_Z:
-				vis.z += blockOffsets[2].get(vec3(off) / 16.f) * mod.second;
+//				vis.z += blockOffsets[2][vec3(off) / 16.f] * mod.second;
 				break;
 			}
 		}
@@ -97,12 +97,13 @@ u16 ChunkMeshGenerator::getBlockAt(const ivec3& pos) {
 }
 
 u8vec4 ChunkMeshGenerator::getLightAt(const ivec3& pos) {
-	auto dir = glm::floor(vec3(pos) / 16.f);
-	if (dir.x != 0 || dir.y != 0 || dir.z != 0) {
-		u8 ind = static_cast<u8>(Vec::TO_ENUM.at(dir));
-		return adjacent[ind]->getLight(Space::Block::index(pos));
-	}
-	return chunk->getLight(Space::Block::index(pos));
+//	auto dir = glm::floor(vec3(pos) / 16.f);
+//	if (dir.x != 0 || dir.y != 0 || dir.z != 0) {
+//		u8 ind = static_cast<u8>(Vec::TO_ENUM.at(dir));
+//		return adjacent[ind]->getLight(Space::Block::index(pos));
+//	}
+//	return chunk->getLight(Space::Block::index(pos));
+	return { 0, 0, 0, 15 };
 }
 
 void ChunkMeshGenerator::addFaces(const vec3& offset,

@@ -57,13 +57,17 @@ std::shared_ptr<GuiComponent> GuiBuilder::createComponent(LuaGuiElement& elem, g
 		c = body;
 		break;
 	}
-	case Util::hash("Rect"):c = GuiRect::fromSerialized(elem, textures, bounds);
+	case Util::hash("Rect"):
+		c = GuiRect::fromSerialized(elem, textures, bounds);
 		break;
-	case Util::hash("Button"):c = GuiImageButton::fromSerialized(elem, textures, bounds);
+	case Util::hash("Button"):
+		c = GuiImageButton::fromSerialized(elem, textures, bounds);
 		break;
-	case Util::hash("Text"):c = GuiText::fromSerialized(elem, textures, bounds);
+	case Util::hash("Text"):
+		c = GuiText::fromSerialized(elem, textures, bounds);
 		break;
-	case Util::hash("Model"):c = GuiModel::fromSerialized(elem, textures, models, bounds);
+	case Util::hash("Model"):
+		c = GuiModel::fromSerialized(elem, textures, models, bounds);
 		break;
 	}
 	

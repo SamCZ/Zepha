@@ -48,6 +48,7 @@ include_directories(
     ${ENET_HEADERS}
     ${NOISE_HEADERS}
     ${PTHREAD_HEADERS}
+    lib/fastnoise2/include
     lib/catch2/include
     lib/gzip/include
     lib/cute_files/include
@@ -105,6 +106,11 @@ else()
     target_compile_options(assimp PRIVATE -w)
     target_link_libraries(${MAIN_EXEC_NAME} assimp)
 endif()
+
+# Build and Link FastNoise2
+
+add_subdirectory(lib/fastnoise2)
+target_link_libraries(${MAIN_EXEC_NAME} FastNoise)
 
 # Link Lua 5.3.5
 find_library(LUA_LIB NAMES lua lua5.3)

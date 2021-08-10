@@ -21,6 +21,21 @@ namespace Space {
 	const static i16f MAPBLOCK_CHUNK_LENGTH = MAPBLOCK_SIZE;
 	const static i16f REGION_CHUNK_LENGTH = MAPBLOCK_CHUNK_LENGTH * REGION_SIZE;
 	
+	// Get the index of a position vector in a cube.
+	static inline u32 posToIndex(const ivec3& pos, const u32 size) {
+		return pos.x + size * (pos.z + size * pos.y);
+	}
+	
+	// Return a position vector from an index of a cube.
+	static inline ivec3 indexToPos(u32 ind, const u32 size) {
+		ivec3 vec {};
+		vec.y = ind / pow(size, 2);
+		ind -= static_cast<u32>(vec.y) * pow(size, 2);
+		vec.z = ind / size;
+		vec.x = ind % size;
+		return vec;
+	}
+	
 	// Private helper methods
 	namespace {
 		inline u16vec3 localFromGlobal(const ivec3& pos, i16 size) {
@@ -86,8 +101,7 @@ namespace Space {
 		
 		// Get the index of a MapBlock within its Region from its local or world position.
 		static inline u16 index(const ivec3& vec) {
-			u8vec3 local = MapBlock::relative::toRegion(vec);
-			return local.x + REGION_SIZE * (local.y + REGION_SIZE * local.z);
+			return Space::posToIndex(MapBlock::relative::toRegion(vec), REGION_SIZE);
 		}
 	}
 	
@@ -123,20 +137,12 @@ namespace Space {
 		
 		// Get the index of a Chunk within its MapBlock from its local or world position.
 		static inline u16 index(const glm::ivec3& vec) {
-			u8vec3 local = Chunk::relative::toMapBlock(vec);
-			return local.x + MAPBLOCK_SIZE * (local.z + MAPBLOCK_SIZE * local.y);
+			return Space::posToIndex(Chunk::relative::toMapBlock(vec), MAPBLOCK_SIZE);
 		}
 		
 		// Return a local vector of an chunk within its mapblock.
 		static inline ivec3 fromIndex(u16 ind) {
-			u8vec3 vec {};
-			
-			vec.y = ind / (MAPBLOCK_SIZE * MAPBLOCK_SIZE);
-			ind -= (static_cast<int>(vec.y) * MAPBLOCK_SIZE * MAPBLOCK_SIZE);
-			vec.z = ind / MAPBLOCK_SIZE;
-			vec.x = ind % MAPBLOCK_SIZE;
-			
-			return vec;
+			return Space::indexToPos(ind, MAPBLOCK_SIZE);
 		}
 	}
 	
@@ -177,20 +183,12 @@ namespace Space {
 		
 		// Get the index of a Block within its Chunk from its local or world position.
 		static inline u16 index(const ivec3& vec) {
-			u8vec3 local = Block::relative::toChunk(vec);
-			return local.x + CHUNK_SIZE * (local.z + CHUNK_SIZE * local.y);
+			return Space::posToIndex(Block::relative::toChunk(vec), CHUNK_SIZE);
 		}
 		
 		// Return a local vector of an block within its chunk.
 		static inline u8vec3 fromIndex(u16 ind) {
-			u8vec3 vec {};
-			
-			vec.y = ind / (CHUNK_SIZE * CHUNK_SIZE);
-			ind -= (static_cast<int>(vec.y) * CHUNK_SIZE * CHUNK_SIZE);
-			vec.z = ind / CHUNK_SIZE;
-			vec.x = ind % CHUNK_SIZE;
-			
-			return vec;
+			return Space::indexToPos(ind, CHUNK_SIZE);
 		}
 	}
 }

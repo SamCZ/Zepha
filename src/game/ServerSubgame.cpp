@@ -15,7 +15,7 @@ ServerSubgame::ServerSubgame(const string& subgame, usize seed) :
 	lua(make_unique<ServerLuaParser>(*this)) {
 	
 	if (subgame.empty()) throw std::runtime_error("No subgame specified.");
-	else if (!cf_file_exists(subgamePath.data())) throw std::runtime_error("Subgame does not exist.");
+	if (!cf_file_exists(subgamePath.data())) throw std::runtime_error("Subgame does not exist.");
 }
 
 void ServerSubgame::init(WorldPtr world) {

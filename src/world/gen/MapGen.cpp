@@ -26,6 +26,18 @@ MapGen::MapGen(Subgame& game, World& world, u32 seed, std::unordered_set<string>
 	}
 
 	generateVoronoi(biomeIndices);
+	
+	let biomePerlin = FastNoise::New<FastNoise::Simplex>();
+	
+	let biomeScale = FastNoise::New<FastNoise::DomainScale>();
+	biomeScale->SetSource(biomePerlin);
+	biomeScale->SetScale(1/1000.f);
+	
+	let biomeFractal = FastNoise::New<FastNoise::FractalFBm>();
+	biomeFractal->SetSource(biomeScale);
+	biomeFractal->SetOctaveCount(4);
+	
+	biomeGenerator = biomeFractal;
 }
 
 [[maybe_unused]] uptr<MapGen::ChunkMap> MapGen::generateChunk(u16 dim, ivec3 pos) {
@@ -39,50 +51,29 @@ uptr<MapGen::ChunkMap> MapGen::generateMapBlock(u16 dim, ivec3 pos) {
 std::unique_ptr<MapGen::ChunkMap> MapGen::generateArea(u16 dim, ivec3 origin, u16 size) {
 	Job job(origin, size);
 
-	// Build Biome Prop Maps
-
-	const auto fill = [&](const noise::module::Module& s) {
-		return [&](vec3 pos) {
-			vec3 worldPos = vec3(job.pos) + pos * static_cast<f32>(job.size);
-			return s.GetValue(worldPos.x, 0, worldPos.z);
-		};
-	};
-
-	job.temperature.populate(fill(props.temperature));
-	job.roughness.populate(fill(props.roughness));
-	job.humidity.populate(fill(props.humidity));
-
-	// Generate Biome Topmap
-
-	vec<u16> biomeMap {};
-	biomeMap.resize((job.size * 16 + 1) * (job.size * 16 + 1));
-
-	for (usize i = 0; i < biomeMap.size(); i++) {
-		vec3 indPos = { i / (job.size * 16 + 1), 0, i % (job.size * 16 + 1) };
-		vec3 queryPos = indPos / 16.f / static_cast<f32>(job.size);
-
-		biomeMap[i] = getBiomeAt(job.temperature.get(queryPos),
-			job.humidity.get(queryPos), job.roughness.get(queryPos));
+	job.temperature.generate({ job.pos.x * 16, 0, job.pos.z * 16 }, biomeGenerator);
+	job.roughness.generate({ job.pos.x * 16, 0, job.pos.z * 16 }, biomeGenerator);
+	job.humidity.generate({ job.pos.x * 16, 0, job.pos.z * 16 }, biomeGenerator);
+	
+	let biomeMap = vec<u16>(pow(job.size * 16 + 1, 2));
+	u16vec3 bPos {};
+	for (bPos.x = 0; bPos.x < job.size * 16 + 1; bPos.x++) {
+		for (bPos.z = 0; bPos.z < job.size * 16 + 1; bPos.z++) {
+			biomeMap[bPos.z * (job.size * 16 + 1 ) + bPos.x] =
+				getBiomeAt(job.temperature[bPos], job.humidity[bPos], job.roughness[bPos]);
+		}
 	}
-
-	// Generate Heightmap and Volume
-
-	job.heightmap.populate([&](vec3 pos) {
-		ivec3 blockPos = ivec3(pos * 16.f * static_cast<f32>(job.size));
-		auto& biome = game.getBiomes().biomeFromId(biomeMap.at(blockPos.x * (job.size * 16 + 1) + blockPos.z));
-		vec3 worldPos = vec3(job.pos) + pos * static_cast<f32>(job.size);
-		return biome.heightmap[biome.heightmap.size() - 1]->GetValue(worldPos.x, 0, worldPos.z);
+	
+	job.heightmap.fill([&](ivec3 pos) {
+		return game.getBiomes().biomeFromId(biomeMap[pos.z * (job.size * 16 + 1) + pos.x])
+			.heightmap->GenSingle2D(job.pos.x * 16 + pos.x, job.pos.z * 16 + pos.z, 1337);
 	});
-
-	job.volume.populate([&](vec3 pos) {
-		ivec3 blockPos = ivec3(pos * 16.f * static_cast<f32>(job.size));
-		auto& biome = game.getBiomes().biomeFromId(biomeMap.at(blockPos.x * (job.size * 16 + 1) + blockPos.z));
-		vec3 worldPos = vec3(job.pos) + pos * static_cast<f32>(job.size);
-		return biome.volume[biome.volume.size() - 1]->GetValue(worldPos.x, worldPos.y, worldPos.z);
+	
+	job.volume.fill([&](ivec3 pos) {
+		return game.getBiomes().biomeFromId(biomeMap[pos.z * (job.size * 16 + 1) + pos.x])
+			.volume->GenSingle3D(job.pos.x * 16 + pos.x, job.pos.y * 16 + pos.y, job.pos.z * 16 + pos.z, 1337);
 	});
-
-	// Generate Chunks
-
+	
 	i16vec3 pos {};
 	for (pos.x = 0; pos.x < job.size; pos.x++) {
 		for (pos.z = 0; pos.z < job.size; pos.z++) {
@@ -104,7 +95,7 @@ std::unique_ptr<MapGen::ChunkMap> MapGen::generateArea(u16 dim, ivec3 origin, u1
 		}
 	}
 	
-	propogateSunlightNodes(job);
+//	propogateSunlightNodes(job);
 	
 	for (let& chunk : *job.chunks) {
 		chunk.second->compress();
@@ -138,12 +129,12 @@ u16 MapGen::getBiomeAt(f32 temperature, f32 humidity, f32 roughness) {
 
 uptr<MapGen::ChunkData> MapGen::populateChunkDensity(MapGen::Job& job, ivec3 localPos) {
 	auto data = make_unique<ChunkData>();
-
+	
 	for (u16 i = 0; i < 4096; i++) {
 		ivec3 indPos = Space::Block::fromIndex(i);
-		vec3 queryPos = (vec3(localPos) + vec3(indPos) / 16.f) / static_cast<f32>(job.size);
-		(*data)[i] = (job.volume.get(queryPos) + job.heightmap.get({ queryPos.x, 0, queryPos.z }))
-			- ((job.pos.y + localPos.y) * 16 + indPos.y);
+		let ind3d = localPos * 16 + indPos;
+		let ind2d = (localPos.z * 16 + indPos.z) * (job.size * 16) + (localPos.x * 16 + indPos.x);
+		(*data)[i] = (job.heightmap[ind2d]) + (job.volume[ind3d]) - ((job.pos.y + localPos.y) * 16 + indPos.y);
 	}
 
 	return data;
@@ -191,7 +182,7 @@ void MapGen::generateChunkBlocks(Job& job, ivec3 localPos, vec<u16> biomeMap, Ch
 	for (u16 i = 0; i < 4096; i++) {
 		ivec3 indPos = Space::Block::fromIndex(i);
 
-		u16 biomeId = biomeMap[(localPos.x * 16 + indPos.x) * (job.size * 16 + 1) + (localPos.z * 16 + indPos.z)];
+		u16 biomeId = biomeMap[(localPos.z * 16 + indPos.z) * (job.size * 16 + 1) + (localPos.x * 16 + indPos.x)];
 		auto& biome = game.getBiomes().biomeFromId(biomeId);
 		chunk.d->biomes[i] = biomeId;
 
@@ -225,11 +216,10 @@ void MapGen::generateChunkDecorAndLight(Job& job, ivec3 localPos, vec<u16> biome
 		job.chunks->count(abovePos) ? job.chunks->at(abovePos) : nullptr : nullptr;
 
 	for (u16 i = 0; i < 256; i++) {
-		ivec3 indPos = { i / 16, 15, i % 16 };
-
-		u16 biomeID = biomeMap[(localPos.x * 16 + indPos.x)
-			* (job.size * 16 + 1) + (localPos.z * 16 + indPos.z)];
-		auto& biome = game.getBiomes().biomeFromId(biomeID);
+		ivec3 indPos { i / 16, 15, i % 16 };
+		
+		u16 biomeId = biomeMap[(localPos.z * 16 + indPos.z) * (job.size * 16 + 1) + (localPos.x * 16 + indPos.x)];
+		auto& biome = game.getBiomes().biomeFromId(biomeId);
 
 		i16 schemID = -1;
 		for (u16 j = 0; j < biome.schematics.size(); j++) {

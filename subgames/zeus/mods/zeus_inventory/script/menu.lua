@@ -9,8 +9,8 @@ local menu = zepha.build_gui(function()
         Gui.Rect {
             key = "inventory",
             position = { pc(50), pc(50) },
-            position_anchor = { pc(50), pc(55) },
-            size = { 237, 187 },
+            position_anchor = { pc(50), pc(50) },
+            size = { 342, 187 },
 
             Gui.Rect {
                 key = "backpack",
@@ -64,9 +64,25 @@ local menu = zepha.build_gui(function()
                 }
             },
             Gui.Rect {
+                key = "player_frame",
+                position = { 105, 0 },
+                size = { 106, 187 },
+                background = "zeus:inventory:player_frame",
+
+                Gui.Model {
+                    position = { 52, 150 },
+                    scale = { 64, 64 },
+
+                    type = "model",
+                    source = "zeus:default:player",
+                    texture = "zeus:default:player",
+                    anim_range = { 0, 100 }
+                }
+            },
+            Gui.Rect {
                 key = "equipment",
 
-                position = { 106, 1 },
+                position = { 209, 1 },
                 size = { 132, 80 },
                 padding = { 18, 8, 8, 8 },
                 background = "zeus:inventory:equipment",
@@ -76,23 +92,13 @@ local menu = zepha.build_gui(function()
 
                     position = { 41, 1 },
                     size = { 34, 52 },
-                    overflow = "hidden",
-
-                    Gui.Model {
-                        position = { 15, 52 },
-                        scale = { 28, 28 },
-
-                        type = "model",
-                        source = "zeus:default:player",
-                        texture = "zeus:default:player",
-                        anim_range = { 0, 100 }
-                    }
+                    overflow = "hidden"
                 }
             },
             Gui.Rect {
                 key = "dynamic",
 
-                position = { 106, 80 },
+                position = { 209, 80 },
                 size = { 132, 107 },
                 padding = { 8, 8, 8, 8 },
                 background = "zeus:inventory:dynamic",
