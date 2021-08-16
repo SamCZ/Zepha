@@ -66,23 +66,29 @@ void ServerWorld::update(f64 delta) {
 	refs->update();
 	
 	u32 genCount = 0;
-	std::unordered_set<ivec4, Vec::ivec4> updatedChunks {};
 	
 	auto finishedGen = genStream->update();
+	std::unordered_set<ivec4, Vec::ivec4> chunksDirtied {};
 
 	Timer t("Finishing Generation");
 	for (auto& data : *finishedGen) {
 		let dim = getDimension(data.dim);
+		
 		for (const auto& chunkPair : *data.created) {
-			updatedChunks.insert(ivec4(chunkPair.first, data.dim));
 			dim->setChunk(chunkPair.second);
+			let chunkMapBlockPos = Space::MapBlock::world::fromChunk(chunkPair.first);
+			if (chunkMapBlockPos != data.pos) {
+				let chunkMapBlock = dim->getMapBlock(chunkMapBlockPos);
+				if (chunkMapBlock->generated) chunksDirtied.insert(ivec4(chunkPair.first, data.dim));
+			}
 		}
 		
-		auto mapBlock = dim->getMapBlock(ivec3(data.pos));
+		
+		let mapBlock = dim->getMapBlock(ivec3(data.pos));
+		assert(mapBlock);
 		
 		if (!mapBlock->generated) {
 			mapBlock->generated = true;
-			assert(mapBlock);
 
 			Serializer s {};
 			for (u16 i = 0; i < 64; i++) {
@@ -102,50 +108,32 @@ void ServerWorld::update(f64 delta) {
 			totalGens++;
 		}
 	}
-	if (!finishedGen->empty()) {
-		t.printElapsedMs();
-		std::cout << totalGens << std::endl;
-	}
-	
-//	auto finishedPackets = packetStream->update();
-//	if (finishedPackets->size()) std::cout << finishedPackets->size() << " finished packets" << std::endl;
-//	for (auto& data : *finishedPackets) {
-//		for (auto& client : clients.getClients()) {
-//			if (!client.second->player) continue;
-//			data->packet->sendTo(client.second->peer, Packet::Channel::WORLD);
-//		}
-//	}
 	
 	generatedMapBlocks = genCount;
 
-//    for (auto& chunkPos : updatedChunks) {
-//    	std::cout << Util::toString(chunkPos) << std::endl;
-//        ivec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunkPos);
-//        auto dim = getDimension(chunkPos.w);
-//        auto chunk = dim->getChunk(ivec3(chunkPos));
-//
-//        assert(chunk != nullptr);
-//
-////        bool sentAlready = false;
-////        for (auto& mapBlock : generatedMapBlocks) if (mapBlock == mapBlockPos) { sentAlready = true; break; }
-////        if (sentAlready) continue;
-//
-//        Packet p(Packet::Type::CHUNK);
-//        p.data = chunk->compress();
-//
-//        for (auto& client : clients.getClients()) {
-//            if (!client.second->player) continue;
-//
+	for (auto& chunkPos : chunksDirtied) {
+        ivec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunkPos);
+        auto dim = getDimension(chunkPos.w);
+        auto chunk = dim->getChunk(ivec3(chunkPos));
+        assert(chunk);
+
+        Packet p(Packet::Type::CHUNK);
+        p.data = chunk->compressToString();
+
+        for (auto& client : clients.getClients()) {
+            if (!client.second->player) continue;
+//            std::cout << "dirtied" << chunk->getPos() << std::endl;
+
 //            auto myChunk = Space::Chunk::world::fromBlock(client.second->player->getPos());
-//
+
 //            std::pair<ivec3, ivec3> bounds = {
 //                {myChunk.x - activeChunkRange.x, myChunk.y - activeChunkRange.y, myChunk.z - activeChunkRange.x},
 //                {myChunk.x + activeChunkRange.x, myChunk.y + activeChunkRange.y, myChunk.z + activeChunkRange.x}};
-//
-////            if (isInBounds(chunkPos, bounds))
-//            p.sendTo(client.second->peer, Packet::Channel::WORLD);
-//        }
-//    }
+
+//            if (isInBounds(chunkPos, bounds))
+            p.sendTo(client.second->peer, Packet::Channel::WORLD);
+        }
+    }
 	
 	Packet r = Serializer().append(generatedMapBlocks).packet(Packet::Type::SERVER_INFO);
 	
@@ -178,7 +166,6 @@ void ServerWorld::update(f64 delta) {
 		}
 		
 		// Update clients with removed entities.
-		
 		Serializer rem;
 		rem.append(ind);
 		for (i64 entity : dimension->getRemovedEntities()) rem.append<i64>(entity);
@@ -240,32 +227,29 @@ void ServerWorld::sendChunksToPlayer(ServerPlayer& client) {
 	ivec3 playerPos = Space::MapBlock::world::fromBlock(client.getPos());
 	ivec3 lastPlayerPos = Space::MapBlock::world::fromBlock(client.lastPos);
 	
-	Bounds newBounds = { playerPos - ivec3{ sendRange.x, sendRange.y, sendRange.x },
-		playerPos + ivec3{ sendRange.x, sendRange.y, sendRange.x }};
-	Bounds oldBounds = { lastPlayerPos - ivec3{ sendRange.x, sendRange.y, sendRange.x },
-		lastPlayerPos + ivec3{ sendRange.x, sendRange.y, sendRange.x }};
+	Bounds newBounds = { playerPos - ivec3 { sendRange.x, sendRange.y, sendRange.x },
+		playerPos + ivec3 { sendRange.x, sendRange.y, sendRange.x }};
+	Bounds oldBounds = { lastPlayerPos - ivec3 { sendRange.x, sendRange.y, sendRange.x },
+		lastPlayerPos + ivec3 { sendRange.x, sendRange.y, sendRange.x }};
 	
 	for (auto& pos : generateOrder) {
 		if (oldBounds.intersects(playerPos + pos) || !newBounds.intersects(playerPos + pos)) continue;
-//		packetStream->queue(client.getDim()->getInd(), pos + playerPos);
 		
-//		auto dim = client.getDim();
-//		std::cout << dim->getInd() << std::endl;
-//		auto mb = dim->getMapBlock(pos);
-//		std::cout << mb << std::endl;
-//		if (!mb) return;
-//		Serializer s {};
-//		for (u16 i = 0; i < 64; i++) {
-//			auto chunk = mb->get(i);
-//			if (chunk) s.append(chunk->compressToString());
-//		}
-//
-//		let packet = make_unique<Packet>(Packet::Type::MAPBLOCK);
-//
-//		for (auto& client : clients.getClients()) {
-//			if (!client.second->player) continue;
-//			packet->sendTo(client.second->peer, Packet::Channel::WORLD);
-//		}
+		auto dim = client.getDim();
+		auto mb = dim->getMapBlock(playerPos + pos);
+		if (!mb) return;
+//		std::cout << "sending " << pos << " to " << client.getId() << std::endl;
+		Serializer s {};
+		for (u16 i = 0; i < 64; i++) {
+			auto chunk = mb->get(i);
+			if (chunk) s.append(chunk->compressToString());
+		}
+		let packet = s.packet(Packet::Type::MAPBLOCK);
+
+		for (auto& client : clients.getClients()) {
+			if (!client.second->player) continue;
+			packet.sendTo(client.second->peer, Packet::Channel::WORLD);
+		}
 	}
 }
 

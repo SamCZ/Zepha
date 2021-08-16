@@ -19,26 +19,6 @@ local structures = {}
 --    layout = {{{ "zeus:flowers:flower_geranium" }}}
 -- }))
 
-for i = 1, 5 do
-   table.insert(structures, zepha.create_structure({
-       origin = V(),
-       probability = 0.1,
-       layout = {{{ "zeus:default:tall_grass_" .. tostring(i) }}}
-   }))
-end
---
-table.insert(structures, zepha.create_structure({
-   origin = V(),
-   probability = 0.025,
-   layout = {{{ "zeus:flowers:flower_geranium" }}}
-}))
-
-table.insert(structures, zepha.create_structure({
-   origin = V(),
-   probability = 0.025,
-   layout = {{{ "zeus:flowers:flower_white_dandelion" }}}
-}))
-
 table.insert(structures, zepha.create_structure({
     origin = V(1),
     probability = 0.025,
@@ -141,26 +121,70 @@ table.insert(structures, zepha.create_structure({
   }
 }))
 
+for i = 1, 5 do
+   table.insert(structures, zepha.create_structure({
+       origin = V(),
+       probability = 0.1,
+       layout = {{{ "zeus:default:tall_grass_" .. tostring(i) }}}
+   }))
+end
+--
+table.insert(structures, zepha.create_structure({
+   origin = V(),
+   probability = 0.025,
+   layout = {{{ "zeus:flowers:flower_geranium" }}}
+}))
+
+table.insert(structures, zepha.create_structure({
+   origin = V(),
+   probability = 0.025,
+   layout = {{{ "zeus:flowers:flower_white_dandelion" }}}
+}))
+
 local noise = {
---     heightmap = runfile(_PATH .. 'world_noise'),
-    volume = {
-        module = "scale",
-        y_scale = 2,
-        source = {
-            module = "add",
-            scalar = -2200,
-            source = {
-                module = "multiply",
-                scalar = 3000,
+    heightmap = {
+        module = "add",
+        sources = {
+            runfile(_PATH .. 'world_noise'),
+            {
+                module = "max",
+                scalar = 0,
                 source = {
-                    module = "simplex",
-                    frequency = 0.0025,
-                    octaves = 6,
-                    lacunarity = 2
+                    module = "add",
+                    scalar = -150,
+                    source = {
+                        module = "multiply",
+                        scalar = 400,
+                        source = {
+                            module = "simplex",
+                            frequency = 0.00025,
+                            lacunarity = 2.5,
+                            octaves = 8,
+                            persistence = 0.55
+                        }
+                    }
                 }
             }
         }
     }
+--     volume = {
+--         module = "scale",
+--         y_scale = 2,
+--         source = {
+--             module = "add",
+--             scalar = -2200,
+--             source = {
+--                 module = "multiply",
+--                 scalar = 3000,
+--                 source = {
+--                     module = "simplex",
+--                     frequency = 0.0025,
+--                     octaves = 6,
+--                     lacunarity = 2
+--                 }
+--             }
+--         }
+--     }
 }
 
 zepha.register_biome(identifier, {

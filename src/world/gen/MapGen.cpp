@@ -35,7 +35,8 @@ MapGen::MapGen(Subgame& game, World& world, u32 seed, std::unordered_set<string>
 	
 	let biomeFractal = FastNoise::New<FastNoise::FractalFBm>();
 	biomeFractal->SetSource(biomeScale);
-	biomeFractal->SetOctaveCount(4);
+	biomeFractal->SetOctaveCount(5);
+	biomeFractal->SetLacunarity(3);
 	
 	biomeGenerator = biomeFractal;
 }

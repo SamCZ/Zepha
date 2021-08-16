@@ -18,7 +18,7 @@ void GuiCellGraph::create(f32 scale, vec4 padding, u16 count, const string& titl
 	add(background);
 	
 	let label = make_shared<GuiText>();
-	label->create({ 2, 2 }, {}, {}, { 1, 1, 1, 1 }, this->font);
+	label->create({ 2, 2 }, {}, { 1, 1, 1, 1 }, {}, this->font);
 	label->setPos({ 4, 8 });
 	label->setText(title);
 	add(label);

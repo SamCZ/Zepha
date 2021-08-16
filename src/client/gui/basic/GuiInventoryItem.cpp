@@ -43,7 +43,7 @@ void GuiInventoryItem::create(glm::vec2 scale, unsigned short count, ItemDef& de
 	
 	if (count > 1) {
 		auto text = std::make_shared<GuiText>("count");
-		text->create(scale, {}, {}, { 1, 1, 1, 1 }, f);
+		text->create(scale, {}, { 1, 1, 1, 1 }, {}, f);
 		text->setText(std::to_string(count));
 		add(text);
 		text->setPos({ (19 - text->getWidth()) * scale.x, 9 * scale.y });

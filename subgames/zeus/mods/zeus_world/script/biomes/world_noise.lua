@@ -1,24 +1,11 @@
 return {
-    module = "add",
-    sources = {{
-        -- Elevation
-        module = "scale_bias",
-        source = {
-            module = "perlin",
-            frequency = 0.002,
-            octaves = 8
-        },
-        scale = 250,
-        bias = -32
-    }, {
-        -- Features
-        module = "scale_bias",
-        source = {
-            module = "perlin",
-            frequency = 0.2,
-            octaves = 3,
-        },
-        scale = 6,
-        bias = 6
-    }}
+    module = "multiply",
+    scalar = 100,
+    source = {
+        module = "simplex",
+        frequency = 0.0002,
+        octaves = 5,
+        lacunarity = 3,
+        persistence = 0.45
+    }
 };

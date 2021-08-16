@@ -38,8 +38,9 @@ namespace Util {
 		return toFixed<T>(val);
 	}
 
-	template <typename V, std::enable_if_t<std::is_trivially_copyable_v<typename V::value_type> &&
-		std::is_same_v<vec<typename V::value_type>, V>, bool> = true>
+	template <typename V, std::enable_if_t<(std::is_trivially_copyable_v<typename V::value_type>
+	    || std::is_same_v<typename V::value_type, string>)
+        && std::is_same_v<vec<typename V::value_type>, V>, bool> = true>
 	static string toString(V vec) {
 		std::ostringstream out;
 		out << "[ ";
@@ -48,8 +49,9 @@ namespace Util {
 		return out.str();
 	}
 
-	template <typename A, std::enable_if_t<std::is_trivially_copyable_v<typename A::value_type> &&
-		std::is_same_v<array<typename A::value_type, A::size_type>, A>, bool> = true>
+	template <typename A, std::enable_if_t<(std::is_trivially_copyable_v<typename A::value_type>
+		|| std::is_same_v<typename A::value_type, string>)
+		&& std::is_same_v<array<typename A::value_type, A::size_type>, A>, bool> = true>
 	static string toString(A arr) {
 		std::ostringstream out;
 		for (usize i = 0; i < arr.size(); i++) out << (i == 0 ? "" : ", ") << arr[i];
@@ -122,7 +124,7 @@ namespace Util {
 		color.g = intFromHexSegment(g) / 255.f;
 		color.b = intFromHexSegment(b) / 255.f;
 		color.a = intFromHexSegment(a) / 255.f;
-
+		
 		return color;
 	}
 

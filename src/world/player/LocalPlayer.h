@@ -47,6 +47,8 @@ public:
 	
 	void update(Input& input, f64 delta, vec2 mouseDelta);
 	
+	virtual string getUsername() override;
+	
 	/** The following setters call Player setters, but updates some rendering-related information. */
 	
 	virtual void setPos(vec3 pos, bool assert = false) override;

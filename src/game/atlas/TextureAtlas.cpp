@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <stb_image/stb_image.h>
 #include <cute_files/cute_files.h>
+#include <util/Types.h>
+#include <util/Util.h>
 
 #include "TextureAtlas.h"
 
@@ -181,7 +183,7 @@ std::shared_ptr<AtlasRef> TextureAtlas::generateTexture(std::string req) {
 		std::string paramsString = req.substr(paramsBegin + 1, paramsEnd - paramsBegin - 1);
 		
 		std::vector<std::string> params;
-		std::string::size_type pos = 0;
+		std::string::size_type pos;
 		while ((pos = paramsString.find(',')) != std::string::npos) {
 			params.push_back(paramsString.substr(0, pos));
 			paramsString.erase(0, pos + 1);
@@ -197,9 +199,22 @@ std::shared_ptr<AtlasRef> TextureAtlas::generateTexture(std::string req) {
 			auto data = getBytesAtPos({ src->pos.x + loc.x, src->pos.y + loc.y }, { loc.z, loc.w }).data;
 			return addImage(data, req, false, loc.z, loc.w);
 		}
+		else if (paramName == "multiply") {
+			if (params.size() != 2) throw std::runtime_error("multiply() requires 2 parameters.");
+			vec4 multiple = Util::hexToColorVec(params[1]);
+			auto tex = getBytesOfTex(params[0]);
+			
+			for (int i = 0; i < tex.width * tex.height; i++) {
+				tex.data[i * 4 + 0] *= multiple.x;
+				tex.data[i * 4 + 1] *= multiple.y;
+				tex.data[i * 4 + 2] *= multiple.z;
+				tex.data[i * 4 + 3] *= multiple.w;
+			}
+			
+			return addImage(tex.data, req, false, tex.width, tex.height);
+		}
 		else {
 			throw std::runtime_error("Invalid parameter.");
-			return nullptr;
 		}
 	}
 	
@@ -236,7 +251,6 @@ TextureAtlas::RawTexData TextureAtlas::getBytesAtPos(glm::ivec2 pos, glm::ivec2 
 	}
 	
 	data.data = pixels;
-	
 	return data;
 }
 

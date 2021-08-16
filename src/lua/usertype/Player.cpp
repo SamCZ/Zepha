@@ -16,6 +16,10 @@ unsigned int Api::Usertype::ServerPlayer::get_id() {
 	return player->getId();
 }
 
+string Api::Usertype::ServerPlayer::get_username() {
+	return player->getUsername();
+}
+
 glm::vec3 Api::Usertype::ServerPlayer::get_pos() {
 	return player->getPos();
 }
@@ -122,6 +126,7 @@ bool Api::Usertype::ServerPlayer::get_flying() {
 void Api::Usertype::ServerPlayer::bind(State, sol::state& lua, sol::table& core) {
 	lua.new_usertype<ServerPlayer>("Player",
 		"get_id", &ServerPlayer::get_id,
+		"get_username", &ServerPlayer::get_username,
 		"get_pos", &ServerPlayer::get_pos,
 		"get_block_pos", &ServerPlayer::get_block_pos,
 		"set_pos", &ServerPlayer::set_pos,
@@ -180,6 +185,7 @@ void Api::Usertype::LocalPlayer::set_hud(std::shared_ptr<LuaGuiElement> hud) {
 void Api::Usertype::LocalPlayer::bind(State, sol::state& lua, sol::table& core) {
 	lua.new_usertype<LocalPlayer>("Player",
 		"get_id", &LocalPlayer::get_id,
+		"get_username", &LocalPlayer::get_username,
 		"get_pos", &LocalPlayer::get_pos,
 		"get_block_pos", &LocalPlayer::get_block_pos,
 		"set_pos", &LocalPlayer::set_pos,

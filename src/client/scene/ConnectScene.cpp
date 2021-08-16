@@ -33,7 +33,7 @@ ConnectScene::ConnectScene(Client& client, Address addr) : Scene(client),
 	Font f(client.game->textures, client.game->textures["font"]);
 	
 	auto statusText = std::make_shared<GuiText>("statusText");
-	statusText->create({ 2, 2 }, {}, {}, { 1, 1, 1, 1 }, f);
+	statusText->create({ 2, 2 }, {}, { 1, 1, 1, 1 }, {}, f);
 	statusText->setText("Connecting...");
 	statusText->setPos({ 32, 24 });
 	components.add(statusText);

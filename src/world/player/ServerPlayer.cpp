@@ -14,6 +14,10 @@ ServerPlayer::ServerPlayer(ServerClient& client, World& world, SubgamePtr game, 
 	inventory->createList("cursor", 1, 1);
 }
 
+string ServerPlayer::getUsername() {
+	return client.username;
+}
+
 void ServerPlayer::assertField(Packet packet) {
 	packet.type = Packet::Type::THIS_PLAYER_INFO;
 	packet.sendTo(getPeer(), Packet::Channel::INTERACT);

@@ -23,6 +23,8 @@ class ServerPlayer : public Player {
 public:
 	ServerPlayer(ServerClient& client, World& world, SubgamePtr game, DimensionPtr dim);
 	
+	virtual string getUsername() override;
+	
 	virtual void assertField(Packet packet) override;
 	
 	virtual void handleAssertion(Deserializer& d) override;

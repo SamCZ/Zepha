@@ -16,7 +16,6 @@ ServerGenStream::ServerGenStream(ServerSubgame& game, ServerWorld& world) :
 
 bool ServerGenStream::queue(u16 dimension, ivec3 pos) {
 	auto v4 = ivec4(pos, dimension);
-//	if (!queuedMap.count(v4)) {
 	if (queuedMap.find(v4) == queuedMap.end() && inProgressMap.find(v4) == inProgressMap.end()) {
 		queuedTasks.push(v4);
 		queuedMap.emplace(v4);
@@ -28,6 +27,7 @@ bool ServerGenStream::queue(u16 dimension, ivec3 pos) {
 uptr<vec<ServerGenStream::FinishedJob>> ServerGenStream::update() {
 	auto created = make_unique<vec<FinishedJob>>();
 	
+	usize dequeued = 0;
 	for (usize i = 0; i < THREAD_QUEUE_SIZE; i++) {
 		for (auto& t : threads) {
 			auto& j = t.jobs[i];
@@ -43,6 +43,7 @@ uptr<vec<ServerGenStream::FinishedJob>> ServerGenStream::update() {
 				queuedMap.erase(pos);
 				inProgressMap.emplace(pos);
 				queuedTasks.pop();
+				dequeued++;
 				
 				j.pos = ivec3(pos);
 				j.gen = world.getDimension(pos.w)->getGen();
@@ -51,6 +52,9 @@ uptr<vec<ServerGenStream::FinishedJob>> ServerGenStream::update() {
 			}
 		}
 	}
+	
+	if (dequeued >= THREAD_QUEUE_SIZE * THREADS)
+		std::cout << Log::err << "Server threads were idle!" << Log::endl;
 	
 	return created;
 }

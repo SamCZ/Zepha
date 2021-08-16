@@ -166,7 +166,7 @@ namespace Api::Usertype {
 		 * @returns the scale multiplier of the entity's model.
 		 */
 		
-		float get_scale();
+		glm::vec3 get_scale();
 		
 		/**
 		 * Sets the scale of the entity's model,
@@ -174,14 +174,14 @@ namespace Api::Usertype {
 		 * @param scale - The desired scale multiplier.
 		 */
 		
-		void set_scale(float scale);
+		void set_scale(sol::object scale);
 		
 		/**
 		 * Sets the scale of the entity's model, without any interpolation.
 		 * @param scale - The desired scale multiplier.
 		 */
 		
-		void snap_scale(float scale);
+		void snap_scale(sol::object scale);
 		
 		/**
 		 * Gets the entity's true visual-offset, which may be different from

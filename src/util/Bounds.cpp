@@ -54,6 +54,6 @@ void Bounds::setB(glm::vec3 vecB) {
 
 bool Bounds::intersects(glm::vec3 test) {
 	return (test.x >= a.x && test.x <= b.x
-	        && test.y >= a.y && test.y <= b.y
-	        && test.z >= a.z && test.z <= b.z);
+		 && test.y >= a.y && test.y <= b.y
+		 && test.z >= a.z && test.z <= b.z);
 }

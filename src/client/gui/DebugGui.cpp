@@ -21,11 +21,11 @@ DebugGui::DebugGui(u16vec2 buffer, SubgamePtr game, LocalWorld& world, vec<strin
 	Font f(game.l()->textures, fontRef);
 
 	auto crosshairText = make_shared<GuiText>("crosshairText");
-	crosshairText->create({ 2, 2 }, {}, { 0.2, 0.2, 0.2, 0.5 }, { 1, 1, 1, 1 }, f);
+	crosshairText->create({ 2, 2 }, {}, { 1, 1, 1, 1 }, { 0.2, 0.2, 0.2, 0.5 }, f);
 	add(crosshairText);
 
 	auto dataText = make_shared<GuiText>("dataText");
-	dataText->create({ 2, 2 }, {}, { 0.2, 0.2, 0.2, 0.5 }, { 1, 1, 1, 1 }, f);
+	dataText->create({ 2, 2 }, {}, { 1, 1, 1, 1 }, { 0.2, 0.2, 0.2, 0.5 }, f);
 	add(dataText);
 
 	auto interpGraph = make_shared<GuiLabelledGraph>("interpGraph");
@@ -219,7 +219,8 @@ void DebugGui::update(sptr<LocalPlayer> player, f64 delta, u32 interpolatedChunk
 
 	if (target.type == Target::Type::BLOCK) {
 		const auto& def = game->getDefs().blockFromId(world.getActiveDimension()->getBlock(target.data.block.pos));
-		get<GuiText>("crosshairText")->setText(def.name + " (" + def.identifier + ") [" + std::to_string(def.index) + "]");
+		get<GuiText>("crosshairText")->setText(
+			"`b" + def.name + " (`r` `c7" + def.identifier + "`cr - " + std::to_string(def.index) + "` `b)");
 	}
 	else {
 		get<GuiText>("crosshairText")->setText("");

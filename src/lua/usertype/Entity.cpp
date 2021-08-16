@@ -141,16 +141,18 @@ void Api::Usertype::Entity::snap_roll(float rot) {
 	entity->setRotateZ(rot);
 }
 
-float Api::Usertype::Entity::get_scale() {
-	return entity->getScale().x;
+glm::vec3 Api::Usertype::Entity::get_scale() {
+	return entity->getScale();
 }
 
-void Api::Usertype::Entity::set_scale(float scale) {
-	entity->setScale(scale);
+void Api::Usertype::Entity::set_scale(sol::object scale) {
+	if (scale.is<glm::vec3>()) entity->setScale(scale.as<glm::vec3>());
+	else entity->setScale(scale.as<f32>());
 }
 
-void Api::Usertype::Entity::snap_scale(float scale) {
-	entity->setScale(scale);
+void Api::Usertype::Entity::snap_scale(sol::object scale) {
+	if (scale.is<glm::vec3>()) entity->setScale(scale.as<glm::vec3>());
+	else entity->setScale(scale.as<f32>());
 }
 
 Api::Usertype::Dimension Api::Usertype::Entity::get_dimension() {
@@ -178,6 +180,9 @@ void Api::Usertype::Entity::set_display_type(const std::string& mode,
 	}
 	else if (mode == "model" && argB) {
 		entity->setAppearance("model", argA, *argB);
+	}
+	else if (mode == "wireframe") {
+		entity->setAppearance("wireframe", argA, argB ? *argB : "");
 	}
 	else throw std::runtime_error("Invalid display type parameters.");
 }

@@ -1,9 +1,3 @@
-//
-// Created by aurailus on 25/12/18.
-//
-
-#include <utility>
-
 #include "GuiText.h"
 
 #include "util/Util.h"
@@ -12,178 +6,260 @@
 #include "game/atlas/asset/AtlasRef.h"
 #include "world/dim/ent/AnimationSegment.h"
 
-GuiText::GuiText(const std::string& key) : GuiComponent(key) {}
-
-void GuiText::create(glm::vec2 scale, glm::vec4 padding, glm::vec4 bgcolor, glm::vec4 color, Font font) {
-	// Text Constructor
-	// Creates a GuiText object.
-	
-	this->scale = scale;
+void GuiText::create(vec2 scale, vec4 padding, vec4 textColor, vec4 backgroundColor, Font font) {
 	this->padding = padding;
 	this->font = std::move(font);
 	
-	this->bgcolor = bgcolor;
-	this->color = color;
+	this->textColor = textColor;
+	this->backgroundColor = backgroundColor;
 	
-	setScale(scale);
 	setText("");
+	setScale(scale);
 }
 
-std::shared_ptr<GuiText> GuiText::fromSerialized(const LuaGuiElement& elem, TextureAtlas& textures, glm::ivec2 bounds) {
-	glm::vec2 pos = SerialGui::get<glm::vec2>(elem, "position", bounds);
-	glm::vec2 offset = SerialGui::get<glm::vec2>(elem, "position_anchor");
-	glm::vec2 size = SerialGui::get<glm::vec2>(elem, "size", bounds);
-	glm::vec4 padding = SerialGui::get<glm::vec4>(elem, "padding", bounds);
-	glm::vec2 scale = SerialGui::get<glm::vec2>(elem, "scale");
-	if (scale == glm::vec2{ 0, 0 }) scale = { 1, 1 };
-	
+sptr<GuiText> GuiText::fromSerialized(const LuaGuiElement& elem, TextureAtlas& textures, ivec2 bounds) {
+	vec2 pos     = SerialGui::get<vec2>(elem, "position", bounds);
+	vec2 offset  = SerialGui::get<vec2>(elem, "position_anchor");
+	vec2 size    = SerialGui::get<vec2>(elem, "size", bounds);
+	vec4 padding = SerialGui::get<vec4>(elem, "padding", bounds);
+	vec2 scale   = SerialGui::get<vec2>(elem, "scale") * vec2(0.33);
+
+	if (scale.x == 0 && scale.y == 0) scale = vec2 { 1, 1 };
 	pos -= offset * size;
-	
-	glm::vec4 background_color = Util::hexToColorVec(elem.get_or<std::string>("background", "#0000"));
-	glm::vec4 color = Util::hexToColorVec(elem.get_or<std::string>("color", "#fff"));
-	std::string content = elem.get_or<std::string>("content", "");
-	
+
+	vec4 backgroundColor = Util::hexToColorVec(elem.get_or<string>("background", "#0000"));
+	vec4 textColor = Util::hexToColorVec(elem.get_or<string>("color", "#fff"));
+	string content = elem.get_or<string>("content", "");
+
 	auto text = std::make_shared<GuiText>(elem.key);
-	text->create(scale * SerialGui::SCALE_MODIFIER, padding, background_color, color, { textures, textures["font"] });
+	text->create(scale * SerialGui::SCALE_MODIFIER, padding,
+		textColor, backgroundColor, { textures, textures["font"] });
 	text->setText(content);
 	text->setPos(pos);
-	
+
 	return text;
 }
 
-void GuiText::setText(std::string text) {
-	this->text = std::move(text);
-	unsigned int indOffset = 0;
+void GuiText::setText(string newText) {
+	text = newText;
+	u32 ind = 0;
 	
-	maxLineWidth = 0;
+	width = 0;
 	
-	std::vector<EntityVertex> textVertices;
-	textVertices.reserve(text.length() * 8 + 200);
-	std::vector<unsigned int> textIndices;
-	textIndices.reserve(text.length() * 12 + 240);
+	vec<EntityVertex> vertices;
+	vertices.reserve(text.length() * 8 + 200);
+	vec<u32> indices;
+	indices.reserve(text.length() * 12 + 240);
 	
-	//Draw background & Measure Line Width
-	int lineWidth = 0;
-	int xOffset = 0, yOffset = 0;
-	int h = Font::charHeight;
-	
-	for (unsigned int i = 0; i < this->text.length() + 1; i++) {
-		char c = this->text[i];
-		
-		//TODO: Proper font handling.
-		if (c == '\t') c = ' ';
-		
-		if (c == '\n' || i == this->text.length()) {
-			if (lineWidth > 0) {
-				lineWidth += 2;
-				
-				if (lineWidth > maxLineWidth) maxLineWidth = lineWidth;
-				
-				if (bgcolor.w != 0) {
-					textVertices.emplace_back(glm::vec3{ -1, yOffset - 1, 0 }, bgcolor, glm::vec3(1), 0.f, glm::vec3{},
-						glm::ivec4{}, glm::vec4{});
-					textVertices.emplace_back(glm::vec3{ -1, yOffset + h + 1, 0 }, bgcolor, glm::vec3(1), 0.f,
-						glm::vec3{}, glm::ivec4{}, glm::vec4{});
-					textVertices.emplace_back(glm::vec3{ lineWidth + 1, yOffset + h + 1, 0 }, bgcolor, glm::vec3(1),
-						0.f, glm::vec3{}, glm::ivec4{}, glm::vec4{});
-					textVertices.emplace_back(glm::vec3{ lineWidth + 1, yOffset - 1, 0 }, bgcolor, glm::vec3(1), 0.f,
-						glm::vec3{}, glm::ivec4{}, glm::vec4{});
-					
-					textIndices.emplace_back(indOffset);
-					textIndices.emplace_back(indOffset + 1);
-					textIndices.emplace_back(indOffset + 2);
-					textIndices.emplace_back(indOffset + 2);
-					textIndices.emplace_back(indOffset + 3);
-					textIndices.emplace_back(indOffset);
-					
-					indOffset += 4;
-				}
-				yOffset += h + 2;
-			}
-			else {
-				yOffset += h / 2; //Pad out the height if using just newlines.
-			}
-			
-			lineWidth = 0;
-		}
-		else lineWidth += font.getCharWidth(c) + 1;
+	vec<string> lines;
+	{
+		std::stringstream textStream(text);
+		string line;
+		while (std::getline(textStream, line, '\n')) lines.emplace_back(line);
 	}
 	
-	//Draw Characters
+	vec3 offset = {};
+	u32 h = Font::charHeight;
 	
-	bool emptyLine = true;
-	xOffset = 0;
-	yOffset = 0;
+	bool bold = false;
+	bool italic = false;
+	i32 underline = -1;
+	i32 strikethrough = -1;
+	u32 strikethroughVertStart = 0;
+	vec4 color = textColor;
 	
-	for (unsigned int i = 0; i < this->text.length() + 1; i++) {
-		char c = this->text[i];
+	for (usize i = 0; i < lines.size(); i++) {
+		let& line = lines[i];
+		bool empty = line.find_first_not_of(" \t\n") == -1;
 		
-		//TODO: Proper font handling.
-		if (c == '\t') c = ' ';
-		
-		unsigned int h = Font::charHeight;
-		
-		if (c == '\n' || i == this->text.length()) {
-			yOffset += (emptyLine) ? h / 2 : h + 2;
-			xOffset = 0;
-			emptyLine = true;
+		if (empty) {
+			offset.x = 0;
+			offset.y += h / 2;
 			continue;
 		}
-		else {
-			emptyLine = false;
+		
+		u32 bgVertStart = 0;
+		if (backgroundColor.w != 0) {
+			bgVertStart = vertices.size();
+			for (u32 i = 0; i < 4; i++) vertices.push_back({});
+			for (u32 i : INDICES) indices.push_back(i + ind);
+			ind += 4;
+		}
+
+		for (usize j = 0; j < line.length() + 1; j++) {
+			char c = j < line.length() ? line[j] : ' ';
+			if (c == '\t') c = ' ';
+			
+			if (c == '`') {
+				bool flushDecorators = j == line.length();
+				
+				char d = line[++j];
+				if (d == '`') goto escape_formatting;
+				else if (d == ' ') offset.x++;
+				else if (d == 'b') bold = true;
+				else if (d == 'i') italic = true;
+				else if (d == 'u') underline = offset.x;
+				else if (d == 's') {
+					strikethrough = offset.x;
+					strikethroughVertStart = vertices.size();
+					for (u32 i = 0; i < 4; i++) vertices.push_back({});
+					for (u32 i : INDICES) indices.push_back(i + ind);
+					ind += 4;
+				}
+				else if (d == 'c') flushDecorators = true;
+				else if (d == 'r') {
+					bold = false;
+					italic = false;
+					flushDecorators = true;
+				}
+				
+				if (flushDecorators) {
+					if (underline != -1) {
+						GuiText::drawRect({ underline, h - 1, offset.x, h }, color, vertices, indices, ind);
+						GuiText::drawRect({ underline + 1, h, offset.x + 1, h + 1 },
+							color * BG_MULTIPLE, vertices, indices, ind);
+						underline = offset.x;
+					}
+					
+					if (strikethrough != -1) {
+						GuiText::drawRect({ strikethrough, h / 2, offset.x, h / 2 + 1 },
+							color, vertices, indices, ind);
+						GuiText::drawRect({ strikethrough + 1, h / 2 + 1, offset.x + 1, h / 2 + 2 },
+							color * BG_MULTIPLE, vertices, indices, ind, strikethroughVertStart);
+						strikethrough = offset.x;
+					}
+					
+					if (d == 'r') {
+						color = textColor;
+						underline = -1;
+						strikethrough = -1;
+					}
+				}
+				
+				if (d == 'c') {
+					char code = line[++j];
+					if (code == 'r') color = textColor;
+					else {
+						u32 v;
+						std::stringstream ss;
+						ss << std::hex << code;
+						ss >> v;
+						color = COLORS[v];
+					}
+				}
+				
+				continue;
+			}
+			
+			escape_formatting:
+			if (j == line.length()) continue;
+
+			u32 w = font.getCharWidth(c) + 1;
+			vec4 UV = font.getCharUVs(c);
+
+			for (u32 k = 0; k < (bold ? 4 : 2); k++) {
+				vec4 c = color;
+				
+				if (k == 0 || (k == 1 && bold)) c *= BG_MULTIPLE;
+	
+				if (k == 0) {
+					offset.x += 1;
+					offset.y += 1;
+				}
+				else if ((k == 1 || k == 3) && bold) {
+					offset.x += 1;
+				}
+				else if ((k == 1 && !bold) || (k == 2 && bold)) {
+					offset.x -= bold ? 2 : 1;
+					offset.y -= 1;
+				}
+
+				vertices.emplace_back(offset + vec3(italic ? 2 : 0, 0, 0), vec4 { UV.x, UV.y, 0, c.w },
+					vec3(c), 1.f, vec3 {}, ivec4 {}, vec4 {});
+				
+				vertices.emplace_back(offset + vec3(0, h, 0), vec4 { UV.x, UV.w, 0, c.w },
+					vec3(c), 1.f, vec3 {}, ivec4 {}, vec4 {});
+				
+				vertices.emplace_back(offset + vec3(w, h, 0), vec4 { UV.z, UV.w, 0, c.w },
+					vec3(c), 1.f, vec3 {}, ivec4 {}, vec4 {});
+				
+				vertices.emplace_back(offset + vec3(w + (italic ? 2 : 0), 0, 0), vec4 { UV.z, UV.y, 0, c.w },
+					vec3(c), 1.f, vec3 {}, ivec4 {}, vec4 {});
+				
+				for (u32 i : INDICES) indices.push_back(i + ind);
+				ind += 4;
+			}
+
+			offset.x += w;
 		}
 		
-		auto charWidth = font.getCharWidth(c) + 1;
-		auto charUVs = font.getCharUVs(c);
+		if (backgroundColor.w != 0) GuiText::drawRect({ -1, offset.y - 1, offset.x + 2, offset.y + h + 1 },
+			backgroundColor, vertices, indices, ind, bgVertStart);
 		
-		for (unsigned int j = 0; j <= 1; j++) {
-			glm::vec3 c = { this->color.x, this->color.y, this->color.z };
-			
-			if (j == 0) {
-				c *= glm::vec3{ 0.4, 0.4, 0.45 };
-				xOffset += 1;
-				yOffset += 1;
-			}
-			else {
-				xOffset -= 1;
-				yOffset -= 1;
-			}
-			
-			textVertices.emplace_back(glm::vec3{ xOffset, yOffset, 0 }, glm::vec4{ charUVs.x, charUVs.y, 0, color.w },
-				c, 1.f, glm::vec3{}, glm::ivec4{}, glm::vec4{});
-			textVertices.emplace_back(glm::vec3{ xOffset, yOffset + h, 0 },
-				glm::vec4{ charUVs.x, charUVs.w, 0, color.w }, c, 1.f, glm::vec3{}, glm::ivec4{}, glm::vec4{});
-			textVertices.emplace_back(glm::vec3{ xOffset + charWidth, yOffset + h, 0 },
-				glm::vec4{ charUVs.z, charUVs.w, 0, color.w }, c, 1.f, glm::vec3{}, glm::ivec4{}, glm::vec4{});
-			textVertices.emplace_back(glm::vec3{ xOffset + charWidth, yOffset, 0 },
-				glm::vec4{ charUVs.z, charUVs.y, 0, color.w }, c, 1.f, glm::vec3{}, glm::ivec4{}, glm::vec4{});
-			
-			textIndices.emplace_back(indOffset);
-			textIndices.emplace_back(indOffset + 1);
-			textIndices.emplace_back(indOffset + 2);
-			textIndices.emplace_back(indOffset + 2);
-			textIndices.emplace_back(indOffset + 3);
-			textIndices.emplace_back(indOffset);
-			
-			indOffset += 4;
-		}
-		
-		xOffset += charWidth;
+		if (offset.x > width) width = offset.x;
+		offset.x = 0;
+		offset.y += h + 2;
 	}
 	
-	auto m = std::make_unique<EntityMesh>();
-	m->create(textVertices, textIndices);
+	let m = make_unique<EntityMesh>();
+	m->create(vertices, indices);
 	
-	auto model = std::make_shared<Model>();
+	let model = make_shared<Model>();
 	model->fromMesh(std::move(m));
 	
 	entity.setModel(model);
 }
 
-std::string GuiText::getText() {
+string GuiText::getText() {
 	return text;
 }
 
-unsigned int GuiText::getWidth() {
-	return maxLineWidth;
+u32 GuiText::getWidth() {
+	return width;
 }
+
+void GuiText::drawRect(const vec4 pos, const vec4 color,
+	vec<EntityVertex>& vertices, vec<u32>& indices, u32& ind, const u32 insert) {
+	
+	vec<EntityVertex> myVerts = {
+		{ vec3 { pos.x, pos.y, 0 }, color, vec3(1), 0.f, vec3 {}, ivec4 {}, vec4 {} },
+		{ vec3 { pos.x, pos.w, 0 }, color, vec3(1), 0.f, vec3 {}, ivec4 {}, vec4 {} },
+		{ vec3 { pos.z, pos.w, 0 }, color, vec3(1), 0.f, vec3 {}, ivec4 {}, vec4 {} },
+		{ vec3 { pos.z, pos.y, 0 }, color, vec3(1), 0.f, vec3 {}, ivec4 {}, vec4 {} }
+	};
+	
+	if (insert != -1) {
+		vertices[insert] = myVerts[0];
+		vertices[insert + 1] = myVerts[1];
+		vertices[insert + 2] = myVerts[2];
+		vertices[insert + 3] = myVerts[3];
+	}
+	else {
+		for (EntityVertex& vert : myVerts) vertices.emplace_back(vert);
+		for (u32 i : INDICES) indices.push_back(i + ind);
+		ind += 4;
+	}
+}
+
+const array<vec4, 16> GuiText::COLORS = {
+	Util::hexToColorVec("#000000"),
+	Util::hexToColorVec("#0000AA"),
+	Util::hexToColorVec("#00AA00"),
+	Util::hexToColorVec("#00AAAA"),
+	Util::hexToColorVec("#AA0000"),
+	Util::hexToColorVec("#b05cff"),
+	Util::hexToColorVec("#FFAA00"),
+	Util::hexToColorVec("#cccccc"),
+	Util::hexToColorVec("#555555"),
+	Util::hexToColorVec("#33a2f5"),
+	Util::hexToColorVec("#9fff80"),
+	Util::hexToColorVec("#7df4ff"),
+	Util::hexToColorVec("#ff739f"),
+	Util::hexToColorVec("#fd7dff"),
+	Util::hexToColorVec("#fffb82"),
+	Util::hexToColorVec("#ffffff")
+};
+
+const array<u32, 6> GuiText::INDICES = { 0, 1, 2, 2, 3, 0 };
+
+const vec4 GuiText::BG_MULTIPLE = { 0.3, 0.3, 0.35, 0.75 };

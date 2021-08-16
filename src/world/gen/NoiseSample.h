@@ -6,67 +6,49 @@
 #include "util/Types.h"
 #include "util/Interp.h"
 
+/**
+ * Stores a 2d or 3d array of noise data that can be accessed by local position or index.
+ * Noise will only be sampled every `precision` blocks, and interpolated between them.
+ * Generates 1 block larger on each access due to interpolation, but the index signature
+ * will access it as though it was exactly `size` blocks wide.
+ */
+
 class NoiseSample {
 public:
-	typedef std::function<f32(ivec3 pos)> fill_function;
-	
 	NoiseSample(u16vec2 size, u16 precision);
 	NoiseSample(u16vec3 size, u16 precision);
 	
+	/** Populates the data with a noise generator. */
 	void generate(ivec3 pos, const FastNoise::SmartNode<>& generator);
 	
-	void fill(const fill_function& fill);
+	/** Populates the data with a fill function. */
+	void fill(const std::function<f32(ivec3)>& fill);
 	
+	/** Retrieves the value from a local position. */
 	inline f32 operator[](u16vec3 pos) {
 		return data[index(pos)];
 	}
 	
+	/** Retrieves the value from an index into a `size`-sized cuboid. */
 	inline f32 operator[](u32 ind) {
 		return data[shiftIndexByOne(ind)];
 	}
 	
-//	inline f32 get(vec3 pos) {
-//		vec3 scaled = pos * vec3(precision) / scaleBy;
-//
-//		ivec3 a = { scaled.x, scaled.y, scaled.z };
-//		vec3 factor = { scaled.x - a.x, scaled.y - a.y, scaled.z - a.z };
-//		ivec3 b = {
-//			(std::min)(static_cast<i32>(std::ceil(scaled.x)), precision.x),
-//			(std::min)(static_cast<i32>(std::ceil(scaled.y)), precision.y),
-//			(std::min)(static_cast<i32>(std::ceil(scaled.z)), precision.z) };
-//
-//		assert(index(b.x, b.y, b.z) < data.size());
-//
-//		// No vertical interpolation
-//		if (precision.y == 0)
-//			return Interp::bilerp(
-//				data[index(a.x, a.y, a.z)], data[index(b.x, a.y, a.z)],
-//				data[index(a.x, a.y, b.z)], data[index(b.x, a.y, b.z)],
-//				factor.x, factor.z);
-//
-//		return Interp::trilerp(
-//			data[index(a.x, a.y, a.z)], data[index(b.x, a.y, a.z)],
-//			data[index(a.x, a.y, b.z)], data[index(b.x, a.y, b.z)],
-//			data[index(a.x, b.y, a.z)], data[index(b.x, b.y, a.z)],
-//			data[index(a.x, b.y, b.z)], data[index(b.x, b.y, b.z)],
-//			factor.x, factor.z, factor.y);
-//	}
-	
 private:
+	/** Interpolates the data between sampled points. */
 	void interpolateData();
 	
-//	inline u32 innerIndex(u16 x, u16 y, u16 z) {
-//		return static_cast<u32>(x) * size.x * size.y + y * size.x + z;
-//	};
-	
+	/** Retrieves the index for a position vector. */
 	inline u32 index(u16vec3 pos) {
 		return index(pos.x, pos.y, pos.z);
 	};
 	
+	/** Retrieves the index for the inner data from position coordinates. */
 	inline u32 index(u16 x, u16 y, u16 z) {
 		return static_cast<u32>(x) * (size.x + 1) * (size.y + 1) + y * (size.x + 1) + z;
 	};
 	
+	/** Shifts an index value from the provided `size` to the internal dimensions. */
 	inline u32 shiftIndexByOne(u32 ind) {
 		u16vec3 vec = {};
 		
@@ -80,8 +62,13 @@ private:
 		return index(vec);
 	};
 	
+	/** The specified size of the Sample. The actual size is 1 larger on each axis. */
 	u16vec3 size;
+	
+	/** The precision at which points are sampled. */
 	u16 precision;
+	
+	/** The point data. */
 	vec<f32> data {};
 };
 

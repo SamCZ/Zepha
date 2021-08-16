@@ -83,6 +83,13 @@ void LocalDimension::update(f64 delta) {
 }
 
 void LocalDimension::setChunk(sptr<Chunk> chunk) {
+	let clientMapBlock = Space::MapBlock::world::fromBlock(static_cast<LocalWorld&>(world).getPlayer()->getPos());
+	let mapBlockPos = Space::MapBlock::world::fromChunk(chunk->getPos());
+	
+	if (abs(clientMapBlock.x - mapBlockPos.x) > retainMapBlockRange.x ||
+		abs(clientMapBlock.y - mapBlockPos.y) > retainMapBlockRange.y ||
+		abs(clientMapBlock.z - mapBlockPos.z) > retainMapBlockRange.x) return;
+	
 	Dimension::setChunk(chunk);
 	meshChunk(chunk);
 }

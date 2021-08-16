@@ -1,79 +1,114 @@
-//
-// Created by aurailus on 08/04/19.
-//
-
 #include "WireframeEntity.h"
 
-#include "world/dim/ent/DrawableEntity.h"
-
 void WireframeEntity::updateMesh(const std::vector<SelectionBox>& boxes, float width) {
-	this->width = width;
-	buildMesh(boxes);
+	this->model->fromMesh(WireframeEntity::createMesh(boxes, width));
 }
 
-
-void WireframeEntity::buildMesh(const std::vector<SelectionBox>& boxes) {
-	indOffset = 0;
+uptr<EntityMesh> WireframeEntity::createMesh(const vec<SelectionBox>& boxes, f32 wireWidth, vec3 stroke, vec4 fill) {
+	vec<u32> indices {};
+	indices.reserve(boxes.size() * 36 * (12 + fill.a ? 1 : 0));
+	vec<EntityVertex> vertices {};
+	vertices.reserve(boxes.size() * 8 * 12 + (fill.a ? 24 : 0));
 	
-	vertices.clear();
-	indices.clear();
+	for (const let& box : boxes) WireframeEntity::createSelectionBoxVertices(
+		box, wireWidth, vec4(stroke, 1), fill, vertices, indices);
 	
-	for (auto& box : boxes) {
-		glm::vec3 a = box.a;
-		glm::vec3 b = box.b - box.a;
-		
-		createBox(a, b, 0, 0, 0, 0, b.y, 0);
-		createBox(a, b, b.x, 0, 0, 0, b.y, 0);
-		createBox(a, b, b.x, 0, b.z, 0, b.y, 0);
-		createBox(a, b, 0, 0, b.z, 0, b.y, 0);
-		
-		createBox(a, b, 0, 0, 0, b.x, 0, 0);
-		createBox(a, b, 0, b.y, 0, b.x, 0, 0);
-		createBox(a, b, 0, b.y, b.z, b.x, 0, 0);
-		createBox(a, b, 0, 0, b.z, b.x, 0, 0);
-		
-		createBox(a, b, 0, 0, 0, 0, 0, b.z);
-		createBox(a, b, 0, b.y, 0, 0, 0, b.z);
-		createBox(a, b, b.x, b.y, 0, 0, 0, b.z);
-		createBox(a, b, b.x, 0, 0, 0, 0, b.z);
-	}
-	
-	
-	std::unique_ptr<EntityMesh> mesh = std::make_unique<EntityMesh>();
+	uptr<EntityMesh> mesh = make_unique<EntityMesh>();
 	mesh->create(vertices, indices);
-	this->model->fromMesh(std::move(mesh));
+	return mesh;
 }
 
-void
-WireframeEntity::createBox(glm::vec3 a, glm::vec3 b, float x, float y, float z, float xSize, float ySize, float zSize) {
-	float hw = (width / 2.0f);
-	float w = width;
-	glm::vec3 c = color;
+uptr<EntityMesh> WireframeEntity::createMesh(const SelectionBox& box, f32 wireWidth, vec3 stroke, vec4 fill) {
+	return WireframeEntity::createMesh(vec<SelectionBox> { box }, wireWidth, stroke, fill);
+}
+
+void WireframeEntity::createSelectionBoxVertices(const SelectionBox& box, f32 wireWidth,
+	vec4 stroke, vec4 fill, vec<EntityVertex>& vertices, vec<u32>& indices) {
 	
-	std::vector<EntityVertex> myVerts{
-		/*0*/
-		{{ x - hw + a.x, y - hw + a.y, z - hw + a.z }, { c.x, c.y, c.z, 1 }, { 1, 1, 1 }, false, { 0, 1, 0 }, {}, {}},
-		/*1*/{{ x - hw + a.x + xSize + w, y - hw + a.y, z - hw + a.z }, { c.x, c.y, c.z, 1 }, { 1, 1, 1 }, false,
-			{ 0, 1, 0 }, {}, {}},
-		/*2*/
-		{{ x - hw + a.x + xSize + w, y - hw + a.y, z - hw + a.z + zSize + w }, { c.x, c.y, c.z, 1 }, { 1, 1, 1 }, false,
-			{ 0, 1, 0 }, {}, {}},
-		/*3*/{{ x - hw + a.x, y - hw + a.y, z - hw + a.z + zSize + w }, { c.x, c.y, c.z, 1 }, { 1, 1, 1 }, false,
-			{ 0, 1, 0 }, {}, {}},
+	let& a = box.a;
+	let& b = box.b;
+	
+	createStrokeVertices({ a.x, a.y, a.z }, { b.x, a.y, a.z }, wireWidth, stroke, vertices, indices);
+	createStrokeVertices({ a.x, a.y, b.z }, { b.x, a.y, b.z }, wireWidth, stroke, vertices, indices);
+	createStrokeVertices({ a.x, a.y, a.z }, { a.x, a.y, b.z }, wireWidth, stroke, vertices, indices);
+	createStrokeVertices({ b.x, a.y, a.z }, { b.x, a.y, b.z }, wireWidth, stroke, vertices, indices);
+	
+	createStrokeVertices({ a.x, b.y, a.z }, { b.x, b.y, a.z }, wireWidth, stroke, vertices, indices);
+	createStrokeVertices({ a.x, b.y, b.z }, { b.x, b.y, b.z }, wireWidth, stroke, vertices, indices);
+	createStrokeVertices({ a.x, b.y, a.z }, { a.x, b.y, b.z }, wireWidth, stroke, vertices, indices);
+	createStrokeVertices({ b.x, b.y, a.z }, { b.x, b.y, b.z }, wireWidth, stroke, vertices, indices);
+	
+	createStrokeVertices({ a.x, a.y, a.z }, { a.x, b.y, a.z }, wireWidth, stroke, vertices, indices);
+	createStrokeVertices({ b.x, a.y, a.z }, { b.x, b.y, a.z }, wireWidth, stroke, vertices, indices);
+	createStrokeVertices({ b.x, a.y, b.z }, { b.x, b.y, b.z }, wireWidth, stroke, vertices, indices);
+	createStrokeVertices({ a.x, a.y, b.z }, { a.x, b.y, b.z }, wireWidth, stroke, vertices, indices);
+	
+	if (fill.a) {
+		vec3 nml = { 0, 1, 0 };
+		f32 off = wireWidth / 2;
+		usize indOffset = vertices.size();
 		
-		/*4*/{{ x - hw + a.x, y - hw + a.y + ySize + w, z - hw + a.z }, { c.x, c.y, c.z, 1 }, { 1, 1, 1 }, false,
-			{ 0, 1, 0 }, {}, {}},
-		/*5*/
-		{{ x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z }, { c.x, c.y, c.z, 1 }, { 1, 1, 1 }, false,
-			{ 0, 1, 0 }, {}, {}},
-		/*6*/{{ x - hw + a.x + xSize + w, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w }, { c.x, c.y, c.z, 1 },
-			{ 1, 1, 1 }, false, { 0, 1, 0 }, {}, {}},
-		/*7*/
-		{{ x - hw + a.x, y - hw + a.y + ySize + w, z - hw + a.z + zSize + w }, { c.x, c.y, c.z, 1 }, { 1, 1, 1 }, false,
-			{ 0, 1, 0 }, {}, {}},
-	};
+		vertices.push_back({{ a.x, a.y, a.z - off }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ a.x, b.y, a.z - off }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ b.x, b.y, a.z - off }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ b.x, a.y, a.z - off }, fill, vec3(1), false, nml, {}, {}});
+		
+		vertices.push_back({{ a.x, a.y, b.z + off }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ a.x, b.y, b.z + off }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ b.x, b.y, b.z + off }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ b.x, a.y, b.z + off }, fill, vec3(1), false, nml, {}, {}});
+		
+		vertices.push_back({{ a.x - off, a.y, a.z }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ a.x - off, b.y, a.z }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ a.x - off, b.y, b.z }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ a.x - off, a.y, b.z }, fill, vec3(1), false, nml, {}, {}});
+		
+		vertices.push_back({{ b.x + off, a.y, a.z }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ b.x + off, b.y, a.z }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ b.x + off, b.y, b.z }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ b.x + off, a.y, b.z }, fill, vec3(1), false, nml, {}, {}});
+		
+		vertices.push_back({{ a.x, a.x - off, a.z }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ b.x, a.x - off, a.z }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ b.x, a.x - off, b.z }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ a.x, a.x - off, b.z }, fill, vec3(1), false, nml, {}, {}});
+		
+		vertices.push_back({{ a.x, b.y + off, a.z }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ b.x, b.y + off, a.z }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ b.x, b.y + off, b.z }, fill, vec3(1), false, nml, {}, {}});
+		vertices.push_back({{ a.x, b.y + off, b.z }, fill, vec3(1), false, nml, {}, {}});
+		
+		const static array<u32, 36> boxIndices {
+			0, 1, 2, 2, 3, 0,
+			4, 7, 6, 6, 5, 4,
+			8, 11, 10, 10, 9, 8,
+			12, 13, 14, 14, 15, 12,
+			16, 17, 18, 18, 19, 16,
+			20, 23, 22, 22, 21, 20
+		};
+		
+		for (u32 i : boxIndices) indices.push_back(i + indOffset);
+	}
+}
+
+void WireframeEntity::createStrokeVertices(vec3 a, vec3 b, f32 wireWidth,
+	vec4 color, vec<EntityVertex>& vertices, vec<u32>& indices) {
 	
-	std::vector<unsigned int> myInds{
+	f32 off = wireWidth / 2.f;
+	vec3 nml = { 0, 1, 0 };
+	usize indOffset = vertices.size();
+	
+	vertices.push_back({{ a.x - off, a.y - off, a.z - off }, color, vec3(1), false, nml, {}, {}});
+	vertices.push_back({{ b.x + off, a.y - off, a.z - off }, color, vec3(1), false, nml, {}, {}});
+	vertices.push_back({{ b.x + off, a.y - off, b.z + off }, color, vec3(1), false, nml, {}, {}});
+	vertices.push_back({{ a.x - off, a.y - off, b.z + off }, color, vec3(1), false, nml, {}, {}});
+	
+	vertices.push_back({{ a.x - off, b.y + off, a.z - off }, color, vec3(1), false, nml, {}, {}});
+	vertices.push_back({{ b.x + off, b.y + off, a.z - off }, color, vec3(1), false, nml, {}, {}});
+	vertices.push_back({{ b.x + off, b.y + off, b.z + off }, color, vec3(1), false, nml, {}, {}});
+	vertices.push_back({{ a.x - off, b.y + off, b.z + off }, color, vec3(1), false, nml, {}, {}});
+
+	const static array<u32, 36> boxIndices {
 		0, 1, 2, 2, 3, 0,
 		4, 7, 6, 6, 5, 4,
 		0, 4, 5, 5, 1, 0,
@@ -82,8 +117,5 @@ WireframeEntity::createBox(glm::vec3 a, glm::vec3 b, float x, float y, float z, 
 		1, 5, 6, 6, 2, 1,
 	};
 	
-	vertices.insert(vertices.end(), myVerts.begin(), myVerts.end());
-	for (auto i : myInds) indices.push_back(i + indOffset);
-	
-	indOffset += 8;
+	for (u32 i : boxIndices) indices.push_back(i + indOffset);
 }

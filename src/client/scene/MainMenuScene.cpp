@@ -34,12 +34,12 @@ MainMenuScene::MainMenuScene(Client& client) :
 	components->add(branding);
 	{
 		auto zephaText = make_shared<GuiText>("zephaText");
-		zephaText->create({ GS, GS }, {}, {}, { 1, 1, 1, 1 }, f);
+		zephaText->create({ GS, GS }, {}, { 1, 1, 1, 1 }, {}, f);
 		zephaText->setText("Zepha");
 		branding->add(zephaText);
 		
 		auto alphaText = make_shared<GuiText>("alphaText");
-		alphaText->create({ GS, GS }, {}, {}, { 1, 0.5, 0.7, 1 }, f);
+		alphaText->create({ GS, GS }, {}, { 1, 0.5, 0.7, 1 }, {}, f);
 		alphaText->setText("ALPHA");
 		alphaText->setPos({ 25 * GS, 0 });
 		branding->add(alphaText);

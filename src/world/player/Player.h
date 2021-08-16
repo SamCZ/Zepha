@@ -22,6 +22,8 @@ public:
 		this->id = id;
 	}
 	
+	virtual string getUsername() = 0;
+	
 	virtual void setDim(DimensionPtr dim, bool assert = false);
 	
 	virtual void setPos(vec3 pos, bool assert = false);

@@ -30,6 +30,8 @@ class LuaGuiElement {
 	
 	void remove(sol::this_state s, sol::object elem);
 	
+	void clear(sol::this_state s);
+	
 	std::string type{}, key{};
 	
 	LuaGuiElement* parent = nullptr;
@@ -75,7 +77,8 @@ namespace ClientApi {
 			"get", &LuaGuiElement::get_child,
 			"append", &LuaGuiElement::append,
 			"prepend", &LuaGuiElement::prepend,
-			"remove", &LuaGuiElement::remove
+			"remove", &LuaGuiElement::remove,
+			"clear", &LuaGuiElement::clear
 		);
 	}
 }

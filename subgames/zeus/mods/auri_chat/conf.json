@@ -1,0 +1,5 @@
+{
+  "name": "@auri:chat",
+  "description": "A simple chat interface and API supporting messaging and commands.",
+  "version": "0.0.1"
+}

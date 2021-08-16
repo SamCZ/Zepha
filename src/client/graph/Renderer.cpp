@@ -93,6 +93,8 @@ void Renderer::beginChunkDeferredCalls() {
 }
 
 void Renderer::beginEntityDeferredCalls() {
+	glEnable(GL_BLEND);
+	
 	currentModelUniform = entity.uniforms.model;
 	
 	setShader(entity);
@@ -101,6 +103,8 @@ void Renderer::beginEntityDeferredCalls() {
 }
 
 void Renderer::endDeferredCalls() {
+	glDisable(GL_BLEND);
+	
 	activeTexture = nullptr;
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, ssao.fbo);
@@ -154,6 +158,7 @@ void Renderer::endDeferredCalls() {
 	glBindTexture(GL_TEXTURE_2D, blur.colorBuffer);
 	
 	glEnable(GL_BLEND);
+	
 	renderQuad();
 }
 

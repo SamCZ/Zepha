@@ -95,7 +95,6 @@ void DrawableEntity::interpScale(float scale) {
 void DrawableEntity::setScale(glm::vec3 scale) {
 	visualScale = scale;
 	Entity::setScale(scale);
-	
 }
 
 void DrawableEntity::interpScale(glm::vec3 scale) {

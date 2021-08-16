@@ -3,8 +3,8 @@
 
 #include "NoiseSample.h"
 
-
-NoiseSample::NoiseSample(u16vec2 size, u16 precision) : NoiseSample({ size.x, 0, size.y }, precision) {}
+NoiseSample::NoiseSample(u16vec2 size, u16 precision):
+	NoiseSample({ size.x, 0, size.y }, precision) {}
 
 NoiseSample::NoiseSample(u16vec3 size, u16 precision):
 	size(size), precision(precision), data((size.x + 1) * (size.y + 1) * (size.z + 1), 0) {
@@ -23,7 +23,7 @@ void NoiseSample::generate(ivec3 pos, const FastNoise::SmartNode<>& generator) {
 	interpolateData();
 }
 
-void NoiseSample::fill(const NoiseSample::fill_function& fill) {
+void NoiseSample::fill(const std::function<f32(ivec3)>& fill) {
 	u16vec3 pos {};
 	for (pos.x = 0; pos.x < size.x + 1; pos.x += precision)
 		for (pos.y = 0; pos.y < size.y + 1; pos.y += precision)
@@ -41,8 +41,8 @@ void NoiseSample::interpolateData() {
 				if (pos.x % precision == 0 && pos.y % precision == 0 && pos.z % precision == 0) continue;
 				
 				vec3 frac = vec3(pos) / static_cast<f32>(precision);
-				u16vec3 a = u16vec3(glm::floor(frac)) * static_cast<u16>(precision);
-				u16vec3 b = u16vec3(glm::ceil(frac)) * static_cast<u16>(precision);
+				u16vec3 a = u16vec3(glm::floor(frac)) * precision;
+				u16vec3 b = u16vec3(glm::ceil(frac)) * precision;
 				vec3 factor = frac - glm::floor(frac);
 				
 				data[index(pos)] = Interp::trilerp(

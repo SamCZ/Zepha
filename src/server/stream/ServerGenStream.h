@@ -18,7 +18,7 @@ class ServerSubgame;
 class ServerGenStream {
 public:
 	static const usize THREADS = 4;
-	static const usize THREAD_QUEUE_SIZE = 16;
+	static const usize THREAD_QUEUE_SIZE = 4;
 	
 	struct FinishedJob {
 		FinishedJob(u16 dim, ivec3 pos, uptr<MapGen::ChunkMap> created) :
@@ -37,13 +37,13 @@ public:
 	
 	std::unique_ptr<std::vector<FinishedJob>> update();
 	
-	private:
+private:
 	struct Job {
 		bool locked = false;
 		uptr<MapGen::ChunkMap> created = nullptr;
 		
 		u16 dim;
-		ivec3 pos{};
+		ivec3 pos {};
 		sptr<MapGen> gen;
 	};
 	

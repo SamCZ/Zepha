@@ -50,7 +50,7 @@ vector.__unm = vector.negative
 -- vector.subtract
 -- Subtract v2 from v1
 function vector.subtract(v1, v2)
-    return vector.add(v1, vector.negative(v2))
+    return vector.add(v1, -v2)
 end
 
 vector.__sub = vector.subtract
@@ -59,11 +59,8 @@ vector.__sub = vector.subtract
 -- Multiply v1 by a vector or number
 function vector.multiply(v1, m)
     assert(vector.is_vector(v1))
-    if vector.is_vector(m) then
-        return create_vector(rawget(v1, 1) * rawget(m, 1), rawget(v1, 2) * rawget(m, 2), rawget(v1, 3) * rawget(m, 3))
-    elseif type(m) == "number" then
-        return create_vector(rawget(v1, 1) * m, rawget(v1, 2) * m, rawget(v1, 3) * m)
-    end
+    if vector.is_vector(m) then return create_vector(rawget(v1, 1) * rawget(m, 1), rawget(v1, 2) * rawget(m, 2), rawget(v1, 3) * rawget(m, 3))
+    elseif type(m) == "number" then return create_vector(rawget(v1, 1) * m, rawget(v1, 2) * m, rawget(v1, 3) * m) end
 end
 
 vector.__mul = vector.multiply
@@ -176,10 +173,10 @@ end
 
 function vector:__tostring()
     return table.concat({
-      "{ ",
+      "{",
       tostring(rawget(self, 1)), ", ",
       tostring(rawget(self, 2)), ", ",
-      tostring(rawget(self, 3)), " }"
+      tostring(rawget(self, 3)), "}"
     })
 end
 
@@ -202,7 +199,7 @@ vector.new = function(x, y, z)
     -- Invalid type passed to function, return nil
     elseif type(x) ~= "number" and type(x) ~= "table" then return nil
     -- Passed a table as x with at least x and y parameters, z will be set to table value or 0
-    elseif type(x) == "table" and (x.__is_vector or (type(x[1]) == "number" and type(x[2]) == "number")) then return create_vector(x[1], x[2], x[3] or 0)
+    elseif type(x) == "table" and (vector.is_vector(x) or (type(x[1]) == "number" and type(x[2]) == "number")) then return create_vector(x[1], x[2], x[3] or 0)
     -- Only one number was passed, give a vector with all three values set to it
     elseif y == nil then return create_vector(x, x, x)
     -- Invalid type passed to function, return nil

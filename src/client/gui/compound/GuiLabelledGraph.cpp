@@ -34,7 +34,7 @@ void GuiLabelledGraph::create(glm::vec2 scale, glm::vec4 padding, const std::str
 	graph->setPos({ GRAPH_PAD_X, GRAPH_PAD_Y });
 	
 	auto label = std::make_shared<GuiText>("label");
-	label->create({ 2, 2 }, {}, {}, { 1, 1, 1, 1 }, this->font);
+	label->create({ 2, 2 }, {}, { 1, 1, 1, 1 }, {}, this->font);
 	add(label);
 	label->setPos({ TEXT_PAD_X, TEXT_PAD_Y });
 	

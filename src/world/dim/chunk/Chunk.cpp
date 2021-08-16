@@ -65,7 +65,6 @@ void Chunk::combineWith(sptr<Chunk> o) {
 		generationState = GenerationState::GENERATED;
 		countRenderableBlocks();
 	}
-	
 	else generationState = GenerationState::PARTIAL;
 }
 

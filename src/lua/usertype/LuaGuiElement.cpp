@@ -80,8 +80,8 @@ sol::object LuaGuiElement::get_child(sol::this_state s, sol::object key) {
 
 void LuaGuiElement::append(sol::this_state s, sol::object elem) {
 	if (elem.is<std::shared_ptr<LuaGuiElement>>()) children.push_back(elem.as<std::shared_ptr<LuaGuiElement>>());
-	else if (elem.is<sol::function>())
-		children.push_back(call(s, elem.as<sol::function>()).as<std::shared_ptr<LuaGuiElement>>());
+	else if (elem.is<sol::protected_function>())
+		children.push_back(call(s, elem.as<sol::protected_function>()).as<std::shared_ptr<LuaGuiElement>>());
 	else throw std::runtime_error("Append arg is not an element or a function to generate one.");
 	
 	children.back()->parent = this;
@@ -122,6 +122,16 @@ void LuaGuiElement::remove(sol::this_state s, sol::object elem) {
 			}
 		}
 	}
+}
+
+void LuaGuiElement::clear(sol::this_state s) {
+	for (auto it = children.cbegin(); it != children.cend();) {
+		(*it)->parent = nullptr;
+		(*it)->updateFunction = nullptr;
+		it = children.erase(it);
+	}
+	
+	if (updateFunction) updateFunction();
 }
 
 Any LuaGuiElement::getAsAny(const std::string& key) const {

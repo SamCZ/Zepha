@@ -47,6 +47,10 @@ void LocalPlayer::update(Input& input, f64 delta, vec2 mouseDelta) {
 	if (!gameGui.isInMenu()) updateInteract(input, delta);
 }
 
+string LocalPlayer::getUsername() {
+	return "UNIMPLEMENTED";
+}
+
 void LocalPlayer::setPos(vec3 pos, bool assert) {
 	Player::setPos(pos, assert);
 	renderer.camera.setPos(pos + getLookOffset());

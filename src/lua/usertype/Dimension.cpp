@@ -65,11 +65,14 @@ sol::table Api::Usertype::Dimension::add_entity_c(sol::this_state s, glm::vec3 p
 	auto displayType = luaEntity.get<sol::optional<std::string>>("display");
 	if (!displayType) throw std::runtime_error("entity '" + identifier + "' is missing the display property.");
 	
-	auto displayObject = luaEntity.get<sol::optional<std::string>>("display_object");
-	if (!displayObject) throw std::runtime_error("entity '" + identifier + "' is missing the display_object property.");
+	auto displayObject = luaEntity.get<sol::optional<std::string>>(
+		(*displayType == "wireframe") ? "display_stroke" : "display_object");
+	if (!displayObject) throw std::runtime_error(
+		"entity '" + identifier + "' is missing the display_object/display_color property.");
 	
-	auto displayTexture = luaEntity.get<sol::optional<std::string>>("display_texture");
-	if (strncmp(displayType->data(), "model", 5) == 0 && !displayTexture)
+	auto displayTexture = luaEntity.get<sol::optional<std::string>>(
+		(*displayType == "wireframe") ? "display_fill" : "display_texture");
+	if (displayType == "model" && !displayTexture)
 		throw std::runtime_error("entity '" + identifier + "' is missing the display_texture property.");
 	
 	auto entity = std::make_shared<::LocalLuaEntity>(dim->getGame(), dim);
@@ -105,11 +108,13 @@ sol::table Api::Usertype::Dimension::add_entity_s(sol::this_state s, glm::vec3 p
 	auto displayType = luaEntity.get<sol::optional<std::string>>("display");
 	if (!displayType) throw std::runtime_error("entity '" + identifier + "' is missing the display property.");
 	
-	auto displayObject = luaEntity.get<sol::optional<std::string>>("display_object");
-	if (!displayObject) throw std::runtime_error("entity '" + identifier + "' is missing the display_object property.");
+	auto displayObject = luaEntity.get<sol::optional<std::string>>(
+		(*displayType == "wireframe") ? "display_color" : "display_object");
+	if (!displayObject) throw std::runtime_error(
+			"entity '" + identifier + "' is missing the display_object/display_color property.");
 	
 	auto displayTexture = luaEntity.get<sol::optional<std::string>>("display_texture");
-	if (strncmp(displayType->data(), "model", 5) == 0 && !displayTexture)
+	if (displayType == "model" && !displayTexture)
 		throw std::runtime_error("entity '" + identifier + "' is missing the display_texture property.");
 	
 	unsigned int ind = dim->nextEntityInd();

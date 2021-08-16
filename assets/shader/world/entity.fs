@@ -15,11 +15,11 @@ uniform sampler2D tex;
 void main() {
     if (useTex > 0.5) {
         vec4 spec = texture(tex, colorData.xy) * vec4(colorBlend, colorData.w);
-        if (spec.a < 0.1) discard;
+        if (spec.a < 0.01) discard;
         gSpecular = spec;
     }
     else {
-        if (colorData.a < 0.1) discard;
+        if (colorData.a < 0.01) discard;
         gSpecular = colorData * vec4(colorBlend, 1);
     }
     gPosition = vec4(fragPos, 1);

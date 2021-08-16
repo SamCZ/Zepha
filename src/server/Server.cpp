@@ -32,7 +32,7 @@ Server::Server(u16 port, const std::string& subgame) :
 void Server::update() {
 	const static i64 interval_ns = static_cast<i64>((1000 / 60.f) * 1000000L);
 	Timer loop("");
-	
+
 	world.s()->update(delta);
 	game.s()->update(delta);
 	
@@ -58,9 +58,8 @@ void Server::update() {
 			PacketView p(event.packet);
 			
 			auto client = static_cast<ServerClient*>(event.peer->data);
-			if (client->player) return playerPacketReceived(p, clients.getClient(client->id)->player);
-			
-			if (infoSender.handlePacket(*client, p)) {
+			if (client->player) playerPacketReceived(p, clients.getClient(client->id)->player);
+			else if (infoSender.handlePacket(*client, p)) {
 				auto clientShr = clients.getClient(client->id);
 				clients.createPlayer(clientShr, world->getDefaultDimension());
 			}
@@ -93,7 +92,7 @@ void Server::update() {
 	
 	playersUpdated.clear();
 	
-	u64 sleep_for = (std::max)(interval_ns - static_cast<i64>(loop.elapsedNs()), 0L);
+	i64 sleep_for = (std::max)(interval_ns - static_cast<i64>(loop.elapsedNs()), 0L);
 	if (sleep_for > 0) std::this_thread::sleep_for(std::chrono::nanoseconds(sleep_for));
 	
 	delta = loop.elapsedNs() / 1000000.f / 1000.f;
@@ -164,6 +163,7 @@ void Server::playerPacketReceived(PacketView& p, sptr<ServerPlayer> player) {
 	}
 	
 	case Packet::Type::INV_INTERACT: {
+		// TODO: When reading these parameters, there's a bad_alloc error.
 		bool primary = p.d.read<bool>();
 		string source = p.d.read<string>();
 		string list = p.d.read<string>();
@@ -174,9 +174,10 @@ void Server::playerPacketReceived(PacketView& p, sptr<ServerPlayer> player) {
 	
 	case Packet::Type::MOD_MESSAGE: {
 		string source = p.d.read<string>();
-		string list = p.d.read<string>();
+		string message = p.d.read<string>();
 		game->getParser().safe_function(game->getParser().core["trigger"], "message",
-			source, game->getParser().safe_function(game->getParser().core["deserialize"], list));
+			source, game->getParser().safe_function(game->getParser().core["deserialize"], message),
+			Api::Usertype::ServerPlayer(player));
 		break;
 	}
 	}

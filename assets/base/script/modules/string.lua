@@ -16,3 +16,15 @@ string.split = function(input, sep, op)
         table.insert(t, op and op(str) or str) end
     return t
 end
+
+-- string.escape
+-- Escapes a string, replacing all graves with grave literals.
+string.escape = function(str)
+    return str:gsub('%`', '``')
+end
+
+-- string.starts_with
+-- Checks if a string starts with the specified substring.
+string.starts_with = function(str, substr)
+    return str:sub(1, substr:len()) == substr
+end

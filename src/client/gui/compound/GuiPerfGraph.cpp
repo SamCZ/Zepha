@@ -30,15 +30,14 @@ void GuiPerfGraph::create(f32 scale, vec4 padding, const vec<string>& sections, 
 	meter->setPos({ GRAPH_PAD_X, GRAPH_PAD_Y });
 	
 	auto label = std::make_shared<GuiText>("label");
-	label->create({ 2, 2 }, {}, {}, { 1, 1, 1, 1 }, this->font);
+	label->create({ 2, 2 }, {}, { 1, 1, 1, 1 }, {}, this->font);
 	label->setText(title);
 	add(label);
 	label->setPos({ TEXT_PAD_X, TEXT_PAD_Y });
 	
 	for (usize i = 0; i < sections.size(); i++) {
 		auto label = std::make_shared<GuiText>();
-		label->create({ 2, 2 }, {}, vec4(GuiMeter::COLORS[i % GuiMeter::COLORS.size()], 1),
-			{ 1, 1, 1, 1 }, this->font);
+		label->create({ 2, 2 }, {}, vec4(GuiMeter::COLORS[i % GuiMeter::COLORS.size()], 1), {}, this->font);
 		label->setText(sections[i]);
 		add(label);
 		label->setPos({ TEXT_PAD_X + scale * (i % 2) / 2, TEXT_PAD_Y + GRAPH_PAD_Y + (i / 2) * 24 + 2 });
