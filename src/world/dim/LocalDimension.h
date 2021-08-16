@@ -98,6 +98,9 @@ private:
 	std::unordered_map<vec3, chunk_ref, Vec::vec3> renderRefs{};
 	std::list<sptr<ChunkRenderElem>> renderElems{};
 	
+	u32 mapBlockScanY = 0;
+	const static u32 MAPBLOCK_SCAN_Y_INTERVAL = 8;
+	
 	const ivec2 retainMapBlockRange = { 4, 4 };
 	i64 entityInd = -1;
 };

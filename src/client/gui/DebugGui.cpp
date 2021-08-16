@@ -61,7 +61,7 @@ DebugGui::DebugGui(u16vec2 buffer, SubgamePtr game, LocalWorld& world, vec<strin
 	add(perfGraph);
 
 	auto chunkStates = make_shared<GuiCellGraph>("chunkStates");
-	chunkStates->create(6, vec4(4), CHUNK_RANGE, "Chunk Compression", f);
+	chunkStates->create(12, vec4(4), MAPBLOCK_RANGE, "Mapblocks", f);
 	chunkStates->refresh();
 	add(chunkStates);
 
@@ -82,7 +82,7 @@ void DebugGui::positionElements(u16vec2 buffer) {
 	get<GuiLabelledGraph>("gpuGraph")->setPos({ buffer.x - 254, 90 + 80 });
 	get<GuiLabelledGraph>("perfGraph")->setPos({ buffer.x - 354 - 254, 10 });
 
-	get<GuiLabelledGraph>("chunkStates")->setPos({ buffer.x - 264 - 300, buffer.y - 334 });
+	get<GuiLabelledGraph>("chunkStates")->setPos({ buffer.x - 264 - 144, buffer.y - 178 });
 }
 
 void DebugGui::update(sptr<LocalPlayer> player, f64 delta, u32 interpolatedChunks, u32 generatedChunks,
@@ -176,51 +176,40 @@ void DebugGui::update(sptr<LocalPlayer> player, f64 delta, u32 interpolatedChunk
 		str << "No Target" << std::endl << std::endl;
 	}
 
-//	for (usize i = 0; i < perfTimings.size(); i++) {
-//		str << perfSections[i] << ": " << perfTimings[i] << " ns." << std::endl;
-//	}
-
 	get<GuiText>("dataText")->setText(str.str());
 
 	// Chunk States
 
-	if (chunkTimer == 0) {
-		auto chunkStates = get<GuiCellGraph>("chunkStates");
-		ivec3 off = { 0, 0, 0 };
-		for (off.x = 0; off.x < CHUNK_RANGE; off.x++) {
-			for (off.z = 0; off.z < CHUNK_RANGE; off.z++) {
-				f32 existAmount = 0;
-				f32 compressedAmount = 0;
-				ivec3 check = ivec3(chunkPos) + off -
-					glm::ivec3(floor(CHUNK_RANGE / 2), 0, floor(CHUNK_RANGE / 2));
+	auto chunkStates = get<GuiCellGraph>("chunkStates");
+	ivec3 off = { 0, 0, 0 };
+	for (off.x = 0; off.x < MAPBLOCK_RANGE; off.x++) {
+		if ((off.x - mapBlockScanX) % MAPBLOCK_SCAN_X_INTERVAL != 0) continue;
+		
+		for (off.z = 0; off.z < MAPBLOCK_RANGE; off.z++) {
+			f32 existAmount = 0;
+			ivec3 check = ivec3(mapBlockPos) + off -
+				ivec3(MAPBLOCK_RANGE / 2, 0, MAPBLOCK_RANGE / 2);
 
-				for (off.y = 0; off.y < CHUNK_VERT; off.y++) {
-					check.y = static_cast<i32>(chunkPos.y) + off.y - CHUNK_VERT / 2;
-					const auto chunk = world.getActiveDimension()->getChunk(check);
-					if (chunk) {
-						existAmount++;
-						if (chunk->isCompressed()) compressedAmount++;
-					}
-				}
-
-				const auto color = glm::mix(CHUNK_UNLOADED,
-					glm::mix(CHUNK_UNCOMPRESSED, CHUNK_COMPRESSED,
-						compressedAmount / CHUNK_VERT),existAmount / CHUNK_VERT);
-
-				chunkStates->setCellColor(u16vec2(off.x, off.z), color);
+			for (off.y = 0; off.y < MAPBLOCK_VERT; off.y++) {
+				check.y = static_cast<i32>(chunkPos.y) + off.y - MAPBLOCK_VERT / 2;
+				const auto mapBlock = world.getActiveDimension()->getMapBlock(check);
+				if (mapBlock) existAmount++;
 			}
-		}
-		chunkStates->refresh();
-	}
-	
-	chunkTimer = (chunkTimer + 1) % CHUNK_INTERVAL;
 
-	// Crosshair information
+			const auto color =
+				(off.x == MAPBLOCK_RANGE / 2 && off.z == MAPBLOCK_RANGE / 2) ? MAPBLOCK_CURRENT
+					: glm::mix(MAPBLOCK_UNLOADED, MAPBLOCK_LOADED, existAmount / MAPBLOCK_VERT);
+			chunkStates->setCellColor(u16vec2(off.x, off.z), color);
+		}
+	}
+	chunkStates->refresh();
+	
+	mapBlockScanX = (mapBlockScanX + 1) % MAPBLOCK_SCAN_X_INTERVAL;
 
 	if (target.type == Target::Type::BLOCK) {
 		const auto& def = game->getDefs().blockFromId(world.getActiveDimension()->getBlock(target.data.block.pos));
-		get<GuiText>("crosshairText")->setText(
-			"`b" + def.name + " (`r` `c7" + def.identifier + "`cr - " + std::to_string(def.index) + "` `b)");
+		get<GuiText>("crosshairText")->setText("`b" + def.name + " (`r` `c7" +
+			def.identifier + "`cr - " + std::to_string(def.index) + "` `b)");
 	}
 	else {
 		get<GuiText>("crosshairText")->setText("");

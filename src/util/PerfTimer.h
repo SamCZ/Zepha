@@ -7,6 +7,8 @@ public:
 	PerfTimer(const vec<string>& sections);
 	
 	void start(const string& section);
+	void resume(const string& section);
+	
 	vec<usize> end();
 private:
 	void stopCurrent();

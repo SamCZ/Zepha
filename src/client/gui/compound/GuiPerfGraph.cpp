@@ -24,7 +24,7 @@ void GuiPerfGraph::create(f32 scale, vec4 padding, const vec<string>& sections, 
 	background->setPos({ 0, 0 });
 	
 	auto meter = make_shared<GuiMeter>("meter");
-	meter->create({ scale - GRAPH_PAD_X * 2, 24 }, {}, 0.85);
+	meter->create({ scale - GRAPH_PAD_X * 2, 24 }, {}, 0.95);
 	add(meter);
 	meter->setBudget(1 / 60.f * 1000000000);
 	meter->setPos({ GRAPH_PAD_X, GRAPH_PAD_Y });

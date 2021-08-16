@@ -37,18 +37,18 @@ public:
 
 private:
 
-	constexpr static vec4 CHUNK_UNLOADED = { 1, 1, 1, 0.15 };
-	constexpr static vec4 CHUNK_COMPRESSED = { 1, 1, 1, 0.75 };
-	constexpr static vec4 CHUNK_UNCOMPRESSED = { 1, 0, 0, 0.75 };
+	constexpr static vec4 MAPBLOCK_UNLOADED = { 1, 1, 1, 0.15 };
+	constexpr static vec4 MAPBLOCK_LOADED = { 1, 1, 1, 0.75 };
+	constexpr static vec4 MAPBLOCK_CURRENT = { 1, 0.93, 0.35, 1 };
 
-	constexpr static i32 CHUNK_VERT = 3;
-	constexpr static i32 CHUNK_RANGE = 48;
+	constexpr static i32 MAPBLOCK_VERT = 3;
+	constexpr static i32 MAPBLOCK_RANGE = 11;
+	
+	u32 mapBlockScanX = 0;
+	constexpr static u32 MAPBLOCK_SCAN_X_INTERVAL = 9;
 
 	SubgamePtr game;
 	LocalWorld& world;
-
-	u16 chunkTimer = 0;
-	constexpr static u16 CHUNK_INTERVAL = 5;
 
 	Visibility state = Visibility::ON;
 };

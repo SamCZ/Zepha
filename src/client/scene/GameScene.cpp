@@ -25,7 +25,7 @@ void GameScene::update() {
 	Window& window = client.renderer.window;
 	auto perfTimings = perf.end();
 	
-	perf.start("update:mods");
+	perf.start("other");
 	client.game->update(client.getDelta());
 	
 	world.l()->update(client.getDelta(), perfTimings, perf);

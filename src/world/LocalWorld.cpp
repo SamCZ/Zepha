@@ -16,7 +16,7 @@ LocalWorld::LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& render
 //	worldGenStream(make_shared<WorldInterpolationStream>(*game.l(), *this, 55)),
 	player(make_shared<LocalPlayer>(game, *this, DimensionPtr(nullptr), renderer)) {
 	
-	renderer.window.onResize(Util::bind_this(&debugGui, &DebugGui::bufferResized));
+	lock = renderer.window.onResize(Util::bind_this(&debugGui, &DebugGui::bufferResized));
 }
 
 void LocalWorld::init() {
@@ -43,14 +43,8 @@ void LocalWorld::update(f64 delta, vec<usize>& perfTimings, PerfTimer& perf) {
 	refs->update(delta, net);
 	
 	// Update the network
-	perf.start("update:net");
+	perf.resume("other");
 	net.update();
-	
-	// Commit interpolated mapblocks
-	perf.start("update:chunks");
-//	auto finishedChunks = worldGenStream->update();
-//	lastInterpolations = finishedChunks->size() / 64;
-//	for (const auto& chunk : *finishedChunks) commitChunk(chunk);
 	
 	// Update debug interface
 	perf.start("update:debug");
@@ -60,20 +54,21 @@ void LocalWorld::update(f64 delta, vec<usize>& perfTimings, PerfTimer& perf) {
 		perfTimings,
 		activeDimension->getMeshChunksDrawn(),
 		activeDimension->getMeshChunksCommitted());
+	perf.resume("other");
 	
 	// Toggle regular interface
 	if (renderer.window.input.keyPressed(GLFW_KEY_F1)) {
 		hudVisible = !hudVisible;
-		debugGui.changeVisibility(hudVisible ? debugVisible ? DebugGui::Visibility::OFF :
-			DebugGui::Visibility::FPS_ONLY : DebugGui::Visibility::ON);
 		player.l()->setHudVisible(hudVisible);
+		debugGui.changeVisibility(hudVisible ? debugVisible ? DebugGui::Visibility::ON :
+			DebugGui::Visibility::FPS_ONLY : DebugGui::Visibility::OFF);
 	}
 	
 	// Toggle debug interface
 	if (renderer.window.input.keyPressed(GLFW_KEY_F3)) {
 		debugVisible = !debugVisible;
-		debugGui.changeVisibility(hudVisible ? debugVisible ? DebugGui::Visibility::OFF :
-			DebugGui::Visibility::FPS_ONLY : DebugGui::Visibility::ON);
+		debugGui.changeVisibility(hudVisible ? debugVisible ? DebugGui::Visibility::ON :
+			DebugGui::Visibility::FPS_ONLY : DebugGui::Visibility::OFF);
 	}
 }
 

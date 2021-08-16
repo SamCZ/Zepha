@@ -52,7 +52,7 @@ void LocalDimension::update(f64 delta) {
 	for (let it = regions.cbegin(); it != regions.cend();) {
 		for (u16 m = 0; m < 64; m++) {
 			let mapBlock = it->second->get(m);
-			if (!mapBlock) continue;
+			if (!mapBlock || (mapBlock->pos.y - mapBlockScanY) % MAPBLOCK_SCAN_Y_INTERVAL != 0) continue;
 			
 			if (abs(clientMapBlock.x - mapBlock->pos.x) > retainMapBlockRange.x ||
 			    abs(clientMapBlock.y - mapBlock->pos.y) > retainMapBlockRange.y ||
@@ -80,6 +80,8 @@ void LocalDimension::update(f64 delta) {
 		erase_region_and_continue:
 		it = regions.erase(it);
 	}
+	
+	mapBlockScanY = (mapBlockScanY + 1) % MAPBLOCK_SCAN_Y_INTERVAL;
 }
 
 void LocalDimension::setChunk(sptr<Chunk> chunk) {

@@ -6,6 +6,10 @@
       <file path="$PROJECT_DIR$/src" />
       <file path="$PROJECT_DIR$/test" />
     </sourceRoots>
+    <libraryRoots>
+      <file path="$PROJECT_DIR$/cmake-build-debug" />
+      <file path="$PROJECT_DIR$/cmake-build-release" />
+    </libraryRoots>
     <excludeRoots>
       <file path="$PROJECT_DIR$/.github" />
       <file path="$PROJECT_DIR$/.idea" />

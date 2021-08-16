@@ -18,8 +18,8 @@ public:
 	void draw() override;
 	
 private:
-	vec<string> perfSections = { "update:mods", "update:world", "update:player", "update:net", "update:chunks",
-		"draw:world", "draw:entities", "draw:interface", "update:debug", "idle" };
+	vec<string> perfSections = { "update:world", "update:player", "update:debug",
+		"draw:world", "draw:entities", "draw:interface", "other", "idle" };
 	PerfTimer perf { perfSections };
 	
 	WorldPtr world;
