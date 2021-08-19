@@ -10,15 +10,15 @@
 #include "client/gui/basic/GuiContainer.h"
 
 class LuaErrorScene : public Scene {
-	public:
+public:
 	LuaErrorScene(Client& client, const std::string& err);
 	
 	void update() override;
 	
 	void draw() override;
 	
-	private:
-	GuiContainer components;
+private:
+//	GuiContainer components;
 	const std::string err;
 	
 	Window::RCBLock lock;

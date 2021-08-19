@@ -18,7 +18,7 @@ GameScene::GameScene(Client& client) : Scene(client),
 	
 	client.renderer.setClearColor(148, 194, 240);
 //	client.renderer.setClearColor(16, 24, 32);
-	client.renderer.window.input.lockMouse(true);
+	client.renderer.window.input.setMouseLocked(true);
 }
 
 void GameScene::update() {

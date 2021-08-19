@@ -4,6 +4,7 @@
 #include "util/net/PacketView.h"
 #include "client/graph/Renderer.h"
 #include "world/dim/chunk/Chunk.h"
+#include "inv/LocalInventoryRefs.h"
 #include "world/player/LocalPlayer.h"
 #include "client/stream/WorldInterpolationStream.h"
 
@@ -12,11 +13,11 @@ LocalWorld::LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& render
 	renderer(renderer),
 	net(conn, *this),
 	refs(make_shared<LocalInventoryRefs>(game, net)),
-	debugGui(renderer.window.getSize(), game, *this, perfSections),
+//	debugGui(renderer.window.getSize(), game, *this, perfSections),
 //	worldGenStream(make_shared<WorldInterpolationStream>(*game.l(), *this, 55)),
 	player(make_shared<LocalPlayer>(game, *this, DimensionPtr(nullptr), renderer)) {
 	
-	lock = renderer.window.onResize(Util::bind_this(&debugGui, &DebugGui::bufferResized));
+//	lock = renderer.window.onResize(Util::bind_this(&debugGui, &DebugGui::bufferResized));
 }
 
 void LocalWorld::init() {
@@ -39,7 +40,7 @@ void LocalWorld::update(f64 delta, vec<usize>& perfTimings, PerfTimer& perf) {
 	
 	// Update children
 	perf.start("update:player");
-	if (*player) player.l()->update(renderer.window.input, delta, renderer.window.input.mouseDelta());
+	if (*player) player.l()->update(renderer.window.input, delta, renderer.window.input.getMouseDelta());
 	refs->update(delta, net);
 	
 	// Update the network
@@ -48,28 +49,28 @@ void LocalWorld::update(f64 delta, vec<usize>& perfTimings, PerfTimer& perf) {
 	
 	// Update debug interface
 	perf.start("update:debug");
-	debugGui.update(
-		player.l(), delta,
-		lastInterpolations, net.serverSideChunkGens, net.recvPackets,
-		perfTimings,
-		activeDimension->getMeshChunksDrawn(),
-		activeDimension->getMeshChunksCommitted());
+//	debugGui.update(
+//		player.l(), delta,
+//		lastInterpolations, net.serverSideChunkGens, net.recvPackets,
+//		perfTimings,
+//		activeDimension->getMeshChunksDrawn(),
+//		activeDimension->getMeshChunksCommitted());
 	perf.resume("other");
 	
 	// Toggle regular interface
-	if (renderer.window.input.keyPressed(GLFW_KEY_F1)) {
-		hudVisible = !hudVisible;
-		player.l()->setHudVisible(hudVisible);
-		debugGui.changeVisibility(hudVisible ? debugVisible ? DebugGui::Visibility::ON :
-			DebugGui::Visibility::FPS_ONLY : DebugGui::Visibility::OFF);
-	}
-	
-	// Toggle debug interface
-	if (renderer.window.input.keyPressed(GLFW_KEY_F3)) {
-		debugVisible = !debugVisible;
-		debugGui.changeVisibility(hudVisible ? debugVisible ? DebugGui::Visibility::ON :
-			DebugGui::Visibility::FPS_ONLY : DebugGui::Visibility::OFF);
-	}
+//	if (renderer.window.input.keyPressed(GLFW_KEY_F1)) {
+//		hudVisible = !hudVisible;
+//		player.l()->setHudVisible(hudVisible);
+//		debugGui.changeVisibility(hudVisible ? debugVisible ? DebugGui::Visibility::ON :
+//			DebugGui::Visibility::FPS_ONLY : DebugGui::Visibility::OFF);
+//	}
+//
+//	// Toggle debug interface
+//	if (renderer.window.input.keyPressed(GLFW_KEY_F3)) {
+//		debugVisible = !debugVisible;
+//		debugGui.changeVisibility(hudVisible ? debugVisible ? DebugGui::Visibility::ON :
+//			DebugGui::Visibility::FPS_ONLY : DebugGui::Visibility::OFF);
+//	}
 }
 
 void LocalWorld::handleWorldPacket(uptr<PacketView> p) {
@@ -162,6 +163,6 @@ void LocalWorld::drawEntities() {
 
 void LocalWorld::drawInterface() {
 	player.l()->drawHud(renderer);
-	debugGui.draw(renderer);
+//	debugGui.draw(renderer);
 	player.l()->drawMenu(renderer);
 }

@@ -90,7 +90,7 @@ private:
 	PlayerPtr player;
 	
 	/** The debug interface. */
-	DebugGui debugGui;
+//	DebugGui debugGui;
 	
 	/** The number of chunks that were interpolated last frome. */
 	u32 lastInterpolations = 0;

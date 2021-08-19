@@ -1,20 +1,17 @@
+////
+//// Created by aurailus on 2019-10-29.
+////
 //
-// Created by aurailus on 2019-10-29.
+//#pragma once
 //
-
-#pragma once
-
-#include "GuiContainer.h"
-
-class ItemDef;
-
-class Font;
-
-class GuiInventoryItem : public GuiContainer {
-	public:
-	GuiInventoryItem() = default;
-	
-	GuiInventoryItem(const std::string& key);
-	
-	void create(glm::vec2 scale, unsigned short itemCount, ItemDef& def, Font font);
-};
+//#include "GuiContainer.h"
+//
+//class Font;
+//class ItemDef;
+//
+//class GuiInventoryItem : public GuiContainer {
+//public:
+//	using GuiContainer::GuiContainer;
+//
+//	void create(glm::vec2 scale, unsigned short itemCount, ItemDef& def, Font font);
+//};

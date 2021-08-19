@@ -213,7 +213,7 @@ private:
 	
 	void updateInteract(Input& input, f64 delta);
 	
-	GameGui gameGui;
+//	GameGui gameGui;
 	Renderer& renderer;
 	
 	/** The player's current target. */

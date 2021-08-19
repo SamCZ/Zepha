@@ -136,45 +136,45 @@ void LuaGuiElement::clear(sol::this_state s) {
 
 Any LuaGuiElement::getAsAny(const std::string& key) const {
 	if (!traits.count(key)) return Any();
-	auto object = traits.at(key);
-	
-	if (object.is<float>()) return Any::from<float>(object.as<float>());
-	else if (object.is<bool>()) return Any::from<bool>(object.as<bool>());
-	else if (object.is<std::string>()) return Any::from<std::string>(object.as<std::string>());
-	else if (object.is<sol::table>()) {
-		auto table = object.as<sol::table>();
-		
-		if (table.size() == 2) {
-			auto x = table.get<sol::object>(1);
-			auto y = table.get<sol::object>(2);
-			
-			glm::vec2 values = {};
-			if (x.is<float>()) values.x = x.as<float>();
-			else if (x.is<std::string>()) values.x = SerialGui::toDouble(x.as<std::string>());
-			if (y.is<float>()) values.y = y.as<float>();
-			else if (y.is<std::string>()) values.y = SerialGui::toDouble(y.as<std::string>());
-			
-			return Any::from<glm::vec2>(values);
-		}
-		else if (table.size() == 4) {
-			auto x = table.get<sol::object>(1);
-			auto y = table.get<sol::object>(2);
-			auto z = table.get<sol::object>(3);
-			auto w = table.get<sol::object>(4);
-			
-			glm::vec4 values = {};
-			if (x.is<float>()) values.x = x.as<float>();
-			else if (x.is<std::string>()) values.x = SerialGui::toDouble(x.as<std::string>());
-			if (y.is<float>()) values.y = y.as<float>();
-			else if (y.is<std::string>()) values.y = SerialGui::toDouble(y.as<std::string>());
-			if (z.is<float>()) values.z = z.as<float>();
-			else if (z.is<std::string>()) values.z = SerialGui::toDouble(z.as<std::string>());
-			if (w.is<float>()) values.w = w.as<float>();
-			else if (w.is<std::string>()) values.w = SerialGui::toDouble(w.as<std::string>());
-			
-			return Any::from<glm::vec4>(values);
-		}
-	}
+//	auto object = traits.at(key);
+//
+//	if (object.is<float>()) return Any::from<float>(object.as<float>());
+//	else if (object.is<bool>()) return Any::from<bool>(object.as<bool>());
+//	else if (object.is<std::string>()) return Any::from<std::string>(object.as<std::string>());
+//	else if (object.is<sol::table>()) {
+//		auto table = object.as<sol::table>();
+//
+//		if (table.size() == 2) {
+//			auto x = table.get<sol::object>(1);
+//			auto y = table.get<sol::object>(2);
+//
+//			glm::vec2 values = {};
+//			if (x.is<float>()) values.x = x.as<float>();
+//			else if (x.is<std::string>()) values.x = SerialGui::toDouble(x.as<std::string>());
+//			if (y.is<float>()) values.y = y.as<float>();
+//			else if (y.is<std::string>()) values.y = SerialGui::toDouble(y.as<std::string>());
+//
+//			return Any::from<glm::vec2>(values);
+//		}
+//		else if (table.size() == 4) {
+//			auto x = table.get<sol::object>(1);
+//			auto y = table.get<sol::object>(2);
+//			auto z = table.get<sol::object>(3);
+//			auto w = table.get<sol::object>(4);
+//
+//			glm::vec4 values = {};
+//			if (x.is<float>()) values.x = x.as<float>();
+//			else if (x.is<std::string>()) values.x = SerialGui::toDouble(x.as<std::string>());
+//			if (y.is<float>()) values.y = y.as<float>();
+//			else if (y.is<std::string>()) values.y = SerialGui::toDouble(y.as<std::string>());
+//			if (z.is<float>()) values.z = z.as<float>();
+//			else if (z.is<std::string>()) values.z = SerialGui::toDouble(z.as<std::string>());
+//			if (w.is<float>()) values.w = w.as<float>();
+//			else if (w.is<std::string>()) values.w = SerialGui::toDouble(w.as<std::string>());
+//
+//			return Any::from<glm::vec4>(values);
+//		}
+//	}
 	
 	throw std::runtime_error("Invalid type requested in getAsAny");
 }

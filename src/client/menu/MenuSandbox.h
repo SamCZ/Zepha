@@ -10,13 +10,9 @@
 #include "client/gui/GuiBuilder.h"
 
 class Client;
-
 class Subgame;
-
 class AtlasRef;
-
 class SubgameDef;
-
 class GuiContainer;
 
 class MenuSandbox : LuaParser {
@@ -46,9 +42,11 @@ class MenuSandbox : LuaParser {
 	LuaMod mod {};
 	std::vector<std::shared_ptr<AtlasRef>> modAssets{};
 	
-	std::shared_ptr<GuiContainer> container = nullptr;
-	std::shared_ptr<GuiContainer> luaContainer = nullptr;
-	GuiBuilder builder;
+//	GuiRoot gui;
+	
+//	std::shared_ptr<GuiContainer> container = nullptr;
+//	std::shared_ptr<GuiContainer> luaContainer = nullptr;
+//	GuiBuilder builder;
 	
 	Client& client;
 	glm::ivec2& win;

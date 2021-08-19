@@ -1,66 +1,99 @@
-//
-// Created by aurailus on 09/04/19.
-//
-
 #pragma once
 
-#include <array>
 #include <functional>
-#include <glm/vec2.hpp>
+#include <unordered_map>
+
+#include "util/Types.h"
+
+/**
+ * Manages callbacks for key and mouse input, allows toggling mouse locking.
+ */
 
 class Input {
-	public:
-	Input();
+public:
 	
-	void init(GLFWwindow* window, glm::ivec2* winDimensions);
+	/** Activates the input listeners. */
+	void init(GLFWwindow* window);
 	
-	void setCallback(std::function<void(bool, int)> callback);
-	
+	/** Updates non-listener based data. */
 	void update();
 	
-	bool keyDown(int key);
+	/** Returns true if the specified key is down.  */
+	bool isKeyDown(u32 key);
 	
-	bool keyPressed(int key);
+	/** Returns true if the specified mouse button is down. */
+	bool isMouseDown(u32 button);
 	
-	bool keyReleased(int key);
+	/** Sets whether or not the mouse is locked and hidden for first person camera use. */
+	void setMouseLocked(bool lock);
 	
-	bool mouseDown(int button);
+	usize bindKeyCallback(i32 key, std::function<void(i32)> cb);
+	void unbindKeyCallback(i32 key, usize id);
 	
-	bool mousePressed(int button);
+	usize bindKeyCallback(std::function<void(u32, i32)> cb);
+	void unbindKeyCallback(usize id);
 	
-	bool mouseReleased(int button);
+	usize bindMouseCallback(i32 button, std::function<void(i32)> cb);
+	void unbindMouseCallback(i32 button, usize id);
 	
-	void lockMouse(bool lock);
+	usize bindMouseCallback(std::function<void(u32, i32)> cb);
+	void unbindMouseCallback(usize id);
 	
-	glm::ivec2 mousePos();
+	/**
+	 * Gets the position of the mouse relative to the screen.
+	 * Will always report the center of the screen if the mouse is locked.
+	 */
 	
-	glm::vec2 mouseDelta();
+	ivec2 getMousePos();
 	
-	private:
-	void updateMouse(int key);
+	/**
+	 * Gets the delta of the last mouse movement.
+	 * Only works if the mouse is locked.
+	 */
+	 
+	ivec2 getMouseDelta();
 	
-	static void keyCallback(GLFWwindow* window, int key, int code, int action, int mode);
+private:
 	
-	static void scrollCallback(GLFWwindow* window, double, double yO);
+	/** Calls the key callbacks and sets the key state of the key provided. */
+	void updateKey(u32 key, i32 state);
 	
-	GLFWwindow* window = nullptr;
-	glm::ivec2* winDimensions = nullptr;
+	/** Calls the button callbacks and sets the button state of the mouse button provided. */
+	void updateMouse(u32 button, i32 state);
 	
-	bool keysNew[1024]{ false };
-	bool keysDown[1024]{ false };
-	bool keysPressed[1024]{ false };
-	bool keysReleased[1024]{ false };
+	/**
+	 * Calls the following key callbacks when the user scrolls.
+	 * Right: 11, Left: 10, Up: 8, Down: 9
+	 */
+	 
+	static void scrollCallback(GLFWwindow* window, f64 x, f64 y);
 	
-	struct mouse {
-		bool down = false;
-		bool pressed = false;
-		bool released = false;
-	};
-	std::array<mouse, 3> mouseState{};
-	glm::vec2 delta;
+	/** Calls the updateKey function with the proper key and state. */
+	static void keyCallback(GLFWwindow* window, i32 key, i32 code, i32 action, i32 mode);
 	
-	bool mouseIsLocked = false;
+	/** Calls the updateMouse function with the proper button and state. */
+	static void mouseCallback(GLFWwindow* window, i32 key, i32 action, i32 mods);
+	
+	const static ivec2 LOCKED_MOUSE_POS;
+	
+	array<bool, 1024> keyState {};
+	array<bool, 3> mouseState {};
+	
+	vec2 mouseDelta;
+	bool mouseLocked = false;
 	bool forceMouseUnlocked = false;
 	
-	std::function<void(bool, int)> callback = nullptr;
+	GLFWwindow* window = nullptr;
+	
+	array<std::unordered_map<usize, std::function<void(i32)>>, 1024> keyCallbacks {};
+	usize keyCallbacksInd = 0;
+	
+	std::unordered_map<usize, std::function<void(u32, i32)>> globalKeyCallbacks {};
+	usize globalKeyCallbacksInd = 0;
+	
+	array<std::unordered_map<usize, std::function<void(i32)>>, 3> mouseCallbacks {};
+	usize mouseCallbacksInd = 0;
+	
+	std::unordered_map<usize, std::function<void(u32, i32)>> globalMouseCallbacks {};
+	usize globalMouseCallbacksInd = 0;
 };

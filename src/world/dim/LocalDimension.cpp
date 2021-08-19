@@ -5,9 +5,12 @@
 #include "util/net/PacketView.h"
 #include "lua/usertype/Target.h"
 #include "lua/usertype/Player.h"
+#include "world/inv/Inventory.h"
 #include "world/dim/chunk/Chunk.h"
 #include "client/graph/Renderer.h"
 #include "world/dim/chunk/Region.h"
+#include "lua/usertype/ItemStack.h"
+#include "world/inv/InventoryList.h"
 #include "world/dim/chunk/MapBlock.h"
 #include "client/stream/MeshGenStream.h"
 #include "client/graph/mesh/MeshChunk.h"
@@ -43,7 +46,7 @@ void LocalDimension::update(f64 delta) {
 	for (auto& entity : playerEntities) entity.update(delta);
 	
 	/*
-	 * Delete mapblocks and regions that are outside of the retain range,
+	 * Delete mapblocks and regions that are outside the retain-range,
 	 * and compress chunks if they are idle.
 	 */
 	

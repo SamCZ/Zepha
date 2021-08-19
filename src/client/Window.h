@@ -47,9 +47,6 @@ private:
 	ivec2 win;
 	ivec2 center;
 	
-	bool keys[1024] {};
-	
 	std::list<std::pair<RCBLock, std::function<void(ivec2)>>> resizeCallbacks {};
-	
 };
 

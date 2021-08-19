@@ -14,22 +14,23 @@
 #include "util/net/Deserializer.h"
 #include "game/def/CraftItemDef.h"
 #include "world/dim/ent/Collision.h"
+#include "world/inv/LocalInventoryRefs.h"
 #include "client/conn/ClientNetworkInterpreter.h"
 
 LocalPlayer::LocalPlayer(SubgamePtr game, LocalWorld& world, DimensionPtr dim, Renderer& renderer) :
 	Player(game, world, dim), DrawableEntity(game, dim), Entity(game, dim),
 	renderer(renderer),
-	wireframe(game, dim, { 1, 1, 1 }),
-	gameGui(world.getRefs().l(), renderer.window.getSize(), game.l(), renderer) {
+	wireframe(game, dim, { 1, 1, 1 }) {
+//	gameGui(world.getRefs().l(), renderer.window.getSize(), game.l(), renderer) {
 	
 	handItemModel.parent = &handModel;
 	
-	lock = renderer.window.onResize([&](glm::ivec2 win) { gameGui.winResized(win); });
+//	lock = renderer.window.onResize([&](glm::ivec2 win) { gameGui.winResized(win); });
 }
 
 void LocalPlayer::update(Input& input, f64 delta, vec2 mouseDelta) {
-	gameGui.update(delta);
-	handItemModel.setVisible(gameGui.isVisible());
+//	gameGui.update(delta);
+//	handItemModel.setVisible(gameGui.isVisible());
 	
 	updatePhysics(input, delta, mouseDelta);
 	
@@ -44,7 +45,7 @@ void LocalPlayer::update(Input& input, f64 delta, vec2 mouseDelta) {
 	findTarget(input);
 	updateWireframe();
 	
-	if (!gameGui.isInMenu()) updateInteract(input, delta);
+//	if (!gameGui.isInMenu()) updateInteract(input, delta);
 }
 
 string LocalPlayer::getUsername() {
@@ -96,29 +97,29 @@ InventoryPtr LocalPlayer::getInventory() {
 }
 
 bool LocalPlayer::isInMenu() {
-	return gameGui.isInMenu();
+//	return gameGui.isInMenu();
 }
 
 void LocalPlayer::showMenu(sptr<LuaGuiElement> root) {
-	gameGui.showMenu(root);
-	renderer.window.input.lockMouse(false);
+//	gameGui.showMenu(root);
+	renderer.window.input.setMouseLocked(false);
 }
 
 void LocalPlayer::closeMenu() {
-	gameGui.closeMenu();
-	renderer.window.input.lockMouse(true);
+//	gameGui.closeMenu();
+	renderer.window.input.setMouseLocked(true);
 }
 
 sptr<LuaGuiElement> LocalPlayer::getHud() {
-	return gameGui.getHud();
+//	return gameGui.getHud();
 }
 
 void LocalPlayer::setHud(sptr<LuaGuiElement> hud) {
-	gameGui.setHud(hud);
+//	gameGui.setHud(hud);
 }
 
 void LocalPlayer::setHudVisible(bool hudVisible) {
-	gameGui.setVisible(hudVisible);
+//	gameGui.setVisible(hudVisible);
 }
 
 void LocalPlayer::draw(Renderer&) {
@@ -127,11 +128,11 @@ void LocalPlayer::draw(Renderer&) {
 }
 
 void LocalPlayer::drawHud(Renderer&) {
-	gameGui.drawHud(renderer);
+//	gameGui.drawHud(renderer);
 }
 
 void LocalPlayer::drawMenu(Renderer&) {
-	gameGui.drawMenu(renderer);
+//	gameGui.drawMenu(renderer);
 }
 
 void LocalPlayer::assertField(Packet packet) {
@@ -203,15 +204,15 @@ void LocalPlayer::handleAssertion(Deserializer& d) {
 }
 
 bool LocalPlayer::getKey(Input& input, LocalPlayer::PlayerControl control) {
-	if (gameGui.isInMenu()) return false;
-	return input.keyDown(
+//	if (gameGui.isInMenu()) return false;
+	return input.isKeyDown(
 		control == PlayerControl::FORWARD ? GLFW_KEY_COMMA :
-		control == PlayerControl::BACKWARD ? GLFW_KEY_O :
-		control == PlayerControl::LEFT ? GLFW_KEY_A :
-		control == PlayerControl::RIGHT ? GLFW_KEY_E :
-		control == PlayerControl::JUMP ? GLFW_KEY_SPACE :
-		control == PlayerControl::MOD1 ? GLFW_KEY_LEFT_SHIFT :
-		GLFW_KEY_LEFT_CONTROL);
+			control == PlayerControl::BACKWARD ? GLFW_KEY_O :
+				control == PlayerControl::LEFT ? GLFW_KEY_A :
+					control == PlayerControl::RIGHT ? GLFW_KEY_E :
+						control == PlayerControl::JUMP ? GLFW_KEY_SPACE :
+							control == PlayerControl::MOD1 ? GLFW_KEY_LEFT_SHIFT :
+								GLFW_KEY_LEFT_CONTROL);
 }
 
 void LocalPlayer::updatePhysics(Input& input, f64 delta, vec2 mouseDelta) {
@@ -327,29 +328,29 @@ void LocalPlayer::updateCamera() {
 }
 
 void LocalPlayer::updateWireframe() {
-	if (gameGui.isVisible() && target.type != Target::Type::NOTHING) {
-		std::vector<SelectionBox> boxes {};
-		vec3 thicknessOffset {};
-		vec3 renderPos {};
-		
-		if (target.type == Target::Type::BLOCK) {
-			boxes = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos)).sBoxes;
-			renderPos = target.data.block.pos;
-			thicknessOffset = vec3(0.5);
-		}
-		else {
-			const auto& entity = **dim.l()->getEntityById(target.data.entity.id).entity;
-			boxes.push_back(*entity.getCollisionBox());
-			renderPos = entity.getPos();
-		}
-		
-		float distance = glm::distance(pos, renderPos + thicknessOffset);
-		
-		wireframe.updateMesh(boxes, 0.002f + distance * 0.0014f);
-		wireframe.setPos(renderPos);
-		wireframe.setVisible(true);
-	}
-	else wireframe.setVisible(false);
+//	if (gameGui.isVisible() && target.type != Target::Type::NOTHING) {
+//		std::vector<SelectionBox> boxes {};
+//		vec3 thicknessOffset {};
+//		vec3 renderPos {};
+//
+//		if (target.type == Target::Type::BLOCK) {
+//			boxes = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos)).sBoxes;
+//			renderPos = target.data.block.pos;
+//			thicknessOffset = vec3(0.5);
+//		}
+//		else {
+//			const auto& entity = **dim.l()->getEntityById(target.data.entity.id).entity;
+//			boxes.push_back(*entity.getCollisionBox());
+//			renderPos = entity.getPos();
+//		}
+//
+//		float distance = glm::distance(pos, renderPos + thicknessOffset);
+//
+//		wireframe.updateMesh(boxes, 0.002f + distance * 0.0014f);
+//		wireframe.setPos(renderPos);
+//		wireframe.setVisible(true);
+//	}
+//	else wireframe.setVisible(false);
 }
 
 void LocalPlayer::updateWieldAndHandItems() {
@@ -421,14 +422,14 @@ void LocalPlayer::updateInteract(Input& input, f64 delta) {
 	if (breakTime > 0) breakTime += delta;
 	if (breakTime > breakInterval) breakTime = 0;
 	
-	if (input.mouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
+	if (input.isMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
 		if (target.type == Target::Type::BLOCK && breakTime == 0) {
 			auto& targetedBlock = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos));
 			breakInterval = dim->blockHit(target, static_cast<LocalWorld&>(dim->getWorld()).getPlayer());
 			breakTime += delta;
 		}
 	}
-	else if (input.mousePressed(GLFW_MOUSE_BUTTON_RIGHT)) {
+	else if (input.isMouseDown(GLFW_MOUSE_BUTTON_RIGHT)) {
 		if (target.type == Target::Type::BLOCK) {
 			auto& wieldItem = game->getDefs().fromId(this->wieldItem);
 			auto& targetedBlock = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos));

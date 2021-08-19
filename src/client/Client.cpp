@@ -7,7 +7,7 @@
 
 #include "util/Types.h"
 #include "util/Timer.h"
-#include "scene/GameScene.h"
+//#include "scene/GameScene.h"
 #include "scene/ConnectScene.h"
 #include "scene/MainMenuScene.h"
 

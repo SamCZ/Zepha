@@ -78,8 +78,8 @@ add_library(Zepha_Core
         client/gui/GameGuiBuilder.h
         client/gui/GuiBuilder.cpp
         client/gui/GuiBuilder.h
-        client/gui/GuiComponent.cpp
-        client/gui/GuiComponent.h
+        client/gui/Element.cpp
+        client/gui/Element.h
         client/gui/SerialGui.h
         client/Input.cpp
         client/Input.h
@@ -331,6 +331,6 @@ add_library(Zepha_Core
         client/gui/compound/GuiCellGraph.cpp
         client/gui/compound/GuiCellGraph.h
         client/gui/basic/GuiCells.cpp
-        client/gui/basic/GuiCells.h)
+        client/gui/basic/GuiCells.h client/gui/Gui.h client/gui/Root.cpp client/gui/Root.h client/gui/BoxElement.cpp client/gui/BoxElement.h client/gui/Gui.cpp client/gui/Style.h client/gui/Style.cpp)
 
 target_include_directories(Zepha_Core PUBLIC .)

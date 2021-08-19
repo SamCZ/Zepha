@@ -56,7 +56,7 @@ Window::Window(ivec2 win) :
 	glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	glfwMaximizeWindow(mainWindow);
 	
-	input.init(mainWindow, &this->win);
+	input.init(mainWindow);
 }
 
 void Window::update() {

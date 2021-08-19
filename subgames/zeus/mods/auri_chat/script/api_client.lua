@@ -23,7 +23,6 @@ chat.send_channel = function(channel_name, message)
 end
 
 local function add_channel(channel)
-    print(channel.identifier)
     chat.channels[channel.identifier] = {
         name = channel.name,
         icon = channel.icon,

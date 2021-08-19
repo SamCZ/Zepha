@@ -6,11 +6,14 @@
 
 #include <iostream>
 #include <execinfo.h>
+#include <unordered_map>
 
 #include "util/Log.h"
 #include "util/Util.h"
+#include "util/Types.h"
 #include "client/Client.h"
 #include "server/Server.h"
+#include "util/net/Address.h"
 
 enum class Mode {
 	CLIENT, SERVER
@@ -25,13 +28,13 @@ enum class Mode {
  * @returns - A map of parsed arguments.
  */
 
-std::map<std::string, std::string> ParseArgs(int argc, char* argv[]) {
-	std::map<std::string, std::string> args;
+std::unordered_map<string, string> ParseArgs(i32 argc, char* argv[]) {
+	std::unordered_map<string, string> args;
+	
 	for (usize i = 1; i < argc; i++) {
-		
-		std::string arg(argv[i]);
+		string arg(argv[i]);
 		usize equals = arg.find('=');
-		std::string first = (equals == -1) ? arg : arg.substr(0, equals);
+		string first = (equals == -1) ? arg : arg.substr(0, equals);
 		
 		if (args.count(first)) throw std::invalid_argument("Duplicate argument " + first + ".");
 		
@@ -42,7 +45,6 @@ std::map<std::string, std::string> ParseArgs(int argc, char* argv[]) {
 	
 	return args;
 }
-
 
 /**
  * Instantiates a Client or Server instance, depending on the arguments provided.

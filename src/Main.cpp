@@ -1,9 +1,3 @@
-/*
- * Zepha, designed, developed, and created by Nicole Collings
- * This is my child, and I hope you like it.
- * Copyright 2018 - present Nicole Collings, All Rights Reserved.
- */
-
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wconversion"
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
@@ -19,9 +13,10 @@
 
 #include "StartGame.h"
 
-/**
- * Main entrance point to the program. (Am I really describing what the main function is?)
- * Intentionally kept minimal to allow for testing. Real startup logic is done in StartGame.
+/*
+ * Zepha, designed, developed, and created by Nicole Collings
+ * This is my child, and I hope you like it.
+ * Copyright 2018 - present Auri Collings, All Rights Reserved.
  */
 
 int main(int argc, char* argv[]) {

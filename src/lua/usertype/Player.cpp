@@ -8,8 +8,10 @@
 
 #include "ItemStack.h"
 #include "InventoryList.h"
+#include "LuaGuiElement.h"
 #include "world/LocalWorld.h"
 #include "world/ServerWorld.h"
+#include "world/inv/Inventory.h"
 #include "world/player/LocalPlayer.h"
 
 unsigned int Api::Usertype::ServerPlayer::get_id() {

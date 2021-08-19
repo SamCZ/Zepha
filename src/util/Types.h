@@ -6,10 +6,12 @@
 
 #define let auto
 
+#include <any>
 #include <vector>
 #include <string>
 #include <memory>
 #include <cstdint>
+#include <optional>
 #include <glm/glm.hpp>
 
 using i8  = int8_t;
@@ -74,5 +76,10 @@ using uptr = std::unique_ptr<T>;
 
 using std::make_shared;
 using std::make_unique;
+
+using std::any;
+using std::optional;
+
+using std::any_cast;
 
 #pragma clang diagnostic pop

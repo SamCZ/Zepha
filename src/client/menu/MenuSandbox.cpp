@@ -20,14 +20,15 @@
 MenuSandbox::MenuSandbox(glm::ivec2& win, Client& client, std::shared_ptr<GuiContainer> container) :
 	LuaParser(*client.game),
 	win(win),
-	client(client),
-	container(container),
-	luaContainer(std::dynamic_pointer_cast<GuiContainer>(container->add(std::make_shared<GuiContainer>("__lua")))),
-	builder(client.game->textures, client.game->models, luaContainer) {}
+	client(client)
+//	container(container),
+//	luaContainer(std::dynamic_pointer_cast<GuiContainer>(container->add(std::make_shared<GuiContainer>("__lua"))))
+//	builder(client.game->textures, client.game->models, luaContainer) {}
+{}
 
 void MenuSandbox::reset() {
-	container->remove("error");
-	builder.clear(true);
+//	container->remove("error");
+//	builder.clear(true);
 	core = {};
 	mod = {};
 	lua = sol::state{};
@@ -45,9 +46,9 @@ void MenuSandbox::loadApi() {
 	
 	modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::CLIENT, lua, core));
 	
-	ClientApi::gui_element(lua);
+//	ClientApi::gui_element(lua);
 	
-	MenuApi::set_gui(builder, win, lua, core);
+//	MenuApi::set_gui(builder, win, lua, core);
 	MenuApi::start_game(client, core);
 	
 	bindModules();
@@ -70,11 +71,11 @@ void MenuSandbox::load(const SubgameDef& subgame) {
 }
 
 void MenuSandbox::windowResized() {
-	builder.build(win);
+//	builder.build(win);
 }
 
 void MenuSandbox::update(double delta) {
-	builder.update();
+//	builder.update();
 	core["__builtin"]["update_delayed_functions"]();
 }
 
@@ -158,22 +159,22 @@ void MenuSandbox::loadAndRunMod(const std::string& modPath) {
 
 void MenuSandbox::showError(const std::string& what, const std::string& subgame) {
 	const std::string errPrefixText = "Encountered an error while loading the menu for " + subgame + " ;-;";
-	Font f(client.game->textures, client.game->textures["font"]);
+//	Font f(client.game->textures, client.game->textures["font"]);
 	
-	auto errWrap = std::make_shared<GuiContainer>("error");
-	container->add(errWrap);
+//	auto errWrap = std::make_shared<GuiContainer>("error");
+//	container->add(errWrap);
 	
-	auto errPrefix = std::make_shared<GuiText>("error_text");
-	errPrefix->create({ 3, 3 }, {}, { 0.7, 0, 0.3, 1 }, { 1, 1, 1, 1 }, f);
-	errPrefix->setText(errPrefixText);
-	errPrefix->setPos({ 8, 16 });
-	errWrap->add(errPrefix);
+//	auto errPrefix = std::make_shared<GuiText>("error_text");
+//	errPrefix->create({ 3, 3 }, {}, { 0.7, 0, 0.3, 1 }, { 1, 1, 1, 1 }, f);
+//	errPrefix->setText(errPrefixText);
+//	errPrefix->setPos({ 8, 16 });
+//	errWrap->add(errPrefix);
 	
-	auto errMsg = std::make_shared<GuiText>("error_text");
-	errMsg->create({ 3, 3 }, {}, {}, { 1, 0.5, 0.6, 1 }, f);
-	errMsg->setText(what);
-	errMsg->setPos({ 8, 52 });
-	errWrap->add(errMsg);
+//	auto errMsg = std::make_shared<GuiText>("error_text");
+//	errMsg->create({ 3, 3 }, {}, {}, { 1, 0.5, 0.6, 1 }, f);
+//	errMsg->setText(what);
+//	errMsg->setPos({ 8, 52 });
+//	errWrap->add(errMsg);
 }
 
 sol::protected_function_result MenuSandbox::errorCallback(sol::protected_function_result r) const {

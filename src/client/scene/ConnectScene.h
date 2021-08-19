@@ -37,7 +37,7 @@ private:
 	State connectState = State::CONNECTING;
 	ServerConnection& connection;
 	
-	GuiContainer components;
+//	GuiContainer components;
 	
 	double dotsTime = 0;
 	

@@ -4,6 +4,7 @@
 
 #include "util/Types.h"
 #include "client/Window.h"
+#include "client/gui/Root.h"
 #include "client/menu/SubgameDef.h"
 #include "client/menu/MenuSandbox.h"
 
@@ -43,14 +44,15 @@ private:
 	ivec2 sandboxArea {};
 	
 	/** Element references. */
-	uptr<GuiContainer> components;
-	sptr<GuiContainer> branding;
-	sptr<GuiContainer> navigationBar;
-	sptr<GuiContainer> menuContainer;
+//	uptr<GuiContainer> components;
+//	sptr<GuiContainer> branding;
+//	sptr<GuiContainer> navigationBar;
+//	sptr<GuiContainer> menuContainer;
 	
 	/** Provides the API for menu mods. */
-	MenuSandbox sandbox;
-	
+//	MenuSandbox sandbox;
+	Gui::Root root;
+
 	/** A list of found subgames. */
 	vec<SubgameDef> subgames;
 	
