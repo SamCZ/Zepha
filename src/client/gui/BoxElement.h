@@ -5,9 +5,9 @@ namespace Gui {
 	public:
 		using Element::Element;
 	
-	protected:
 		virtual void updateElement() override;
-
-		virtual void layoutChildren() override;
+		
+	protected:
+		optional<any> curBg;
 	};
 }

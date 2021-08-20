@@ -53,22 +53,23 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 //	root.body->setStyle(Gui::Style::Rule::H_ALIGN, "center");
 //	root.body->setStyle(Gui::Style::Rule::V_ALIGN, "center");
 	
-	root.body->setStyle(Gui::Style::Rule::BACKGROUND_COLOR, "#123");
+//	root.body->setStyle(Gui::Style::Rule::BACKGROUND, string("#123"));
 
 	root.addStylesheet({
-		{ "sandbox", {}},
+		{ "sandbox", {{
+		}}},
 		{ "navigation", {{
 			{ Gui::Style::Rule::HEIGHT, 18 }
 		}}},
 		{ "navigationWrap", {{
-			{ Gui::Style::Rule::DIRECTION, "row" },
+			{ Gui::Style::Rule::DIRECTION, string("row") },
 			{ Gui::Style::Rule::TOP, 0 },
 			{ Gui::Style::Rule::LEFT, 0 }
 		}}},
 		{ "navigationBackground", {{
 			{ Gui::Style::Rule::WIDTH, 64 },
 			{ Gui::Style::Rule::HEIGHT, 18 },
-			{ Gui::Style::Rule::BACKGROUND_IMAGE, "menu_bar_bg" }
+			{ Gui::Style::Rule::BACKGROUND, string("menu_bar_bg") }
 		}}},
 		{ "navigationButton", {{
 			{ Gui::Style::Rule::WIDTH, 16 },
@@ -76,15 +77,8 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 		}}}
 	});
 
-	let sandbox = root.body->append<Gui::BoxElement>({
-		.classes = { "sandbox" }
-//		.styles = {{
-//			{ Gui::Style::Rule::BACKGROUND_COLOR, "#700" }
-//		}}
-	});
-	
+	let sandbox = root.body->append<Gui::BoxElement>({ .classes = { "sandbox" } });
 	let navigation = root.body->append<Gui::BoxElement>({ .classes = { "navigation" } });
-	
 	let navigationBG = navigation->append<Gui::BoxElement>({ .classes = { "navigationWrap" } });
 	
 	for (usize i = 0; i < 2000 / Gui::PX_SCALE / 64; i++)
@@ -100,32 +94,24 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 	
 	let serversButton = navigationList->append<Gui::BoxElement>({
 		.classes = { "navigationButton" },
-		.styles = {{
-			{ Gui::Style::Rule::BACKGROUND_IMAGE, "crop(0, 0, 16, 16, menu_flag_multiplayer)" }
-		}}
+		.styles = {{ { Gui::Style::Rule::BACKGROUND, string("crop(0, 0, 16, 16, menu_flag_multiplayer)") } }}
 	});
 	
 	let contentButton = navigationList->append<Gui::BoxElement>({
 		.classes = { "navigationButton" },
-		.styles = {{
-			{ Gui::Style::Rule::BACKGROUND_IMAGE, "crop(0, 0, 16, 16, menu_flag_content)" }
-		}}
+		.styles = {{ { Gui::Style::Rule::BACKGROUND, string("crop(0, 0, 16, 16, menu_flag_content)") } }}
 	});
 	
 	navigationList->append<Gui::BoxElement>({});
 	
 	let settingsButton = navigationList->append<Gui::BoxElement>({
 		.classes = { "navigationButton" },
-		.styles = {{
-			{ Gui::Style::Rule::BACKGROUND_IMAGE, "crop(0, 0, 16, 16, menu_flag_settings)" }
-		}}
+		.styles = {{ { Gui::Style::Rule::BACKGROUND, string("crop(0, 0, 16, 16, menu_flag_settings)") } }}
 	});
 	
 	let closeButton = navigationList->append<Gui::BoxElement>({
 		.classes = { "navigationButton" },
-		.styles = {{
-			{ Gui::Style::Rule::BACKGROUND_IMAGE, "crop(0, 0, 16, 16, menu_flag_quit)" }
-		}}
+		.styles = {{ { Gui::Style::Rule::BACKGROUND, string("crop(0, 0, 16, 16, menu_flag_quit)") } }}
 	});
 	
 //		closeButton->setCallback(Element::CallbackType::PRIMARY,

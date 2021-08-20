@@ -102,7 +102,7 @@ void DrawableEntity::interpScale(glm::vec3 scale) {
 }
 
 void DrawableEntity::draw(Renderer& renderer) {
-	if (visible) {
+	if (visible && model) {
 		renderer.setModelMatrix(getModelMatrix());
 		
 		model->getTransformsByFrame(animation.getFrame(), animation.getBounds(), transforms);

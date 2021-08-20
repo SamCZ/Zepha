@@ -1,11 +1,12 @@
 #include "Root.h"
 
-#include "BoxElement.h"
+#include "util/Timer.h"
+#include "client/gui/BoxElement.h"
 
 Gui::Root::Root(Window& window, TextureAtlas& atlas) :
 	atlas(atlas),
 	window(window),
-	body(make_shared<BoxElement>(*this)) {
+	body(make_shared<BoxElement>(*this, stylesheets)) {
 	const ivec2 size = glm::ceil(vec2(window.getSize()) / static_cast<f32>(Gui::PX_SCALE));
 	
 	body->setProps({
@@ -20,15 +21,22 @@ Gui::Root::Root(Window& window, TextureAtlas& atlas) :
 		size = glm::ceil(vec2(window.getSize()) / static_cast<f32>(Gui::PX_SCALE));
 		body->setStyle(Style::Rule::WIDTH, size.x);
 		body->setStyle(Style::Rule::HEIGHT, size.y);
+		body->setStyle(Style::Rule::BACKGROUND, vec4(rand(), 0, 0, 1));
+		Timer t("Resize UI");
+		body->updateElement();
+		t.printElapsedMs();
 	});
+	
+//	window.input.bindMouseCallback()
 }
 
 void Gui::Root::addStylesheet(const std::unordered_map<string, Style>& sheet) {
 	stylesheets.emplace_back(sheet);
 }
 
-const vec<std::unordered_map<string, Gui::Style>>& Gui::Root::getStylesheets() {
-	return stylesheets;
+void Gui::Root::update() {
+	const let pos = window.input.getMousePos();
+	
 }
 
 void Gui::Root::draw(Renderer& renderer) {

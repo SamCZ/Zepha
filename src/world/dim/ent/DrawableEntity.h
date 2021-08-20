@@ -75,7 +75,7 @@ protected:
 	glm::vec3 visualRotation{};
 	glm::vec3 visualScale{ 1, 1, 1 };
 	
-	std::shared_ptr<Model> model;
+	std::shared_ptr<Model> model = nullptr;
 	std::vector<glm::mat4> transforms{};
 };
 

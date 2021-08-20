@@ -20,8 +20,7 @@ namespace Gui {
 			
 			OVERFLOW,
 			
-			BACKGROUND_COLOR,
-			BACKGROUND_IMAGE
+			BACKGROUND
 		};
 		
 		enum class Type {
@@ -31,9 +30,7 @@ namespace Gui {
 		};
 		
 		Style() = default;
-		Style(const std::unordered_map<Rule, std::any>& rules): rules(rules) {}
-		
-	private:
+		Style(const std::unordered_map<Rule, any>& rules): rules(rules) {}
 		
 		/**
 		 * Simple get. Returns an optional containing an any of
@@ -45,103 +42,127 @@ namespace Gui {
 			if (it == rules.end()) return std::nullopt;
 			return optional<any>(it->second);
 		}
-		
-	public:
-		
+	
 		/**
-		 * Returns an optional of type T of the specified Rule's value,
+		 * Returns an optional of type O of the specified Rule's value,
 		 * or an empty optional if the rule is not defined.
 		 * Throws if the rule is defined to a different type.
 		 */
 		
-		template<typename O, Type T = Type::LITERAL, std::enable_if<
-			std::is_same_v<O, optional<typename O::value_type>> &&
+		template<typename V, Type T = Type::LITERAL, std::enable_if_t<
+			!(std::is_integral_v<V> ||
+			std::is_floating_point_v<V> ||
+		    std::is_same_v<V, string>) &&
 		    T == Type::LITERAL, bool> = true>
 		    	
-        const O get(Rule rule) const {
-			const let raw = get(rule);
-			if (!raw) return raw;
-			if (raw->type() == typeid(typename O::value_type)) return raw;
+        const optional<V> get(Rule rule) const {
+			const optional<any> raw = get(rule);
+			if (!raw) return std::nullopt;
+			if (raw->type() == typeid(V)) return any_cast<V>(*raw);
 			throw std::runtime_error("Rule value is of an incorrect type.");
 		}
 		
-		template<typename V, Type T = Type::LITERAL, std::enable_if_t<
-		std::is_same_v<V, optional<typename V::value_type>>, bool> = true>
-			const any& get(Rule rule) const {
-			const any& v = get<typename V::value_type, T>(rule);
-			if (&v == &ANY_MISSING) return V();
-			if (v.type())
-			return V(v)
-			const let it = rules.find(rule);
-			if (it == rules.end()) return ANY_MISSING;
-			return it->second;
-		}
+		/**
+		 * get<O, T> specialization for string-like values.
+		 */
 		
-		template<typename V, Type T = Type::LITERAL, std::enable_if_t<(!std::is_same_v<V, string> &&
-		    !std::is_integral_v<V> && !std::is_floating_point_v<V>) && T == Type::LITERAL, bool> = true>
-		    	
-        const V get(Rule rule, std::optional<V> def = std::nullopt) const {
-			const let it = rules.find(rule);
-			if (it == rules.end() && def) return *def;
-			if (it == rules.end()) throw std::runtime_error("Field is missing.");
-			if (it->second.type() == typeid(V)) return std::any_cast<V>(it->second);
-			throw std::runtime_error("Field is incorrect type.");
-		}
-		
-		template<typename Str, Type T = Type::LITERAL, std::enable_if_t<
-		    std::is_same_v<Str, string> && T == Type::LITERAL, bool> = true>
+		template<typename S, Type T = Type::LITERAL, std::enable_if_t<
+			std::is_same_v<S, string> &&
+	        T == Type::LITERAL, bool> = true>
 		    
-		const Str get(Rule rule, std::optional<Str> def = std::nullopt) const {
-			const let it = rules.find(rule);
-			if (it == rules.end() && def) return *def;
-			if (it == rules.end()) throw std::runtime_error("Field is missing.");
-			if (it->second.type() == typeid(string)) return std::any_cast<string>(it->second);
-			if (it->second.type() == typeid(const char*)) return std::any_cast<const char*>(it->second);
-			throw std::runtime_error("Field is incorrect type.");
+		const optional<S> get(Rule rule) const {
+			const optional<any> raw = get(rule);
+			if (!raw) return std::nullopt;
+			if (raw->type() == typeid(string)) return any_cast<string>(*raw);
+//			if (raw->type() == typeid(const char*)) return any_cast<const char*>(*raw);
+			throw std::runtime_error("Rule value is of an incorrect type.");
 		}
 		
+		/**
+		 * get<O, T> specialization for numeric values.
+		 */
+		 
 		template<typename N, Type T = Type::LITERAL, std::enable_if_t<
-			(std::is_integral_v<N> || std::is_floating_point_v<N>) && T == Type::LITERAL, bool> = true>
+			(std::is_integral_v<N> ||
+		    std::is_floating_point_v<N>) &&
+		    T == Type::LITERAL, bool> = true>
 			
-		const N get(Rule rule, std::optional<N> def = std::nullopt) const {
-			const let it = rules.find(rule);
-			if (it == rules.end() && def) return *def;
-			if (it == rules.end()) throw std::runtime_error("Field is missing.");
-			if (it->second.type() == typeid(N)) return std::any_cast<N>(it->second);
-			if (it->second.type() == typeid(i8)) return static_cast<N>(std::any_cast<i8>(it->second));
-			if (it->second.type() == typeid(i16)) return static_cast<N>(std::any_cast<i16>(it->second));
-			if (it->second.type() == typeid(i32)) return static_cast<N>(std::any_cast<i32>(it->second));
-			if (it->second.type() == typeid(i64)) return static_cast<N>(std::any_cast<i64>(it->second));
-			if (it->second.type() == typeid(f32)) return static_cast<N>(std::any_cast<f32>(it->second));
-			if (it->second.type() == typeid(f64)) return static_cast<N>(std::any_cast<f64>(it->second));
-			if (it->second.type() == typeid(u8)) return static_cast<N>(std::any_cast<u8>(it->second));
-			if (it->second.type() == typeid(u16)) return static_cast<N>(std::any_cast<u16>(it->second));
-			if (it->second.type() == typeid(u32)) return static_cast<N>(std::any_cast<u32>(it->second));
-			if (it->second.type() == typeid(u64)) return static_cast<N>(std::any_cast<u64>(it->second));
-			if (it->second.type() == typeid(usize)) return static_cast<N>(std::any_cast<usize>(it->second));
-			throw std::runtime_error("Field is incorrect type.");
+        const optional<N> get(Rule rule) const {
+        	const optional<any> raw = get(rule);
+        	if (!raw) return std::nullopt;
+        	if (raw->type() == typeid(N)) return any_cast<N>(*raw);
+//        	if (raw->type() == typeid(i8)) return static_cast<N>(any_cast<i8>(*raw));
+//        	if (raw->type() == typeid(i16)) return static_cast<N>(any_cast<i16>(*raw));
+//        	if (raw->type() == typeid(i32)) return static_cast<N>(any_cast<i32>(*raw));
+//        	if (raw->type() == typeid(i64)) return static_cast<N>(any_cast<i64>(*raw));
+//        	if (raw->type() == typeid(f32)) return static_cast<N>(any_cast<f32>(*raw));
+//        	if (raw->type() == typeid(f64)) return static_cast<N>(any_cast<f64>(*raw));
+//        	if (raw->type() == typeid(u8)) return static_cast<N>(any_cast<u8>(*raw));
+//        	if (raw->type() == typeid(u16)) return static_cast<N>(any_cast<u16>(*raw));
+//        	if (raw->type() == typeid(u32)) return static_cast<N>(any_cast<u32>(*raw));
+//        	if (raw->type() == typeid(u64)) return static_cast<N>(any_cast<u64>(*raw));
+//        	if (raw->type() == typeid(usize)) return static_cast<N>(any_cast<usize>(*raw));
+			throw std::runtime_error("Rule value is of an incorrect type.");
 		}
 		
-		template<typename V, Type C, std::enable_if_t<C == Type::COLOR, bool> = true>
+		/**
+		 * Returns an optional of the specified Rule's value,
+		 * which is interpreted as a vec4 color from several different formats.
+		 * Throws if the rule is defined to a different type.
+		 */
 		
-		const V get(Rule rule, std::optional<V> def = std::nullopt) const {
-			const std::any& v = get(rule);
-			if (v.type() == typeid(void) && def) return *def;
-			if (v.type() == typeid(void)) throw std::runtime_error("Field is missing with no default.");
-			if (v.type() == typeid(vec4)) return std::any_cast<vec4>(v);
-			if (v.type() == typeid(string)) return Util::hexToColorVec(std::any_cast<string>(v));
-			if (v.type() == typeid(const char*)) return Util::hexToColorVec(string(std::any_cast<const char*>(v)));
-			throw std::runtime_error("Field is incorrect type.");
+		template<typename V, Type C, std::enable_if_t<
+			std::is_same_v<V, vec4> &&
+			C == Type::COLOR, bool> = true>
+		
+		const optional<V> get(Rule rule, optional<V> def = std::nullopt) const {
+			const optional<any> raw = get(rule);
+			if (!raw) return std::nullopt;
+			if (raw->type() == typeid(void) && def) return *def;
+			if (raw->type() == typeid(void)) throw std::runtime_error("Field is missing with no default.");
+			if (raw->type() == typeid(vec4)) return any_cast<vec4>(*raw);
+			try {
+				if (raw->type() == typeid(string)) return Util::hexToColorVec(any_cast<string>(*raw));
+//				if (raw->type() == typeid(const char*)) return Util::hexToColorVec(string(any_cast<const char*>(*raw)));
+			}
+			catch (std::exception) {
+				return std::nullopt;
+			}
+			throw std::runtime_error("Rule value is of an incorrect type.");
 		}
 		
-		template<typename I, Type L, std::enable_if_t<L == Type::LENGTH, bool> = true>
+		/**
+		 * Returns an optional of the specified Rule's value,
+		 * which is interpreted as a length.
+		 * Throws if the rule is defined to a different type.
+		 */
 		
-		I get(Rule rule, std::optional<I> def = std::nullopt) const {
-			return get<i32>(rule, def);
+		template<typename N, Type L, std::enable_if_t<
+			(std::is_integral_v<N> || std::is_floating_point_v<N>) &&
+			L == Type::LENGTH, bool> = true>
+		
+		optional<N> get(Rule rule) const {
+			return get<N>(rule);
 		}
 		
-		std::unordered_map<Rule, std::any> rules {};
+		/**
+		 * Returns the specified Rule's value as a V,
+		 * or the default value provided as the second parameter.
+		 * Throws if the rule is defined to a different type.
+		 */
+		 
+		template<typename V, Type T = Type::LITERAL>
+		
+		const V get(Rule rule, V def) const {
+			const optional<V> raw = get<V, T>(rule);
+			if (!raw) return def;
+			return *raw;
+		}
+		
+		std::unordered_map<Rule, any> rules {};
 	
 		const static any ANY_MISSING;
 	};
+	
+	typedef std::unordered_map<string, Style> StyleSheet;
 }
