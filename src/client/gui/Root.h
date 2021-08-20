@@ -12,6 +12,8 @@ namespace Gui {
 	public:
 		Root(Window& window, TextureAtlas& atlas);
 		
+		~Root();
+		
 		template<typename E, std::enable_if_t<std::is_base_of_v<Element, E>, bool> = true>
 		sptr<E> create(const Element::Props& props = {}, const vec<sptr<Element>>& children = {}) {
 			let elem = make_shared<E>(*this, stylesheets);
@@ -27,6 +29,8 @@ namespace Gui {
 		void update();
 		
 		void draw(Renderer& renderer);
+		
+		void setCursorPointer(bool hand);
 		
 		vec<StyleSheet> stylesheets;
 		const sptr<Element> body;

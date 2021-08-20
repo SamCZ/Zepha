@@ -2,7 +2,6 @@
 
 #include "client/gui/Root.h"
 #include "client/graph/Model.h"
-#include "game/atlas/asset/AtlasRef.h"
 #include "client/graph/mesh/EntityMesh.h"
 
 void Gui::BoxElement::updateElement() {
@@ -19,7 +18,6 @@ void Gui::BoxElement::updateElement() {
 		else if (rawBg->type() == typeid(string)) isDirty = any_cast<string>(*rawBg) != any_cast<string>(*curBg);
 	}
 	curBg = rawBg;
-	
 	
 	if (isDirty) {
 		const let bgColor = getStyle<vec4, ValueType::COLOR>(bgRule);
@@ -50,8 +48,10 @@ void Gui::BoxElement::updateElement() {
 		entity.setModel(model);
 	}
 	
-	entity.setScale(vec3(getComputedSize() * static_cast<i32>(PX_SCALE), 0));
-	entity.setPos(vec3(getComputedScreenPos() * static_cast<i32>(PX_SCALE), 0));
+	let margin = getStyle<ivec4, ValueType::LENGTH>(StyleRule::MARGIN, {});
+	
+	entity.setScale(vec3(getComputedSize(), 0));
+	entity.setPos(vec3(getComputedScreenPos() + ivec2 { margin.x, margin.y }, 0));
 	
 	Element::updateElement();
 }

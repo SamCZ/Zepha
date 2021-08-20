@@ -1,6 +1,7 @@
 #include "Element.h"
 
 #include "util/Util.h"
+#include "client/gui/Root.h"
 #include "client/graph/Renderer.h"
 
 Gui::Element::~Element() {
@@ -17,50 +18,54 @@ void Gui::Element::setStyle(StyleRule style, const std::any& value) {
 }
 
 ivec2 Gui::Element::getComputedSize() {
-	return {
-		getStyle<i32, ValueType::LENGTH>(StyleRule::WIDTH, std::max(layoutSize.x, 0)),
-		getStyle<i32, ValueType::LENGTH>(StyleRule::HEIGHT, std::max(layoutSize.y, 0))
-	};
+	let size = getStyle<ivec2, ValueType::LENGTH>(StyleRule::SIZE, glm::max(layoutSize, 0));
+	return size;
+}
+
+ivec2 Gui::Element::getComputedOuterSize() {
+	let size = getComputedSize();
+	let margin = getStyle<ivec4, ValueType::LENGTH>(StyleRule::MARGIN, {});
+	return ivec2 { size.x + margin.x + margin.z, size.y + margin.y + margin.w };
 }
 
 ivec2 Gui::Element::getComputedContentSize() {
 	let size = getComputedSize();
-	let padding = getStyle<ivec4>(StyleRule::PADDING, {});
-	return glm::max(ivec2 { size.x - padding.x - padding.z, size.y - padding.y - padding.w }, ivec2 {});
+	let padding = getStyle<ivec4, ValueType::LENGTH>(StyleRule::PADDING, {});
+	return glm::max(ivec2 { size.x - padding.x - padding.z, size.y - padding.y - padding.w }, 0);
 }
 
 ivec2 Gui::Element::getExplicitSize() {
-	return {
-		getStyle<i32, ValueType::LENGTH>(StyleRule::WIDTH, -1),
-		getStyle<i32, ValueType::LENGTH>(StyleRule::HEIGHT, -1)
-	};
+	return getStyle<ivec2, ValueType::LENGTH>(StyleRule::SIZE, ivec2(-1));
 }
 
 ivec2 Gui::Element::getComputedPos() {
-	return {
-		getStyle<i32, ValueType::LENGTH>(StyleRule::LEFT, layoutPosition.x),
-		getStyle<i32, ValueType::LENGTH>(StyleRule::TOP, layoutPosition.y)
-	};
+	return getStyle<ivec2, ValueType::LENGTH>(StyleRule::POS, layoutPosition);
 }
 
 ivec2 Gui::Element::getComputedScreenPos() {
 	return getComputedPos() + parentOffset;
 }
 
-bool Gui::Element::handleMouseHover(ivec2 mousePos) {
+bool Gui::Element::handleMouseHover(ivec2 mousePos, bool& pointer) {
 	bool childIntersects = false;
 	for (let& child : children)
-		if (child->handleMouseHover(mousePos)) childIntersects = true;
+		if (child->handleMouseHover(mousePos, pointer))
+			childIntersects = true;
 		
 	if (childIntersects) {
-		hovered = false;
+		if (hovered) {
+			hovered = false;
+			updateElement();
+		}
 		return true;
 	}
 	
-	ivec2 size = getComputedSize() * static_cast<i32>(PX_SCALE);
-	ivec2 pos = getComputedScreenPos() * static_cast<i32>(PX_SCALE);
+	ivec2 size = getComputedSize();
+	ivec2 pos = getComputedScreenPos();
 	bool intersects = mousePos.x >= pos.x && mousePos.x <= pos.x + size.x &&
 		mousePos.y >= pos.y && mousePos.y <= pos.y + size.y;
+	
+	if (intersects) pointer = getStyle<string>(StyleRule::CURSOR, "") == "pointer";
 	
 	if (hovered != intersects) {
 		hovered = intersects;
@@ -116,8 +121,8 @@ void Gui::Element::layoutChildren() {
 		 * The element gap across the primary axis.
 		 */
 	
-		const i32 gap = getStyle<ivec2>(StyleRule::GAP, ivec2(0))[primary];
-		const ivec4& padding = getStyle<ivec4>(StyleRule::PADDING, ivec4 {});
+		const i32 gap = getStyle<ivec2, ValueType::LENGTH>(StyleRule::GAP, ivec2(0))[primary];
+		const ivec4& padding = getStyle<ivec4, ValueType::LENGTH>(StyleRule::PADDING, ivec4 {});
 	
 		/*
 		 * Calculates the explicit spaced used up by children across the primary axis,
@@ -133,6 +138,8 @@ void Gui::Element::layoutChildren() {
 			let childExplicitSize = child->getExplicitSize();
 			if (childExplicitSize[primary] != -1) explicitSize += childExplicitSize[primary];
 			else implicitCount++;
+			let childMargin = child->getStyle<ivec4, ValueType::LENGTH>(StyleRule::MARGIN, {});
+			explicitSize += childMargin[primary] + childMargin[primary + 2];
 		}
 	
 		/**
@@ -143,7 +150,7 @@ void Gui::Element::layoutChildren() {
 		if (align[primary] == 1) offset[primary] += selfSize[primary] - explicitSize - (gap * (children.size() - 1));
 		else if (align[primary] == 0) offset[primary] += selfSize[primary] / 2 -
 			explicitSize / 2 - (gap * (children.size() - 1)) / 2;
-	
+		
 		/**
 		 * The amount of size each implicitly sized element should occupy.
 		 */
@@ -159,6 +166,7 @@ void Gui::Element::layoutChildren() {
 	
 		for (const let& child : children) {
 			let childExplicitSize = child->getExplicitSize();
+			let childMargin = child->getStyle<ivec4, ValueType::LENGTH>(StyleRule::MARGIN, {});
 		
 			child->layoutSize[primary] =
 				(childExplicitSize[primary] == -1 && align[primary] == 2) ? implicitElemSize : 0;
@@ -174,7 +182,8 @@ void Gui::Element::layoutChildren() {
 			child->layoutPosition[primary] = offset[primary];
 		
 			offset[primary] += ((childExplicitSize[primary] == -1 && align[primary] == 2)
-				? implicitElemSize : childExplicitSize[primary]) + gap;
+				? implicitElemSize : childExplicitSize[primary])
+				+ gap + childMargin[primary] + childMargin[primary + 2];
 			
 			child->parentOffset = selfOffset;
 

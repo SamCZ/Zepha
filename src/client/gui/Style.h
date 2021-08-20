@@ -2,13 +2,14 @@
 
 #include "client/gui/Gui.h"
 
+#include "client/gui/Expression.h"
+
 namespace Gui {
 	enum class StyleRule {
+		POS,
+		SIZE,
+		MARGIN,
 		PADDING,
-		WIDTH,
-		HEIGHT,
-		TOP,
-		LEFT,
 		
 		GAP,
 		LAYOUT,
@@ -16,10 +17,12 @@ namespace Gui {
 		H_ALIGN,
 		V_ALIGN,
 		
+		CURSOR,
 		OVERFLOW,
-		
 		BACKGROUND,
-		BACKGROUND_HOVER
+		BACKGROUND_HOVER,
+		
+		CONTENT
 	};
 	
 	enum class ValueType {
@@ -139,8 +142,29 @@ namespace Gui {
 			L == ValueType::LENGTH, bool> = true>
 		
 		optional<N> get(StyleRule rule) const {
-			return get<N>(rule);
+			let raw = get<string>(rule);
+			if (!raw) return std::nullopt;
+			return Gui::Expression(*raw).eval();
 		}
+		
+		/**
+		 * Returns an optional of the specified Rule's value,
+		 * which is interpreted as a length.
+		 */
+		
+		template<typename VN, ValueType L, std::enable_if_t<
+			(std::is_integral_v<typename VN::value_type> || std::is_floating_point_v<typename VN::value_type>) &&
+			std::is_same_v<VN, glm::vec<VN::length(), typename VN::value_type>> &&
+			L == ValueType::LENGTH, bool> = true>
+			
+			optional<VN> get(StyleRule rule) const {
+				let raw = get<array<string, VN::length()>>(rule);
+				if (!raw) return std::nullopt;
+				VN vec;
+				for (usize i = 0; i < VN::length(); i++)
+					vec[i] = Gui::Expression((*raw)[i]).eval();
+				return vec;
+			}
 		
 		/**
 		 * Returns the specified Rule's value as a V,
