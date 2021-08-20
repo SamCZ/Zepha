@@ -31,7 +31,7 @@ namespace Gui {
 		
 		virtual void setProps(const Props& props);
 		
-		virtual void setStyle(Style::Rule style, const std::any& value);
+		virtual void setStyle(StyleRule style, const std::any& value);
 		
 		virtual void updateElement();
 		
@@ -71,8 +71,9 @@ namespace Gui {
 		virtual ivec2 getComputedContentSize();
 		virtual ivec2 getExplicitSize();
 		virtual ivec2 getComputedPos();
+		virtual ivec2 getComputedScreenPos();
 		
-		const optional<any> getStyle(Style::Rule rule) const {
+		const optional<any> getStyle(StyleRule rule) const {
 			const optional<any> opt = props.styles.get(rule);
 			if (opt) return *opt;
 			for (const let& ss : stylesheets) {
@@ -85,8 +86,8 @@ namespace Gui {
 			return std::nullopt;
 		}
 		
-		template<typename V, Style::Type T = Style::Type::LITERAL>
-		const optional<V> getStyle(Style::Rule rule) const {
+		template<typename V, ValueType T = ValueType::LITERAL>
+		const optional<V> getStyle(StyleRule rule) const {
 			const optional<V> opt = props.styles.get<V, T>(rule);
 			if (opt) return *opt;
 			for (const let& ss : stylesheets) {
@@ -99,14 +100,14 @@ namespace Gui {
 			return std::nullopt;
 		}
 	
-		template<typename V, Style::Type T = Style::Type::LITERAL>
-		const V getStyle(Style::Rule rule, V def) const {
+		template<typename V, ValueType T = ValueType::LITERAL>
+		const V getStyle(StyleRule rule, V def) const {
 			const optional<V> opt = getStyle<V, T>(rule);
 			if (opt) return *opt;
 			return def;
 		}
 
-		void handleMouseMove(ivec2 mousePos);
+		bool handleMouseHover(ivec2 mousePos);
 		bool handleMouseClick(u32 button, bool down);
 		
 	protected:

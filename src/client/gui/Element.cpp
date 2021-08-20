@@ -12,39 +12,62 @@ void Gui::Element::setProps(const Props& props) {
 	updateElement();
 }
 
-void Gui::Element::setStyle(Style::Rule style, const std::any& value) {
+void Gui::Element::setStyle(StyleRule style, const std::any& value) {
 	props.styles.rules[style] = value;
 }
 
 ivec2 Gui::Element::getComputedSize() {
 	return {
-		getStyle<i32, Style::Type::LENGTH>(Style::Rule::WIDTH, std::max(layoutSize.x, 0)),
-		getStyle<i32, Style::Type::LENGTH>(Style::Rule::HEIGHT, std::max(layoutSize.y, 0))
+		getStyle<i32, ValueType::LENGTH>(StyleRule::WIDTH, std::max(layoutSize.x, 0)),
+		getStyle<i32, ValueType::LENGTH>(StyleRule::HEIGHT, std::max(layoutSize.y, 0))
 	};
 }
 
 ivec2 Gui::Element::getComputedContentSize() {
 	let size = getComputedSize();
-	let padding = getStyle<ivec4>(Style::Rule::PADDING, {});
+	let padding = getStyle<ivec4>(StyleRule::PADDING, {});
 	return glm::max(ivec2 { size.x - padding.x - padding.z, size.y - padding.y - padding.w }, ivec2 {});
 }
 
 ivec2 Gui::Element::getExplicitSize() {
 	return {
-		getStyle<i32, Style::Type::LENGTH>(Style::Rule::WIDTH, -1),
-		getStyle<i32, Style::Type::LENGTH>(Style::Rule::HEIGHT, -1)
+		getStyle<i32, ValueType::LENGTH>(StyleRule::WIDTH, -1),
+		getStyle<i32, ValueType::LENGTH>(StyleRule::HEIGHT, -1)
 	};
 }
 
 ivec2 Gui::Element::getComputedPos() {
 	return {
-		getStyle<i32, Style::Type::LENGTH>(Style::Rule::LEFT, layoutPosition.x),
-		getStyle<i32, Style::Type::LENGTH>(Style::Rule::TOP, layoutPosition.y)
+		getStyle<i32, ValueType::LENGTH>(StyleRule::LEFT, layoutPosition.x),
+		getStyle<i32, ValueType::LENGTH>(StyleRule::TOP, layoutPosition.y)
 	};
 }
 
-void Gui::Element::handleMouseMove(ivec2 mousePos) {
-	for (let& child : children) child->handleMouseMove(mousePos);
+ivec2 Gui::Element::getComputedScreenPos() {
+	return getComputedPos() + parentOffset;
+}
+
+bool Gui::Element::handleMouseHover(ivec2 mousePos) {
+	bool childIntersects = false;
+	for (let& child : children)
+		if (child->handleMouseHover(mousePos)) childIntersects = true;
+		
+	if (childIntersects) {
+		hovered = false;
+		return true;
+	}
+	
+	ivec2 size = getComputedSize() * static_cast<i32>(PX_SCALE);
+	ivec2 pos = getComputedScreenPos() * static_cast<i32>(PX_SCALE);
+	bool intersects = mousePos.x >= pos.x && mousePos.x <= pos.x + size.x &&
+		mousePos.y >= pos.y && mousePos.y <= pos.y + size.y;
+	
+	if (hovered != intersects) {
+		hovered = intersects;
+		updateElement();
+	}
+	
+	return intersects;
 }
 
 bool Gui::Element::handleMouseClick(u32 button, bool down) {
@@ -62,12 +85,12 @@ void Gui::Element::updateElement() {
 }
 
 void Gui::Element::layoutChildren() {
-	const string& layout = getStyle<string>(Style::Rule::LAYOUT, "");
+	const string& layout = getStyle<string>(StyleRule::LAYOUT, "");
 	
 	switch (Util::hash(layout.data())) {
 	default:
 	case Util::hash("flex"): {
-		const string& direction = getStyle<string>(Style::Rule::DIRECTION, "");
+		const string& direction = getStyle<string>(StyleRule::DIRECTION, "");
 	
 		/**
 		 * The primary flex direction. Stored as a bool but interpreted as an index into a vec2.
@@ -76,8 +99,8 @@ void Gui::Element::layoutChildren() {
 	 
 		const bool primary = direction != "row";
 	
-		const string& hAlignRaw = getStyle<string>(Style::Rule::H_ALIGN, "");
-		const string& vAlignRaw = getStyle<string>(Style::Rule::V_ALIGN, "");
+		const string& hAlignRaw = getStyle<string>(StyleRule::H_ALIGN, "");
+		const string& vAlignRaw = getStyle<string>(StyleRule::V_ALIGN, "");
 	
 		/**
 		 * Parsed alignment of the horizontal and vertical axes.
@@ -93,8 +116,8 @@ void Gui::Element::layoutChildren() {
 		 * The element gap across the primary axis.
 		 */
 	
-		const i32 gap = getStyle<ivec2>(Style::Rule::GAP, ivec2(0))[primary];
-		const ivec4& padding = getStyle<ivec4>(Style::Rule::PADDING, ivec4 {});
+		const i32 gap = getStyle<ivec2>(StyleRule::GAP, ivec2(0))[primary];
+		const ivec4& padding = getStyle<ivec4>(StyleRule::PADDING, ivec4 {});
 	
 		/*
 		 * Calculates the explicit spaced used up by children across the primary axis,

@@ -6,7 +6,10 @@
 #include "client/graph/mesh/EntityMesh.h"
 
 void Gui::BoxElement::updateElement() {
-	let rawBg = getStyle(Style::Rule::BACKGROUND);
+	const let bgRule = hovered && getStyle(StyleRule::BACKGROUND_HOVER) ?
+		StyleRule::BACKGROUND_HOVER : StyleRule::BACKGROUND;
+	
+	let rawBg = getStyle(bgRule);
 	
 	bool isDirty = false;
 	if ((!rawBg && curBg) || (rawBg && !curBg)) isDirty = true;
@@ -19,27 +22,27 @@ void Gui::BoxElement::updateElement() {
 	
 	
 	if (isDirty) {
-		std::cout << "dirty" << std::endl;
-		const let bgColor = getStyle<vec4, Style::Type::COLOR>(Style::Rule::BACKGROUND);
-		const string bgImage = getStyle<string>(Style::Rule::BACKGROUND, "");
+		const let bgColor = getStyle<vec4, ValueType::COLOR>(bgRule);
+		const string bgImage = getStyle<string>(bgRule, "");
 		
 		let mesh = std::make_unique<EntityMesh>();
 		if (bgColor && bgColor->a != 0) {
+			tex = nullptr;
 			mesh->create({
 				{ { 0, 0, 0 }, *bgColor, vec3(1), false, {}, {}, {} },
 				{ { 0, 1, 0 }, *bgColor, vec3(1), false, {}, {}, {} },
 				{ { 1, 1, 0 }, *bgColor, vec3(1), false, {}, {}, {} },
 				{ { 1, 0, 0 }, *bgColor, vec3(1), false, {}, {}, {} }
-				}, { 0, 1, 2, 2, 3, 0 });
+			}, { 0, 1, 2, 2, 3, 0 });
 		}
 		else if (!bgImage.empty()) {
-			const let& tex = *root.atlas[bgImage];
+			tex = root.atlas[bgImage];
 			mesh->create({
-				{ { 0, 0, 0 }, { tex.uv.x, tex.uv.y, 0, 1 }, vec3(1), true, {}, {}, {} },
-				{ { 0, 1, 0 }, { tex.uv.x, tex.uv.w, 0, 1 }, vec3(1), true, {}, {}, {} },
-				{ { 1, 1, 0 }, { tex.uv.z, tex.uv.w, 0, 1 }, vec3(1), true, {}, {}, {} },
-				{ { 1, 0, 0 }, { tex.uv.z, tex.uv.y, 0, 1 }, vec3(1), true, {}, {}, {} }
-				}, { 0, 1, 2, 2, 3, 0 });
+				{ { 0, 0, 0 }, { tex->uv.x, tex->uv.y, 0, 1 }, vec3(1), true, {}, {}, {} },
+				{ { 0, 1, 0 }, { tex->uv.x, tex->uv.w, 0, 1 }, vec3(1), true, {}, {}, {} },
+				{ { 1, 1, 0 }, { tex->uv.z, tex->uv.w, 0, 1 }, vec3(1), true, {}, {}, {} },
+				{ { 1, 0, 0 }, { tex->uv.z, tex->uv.y, 0, 1 }, vec3(1), true, {}, {}, {} }
+			}, { 0, 1, 2, 2, 3, 0 });
 		}
 	
 		let model = make_shared<Model>();
@@ -47,8 +50,8 @@ void Gui::BoxElement::updateElement() {
 		entity.setModel(model);
 	}
 	
-	entity.setScale(vec3(getComputedSize(), 0) * static_cast<f32>(PX_SCALE));
-	entity.setPos((vec3(getComputedPos(), 0) + vec3(parentOffset, 0)) * static_cast<f32>(PX_SCALE));
+	entity.setScale(vec3(getComputedSize() * static_cast<i32>(PX_SCALE), 0));
+	entity.setPos(vec3(getComputedScreenPos() * static_cast<i32>(PX_SCALE), 0));
 	
 	Element::updateElement();
 }

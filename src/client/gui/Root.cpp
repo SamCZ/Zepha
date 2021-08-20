@@ -12,16 +12,15 @@ Gui::Root::Root(Window& window, TextureAtlas& atlas) :
 	body->setProps({
 		.id = "body",
 		.styles = {{
-			{ Style::Rule::WIDTH, size.x },
-			{ Style::Rule::HEIGHT, size.y }
+			{ StyleRule::WIDTH, size.x },
+			{ StyleRule::HEIGHT, size.y }
 		}}
 	});
 	
 	lock = window.onResize([&](ivec2 size) {
 		size = glm::ceil(vec2(window.getSize()) / static_cast<f32>(Gui::PX_SCALE));
-		body->setStyle(Style::Rule::WIDTH, size.x);
-		body->setStyle(Style::Rule::HEIGHT, size.y);
-		body->setStyle(Style::Rule::BACKGROUND, vec4(rand(), 0, 0, 1));
+		body->setStyle(StyleRule::WIDTH, size.x);
+		body->setStyle(StyleRule::HEIGHT, size.y);
 		Timer t("Resize UI");
 		body->updateElement();
 		t.printElapsedMs();
@@ -36,7 +35,7 @@ void Gui::Root::addStylesheet(const std::unordered_map<string, Style>& sheet) {
 
 void Gui::Root::update() {
 	const let pos = window.input.getMousePos();
-	
+	body->handleMouseHover(pos);
 }
 
 void Gui::Root::draw(Renderer& renderer) {

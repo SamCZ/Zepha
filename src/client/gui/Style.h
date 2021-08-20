@@ -3,41 +3,42 @@
 #include "client/gui/Gui.h"
 
 namespace Gui {
+	enum class StyleRule {
+		PADDING,
+		WIDTH,
+		HEIGHT,
+		TOP,
+		LEFT,
+		
+		GAP,
+		LAYOUT,
+		DIRECTION,
+		H_ALIGN,
+		V_ALIGN,
+		
+		OVERFLOW,
+		
+		BACKGROUND,
+		BACKGROUND_HOVER
+	};
+	
+	enum class ValueType {
+		LITERAL,
+		COLOR,
+		LENGTH
+	};
+	
 	class Style {
 	public:
-		enum class Rule {
-			PADDING,
-			WIDTH,
-			HEIGHT,
-			TOP,
-			LEFT,
-			
-			GAP,
-			LAYOUT,
-			DIRECTION,
-			H_ALIGN,
-			V_ALIGN,
-			
-			OVERFLOW,
-			
-			BACKGROUND
-		};
-		
-		enum class Type {
-			LITERAL,
-			COLOR,
-			LENGTH
-		};
-		
 		Style() = default;
-		Style(const std::unordered_map<Rule, any>& rules): rules(rules) {}
+		Style(const std::unordered_map<StyleRule, any>& rules): rules(rules) {}
 		
 		/**
 		 * Simple get. Returns an optional containing an any of
 		 * the Rule's value, or an empty optional if the rule is not defined.
 		 */
 		
-		const optional<any> get(Rule rule) const {
+		const optional<any> get(StyleRule rule) const {
 			const let it = rules.find(rule);
 			if (it == rules.end()) return std::nullopt;
 			return optional<any>(it->second);
@@ -45,49 +46,47 @@ namespace Gui {
 	
 		/**
 		 * Returns an optional of type O of the specified Rule's value,
-		 * or an empty optional if the rule is not defined.
-		 * Throws if the rule is defined to a different type.
+		 * or an empty optional if the rule is not defined, or not the type V.
 		 */
 		
-		template<typename V, Type T = Type::LITERAL, std::enable_if_t<
+		template<typename V, ValueType T = ValueType::LITERAL, std::enable_if_t<
 			!(std::is_integral_v<V> ||
 			std::is_floating_point_v<V> ||
 		    std::is_same_v<V, string>) &&
-		    T == Type::LITERAL, bool> = true>
+			T == ValueType::LITERAL, bool> = true>
 		    	
-        const optional<V> get(Rule rule) const {
+        const optional<V> get(StyleRule rule) const {
 			const optional<any> raw = get(rule);
-			if (!raw) return std::nullopt;
-			if (raw->type() == typeid(V)) return any_cast<V>(*raw);
-			throw std::runtime_error("Rule value is of an incorrect type.");
+			if (!raw || raw->type() != typeid(V)) return std::nullopt;
+			return any_cast<V>(*raw);
 		}
 		
 		/**
 		 * get<O, T> specialization for string-like values.
 		 */
 		
-		template<typename S, Type T = Type::LITERAL, std::enable_if_t<
+		template<typename S, ValueType T = ValueType::LITERAL, std::enable_if_t<
 			std::is_same_v<S, string> &&
-	        T == Type::LITERAL, bool> = true>
+			T == ValueType::LITERAL, bool> = true>
 		    
-		const optional<S> get(Rule rule) const {
+		const optional<S> get(StyleRule rule) const {
 			const optional<any> raw = get(rule);
 			if (!raw) return std::nullopt;
 			if (raw->type() == typeid(string)) return any_cast<string>(*raw);
 //			if (raw->type() == typeid(const char*)) return any_cast<const char*>(*raw);
-			throw std::runtime_error("Rule value is of an incorrect type.");
+			return std::nullopt;
 		}
 		
 		/**
 		 * get<O, T> specialization for numeric values.
 		 */
 		 
-		template<typename N, Type T = Type::LITERAL, std::enable_if_t<
+		template<typename N, ValueType T = ValueType::LITERAL, std::enable_if_t<
 			(std::is_integral_v<N> ||
 		    std::is_floating_point_v<N>) &&
-		    T == Type::LITERAL, bool> = true>
+			T == ValueType::LITERAL, bool> = true>
 			
-        const optional<N> get(Rule rule) const {
+        const optional<N> get(StyleRule rule) const {
         	const optional<any> raw = get(rule);
         	if (!raw) return std::nullopt;
         	if (raw->type() == typeid(N)) return any_cast<N>(*raw);
@@ -102,20 +101,19 @@ namespace Gui {
 //        	if (raw->type() == typeid(u32)) return static_cast<N>(any_cast<u32>(*raw));
 //        	if (raw->type() == typeid(u64)) return static_cast<N>(any_cast<u64>(*raw));
 //        	if (raw->type() == typeid(usize)) return static_cast<N>(any_cast<usize>(*raw));
-			throw std::runtime_error("Rule value is of an incorrect type.");
+			return std::nullopt;
 		}
 		
 		/**
 		 * Returns an optional of the specified Rule's value,
 		 * which is interpreted as a vec4 color from several different formats.
-		 * Throws if the rule is defined to a different type.
 		 */
 		
-		template<typename V, Type C, std::enable_if_t<
+		template<typename V, ValueType C, std::enable_if_t<
 			std::is_same_v<V, vec4> &&
-			C == Type::COLOR, bool> = true>
+			C == ValueType::COLOR, bool> = true>
 		
-		const optional<V> get(Rule rule, optional<V> def = std::nullopt) const {
+		const optional<V> get(StyleRule rule, optional<V> def = std::nullopt) const {
 			const optional<any> raw = get(rule);
 			if (!raw) return std::nullopt;
 			if (raw->type() == typeid(void) && def) return *def;
@@ -128,20 +126,19 @@ namespace Gui {
 			catch (std::exception) {
 				return std::nullopt;
 			}
-			throw std::runtime_error("Rule value is of an incorrect type.");
+			return std::nullopt;
 		}
 		
 		/**
 		 * Returns an optional of the specified Rule's value,
 		 * which is interpreted as a length.
-		 * Throws if the rule is defined to a different type.
 		 */
 		
-		template<typename N, Type L, std::enable_if_t<
+		template<typename N, ValueType L, std::enable_if_t<
 			(std::is_integral_v<N> || std::is_floating_point_v<N>) &&
-			L == Type::LENGTH, bool> = true>
+			L == ValueType::LENGTH, bool> = true>
 		
-		optional<N> get(Rule rule) const {
+		optional<N> get(StyleRule rule) const {
 			return get<N>(rule);
 		}
 		
@@ -151,17 +148,15 @@ namespace Gui {
 		 * Throws if the rule is defined to a different type.
 		 */
 		 
-		template<typename V, Type T = Type::LITERAL>
+		template<typename V, ValueType T = ValueType::LITERAL>
 		
-		const V get(Rule rule, V def) const {
+		const V get(StyleRule rule, V def) const {
 			const optional<V> raw = get<V, T>(rule);
 			if (!raw) return def;
 			return *raw;
 		}
 		
-		std::unordered_map<Rule, any> rules {};
-	
-		const static any ANY_MISSING;
+		std::unordered_map<StyleRule, any> rules {};
 	};
 	
 	typedef std::unordered_map<string, Style> StyleSheet;
