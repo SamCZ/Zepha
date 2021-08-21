@@ -1,9 +1,11 @@
-zepha.set_gui(zepha.build_gui(function()
-    return Gui.Body {
+zepha.set_gui(zepha.gui(function()
+    return Gui.Box {
         background = "#124778",
+        h_align = "center",
+        v_align = "center",
 
         Gui.Text {
-            position = { 4, 4 },
+            size = { 64, 4 },
             content = "Parentheses"
         }
     }

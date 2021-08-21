@@ -16,9 +16,9 @@ Font::Font(TextureAtlas& atlas, std::shared_ptr<AtlasRef> tex) :
 	getCharWidths(atlas);
 }
 
-unsigned int Font::getCharWidth(char c) {
+u16 Font::getCharWidth(char c) {
 	unsigned int index = static_cast<unsigned int>(c) - 32;
-	if (index >= amountOfChars) throw std::runtime_error("Invalid char index.");
+	if (index >= C_COUNT) return charWidths[C_COUNT];
 	return charWidths[index];
 }
 
@@ -27,44 +27,44 @@ void Font::getCharWidths(TextureAtlas& atlas) {
 	
 	charWidths[0] = 2;
 	
-	for (unsigned int i = 1; i < amountOfChars; i++) {
-		glm::vec2 charPos = { i % 18 * charWidth, std::floor(i / 18) * charHeight };
+	for (u16 i = 1; i < C_COUNT + 1; i++) {
+		glm::vec2 charPos = { i % 18 * C_WIDTH, std::floor(i / 18) * C_HEIGHT };
 		
-		unsigned int xBase = static_cast<unsigned int>(fontTex->pos.x) + static_cast<unsigned int>(charPos.x);
-		unsigned int yBase = static_cast<unsigned int>(fontTex->pos.y) + static_cast<unsigned int>(charPos.y);
+		u32 xBase = static_cast<u32>(fontTex->pos.x) + static_cast<u32>(charPos.x);
+		u32 yBase = static_cast<u32>(fontTex->pos.y) + static_cast<u32>(charPos.y);
 		
-		unsigned short width = 0;
+		u16 width = 0;
 		
-		for (unsigned int j = 0; j < charWidth; j++) {
+		for (u16 j = 0; j < C_WIDTH; j++) {
 			bool empty = true;
-			for (unsigned int k = 0; k < charHeight; k++) {
-				unsigned int xx = xBase + j;
-				unsigned int yy = yBase + k;
+			for (u16 k = 0; k < C_HEIGHT; k++) {
+				u32 xx = xBase + j;
+				u32 yy = yBase + k;
 				
-				unsigned int offset = yy * static_cast<unsigned int>(atlasSize.x) * 4 + xx * 4 + 3;
+				u32 offset = yy * static_cast<u32>(atlasSize.x) * 4 + xx * 4 + 3;
 				
 				if (data[offset] != 0) {
 					empty = false;
 					break;
 				}
 			}
-			if (!empty) width = static_cast<unsigned short>(j);
+			if (!empty) width = static_cast<u16>(j);
 		}
 		
 		charWidths[i] = width;
 	}
 }
 
-glm::vec4 Font::getCharUVs(char c) {
-	unsigned int index = static_cast<unsigned int>(c) - 32;
-	if (index >= amountOfChars) throw std::runtime_error("Invalid char index.");
+vec4 Font::getCharUVs(char c) {
+	u16 index = static_cast<u16>(c) - 32;
+	if (index >= C_COUNT) index = C_COUNT;
 	
-	glm::vec2 charPos = { (index % 18) * charWidth, std::floor(index / 18) * charHeight };
-	glm::vec4 uv = {
+	vec2 charPos = { (index % 18) * C_WIDTH, std::floor(index / 18) * C_HEIGHT };
+	vec4 uv = {
 		fontTex->uv.x + (charPos.x) / atlasSize.x,
 		fontTex->uv.y + (charPos.y) / atlasSize.y,
 		fontTex->uv.x + (charPos.x + getCharWidth(c) + 1) / atlasSize.x,
-		fontTex->uv.y + (charPos.y + charHeight) / atlasSize.y
+		fontTex->uv.y + (charPos.y + C_HEIGHT) / atlasSize.y
 	};
 	
 	return uv;

@@ -26,5 +26,5 @@ class LuaKeybindHandler {
 	std::array<std::vector<sol::protected_function>, 1024> callbacksDown{};
 	std::array<std::vector<sol::protected_function>, 1024> callbacksUp{};
 	
-	const LocalLuaParser* parser;
+	LocalLuaParser* parser;
 };

@@ -62,7 +62,7 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
 	core["__builtin"] = lua.create_table();
 	
 	// Types
-	ClientApi::gui_element(lua);
+//	ClientApi::gui_element(lua);
 	
 	Api::Usertype::Target::bind(Api::State::CLIENT, lua, core);
 	Api::Usertype::Entity::bind(Api::State::CLIENT, lua, core);
@@ -116,7 +116,7 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
 	lua.set_function("runfile", &LocalLuaParser::runFileSandboxed, this);
 }
 
-sol::protected_function_result LocalLuaParser::errorCallback(sol::protected_function_result r) const {
+sol::protected_function_result LocalLuaParser::errorCallback(sol::protected_function_result r) {
 	sol::error err = r;
 	std::string errString = err.what();
 	

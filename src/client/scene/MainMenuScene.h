@@ -28,11 +28,16 @@ private:
 	
 	/** Find valid subgames in the subgames folder. */
 	void findSubgames();
+
+	/** The GUI root. */
+	Gui::Root root;
+	
+	/** The GUI sandbox element root. */
+	sptr<Gui::Element> sandboxElem;
 	
 	/** Provides the API for menu mods. */
-//	MenuSandbox sandbox;
-	Gui::Root root;
-
+	MenuSandbox sandbox;
+	
 	/** A list of found subgames. */
 	vec<SubgameDef> subgames;
 	

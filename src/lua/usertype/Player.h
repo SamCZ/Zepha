@@ -12,7 +12,7 @@
 #include "Dimension.h"
 #include "world/player/LocalPlayer.h"
 
-class LuaGuiElement;
+//class LuaGuiElement;
 
 namespace Api::Usertype {
 	class ServerPlayer;
@@ -82,13 +82,13 @@ public:
 	
 	bool is_in_menu();
 	
-	void show_menu(std::shared_ptr<LuaGuiElement> root);
+//	void show_menu(std::shared_ptr<LuaGuiElement> root);
 	
 	void close_menu();
 	
-	std::shared_ptr<LuaGuiElement> get_hud();
+//	std::shared_ptr<LuaGuiElement> get_hud();
 	
-	void set_hud(std::shared_ptr<LuaGuiElement> hud);
+//	void set_hud(std::shared_ptr<LuaGuiElement> hud);
 	
 	static void bind(State state, sol::state& lua, sol::table& core);
 };

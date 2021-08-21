@@ -36,7 +36,7 @@ void Gui::TextElement::updateElement() {
 		}
 
 		vec3 offset = {};
-		u32 h = Font::charHeight;
+		u32 h = Font::C_HEIGHT;
 
 		bool bold = false;
 		bool italic = false;
@@ -192,9 +192,12 @@ void Gui::TextElement::updateElement() {
 		
 	}
 	
-	entity.setScale(PX_SCALE * (2/3.f));
-//	entity.setScale(vec3(getComputedSize() * static_cast<i32>(PX_SCALE), 0));
-	entity.setPos(vec3(getComputedScreenPos() * static_cast<i32>(PX_SCALE), 0));
+	let scale = getStyle<f32, ValueType::LENGTH>(StyleRule::TEXT_SIZE, 3.f);
+	let margin = getStyle<ivec4, ValueType::LENGTH>(StyleRule::MARGIN, {});
+	
+	entity.setScale(vec3(scale, scale, 0));
+	entity.setPos(vec3(getComputedScreenPos() + ivec2 { margin.x, margin.y }, 0));
+	
 	Element::updateElement();
 }
 

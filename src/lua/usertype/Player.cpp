@@ -8,7 +8,6 @@
 
 #include "ItemStack.h"
 #include "InventoryList.h"
-#include "LuaGuiElement.h"
 #include "world/LocalWorld.h"
 #include "world/ServerWorld.h"
 #include "world/inv/Inventory.h"
@@ -168,21 +167,25 @@ bool Api::Usertype::LocalPlayer::is_in_menu() {
 	return player.l()->isInMenu();
 }
 
-void Api::Usertype::LocalPlayer::show_menu(std::shared_ptr<LuaGuiElement> root) {
-	return player.l()->showMenu(root);
-}
+//void Api::Usertype::LocalPlayer::show_menu(std::shared_ptr<LuaGuiElement> root) {
+////	return player.l()->showMenu(root);
+//	return;
+//}
 
 void Api::Usertype::LocalPlayer::close_menu() {
-	return player.l()->closeMenu();
+//	return player.l()->closeMenu();
+	return;
 }
 
-std::shared_ptr<LuaGuiElement> Api::Usertype::LocalPlayer::get_hud() {
-	return player.l()->getHud();
-}
+//std::shared_ptr<LuaGuiElement> Api::Usertype::LocalPlayer::get_hud() {
+////	return player.l()->getHud();
+//	return nullptr;
+//}
 
-void Api::Usertype::LocalPlayer::set_hud(std::shared_ptr<LuaGuiElement> hud) {
-	player.l()->setHud(hud);
-}
+//void Api::Usertype::LocalPlayer::set_hud(std::shared_ptr<LuaGuiElement> hud) {
+////	player.l()->setHud(hud);
+//	return;
+//}
 
 void Api::Usertype::LocalPlayer::bind(State, sol::state& lua, sol::table& core) {
 	lua.new_usertype<LocalPlayer>("Player",
@@ -209,10 +212,10 @@ void Api::Usertype::LocalPlayer::bind(State, sol::state& lua, sol::table& core) 
 		
 		"get_dimension", &LocalPlayer::get_dimension,
 		
-		"show_menu", &LocalPlayer::show_menu,
+//		"show_menu", &LocalPlayer::show_menu,
 		"close_menu", &LocalPlayer::close_menu,
-		"set_hud", &LocalPlayer::set_hud,
-		"get_hud", &LocalPlayer::get_hud,
+//		"set_hud", &LocalPlayer::set_hud,
+//		"get_hud", &LocalPlayer::get_hud,
 		
 		"pos", sol::property(&LocalPlayer::get_pos, &LocalPlayer::set_pos),
 		"block_pos", sol::property(&LocalPlayer::get_block_pos, &LocalPlayer::set_pos),

@@ -10,4 +10,6 @@ class ErrorFormatter {
 public:
 	static string formatError(const string& fileName, usize line,
 		const string& stack, string file, bool ansiColors = true) noexcept;
+	
+	constexpr static i32 LOOK_AROUND = 4;
 };

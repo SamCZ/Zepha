@@ -1,7 +1,7 @@
-
 #include <fstream>
 #include <iostream>
 #include <cute_files/cute_files.h>
+#include <client/gui/TextElement.h>
 
 #include "MenuSandbox.h"
 
@@ -9,29 +9,25 @@
 #include "client/Client.h"
 #include "lua/ErrorFormatter.h"
 #include "client/menu/SubgameDef.h"
-#include "client/gui/basic/GuiText.h"
-#include "client/gui/basic/GuiContainer.h"
 
 // Modules
 #include "lua/modules/Time.h"
 #include "lua/modules/mSetGui.h"
 #include "lua/modules/mStartGame.h"
+#include "lua/usertype/LuaGuiElement.h"
 
-MenuSandbox::MenuSandbox(glm::ivec2& win, Client& client, std::shared_ptr<GuiContainer> container) :
+MenuSandbox::MenuSandbox(Client& client, Gui::Root& root, sptr<Gui::Element> sandboxRoot) :
 	LuaParser(*client.game),
-	win(win),
-	client(client)
-//	container(container),
-//	luaContainer(std::dynamic_pointer_cast<GuiContainer>(container->add(std::make_shared<GuiContainer>("__lua"))))
-//	builder(client.game->textures, client.game->models, luaContainer) {}
-{}
+	client(client),
+	root(root),
+	sandboxRoot(sandboxRoot) {}
 
 void MenuSandbox::reset() {
 //	container->remove("error");
-//	builder.clear(true);
+	sandboxRoot->clear();
 	core = {};
 	mod = {};
-	lua = sol::state{};
+	lua = sol::state {};
 	lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table, sol::lib::debug);
 	
 	loadApi();
@@ -46,9 +42,10 @@ void MenuSandbox::loadApi() {
 	
 	modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::CLIENT, lua, core));
 	
+	Api::Usertype::GuiElement::bind(lua, core, root);
 //	ClientApi::gui_element(lua);
 	
-//	MenuApi::set_gui(builder, win, lua, core);
+	MenuApi::set_gui(lua, core, sandboxRoot);
 	MenuApi::start_game(client, core);
 	
 	bindModules();
@@ -60,14 +57,15 @@ void MenuSandbox::loadApi() {
 
 void MenuSandbox::load(const SubgameDef& subgame) {
 	reset();
+	subgameName = subgame.config.name;
 	
-	try {
-		loadAndRunMod(subgame.subgamePath + "/../../assets/base");
-		loadAndRunMod(subgame.subgamePath + "/menu");
-	}
-	catch (const std::runtime_error& e) {
-		showError(e.what(), subgame.config.name);
-	}
+//	try {
+	loadAndRunMod(subgame.subgamePath + "/../../assets/base");
+	loadAndRunMod(subgame.subgamePath + "/menu");
+//	}
+//	catch (const std::runtime_error& e) {
+//		showError(e.what(), subgame.config.name);
+//	}
 }
 
 void MenuSandbox::windowResized() {
@@ -79,7 +77,7 @@ void MenuSandbox::update(double delta) {
 	core["__builtin"]["update_delayed_functions"]();
 }
 
-sol::protected_function_result MenuSandbox::runFileSandboxed(const std::string& file) {
+sol::protected_function_result MenuSandbox::runFileSandboxed(const string& file) {
 	for (LuaMod::File& f : mod.files) {
 		if (f.path != file) continue;
 		
@@ -94,18 +92,18 @@ sol::protected_function_result MenuSandbox::runFileSandboxed(const std::string& 
 	throw std::runtime_error("Error opening '" + file + "', file not found.");
 }
 
-void MenuSandbox::loadAndRunMod(const std::string& modPath) {
+void MenuSandbox::loadAndRunMod(const string& modPath) {
 	if (!cf_file_exists(modPath.data())) throw std::runtime_error("Directory not found.");
 	
 	LuaMod mod;
-	std::string root = modPath + "/script";
+	string root = modPath + "/script";
 	
-	std::list<std::string> dirsToScan{ root };
-	std::list<std::string> luaFiles{};
+	std::list<string> dirsToScan{ root };
+	std::list<string> luaFiles{};
 	
 	cf_dir_t dir;
 	while (!dirsToScan.empty()) {
-		std::string dirStr = *dirsToScan.begin();
+		string dirStr = *dirsToScan.begin();
 		dirsToScan.erase(dirsToScan.begin());
 		
 		if (!cf_file_exists(dirStr.data())) throw std::runtime_error("Missing 'script' directory.");
@@ -131,9 +129,9 @@ void MenuSandbox::loadAndRunMod(const std::string& modPath) {
 	
 	mod.modPath = modPath;
 	
-	for (std::string& file : luaFiles) {
+	for (string& file : luaFiles) {
 		size_t rootPos = file.find(root);
-		std::string modPath = file;
+		string modPath = file;
 		
 		if (rootPos == std::string::npos)
 			throw std::runtime_error("Attempted to access file \"" + file + "\", which is outside of the mod root.");
@@ -142,66 +140,67 @@ void MenuSandbox::loadAndRunMod(const std::string& modPath) {
 		modPath.resize(modPath.size() - 4);
 		
 		std::ifstream t(file);
-		std::string fileStr((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+		string fileStr((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
 		
-		LuaMod::File f{ modPath, fileStr };
+		LuaMod::File f { modPath, fileStr };
 		mod.files.push_back(f);
 	}
 	
-	std::string texPath = modPath + "/textures";
-	if (cf_file_exists(texPath.data())) {
-		this->modAssets = client.game->textures.loadDirectory(texPath, false, true);
-	}
+	string texPath = modPath + "/textures";
+	if (cf_file_exists(texPath.data()))
+		menuAssets = client.game->textures.loadDirectory(texPath, false, true);
 	
 	this->mod = mod;
 	runFileSandboxed("init");
 }
 
-void MenuSandbox::showError(const std::string& what, const std::string& subgame) {
-	const std::string errPrefixText = "Encountered an error while loading the menu for " + subgame + " ;-;";
-//	Font f(client.game->textures, client.game->textures["font"]);
-	
-//	auto errWrap = std::make_shared<GuiContainer>("error");
-//	container->add(errWrap);
-	
-//	auto errPrefix = std::make_shared<GuiText>("error_text");
-//	errPrefix->create({ 3, 3 }, {}, { 0.7, 0, 0.3, 1 }, { 1, 1, 1, 1 }, f);
-//	errPrefix->setText(errPrefixText);
-//	errPrefix->setPos({ 8, 16 });
-//	errWrap->add(errPrefix);
-	
-//	auto errMsg = std::make_shared<GuiText>("error_text");
-//	errMsg->create({ 3, 3 }, {}, {}, { 1, 0.5, 0.6, 1 }, f);
-//	errMsg->setText(what);
-//	errMsg->setPos({ 8, 52 });
-//	errWrap->add(errMsg);
+void MenuSandbox::showError(const string& err) {
+	const string errPrefixText = "`cfEncountered an error while loading the menu for '" + subgameName + "' ;-;\n\n`r";
+
+	using Expr = Gui::Expression;
+	sandboxRoot->append<Gui::TextElement>({
+		.styles = {{
+			{ Gui::StyleRule::CONTENT, errPrefixText + err },
+			{ Gui::StyleRule::TEXT_SIZE, Expr("2px") },
+			{ Gui::StyleRule::SIZE, array<Expr, 2> { Expr("100dp"), Expr("-1") } },
+			{ Gui::StyleRule::MARGIN, array<Expr, 4> { Expr("4dp"), Expr("4dp"), Expr("4dp"), Expr("4dp") } }
+		}}
+	});
 }
 
-sol::protected_function_result MenuSandbox::errorCallback(sol::protected_function_result r) const {
-	sol::error err = r;
-	std::string errString = err.what();
+sol::protected_function_result MenuSandbox::errorCallback(sol::protected_function_result r) {
+	string err = static_cast<sol::error>(r).what();
 	
-	try {
-		std::string::size_type lineNumStart = errString.find(':');
-		if (lineNumStart == std::string::npos) throw std::out_of_range("Improperly formatted error. [0]");
-		std::string::size_type lineNumEnd = errString.find(':', lineNumStart + 1);
-		if (lineNumEnd == std::string::npos) throw std::out_of_range("Improperly formatted error. [1]");
-		
-		std::string fileName = errString.substr(0, lineNumStart);
-		int lineNum = std::stoi(errString.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1));
-		
-		for (const LuaMod::File& file : mod.files)
-			if (file.path == fileName)
-				throw std::runtime_error(ErrorFormatter::formatError(fileName, lineNum, errString, file.file));
-		
-		throw std::out_of_range("Error thrown outside of handled files. [2]");
+	std::cout << Log::err << err << Log::endl;
+	
+	vec<string> lines;
+	{
+		string line;
+		std::stringstream textStream(err);
+		while (std::getline(textStream, line, '\n')) lines.emplace_back(line);
 	}
-	catch (const std::runtime_error& e) {
-		std::cout << Log::err << e.what() << std::endl;
-		throw;
+
+	for (const let& line : lines) {
+		usize lineNumStart = line.find(':');
+		if (lineNumStart == string::npos) continue;
+		usize lineNumEnd = line.find(':', lineNumStart + 1);
+		if (lineNumEnd == string::npos) continue;
+		
+		string fileName = line.substr(0, lineNumStart);
+		fileName.erase(std::remove_if(fileName.begin(), fileName.end(), isspace), fileName.end());
+		
+		for (const let& file : mod.files) {
+			if (file.path == fileName) {
+				let msg = ErrorFormatter::formatError(fileName,
+					std::stoi(line.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1)),
+					err, file.file);
+				
+				showError(msg);
+				return r;
+			}
+		}
 	}
-	catch (const std::out_of_range& e) {
-		std::cout << Log::err << "Failed to format error, " << e.what() << Log::endl;
-		throw std::runtime_error(errString);
-	}
+	
+	showError(err);
+	return r;
 }

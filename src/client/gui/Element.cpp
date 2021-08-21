@@ -24,6 +24,10 @@ ivec2 Gui::Element::getComputedSize() {
 	return size;
 }
 
+void Gui::Element::clear() {
+	children.clear();
+}
+
 ivec2 Gui::Element::getComputedOuterSize() {
 	let size = getComputedSize();
 	let margin = getStyle<ivec4, ValueType::LENGTH>(StyleRule::MARGIN, {});

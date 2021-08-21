@@ -1,35 +1,29 @@
-//
-// Created by aurailus on 13/08/19.
-//
-
 #pragma once
 
-#include <memory>
-#include <glm/vec2.hpp>
-#include <glm/vec4.hpp>
+#include "util/Types.h"
 
 class AtlasRef;
-
 class TextureAtlas;
 
 class Font {
-	public:
+public:
 	Font() = default;
 	
 	Font(TextureAtlas& atlas, std::shared_ptr<AtlasRef> tex);
 	
-	unsigned int getCharWidth(char c);
+	u16 getCharWidth(char c);
 	
-	glm::vec4 getCharUVs(char c);
+	vec4 getCharUVs(char c);
 	
-	const static unsigned int amountOfChars = 95;
-	const static unsigned int charWidth = 7;
-	const static unsigned int charHeight = 9;
-	private:
+	constexpr static u16 C_COUNT = 95;
+	constexpr static u16 C_WIDTH = 7;
+	constexpr static u16 C_HEIGHT = 9;
+	
+private:
 	void getCharWidths(TextureAtlas& atlas);
 	
-	glm::vec2 atlasSize{};
+	vec2 atlasSize {};
 	
-	std::shared_ptr<AtlasRef> fontTex = nullptr;
-	std::array<unsigned short, 95> charWidths{};
+	sptr<AtlasRef> fontTex = nullptr;
+	array<u16, C_COUNT + 1> charWidths {};
 };

@@ -331,6 +331,6 @@ add_library(Zepha_Core
         client/gui/compound/GuiCellGraph.cpp
         client/gui/compound/GuiCellGraph.h
         client/gui/basic/GuiCells.cpp
-        client/gui/basic/GuiCells.h client/gui/Gui.h client/gui/Root.cpp client/gui/Root.h client/gui/BoxElement.cpp client/gui/BoxElement.h client/gui/Gui.cpp client/gui/Style.h client/gui/TextElement.cpp client/gui/TextElement.h client/gui/Expression.cpp client/gui/Expression.h)
+        client/gui/basic/GuiCells.h client/gui/Gui.h client/gui/Root.cpp client/gui/Root.h client/gui/BoxElement.cpp client/gui/BoxElement.h client/gui/Gui.cpp client/gui/Style.h client/gui/TextElement.cpp client/gui/TextElement.h client/gui/Expression.cpp client/gui/Expression.h client/gui/Style.cpp)
 
 target_include_directories(Zepha_Core PUBLIC .)

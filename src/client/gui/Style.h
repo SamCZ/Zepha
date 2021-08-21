@@ -22,7 +22,9 @@ namespace Gui {
 		BACKGROUND,
 		BACKGROUND_HOVER,
 		
-		CONTENT
+		CONTENT,
+		TEXT_SIZE,
+		TEXT_COLOR
 	};
 	
 	enum class ValueType {
@@ -180,6 +182,8 @@ namespace Gui {
 		}
 		
 		std::unordered_map<StyleRule, any> rules {};
+	
+		const static std::unordered_map<string, StyleRule> RULE_STRINGS_TO_ENUMS;
 	};
 	
 	typedef std::unordered_map<string, Style> StyleSheet;

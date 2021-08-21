@@ -12,12 +12,11 @@
 #include "../../util/CovariantPtr.h"
 
 class Subgame;
-
 class ItemStack;
 
 namespace Api::Usertype {
 	class ItemStack : SubgameUsertype {
-		public:
+	public:
 		ItemStack() = default;
 		
 		explicit ItemStack(sol::table tbl);
@@ -38,7 +37,7 @@ namespace Api::Usertype {
 		
 		static void bind(State state, sol::state& lua, sol::table& core);
 		
-		private:
+	private:
 		std::string name;
 		unsigned short count;
 	};

@@ -7,6 +7,8 @@
 #include "lua/LuaParser.h"
 
 #include "lua/LuaMod.h"
+#include "client/gui/Root.h"
+#include "client/gui/Element.h"
 #include "client/gui/GuiBuilder.h"
 
 class Client;
@@ -16,8 +18,8 @@ class SubgameDef;
 class GuiContainer;
 
 class MenuSandbox : LuaParser {
-	public:
-	MenuSandbox(glm::ivec2& window, Client& client, std::shared_ptr<GuiContainer> container);
+public:
+	MenuSandbox(Client& client, Gui::Root& root, sptr<Gui::Element> sandboxRoot);
 	
 	void load(const SubgameDef& subgame);
 	
@@ -26,28 +28,27 @@ class MenuSandbox : LuaParser {
 	void windowResized();
 	
 	using LuaParser::update;
-	private:
+
+private:
 	void reset();
 	
 	void loadApi();
 	
-	void loadAndRunMod(const std::string& modPath);
+	void loadAndRunMod(const string& modPath);
 	
-	void showError(const std::string& what, const std::string& subgame);
+	void showError(const string& err);
 	
-	sol::protected_function_result runFileSandboxed(const std::string& file);
+	sol::protected_function_result runFileSandboxed(const string& file);
 	
-	virtual sol::protected_function_result errorCallback(sol::protected_function_result r) const override;
+	virtual sol::protected_function_result errorCallback(sol::protected_function_result r) override;
 	
 	LuaMod mod {};
-	std::vector<std::shared_ptr<AtlasRef>> modAssets{};
-	
-//	GuiRoot gui;
-	
-//	std::shared_ptr<GuiContainer> container = nullptr;
-//	std::shared_ptr<GuiContainer> luaContainer = nullptr;
-//	GuiBuilder builder;
+	string subgameName;
 	
 	Client& client;
-	glm::ivec2& win;
+	
+	Gui::Root& root;
+	sptr<Gui::Element> sandboxRoot;
+	vec<sptr<AtlasRef>> menuAssets {};
+	
 };

@@ -145,7 +145,7 @@ void ServerLuaParser::loadApi(WorldPtr world) {
 	lua.set_function("runfile", &ServerLuaParser::runFileSandboxed, this);
 }
 
-sol::protected_function_result ServerLuaParser::errorCallback(sol::protected_function_result r) const {
+sol::protected_function_result ServerLuaParser::errorCallback(sol::protected_function_result r) {
 	sol::error err = r;
 	std::string errString = err.what();
 	

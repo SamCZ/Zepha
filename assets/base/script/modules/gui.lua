@@ -5,31 +5,24 @@ setmetatable(env, {__index = _G})
 -- create_element
 -- Build a GUI Element with the provided constructor data, apply the metatable.
 local function create_element(elem_type, data)
-    local elem = GuiElement.new(elem_type, data)
-    return elem
+    return GuiElement.new(elem_type, data)
 end
 
 -- register_element
 -- Add an element to the Gui namespace.
 local function register_element(key)
     if type(key) == "table" then
-        for _,v in pairs(key) do register_element(v) end
+        for _, v in pairs(key) do register_element(v) end
         return
     end
     env.Gui[key] = function(data) return create_element(key, data) end
 end
 
-register_element({"Body", "Rect", "Text", "Model", "Button", "InventoryList"})
-
--- pc
--- Formats a number to be a percent string.
-env.pc = function(num)
-    return tostring(num) .. "%"
-end
+register_element({ "Box", "Text" })
 
 -- zepha.build_gui
 -- Allows you to Build UI Elements with the GUI namespace outside of a callback.
-zepha.build_gui = function(fn)
+zepha.gui = function(fn)
     setfenv(fn, env)
     return fn()
 end

@@ -100,23 +100,23 @@ bool LocalPlayer::isInMenu() {
 //	return gameGui.isInMenu();
 }
 
-void LocalPlayer::showMenu(sptr<LuaGuiElement> root) {
-//	gameGui.showMenu(root);
-	renderer.window.input.setMouseLocked(false);
-}
+//void LocalPlayer::showMenu(sptr<LuaGuiElement> root) {
+////	gameGui.showMenu(root);
+//	renderer.window.input.setMouseLocked(false);
+//}
 
 void LocalPlayer::closeMenu() {
 //	gameGui.closeMenu();
 	renderer.window.input.setMouseLocked(true);
 }
 
-sptr<LuaGuiElement> LocalPlayer::getHud() {
-//	return gameGui.getHud();
-}
+//sptr<LuaGuiElement> LocalPlayer::getHud() {
+////	return gameGui.getHud();
+//}
 
-void LocalPlayer::setHud(sptr<LuaGuiElement> hud) {
-//	gameGui.setHud(hud);
-}
+//void LocalPlayer::setHud(sptr<LuaGuiElement> hud) {
+////	gameGui.setHud(hud);
+//}
 
 void LocalPlayer::setHudVisible(bool hudVisible) {
 //	gameGui.setVisible(hudVisible);

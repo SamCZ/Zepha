@@ -17,36 +17,34 @@
 #include "client/gui/compound/GuiImageButton.h"
 
 MainMenuScene::MainMenuScene(Client& client) : Scene(client),
-	root(client.renderer.window, client.game->textures) {
+	root(client.renderer.window, client.game->textures),
+	sandboxElem(root.create<Gui::BoxElement>({ .classes = { "sandbox" }})),
+	sandbox(client, root, sandboxElem) {
 	
 	client.renderer.setClearColor(0, 0, 0);
 	client.renderer.window.input.setMouseLocked(false);
 	
-	root.body->setStyle(Gui::StyleRule::BACKGROUND, string("#123"));
+	using Expr = Gui::Expression;
 
 	root.addStylesheet({
-		{ "sandbox", {{
-			{ Gui::StyleRule::H_ALIGN, string("center") },
-			{ Gui::StyleRule::V_ALIGN, string("center") }
-		}}},
 		{ "navigation", {{
-			{ Gui::StyleRule::SIZE, array<Gui::Expression, 2> { Gui::Expression("-1"), Gui::Expression("18dp") } }
+			{ Gui::StyleRule::SIZE, array<Expr, 2> { Expr("-1"), Expr("18dp") } }
 		}}},
 		{ "navigationWrap", {{
 			{ Gui::StyleRule::DIRECTION, string("row") },
-			{ Gui::StyleRule::POS, array<Gui::Expression, 2> { Gui::Expression("0"), Gui::Expression("0") } }
+			{ Gui::StyleRule::POS, array<Expr, 2> { Expr("0"), Expr("0") } }
 		}}},
 		{ "navigationBackground", {{
-			{ Gui::StyleRule::SIZE, array<Gui::Expression, 2> { Gui::Expression("64dp"), Gui::Expression("18dp") } },
+			{ Gui::StyleRule::SIZE, array<Expr, 2> { Expr("64dp"), Expr("18dp") } },
 			{ Gui::StyleRule::BACKGROUND, string("menu_bar_bg") }
 		}}},
 		{ "navigationButton", {{
-			{ Gui::StyleRule::SIZE, array<Gui::Expression, 2> { Gui::Expression("16dp"), Gui::Expression("16dp") } },
+			{ Gui::StyleRule::SIZE, array<Expr, 2> { Expr("16dp"), Expr("16dp") } },
 			{ Gui::StyleRule::CURSOR, string("pointer") }
 		}}}
 	});
 
-	let sandbox = root.body->append<Gui::BoxElement>({ .classes = { "sandbox" }  });
+	root.body->append(sandboxElem);
 	let navigation = root.body->append<Gui::BoxElement>({ .classes = { "navigation" } });
 	let navigationBG = navigation->append<Gui::BoxElement>({ .classes = { "navigationWrap" } });
 
@@ -56,9 +54,8 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 	let navigationList = navigation->append<Gui::BoxElement>({
 		.classes = { "navigationWrap" },
 		.styles = {{
-			{ Gui::StyleRule::PADDING, array<Gui::Expression, 4>
-				{ Gui::Expression("1dp"), Gui::Expression("1dp"), Gui::Expression("1dp"), Gui::Expression("1dp") } },
-			{ Gui::StyleRule::GAP, array<Gui::Expression, 2> { Gui::Expression("1dp"), Gui::Expression("1dp") } }
+			{ Gui::StyleRule::PADDING, array<Expr, 4> { Expr("1dp"), Expr("1dp"), Expr("1dp"), Expr("1dp") } },
+			{ Gui::StyleRule::GAP, array<Expr, 2> { Expr("1dp"), Expr("1dp") } }
 		}}
 	});
 
@@ -81,9 +78,8 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 	navigationList->append<Gui::BoxElement>({
 		.styles = {{
 			{ Gui::StyleRule::BACKGROUND, string("#fff5") },
-			{ Gui::StyleRule::SIZE, array<Gui::Expression, 2> { Gui::Expression("1dp"), Gui::Expression("10dp") } },
-			{ Gui::StyleRule::MARGIN, array<Gui::Expression, 4>
-			    { Gui::Expression("2dp"), Gui::Expression("3dp"), Gui::Expression("2dp"), Gui::Expression("3dp") } }
+			{ Gui::StyleRule::SIZE, array<Expr, 2> { Expr("1dp"), Expr("10dp") } },
+			{ Gui::StyleRule::MARGIN, array<Expr, 4> { Expr("2dp"), Expr("3dp"), Expr("2dp"), Expr("3dp") } }
 		}}
 	});
 
@@ -108,7 +104,7 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 
 	if (subgames.size() > 0) {
 		selectedSubgame = &subgames[0];
-//		sandbox.load(*selectedSubgame);
+		sandbox.load(*selectedSubgame);
 	}
 
 	navigationList->append<Gui::BoxElement>();

@@ -79,6 +79,8 @@ namespace Gui {
 			return elem;
 		}
 		
+		void clear();
+		
 		/** Returns the element's computed size. */
 		virtual ivec2 getComputedSize();
 		
@@ -104,6 +106,7 @@ namespace Gui {
 			for (const let& ss : stylesheets) {
 				for (const string& className : props.classes) {
 					const let& styles = ss.find(className);
+					if (styles == ss.end()) continue;
 					const optional<any> opt = styles->second.get(rule);
 					if (opt) return *opt;
 				}
@@ -119,6 +122,7 @@ namespace Gui {
 			for (const let& ss : stylesheets) {
 				for (const string& className : props.classes) {
 					const let& styles = ss.find(className);
+					if (styles == ss.end()) continue;
 					const optional<V> opt = styles->second.get<V, T>(rule);
 					if (opt) return *opt;
 				}

@@ -11,7 +11,6 @@
 
 class Input;
 class Deserializer;
-class LuaGuiElement;
 class LocalInventory;
 class LocalInventoryRefs;
 enum class NetPlayerField;
@@ -89,7 +88,7 @@ public:
 	 * @param root - The root GUI element to display.
 	 */
 	
-	void showMenu(sptr<LuaGuiElement> root);
+//	void showMenu(sptr<LuaGuiElement> root);
 	
 	/**
 	 * Closes the currently open menu.
@@ -102,7 +101,7 @@ public:
 	 * @returns the root GUI element of the hud.
 	 */
 	
-	sptr<LuaGuiElement> getHud();
+//	sptr<LuaGuiElement> getHud();
 	
 	/**
 	 * Sets the HUD to the specified GUI tree. The hud does not constitute
@@ -111,7 +110,7 @@ public:
 	 * @param hud - The root GUI element to display.
 	 */
 	
-	void setHud(sptr<LuaGuiElement> hud);
+//	void setHud(sptr<LuaGuiElement> hud);
 	
 	/**
 	 * Sets the visibility state of the HUD.
