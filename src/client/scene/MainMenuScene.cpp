@@ -30,18 +30,18 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 			{ Gui::StyleRule::V_ALIGN, string("center") }
 		}}},
 		{ "navigation", {{
-			{ Gui::StyleRule::SIZE, array<string, 2> { "-1", "18dp" } }
+			{ Gui::StyleRule::SIZE, array<Gui::Expression, 2> { Gui::Expression("-1"), Gui::Expression("18dp") } }
 		}}},
 		{ "navigationWrap", {{
 			{ Gui::StyleRule::DIRECTION, string("row") },
-			{ Gui::StyleRule::POS, array<string, 2> { "0", "0" } }
+			{ Gui::StyleRule::POS, array<Gui::Expression, 2> { Gui::Expression("0"), Gui::Expression("0") } }
 		}}},
 		{ "navigationBackground", {{
-			{ Gui::StyleRule::SIZE, array<string, 2> { "64dp", "18dp" } },
+			{ Gui::StyleRule::SIZE, array<Gui::Expression, 2> { Gui::Expression("64dp"), Gui::Expression("18dp") } },
 			{ Gui::StyleRule::BACKGROUND, string("menu_bar_bg") }
 		}}},
 		{ "navigationButton", {{
-			{ Gui::StyleRule::SIZE, array<string, 2> { "16dp", "16dp" } },
+			{ Gui::StyleRule::SIZE, array<Gui::Expression, 2> { Gui::Expression("16dp"), Gui::Expression("16dp") } },
 			{ Gui::StyleRule::CURSOR, string("pointer") }
 		}}}
 	});
@@ -56,8 +56,9 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 	let navigationList = navigation->append<Gui::BoxElement>({
 		.classes = { "navigationWrap" },
 		.styles = {{
-			{ Gui::StyleRule::PADDING, array<string, 4> { "1dp", "1dp", "1dp", "1dp" } },
-			{ Gui::StyleRule::GAP, array<string, 2> { "1dp", "1dp" } }
+			{ Gui::StyleRule::PADDING, array<Gui::Expression, 4>
+				{ Gui::Expression("1dp"), Gui::Expression("1dp"), Gui::Expression("1dp"), Gui::Expression("1dp") } },
+			{ Gui::StyleRule::GAP, array<Gui::Expression, 2> { Gui::Expression("1dp"), Gui::Expression("1dp") } }
 		}}
 	});
 
@@ -80,8 +81,9 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 	navigationList->append<Gui::BoxElement>({
 		.styles = {{
 			{ Gui::StyleRule::BACKGROUND, string("#fff5") },
-			{ Gui::StyleRule::SIZE, array<string, 2> { "1dp", "10dp" } },
-			{ Gui::StyleRule::MARGIN, array<string, 4> { "2dp", "3dp", "2dp", "3dp" } }
+			{ Gui::StyleRule::SIZE, array<Gui::Expression, 2> { Gui::Expression("1dp"), Gui::Expression("10dp") } },
+			{ Gui::StyleRule::MARGIN, array<Gui::Expression, 4>
+			    { Gui::Expression("2dp"), Gui::Expression("3dp"), Gui::Expression("2dp"), Gui::Expression("3dp") } }
 		}}
 	});
 
@@ -109,12 +111,7 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 //		sandbox.load(*selectedSubgame);
 	}
 
-	navigationList->append<Gui::BoxElement>({
-		.styles = {{
-			{ Gui::StyleRule::BACKGROUND, string("#f006") },
-			{ Gui::StyleRule::SIZE, array<string, 2> { "-1", "16dp" } }
-		}}
-	});
+	navigationList->append<Gui::BoxElement>();
 
 	let settingsButton = navigationList->append<Gui::BoxElement>({
 		.classes = { "navigationButton" },
@@ -139,11 +136,6 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 //			if (!down) return;
 //			client.scene.setScene(make_unique<ConnectScene>(client, Address{ "127.0.0.1" }));
 //		});
-
-//		auto divider = make_shared<GuiRect>("divider");
-//		divider->create({ GS, GS * 10 }, {}, { 1, 1, 1, 0.3 });
-//		divider->setPos({ GS * 2 + GS * 18 * 2, GS * 4 });
-//		navigationBarIcons->add(divider);
 }
 
 void MainMenuScene::findSubgames() {

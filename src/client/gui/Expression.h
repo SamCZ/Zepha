@@ -19,28 +19,19 @@ namespace Gui {
 	};
 	
 	class Expression {
-		struct String {
-			String() = default;
-			explicit String(const string& v): v(v) {}
-		
-			string v {};
-		
-			bool isOperator();
-		
-			f32 eval();
-		};
-		
 		struct Token {
 			Token() = default;
-			explicit Token(f32 val, UnitOrOperator unit): val(val), unit(unit);
 			explicit Token(const string& str);
+			Token(f32 val, UnitOrOperator unit): val(val), unit(unit) {};
 			
 			bool isOperator();
+			
 			f32 evalValue();
 			
-			f32 val;
+			f32 val = 0;
 			UnitOrOperator unit;
 		};
+		
 	public:
 		Expression() = default;
 		Expression(const string& exp);
@@ -48,9 +39,11 @@ namespace Gui {
 		void setExpression(string exp);
 	
 		f32 eval();
+		
 	private:
 		usize hash = 0;
-		std::queue<String> infix {};
+		
+		std::vector<Token> expression;
 	
 		const static std::unordered_map<char, u8> PRECEDENCE;
 	};

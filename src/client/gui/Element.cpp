@@ -18,7 +18,9 @@ void Gui::Element::setStyle(StyleRule style, const std::any& value) {
 }
 
 ivec2 Gui::Element::getComputedSize() {
-	let size = getStyle<ivec2, ValueType::LENGTH>(StyleRule::SIZE, glm::max(layoutSize, 0));
+	let size = getStyle<ivec2, ValueType::LENGTH>(StyleRule::SIZE, ivec2(-1));
+	if (size.x == -1) size.x = std::max(layoutSize.x, 0);
+	if (size.y == -1) size.y = std::max(layoutSize.y, 0);
 	return size;
 }
 
@@ -132,7 +134,7 @@ void Gui::Element::layoutChildren() {
 	
 		let selfSize = getComputedContentSize();
 		i32 explicitSize = gap * (children.size() - 1);
-		usize implicitCount = 0;
+		i32 implicitCount = 0;
 	
 		for (const let& child : children) {
 			let childExplicitSize = child->getExplicitSize();
@@ -141,7 +143,7 @@ void Gui::Element::layoutChildren() {
 			let childMargin = child->getStyle<ivec4, ValueType::LENGTH>(StyleRule::MARGIN, {});
 			explicitSize += childMargin[primary] + childMargin[primary + 2];
 		}
-	
+		
 		/**
 		 * The cumulative layout offset of the children across the x and y axis.
 		 */
@@ -154,9 +156,10 @@ void Gui::Element::layoutChildren() {
 		/**
 		 * The amount of size each implicitly sized element should occupy.
 		 */
+		 
+//		std::cout << selfSize << ": " << (selfSize[primary] - explicitSize) << std::endl;
 	 
-		i32 implicitElemSize = floor((selfSize[primary] - explicitSize) /
-			(std::max)(implicitCount, static_cast<usize>(1)));
+		i32 implicitElemSize = floor((selfSize[primary] - explicitSize) / (std::max)(implicitCount, 1));
 	
 		ivec2 selfOffset = getComputedPos() + parentOffset;
 		

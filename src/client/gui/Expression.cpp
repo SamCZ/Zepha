@@ -5,8 +5,8 @@
 
 #include "client/gui/Expression.h"
 
-#include "util/Util.h"
 #include "Gui.h"
+#include "util/Util.h"
 
 Gui::Expression::Expression(const string& exp) {
 	setExpression(exp);
@@ -22,25 +22,25 @@ void Gui::Expression::setExpression(string exp) {
 	exp.erase(std::remove_if(exp.begin(), exp.end(), isspace), exp.end());
 	
 	// Process Infix into Postfix (RPN)
-	infix = {};
+	std::queue<string> queue {};
 	std::stack<char> operators {};
 	
 	bool nextOperatorIsUnary = true;
 	
-	String temp = {};
+	string temp = {};
 	
 	while (exp.size()) {
 		let& c = exp[0];
 		// Number or Unit or Keyword
 		if ((c >= '0' && c <= '9') || c == '.' || (c >= 97 && c <= 122) ||
 		(nextOperatorIsUnary && (c == '+' || c == '-'))) {
-			temp.v += c;
+			temp += c;
 			nextOperatorIsUnary = false;
 		}
 		// Binary Operator
 		else if (!nextOperatorIsUnary && (c == '+' || c == '-' || c == '*' || c == '/' || c == '^')) {
-			if (temp.v.size()) {
-				infix.emplace(temp);
+			if (temp.size()) {
+				queue.emplace(temp);
 				temp = {};
 			}
 			
@@ -48,7 +48,7 @@ void Gui::Expression::setExpression(string exp) {
 				((c != '^' && PRECEDENCE.at(operators.top()) >= PRECEDENCE.at(c)) ||
 					PRECEDENCE.at(operators.top()) > PRECEDENCE.at(c))) {
 				
-				infix.emplace(string(1, operators.top()));
+				queue.emplace(string(1, operators.top()));
 				operators.pop();
 			}
 			
@@ -57,8 +57,8 @@ void Gui::Expression::setExpression(string exp) {
 		}
 		// Opening Parentheses
 		else if (c == '(') {
-			if (temp.v.size()) {
-				infix.emplace(temp);
+			if (temp.size()) {
+				queue.emplace(temp);
 				temp = {};
 			}
 			
@@ -67,13 +67,13 @@ void Gui::Expression::setExpression(string exp) {
 		}
 		// Closing Parentheses
 		else if (c == ')') {
-			if (!temp.v.size()) throw std::logic_error("Empty or mismatched parentheses.");
-			infix.emplace(temp);
+			if (!temp.size()) throw std::logic_error("Empty or mismatched parentheses.");
+			queue.emplace(temp);
 			temp = {};
 			
 			if (!operators.size()) throw std::logic_error("Mismatched parentheses.");
 			while (operators.top() != '(') {
-				infix.emplace(string(1, operators.top()));
+				queue.emplace(string(1, operators.top()));
 				operators.pop();
 				if (!operators.size()) throw std::logic_error("Mismatched parentheses.");
 			}
@@ -85,25 +85,31 @@ void Gui::Expression::setExpression(string exp) {
 		exp.erase(0, 1);
 	}
 	
-	if (temp.v.size()) {
-		infix.push(temp);
+	if (temp.size()) {
+		queue.push(temp);
 		temp = {};
 	}
 	
 	while (operators.size()) {
 		if (operators.top() == '(') throw std::logic_error("Mismatched parentheses.");
-		infix.emplace(string(1, operators.top()));
+		queue.emplace(string(1, operators.top()));
 		operators.pop();
+	}
+	
+	expression.clear();
+	expression.reserve(queue.size());
+	
+	while (queue.size()) {
+		expression.push_back(Token(queue.front()));
+		queue.pop();
 	}
 }
 
 f32 Gui::Expression::eval() {
-	let infix = this->infix;
-	std::stack<String> eval {};
+	std::stack<Token> eval {};
 	
-	while (infix.size()) {
-		let& t = infix.front();
-		infix.pop();
+	for (usize i = 0; i < expression.size(); i++) {
+		let& t = expression[i];
 		
 		if (!t.isOperator()) {
 			eval.emplace(t);
@@ -111,33 +117,35 @@ f32 Gui::Expression::eval() {
 		else {
 			if (eval.size() < 2) throw std::runtime_error("Eval stack has < 2 items! This is an engine error!");
 			
-			String b = eval.top();
+			let b = eval.top();
 			eval.pop();
-			String a = eval.top();
+			let a = eval.top();
 			eval.pop();
 			
-			switch (t.v[0]) {
-			case '+':
-				eval.emplace(std::to_string(a.eval() + b.eval()));
+			switch (t.unit) {
+			default:
+				throw std::logic_error("Tried to operate with a non-operator token.");
+			case UnitOrOperator::ADD:
+				eval.emplace(a.evalValue() + b.evalValue(), UnitOrOperator::REAL_PIXEL);
 				break;
-			case '-':
-				eval.emplace(std::to_string(a.eval() - b.eval()));
+			case UnitOrOperator::SUBTRACT:
+				eval.emplace(a.evalValue() - b.evalValue(), UnitOrOperator::REAL_PIXEL);
 				break;
-			case '*':
-				eval.emplace(std::to_string(a.eval() * b.eval()));
+			case UnitOrOperator::MULTIPLY:
+				eval.emplace(a.evalValue() * b.evalValue(), UnitOrOperator::REAL_PIXEL);
 				break;
-			case '/':
-				eval.emplace(std::to_string(a.eval() / b.eval()));
+			case UnitOrOperator::DIVIDE:
+				eval.emplace(a.evalValue() / b.evalValue(), UnitOrOperator::REAL_PIXEL);
 				break;
-			case '^':
-				eval.emplace(std::to_string(pow(a.eval(), b.eval())));
+			case UnitOrOperator::EXPONENT:
+				eval.emplace(pow(a.evalValue(), b.evalValue()), UnitOrOperator::REAL_PIXEL);
 				break;
 			}
 		}
 	}
 	
 	if (!eval.size()) throw std::runtime_error("Eval stack is empty! This is an engine error!");
-	return eval.top().eval();
+	return eval.top().evalValue();
 }
 
 const std::unordered_map<char, u8> Gui::Expression::PRECEDENCE {
@@ -148,28 +156,45 @@ const std::unordered_map<char, u8> Gui::Expression::PRECEDENCE {
 	{ '-', 2 }
 };
 
-bool Gui::Expression::String::isOperator() {
-	return v.size() == 1 && (v[0] == '+' || v[0] == '-' || v[0] == '*' || v[0] == '/' || v[0] == '^');
+Gui::Expression::Token::Token(const string& str) {
+	// Operator
+	if (str.size() == 1) {
+		switch (str[0]) {
+			default: break;
+			case '+': unit = UnitOrOperator::ADD; return;
+			case '-': unit = UnitOrOperator::SUBTRACT; return;
+			case '*': unit = UnitOrOperator::MULTIPLY; return;
+			case '/': unit = UnitOrOperator::DIVIDE; return;
+			case '^': unit = UnitOrOperator::EXPONENT; return;
+		}
+	}
+	
+	// Value
+	usize unitInd = -1;
+	val = std::stof(str, &unitInd);
+	string unitStr = str.substr(unitInd);
+	
+	// Unit
+	switch (Util::hash(unitStr.data())) {
+		default: throw std::logic_error("Unknown unit '" + unitStr + "'.");
+		
+		case Util::hash("dp"): unit = UnitOrOperator::DISPLAY_PIXEL; return;
+		case Util::hash(""):
+		case Util::hash("px"): unit = UnitOrOperator::REAL_PIXEL; return;
+		case Util::hash("deg"): unit = UnitOrOperator::DEGREE; return;
+	}
 }
 
-f32 Gui::Expression::String::eval() {
-	usize unitInd = -1;
-	
-	f32 value = std::stof(v, &unitInd);
-	string unit = v.substr(unitInd);
-	
-	switch (Util::hash(unit.data())) {
-	default:
-		throw std::logic_error("Unknown unit '" + unit + "'.");
-	
-	case Util::hash("dp"):
-		return value * Gui::PX_SCALE;
+bool Gui::Expression::Token::isOperator() {
+	return static_cast<u8>(unit) >= 128;
+}
+
+f32 Gui::Expression::Token::evalValue() {
+	switch (unit) {
+		default: throw std::logic_error("Tried to evalValue() on an Operator token.");
 		
-	case Util::hash("deg"):
-		return value * M_PI / 180.f;
-	
-	case Util::hash(""):
-	case Util::hash("px"):
-		return value;
+		case UnitOrOperator::DISPLAY_PIXEL: return val * Gui::PX_SCALE;
+		case UnitOrOperator::REAL_PIXEL: return val;
+		case UnitOrOperator::DEGREE: return val * M_PI / 180.f;
 	}
 }

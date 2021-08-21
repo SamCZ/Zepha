@@ -13,14 +13,14 @@ Gui::Root::Root(Window& window, TextureAtlas& atlas) :
 	body->setProps({
 		.id = "body",
 		.styles = {{
-			{ StyleRule::SIZE, array<string, 2> {
-				std::to_string(size.x) + "px", std::to_string(size.y) + "px" } }
+			{ StyleRule::SIZE, array<Expression, 2> {
+				Expression(std::to_string(size.x)), Expression(std::to_string(size.y)) }}
 		}}
 	});
 	
 	lock = window.onResize([&](ivec2 size) {
-		body->setStyle(StyleRule::SIZE, array<string, 2> {
-			std::to_string(size.x) + "px", std::to_string(size.y) + "px" });
+		body->setStyle(StyleRule::SIZE, array<Expression, 2> {
+			Expression(std::to_string(size.x)), Expression(std::to_string(size.y)) });
 		Timer t("Resize UI");
 		body->updateElement();
 		t.printElapsedMs();

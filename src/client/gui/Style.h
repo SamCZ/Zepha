@@ -142,9 +142,9 @@ namespace Gui {
 			L == ValueType::LENGTH, bool> = true>
 		
 		optional<N> get(StyleRule rule) const {
-			let raw = get<string>(rule);
+			let raw = get<Gui::Expression>(rule);
 			if (!raw) return std::nullopt;
-			return Gui::Expression(*raw).eval();
+			return raw->eval();
 		}
 		
 		/**
@@ -157,14 +157,13 @@ namespace Gui {
 			std::is_same_v<VN, glm::vec<VN::length(), typename VN::value_type>> &&
 			L == ValueType::LENGTH, bool> = true>
 			
-			optional<VN> get(StyleRule rule) const {
-				let raw = get<array<string, VN::length()>>(rule);
-				if (!raw) return std::nullopt;
-				VN vec;
-				for (usize i = 0; i < VN::length(); i++)
-					vec[i] = Gui::Expression((*raw)[i]).eval();
-				return vec;
-			}
+		optional<VN> get(StyleRule rule) const {
+			let raw = get<array<Gui::Expression, VN::length()>>(rule);
+			if (!raw) return std::nullopt;
+			VN vec;
+			for (usize i = 0; i < VN::length(); i++) vec[i] = (*raw)[i].eval();
+			return vec;
+		}
 		
 		/**
 		 * Returns the specified Rule's value as a V,
