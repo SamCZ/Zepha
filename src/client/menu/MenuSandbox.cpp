@@ -23,7 +23,6 @@ MenuSandbox::MenuSandbox(Client& client, Gui::Root& root, sptr<Gui::Element> san
 	sandboxRoot(sandboxRoot) {}
 
 void MenuSandbox::reset() {
-//	container->remove("error");
 	sandboxRoot->clear();
 	core = {};
 	mod = {};
@@ -58,22 +57,12 @@ void MenuSandbox::loadApi() {
 void MenuSandbox::load(const SubgameDef& subgame) {
 	reset();
 	subgameName = subgame.config.name;
-	
-//	try {
+
 	loadAndRunMod(subgame.subgamePath + "/../../assets/base");
 	loadAndRunMod(subgame.subgamePath + "/menu");
-//	}
-//	catch (const std::runtime_error& e) {
-//		showError(e.what(), subgame.config.name);
-//	}
-}
-
-void MenuSandbox::windowResized() {
-//	builder.build(win);
 }
 
 void MenuSandbox::update(double delta) {
-//	builder.update();
 	core["__builtin"]["update_delayed_functions"]();
 }
 

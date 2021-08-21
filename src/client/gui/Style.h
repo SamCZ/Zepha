@@ -143,10 +143,10 @@ namespace Gui {
 			(std::is_integral_v<N> || std::is_floating_point_v<N>) &&
 			L == ValueType::LENGTH, bool> = true>
 		
-		optional<N> get(StyleRule rule) const {
+		optional<N> get(StyleRule rule, const ExpressionInfo& info) const {
 			let raw = get<Gui::Expression>(rule);
 			if (!raw) return std::nullopt;
-			return raw->eval();
+			return raw->eval(info);
 		}
 		
 		/**
@@ -159,11 +159,11 @@ namespace Gui {
 			std::is_same_v<VN, glm::vec<VN::length(), typename VN::value_type>> &&
 			L == ValueType::LENGTH, bool> = true>
 			
-		optional<VN> get(StyleRule rule) const {
+		optional<VN> get(StyleRule rule, const ExpressionInfo& info) const {
 			let raw = get<array<Gui::Expression, VN::length()>>(rule);
 			if (!raw) return std::nullopt;
 			VN vec;
-			for (usize i = 0; i < VN::length(); i++) vec[i] = (*raw)[i].eval();
+			for (usize i = 0; i < VN::length(); i++) vec[i] = (*raw)[i].eval(info);
 			return vec;
 		}
 		

@@ -31,14 +31,8 @@ void Gui::Expression::setExpression(string exp) {
 	
 	while (exp.size()) {
 		let& c = exp[0];
-		// Number or Unit or Keyword
-		if ((c >= '0' && c <= '9') || c == '.' || (c >= 97 && c <= 122) ||
-		(nextOperatorIsUnary && (c == '+' || c == '-'))) {
-			temp += c;
-			nextOperatorIsUnary = false;
-		}
 		// Binary Operator
-		else if (!nextOperatorIsUnary && (c == '+' || c == '-' || c == '*' || c == '/' || c == '^')) {
+		if (!nextOperatorIsUnary && (c == '+' || c == '-' || c == '*' || c == '/' || c == '^')) {
 			if (temp.size()) {
 				queue.emplace(temp);
 				temp = {};
@@ -81,6 +75,11 @@ void Gui::Expression::setExpression(string exp) {
 			operators.pop();
 			nextOperatorIsUnary = false;
 		}
+		// Number or Unit or Keyword
+		else {
+			temp += c;
+			nextOperatorIsUnary = false;
+		}
 		
 		exp.erase(0, 1);
 	}
@@ -105,7 +104,11 @@ void Gui::Expression::setExpression(string exp) {
 	}
 }
 
-f32 Gui::Expression::eval() {
+f32 Gui::Expression::eval(const ExpressionInfo& info) {
+	if (!expression.size()) {
+		return nanf("");
+	}
+	
 	std::stack<Token> eval {};
 	
 	for (usize i = 0; i < expression.size(); i++) {
@@ -124,28 +127,28 @@ f32 Gui::Expression::eval() {
 			
 			switch (t.unit) {
 			default:
-				throw std::logic_error("Tried to operate with a non-operator token.");
+				throw std::logic_error("Tried to operate with a non-operator token! This is an engine error!");
 			case UnitOrOperator::ADD:
-				eval.emplace(a.evalValue() + b.evalValue(), UnitOrOperator::REAL_PIXEL);
+				eval.emplace(a.eval(info) + b.eval(info), UnitOrOperator::RAW);
 				break;
 			case UnitOrOperator::SUBTRACT:
-				eval.emplace(a.evalValue() - b.evalValue(), UnitOrOperator::REAL_PIXEL);
+				eval.emplace(a.eval(info) - b.eval(info), UnitOrOperator::RAW);
 				break;
 			case UnitOrOperator::MULTIPLY:
-				eval.emplace(a.evalValue() * b.evalValue(), UnitOrOperator::REAL_PIXEL);
+				eval.emplace(a.eval(info) * b.eval(info), UnitOrOperator::RAW);
 				break;
 			case UnitOrOperator::DIVIDE:
-				eval.emplace(a.evalValue() / b.evalValue(), UnitOrOperator::REAL_PIXEL);
+				eval.emplace(a.eval(info) / b.eval(info), UnitOrOperator::RAW);
 				break;
 			case UnitOrOperator::EXPONENT:
-				eval.emplace(pow(a.evalValue(), b.evalValue()), UnitOrOperator::REAL_PIXEL);
+				eval.emplace(pow(a.eval(info), b.eval(info)), UnitOrOperator::RAW);
 				break;
 			}
 		}
 	}
 	
 	if (!eval.size()) throw std::runtime_error("Eval stack is empty! This is an engine error!");
-	return eval.top().evalValue();
+	return eval.top().eval(info);
 }
 
 const std::unordered_map<char, u8> Gui::Expression::PRECEDENCE {
@@ -178,9 +181,13 @@ Gui::Expression::Token::Token(const string& str) {
 	switch (Util::hash(unitStr.data())) {
 		default: throw std::logic_error("Unknown unit '" + unitStr + "'.");
 		
-		case Util::hash("dp"): unit = UnitOrOperator::DISPLAY_PIXEL; return;
 		case Util::hash(""):
-		case Util::hash("px"): unit = UnitOrOperator::REAL_PIXEL; return;
+		case Util::hash("px"): unit = UnitOrOperator::RAW; return;
+		case Util::hash("dp"): unit = UnitOrOperator::DISPLAY_PIXEL; return;
+		case Util::hash("cw"): unit = UnitOrOperator::CONTAINER_WIDTH; return;
+		case Util::hash("ch"): unit = UnitOrOperator::CONTAINER_HEIGHT; return;
+		case Util::hash("sw"): unit = UnitOrOperator::SELF_WIDTH; return;
+		case Util::hash("sh"): unit = UnitOrOperator::SELF_HEIGHT; return;
 		case Util::hash("deg"): unit = UnitOrOperator::DEGREE; return;
 	}
 }
@@ -189,12 +196,19 @@ bool Gui::Expression::Token::isOperator() {
 	return static_cast<u8>(unit) >= 128;
 }
 
-f32 Gui::Expression::Token::evalValue() {
+f32 Gui::Expression::Token::eval(const ExpressionInfo& info) {
 	switch (unit) {
-		default: throw std::logic_error("Tried to evalValue() on an Operator token.");
+		default: throw std::logic_error("Tried to eval() on an Operator token! This is an engine error!");
 		
 		case UnitOrOperator::DISPLAY_PIXEL: return val * Gui::PX_SCALE;
-		case UnitOrOperator::REAL_PIXEL: return val;
+		case UnitOrOperator::RAW: return val;
+		case UnitOrOperator::CONTAINER_WIDTH: {
+//			std::cout << info.containerSize << ":" << val << std::endl;
+			return (val / 100.f) * info.containerSize.x;
+		}
+		case UnitOrOperator::CONTAINER_HEIGHT: return (val / 100.f) * info.containerSize.y;
+		case UnitOrOperator::SELF_WIDTH: return (val / 100.f) * info.selfSize.x;
+		case UnitOrOperator::SELF_HEIGHT: return (val / 100.f) * info.selfSize.y;
 		case UnitOrOperator::DEGREE: return val * M_PI / 180.f;
 	}
 }

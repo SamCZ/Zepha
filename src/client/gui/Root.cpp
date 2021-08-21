@@ -26,7 +26,10 @@ Gui::Root::Root(Window& window, TextureAtlas& atlas) :
 		t.printElapsedMs();
 	});
 	
-//	window.input.bindMouseCallback()
+	window.input.bindMouseCallback([&](u32 button, i32 state) {
+		let pos = window.input.getMousePos();
+		body->handleMouseClick(pos, button, state == GLFW_PRESS);
+	});
 }
 
 Gui::Root::~Root() {

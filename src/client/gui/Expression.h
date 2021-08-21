@@ -6,19 +6,31 @@
 #include "util/Types.h"
 
 namespace Gui {
-	enum class UnitOrOperator: u8 {
-		DISPLAY_PIXEL,
-		REAL_PIXEL,
-		DEGREE,
+	struct ExpressionInfo {
+		ExpressionInfo() = default;
+		ExpressionInfo(ivec2 containerSize, ivec2 selfSize): containerSize(containerSize), selfSize(selfSize) {}
 		
-		ADD = 128,
-		SUBTRACT,
-		MULTIPLY,
-		DIVIDE,
-		EXPONENT
+		ivec2 containerSize;
+		ivec2 selfSize;
 	};
 	
 	class Expression {
+		enum class UnitOrOperator: u8 {
+			RAW,
+			DISPLAY_PIXEL,
+			CONTAINER_WIDTH,
+			CONTAINER_HEIGHT,
+			SELF_WIDTH,
+			SELF_HEIGHT,
+			DEGREE,
+		
+			ADD = 128,
+			SUBTRACT,
+			MULTIPLY,
+			DIVIDE,
+			EXPONENT
+		};
+		
 		struct Token {
 			Token() = default;
 			explicit Token(const string& str);
@@ -26,7 +38,7 @@ namespace Gui {
 			
 			bool isOperator();
 			
-			f32 evalValue();
+			f32 eval(const ExpressionInfo& info);
 			
 			f32 val = 0;
 			UnitOrOperator unit;
@@ -38,12 +50,12 @@ namespace Gui {
 	
 		void setExpression(string exp);
 	
-		f32 eval();
+		f32 eval(const ExpressionInfo& info);
 		
 	private:
 		usize hash = 0;
 		
-		std::vector<Token> expression;
+		vec<Token> expression;
 	
 		const static std::unordered_map<char, u8> PRECEDENCE;
 	};

@@ -87,19 +87,20 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 
 	for (usize i = 0; i < subgames.size(); i++) {
 		let& subgame = subgames[i];
-		navigationList->append<Gui::BoxElement>({
+		
+		let elem = navigationList->append<Gui::BoxElement>({
 			.classes = { "navigationButton" },
 			.styles = {{
 				{ Gui::StyleRule::BACKGROUND, string("crop(0, 0, 16, 16, " + subgame.iconRef->name + ")") },
 				{ Gui::StyleRule::BACKGROUND_HOVER, string("crop(16, 0, 16, 16, " + subgame.iconRef->name + ")") }
 			}}
 		});
-//
-//		button->setCallback(Element::CallbackType::PRIMARY, [&](bool down, ivec2) {
-//			if (!down) return;
-//			selectedSubgame = &subgame;
-//			sandbox.load(*selectedSubgame);
-//		});
+		
+		elem->onClick([&](u32 button, bool down) {
+			if (button != GLFW_MOUSE_BUTTON_1) return;
+			selectedSubgame = &subgame;
+			sandbox.load(*selectedSubgame);
+		});
 	}
 
 	if (subgames.size() > 0) {

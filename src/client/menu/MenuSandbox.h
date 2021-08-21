@@ -25,8 +25,6 @@ public:
 	
 	void update(double delta) override;
 	
-	void windowResized();
-	
 	using LuaParser::update;
 
 private:

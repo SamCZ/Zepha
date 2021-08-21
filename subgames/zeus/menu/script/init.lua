@@ -1,52 +1,63 @@
-local menu = zepha.build_gui(function()
+local menu = zepha.gui(function()
     return Gui.Box {
         background = 'zeus_background_christmas_night',
 
         Gui.Box {
-            key = 'particle_wrap',
-            size = { '100%', '100%' }
+--             id = 'particle_wrap',
+            size = { '100cw', '100ch' }
         },
 
         Gui.Box {
-            pos = { '20% - 50s%', 0 },
-            size = { 102, '100%' },
+            gap = 4,
+            padding = 8,
+            size = { 102, '100ch' },
+            pos = { '20cw - 50sw', 0 },
 
             background = '#0135',
 
             Gui.Box {
-                pos = { 8, 8 },
-                size = { 86, 30 },
+                size = { nil, 30 },
+                margin = { 0, 0, 0, 8 },
 
                 background = 'zeus_logo'
             },
 
-            Gui.Button {
-                id = 'button_play',
+            Gui.Box {
+--                 id = 'button_play',
 
 --                 callbacks = {
 --                     primary = function() zepha.start_game_local() end
 --                 },
 
-                pos = { 6, 50 },
-                size = { 90, 20 },
+                padding = 5,
+                size = { nil, 20 },
 
-                content = 'Local Play',
+                cursor = "pointer",
                 background = 'crop(0, 0, 90, 20, zeus_button)',
-                background_hover = 'crop(0, 20, 90, 20, zeus_button)'
+                background_hover = 'crop(0, 20, 90, 20, zeus_button)',
+
+                Gui.Text {
+                    content = 'Local Play'
+                }
             },
 
-            Gui.Button {
-                id = 'button_servers',
+            Gui.Box {
+--                 id = 'button_servers',
 
 --                 callbacks = {
 --                     primary = function() zepha.start_game() end
 --                 },
 
-                pos = { 6, 74 },
-                size = { 90, 20 },
-                content = 'Browse Servers',
+                padding = 5,
+                size = { nil, 20 },
+
+                cursor = "pointer",
                 background = 'crop(0, 0, 90, 20, zeus_button)',
-                background_hover = 'crop(0, 20, 90, 20, zeus_button)'
+                background_hover = 'crop(0, 20, 90, 20, zeus_button)',
+
+                Gui.Text {
+                    content = 'Browse Servers'
+                }
             }
         }
     }
@@ -62,17 +73,17 @@ end)
 --     ) end)
 -- end, 1)
 
-local particle_wrap = menu:get('particle_wrap')
-menu(function()
-    for _ = 1, 20 do
-        local scale = 6 + math.random() * 4
-        particle_wrap:append(Gui.Rect {
-            pos = { math.floor(math.random() * 600), math.floor(math.random() * 320) },
-            background = 'particle_dark',
-            size = { scale, scale }
-        })
-    end
-end)
+-- local particle_wrap = menu:get('particle_wrap')
+-- menu(function()
+--     for _ = 1, 20 do
+--         local scale = 6 + math.random() * 4
+--         particle_wrap:append(Gui.Rect {
+--             pos = { math.floor(math.random() * 600), math.floor(math.random() * 320) },
+--             background = 'particle_dark',
+--             size = { scale, scale }
+--         })
+--     end
+-- end)
 
 -- local tick = 0
 -- zepha.after(function()

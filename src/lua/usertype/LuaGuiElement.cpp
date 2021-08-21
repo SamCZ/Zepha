@@ -7,6 +7,7 @@
 #include "client/gui/TextElement.h"
 
 static const Gui::Expression parseObjectToExpr(sol::object value) {
+	if (!value.valid()) return Gui::Expression("");
 	if (value.is<f32>()) return Gui::Expression(std::to_string(value.as<f32>()) + "dp");
 	if (value.is<string>()) return Gui::Expression(value.as<string>());
 	throw std::invalid_argument("Object cannot be converted to an expression.");
@@ -21,7 +22,8 @@ static const array<Gui::Expression, D> parseLengthTableVal(sol::object value) {
 		
 		vec<Gui::Expression> exprs {};
 		exprs.reserve(t.size());
-		for (let& v : t) exprs.emplace_back(parseObjectToExpr(v.second));
+		for (usize i = 1; i <= t.size(); i++)
+			exprs.emplace_back(parseObjectToExpr(t.get<sol::object>(i)));
 		
 		for (usize i = 0; i < arr.size() / exprs.size(); i++)
 			for (usize j = 0; j < exprs.size(); j++)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <functional>
 
 #include "client/gui/Gui.h"
 #include "client/gui/Style.h"
@@ -20,7 +21,9 @@ namespace Gui {
 	 */
 	
 	class Element {
+		friend class Root;
 		friend class BoxElement;
+		friend class TextElement;
 		
 	public:
 		struct Props {;
@@ -81,23 +84,25 @@ namespace Gui {
 		
 		void clear();
 		
+		void onClick(const std::function<void(i32, bool)>& cb);
+		
 		/** Returns the element's computed size. */
-		virtual ivec2 getComputedSize();
+		virtual ivec2 getComputedSize() const;
 		
 		/** Returns the element's computed size + margins. */
-		virtual ivec2 getComputedOuterSize();
+		virtual ivec2 getComputedOuterSize() const;
 		
 		/** Returns the element's computed content size, which is its size - padding. */
-		virtual ivec2 getComputedContentSize();
+		virtual ivec2 getComputedContentSize() const;
 		
 		/** Returns the element's explicit size. Unspecified dimensions are -1. */
-		virtual ivec2 getExplicitSize();
+		virtual ivec2 getExplicitSize() const;
 		
 		/** Returns the element's computed position relative to its parent. */
-		virtual ivec2 getComputedPos();
+		virtual ivec2 getComputedPos() const;
 		
 		/** Returns the element's computed position relative to the screen. */
-		virtual ivec2 getComputedScreenPos();
+		virtual ivec2 getComputedScreenPos() const;
 		
 		/** Gets a style value from the element's styles or the root's stylesheets. */
 		const optional<any> getStyle(StyleRule rule) const {
@@ -114,8 +119,10 @@ namespace Gui {
 			return std::nullopt;
 		}
 		
-		/** Gets a style value from the element's styles or the root's stylesheets. */
-		template<typename V, ValueType T = ValueType::LITERAL>
+		/** Gets a generic value from the element's styles or the root's stylesheets. */
+		template<typename V, ValueType T = ValueType::LITERAL,
+			std::enable_if_t<T != ValueType::LENGTH, bool> = true>
+			
 		const optional<V> getStyle(StyleRule rule) const {
 			const optional<V> opt = props.styles.get<V, T>(rule);
 			if (opt) return *opt;
@@ -129,14 +136,67 @@ namespace Gui {
 			}
 			return std::nullopt;
 		}
+		
+		/** Gets a LENGTH value from the element's styles or the root's stylesheets. */
+		template<typename V, ValueType T = ValueType::LITERAL,
+			std::enable_if_t<T == ValueType::LENGTH, bool> = true>
+		
+		const optional<V> getStyle(StyleRule rule) const {
+			ExpressionInfo info = getExpr();
+			const optional<V> opt = props.styles.get<V, T>(rule, info);
+			if (opt) return *opt;
+			for (const let& ss : stylesheets) {
+				for (const string& className : props.classes) {
+					const let& styles = ss.find(className);
+					if (styles == ss.end()) continue;
+					const optional<V> opt = styles->second.get<V, T>(rule, info);
+					if (opt) return *opt;
+				}
+			}
+			return std::nullopt;
+		}
+		
+		/** Gets a LENGTH value from the element's styles or the root's stylesheets. */
+		template<typename V, ValueType T = ValueType::LITERAL,
+			std::enable_if_t<T == ValueType::LENGTH, bool> = true>
+		
+        const optional<V> getStyleWithExpr(StyleRule rule, const ExpressionInfo& expr) const {
+        	const optional<V> opt = props.styles.get<V, T>(rule, expr);
+			if (opt) return *opt;
+			for (const let& ss : stylesheets) {
+				for (const string& className : props.classes) {
+					const let& styles = ss.find(className);
+					if (styles == ss.end()) continue;
+					const optional<V> opt = styles->second.get<V, T>(rule, expr);
+					if (opt) return *opt;
+				}
+			}
+			return std::nullopt;
+		}
 	
 		/** Gets a style value from the element's styles or the root's stylesheets. */
 		template<typename V, ValueType T = ValueType::LITERAL>
+		
 		const V getStyle(StyleRule rule, V def) const {
 			const optional<V> opt = getStyle<V, T>(rule);
 			if (opt) return *opt;
 			return def;
 		}
+	
+		/** Gets a LENGTH value from the element's styles or the root's stylesheets, with a custom ExpressionInfo. */
+		template<typename V, ValueType T = ValueType::LITERAL,
+			std::enable_if_t<T == ValueType::LENGTH, bool> = true>
+			
+		const V getStyleWithExpr(StyleRule rule, V def, const ExpressionInfo& info) const {
+			const optional<V> opt = getStyleWithExpr<V, T>(rule, info);
+			if (opt) return *opt;
+			return def;
+		}
+		
+	protected:
+		
+		/** Returns an ExpressionInfo object for evaluating Lengths. */
+		virtual ExpressionInfo getExpr() const;
 
 		/**
 		 * Called by the root when the mouse position changes.
@@ -150,9 +210,8 @@ namespace Gui {
 		 * Triggers a click interaction on the hovered element.
 		 */
 
-		bool handleMouseClick(u32 button, bool down);
+		bool handleMouseClick(ivec2 mousePos, u32 button, bool down);
 		
-	protected:
 		Root& root;
 		Props props;
 		vec<StyleSheet>& stylesheets;
@@ -162,6 +221,7 @@ namespace Gui {
 		std::list<sptr<Element>> children;
 		
 		bool hovered = false;
+		std::function<void(u32, bool)> clickCb = nullptr;
 		
 		/** The screen offset of the parent. */
 		ivec2 parentOffset {};

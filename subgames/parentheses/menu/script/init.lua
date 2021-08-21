@@ -6,6 +6,7 @@ zepha.set_gui(zepha.gui(function()
 
         Gui.Text {
             size = { 64, 4 },
+            pos = { "50cw", 50 },
             content = "Parentheses"
         }
     }

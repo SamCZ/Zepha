@@ -5,7 +5,7 @@ const std::unordered_map<string, Gui::StyleRule> Gui::Style::RULE_STRINGS_TO_ENU
 	{ "size", StyleRule::SIZE },
 	{ "margin", StyleRule::MARGIN },
 	{ "padding", StyleRule::PADDING },
-	{ "GAP", StyleRule::GAP },
+	{ "gap", StyleRule::GAP },
 	{ "layout", StyleRule::LAYOUT },
 	{ "direction", StyleRule::DIRECTION },
 	{ "h_align", StyleRule::H_ALIGN },

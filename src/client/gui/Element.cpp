@@ -17,46 +17,56 @@ void Gui::Element::setStyle(StyleRule style, const std::any& value) {
 	props.styles.rules[style] = value;
 }
 
-ivec2 Gui::Element::getComputedSize() {
-	let size = getStyle<ivec2, ValueType::LENGTH>(StyleRule::SIZE, ivec2(-1));
-	if (size.x == -1) size.x = std::max(layoutSize.x, 0);
-	if (size.y == -1) size.y = std::max(layoutSize.y, 0);
-	return size;
-}
-
 void Gui::Element::clear() {
 	children.clear();
 }
 
-ivec2 Gui::Element::getComputedOuterSize() {
+void Gui::Element::onClick(const std::function<void(i32, bool)>& cb) {
+	clickCb = cb;
+}
+
+Gui::ExpressionInfo Gui::Element::getExpr() const {
+	return {
+		parent ? parent->getComputedSize() : ivec2 {},
+		getComputedSize()
+	};
+}
+
+ivec2 Gui::Element::getComputedSize() const {
+	let size = getStyleWithExpr<vec2, ValueType::LENGTH>(StyleRule::SIZE, vec2(nanf("")),
+		{ parent ? parent->getComputedSize() : ivec2 {}, {} });
+	if (std::isnan(size.x)) size.x = std::max(layoutSize.x, 0);
+	if (std::isnan(size.y)) size.y = std::max(layoutSize.y, 0);
+	return size;
+}
+
+ivec2 Gui::Element::getComputedOuterSize() const {
 	let size = getComputedSize();
 	let margin = getStyle<ivec4, ValueType::LENGTH>(StyleRule::MARGIN, {});
 	return ivec2 { size.x + margin.x + margin.z, size.y + margin.y + margin.w };
 }
 
-ivec2 Gui::Element::getComputedContentSize() {
+ivec2 Gui::Element::getComputedContentSize() const {
 	let size = getComputedSize();
 	let padding = getStyle<ivec4, ValueType::LENGTH>(StyleRule::PADDING, {});
 	return glm::max(ivec2 { size.x - padding.x - padding.z, size.y - padding.y - padding.w }, 0);
 }
 
-ivec2 Gui::Element::getExplicitSize() {
+ivec2 Gui::Element::getExplicitSize() const {
 	return getStyle<ivec2, ValueType::LENGTH>(StyleRule::SIZE, ivec2(-1));
 }
 
-ivec2 Gui::Element::getComputedPos() {
+ivec2 Gui::Element::getComputedPos() const {
 	return getStyle<ivec2, ValueType::LENGTH>(StyleRule::POS, layoutPosition);
 }
 
-ivec2 Gui::Element::getComputedScreenPos() {
+ivec2 Gui::Element::getComputedScreenPos() const {
 	return getComputedPos() + parentOffset;
 }
 
 bool Gui::Element::handleMouseHover(ivec2 mousePos, bool& pointer) {
 	bool childIntersects = false;
-	for (let& child : children)
-		if (child->handleMouseHover(mousePos, pointer))
-			childIntersects = true;
+	for (let& child : children) if (child->handleMouseHover(mousePos, pointer)) childIntersects = true;
 		
 	if (childIntersects) {
 		if (hovered) {
@@ -81,9 +91,17 @@ bool Gui::Element::handleMouseHover(ivec2 mousePos, bool& pointer) {
 	return intersects;
 }
 
-bool Gui::Element::handleMouseClick(u32 button, bool down) {
-	for (let& child: children) if (child->handleMouseClick(button, down)) return true;
-	return false;
+bool Gui::Element::handleMouseClick(ivec2 mousePos, u32 button, bool down) {
+	for (let& child : children) if (child->handleMouseClick(mousePos, button, down)) return true;
+
+	ivec2 size = getComputedSize();
+	ivec2 pos = getComputedScreenPos();
+	bool intersects = mousePos.x >= pos.x && mousePos.x <= pos.x + size.x &&
+		mousePos.y >= pos.y && mousePos.y <= pos.y + size.y;
+	if (!intersects) return false;
+
+	if (clickCb) clickCb(button, down);
+	return clickCb != nullptr;
 }
 
 void Gui::Element::draw(Renderer& renderer) {
@@ -160,8 +178,6 @@ void Gui::Element::layoutChildren() {
 		/**
 		 * The amount of size each implicitly sized element should occupy.
 		 */
-		 
-//		std::cout << selfSize << ": " << (selfSize[primary] - explicitSize) << std::endl;
 	 
 		i32 implicitElemSize = floor((selfSize[primary] - explicitSize) / (std::max)(implicitCount, 1));
 	
@@ -193,7 +209,7 @@ void Gui::Element::layoutChildren() {
 				+ gap + childMargin[primary] + childMargin[primary + 2];
 			
 			child->parentOffset = selfOffset;
-
+			
 			child->updateElement();
 		}
 		break;
