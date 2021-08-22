@@ -1,6 +1,5 @@
 #pragma once
 
-#include <list>
 #include <functional>
 
 #include "client/gui/Gui.h"
@@ -42,11 +41,20 @@ namespace Gui {
 		/** Sets a style rule on the element. */
 		virtual void setStyle(StyleRule style, const std::any& value);
 		
+		virtual const optional<any> getStyleRaw(StyleRule style) const;
+		
 		/** Recalculates the element based on its props. Call when props or stylesheets change. */
 		virtual void updateElement();
 		
 		/** Draws the element to the screen. */
 		virtual void draw(Renderer& renderer);
+		
+		sptr<Element> get(u32 ind);
+		
+		template<typename E, std::enable_if_t<std::is_base_of_v<Element, E>, bool> = true>
+		sptr<E> get(u32 ind) {
+			return std::dynamic_pointer_cast<E>(get(ind));
+		}
 		
 		/** Creates and prepends an element to this element. */
 		template<typename E, std::enable_if_t<std::is_base_of_v<Element, E>, bool> = true>
@@ -59,7 +67,7 @@ namespace Gui {
 		
 		/** Prepends an existing element to this element. */
 		sptr<Element> prepend(sptr<Element> elem) {
-			children.push_front(elem);
+			children.insert(children.begin(), elem);
 			elem->parent = this;
 			updateElement();
 			return elem;
@@ -218,13 +226,16 @@ namespace Gui {
 
 		DrawableEntity entity;
 		Element* parent = nullptr;
-		std::list<sptr<Element>> children;
+		vec<sptr<Element>> children;
 		
 		bool hovered = false;
 		std::function<void(u32, bool)> clickCb = nullptr;
 		
 		/** The screen offset of the parent. */
 		ivec2 parentOffset {};
+		
+		/** The last computed size of the element. */
+		mutable ivec2 computedSize {};
 		
 		/** The element's implicit size, as defined by the parent layout. */
 		ivec2 layoutSize { -1, -1 };

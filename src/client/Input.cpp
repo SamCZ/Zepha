@@ -50,39 +50,39 @@ void Input::setMouseLocked(bool lock) {
 }
 
 usize Input::bindKeyCallback(i32 key, std::function<void(i32)> cb) {
-	keyCallbacks[key][keyCallbacksInd] = cb;
+	keyCallbacks[key].emplace(keyCallbacksInd, ICB(cb));
 	return keyCallbacksInd++;
 }
 
 void Input::unbindKeyCallback(i32 key, usize id) {
-	keyCallbacks[key].erase(id);
+	keyCallbacks[key].at(id).valid = false;
 }
 
 usize Input::bindKeyCallback(std::function<void(u32, i32)> cb) {
-	globalKeyCallbacks[globalKeyCallbacksInd] = cb;
+	globalKeyCallbacks.emplace(globalKeyCallbacksInd, ICB(cb));
 	return globalKeyCallbacksInd++;
 }
 
 void Input::unbindKeyCallback(usize id) {
-	globalKeyCallbacks.erase(id);
+	globalKeyCallbacks.at(id).valid = false;
 }
 
 usize Input::bindMouseCallback(i32 button, std::function<void(i32)> cb) {
-	mouseCallbacks[button][mouseCallbacksInd] = cb;
+	mouseCallbacks[button].emplace(mouseCallbacksInd, ICB(cb));
 	return mouseCallbacksInd++;
 }
 
 void Input::unbindMouseCallback(i32 button, usize id) {
-	mouseCallbacks[button].erase(id);
+	mouseCallbacks[button].at(id).valid = false;
 }
 
 usize Input::bindMouseCallback(std::function<void(u32, i32)> cb) {
-	globalMouseCallbacks[globalMouseCallbacksInd] = cb;
+	globalMouseCallbacks.emplace(globalMouseCallbacksInd, ICB(cb));
 	return globalMouseCallbacksInd++;
 }
 
 void Input::unbindMouseCallback(usize id) {
-	globalMouseCallbacks.erase(id);
+	globalMouseCallbacks.at(id).valid = false;
 }
 
 ivec2 Input::getMousePos() {
@@ -97,14 +97,14 @@ ivec2 Input::getMouseDelta() {
 
 void Input::updateKey(u32 key, i32 state) {
 	keyState[key] = state != GLFW_RELEASE && state != 3;
-	for (let& callback : keyCallbacks[key]) callback.second(state);
-	for (let& callback : globalKeyCallbacks) callback.second(key, state);
+	for (let& cb : keyCallbacks[key]) if (cb.second.valid) cb.second.cb(state);
+	for (let& cb : globalKeyCallbacks) if (cb.second.valid) cb.second.cb(key, state);
 }
 
 void Input::updateMouse(u32 button, i32 state) {
 	mouseState[button] = state != GLFW_RELEASE && state != 3;
-	for (let& callback : mouseCallbacks[button]) callback.second(state);
-	for (let& callback : globalMouseCallbacks) callback.second(button, state);
+	for (let& cb : mouseCallbacks[button]) if (cb.second.valid) cb.second.cb(state);
+	for (let& cb : globalMouseCallbacks) if (cb.second.valid) cb.second.cb(button, state);
 }
 
 void Input::scrollCallback(GLFWwindow* window, f64 x, f64 y) {

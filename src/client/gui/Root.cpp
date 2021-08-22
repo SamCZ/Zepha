@@ -26,7 +26,8 @@ Gui::Root::Root(Window& window, TextureAtlas& atlas) :
 		t.printElapsedMs();
 	});
 	
-	window.input.bindMouseCallback([&](u32 button, i32 state) {
+	mouseCb = window.input.bindMouseCallback([&](u32 button, i32 state) {
+		std::cout << "input found " << state << std::endl;
 		let pos = window.input.getMousePos();
 		body->handleMouseClick(pos, button, state == GLFW_PRESS);
 	});
@@ -34,6 +35,8 @@ Gui::Root::Root(Window& window, TextureAtlas& atlas) :
 
 Gui::Root::~Root() {
 	window.setCursorHand(false);
+	window.input.unbindMouseCallback(mouseCb);
+	std::cout << "unbound callalalalbacks" << std::endl;
 }
 
 void Gui::Root::addStylesheet(const std::unordered_map<string, Style>& sheet) {

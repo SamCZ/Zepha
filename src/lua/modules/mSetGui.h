@@ -1,9 +1,6 @@
 #pragma once
 
 #include "lua/Lua.h"
-#include "client/gui/GuiBuilder.h"
-
-class LuaGuiElement;
 
 namespace MenuApi {
 	void set_gui(sol::state& lua, sol::table& core, sptr<Gui::Element>& root) {

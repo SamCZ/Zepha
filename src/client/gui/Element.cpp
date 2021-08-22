@@ -13,8 +13,17 @@ void Gui::Element::setProps(const Props& props) {
 	updateElement();
 }
 
-void Gui::Element::setStyle(StyleRule style, const std::any& value) {
+void Gui::Element::setStyle(StyleRule style, const any& value) {
 	props.styles.rules[style] = value;
+}
+
+const optional<any> Gui::Element::getStyleRaw(Gui::StyleRule style) const {
+	return getStyle(style);
+}
+
+sptr<Gui::Element> Gui::Element::get(u32 ind) {
+	if (ind >= children.size()) return nullptr;
+	return children[ind];
 }
 
 void Gui::Element::clear() {
@@ -34,9 +43,10 @@ Gui::ExpressionInfo Gui::Element::getExpr() const {
 
 ivec2 Gui::Element::getComputedSize() const {
 	let size = getStyleWithExpr<vec2, ValueType::LENGTH>(StyleRule::SIZE, vec2(nanf("")),
-		{ parent ? parent->getComputedSize() : ivec2 {}, {} });
+		{ parent ? parent->computedSize : ivec2 {}, {} });
 	if (std::isnan(size.x)) size.x = std::max(layoutSize.x, 0);
 	if (std::isnan(size.y)) size.y = std::max(layoutSize.y, 0);
+	computedSize = ivec2(size);
 	return size;
 }
 
@@ -68,31 +78,33 @@ bool Gui::Element::handleMouseHover(ivec2 mousePos, bool& pointer) {
 	bool childIntersects = false;
 	for (let& child : children) if (child->handleMouseHover(mousePos, pointer)) childIntersects = true;
 		
-	if (childIntersects) {
-		if (hovered) {
-			hovered = false;
-			updateElement();
-		}
-		return true;
-	}
+//	if (childIntersects) {
+//		if (hovered) {
+//			hovered = false;
+//			updateElement();
+//		}
+//		return true;
+//	}
 	
 	ivec2 size = getComputedSize();
 	ivec2 pos = getComputedScreenPos();
 	bool intersects = mousePos.x >= pos.x && mousePos.x <= pos.x + size.x &&
 		mousePos.y >= pos.y && mousePos.y <= pos.y + size.y;
 	
-	if (intersects) pointer = getStyle<string>(StyleRule::CURSOR, "") == "pointer";
+	let cursor = getStyle<string>(StyleRule::CURSOR);
+	if (intersects && cursor) pointer = *cursor == "pointer";
 	
 	if (hovered != intersects) {
 		hovered = intersects;
 		updateElement();
 	}
 	
-	return intersects;
+	return intersects || childIntersects;
 }
 
 bool Gui::Element::handleMouseClick(ivec2 mousePos, u32 button, bool down) {
-	for (let& child : children) if (child->handleMouseClick(mousePos, button, down)) return true;
+	for (i32 i = children.size() - 1; i >= 0; i--)
+		if (children[i]->handleMouseClick(mousePos, button, down)) return true;
 
 	ivec2 size = getComputedSize();
 	ivec2 pos = getComputedScreenPos();

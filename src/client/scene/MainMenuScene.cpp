@@ -28,7 +28,7 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 
 	root.addStylesheet({
 		{ "navigation", {{
-			{ Gui::StyleRule::SIZE, array<Expr, 2> { Expr("-1"), Expr("18dp") } }
+			{ Gui::StyleRule::SIZE, array<Expr, 2> { Expr(""), Expr("18dp") } }
 		}}},
 		{ "navigationWrap", {{
 			{ Gui::StyleRule::DIRECTION, string("row") },
@@ -59,7 +59,7 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 		}}
 	});
 
-	let serversButton = navigationList->append<Gui::BoxElement>({
+	navigationList->append<Gui::BoxElement>({
 		.classes = { "navigationButton" },
 		.styles = {{
 			{ Gui::StyleRule::BACKGROUND, string("crop(0, 0, 16, 16, menu_flag_multiplayer)") },
@@ -75,6 +75,11 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 		}}
 	});
 
+	contentButton->onClick([&](u32 button, bool down) {
+		if (button != GLFW_MOUSE_BUTTON_1 || !down) return;
+		client.scene.setScene(make_unique<ConnectScene>(client, Address { "127.0.0.1" }));
+	});
+	
 	navigationList->append<Gui::BoxElement>({
 		.styles = {{
 			{ Gui::StyleRule::BACKGROUND, string("#fff5") },
@@ -97,7 +102,7 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 		});
 		
 		elem->onClick([&](u32 button, bool down) {
-			if (button != GLFW_MOUSE_BUTTON_1) return;
+			if (button != GLFW_MOUSE_BUTTON_1 || !down) return;
 			selectedSubgame = &subgame;
 			sandbox.load(*selectedSubgame);
 		});
@@ -110,7 +115,7 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 
 	navigationList->append<Gui::BoxElement>();
 
-	let settingsButton = navigationList->append<Gui::BoxElement>({
+	navigationList->append<Gui::BoxElement>({
 		.classes = { "navigationButton" },
 		.styles = {{
 			{ Gui::StyleRule::BACKGROUND, string("crop(0, 0, 16, 16, menu_flag_settings)") },
@@ -126,13 +131,10 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 		}}
 	});
 
-//		closeButton->setCallback(Element::CallbackType::PRIMARY,
-//			[](bool down, ivec2) { if (down) exit(0); });
-
-//		contentButton->setCallback(Element::CallbackType::PRIMARY, [&](bool down, ivec2) {
-//			if (!down) return;
-//			client.scene.setScene(make_unique<ConnectScene>(client, Address{ "127.0.0.1" }));
-//		});
+	closeButton->onClick([](u32 button, bool down) {
+		if (button != GLFW_MOUSE_BUTTON_1 || !down) return;
+		exit(0);
+	});
 }
 
 void MainMenuScene::findSubgames() {
@@ -211,11 +213,9 @@ void MainMenuScene::findSubgames() {
 }
 
 void MainMenuScene::update() {
-	client.game->textures.update();
 	root.update();
-//	sandbox.update(client.getDelta());
-	
-//	components->handleMouseInput(client.renderer.window);
+	client.game->textures.update();
+	sandbox.update(client.getDelta());
 }
 
 void MainMenuScene::draw() {

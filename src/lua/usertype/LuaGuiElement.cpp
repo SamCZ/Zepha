@@ -35,21 +35,23 @@ static const array<Gui::Expression, D> parseLengthTableVal(sol::object value) {
 	let v = parseObjectToExpr(value);
 	for (usize i = 0; i < arr.size(); i++) arr[i] = v;
 	return arr;
-	
-	throw std::invalid_argument("Invalid length table configuration.");
 }
 
-void Api::Usertype::GuiElement::parseRule(const string& ruleStr, const sol::object& value, Gui::Style& styles) {
+Gui::StyleRule Api::Usertype::GuiElement::ruleFromStr(const string& str) {
 	using namespace Gui;
 	
-	const let ruleIt = Style::RULE_STRINGS_TO_ENUMS.find(ruleStr);
+	const let ruleIt = Style::RULE_STRINGS_TO_ENUMS.find(str);
 	if (ruleIt == Style::RULE_STRINGS_TO_ENUMS.end())
-		throw std::invalid_argument("Style rule '" + ruleStr + "' doesn't exist.");
-	const StyleRule rule = ruleIt->second;
+		throw std::invalid_argument("Style rule '" + str + "' doesn't exist.");
+	return ruleIt->second;
+}
+
+any Api::Usertype::GuiElement::parseRuleValue(Gui::StyleRule rule, const sol::object& value) {
+	using namespace Gui;
 	
 	switch (rule) {
 	default:
-		throw std::invalid_argument("Unhandled rule '" + ruleStr + "'! This is an engine error!");
+		throw std::invalid_argument("Unhandled rule! This is an engine error! [1]");
 	
 	case StyleRule::LAYOUT:
 	case StyleRule::DIRECTION:
@@ -61,32 +63,64 @@ void Api::Usertype::GuiElement::parseRule(const string& ruleStr, const sol::obje
 	case StyleRule::BACKGROUND:
 	case StyleRule::BACKGROUND_HOVER:
 	case StyleRule::CONTENT:
-		styles.rules[rule] = value.as<string>();
-		break;
+		return value.as<string>();
 		
 	case StyleRule::POS:
 	case StyleRule::SIZE:
 	case StyleRule::GAP:
-		styles.rules[rule] = parseLengthTableVal<2>(value);
-		break;
+		return parseLengthTableVal<2>(value);
 		
 	case StyleRule::MARGIN:
 	case StyleRule::PADDING:
-		styles.rules[rule] = parseLengthTableVal<4>(value);
-		break;
+		return parseLengthTableVal<4>(value);
 	
 	case StyleRule::TEXT_SIZE:
-		styles.rules[rule] = parseObjectToExpr(value);
-		break;
+		return parseObjectToExpr(value);
 	}
 }
 
-std::shared_ptr<Gui::Element> Api::Usertype::GuiElement::create(const string& type, sol::table data, Gui::Root& root) {
+sol::object Api::Usertype::GuiElement::styleAnyToObject(Gui::StyleRule rule, optional<any> value, sol::this_state s) {
+	using namespace Gui;
+	
+	switch (rule) {
+	default:
+		throw std::invalid_argument("Unhandled rule! This is an engine error! [1]");
+	
+	case StyleRule::LAYOUT:
+	case StyleRule::DIRECTION:
+	case StyleRule::H_ALIGN:
+	case StyleRule::V_ALIGN:
+	case StyleRule::CURSOR:
+	case StyleRule::OVERFLOW:
+	case StyleRule::TEXT_COLOR:
+	case StyleRule::BACKGROUND:
+	case StyleRule::BACKGROUND_HOVER:
+	case StyleRule::CONTENT:
+		return sol::make_object(s, std::any_cast<string>(value));
+		
+	case StyleRule::POS:
+	case StyleRule::SIZE:
+	case StyleRule::GAP:
+//		return sol::make_object(s, std::any_cast<string>(value));
+		
+	case StyleRule::MARGIN:
+	case StyleRule::PADDING:
+//		return parseLengthTableVal<4>(value);
+	
+	case StyleRule::TEXT_SIZE:
+		break;
+//		return parseObjectToExpr(value);
+	}
+}
+
+sptr<Gui::Element> Api::Usertype::GuiElement::create(const string& type, sol::table data, Gui::Root& root) {
 	Gui::Element::Props props {};
 	
 	for (let& style : data) {
 		if (!style.first.is<string>()) continue;
-		GuiElement::parseRule(style.first.as<string>(), style.second, props.styles);
+		let rule = GuiElement::ruleFromStr(style.first.as<string>());
+		let value = GuiElement::parseRuleValue(rule, style.second);
+		props.styles.rules[rule] = value;
 	}
 	
 	sptr<Gui::Element> elem = nullptr;
@@ -103,30 +137,30 @@ std::shared_ptr<Gui::Element> Api::Usertype::GuiElement::create(const string& ty
 	}
 	
 	return elem;
-	
-//	let elem = root.create<Gui::BoxElement>(props);
-//	return elem;
-	//	auto elem = std::make_shared<LuaGuiElement>();
-//
-//	elem->type = type;
-//
-//	for (const auto& pair : data) {
-//		if (pair.first.is<float>()) {
-//			if (!pair.second.is<std::shared_ptr<LuaGuiElement>>()) continue;
-//			elem->children.push_back(pair.second.as<std::shared_ptr<LuaGuiElement>>());
-//			elem->children.back()->parent = elem.get();
-//		}
-//		else if (pair.first.is<std::string>()) elem->set_trait(pair.first.as<std::string>(), pair.second);
-//	}
-//
-//	return elem;
 }
 
 void Api::Usertype::GuiElement::bind(sol::state& lua, sol::table& core, Gui::Root& root) {
 	lua.new_usertype<Gui::Element>("GuiElement",
 		sol::meta_function::construct, sol::factories([&](const string& type, sol::table data) {
 			return GuiElement::create(type, data, root);
-		})
+		}),
+		"append", [&](Gui::Element& self, sptr<Gui::Element> child) {
+			self.append(child);
+		},
+		"get", [&](sol::this_state s, Gui::Element& self, sol::object query) -> sol::object {
+			if (query.is<u32>()) {
+				let found = self.get(query.as<u32>() - 1);
+				if (!found) return sol::nil;
+				return sol::make_object(s, found);
+			}
+			else throw std::runtime_error("ID get is unimplemented.");
+		},
+		sol::meta_function::new_index, [&](Gui::Element& self, const string& ruleStr, sol::object rawValue) {
+			let rule = GuiElement::ruleFromStr(ruleStr);
+			let value = GuiElement::parseRuleValue(rule, rawValue);
+			self.setStyle(rule, value);
+			self.updateElement();
+		}
 	);
 }
 

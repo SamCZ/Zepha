@@ -9,7 +9,6 @@
 #include "lua/LuaMod.h"
 #include "client/gui/Root.h"
 #include "client/gui/Element.h"
-#include "client/gui/GuiBuilder.h"
 
 class Client;
 class Subgame;
@@ -48,5 +47,7 @@ private:
 	Gui::Root& root;
 	sptr<Gui::Element> sandboxRoot;
 	vec<sptr<AtlasRef>> menuAssets {};
+	
+	double accumulatedDelta = 0;
 	
 };

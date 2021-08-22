@@ -74,13 +74,8 @@ add_library(Zepha_Core
         client/gui/DebugGui.h
         client/gui/GameGui.cpp
         client/gui/GameGui.h
-        client/gui/GameGuiBuilder.cpp
-        client/gui/GameGuiBuilder.h
-        client/gui/GuiBuilder.cpp
-        client/gui/GuiBuilder.h
         client/gui/Element.cpp
         client/gui/Element.h
-        client/gui/SerialGui.h
         client/Input.cpp
         client/Input.h
         client/LocalServerInstance.cpp
@@ -331,6 +326,6 @@ add_library(Zepha_Core
         client/gui/compound/GuiCellGraph.cpp
         client/gui/compound/GuiCellGraph.h
         client/gui/basic/GuiCells.cpp
-        client/gui/basic/GuiCells.h client/gui/Gui.h client/gui/Root.cpp client/gui/Root.h client/gui/BoxElement.cpp client/gui/BoxElement.h client/gui/Gui.cpp client/gui/Style.h client/gui/TextElement.cpp client/gui/TextElement.h client/gui/Expression.cpp client/gui/Expression.h client/gui/Style.cpp)
+        client/gui/basic/GuiCells.h client/gui/Gui.h client/gui/Root.cpp client/gui/Root.h client/gui/BoxElement.cpp client/gui/BoxElement.h client/gui/Gui.cpp client/gui/Style.h client/gui/TextElement.cpp client/gui/TextElement.h client/gui/Expression.cpp client/gui/Expression.h client/gui/Style.cpp client/CallbackGroup.h)
 
 target_include_directories(Zepha_Core PUBLIC .)

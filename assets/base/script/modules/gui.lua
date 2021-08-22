@@ -1,4 +1,5 @@
 zepha.__builtin.gui_env = { Gui = {}}
+zepha.Gui = zepha.__builtin.gui_env.Gui
 local env = zepha.__builtin.gui_env
 setmetatable(env, {__index = _G})
 

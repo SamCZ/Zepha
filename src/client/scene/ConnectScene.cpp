@@ -43,7 +43,7 @@ ConnectScene::ConnectScene(Client& client, Address addr) : Scene(client),
 //	loadBar->setPos({ 0, client.renderer.window.getSize().y - 32 });
 //	components.add(loadBar);
 //
-//	connection.attemptConnect(std::move(addr));
+	connection.attemptConnect(std::move(addr));
 //
 //	client.renderer.window.onResize([&](glm::ivec2 win) {
 //		components.get<GuiRect>("loadBar")->setPos({ 0, win.y - 32 });

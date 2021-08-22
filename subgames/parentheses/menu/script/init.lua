@@ -5,9 +5,8 @@ zepha.set_gui(zepha.gui(function()
         v_align = "center",
 
         Gui.Text {
-            size = { 64, 4 },
-            pos = { "50cw", 50 },
+            size = { 56, 4 },
             content = "Parentheses"
         }
     }
-end))
+end))ao3.eoaa.oeu

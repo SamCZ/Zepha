@@ -17,8 +17,8 @@ void Gui::TextElement::updateElement() {
 	if (hash != newHash) {
 		hash = newHash;
 		
-		vec4 textColor = vec4(1);
-		vec4 backgroundColor = vec4(0, 0, 0, 0.3);
+		vec4 textColor = getStyle<vec4, ValueType::COLOR>(StyleRule::TEXT_COLOR, vec4(1));
+		vec4 backgroundColor = getStyle<vec4, ValueType::COLOR>(StyleRule::BACKGROUND, vec4(0));
 		
 		u32 ind = 0;
 		u32 width = 0;

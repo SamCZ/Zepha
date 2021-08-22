@@ -63,7 +63,12 @@ void MenuSandbox::load(const SubgameDef& subgame) {
 }
 
 void MenuSandbox::update(double delta) {
-	core["__builtin"]["update_delayed_functions"]();
+	accumulatedDelta += delta;
+	while (accumulatedDelta > static_cast<double>(UPDATE_STEP)) {
+		safe_function(core["__builtin"]["update_entities"], static_cast<double>(UPDATE_STEP));
+		safe_function(core["__builtin"]["update_delayed_functions"]);
+		accumulatedDelta -= static_cast<double>(UPDATE_STEP);
+	}
 }
 
 sol::protected_function_result MenuSandbox::runFileSandboxed(const string& file) {
@@ -147,6 +152,7 @@ void MenuSandbox::showError(const string& err) {
 	const string errPrefixText = "`cfEncountered an error while loading the menu for '" + subgameName + "' ;-;\n\n`r";
 
 	using Expr = Gui::Expression;
+	sandboxRoot->clear();
 	sandboxRoot->append<Gui::TextElement>({
 		.styles = {{
 			{ Gui::StyleRule::CONTENT, errPrefixText + err },

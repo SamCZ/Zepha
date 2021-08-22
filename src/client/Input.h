@@ -1,5 +1,6 @@
 #pragma once
 
+#include <list>
 #include <functional>
 #include <unordered_map>
 
@@ -10,6 +11,52 @@
  */
 
 class Input {
+	template <typename C>
+	struct ICB {
+		ICB(C cb): cb(cb) {}
+		bool valid = true;
+		C cb;
+	};
+	
+	enum TestEnum {
+		A, B,
+		_END
+	};
+	
+	template <typename C>
+	class CallbackManager {
+	public:
+		typedef std::function<C> CB_TYPE;
+		
+		void update();
+		
+		usize bind(CB_TYPE cb);
+		usize unbind(usize ind);
+		
+	private:
+		struct InvalidatableCB {
+			CB_TYPE call;
+			bool valid = true;
+		};
+		
+		usize next = 0;
+		std::list<usize> invalidInds;
+		std::unordered_map<usize, InvalidatableCB> callbacks;
+	};
+	
+	template <typename C, typename E, std::enable_if_t<std::is_enum_v<E> && E::_END != 0, bool> = true>
+	class CallbackGroup {
+	public:
+		typedef E CB_IDENTIFIER;
+		typedef std::function<C> CB_TYPE;
+		
+		usize bind(CB_IDENTIFIER type, CB_TYPE cb);
+		usize unbind(CB_IDENTIFIER type, usize ind);
+		
+	private:
+		std::array<std::unordered_map<usize, CallbackManager<C>>, E::_END - 1> callbacks;
+	};
+	
 public:
 	
 	/** Activates the input listeners. */
@@ -85,15 +132,15 @@ private:
 	
 	GLFWwindow* window = nullptr;
 	
-	array<std::unordered_map<usize, std::function<void(i32)>>, 1024> keyCallbacks {};
+	array<std::unordered_map<usize, ICB<std::function<void(i32)>>>, 1024> keyCallbacks {};
 	usize keyCallbacksInd = 0;
 	
-	std::unordered_map<usize, std::function<void(u32, i32)>> globalKeyCallbacks {};
+	std::unordered_map<usize, ICB<std::function<void(u32, i32)>>> globalKeyCallbacks {};
 	usize globalKeyCallbacksInd = 0;
 	
-	array<std::unordered_map<usize, std::function<void(i32)>>, 3> mouseCallbacks {};
+	array<std::unordered_map<usize, ICB<std::function<void(i32)>>>, 3> mouseCallbacks {};
 	usize mouseCallbacksInd = 0;
 	
-	std::unordered_map<usize, std::function<void(u32, i32)>> globalMouseCallbacks {};
+	std::unordered_map<usize, ICB<std::function<void(u32, i32)>>> globalMouseCallbacks {};
 	usize globalMouseCallbacksInd = 0;
 };

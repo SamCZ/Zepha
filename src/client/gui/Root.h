@@ -41,6 +41,7 @@ namespace Gui {
 		
 	private:
 		Window& window;
+		usize mouseCb;
 		Window::RCBLock lock;
 	};
 }
