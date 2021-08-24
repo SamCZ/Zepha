@@ -14,7 +14,7 @@
 #include "lua/modules/Time.h"
 #include "lua/modules/mSetGui.h"
 #include "lua/modules/mStartGame.h"
-#include "lua/usertype/LuaGuiElement.h"
+#include "lua/usertype/GuiElement.h"
 
 MenuSandbox::MenuSandbox(Client& client, Gui::Root& root, sptr<Gui::Element> sandboxRoot) :
 	LuaParser(*client.game),
@@ -152,14 +152,12 @@ void MenuSandbox::showError(const string& err) {
 
 	using Expr = Gui::Expression;
 	sandboxRoot->clear();
-	sandboxRoot->append<Gui::TextElement>({
-		.styles = {{
-			{ Gui::StyleRule::CONTENT, errPrefixText + err },
-			{ Gui::StyleRule::TEXT_SIZE, Expr("2px") },
-			{ Gui::StyleRule::SIZE, array<Expr, 2> { Expr("100dp"), Expr("-1") } },
-			{ Gui::StyleRule::MARGIN, array<Expr, 4> { Expr("4dp"), Expr("4dp"), Expr("4dp"), Expr("4dp") } }
-		}}
-	});
+	sandboxRoot->append<Gui::TextElement>({{
+		{ Gui::Prop::CONTENT, errPrefixText + err },
+		{ Gui::Prop::TEXT_SIZE, Expr("2px") },
+		{ Gui::Prop::SIZE, array<Expr, 2> { Expr("100dp"), Expr("-1") } },
+		{ Gui::Prop::MARGIN, array<Expr, 4> { Expr("4dp"), Expr("4dp"), Expr("4dp"), Expr("4dp") } }
+	}});
 }
 
 sol::protected_function_result MenuSandbox::errorCallback(sol::protected_function_result r) {

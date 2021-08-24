@@ -22,7 +22,7 @@
 #include "usertype/InventoryList.h"
 #include "usertype/AnimationManager.h"
 
-#include "usertype/LuaGuiElement.h"
+#include "usertype/GuiElement.h"
 
 // Modules
 #include "modules/Time.h"
@@ -57,17 +57,18 @@ void LocalLuaParser::init(WorldPtr world, PlayerPtr player, Client& client) {
 		}
 	
 		for (const let& line : lines) {
-			usize lineNumStart = line.find(':');
+			usize fileNameStart = line.find('/');
+			if (fileNameStart == string::npos) continue;
+			usize lineNumStart = line.find(':', fileNameStart + 1);
 			if (lineNumStart == string::npos) continue;
 			usize lineNumEnd = line.find(':', lineNumStart + 1);
 			if (lineNumEnd == string::npos) continue;
 	
 			string fullPath = line.substr(0, lineNumStart);
 			fullPath.erase(std::remove_if(fullPath.begin(), fullPath.end(), isspace), fullPath.end());
-	
-			usize slashPos = fullPath.find('/');
-			if (slashPos == string::npos) continue;
-			string modName = fullPath.substr(0, slashPos);
+			
+			fileNameStart = fullPath.find('/');
+			string modName = fullPath.substr(0, fileNameStart);
 			if (modName == "base") continue;
 			
 			let iter = mods.find(modName);

@@ -21,15 +21,15 @@ LocalPlayer::LocalPlayer(SubgamePtr game, LocalWorld& world, DimensionPtr dim, R
 	renderer(renderer) {
 	handItemModel.parent = &handModel;
 	
-	hud = root.body->append<Gui::BoxElement>({ .styles {{
-		{ Gui::StyleRule::POS, array<Gui::Expression, 2> { Gui::Expression("0"), Gui::Expression("0") }},
-		{ Gui::StyleRule::SIZE, array<Gui::Expression, 2> { Gui::Expression("100cw"), Gui::Expression("100ch") }}
-	}}});
+	hud = root.body->append<Gui::BoxElement>({{
+		{ Gui::Prop::POS, array<Gui::Expression, 2> { Gui::Expression("0"), Gui::Expression("0") }},
+		{ Gui::Prop::SIZE, array<Gui::Expression, 2> { Gui::Expression("100cw"), Gui::Expression("100ch") }}
+	}});
 	
-	menu = root.body->append<Gui::BoxElement>({ .styles {{
-		{ Gui::StyleRule::POS, array<Gui::Expression, 2> { Gui::Expression("0"), Gui::Expression("0") }},
-		{ Gui::StyleRule::SIZE, array<Gui::Expression, 2> { Gui::Expression("100cw"), Gui::Expression("100ch") }}
-	}}});
+	menu = root.body->append<Gui::BoxElement>({{
+		{ Gui::Prop::POS, array<Gui::Expression, 2> { Gui::Expression("0"), Gui::Expression("0") }},
+		{ Gui::Prop::SIZE, array<Gui::Expression, 2> { Gui::Expression("100cw"), Gui::Expression("100ch") }}
+	}});
 }
 
 void LocalPlayer::update(f64 delta, vec2 mouseDelta) {

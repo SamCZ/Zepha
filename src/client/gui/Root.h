@@ -25,7 +25,7 @@ namespace Gui {
 		
 		template<typename E, std::enable_if_t<std::is_base_of_v<Element, E>, bool> = true>
 		
-		sptr<E> create(const Element::Props& props = {}, const vec<sptr<Element>>& children = {}) {
+		sptr<E> create(const Props& props = {}, const vec<sptr<Element>>& children = {}) {
 			let elem = make_shared<E>(*this, stylesheets);
 			elem->setProps(props);
 			
@@ -39,7 +39,7 @@ namespace Gui {
 		 * styles for elements with specific classes.
 		 */
 		
-		void addStylesheet(const std::unordered_map<string, Style>& sheet);
+		void addStylesheet(const StyleSheet& sheet);
 		
 		/** Processes mouse events. */
 		void update();

@@ -184,8 +184,8 @@ add_library(Zepha_Core
         lua/usertype/InventoryList.h
         lua/usertype/ItemStack.cpp
         lua/usertype/ItemStack.h
-        lua/usertype/LuaGuiElement.cpp
-        lua/usertype/LuaGuiElement.h
+        lua/usertype/GuiElement.cpp
+        lua/usertype/GuiElement.h
         lua/usertype/Player.cpp
         lua/usertype/Player.h
         lua/usertype/SubgameUsertype.h

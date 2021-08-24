@@ -10,17 +10,15 @@ Gui::Root::Root(Window& window, TextureAtlas& atlas) :
 	body(make_shared<BoxElement>(*this, stylesheets)) {
 	const ivec2 size = window.getSize();
 	
-	body->setProps({
-		.id = "body",
-		.styles = {{
-			{ StyleRule::SIZE, array<Expression, 2> {
-				Expression(std::to_string(size.x)), Expression(std::to_string(size.y)) }}
-		}}
-	});
+	using Expr = Expression;
+	body->setProps({{
+		{ Prop::ID, string("body") },
+		{ Prop::SIZE, array<Expr, 2> { Expr(std::to_string(size.x)), Expr(std::to_string(size.y)) }}
+	}});
 	
 	callbacks.emplace_back(window.resize.bind([&](ivec2 size) {
-		body->setStyle(StyleRule::SIZE, array<Expression, 2> {
-			Expression(std::to_string(size.x)), Expression(std::to_string(size.y)) });
+		body->setProp(Prop::SIZE, array<Expr, 2> {
+			Expr(std::to_string(size.x)), Expr(std::to_string(size.y)) });
 		Timer t("Resize UI");
 		body->updateElement();
 		t.printElapsedMs();
@@ -36,7 +34,7 @@ Gui::Root::~Root() {
 	window.setCursorHand(false);
 }
 
-void Gui::Root::addStylesheet(const std::unordered_map<string, Style>& sheet) {
+void Gui::Root::addStylesheet(const StyleSheet& sheet) {
 	stylesheets.emplace_back(sheet);
 }
 

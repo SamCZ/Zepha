@@ -14,7 +14,7 @@ function health.internal.update()
 
     health.internal._wrapper:remove('@health:component')
     health.internal._wrapper:append(function()
-        local elem = Gui.Rect {
+        local elem = Gui.Box {
             id = '@health:component',
             size = { health.internal._width, 9 },
         }

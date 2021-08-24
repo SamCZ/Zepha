@@ -8,17 +8,17 @@ Gui::Element::~Element() {
 	for (let& child : children) child->parent = nullptr;
 }
 
+const Gui::Props& Gui::Element::getProps() const {
+	return props;
+}
+
 void Gui::Element::setProps(const Props& props) {
 	this->props = props;
 	updateElement();
 }
 
-void Gui::Element::setStyle(StyleRule style, const any& value) {
-	props.styles.rules[style] = value;
-}
-
-const optional<any> Gui::Element::getStyleRaw(Gui::StyleRule style) const {
-	return getStyle(style);
+void Gui::Element::setProp(Gui::Prop prop, const any& value) {
+	props.props[prop] = value;
 }
 
 sptr<Gui::Element> Gui::Element::get(u32 ind) {
@@ -26,8 +26,31 @@ sptr<Gui::Element> Gui::Element::get(u32 ind) {
 	return children[ind];
 }
 
+sptr<Gui::Element> Gui::Element::get(const string& id) {
+	for (let& child : children) {
+		if (child->props.get<string>(Prop::ID) == id) return child;
+	}
+	for (let& child : children) {
+		let res = child->get(id);
+		if (res != nullptr) return res;
+	}
+	return nullptr;
+}
+
 void Gui::Element::clear() {
 	children.clear();
+}
+
+void Gui::Element::remove() {
+	if (parent) {
+		for (let it = parent->children.begin(); it != parent->children.end(); it++) {
+			if (it->get() == this) {
+				parent->children.erase(it);
+				break;
+			}
+		}
+		parent = nullptr;
+	}
 }
 
 void Gui::Element::onClick(const std::function<void(i32, bool)>& cb) {
@@ -42,7 +65,7 @@ Gui::ExpressionInfo Gui::Element::getExpr() const {
 }
 
 ivec2 Gui::Element::getComputedSize() const {
-	let size = getStyleWithExpr<vec2, ValueType::LENGTH>(StyleRule::SIZE, vec2(nanf("")),
+	let size = getStyleWithExpr<vec2, Type::LENGTH>(Prop::SIZE, vec2(nanf("")),
 		{ parent ? parent->computedSize : ivec2 {}, {} });
 	if (std::isnan(size.x)) size.x = std::max(layoutSize.x, 0);
 	if (std::isnan(size.y)) size.y = std::max(layoutSize.y, 0);
@@ -50,24 +73,18 @@ ivec2 Gui::Element::getComputedSize() const {
 	return size;
 }
 
-ivec2 Gui::Element::getComputedOuterSize() const {
-	let size = getComputedSize();
-	let margin = getStyle<ivec4, ValueType::LENGTH>(StyleRule::MARGIN, {});
-	return ivec2 { size.x + margin.x + margin.z, size.y + margin.y + margin.w };
-}
-
 ivec2 Gui::Element::getComputedContentSize() const {
 	let size = getComputedSize();
-	let padding = getStyle<ivec4, ValueType::LENGTH>(StyleRule::PADDING, {});
+	let padding = getStyle<ivec4, Type::LENGTH>(Prop::PADDING, {});
 	return glm::max(ivec2 { size.x - padding.x - padding.z, size.y - padding.y - padding.w }, 0);
 }
 
 ivec2 Gui::Element::getExplicitSize() const {
-	return getStyle<ivec2, ValueType::LENGTH>(StyleRule::SIZE, ivec2(-1));
+	return getStyle<ivec2, Type::LENGTH>(Prop::SIZE, ivec2(-1));
 }
 
 ivec2 Gui::Element::getComputedPos() const {
-	return getStyle<ivec2, ValueType::LENGTH>(StyleRule::POS, layoutPosition);
+	return getStyle<ivec2, Type::LENGTH>(Prop::POS, layoutPosition);
 }
 
 ivec2 Gui::Element::getComputedScreenPos() const {
@@ -91,7 +108,7 @@ bool Gui::Element::handleMouseHover(ivec2 mousePos, bool& pointer) {
 	bool intersects = mousePos.x >= pos.x && mousePos.x <= pos.x + size.x &&
 		mousePos.y >= pos.y && mousePos.y <= pos.y + size.y;
 	
-	let cursor = getStyle<string>(StyleRule::CURSOR);
+	let cursor = getStyle<string>(Prop::CURSOR);
 	if (intersects && cursor) pointer = *cursor == "pointer";
 	
 	if (hovered != intersects) {
@@ -126,12 +143,12 @@ void Gui::Element::updateElement() {
 }
 
 void Gui::Element::layoutChildren() {
-	const string& layout = getStyle<string>(StyleRule::LAYOUT, "");
+	const string& layout = getStyle<string>(Prop::LAYOUT, "");
 	
 	switch (Util::hash(layout.data())) {
 	default:
 	case Util::hash("flex"): {
-		const string& direction = getStyle<string>(StyleRule::DIRECTION, "");
+		const string& direction = getStyle<string>(Prop::DIRECTION, "");
 	
 		/**
 		 * The primary flex direction. Stored as a bool but interpreted as an index into a vec2.
@@ -140,8 +157,8 @@ void Gui::Element::layoutChildren() {
 	 
 		const bool primary = direction != "row";
 	
-		const string& hAlignRaw = getStyle<string>(StyleRule::H_ALIGN, "");
-		const string& vAlignRaw = getStyle<string>(StyleRule::V_ALIGN, "");
+		const string& hAlignRaw = getStyle<string>(Prop::H_ALIGN, "");
+		const string& vAlignRaw = getStyle<string>(Prop::V_ALIGN, "");
 	
 		/**
 		 * Parsed alignment of the horizontal and vertical axes.
@@ -157,8 +174,8 @@ void Gui::Element::layoutChildren() {
 		 * The element gap across the primary axis.
 		 */
 	
-		const i32 gap = getStyle<ivec2, ValueType::LENGTH>(StyleRule::GAP, ivec2(0))[primary];
-		const ivec4& padding = getStyle<ivec4, ValueType::LENGTH>(StyleRule::PADDING, ivec4 {});
+		const i32 gap = getStyle<ivec2, Type::LENGTH>(Prop::GAP, ivec2(0))[primary];
+		const ivec4& padding = getStyle<ivec4, Type::LENGTH>(Prop::PADDING, ivec4 {});
 	
 		/*
 		 * Calculates the explicit spaced used up by children across the primary axis,
@@ -174,7 +191,7 @@ void Gui::Element::layoutChildren() {
 			let childExplicitSize = child->getExplicitSize();
 			if (childExplicitSize[primary] != -1) explicitSize += childExplicitSize[primary];
 			else implicitCount++;
-			let childMargin = child->getStyle<ivec4, ValueType::LENGTH>(StyleRule::MARGIN, {});
+			let childMargin = child->getStyle<ivec4, Type::LENGTH>(Prop::MARGIN, {});
 			explicitSize += childMargin[primary] + childMargin[primary + 2];
 		}
 		
@@ -201,7 +218,7 @@ void Gui::Element::layoutChildren() {
 	
 		for (const let& child : children) {
 			let childExplicitSize = child->getExplicitSize();
-			let childMargin = child->getStyle<ivec4, ValueType::LENGTH>(StyleRule::MARGIN, {});
+			let childMargin = child->getStyle<ivec4, Type::LENGTH>(Prop::MARGIN, {});
 		
 			child->layoutSize[primary] =
 				(childExplicitSize[primary] == -1 && align[primary] == 2) ? implicitElemSize : 0;

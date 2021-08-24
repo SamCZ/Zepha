@@ -19,14 +19,12 @@ ConnectScene::ConnectScene(Client& client, Address addr) : Scene(client),
 	client.renderer.setClearColor(10, 10, 10);
 	
 	using Expr = Gui::Expression;
-	status = root.body->append<Gui::TextElement>({
-		.styles = {{
-			{ Gui::StyleRule::TEXT_SIZE, Expr("2px") },
-			{ Gui::StyleRule::SIZE, array<Expr, 2> { Expr("100dp"), Expr("-1") } },
-			{ Gui::StyleRule::CONTENT, string("`c1Connecting to `b`c0" + addr.toString() + "`r`c1...") },
-			{ Gui::StyleRule::MARGIN, array<Expr, 4> { Expr("4dp"), Expr("4dp"), Expr("4dp"), Expr("4dp") } }
-		}}
-	});
+	status = root.body->append<Gui::TextElement>({{
+		{ Gui::Prop::TEXT_SIZE, Expr("2px") },
+		{ Gui::Prop::SIZE, array<Expr, 2> { Expr("100dp"), Expr("-1") } },
+		{ Gui::Prop::CONTENT, string("`c1Connecting to `b`c0" + addr.toString() + "`r`c1...") },
+		{ Gui::Prop::MARGIN, array<Expr, 4> { Expr("4dp"), Expr("4dp"), Expr("4dp"), Expr("4dp") } }
+	}});
 	
 	connection.attemptConnect(std::move(addr));
 }
@@ -50,8 +48,8 @@ void ConnectScene::update() {
 			PacketView p(e.packet);
 			
 			if (p.type == Packet::Type::SERVER_INFO) {
-				status->setStyle(Gui::StyleRule::CONTENT, status->getStyle<string>(Gui::StyleRule::CONTENT, "")
-				    + "Received server properties.\n");
+				status->setProp(Gui::Prop::CONTENT, status->getStyle<string>(Gui::Prop::CONTENT, "")
+				                                    + "Received server properties.\n");
 				
 				const u32 seed = p.d.read<u32>();
 				std::cout << seed << std::endl;
@@ -76,8 +74,9 @@ void ConnectScene::update() {
 				resp.sendTo(connection.getPeer(), Packet::Channel::CONNECT);
 			}
 			else if (p.type == Packet::Type::BIOME_IDENTIFIER_LIST) {
-				status->setStyle(Gui::StyleRule::CONTENT, status->getStyle<string>(Gui::StyleRule::CONTENT, "")
-					+ "Received block & biome index-identifier table.\nDownloading mods... ");
+				status->setProp(Gui::Prop::CONTENT, status->getStyle<string>(Gui::Prop::CONTENT, "")
+				                                    +
+				                                    "Received block & biome index-identifier table.\nDownloading mods... ");
 				
 				client.game->getBiomes().setIdentifiers(p.d.read<vec<string>>());
 				state = State::MODS;
@@ -95,17 +94,19 @@ void ConnectScene::update() {
 			
 			if (p.type == Packet::Type::MODS) {
 				auto mod = LuaMod(p);
-				status->setStyle(Gui::StyleRule::CONTENT, status->getStyle<string>(Gui::StyleRule::CONTENT, "") +
-					(modsFound == 0 ? "" : ", ") + ((modsFound) % 8 == 0 && modsFound != 0 ? "\n" : "") +
-					"`c0`u" + mod.config.name + "`r`c1");
+				status->setProp(Gui::Prop::CONTENT, status->getStyle<string>(Gui::Prop::CONTENT, "") +
+				                                    (modsFound == 0 ? "" : ", ") +
+				                                    ((modsFound) % 8 == 0 && modsFound != 0 ? "\n" : "") +
+				                                    "`c0`u" + mod.config.name + "`r`c1");
 				modsFound++;
 				client.game->getParser().addMod(std::move(mod));
 			}
 			else if (p.type == Packet::Type::MOD_ORDER) {
 				client.game->getParser().setModLoadOrder(p.d.read<vec<string>>());
 				
-				status->setStyle(Gui::StyleRule::CONTENT, status->getStyle<string>(Gui::StyleRule::CONTENT, "")
-					+ ".\n`c7Done`c1 downloading mods. Received the mods order.\nReceiving media");
+				status->setProp(Gui::Prop::CONTENT, status->getStyle<string>(Gui::Prop::CONTENT, "")
+				                                    +
+				                                    ".\n`c7Done`c1 downloading mods. Received the mods order.\nReceiving media");
 				
 				state = State::MEDIA;
 				Packet resp(Packet::Type::MEDIA);
@@ -126,8 +127,8 @@ void ConnectScene::update() {
 				
 				while (t != AssetType::END) {
 					string assetName = p.d.read<string>();
-					status->setStyle(Gui::StyleRule::CONTENT,
-						status->getStyle<string>(Gui::StyleRule::CONTENT, "") + ".");
+					status->setProp(Gui::Prop::CONTENT,
+						status->getStyle<string>(Gui::Prop::CONTENT, "") + ".");
 					
 					if (t == AssetType::TEXTURE) {
 						u16 width = p.d.read<u16>();
@@ -152,8 +153,8 @@ void ConnectScene::update() {
 				}
 			}
 			else if (p.type == Packet::Type::MEDIA_DONE) {
-				status->setStyle(Gui::StyleRule::CONTENT, status->getStyle<string>(Gui::StyleRule::CONTENT, "")
-					+ " `c7Done.`c1\nLoading complete. `c0`bJoining world...\n");
+				status->setProp(Gui::Prop::CONTENT, status->getStyle<string>(Gui::Prop::CONTENT, "")
+				                                    + " `c7Done.`c1\nLoading complete. `c0`bJoining world...\n");
 				
 				state = State::DONE;
 				let gameScene = make_unique<GameScene>(client);
@@ -179,8 +180,8 @@ void ConnectScene::handleConnecting() {
 	
 	case ServerConnection::State::FAILED_CONNECT:
 		state = State::FAILED_CONNECT;
-		status->setStyle(Gui::StyleRule::CONTENT,
-			status->getStyle<string>(Gui::StyleRule::CONTENT, "") + " `cfFailed to init :(\n");
+		status->setProp(Gui::Prop::CONTENT,
+			status->getStyle<string>(Gui::Prop::CONTENT, "") + " `cfFailed to init :(\n");
 		break;
 	
 	case ServerConnection::State::ATTEMPTING_CONNECT:
@@ -189,15 +190,15 @@ void ConnectScene::handleConnecting() {
 		dotsTime += client.getDelta();
 		if (dotsTime > 1) {
 			dotsTime -= 1;
-			status->setStyle(Gui::StyleRule::CONTENT, status->getStyle<string>(Gui::StyleRule::CONTENT, "") + ".");
+			status->setProp(Gui::Prop::CONTENT, status->getStyle<string>(Gui::Prop::CONTENT, "") + ".");
 		}
 		
 		break;
 	
 	case ServerConnection::State::CONNECTED: {
 		state = State::PROPERTIES;
-		status->setStyle(Gui::StyleRule::CONTENT,
-			status->getStyle<string>(Gui::StyleRule::CONTENT, "") + " `c7Connected!~`c1\n");
+		status->setProp(Gui::Prop::CONTENT,
+			status->getStyle<string>(Gui::Prop::CONTENT, "") + " `c7Connected!~`c1\n");
 		
 		Packet resp(Packet::Type::SERVER_INFO);
 		resp.sendTo(connection.getPeer(), Packet::Channel::CONNECT);

@@ -1,25 +1,24 @@
 local max_messages = 8
 
-local chat_wrap = zepha.build_gui(function()
-    return Gui.Rect {
-        position = { 4, '100%' },
-        position_anchor = { 0, '200%' },
+local chat_wrap = zepha.gui(function()
+    return Gui.Box {
+        pos = { 4, '100ch - 100sh - 100dp' },
         size = { 256, 23 + max_messages * 8 },
 
-        Gui.Rect {
-            key = 'chat_tabs',
-            position = { 0, -10 }
+        Gui.Box {
+            id = 'chat_tabs',
+            pos = { 0, -10 }
         },
 
-        Gui.Rect {
-            key = 'chat_box',
+        Gui.Box {
+            id = 'chat_box',
             size = { 256, 2 + max_messages * 8 }
         },
 
-        Gui.Rect {
-            key = 'chat_input',
+        Gui.Box {
+            id = 'chat_input',
             size = { 256, 10 },
-            position = { 0, 3 + max_messages * 8 }
+            pos = { 0, 3 + max_messages * 8 }
         }
     }
 end)

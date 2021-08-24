@@ -13,14 +13,12 @@ LuaErrorScene::LuaErrorScene(Client& client, const std::string& err) : Scene(cli
 	client.renderer.window.input.setMouseLocked(false);
 	
 	using Expr = Gui::Expression;
-	root.body->append<Gui::TextElement>({
-		.styles = {{
-			{ Gui::StyleRule::TEXT_SIZE, Expr("2px") },
-			{ Gui::StyleRule::SIZE, array<Expr, 2> { Expr("100dp"), Expr("-1") } },
-			{ Gui::StyleRule::CONTENT, string("`cfEncountered a fatal mod error ;-;\n\n`r") + err },
-			{ Gui::StyleRule::MARGIN, array<Expr, 4> { Expr("4dp"), Expr("4dp"), Expr("4dp"), Expr("4dp") } }
-		}}
-	});
+	root.body->append<Gui::TextElement>({{
+		{ Gui::Prop::TEXT_SIZE, Expr("2px") },
+		{ Gui::Prop::SIZE, array<Expr, 2> { Expr("100dp"), Expr("-1") } },
+		{ Gui::Prop::CONTENT, string("`cfEncountered a fatal mod error ;-;\n\n`r") + err },
+		{ Gui::Prop::MARGIN, array<Expr, 4> { Expr("4dp"), Expr("4dp"), Expr("4dp"), Expr("4dp") } }
+	}});
 	
 	root.body->onClick([&](i32 button, bool down) {
 		if (button != GLFW_MOUSE_BUTTON_1 || !down) return;

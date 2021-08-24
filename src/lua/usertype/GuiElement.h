@@ -8,13 +8,13 @@ namespace Gui {
 	class Style;
 	class Root;
 	class Element;
-	enum class StyleRule;
+	enum class Prop;
 }
 
 namespace Api::Usertype::GuiElement {
-	Gui::StyleRule ruleFromStr(const string& str);
-	any parseRuleValue(Gui::StyleRule rule, const sol::object& value);
-	sol::object styleAnyToObject(Gui::StyleRule rule, optional<any> value, sol::this_state s);
+	Gui::Prop nameToProp(const string& str);
+	any objectToProp(Gui::Prop prop, const sol::object& value);
+	sol::object propToObject(Gui::Prop prop, any value, sol::state_view s);
 	
 	std::shared_ptr<Gui::Element> create(const string& type, sol::table data, Gui::Root& root);
 	

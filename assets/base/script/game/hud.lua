@@ -5,7 +5,7 @@ zepha.player:set_hud(zepha.gui(function()
         Gui.Box {
 --             id = "crosshair",
 
-            size = { "22dp", "22dp" },
+            size = { "22px", "22px" },
             pos = { "50cw - 50sw", "50ch - 50sh" },
 
             background = "base:crosshair"

@@ -1,127 +1,135 @@
-local menu = zepha.build_gui(function()
-    return Gui.Body {
+local menu = zepha.gui(function()
+    return Gui.Box {
         background = "#0003",
 
-        callbacks = {
-            primary = function() zepha.player:close_menu() end,
-        },
+        Gui.Box {
+            id = "inventory",
 
-        Gui.Rect {
-            key = "inventory",
-            position = { pc(50), pc(50) },
-            position_anchor = { pc(50), pc(50) },
             size = { 342, 187 },
+            pos = { "50cw - 50sw", "50ch - 50sh" },
 
-            Gui.Rect {
-                key = "backpack",
+            Gui.Box {
+                id = "backpack",
 
-                position = { 1, 0 },
+                pos = { 1, 0 },
                 size = { 106, 187 },
                 padding = { 19, 9, 8, 9 },
-                background = "zeus:inventory:backpack",
 
-                Gui.InventoryList {
-                    position = { 0, 0 },
-                    slot_spacing = { 2, 2 },
-                    source = "current_player",
-                    list = "main",
-                },
-                Gui.InventoryList {
-                    position = { 0, 18*3 },
-                    slot_spacing = { 2, 2 },
-                    source = "current_player",
-                    list = "hot_wheel_1",
-                },
-                Gui.InventoryList {
-                    position = { 0, 18*4 },
-                    slot_spacing = { 2, 2 },
-                    source = "current_player",
-                    list = "hot_wheel_2",
-                },
-                Gui.InventoryList {
-                    position = { 0, 18*5 },
-                    slot_spacing = { 2, 2 },
-                    source = "current_player",
-                    list = "hot_wheel_3",
-                },
-                Gui.InventoryList {
-                    position = { 0, 18*6 },
-                    slot_spacing = { 2, 2 },
-                    source = "current_player",
-                    list = "hot_wheel_4",
-                },
-                Gui.InventoryList {
-                    position = { 0, 18*7 },
-                    slot_spacing = { 2, 2 },
-                    source = "current_player",
-                    list = "hot_wheel_5",
-                },
-                Gui.InventoryList {
-                    position = { 0, 18*8 },
-                    slot_spacing = { 2, 2 },
-                    source = "current_player",
-                    list = "hot_wheel_6",
-                }
+                background = "zeus:inventory:backpack"
+
+--                 Gui.InventoryList {
+--                     gap = { 2, 2 },
+--                     pos = { 0, 0 },
+--
+--                     list = "main",
+--                     source = "current_player"
+--                 },
+--                 Gui.InventoryList {
+--                     gap = { 2, 2 },
+--                     pos = { 0, 18 * 3 },
+--
+--                     list = "hot_wheel_1",
+--                     source = "current_player"
+--                 },
+--                 Gui.InventoryList {
+--                     gap = { 2, 2 },
+--                     pos = { 0, 18 * 4 },
+--
+--                     list = "hot_wheel_2",
+--                     source = "current_player"
+--                 },
+--                 Gui.InventoryList {
+--                     gap = { 2, 2 },
+--                     pos = { 0, 18 * 5 },
+--
+--                     list = "hot_wheel_3",
+--                     source = "current_player"
+--                 },
+--                 Gui.InventoryList {
+--                     gap = { 2, 2 },
+--                     pos = { 0, 18 * 6 },
+--
+--                     list = "hot_wheel_4",
+--                     source = "current_player"
+--                 },
+--                 Gui.InventoryList {
+--                     gap = { 2, 2 },
+--                     pos = { 0, 18 * 7 },
+--
+--                     list = "hot_wheel_5",
+--                     source = "current_player"
+--                 },
+--                 Gui.InventoryList {
+--                     gap = { 2, 2 },
+--                     pos = { 0, 18*8 },
+--
+--                     list = "hot_wheel_6",
+--                     source = "current_player"
+--                 }
             },
-            Gui.Rect {
-                key = "player_frame",
-                position = { 105, 0 },
+            Gui.Box {
+                id = "player_frame",
+
+                pos = { 105, 0 },
                 size = { 106, 187 },
+
                 background = "zeus:inventory:player_frame",
 
-                Gui.Model {
-                    position = { 52, 150 },
-                    scale = { 64, 64 },
-
-                    type = "model",
-                    source = "zeus:default:player",
-                    texture = "zeus:default:player",
-                    anim_range = { 0, 100 }
-                }
+--                 Gui.Model {
+--                     pos = { 52, 150 },
+--                     size = { 64, 64 },
+--
+--                     type = "model",
+--                     anim_range = { 0, 100 },
+--                     source = "zeus:default:player",
+--                     texture = "zeus:default:player"
+--                 }
             },
-            Gui.Rect {
-                key = "equipment",
+            Gui.Box {
+                id = "equipment",
 
-                position = { 209, 1 },
+                pos = { 209, 1 },
                 size = { 132, 80 },
                 padding = { 18, 8, 8, 8 },
                 background = "zeus:inventory:equipment",
 
-                Gui.Rect {
-                    key = "player_clamp",
+                Gui.Box {
+                    id = "player_clamp",
 
-                    position = { 41, 1 },
+                    pos = { 41, 1 },
                     size = { 34, 52 },
                     overflow = "hidden"
                 }
             },
-            Gui.Rect {
-                key = "dynamic",
+            Gui.Box {
+                id = "dynamic",
 
-                position = { 209, 80 },
+                pos = { 209, 80 },
                 size = { 132, 107 },
                 padding = { 8, 8, 8, 8 },
-                background = "zeus:inventory:dynamic",
+                background = "zeus:inventory:dynamic"
 
-                Gui.InventoryList {
-                    position = { 1, 1 },
-                    slot_spacing = { 2, 2 },
-                    source = "current_player",
-                    list = "mod",
-                },
-
-                Gui.InventoryList {
-                    position = { 41, 32 },
-                    slot_spacing = { 2, 2 },
-                    source = "current_player",
-                    list = "craft",
-                },
-                Gui.InventoryList {
-                    position = { 81, 41 },
-                    slot_spacing = { 2, 2 },
-                    source = "current_player",
-                    list = "craft_result",
-                }
+--                 Gui.InventoryList {
+--                     gap = { 2, 2 },
+--                     pos = { 1, 1 },
+--
+--                     list = "mod",
+--                     source = "current_player",
+--                 },
+--                 Gui.InventoryList {
+--                     gap = { 2, 2 },
+--                     pos = { 41, 32 },
+--
+--                     list = "craft",
+--                     source = "current_player"
+--                 },
+--                 Gui.InventoryList {
+--                     gap = { 2, 2 },
+--                     pos = { 81, 41 },
+--
+--                     list = "craft_result",
+--                     source = "current_player"
+--                 }
             }
         }
     }

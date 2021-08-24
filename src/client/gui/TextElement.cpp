@@ -7,7 +7,7 @@
 #include "client/graph/mesh/EntityMesh.h"
 
 void Gui::TextElement::updateElement() {
-	const string text = getStyle<string>(StyleRule::CONTENT, "");
+	const string text = getStyle<string>(Prop::CONTENT, "");
 	
 	if (!font) font = std::make_unique<Font>(root.atlas, root.atlas["font"]);
 	
@@ -15,8 +15,8 @@ void Gui::TextElement::updateElement() {
 	if (hash != newHash) {
 		hash = newHash;
 		
-		vec4 textColor = getStyle<vec4, ValueType::COLOR>(StyleRule::TEXT_COLOR, vec4(1));
-		vec4 backgroundColor = getStyle<vec4, ValueType::COLOR>(StyleRule::BACKGROUND, vec4(0));
+		vec4 textColor = getStyle<vec4, Type::COLOR>(Prop::TEXT_COLOR, vec4(1));
+		vec4 backgroundColor = getStyle<vec4, Type::COLOR>(Prop::BACKGROUND, vec4(0));
 		
 		u32 ind = 0;
 		u32 width = 0;
@@ -190,8 +190,8 @@ void Gui::TextElement::updateElement() {
 		
 	}
 	
-	let scale = getStyle<f32, ValueType::LENGTH>(StyleRule::TEXT_SIZE, 3.f);
-	let margin = getStyle<ivec4, ValueType::LENGTH>(StyleRule::MARGIN, {});
+	let scale = getStyle<f32, Type::LENGTH>(Prop::TEXT_SIZE, 3.f);
+	let margin = getStyle<ivec4, Type::LENGTH>(Prop::MARGIN, {});
 	
 	entity.setScale(vec3(scale, scale, 0));
 	entity.setPos(vec3(getComputedScreenPos() + ivec2 { margin.x, margin.y }, 0));

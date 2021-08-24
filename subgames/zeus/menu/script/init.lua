@@ -66,13 +66,15 @@ for _ = 1, 100 do
 end
 
 local particle_wrap = menu:get(1)
-for i, pos in ipairs(positions) do
-    particle_wrap:append(zepha.Gui.Box {
-        pos = pos,
-        background = 'particle_dark',
-        size = sizes[i]
-    })
-end
+zepha.gui(function()
+    for i, pos in ipairs(positions) do
+        particle_wrap:append(Gui.Box {
+            pos = pos,
+            background = 'particle_dark',
+            size = sizes[i]
+        })
+    end
+end)
 
 local tick = 0
 zepha.after(function()

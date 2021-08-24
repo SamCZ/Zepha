@@ -5,8 +5,8 @@
 #include "client/graph/mesh/EntityMesh.h"
 
 void Gui::BoxElement::updateElement() {
-	const let bgRule = hovered && getStyle(StyleRule::BACKGROUND_HOVER) ?
-		StyleRule::BACKGROUND_HOVER : StyleRule::BACKGROUND;
+	const let bgRule = hovered && getStyle(Prop::BACKGROUND_HOVER) ?
+		Prop::BACKGROUND_HOVER : Prop::BACKGROUND;
 	
 	let rawBg = getStyle(bgRule);
 	
@@ -20,7 +20,7 @@ void Gui::BoxElement::updateElement() {
 	curBg = rawBg;
 	
 	if (isDirty) {
-		const let bgColor = getStyle<vec4, ValueType::COLOR>(bgRule);
+		const let bgColor = getStyle<vec4, Type::COLOR>(bgRule);
 		const string bgImage = getStyle<string>(bgRule, "");
 		
 		let mesh = std::make_unique<EntityMesh>();
@@ -48,7 +48,7 @@ void Gui::BoxElement::updateElement() {
 		entity.setModel(model);
 	}
 	
-	let margin = getStyle<ivec4, ValueType::LENGTH>(StyleRule::MARGIN, {});
+	let margin = getStyle<ivec4, Type::LENGTH>(Prop::MARGIN, {});
 	
 	entity.setScale(vec3(getComputedSize(), 0));
 	entity.setPos(vec3(getComputedScreenPos() + ivec2 { margin.x, margin.y }, 0));
