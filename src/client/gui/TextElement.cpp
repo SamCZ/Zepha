@@ -9,9 +9,7 @@
 void Gui::TextElement::updateElement() {
 	const string text = getStyle<string>(StyleRule::CONTENT, "");
 	
-	if (!font) {
-		font = std::make_unique<Font>(root.atlas, root.atlas["font"]);
-	}
+	if (!font) font = std::make_unique<Font>(root.atlas, root.atlas["font"]);
 	
 	usize newHash = std::hash<string>{}(text);
 	if (hash != newHash) {

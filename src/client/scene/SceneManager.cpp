@@ -5,6 +5,10 @@ void SceneManager::setScene(uptr<Scene> newScene) {
 	scene = std::move(newScene);
 }
 
+bool SceneManager::isCurrent(Scene* self) {
+	return scene.get() == self;
+}
+
 void SceneManager::update() {
 	if (!scene) return;
 	scene->update();

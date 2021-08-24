@@ -61,7 +61,7 @@ end)
 local sizes = {}
 local positions = {}
 for _ = 1, 100 do
-    table.insert(sizes, 6 + math.random() * 4)
+    table.insert(sizes, 3 + math.random() * 8)
     table.insert(positions, { math.floor(math.random() * 640), math.floor(math.random() * 320) })
 end
 

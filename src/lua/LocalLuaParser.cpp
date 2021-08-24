@@ -6,6 +6,7 @@
 
 #include "client/Client.h"
 #include "ErrorFormatter.h"
+#include "lua/ModException.h"
 #include "register/RegisterItem.h"
 #include "register/RegisterBlock.h"
 #include "register/RegisterBiome.h"
@@ -35,10 +36,57 @@
 LocalLuaParser::LocalLuaParser(LocalSubgame& game) : LuaParser(game), keybinds(this) {}
 
 void LocalLuaParser::init(WorldPtr world, PlayerPtr player, Client& client) {
+	this->client = &client;
 	lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table, sol::lib::debug);
 	
 	loadApi(world, player);
-	handler.executeMods(Util::bind_this(this, &LocalLuaParser::runFileSandboxed));
+	
+	try {
+		runFileSandboxed("base/init");
+		for (string mod : modLoadOrder) if (mod != "base") runFileSandboxed(mod + "/init");
+	}
+	catch (sol::error r) {
+		string err = r.what();
+		std::cout << Log::err << err << Log::endl;
+	
+		vec<string> lines;
+		{
+			string line;
+			std::stringstream textStream(err);
+			while (std::getline(textStream, line, '\n')) lines.emplace_back(line);
+		}
+	
+		for (const let& line : lines) {
+			usize lineNumStart = line.find(':');
+			if (lineNumStart == string::npos) continue;
+			usize lineNumEnd = line.find(':', lineNumStart + 1);
+			if (lineNumEnd == string::npos) continue;
+	
+			string fullPath = line.substr(0, lineNumStart);
+			fullPath.erase(std::remove_if(fullPath.begin(), fullPath.end(), isspace), fullPath.end());
+	
+			usize slashPos = fullPath.find('/');
+			if (slashPos == string::npos) continue;
+			string modName = fullPath.substr(0, slashPos);
+			if (modName == "base") continue;
+			
+			let iter = mods.find(modName);
+			if (iter == mods.end()) continue;
+			
+			for (const let& file : iter->second.files) {
+				if (file.path != fullPath) continue;
+	
+				let msg = ErrorFormatter::formatError(fullPath,
+					std::stoi(line.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1)),
+					err, file.file);
+				
+				throw ModException(msg);
+			}
+		}
+	
+		throw ModException(err);
+	}
+	
 //	client.renderer.window.input.setCallback(Util::bind_this(&keybinds, &LuaKeybindHandler::keybindHandler));
 }
 
@@ -51,8 +99,12 @@ void LocalLuaParser::update(double delta) {
 	}
 }
 
-LocalModHandler& LocalLuaParser::getHandler() {
-	return handler;
+void LocalLuaParser::addMod(const LuaMod& mod) {
+	mods.emplace(mod.config.name, mod);
+}
+
+void LocalLuaParser::setModLoadOrder(const vec<string> order) {
+	modLoadOrder = order;
 }
 
 void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
@@ -62,8 +114,7 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
 	core["__builtin"] = lua.create_table();
 	
 	// Types
-//	ClientApi::gui_element(lua);
-	
+	Api::Usertype::GuiElement::bind(lua, core, player.l()->getRoot());
 	Api::Usertype::Target::bind(Api::State::CLIENT, lua, core);
 	Api::Usertype::Entity::bind(Api::State::CLIENT, lua, core);
 	Api::Usertype::Inventory::bind(Api::State::CLIENT, lua, core);
@@ -111,48 +162,11 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
 	
 	bindModules();
 	
-	// Create sandboxed runfile()
-	lua["dofile"] = lua["loadfile"] = sol::nil;
-	lua.set_function("runfile", &LocalLuaParser::runFileSandboxed, this);
+	lua.set_function("require", &LocalLuaParser::runFileSandboxed, this);
+	lua["dofile"] = lua["loadfile"] = lua["require"];
 }
 
 sol::protected_function_result LocalLuaParser::errorCallback(sol::protected_function_result r) {
-	sol::error err = r;
-	std::string errString = err.what();
-	
-	try {
-		std::string::size_type slash = errString.find('/');
-		if (slash != std::string::npos) throw "npos";
-		
-		std::string modString = errString.substr(0, slash);
-		
-		std::string::size_type lineNumStart = errString.find(':', slash);
-		if (lineNumStart != std::string::npos) throw "lineNumStart";
-		std::string::size_type lineNumEnd = errString.find(':', lineNumStart + 1);
-		if (lineNumEnd != std::string::npos) throw "lineNumEnd";
-		
-		std::string fileName = errString.substr(0, lineNumStart);
-		int lineNum = std::stoi(errString.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1));
-		
-		for (const auto& mod : handler.cGetMods()) {
-			if (mod.config.name == modString) {
-				for (auto& file : mod.files) {
-					if (file.path == fileName) {
-						std::cout << std::endl << ErrorFormatter::formatError(fileName, lineNum, errString, file.file)
-						          << std::endl;
-						break;
-					}
-				}
-				break;
-			}
-		}
-	}
-	catch (...) {
-		std::cout << Log::err << "Zepha has encountered an error, and ErrorFormatter failed to format it:"
-		          << std::endl << std::endl << errString << Log::endl;
-	}
-	
-	throw std::runtime_error("Exiting.");
 }
 
 sol::protected_function_result LocalLuaParser::runFileSandboxed(const std::string& file) {
@@ -161,20 +175,22 @@ sol::protected_function_result LocalLuaParser::runFileSandboxed(const std::strin
 		throw std::runtime_error("Error opening \"" + file + "\", specified file is invalid.");
 	std::string modname = file.substr(0, modname_length);
 	
-	for (const LuaMod& mod : handler.cGetMods()) {
-		if (modname != mod.config.name) continue;
-		for (const LuaMod::File& f : mod.files) {
-			if (f.path != file) continue;
-			
-			sol::environment env(lua, sol::create, lua.globals());
-			env["_PATH"] = f.path.substr(0, f.path.find_last_of('/') + 1);
-			env["_FILE"] = f.path;
-			env["_MODNAME"] = mod.config.name;
-			
-			return lua.safe_script(f.file, env, std::bind(&LocalLuaParser::errorCallback, this, std::placeholders::_2),
-				"@" + f.path, sol::load_mode::text);
-		}
-		throw std::runtime_error("Error opening \"" + file + "\", file not found.");
+	let iter = mods.find(modname);
+	if (iter == mods.end()) throw std::runtime_error("Error opening \"" + file + "\", mod not found.");
+	
+	for (const LuaMod::File& f : iter->second.files) {
+		if (f.path != file) continue;
+		
+		sol::environment env(lua, sol::create, lua.globals());
+		env["_PATH"] = f.path.substr(0, f.path.find_last_of('/') + 1);
+		env["_FILE"] = f.path;
+		env["_MODNAME"] = modname;
+		
+		using Pfr = sol::protected_function_result;
+		let res = lua.safe_script(f.file, env,
+			[](lua_State*, Pfr pfr) -> Pfr { throw static_cast<sol::error>(pfr); },
+			"@" + f.path, sol::load_mode::text);
+		return res;
 	}
-	throw std::runtime_error("Error opening \"" + file + "\", mod not found.");
+	throw std::runtime_error("Error opening \"" + file + "\", file not found.");
 }

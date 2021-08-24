@@ -1,6 +1,6 @@
 return {
-    runfile(_PATH .. "biomes/plains"),
-    runfile(_PATH .. "biomes/highlands"),
-    runfile(_PATH .. "biomes/desert"),
-    runfile(_PATH .. "biomes/forest")
+    require(_PATH .. "biomes/plains"),
+    require(_PATH .. "biomes/highlands"),
+    require(_PATH .. "biomes/desert"),
+    require(_PATH .. "biomes/forest")
 }

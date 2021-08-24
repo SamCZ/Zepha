@@ -4,5 +4,5 @@ _G['chat'] = {
     channel_order = {},
 }
 
-if zepha.server then runfile(_PATH .. 'api_server')
-else runfile(_PATH .. 'api_client') end
+if zepha.server then require(_PATH .. 'api_server')
+else require(_PATH .. 'api_client') end

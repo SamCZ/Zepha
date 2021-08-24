@@ -7,7 +7,9 @@
 #include "Scene.h"
 
 #include "client/Window.h"
-#include "client/gui/basic/GuiContainer.h"
+#include "client/gui/Root.h"
+
+namespace Gui { class TextElement; };
 
 class LuaErrorScene : public Scene {
 public:
@@ -18,8 +20,6 @@ public:
 	void draw() override;
 	
 private:
-//	GuiContainer components;
-	const std::string err;
 	
-	Window::RCBLock lock;
+	Gui::Root root;
 };

@@ -38,7 +38,7 @@ class ServerConnection {
 	
 	private:
 	unsigned long timeout = 1000;
-	unsigned int attempts = 1000;
+	unsigned int attempts = 10;
 	
 	ENetHost* host = nullptr;
 	ENetPeer* peer = nullptr;

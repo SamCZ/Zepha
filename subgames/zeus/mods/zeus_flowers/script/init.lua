@@ -1,1 +1,1 @@
-runfile("zeus:flowers/flowers")
+require(_PATH .. "flowers")

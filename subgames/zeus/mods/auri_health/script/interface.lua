@@ -2,9 +2,9 @@ if not zepha.client then return end
 
 local hud = zepha.player:get_hud()
 
-health.internal._wrapper = zepha.build_gui(function()
-    return Gui.Rect {
-        key = 'health_wrapper'
+health.internal._wrapper = zepha.gui(function()
+    return Gui.Box {
+        id = 'health_wrapper'
     }
 end)
 
@@ -15,13 +15,13 @@ function health.internal.update()
     health.internal._wrapper:remove('@health:component')
     health.internal._wrapper:append(function()
         local elem = Gui.Rect {
-            key = '@health:component',
+            id = '@health:component',
             size = { health.internal._width, 9 },
         }
 
         -- Background
         for i = 1, hp.max do
-            elem:append(Gui.Rect {
+            elem:append(Gui.Box {
                 size = { 9, 9 },
                 position = { 8 * (i - 1), 0 },
                 background = 'crop(0, 0, 9, 9, @auri:health:hearts)'
@@ -35,14 +35,14 @@ function health.internal.update()
             local start = i % 2
             if i > red_start and i <= red_end then
                 local segment = start ~= 0 and 9 or 18
-                elem:append(Gui.Rect {
+                elem:append(Gui.Box {
                     size = { 9, 9 },
                     position = { 8 * math.floor((i - 1) / 2), 0 },
                     background = 'crop(9, ' .. segment .. ', 9, 9, @auri:health:hearts)'
                 })
             elseif i > blue_start and i <= blue_end then
                 local segment = start ~= 0 and 9 or 18
-                elem:append(Gui.Rect {
+                elem:append(Gui.Box {
                     size = { 9, 9 },
                     position = { 8 * math.floor((i - 1) / 2), 0 },
                     background = 'crop(18, ' .. segment .. ', 9, 9, @auri:health:hearts)'
@@ -59,11 +59,10 @@ function health.render_default(render)
     if render then
         hud:append(function()
             return Gui.Rect {
-                key = '@health:default',
+                id = '@health:default',
 
                 size = { health.internal._width, 9 },
-                position = { '50%', '100%' },
-                position_anchor = { '50%', '200%' },
+                position = { '50cw - 50sw', '100cw - 30px' },
 
                 health.internal._wrapper
             }

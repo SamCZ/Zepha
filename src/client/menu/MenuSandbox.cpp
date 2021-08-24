@@ -49,9 +49,8 @@ void MenuSandbox::loadApi() {
 	
 	bindModules();
 	
-	// Create sandboxed runfile()
-	lua["dofile"] = lua["loadfile"] = sol::nil;
-	lua.set_function("runfile", &MenuSandbox::runFileSandboxed, this);
+	lua.set_function("require", &MenuSandbox::runFileSandboxed, this);
+	lua["dofile"] = lua["loadfile"] = lua["require"];
 }
 
 void MenuSandbox::load(const SubgameDef& subgame) {
@@ -185,14 +184,14 @@ sol::protected_function_result MenuSandbox::errorCallback(sol::protected_functio
 		fileName.erase(std::remove_if(fileName.begin(), fileName.end(), isspace), fileName.end());
 		
 		for (const let& file : mod.files) {
-			if (file.path == fileName) {
-				let msg = ErrorFormatter::formatError(fileName,
-					std::stoi(line.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1)),
-					err, file.file);
-				
-				showError(msg);
-				return r;
-			}
+			if (file.path != fileName) continue;
+			
+			let msg = ErrorFormatter::formatError(fileName,
+				std::stoi(line.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1)),
+				err, file.file);
+			
+			showError(msg);
+			return r;
 		}
 	}
 	

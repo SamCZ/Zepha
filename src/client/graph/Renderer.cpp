@@ -39,7 +39,7 @@ Renderer::Renderer(glm::ivec2 win) :
 	
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
-	lock = window.onResize([&](glm::ivec2 win) {
+	callbacks.emplace_back(window.resize.bind([&](glm::ivec2 win) {
 		ssao.windowResized(win);
 		blur.windowResized(win);
 		light.windowResized(win);
@@ -48,7 +48,7 @@ Renderer::Renderer(glm::ivec2 win) :
 		camera.changeWindowDimensions(win);
 		
 		gu.matrix = camera.getOrthographicMatrix();
-	});
+	}));
 	
 	//VSync 1 = On, 0 = Off
 	glfwSwapInterval(1);

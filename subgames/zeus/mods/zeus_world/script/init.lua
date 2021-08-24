@@ -1,5 +1,5 @@
-runfile(_PATH .. 'keys')
-runfile(_PATH .. 'register_biomes')
+require(_PATH .. 'keys')
+require(_PATH .. 'register_biomes')
 
 zepha.create_dimension('zeus:world:default', {
     biomes = { '#natural', '#default' }

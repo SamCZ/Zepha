@@ -40,7 +40,7 @@ void LocalWorld::update(f64 delta, vec<usize>& perfTimings, PerfTimer& perf) {
 	
 	// Update children
 	perf.start("update:player");
-	if (*player) player.l()->update(renderer.window.input, delta, renderer.window.input.getMouseDelta());
+	if (*player) player.l()->update(delta, renderer.window.input.getMouseDelta());
 	refs->update(delta, net);
 	
 	// Update the network

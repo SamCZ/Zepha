@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 28/12/18.
-//
-
 #include "LocalPlayer.h"
 
 #include "util/Ray.h"
@@ -9,6 +5,7 @@
 #include "game/def/BlockDef.h"
 #include "util/net/NetField.h"
 #include "lua/usertype/Target.h"
+#include "client/gui/BoxElement.h"
 #include "client/graph/Renderer.h"
 #include "world/dim/chunk/Chunk.h"
 #include "util/net/Deserializer.h"
@@ -19,33 +16,40 @@
 
 LocalPlayer::LocalPlayer(SubgamePtr game, LocalWorld& world, DimensionPtr dim, Renderer& renderer) :
 	Player(game, world, dim), DrawableEntity(game, dim), Entity(game, dim),
-	renderer(renderer),
-	wireframe(game, dim, { 1, 1, 1 }) {
-//	gameGui(world.getRefs().l(), renderer.window.getSize(), game.l(), renderer) {
-	
+	root(renderer.window, game.l()->textures),
+	wireframe(game, dim, { 1, 1, 1 }),
+	renderer(renderer) {
 	handItemModel.parent = &handModel;
 	
-//	lock = renderer.window.onResize([&](glm::ivec2 win) { gameGui.winResized(win); });
+	hud = root.body->append<Gui::BoxElement>({ .styles {{
+		{ Gui::StyleRule::POS, array<Gui::Expression, 2> { Gui::Expression("0"), Gui::Expression("0") }},
+		{ Gui::StyleRule::SIZE, array<Gui::Expression, 2> { Gui::Expression("100cw"), Gui::Expression("100ch") }}
+	}}});
+	
+	menu = root.body->append<Gui::BoxElement>({ .styles {{
+		{ Gui::StyleRule::POS, array<Gui::Expression, 2> { Gui::Expression("0"), Gui::Expression("0") }},
+		{ Gui::StyleRule::SIZE, array<Gui::Expression, 2> { Gui::Expression("100cw"), Gui::Expression("100ch") }}
+	}}});
 }
 
-void LocalPlayer::update(Input& input, f64 delta, vec2 mouseDelta) {
-//	gameGui.update(delta);
+void LocalPlayer::update(f64 delta, vec2 mouseDelta) {
+	root.update();
 //	handItemModel.setVisible(gameGui.isVisible());
 	
-	updatePhysics(input, delta, mouseDelta);
+	updatePhysics(delta, mouseDelta);
 	
 	vec3 newPos, newVel;
-	std::tie(newPos, newVel) =
-		Collision::applyVel(game, dim, *collisionBox, pos, vel, delta);
+	std::tie(newPos, newVel) = Collision::applyVel(game, dim, *collisionBox, pos, vel, delta);
 	setPos(newPos);
 	setVel(newVel);
 	
 	updateCamera();
 	
-	findTarget(input);
+	findTarget();
 	updateWireframe();
 	
-//	if (!gameGui.isInMenu()) updateInteract(input, delta);
+//	if (!gameGui.isInMenu())
+	updateInteract(delta);
 }
 
 string LocalPlayer::getUsername() {
@@ -61,7 +65,6 @@ void LocalPlayer::setLookOffset(vec3 eyeOffset, bool assert) {
 	Player::setLookOffset(eyeOffset, assert);
 	renderer.camera.setPos(pos + getLookOffset());
 }
-
 
 void LocalPlayer::setHandList(const string& list, bool assert) {
 	Player::setHandList(list, assert);
@@ -100,25 +103,31 @@ bool LocalPlayer::isInMenu() {
 //	return gameGui.isInMenu();
 }
 
-//void LocalPlayer::showMenu(sptr<LuaGuiElement> root) {
-////	gameGui.showMenu(root);
-//	renderer.window.input.setMouseLocked(false);
-//}
+void LocalPlayer::showMenu(sptr<Gui::Element> newMenu) {
+	menu->clear();
+	menu->append(newMenu);
+	renderer.window.input.setMouseLocked(false);
+}
 
 void LocalPlayer::closeMenu() {
-//	gameGui.closeMenu();
+	menu->clear();
 	renderer.window.input.setMouseLocked(true);
 }
 
-//sptr<LuaGuiElement> LocalPlayer::getHud() {
-////	return gameGui.getHud();
-//}
+Gui::Root& LocalPlayer::getRoot() {
+	return root;
+}
 
-//void LocalPlayer::setHud(sptr<LuaGuiElement> hud) {
-////	gameGui.setHud(hud);
-//}
+sptr<Gui::Element> LocalPlayer::getHud() {
+	return hud->get(0);
+}
 
-void LocalPlayer::setHudVisible(bool hudVisible) {
+void LocalPlayer::setHud(sptr<Gui::Element> newHud) {
+	hud->clear();
+	hud->append(newHud);
+}
+
+void LocalPlayer::setHudVisible(bool visible) {
 //	gameGui.setVisible(hudVisible);
 }
 
@@ -128,11 +137,11 @@ void LocalPlayer::draw(Renderer&) {
 }
 
 void LocalPlayer::drawHud(Renderer&) {
-//	gameGui.drawHud(renderer);
+	hud->draw(renderer);
 }
 
 void LocalPlayer::drawMenu(Renderer&) {
-//	gameGui.drawMenu(renderer);
+	menu->draw(renderer);
 }
 
 void LocalPlayer::assertField(Packet packet) {
@@ -203,19 +212,18 @@ void LocalPlayer::handleAssertion(Deserializer& d) {
 	}
 }
 
-bool LocalPlayer::getKey(Input& input, LocalPlayer::PlayerControl control) {
-//	if (gameGui.isInMenu()) return false;
-	return input.isKeyDown(
+bool LocalPlayer::getKey(LocalPlayer::PlayerControl control) {
+	return renderer.window.input.isKeyDown(
 		control == PlayerControl::FORWARD ? GLFW_KEY_COMMA :
-			control == PlayerControl::BACKWARD ? GLFW_KEY_O :
-				control == PlayerControl::LEFT ? GLFW_KEY_A :
-					control == PlayerControl::RIGHT ? GLFW_KEY_E :
-						control == PlayerControl::JUMP ? GLFW_KEY_SPACE :
-							control == PlayerControl::MOD1 ? GLFW_KEY_LEFT_SHIFT :
-								GLFW_KEY_LEFT_CONTROL);
+		control == PlayerControl::BACKWARD ? GLFW_KEY_O :
+		control == PlayerControl::LEFT ? GLFW_KEY_A :
+		control == PlayerControl::RIGHT ? GLFW_KEY_E :
+		control == PlayerControl::JUMP ? GLFW_KEY_SPACE :
+		control == PlayerControl::MOD1 ? GLFW_KEY_LEFT_SHIFT :
+		GLFW_KEY_LEFT_CONTROL);
 }
 
-void LocalPlayer::updatePhysics(Input& input, f64 delta, vec2 mouseDelta) {
+void LocalPlayer::updatePhysics(f64 delta, vec2 mouseDelta) {
 	static constexpr float JUMP_VEL = 10.0f;
 	static constexpr float MOVE_VEL = 5.5f;
 	static constexpr float GRAVITY_ACCELERATION = 40.0f;
@@ -224,7 +232,7 @@ void LocalPlayer::updatePhysics(Input& input, f64 delta, vec2 mouseDelta) {
 	static constexpr float MOUSE_SENSITIVITY = 0.1f;
 	
 	// Position movement
-	bool sprinting = getKey(input, PlayerControl::MOD2);
+	bool sprinting = getKey(PlayerControl::MOD2);
 	
 	double moveSpeed = MOVE_VEL * (sprinting ? 1.6 : 1);
 	float friction = 0.3f;
@@ -233,7 +241,7 @@ void LocalPlayer::updatePhysics(Input& input, f64 delta, vec2 mouseDelta) {
 		moveSpeed *= 4;
 		friction = 0.15f;
 	}
-	else if (getKey(input, PlayerControl::JUMP) &&
+	else if (getKey(PlayerControl::JUMP) &&
         Collision::isOnGround(game, dim, *collisionBox, pos, vel))
 		vel.y = JUMP_VEL;
 	
@@ -244,14 +252,14 @@ void LocalPlayer::updatePhysics(Input& input, f64 delta, vec2 mouseDelta) {
 	
 	glm::vec3 mod{ 0, 0, 0 };
 	
-	if (getKey(input, PlayerControl::FORWARD)) mod += frontFlat;
-	if (getKey(input, PlayerControl::BACKWARD)) mod -= frontFlat;
-	if (getKey(input, PlayerControl::RIGHT)) mod += rightFlat;
-	if (getKey(input, PlayerControl::LEFT)) mod -= rightFlat;
+	if (getKey(PlayerControl::FORWARD)) mod += frontFlat;
+	if (getKey(PlayerControl::BACKWARD)) mod -= frontFlat;
+	if (getKey(PlayerControl::RIGHT)) mod += rightFlat;
+	if (getKey(PlayerControl::LEFT)) mod -= rightFlat;
 	
 	if (flying) {
-		if (getKey(input, PlayerControl::JUMP)) mod.y += 1;
-		if (getKey(input, PlayerControl::MOD1)) mod.y -= 1;
+		if (getKey(PlayerControl::JUMP)) mod.y += 1;
+		if (getKey(PlayerControl::MOD1)) mod.y -= 1;
 	}
 	else {
 		if (!Collision::isOnGround(game, dim, *collisionBox, pos, vel))
@@ -364,7 +372,7 @@ void LocalPlayer::updateWieldAndHandItems() {
 	handItemModel.setModel(model);
 }
 
-void LocalPlayer::findTarget(Input& input) {
+void LocalPlayer::findTarget() {
 	static constexpr float LOOK_DISTANCE = 6.5f;
 	static constexpr float LOOK_PRECISION = 0.01f;
 	
@@ -418,18 +426,18 @@ void LocalPlayer::findTarget(Input& input) {
 	target = newTarget;
 }
 
-void LocalPlayer::updateInteract(Input& input, f64 delta) {
+void LocalPlayer::updateInteract(f64 delta) {
 	if (breakTime > 0) breakTime += delta;
 	if (breakTime > breakInterval) breakTime = 0;
 	
-	if (input.isMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
+	if (renderer.window.input.isMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
 		if (target.type == Target::Type::BLOCK && breakTime == 0) {
 			auto& targetedBlock = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos));
 			breakInterval = dim->blockHit(target, static_cast<LocalWorld&>(dim->getWorld()).getPlayer());
 			breakTime += delta;
 		}
 	}
-	else if (input.isMouseDown(GLFW_MOUSE_BUTTON_RIGHT)) {
+	else if (renderer.window.input.isMouseDown(GLFW_MOUSE_BUTTON_RIGHT)) {
 		if (target.type == Target::Type::BLOCK) {
 			auto& wieldItem = game->getDefs().fromId(this->wieldItem);
 			auto& targetedBlock = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos));

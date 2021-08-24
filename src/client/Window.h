@@ -14,8 +14,6 @@
 
 class Window {
 public:
-	using RCBLock = sptr<bool>;
-	
 	Window();
 	
 	Window(ivec2 win);
@@ -26,8 +24,6 @@ public:
 	
 	void swapBuffers();
 	
-	RCBLock onResize(std::function<void(ivec2)> cb);
-	
 	ivec2 getSize();
 	
 	void setCursorHand(bool hand);
@@ -35,18 +31,16 @@ public:
 	~Window();
 	
 	Input input;
-	GLFWwindow* mainWindow = nullptr;
-
-private:
-	static void scrollCallback(GLFWwindow* window, f64 xO, f64 yO);
 	
+	GLFWwindow* mainWindow = nullptr;
+	
+	CallbackManager<ivec2> resize {};
+	
+private:
 	static void resizeCallback(GLFWwindow* window, i32 width, i32 height);
 	
 	GLFWcursor* handCursor = nullptr;
 	
 	ivec2 win;
-	ivec2 center;
-	
-	std::list<std::pair<RCBLock, std::function<void(ivec2)>>> resizeCallbacks {};
 };
 

@@ -76,6 +76,6 @@ private:
 	GLint currentModelUniform;
 	double elapsedTime = 0;
 	
-	Window::RCBLock lock;
+	vec<CallbackRef> callbacks {};
 };
 

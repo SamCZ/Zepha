@@ -104,7 +104,7 @@ private:
 	/** A pointer to the active dimension. */
 	sptr<LocalDimension> activeDimension = nullptr;
 	
-	Window::RCBLock lock;
+//	Window::RCBLock lock;
 	
 	/** A reference to the world gen stream. */
 //	sptr<WorldInterpolationStream> worldGenStream;

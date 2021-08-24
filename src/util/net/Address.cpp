@@ -19,3 +19,7 @@ Address Address::fromString(const std::string& addressString) {
 	
 	return Address{ address, port };
 }
+
+string Address::toString() {
+	return host + ":" + std::to_string(port);
+}

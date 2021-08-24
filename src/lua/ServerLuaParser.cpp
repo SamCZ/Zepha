@@ -140,9 +140,8 @@ void ServerLuaParser::loadApi(WorldPtr world) {
 	
 	bindModules();
 	
-	// Create sandboxed runfile()
-	lua["dofile"] = lua["loadfile"] = sol::nil;
-	lua.set_function("runfile", &ServerLuaParser::runFileSandboxed, this);
+	lua.set_function("require", &ServerLuaParser::runFileSandboxed, this);
+	lua["dofile"] = lua["loadfile"] = lua["require"];
 }
 
 sol::protected_function_result ServerLuaParser::errorCallback(sol::protected_function_result r) {

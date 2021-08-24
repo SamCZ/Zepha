@@ -1,6 +1,6 @@
-runfile(_PATH .. "models/init")
-runfile(_PATH .. "player_interact")
-runfile(_PATH .. "inventory")
-runfile(_PATH .. "tools")
+require(_PATH .. "models/init")
+require(_PATH .. "player_interact")
+require(_PATH .. "inventory")
+require(_PATH .. "tools")
 
-if zepha.client then runfile(_PATH .. "hud") end
+if zepha.client then require(_PATH .. "hud") end

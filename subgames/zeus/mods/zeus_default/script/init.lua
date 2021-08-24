@@ -1,5 +1,5 @@
-runfile(_PATH .. "blocks/_index")
-runfile(_PATH .. "entity/_index")
+require(_PATH .. "blocks/index")
+require(_PATH .. "entity/index")
 
 local chat_down = false
 zepha.register_keybind("zeus:default:open_chat", {
