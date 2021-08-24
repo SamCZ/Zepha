@@ -115,13 +115,13 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
 	core["__builtin"] = lua.create_table();
 	
 	// Types
-	Api::Usertype::GuiElement::bind(lua, core, player.l()->getRoot());
 	Api::Usertype::Target::bind(Api::State::CLIENT, lua, core);
 	Api::Usertype::Entity::bind(Api::State::CLIENT, lua, core);
 	Api::Usertype::Inventory::bind(Api::State::CLIENT, lua, core);
 	Api::Usertype::Dimension::bind(Api::State::CLIENT, lua, core);
 	Api::Usertype::ItemStack::bind(Api::State::CLIENT, lua, core);
 	Api::Usertype::LocalPlayer::bind(Api::State::CLIENT, lua, core);
+	Api::Usertype::GuiElement::bind(lua, core, player.l()->getRoot());
 	Api::Usertype::InventoryList::bind(Api::State::CLIENT, lua, core);
 	Api::Usertype::LocalAnimationManager::bind(Api::State::CLIENT, lua, core);
 	
@@ -165,9 +165,6 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
 	
 	lua.set_function("require", &LocalLuaParser::runFileSandboxed, this);
 	lua["dofile"] = lua["loadfile"] = lua["require"];
-}
-
-sol::protected_function_result LocalLuaParser::errorCallback(sol::protected_function_result r) {
 }
 
 sol::protected_function_result LocalLuaParser::runFileSandboxed(const std::string& file) {

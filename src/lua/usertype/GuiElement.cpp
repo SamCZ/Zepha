@@ -8,7 +8,7 @@
 
 static const Gui::Expression parseObjectToExpr(sol::object value) {
 	if (!value.valid()) return Gui::Expression("");
-	if (value.is<f32>()) return Gui::Expression(std::to_string(value.as<f32>()) + "dp");
+	if (value.is<f32>()) return Gui::Expression(std::to_string(value.as<f32>()) + "px");
 	if (value.is<string>()) return Gui::Expression(value.as<string>());
 	throw std::invalid_argument("Object cannot be converted to an expression.");
 }
@@ -80,42 +80,54 @@ any Api::Usertype::GuiElement::objectToProp(Gui::Prop prop, const sol::object& v
 	}
 }
 
-sol::object Api::Usertype::GuiElement::propToObject(Gui::Prop prop, any value, sol::state_view s) {
+sol::object Api::Usertype::GuiElement::propToObject(const Gui::Props& props, Gui::Prop prop,
+	const Gui::ExpressionInfo& expr, sol::state_view s) {
 	using namespace Gui;
 	
 	switch (prop) {
-	default:
+	default: {
 		throw std::invalid_argument("Unhandled rule! This is an engine error! [1]");
-	
+	}
 	case Prop::LAYOUT:
 	case Prop::DIRECTION:
 	case Prop::H_ALIGN:
 	case Prop::V_ALIGN:
 	case Prop::CURSOR:
 	case Prop::OVERFLOW:
-//	case Prop::TEXT_COLOR:
+	case Prop::TEXT_COLOR:
 	case Prop::BACKGROUND:
 	case Prop::BACKGROUND_HOVER:
-	case Prop::CONTENT:
-		return sol::make_object(s, std::any_cast<string>(value));
-		
+	case Prop::CONTENT: {
+		let v = props.get<string>(prop);
+		if (!v) return sol::nil;
+		return sol::make_object(s, *v);
+	}
 	case Prop::POS:
 	case Prop::SIZE:
-	case Prop::GAP:
-	
-//		return sol::make_object(s, s.create_table_with(
-//
-//		));
-//		return sol::make_object(s, std::any_cast<string>(value));
-		
+	case Prop::GAP: {
+		let v = props.get<vec2, Gui::Type::LENGTH>(prop, expr);
+		if (!v) return sol::nil;
+		sol::table tbl = s.create_table();
+		tbl[1] = (*v)[0];
+		tbl[2] = (*v)[1];
+		return sol::make_object(s, tbl);
+	}
 	case Prop::MARGIN:
-	case Prop::PADDING:
-//		return parseLengthTableVal<4>(value);
-	
-	case Prop::TEXT_SIZE:
-		break;
-		throw std::invalid_argument("Unhandled rule! This is an engine error! [1]");
-//		return parseObjectToExpr(value);
+	case Prop::PADDING: {
+		let v = props.get<vec4, Gui::Type::LENGTH>(prop, expr);
+		if (!v) return sol::nil;
+		sol::table tbl = s.create_table();
+		tbl[1] = (*v)[0];
+		tbl[2] = (*v)[1];
+		tbl[3] = (*v)[2];
+		tbl[4] = (*v)[3];
+		return sol::make_object(s, tbl);
+	}
+	case Prop::TEXT_SIZE: {
+		let v = props.get<f32, Gui::Type::LENGTH>(prop, expr);
+		if (!v) return sol::nil;
+		return sol::make_object(s, v);
+	}
 	}
 }
 
@@ -196,17 +208,15 @@ void Api::Usertype::GuiElement::bind(sol::state& lua, sol::table& core, Gui::Roo
 				"remove() parameter must be nil, a number, an string, or a Gui element.");
 		},
 		"clear", &Gui::Element::clear,
-		sol::meta_function::new_index, [&](Gui::Element& self, const string& ruleStr, sol::object rawValue) {
-			let rule = GuiElement::nameToProp(ruleStr);
-			let value = GuiElement::objectToProp(rule, rawValue);
-			self.setProp(rule, value);
+		sol::meta_function::new_index, [&](Gui::Element& self, const string& propStr, sol::object rawValue) {
+			let prop = GuiElement::nameToProp(propStr);
+			let value = GuiElement::objectToProp(prop, rawValue);
+			self.setProp(prop, value);
 			self.updateElement();
 		},
-		sol::meta_function::index, [&](sol::this_state s, Gui::Element& self, const string& ruleStr) {
-			let rule = GuiElement::nameToProp(ruleStr);
-			let value = self.getProps().get(rule);
-			if (!value) return sol::make_object(s, sol::nil);
-			return GuiElement::propToObject(rule, *value, s);
+		sol::meta_function::index, [&](sol::this_state s, Gui::Element& self, const string& propStr) {
+			let prop = GuiElement::nameToProp(propStr);
+			return GuiElement::propToObject(self.getProps(), prop, self.getExpr(), s);
 		}
 	);
 }

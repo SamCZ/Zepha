@@ -201,10 +201,10 @@ namespace Gui {
 			return def;
 		}
 		
-	protected:
-		
 		/** Returns an ExpressionInfo object for evaluating Lengths. */
 		virtual ExpressionInfo getExpr() const;
+		
+	protected:
 
 		/**
 		 * Called by the root when the mouse position changes.

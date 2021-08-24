@@ -94,14 +94,6 @@ ivec2 Gui::Element::getComputedScreenPos() const {
 bool Gui::Element::handleMouseHover(ivec2 mousePos, bool& pointer) {
 	bool childIntersects = false;
 	for (let& child : children) if (child->handleMouseHover(mousePos, pointer)) childIntersects = true;
-		
-//	if (childIntersects) {
-//		if (hovered) {
-//			hovered = false;
-//			updateElement();
-//		}
-//		return true;
-//	}
 	
 	ivec2 size = getComputedSize();
 	ivec2 pos = getComputedScreenPos();

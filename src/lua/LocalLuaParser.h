@@ -32,8 +32,6 @@ public:
 private:
 	void loadApi(WorldPtr world, PlayerPtr player);
 	
-	virtual sol::protected_function_result errorCallback(sol::protected_function_result r) override;
-	
 	sol::protected_function_result runFileSandboxed(const std::string& file);
 	
 	Client* client;

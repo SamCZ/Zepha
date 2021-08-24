@@ -32,8 +32,6 @@ public:
 		return res;
 	}
 	
-	virtual sol::protected_function_result errorCallback(sol::protected_function_result r) = 0;
-	
 	Subgame& game;
 	
 	sol::state lua;

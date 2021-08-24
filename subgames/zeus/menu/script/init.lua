@@ -3,6 +3,7 @@ local menu = zepha.gui(function()
         background = 'zeus_background_christmas_night',
 
         Gui.Box {
+            id = 'particle_wrap',
             size = { '100cw', '100ch' }
         },
 
@@ -58,20 +59,15 @@ local menu = zepha.gui(function()
     }
 end)
 
-local sizes = {}
-local positions = {}
-for _ = 1, 100 do
-    table.insert(sizes, 3 + math.random() * 8)
-    table.insert(positions, { math.floor(math.random() * 640), math.floor(math.random() * 320) })
-end
-
-local particle_wrap = menu:get(1)
+local particle_count = 100
+local particle_wrap = menu:get('particle_wrap')
 zepha.gui(function()
-    for i, pos in ipairs(positions) do
+    for i = 1, particle_count do
         particle_wrap:append(Gui.Box {
-            pos = pos,
             background = 'particle_dark',
-            size = sizes[i]
+
+            size = 3 + math.random() * 8 .. "dp",
+            pos = { math.floor(math.random() * 640) .. "dp", math.floor(math.random() * 320) .. "dp" }
         })
     end
 end)
@@ -79,13 +75,15 @@ end)
 local tick = 0
 zepha.after(function()
     tick = tick + 0.016
-    for i, pos in ipairs(positions) do
+    for i = 1, particle_count do
         local part = particle_wrap:get(i)
+        local pos = part.pos
+        local size = part.size[1]
 
-        pos[1] = pos[1] + (-math.sin(tick) * 0.0125 - 0.0025) * sizes[i] * 3
-        pos[2] = pos[2] + 0.05 * sizes[i]
-        if pos[1] < -12 then pos[1] = 640 end
-        if pos[2] > 320 then pos[2] = -12 end
+        pos[1] = pos[1] + (-math.sin(tick) * 0.0125 - 0.0025) * size * 3
+        pos[2] = pos[2] + 0.05 * size
+        if pos[1] < -36 then pos[1] = 640 * 3 end
+        if pos[2] > 320 * 3 then pos[2] = -36 end
 
         part.pos = pos
     end
