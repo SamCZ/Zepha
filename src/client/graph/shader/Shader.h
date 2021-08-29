@@ -5,9 +5,10 @@
 #pragma once
 
 #include <string>
-#include <GL/glew.h>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
+
+#include "util/GL.h"
 
 class Shader {
 	public:

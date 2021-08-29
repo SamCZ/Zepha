@@ -1,4 +1,4 @@
-add_library(Zepha_Core
+add_library(Zepha_Core STATIC
         client/Client.cpp
         client/Client.h
         client/conn/ClientNetworkInterpreter.cpp
@@ -329,3 +329,10 @@ add_library(Zepha_Core
         client/gui/basic/GuiCells.h client/gui/Gui.h client/gui/Root.cpp client/gui/Root.h client/gui/BoxElement.cpp client/gui/BoxElement.h client/gui/Gui.cpp client/gui/Style.h client/gui/TextElement.cpp client/gui/TextElement.h client/gui/Expression.cpp client/gui/Expression.h client/gui/Style.cpp client/CallbackGroup.h)
 
 target_include_directories(Zepha_Core PUBLIC .)
+
+target_link_libraries(Zepha_Core glfw glm enet glad assimp FastNoise nothings-stb gzip cute_headers nlohmann_json)
+target_link_libraries(Zepha_Core lua sol2)
+
+if(WIN32)
+    target_link_libraries(Zepha_Core opengl32 gdi32)
+endif()

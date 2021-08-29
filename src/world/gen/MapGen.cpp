@@ -14,6 +14,10 @@
 #include "world/dim/chunk/Chunk.h"
 #include "game/atlas/DefinitionAtlas.h"
 
+#ifndef M_PI
+# define M_PI           3.14159265358979323846  /* pi */
+#endif
+
 MapGen::MapGen(Subgame& game, World& world, u32 seed, std::unordered_set<string> biomes) :
 	game(game), world(world), props(seed) {
 

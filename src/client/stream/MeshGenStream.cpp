@@ -2,7 +2,7 @@
 // Created by aurailus on 27/03/19.
 //
 
-#include <libnoise/noise.h>
+//#include <libnoise/noise.h>
 
 #include "MeshGenStream.h"
 
@@ -13,14 +13,14 @@
 
 MeshGenStream::MeshGenStream(SubgamePtr game, LocalDimension& dimension): dimension(dimension),
 	noiseSampler({ NoiseSample(u16vec3(16), 4), NoiseSample(u16vec3(16), 4), NoiseSample(u16vec3(16), 4) }) {
-	noise::module::Perlin offsetBaseNoise;
+	/*noise::module::Perlin offsetBaseNoise;
 	offsetBaseNoise.SetFrequency(8);
 	offsetBaseNoise.SetOctaveCount(3);
 	
 	noise::module::Turbulence offsetTurbulence;
 	offsetTurbulence.SetSourceModule(0, offsetBaseNoise);
 	offsetTurbulence.SetFrequency(4.0);
-	offsetTurbulence.SetPower(0.125);
+	offsetTurbulence.SetPower(0.125);*/
 	
 	generator = FastNoise::New<FastNoise::Constant>();
 	

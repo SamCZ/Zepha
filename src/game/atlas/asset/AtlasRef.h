@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include <string>
+#include <glm/glm.hpp>
+
 struct AtlasRef {
 	int tileX = 0;
 	int tileY = 0;

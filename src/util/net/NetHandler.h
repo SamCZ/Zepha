@@ -5,7 +5,7 @@
 #pragma once
 
 #include <string>
-#include <enet/enet.h>
+#include <enet.h>
 
 #include "NetState.h"
 

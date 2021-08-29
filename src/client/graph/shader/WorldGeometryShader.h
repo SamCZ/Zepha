@@ -5,7 +5,7 @@
 #pragma once
 
 #include <vector>
-#include <libnoise/noise.h>
+#include <FastNoise/FastNoise.h>
 
 #include "Shader.h"
 
@@ -35,7 +35,7 @@ public:
 	
 	Texture swayTex;
 	double swayOffset = 0;
-	noise::module::Perlin swayNoise;
+	FastNoise::SmartNode<> swayNoise;
 	std::vector<unsigned char> swayData{};
 	
 	glm::ivec2 windowSize{};

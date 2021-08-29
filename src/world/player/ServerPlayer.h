@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <enet/enet.h>
+#include <enet.h>
 #include <glm/vec3.hpp>
 #include <unordered_map>
 

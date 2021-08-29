@@ -1,5 +1,7 @@
 #include "BiomeAtlas.h"
 
+#include <stdexcept>
+
 #include "game/def/BiomeDef.h"
 
 u16 BiomeAtlas::size() {

@@ -6,12 +6,12 @@
 #define CUTE_FILES_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
-#include <stb_image/stb_image.h>
-#include <cute_files/cute_files.h>
+#include <stb_image.h>
+#include <cute_files.h>
 
 #pragma clang diagnostic pop
 
-//#include "StartGame.h"
+#include "StartGame.h"
 #include <iostream>
 #include "client/CallbackGroup.h"
 
@@ -26,8 +26,8 @@ enum class CB {
 };
 
 int main(int argc, char* argv[]) {
-//	return StartGame(argc, argv);
-
+	return StartGame(argc, argv);
+/*
 	CallbackGroup<CB, u32> cbs;
 	
 	u32 cbA1 = cbs.bind(CB::A, [&](u32 i) { std::cout << "a1 " << i << std::endl; });
@@ -51,5 +51,5 @@ int main(int argc, char* argv[]) {
 	
 	cbs.unbind(CB::A, cbA3);
 	
-	cbs.call(CB::A, 4);
+	cbs.call(CB::A, 4);*/
 }

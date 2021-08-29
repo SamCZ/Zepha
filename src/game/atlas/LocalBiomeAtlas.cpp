@@ -4,6 +4,8 @@
 
 #include "LocalBiomeAtlas.h"
 
+#include <stdexcept>
+
 #include "game/def/BiomeDef.h"
 
 LocalBiomeAtlas::LocalBiomeAtlas() {

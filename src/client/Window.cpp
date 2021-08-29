@@ -4,7 +4,10 @@
 
 #include "Window.h"
 
+#include <stdexcept>
+
 #include "util/Log.h"
+#include "util/GL.h"
 
 Window::Window() : Window({ 800, 600 }) {};
 
@@ -32,17 +35,13 @@ Window::Window(ivec2 win) :
 	
 	glfwGetFramebufferSize(mainWindow, &win.x, &win.y);
 	glfwMakeContextCurrent(mainWindow);
-	glewExperimental = GL_TRUE;
 	
 	handCursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
 	
 	// Initialize GLEW
-	GLenum error;
-	if ((error = glewInit()) != GLEW_OK) {
-		glfwTerminate();
-		glfwDestroyWindow(mainWindow);
-		printf("%s", reinterpret_cast<const char*>(glewGetErrorString(error)));
-		throw std::runtime_error("GLEW Fatal error.");
+	if(!gladLoadGL()) {
+		printf("Something went wrong!\n");
+		exit(-1);
 	}
 	
 	glEnable(GL_DEPTH_TEST);

@@ -79,7 +79,7 @@ void NetHandler::initClient(Address hostAddress, int attempts, int timeout) {
 		ENetEvent event;
 		if (enet_host_service(host, &event, (enet_uint32) timeout) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
 			std::cout << Log::info << "Connected to "
-			          << NetHandler::intToIPString(event.peer->address.host)
+			          << NetHandler::intToIPString(*reinterpret_cast<unsigned int*>(&event.peer->address.host))
 			          << ":" << event.peer->address.port << "." << Log::endl;
 			state = NetState::CLIENT;
 			break;

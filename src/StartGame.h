@@ -5,7 +5,6 @@
 #pragma once
 
 #include <iostream>
-#include <execinfo.h>
 #include <unordered_map>
 
 #include "util/Log.h"

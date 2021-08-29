@@ -5,7 +5,7 @@
 #pragma once
 
 #include <string>
-#include <GL/glew.h>
+#include "util/GL.h"
 
 class Texture {
 	public:

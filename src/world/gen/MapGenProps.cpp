@@ -5,7 +5,7 @@
 #include "MapGenProps.h"
 
 MapGenProps::MapGenProps(unsigned int seed) : seed(seed) {
-	temperatureBase.SetSeed(seed);
+	/*temperatureBase.SetSeed(seed);
 	temperatureBase.SetFrequency(0.02);
 	temperatureBase.SetOctaveCount(4);
 	temperatureTurbulence.SetSeed(seed);
@@ -36,5 +36,5 @@ MapGenProps::MapGenProps(unsigned int seed) : seed(seed) {
 	roughnessTurbulence.SetFrequency(0.2);
 	roughness.SetSourceModule(0, roughnessTurbulence);
 	roughness.SetScale(0.5);
-	roughness.SetBias(0.5);
+	roughness.SetBias(0.5);*/
 }

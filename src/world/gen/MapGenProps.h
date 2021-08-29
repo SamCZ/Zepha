@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <libnoise/noise.h>
+//#include <libnoise/noise.h>
 
 class MapGenProps {
 	public:
@@ -12,7 +12,7 @@ class MapGenProps {
 	
 	unsigned int seed;
 	
-	noise::module::Perlin temperatureBase;
+	/*noise::module::Perlin temperatureBase;
 	noise::module::Turbulence temperatureTurbulence;
 	noise::module::ScaleBias temperature;
 	
@@ -22,5 +22,5 @@ class MapGenProps {
 	
 	noise::module::Perlin roughnessBase;
 	noise::module::Turbulence roughnessTurbulence;
-	noise::module::ScaleBias roughness;
+	noise::module::ScaleBias roughness;*/
 };
