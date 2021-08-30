@@ -164,8 +164,8 @@ void Api::Usertype::GuiElement::bind(sol::state& lua, sol::table& core, Gui::Roo
 		}),
 		"prepend", [&](sol::this_state s, Gui::Element& self, sol::object child) {
 			if (child.is<sptr<Gui::Element>>()) self.prepend(child.as<sptr<Gui::Element>>());
-			else if (child.is<sol::protected_function>()) {
-				sol::protected_function fn = child.as<sol::protected_function>();
+			else if (child.is<sol::function>()) {
+				sol::protected_function fn = child.as<sol::function>();
 				sol::table tbl = sol::state_view(s)["zepha"]["__builtin"]["gui_env"];
 				sol::environment env(s, sol::create, tbl);
 				sol::set_environment(env, fn);
@@ -176,8 +176,8 @@ void Api::Usertype::GuiElement::bind(sol::state& lua, sol::table& core, Gui::Roo
 		},
 		"append", [&](sol::this_state s, Gui::Element& self, sol::object child) {
 			if (child.is<sptr<Gui::Element>>()) self.append(child.as<sptr<Gui::Element>>());
-			else if (child.is<sol::protected_function>()) {
-				let fn = child.as<sol::protected_function>();
+			else if (child.is<sol::function>()) {
+				let fn = child.as<sol::function>();
 				sol::table tbl = sol::state_view(s)["zepha"]["__builtin"]["gui_env"];
 				sol::environment env(s, sol::create, tbl);
 				sol::set_environment(env, fn);

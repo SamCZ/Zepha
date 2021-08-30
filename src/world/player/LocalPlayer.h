@@ -65,6 +65,9 @@ public:
 	/** Returns the Gui root. */
 	Gui::Root& getRoot();
 	
+	/** Gets the debug element. */
+	sptr<Gui::Element> getDebug();
+	
 	/** Gets the hud element. */
 	sptr<Gui::Element> getHud();
 	
@@ -116,7 +119,7 @@ private:
 	Gui::Root root;
 	
 	/** Element roots for the hud and menu, respectively. */
-	sptr<Gui::BoxElement> hud, menu;
+	sptr<Gui::BoxElement> hud, menu, debug;
 	
 	/** A reference to the renderer. */
 	Renderer& renderer;

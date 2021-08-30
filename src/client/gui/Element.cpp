@@ -59,44 +59,48 @@ void Gui::Element::onClick(const std::function<void(i32, bool)>& cb) {
 
 Gui::ExpressionInfo Gui::Element::getExpr() const {
 	return {
-		parent ? parent->getComputedSize() : ivec2 {},
+		parent ? parent->getComputedSize() : vec2 {},
 		getComputedSize()
 	};
 }
 
-ivec2 Gui::Element::getComputedSize() const {
+vec2 Gui::Element::getComputedSize() const {
 	let size = getStyleWithExpr<vec2, Type::LENGTH>(Prop::SIZE, vec2(nanf("")),
-		{ parent ? parent->computedSize : ivec2 {}, {} });
-	if (std::isnan(size.x)) size.x = std::max(layoutSize.x, 0);
-	if (std::isnan(size.y)) size.y = std::max(layoutSize.y, 0);
-	computedSize = ivec2(size);
+		{ parent ? parent->computedSize : vec2 {}, {} });
+	if (std::isnan(size.x)) size.x = std::max(layoutSize.x, 0.f);
+	if (std::isnan(size.y)) size.y = std::max(layoutSize.y, 0.f);
+	computedSize = size;
 	return size;
 }
 
-ivec2 Gui::Element::getComputedContentSize() const {
+vec2 Gui::Element::getComputedContentSize() const {
 	let size = getComputedSize();
-	let padding = getStyle<ivec4, Type::LENGTH>(Prop::PADDING, {});
-	return glm::max(ivec2 { size.x - padding.x - padding.z, size.y - padding.y - padding.w }, 0);
+	let padding = getStyle<vec4, Type::LENGTH>(Prop::PADDING, {});
+	return glm::max(vec2 { size.x - padding.x - padding.z, size.y - padding.y - padding.w }, vec2(0));
 }
 
-ivec2 Gui::Element::getExplicitSize() const {
-	return getStyle<ivec2, Type::LENGTH>(Prop::SIZE, ivec2(-1));
+vec2 Gui::Element::getExplicitSize() const {
+	return getStyle<vec2, Type::LENGTH>(Prop::SIZE, vec2(-1));
 }
 
-ivec2 Gui::Element::getComputedPos() const {
-	return getStyle<ivec2, Type::LENGTH>(Prop::POS, layoutPosition);
+vec2 Gui::Element::getComputedPos() const {
+	return getStyle<vec2, Type::LENGTH>(Prop::POS, layoutPosition);
 }
 
-ivec2 Gui::Element::getComputedScreenPos() const {
+vec2 Gui::Element::getComputedScreenPos() const {
 	return getComputedPos() + parentOffset;
+}
+
+vec2 Gui::Element::getExplicitPos() const {
+	return getStyle<vec2, Type::LENGTH>(Prop::POS, vec2(nanf("")));
 }
 
 bool Gui::Element::handleMouseHover(ivec2 mousePos, bool& pointer) {
 	bool childIntersects = false;
 	for (let& child : children) if (child->handleMouseHover(mousePos, pointer)) childIntersects = true;
 	
-	ivec2 size = getComputedSize();
-	ivec2 pos = getComputedScreenPos();
+	vec2 size = getComputedSize();
+	vec2 pos = getComputedScreenPos();
 	bool intersects = mousePos.x >= pos.x && mousePos.x <= pos.x + size.x &&
 		mousePos.y >= pos.y && mousePos.y <= pos.y + size.y;
 	
@@ -115,8 +119,8 @@ bool Gui::Element::handleMouseClick(ivec2 mousePos, u32 button, bool down) {
 	for (i32 i = children.size() - 1; i >= 0; i--)
 		if (children[i]->handleMouseClick(mousePos, button, down)) return true;
 
-	ivec2 size = getComputedSize();
-	ivec2 pos = getComputedScreenPos();
+	vec2 size = getComputedSize();
+	vec2 pos = getComputedScreenPos();
 	bool intersects = mousePos.x >= pos.x && mousePos.x <= pos.x + size.x &&
 		mousePos.y >= pos.y && mousePos.y <= pos.y + size.y;
 	if (!intersects) return false;
@@ -166,8 +170,8 @@ void Gui::Element::layoutChildren() {
 		 * The element gap across the primary axis.
 		 */
 	
-		const i32 gap = getStyle<ivec2, Type::LENGTH>(Prop::GAP, ivec2(0))[primary];
-		const ivec4& padding = getStyle<ivec4, Type::LENGTH>(Prop::PADDING, ivec4 {});
+		const f32 gap = getStyle<vec2, Type::LENGTH>(Prop::GAP, vec2(0))[primary];
+		const vec4& padding = getStyle<vec4, Type::LENGTH>(Prop::PADDING, {});
 	
 		/*
 		 * Calculates the explicit spaced used up by children across the primary axis,
@@ -176,14 +180,15 @@ void Gui::Element::layoutChildren() {
 		 */
 	
 		let selfSize = getComputedContentSize();
-		i32 explicitSize = gap * (children.size() - 1);
-		i32 implicitCount = 0;
+		f32 explicitSize = gap * (children.size() - 1);
+		u32 implicitCount = 0;
 	
 		for (const let& child : children) {
+			if (!std::isnan(child->getExplicitPos()[primary])) continue;
 			let childExplicitSize = child->getExplicitSize();
 			if (childExplicitSize[primary] != -1) explicitSize += childExplicitSize[primary];
 			else implicitCount++;
-			let childMargin = child->getStyle<ivec4, Type::LENGTH>(Prop::MARGIN, {});
+			let childMargin = child->getStyle<vec4, Type::LENGTH>(Prop::MARGIN, {});
 			explicitSize += childMargin[primary] + childMargin[primary + 2];
 		}
 		
@@ -191,7 +196,7 @@ void Gui::Element::layoutChildren() {
 		 * The cumulative layout offset of the children across the x and y axis.
 		 */
 	
-		ivec2 offset = { padding.x, padding.y };
+		vec2 offset = { padding.x, padding.y };
 		if (align[primary] == 1) offset[primary] += selfSize[primary] - explicitSize - (gap * (children.size() - 1));
 		else if (align[primary] == 0) offset[primary] += selfSize[primary] / 2 -
 			explicitSize / 2 - (gap * (children.size() - 1)) / 2;
@@ -200,17 +205,17 @@ void Gui::Element::layoutChildren() {
 		 * The amount of size each implicitly sized element should occupy.
 		 */
 	 
-		i32 implicitElemSize = floor((selfSize[primary] - explicitSize) / (std::max)(implicitCount, 1));
+		f32 implicitElemSize = floor((selfSize[primary] - explicitSize) / (std::max)(implicitCount, u32(1)));
 	
-		ivec2 selfOffset = getComputedPos() + parentOffset;
+		vec2 selfOffset = getComputedPos() + parentOffset;
 		
 		/**
 		 * Position each child according to `offset`, size implicitly sized elements using `implicitElemSize`.
 		 */
 	
 		for (const let& child : children) {
-			let childExplicitSize = child->getExplicitSize();
-			let childMargin = child->getStyle<ivec4, Type::LENGTH>(Prop::MARGIN, {});
+			vec2 childExplicitSize = child->getExplicitSize();
+			vec4 childMargin = child->getStyle<vec4, Type::LENGTH>(Prop::MARGIN, {});
 		
 			child->layoutSize[primary] =
 				(childExplicitSize[primary] == -1 && align[primary] == 2) ? implicitElemSize : 0;
@@ -224,13 +229,13 @@ void Gui::Element::layoutChildren() {
 			else if (align[!primary] == 1) child->layoutPosition[!primary] =
 				selfSize[!primary] - childExplicitSize[!primary];
 			child->layoutPosition[primary] = offset[primary];
-		
-			offset[primary] += ((childExplicitSize[primary] == -1 && align[primary] == 2)
-				? implicitElemSize : childExplicitSize[primary])
-				+ gap + childMargin[primary] + childMargin[primary + 2];
+			
+			if (std::isnan(child->getExplicitPos()[primary]))
+				offset[primary] += ((childExplicitSize[primary] == -1 && align[primary] == 2)
+					? implicitElemSize : childExplicitSize[primary])
+						+ gap + childMargin[primary] + childMargin[primary + 2];
 			
 			child->parentOffset = selfOffset;
-			
 			child->updateElement();
 		}
 		break;

@@ -16,9 +16,17 @@ local function position()
         currentRotation = currentRotation + (desiredRotation - currentRotation) / 2
 
         for i, list in ipairs(api.lists) do
-            list.position = { 32.5 + 22 * math.sin(currentRotation - (r * (i + 3))), 32.5 + 22 * math.cos(currentRotation - (r * (i + 3))) } end
+            list.pos = {
+                32.5 + 22 * math.sin(currentRotation - (r * (i + 3))) .. 'dp',
+                32.5 + 22 * math.cos(currentRotation - (r * (i + 3))) .. 'dp'
+            }
+        end
         for i, label in ipairs(api.labels) do
-            label.position = { 37 + 35 * math.sin(currentRotation - (r * (i + 3))), 36 + 35 * math.cos(currentRotation - (r * (i + 3))) } end
+            label.pos = {
+                37 + 35 * math.sin(currentRotation - (r * (i + 3))) .. 'dp',
+                36 + 35 * math.cos(currentRotation - (r * (i + 3))) .. 'dp'
+            }
+        end
 
         if currentRotation == desiredRotation then
             rotating = false
@@ -35,19 +43,19 @@ local function select_slot(n)
     local offset = n - 1
     desiredRotation = offset * r
 
-    api.list_expanded.list = "hot_wheel_" .. n
+--     api.list_expanded.list = 'hot_wheel_' .. n
 
-    for i, list in ipairs(api.lists) do list.visible = i ~= n end
-    for i, label in ipairs(api.labels) do label.visible = i ~= n end
+--     for i, list in ipairs(api.lists) do list.visible = i ~= n end
+--     for i, label in ipairs(api.labels) do label.visible = i ~= n end
 
-    zepha.player:set_wield_list("hot_wheel_" .. slot);
+    zepha.player:set_wield_list('hot_wheel_' .. slot);
     if not rotating then position() end
 end
 
 local function select_item(n)
     item = ((item + n) - 1) % 5 + 1
     local offset = slot - 1
-    api.list_expanded_indicator.position = { 2 + 18 * (item - 1), 0 }
+    api.list_expanded_indicator.pos = { 2 + 18 * (item - 1) .. 'dp', 0 }
 
     zepha.player:set_wield_index(item)
 end

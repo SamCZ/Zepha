@@ -17,19 +17,19 @@
 LocalPlayer::LocalPlayer(SubgamePtr game, LocalWorld& world, DimensionPtr dim, Renderer& renderer) :
 	Player(game, world, dim), DrawableEntity(game, dim), Entity(game, dim),
 	root(renderer.window, game.l()->textures),
+	hud(root.body->append<Gui::BoxElement>({{ { Gui::Prop::CLASS, vec<string> { "_GUI_ROOT" } } }})),
+	menu(root.body->append<Gui::BoxElement>({{ { Gui::Prop::CLASS, vec<string> { "_GUI_ROOT" } } }})),
+	debug(root.body->append<Gui::BoxElement>({{ { Gui::Prop::CLASS, vec<string> { "_GUI_ROOT" } } }})),
 	wireframe(game, dim, { 1, 1, 1 }),
 	renderer(renderer) {
 	handItemModel.parent = &handModel;
 	
-	hud = root.body->append<Gui::BoxElement>({{
-		{ Gui::Prop::POS, array<Gui::Expression, 2> { Gui::Expression("0"), Gui::Expression("0") }},
-		{ Gui::Prop::SIZE, array<Gui::Expression, 2> { Gui::Expression("100cw"), Gui::Expression("100ch") }}
-	}});
-	
-	menu = root.body->append<Gui::BoxElement>({{
-		{ Gui::Prop::POS, array<Gui::Expression, 2> { Gui::Expression("0"), Gui::Expression("0") }},
-		{ Gui::Prop::SIZE, array<Gui::Expression, 2> { Gui::Expression("100cw"), Gui::Expression("100ch") }}
-	}});
+	root.addStylesheet({
+		{ "_GUI_ROOT", {{
+			{ Gui::Prop::POS, array<Gui::Expression, 2> { Gui::Expression("0"), Gui::Expression("0") }},
+			{ Gui::Prop::SIZE, array<Gui::Expression, 2> { Gui::Expression("100cw"), Gui::Expression("100ch") }}
+		}}}
+	});
 }
 
 void LocalPlayer::update(f64 delta, vec2 mouseDelta) {
@@ -100,7 +100,7 @@ InventoryPtr LocalPlayer::getInventory() {
 }
 
 bool LocalPlayer::isInMenu() {
-//	return gameGui.isInMenu();
+	return menu->get(0) != nullptr;
 }
 
 void LocalPlayer::showMenu(sptr<Gui::Element> newMenu) {
@@ -116,6 +116,10 @@ void LocalPlayer::closeMenu() {
 
 Gui::Root& LocalPlayer::getRoot() {
 	return root;
+}
+
+sptr<Gui::Element> LocalPlayer::getDebug() {
+	return debug;
 }
 
 sptr<Gui::Element> LocalPlayer::getHud() {
@@ -138,6 +142,7 @@ void LocalPlayer::draw(Renderer&) {
 
 void LocalPlayer::drawHud(Renderer&) {
 	hud->draw(renderer);
+	debug->draw(renderer);
 }
 
 void LocalPlayer::drawMenu(Renderer&) {

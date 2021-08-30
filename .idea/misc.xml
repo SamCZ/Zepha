@@ -7,17 +7,18 @@
       <file path="$PROJECT_DIR$/test" />
     </sourceRoots>
     <libraryRoots>
-      <file path="$PROJECT_DIR$/cmake-build-debug" />
-      <file path="$PROJECT_DIR$/cmake-build-release" />
+      <file path="$PROJECT_DIR$/lib" />
     </libraryRoots>
     <excludeRoots>
-      <file path="$PROJECT_DIR$/.github" />
       <file path="$PROJECT_DIR$/.idea" />
-      <file path="$PROJECT_DIR$/Libraries" />
-      <file path="$PROJECT_DIR$/cmake-build-install" />
-      <file path="$PROJECT_DIR$/lib" />
+      <file path="$PROJECT_DIR$/.vscode" />
+      <file path="$PROJECT_DIR$/.github" />
       <file path="$PROJECT_DIR$/worlds" />
-      <file path="$PROJECT_DIR$/worlds/world" />
+      <file path="$PROJECT_DIR$/cmake-build-debug" />
+      <file path="$PROJECT_DIR$/cmake-build-install" />
+      <file path="$PROJECT_DIR$/cmake-build-release" />
+      <file path="$PROJECT_DIR$/cmake-build-minsizerel" />
+      <file path="$PROJECT_DIR$/cmake-build-relwithdebinfo" />
     </excludeRoots>
   </component>
   <component name="GCoverageShowInEditor">

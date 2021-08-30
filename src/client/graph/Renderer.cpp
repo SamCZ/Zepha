@@ -51,7 +51,7 @@ Renderer::Renderer(glm::ivec2 win) :
 	}));
 	
 	//VSync 1 = On, 0 = Off
-	glfwSwapInterval(1);
+//	glfwSwapInterval(1);
 }
 
 void Renderer::update(double delta) {

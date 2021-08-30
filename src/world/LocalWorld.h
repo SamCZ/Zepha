@@ -3,7 +3,7 @@
 #include "World.h"
 
 #include "client/Window.h"
-#include "client/gui/DebugGui.h"
+#include "client/gui/DebugDisplay.h"
 #include "world/dim/LocalDimension.h"
 #include "client/conn/ClientNetworkInterpreter.h"
 
@@ -90,7 +90,7 @@ private:
 	PlayerPtr player;
 	
 	/** The debug interface. */
-//	DebugGui debugGui;
+	DebugDisplay debug;
 	
 	/** The number of chunks that were interpolated last frome. */
 	u32 lastInterpolations = 0;

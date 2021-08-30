@@ -191,10 +191,10 @@ void Gui::TextElement::updateElement() {
 	}
 	
 	let scale = getStyle<f32, Type::LENGTH>(Prop::TEXT_SIZE, 3.f);
-	let margin = getStyle<ivec4, Type::LENGTH>(Prop::MARGIN, {});
+	let margin = getStyle<vec4, Type::LENGTH>(Prop::MARGIN, {});
 	
-	entity.setScale(vec3(scale, scale, 0));
-	entity.setPos(vec3(getComputedScreenPos() + ivec2 { margin.x, margin.y }, 0));
+	entity.setScale(ivec3(scale, scale, 0));
+	entity.setPos(ivec3(getComputedScreenPos() + vec2 { margin.x, margin.y }, 0));
 	
 	Element::updateElement();
 }

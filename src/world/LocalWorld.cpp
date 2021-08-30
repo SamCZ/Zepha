@@ -13,7 +13,7 @@ LocalWorld::LocalWorld(SubgamePtr game, ServerConnection& conn, Renderer& render
 	renderer(renderer),
 	net(conn, *this),
 	refs(make_shared<LocalInventoryRefs>(game, net)),
-//	debugGui(renderer.window.getSize(), game, *this, perfSections),
+	debug(player.l()->getDebug(), game, *this, perfSections),
 //	worldGenStream(make_shared<WorldInterpolationStream>(*game.l(), *this, 55)),
 	player(make_shared<LocalPlayer>(game, *this, DimensionPtr(nullptr), renderer)) {
 	
@@ -49,12 +49,12 @@ void LocalWorld::update(f64 delta, vec<usize>& perfTimings, PerfTimer& perf) {
 	
 	// Update debug interface
 	perf.start("update:debug");
-//	debugGui.update(
-//		player.l(), delta,
-//		lastInterpolations, net.serverSideChunkGens, net.recvPackets,
-//		perfTimings,
-//		activeDimension->getMeshChunksDrawn(),
-//		activeDimension->getMeshChunksCommitted());
+	debug.update(
+		player.l(), delta,
+		lastInterpolations, net.serverSideChunkGens, net.recvPackets,
+		perfTimings,
+		activeDimension->getMeshChunksDrawn(),
+		activeDimension->getMeshChunksCommitted());
 	perf.resume("other");
 	
 	// Toggle regular interface

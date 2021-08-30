@@ -48,10 +48,10 @@ void Gui::BoxElement::updateElement() {
 		entity.setModel(model);
 	}
 	
-	let margin = getStyle<ivec4, Type::LENGTH>(Prop::MARGIN, {});
+	let margin = getStyle<vec4, Type::LENGTH>(Prop::MARGIN, {});
 	
-	entity.setScale(vec3(getComputedSize(), 0));
-	entity.setPos(vec3(getComputedScreenPos() + ivec2 { margin.x, margin.y }, 0));
+	entity.setScale(ivec3(getComputedSize(), 0));
+	entity.setPos(ivec3(getComputedScreenPos() + vec2 { margin.x, margin.y }, 0));
 	
 	Element::updateElement();
 }

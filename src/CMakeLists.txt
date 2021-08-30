@@ -70,8 +70,8 @@ add_library(Zepha_Core
         client/gui/compound/GuiInventoryList.h
         client/gui/compound/GuiLabelledGraph.cpp
         client/gui/compound/GuiLabelledGraph.cpp
-        client/gui/DebugGui.cpp
-        client/gui/DebugGui.h
+        client/gui/DebugDisplay.cpp
+        client/gui/DebugDisplay.h
         client/gui/GameGui.cpp
         client/gui/GameGui.h
         client/gui/Element.cpp
@@ -146,8 +146,6 @@ add_library(Zepha_Core
         lua/ErrorFormatter.h
         lua/LocalLuaParser.cpp
         lua/LocalLuaParser.h
-        lua/LocalModHandler.cpp
-        lua/LocalModHandler.h
         lua/LuaKeybindHandler.cpp
         lua/LuaKeybindHandler.h
         lua/LuaMod.cpp

@@ -5,15 +5,15 @@ local menu = zepha.gui(function()
         Gui.Box {
             id = "inventory",
 
-            size = { 342, 187 },
+            size = { "342dp", "187dp" },
             pos = { "50cw - 50sw", "50ch - 50sh" },
 
             Gui.Box {
                 id = "backpack",
 
                 pos = { 1, 0 },
-                size = { 106, 187 },
-                padding = { 19, 9, 8, 9 },
+                size = { "106dp", "187dp" },
+                padding = { "19dp", "9dp", "8dp", "9dp" },
 
                 background = "zeus:inventory:backpack"
 
@@ -70,8 +70,8 @@ local menu = zepha.gui(function()
             Gui.Box {
                 id = "player_frame",
 
-                pos = { 105, 0 },
-                size = { 106, 187 },
+                pos = { "105dp", 0 },
+                size = { "106dp", "187dp" },
 
                 background = "zeus:inventory:player_frame",
 
@@ -88,25 +88,26 @@ local menu = zepha.gui(function()
             Gui.Box {
                 id = "equipment",
 
-                pos = { 209, 1 },
-                size = { 132, 80 },
-                padding = { 18, 8, 8, 8 },
+                pos = { "209dp", "1dp" },
+                size = { "132dp", "80dp" },
+                padding = { "18dp", "8dp", "8dp", "8dp" },
                 background = "zeus:inventory:equipment",
 
                 Gui.Box {
                     id = "player_clamp",
 
-                    pos = { 41, 1 },
-                    size = { 34, 52 },
+                    pos = { "41dp", "1dp" },
+                    size = { "34dp", "52dp" },
                     overflow = "hidden"
                 }
             },
             Gui.Box {
                 id = "dynamic",
 
-                pos = { 209, 80 },
-                size = { 132, 107 },
-                padding = { 8, 8, 8, 8 },
+                pos = { "209dp", "80dp" },
+                size = { "132dp", "107dp" },
+                padding = "8dp",
+
                 background = "zeus:inventory:dynamic"
 
 --                 Gui.InventoryList {

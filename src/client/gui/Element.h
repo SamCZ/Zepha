@@ -94,19 +94,22 @@ namespace Gui {
 		void onClick(const std::function<void(i32, bool)>& cb);
 		
 		/** Returns the element's computed size. */
-		virtual ivec2 getComputedSize() const;
+		virtual vec2 getComputedSize() const;
 		
 		/** Returns the element's computed content size, which is its size - padding. */
-		virtual ivec2 getComputedContentSize() const;
+		virtual vec2 getComputedContentSize() const;
 		
 		/** Returns the element's explicit size. Unspecified dimensions are -1. */
-		virtual ivec2 getExplicitSize() const;
+		virtual vec2 getExplicitSize() const;
 		
 		/** Returns the element's computed position relative to its parent. */
-		virtual ivec2 getComputedPos() const;
+		virtual vec2 getComputedPos() const;
 		
 		/** Returns the element's computed position relative to the screen. */
-		virtual ivec2 getComputedScreenPos() const;
+		virtual vec2 getComputedScreenPos() const;
+		
+		/** Returns the element's explicit position. Unspecified dimensions are nan. */
+		virtual vec2 getExplicitPos() const;
 		
 		/** Gets a style value from the element's styles or the root's stylesheets. */
 		const optional<any> getStyle(Prop rule) const {
@@ -232,16 +235,16 @@ namespace Gui {
 		std::function<void(u32, bool)> clickCb = nullptr;
 		
 		/** The screen offset of the parent. */
-		ivec2 parentOffset {};
+		vec2 parentOffset {};
 		
 		/** The last computed size of the element. */
-		mutable ivec2 computedSize {};
+		mutable vec2 computedSize {};
 		
 		/** The element's implicit size, as defined by the parent layout. */
-		ivec2 layoutSize { -1, -1 };
+		vec2 layoutSize { -1, -1 };
 		
 		/** The element's implicit position, as defined by the parent layout. */
-		ivec2 layoutPosition {};
+		vec2 layoutPosition {};
 		
 		/** Updates child sizes and offsets based on layout styles. */
 		virtual void layoutChildren();

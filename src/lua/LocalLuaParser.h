@@ -9,6 +9,7 @@
 #include "lua/LuaParser.h"
 
 #include "LuaMod.h"
+#include "client/Callback.h"
 #include "util/CovariantPtr.h"
 #include "lua/LuaKeybindHandler.h"
 
@@ -35,9 +36,9 @@ private:
 	sol::protected_function_result runFileSandboxed(const std::string& file);
 	
 	Client* client;
-	LuaKeybindHandler keybinds;
 	double accumulatedDelta = 0;
 	
-	std::unordered_map<string, LuaMod> mods {};
+	vec<CallbackRef> refs;
 	vec<string> modLoadOrder {};
+	std::unordered_map<string, LuaMod> mods {};
 };

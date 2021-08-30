@@ -33,7 +33,7 @@
 // Util
 #include "lua/register/CreateRegister.h"
 
-LocalLuaParser::LocalLuaParser(LocalSubgame& game) : LuaParser(game), keybinds(this) {}
+LocalLuaParser::LocalLuaParser(LocalSubgame& game) : LuaParser(game) {}
 
 void LocalLuaParser::init(WorldPtr world, PlayerPtr player, Client& client) {
 	this->client = &client;
@@ -139,13 +139,13 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
 	
 	Api::Util::createRegister(lua, core, "mesh");
 	Api::Util::createRegister(lua, core, "item",
-		[&](const auto& iden) { RegisterItem::client(core, game, iden); });
+		[&](const string& iden) { RegisterItem::client(core, game, iden); });
 	Api::Util::createRegister(lua, core, "block",
-		[&](const auto& iden) { RegisterBlock::client(core, game, iden); });
+		[&](const string& iden) { RegisterBlock::client(core, game, iden); });
 	Api::Util::createRegister(lua, core, "biome",
-		[&](const auto& iden) { RegisterBiome::client(core, game, iden); });
+		[&](const string& iden) { RegisterBiome::client(core, game, iden); });
 	Api::Util::createRegister(lua, core, "keybind",
-		[&](const auto& iden) { RegisterKeybind::client(core, keybinds, iden); });
+		[&](const string& iden) { RegisterKeybind::client(core, client->renderer.window.input, refs, iden); });
 	Api::Util::createRegister(lua, core, "blockmodel");
 	Api::Util::createRegister(lua, core, "entity", nullptr, "entities");
 	
