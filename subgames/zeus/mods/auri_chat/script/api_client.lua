@@ -2,13 +2,6 @@ chat.open = false
 chat.current_channel = nil
 chat._message_persist_time = 5
 
--- Toggles the chat being open and listening for input.
-chat.set_open = function(open)
-    if open == nil then chat.open = not chat.open
-    else chat.open = open end
-    chat._refresh()
-end
-
 -- Sends a message from the player to the chat channel.
 chat.send = function(message)
     chat.send_channel(nil, message)

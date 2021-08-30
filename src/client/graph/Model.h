@@ -34,8 +34,9 @@ class Model {
 	
 	const ModelAnimation& getAnimation();
 	
-	std::vector<std::unique_ptr<EntityMesh>> meshes;
-	private:
+	std::vector<std::unique_ptr<EntityMesh>> meshes {};
+
+private:
 	void loadModelMeshes(aiNode* node, const aiScene* scene);
 	
 	void loadMeshAndBone(aiMesh* mesh, std::unique_ptr<EntityMesh>& target);
@@ -73,11 +74,11 @@ class Model {
 		return merge(keysArray[index].second, keysArray[nextIndex].second, factor);
 	}
 	
-	ModelAnimation animation{};
-	std::vector<ModelBone*> rootBones{};
-	std::vector<ModelBone> bones{};
-	std::vector<std::shared_ptr<AtlasRef>> textures{};
+	ModelAnimation animation {};
+	std::vector<ModelBone*> rootBones {};
+	std::vector<ModelBone> bones {};
+	std::vector<std::shared_ptr<AtlasRef>> textures {};
 	
-	glm::mat4 globalInverseTransform{};
+	glm::mat4 globalInverseTransform {};
 };
 

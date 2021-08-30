@@ -8,8 +8,9 @@
 #include "client/graph/Model.h"
 #include "client/graph/ModelAnimation.h"
 
-AnimationState::AnimationState(Model& source) {
-	const ModelAnimation& animation = source.getAnimation();
+AnimationState::AnimationState(Model* source) {
+	if (!source) return;
+	const ModelAnimation& animation = source->getAnimation();
 	ticksPerSecond = animation.ticksPerSecond;
 	duration = animation.duration;
 	range = { 0, duration };

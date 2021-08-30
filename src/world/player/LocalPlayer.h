@@ -71,6 +71,9 @@ public:
 	/** Gets the hud element. */
 	sptr<Gui::Element> getHud();
 	
+	/** Gets the menu element. */
+	sptr<Gui::Element> getMenu();
+	
 	/** Sets the hud to the specified element. */
 	void setHud(sptr<Gui::Element> hud);
 	

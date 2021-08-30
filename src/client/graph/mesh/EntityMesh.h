@@ -1,28 +1,22 @@
-//
-// Created by aurailus on 18/06/19.
-//
-
 #pragma once
-
-#include <vector>
 
 #include "Mesh.h"
 
 #include "EntityVertex.h"
 
 class EntityMesh : public Mesh {
-	public:
+public:
 	EntityMesh() = default;
 	
 	EntityMesh(const EntityMesh& o);
 	
-	void create(const std::vector<EntityVertex>& vertices, const std::vector<unsigned int>& indices);
+	void create(const vec<EntityVertex>& vertices, const vec<u32>& indices);
 	
 	~EntityMesh() = default;
 	
-	private:
+private:
 	void initModel();
-	
-	std::vector<EntityVertex> vertices{};
-	std::vector<unsigned int> indices{};
+
+	vec<u32> indices {};
+	vec<EntityVertex> vertices {};
 };

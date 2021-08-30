@@ -163,16 +163,15 @@ void Api::Usertype::ServerPlayer::bind(State, sol::state& lua, sol::table& core)
 	);
 }
 
-bool Api::Usertype::LocalPlayer::is_in_menu() {
-	return player.l()->isInMenu();
+void Api::Usertype::LocalPlayer::set_menu(sol::object elem) {
+	if (elem.is<sptr<Gui::Element>>()) player.l()->showMenu(elem.as<sptr<Gui::Element>>());
+	else player.l()->closeMenu();
 }
 
-void Api::Usertype::LocalPlayer::show_menu(std::shared_ptr<Gui::Element> root) {
-	return player.l()->showMenu(root);
-}
-
-void Api::Usertype::LocalPlayer::close_menu() {
-	return player.l()->closeMenu();
+sol::object Api::Usertype::LocalPlayer::get_menu(sol::this_state s) {
+	let menu = player.l()->getMenu();
+	if (menu) return sol::make_object(s, menu);
+	else return sol::nil;
 }
 
 std::shared_ptr<Gui::Element> Api::Usertype::LocalPlayer::get_hud() {
@@ -208,8 +207,8 @@ void Api::Usertype::LocalPlayer::bind(State, sol::state& lua, sol::table& core) 
 		
 		"get_dimension", &LocalPlayer::get_dimension,
 		
-		"show_menu", &LocalPlayer::show_menu,
-		"close_menu", &LocalPlayer::close_menu,
+		"get_menu", &LocalPlayer::get_menu,
+		"set_menu", &LocalPlayer::set_menu,
 		"set_hud", &LocalPlayer::set_hud,
 		"get_hud", &LocalPlayer::get_hud,
 		
@@ -222,6 +221,6 @@ void Api::Usertype::LocalPlayer::bind(State, sol::state& lua, sol::table& core) 
 		
 		"flying", sol::property(&LocalPlayer::set_flying, &LocalPlayer::get_flying),
 		
-		"in_menu", sol::property(&LocalPlayer::is_in_menu)
+		"menu", sol::property(&LocalPlayer::get_menu, &LocalPlayer::set_menu)
 	);
 }

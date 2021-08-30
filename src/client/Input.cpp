@@ -45,7 +45,8 @@ bool Input::isMouseDown(u32 button) {
 void Input::setMouseLocked(bool lock) {
 	forceMouseUnlocked = !lock;
 	mouseLocked = lock;
-	glfwSetCursorPos(window, LOCKED_MOUSE_POS.x, LOCKED_MOUSE_POS.y);
+	let mousePos = static_cast<Window*>(glfwGetWindowUserPointer(window))->getSize() / 2;
+	glfwSetCursorPos(window, mousePos.x, mousePos.y);
 	glfwSetInputMode(window, GLFW_CURSOR, (mouseLocked ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL));
 }
 

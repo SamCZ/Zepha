@@ -23,8 +23,10 @@ void Gui::BoxElement::updateElement() {
 		const let bgColor = getStyle<vec4, Type::COLOR>(bgRule);
 		const string bgImage = getStyle<string>(bgRule, "");
 		
-		let mesh = std::make_unique<EntityMesh>();
-		if (bgColor && bgColor->a != 0) {
+		if ((!bgColor || bgColor->a == 0) && bgImage.empty()) entity.setModel(nullptr);
+		else if (bgColor) {
+			let mesh = make_unique<EntityMesh>();
+			
 			tex = nullptr;
 			mesh->create({
 				{ { 0, 0, 0 }, *bgColor, vec3(1), false, {}, {}, {} },
@@ -32,8 +34,14 @@ void Gui::BoxElement::updateElement() {
 				{ { 1, 1, 0 }, *bgColor, vec3(1), false, {}, {}, {} },
 				{ { 1, 0, 0 }, *bgColor, vec3(1), false, {}, {}, {} }
 			}, { 0, 1, 2, 2, 3, 0 });
+			
+			let model = make_shared<Model>();
+			model->fromMesh(std::move(mesh));
+			entity.setModel(model);
 		}
-		else if (!bgImage.empty()) {
+		else {
+			let mesh = make_unique<EntityMesh>();
+			
 			tex = root.atlas[bgImage];
 			mesh->create({
 				{ { 0, 0, 0 }, { tex->uv.x, tex->uv.y, 0, 1 }, vec3(1), true, {}, {}, {} },
@@ -41,11 +49,11 @@ void Gui::BoxElement::updateElement() {
 				{ { 1, 1, 0 }, { tex->uv.z, tex->uv.w, 0, 1 }, vec3(1), true, {}, {}, {} },
 				{ { 1, 0, 0 }, { tex->uv.z, tex->uv.y, 0, 1 }, vec3(1), true, {}, {}, {} }
 			}, { 0, 1, 2, 2, 3, 0 });
+			
+			let model = make_shared<Model>();
+			model->fromMesh(std::move(mesh));
+			entity.setModel(model);
 		}
-	
-		let model = make_shared<Model>();
-		model->fromMesh(std::move(mesh));
-		entity.setModel(model);
 	}
 	
 	let margin = getStyle<vec4, Type::LENGTH>(Prop::MARGIN, {});

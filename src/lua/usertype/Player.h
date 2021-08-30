@@ -76,11 +76,9 @@ class Api::Usertype::LocalPlayer : public ServerPlayer {
 public:
 	LocalPlayer(PlayerPtr player) : ServerPlayer(player) {}
 	
-	bool is_in_menu();
+	sol::object get_menu(sol::this_state s);
 	
-	void show_menu(std::shared_ptr<Gui::Element> root);
-	
-	void close_menu();
+	void set_menu(sol::object elem);
 	
 	std::shared_ptr<Gui::Element> get_hud();
 	

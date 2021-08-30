@@ -13,15 +13,15 @@
 
 
 DrawableEntity::DrawableEntity(SubgamePtr game, DimensionPtr dim) :
-	Entity(game, dim),
-	model(std::make_shared<Model>()) {}
+	Entity(game, dim) {}
 
 DrawableEntity::DrawableEntity(SubgamePtr game, DimensionPtr dim, std::shared_ptr<Model> model) :
-	Entity(game, dim),
-	model(model) {}
+	Entity(game, dim) {
+	setModel(model);
+}
 
 void DrawableEntity::setModel(std::shared_ptr<Model> model) {
-	animation = AnimationState(*model);
+	animation = AnimationState(model.get());
 	this->model = std::move(model);
 	animation.setPlaying(true);
 }

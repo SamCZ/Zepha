@@ -109,6 +109,10 @@ void LocalPlayer::showMenu(sptr<Gui::Element> newMenu) {
 	renderer.window.input.setMouseLocked(false);
 }
 
+sptr<Gui::Element> LocalPlayer::getMenu() {
+	return menu->get(0);
+}
+
 void LocalPlayer::closeMenu() {
 	menu->clear();
 	renderer.window.input.setMouseLocked(true);
