@@ -45,7 +45,7 @@ chat._refresh = function()
         local i = 0
         for _, identifier in ipairs(chat.channel_order) do
             local channel = chat.channels[identifier]
-            chat_menu_tabs:append(Gui.Box {
+            chat_menu_tabs:append(zepha.Gui.Box {
                 size = { '48dp', '10dp' },
                 pos = { i * 49 .. 'dp', '0dp' },
                 background = (chat.current_channel == identifier) and '#0005' or '#0002',
