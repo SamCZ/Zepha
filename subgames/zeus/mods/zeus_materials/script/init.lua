@@ -1,9 +1,9 @@
-runfile("zeus:materials/items/stick")
-runfile("zeus:materials/items/rock")
-runfile("zeus:materials/items/flint")
-runfile("zeus:materials/items/flint_heads")
-runfile("zeus:materials/items/plant_fibre")
-runfile("zeus:materials/items/plant_twine")
+require("zeus:materials/items/stick")
+require("zeus:materials/items/rock")
+require("zeus:materials/items/flint")
+require("zeus:materials/items/flint_heads")
+require("zeus:materials/items/plant_fibre")
+require("zeus:materials/items/plant_twine")
 
 if zepha.server then
     zepha.bind("new_player", function(player)

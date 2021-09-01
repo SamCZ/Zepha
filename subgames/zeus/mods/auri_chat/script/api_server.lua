@@ -57,7 +57,7 @@ zepha.bind('message', function(channel, message, player)
 
     if channel == '@auri:chat:message' then
         local user = player:get_username()
-        local color = user:sub(16, 16)
+        local color = tonumber(user:sub(16, 16)) + 4
         chat.send_channel('`b`c' .. color .. user, message.channel, message.content)
     end
 end)

@@ -1,46 +1,34 @@
-//
-// Created by aurailus on 2019-12-28.
-//
-
 #include "LuaErrorScene.h"
 
+#include "util/Types.h"
 #include "client/Client.h"
-#include "client/graph/Font.h"
 #include "client/graph/Renderer.h"
-#include "client/gui/basic/GuiRect.h"
-#include "client/gui/basic/GuiText.h"
+#include "client/gui/TextElement.h"
+#include "client/scene/MainMenuScene.h"
 
-LuaErrorScene::LuaErrorScene(Client& client, const std::string& err) : Scene(client), err(err) {
+LuaErrorScene::LuaErrorScene(Client& client, const std::string& err) : Scene(client),
+	root(client.renderer.window, client.game->textures) {
+	
 	client.renderer.setClearColor(0, 0, 0);
 	client.renderer.window.input.setMouseLocked(false);
 	
-	Font f(client.game->textures, client.game->textures["font"]);
-	glm::ivec2 win = client.renderer.window.getSize();
+	using Expr = Gui::Expression;
+	root.body->append<Gui::TextElement>({{
+		{ Gui::Prop::TEXT_SIZE, Expr("2px") },
+		{ Gui::Prop::SIZE, array<Expr, 2> { Expr("100dp"), Expr("-1") } },
+		{ Gui::Prop::CONTENT, string("`cfEncountered a fatal mod error ;-;\n\n`r") + err },
+		{ Gui::Prop::MARGIN, array<Expr, 4> { Expr("4dp"), Expr("4dp"), Expr("4dp"), Expr("4dp") } }
+	}});
 	
-//	auto container = std::make_shared<GuiRect>(client.renderer.window, "container");
-//	container->create({ 800, 500 }, {}, { 0.05, 0.05, 0.05, 1 });
-//	container->setPos({ win.x / 2 - 800 / 2, win.y / 2 - 500 / 2 });
-//	components.add(container);
-//
-//	auto titleText = std::make_shared<GuiText>(client.renderer.window, "titleText");
-//	titleText->create({ 3, 3 }, {}, {}, { 1, 0.4, 0.5, 1 }, f);
-//	titleText->setText("The Zepha sandbox has encountered an error.");
-//	titleText->setPos({ 16, 12 });
-//	container->add(titleText);
-//
-//	auto errorText = std::make_shared<GuiText>(client.renderer.window, "errorText");
-//	errorText->create({ 2, 2 }, {}, {}, { 0.85, 0.85, 0.85, 1 }, f);
-//	errorText->setText(err);
-//	errorText->setPos({ 16, 48 });
-//	container->add(errorText);
-//
-//	lock = client.renderer.window.onResize([&](glm::ivec2 win) {
-//		components.get<GuiRect>("container")->setPos({ win.x / 2 - 800 / 2, win.y / 2 - 500 / 2 });
-//	});
+	root.body->onClick([&](i32 button, bool down) {
+		if (button != GLFW_MOUSE_BUTTON_1 || !down) return;
+		client.scene.setScene(make_unique<MainMenuScene>(client));
+	});
 }
 
 void LuaErrorScene::update() {
 	client.game->textures.update();
+	root.update();
 }
 
 void LuaErrorScene::draw() {
@@ -51,5 +39,5 @@ void LuaErrorScene::draw() {
 	renderer.beginGUIDrawCalls();
 	renderer.enableTexture(&client.game->textures.atlasTexture);
 	
-//	components.draw(renderer);
+	root.draw(renderer);
 }

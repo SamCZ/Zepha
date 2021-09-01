@@ -140,48 +140,8 @@ void ServerLuaParser::loadApi(WorldPtr world) {
 	
 	bindModules();
 	
-	// Create sandboxed runfile()
-	lua["dofile"] = lua["loadfile"] = sol::nil;
-	lua.set_function("runfile", &ServerLuaParser::runFileSandboxed, this);
-}
-
-sol::protected_function_result ServerLuaParser::errorCallback(sol::protected_function_result r) {
-	sol::error err = r;
-	std::string errString = err.what();
-	
-	try {
-		std::string::size_type slash = errString.find_first_of("/");
-		if (slash != std::string::npos) throw "npos";
-		
-		std::string modString = errString.substr(0, slash);
-		
-		std::string::size_type lineNumStart = errString.find(':', slash);
-		if (lineNumStart != std::string::npos) throw "lineNumStart";
-		std::string::size_type lineNumEnd = errString.find(':', lineNumStart + 1);
-		if (lineNumEnd != std::string::npos) throw "lineNumEnd";
-		
-		std::string fileName = errString.substr(0, lineNumStart);
-		int lineNum = std::stoi(errString.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1));
-		
-		for (auto& mod : handler.cGetMods()) {
-			if (mod.config.name == modString) {
-				for (auto& file : mod.files) {
-					if (file.path == fileName) {
-						std::cout << std::endl << ErrorFormatter::formatError(fileName, lineNum, errString, file.file)
-						          << std::endl;
-						break;
-					}
-				}
-				break;
-			}
-		}
-	}
-	catch (...) {
-		std::cout << Log::err << "Zepha has encountered an error, and ErrorFormatter failed to format it:"
-		          << std::endl << std::endl << errString << Log::endl;
-	}
-	
-	throw std::runtime_error("Exiting.");
+	lua.set_function("require", &ServerLuaParser::runFileSandboxed, this);
+	lua["dofile"] = lua["loadfile"] = lua["require"];
 }
 
 sol::protected_function_result ServerLuaParser::runFileSandboxed(const std::string& file) {
@@ -200,8 +160,10 @@ sol::protected_function_result ServerLuaParser::runFileSandboxed(const std::stri
 			env["_FILE"] = f.path;
 			env["_MODNAME"] = mod.config.name;
 			
-			return lua.safe_script(f.file, env, std::bind(&ServerLuaParser::errorCallback, this,
-				std::placeholders::_2), "@" + f.path, sol::load_mode::text);
+			using Pfr = sol::protected_function_result;
+			return lua.safe_script(f.file, env,
+				[](lua_State*, Pfr pfr) -> Pfr { throw static_cast<sol::error>(pfr); },
+				"@" + f.path, sol::load_mode::text);
 		}
 		throw std::runtime_error("Error opening \"" + file + "\", file not found.");
 	}

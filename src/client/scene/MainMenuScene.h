@@ -17,7 +17,6 @@ class Client;
 
 class MainMenuScene : public Scene {
 public:
-	
 	explicit MainMenuScene(Client& client);
 	
 	void update() override;
@@ -25,7 +24,6 @@ public:
 	void draw() override;
 	
 private:
-	
 	/** Find valid subgames in the subgames folder. */
 	void findSubgames();
 

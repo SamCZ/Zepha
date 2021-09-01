@@ -1,6 +1,6 @@
 local identifier = "zeus:world:plains"
 
-local wood = "zeus:default:wood"
+local wood = "zeus:default:bush_stem"
 local leaf = "zeus:default:leaves"
 local none = "invalid"
 
@@ -93,13 +93,13 @@ table.insert(structures, zepha.create_structure({
   origin = V(2, 2, 2),
   probability = 0.0005,
   layout = {
-      trunk_layer_0,
-      trunk_layer_0,
-      trunk_layer_0,
-      trunk_layer_0,
-      trunk_layer_1,
-      trunk_layer_1,
-      trunk_layer_1,
+--       trunk_layer_0,
+--       trunk_layer_0,
+--       trunk_layer_0,
+--       trunk_layer_0,
+--       trunk_layer_1,
+--       trunk_layer_1,
+--       trunk_layer_1,
       trunk_layer_2,
       trunk_layer_2,
       trunk_layer_2,
@@ -128,7 +128,7 @@ for i = 1, 5 do
        layout = {{{ "zeus:default:tall_grass_" .. tostring(i) }}}
    }))
 end
---
+
 table.insert(structures, zepha.create_structure({
    origin = V(),
    probability = 0.025,
@@ -200,7 +200,7 @@ zepha.register_biome(identifier, {
     },
     tags = { natural = 1, default = 1 },
     structures = structures,
-    biome_tint = "#aaed45",
+    biome_tint = "#6effee",
     noise = noise
 })
 

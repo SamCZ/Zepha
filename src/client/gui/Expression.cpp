@@ -109,9 +109,7 @@ void Gui::Expression::setExpression(string exp) {
 }
 
 f32 Gui::Expression::eval(const ExpressionInfo& info) {
-	if (!expression.size()) {
-		return nanf("");
-	}
+	if (!expression.size()) return nanf("");
 	
 	std::stack<Token> eval {};
 	

@@ -4,10 +4,13 @@
 
 #pragma once
 
+#include <unordered_map>
+
 #include "lua/LuaParser.h"
 
+#include "LuaMod.h"
+#include "client/Callback.h"
 #include "util/CovariantPtr.h"
-#include "lua/LocalModHandler.h"
 #include "lua/LuaKeybindHandler.h"
 
 class Client;
@@ -16,23 +19,26 @@ class LocalPlayer;
 class LocalSubgame;
 
 class LocalLuaParser : public LuaParser {
-	public:
+public:
 	explicit LocalLuaParser(LocalSubgame& game);
 	
 	void init(WorldPtr world, PlayerPtr player, Client& client);
 	
 	void update(double delta) override;
 	
-	LocalModHandler& getHandler();
+	void addMod(const LuaMod& mod);
 	
-	private:
+	void setModLoadOrder(const vec<string> order);
+	
+private:
 	void loadApi(WorldPtr world, PlayerPtr player);
-	
-	virtual sol::protected_function_result errorCallback(sol::protected_function_result r) override;
 	
 	sol::protected_function_result runFileSandboxed(const std::string& file);
 	
-	LuaKeybindHandler keybinds;
-	LocalModHandler handler;
+	Client* client;
 	double accumulatedDelta = 0;
+	
+	vec<CallbackRef> refs;
+	vec<string> modLoadOrder {};
+	std::unordered_map<string, LuaMod> mods {};
 };

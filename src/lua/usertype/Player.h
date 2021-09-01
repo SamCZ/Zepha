@@ -4,15 +4,11 @@
 
 #pragma once
 
-//#include <sol/forward.hpp>
-
 #include <memory>
 
 #include "Inventory.h"
 #include "Dimension.h"
 #include "world/player/LocalPlayer.h"
-
-//class LuaGuiElement;
 
 namespace Api::Usertype {
 	class ServerPlayer;
@@ -80,15 +76,13 @@ class Api::Usertype::LocalPlayer : public ServerPlayer {
 public:
 	LocalPlayer(PlayerPtr player) : ServerPlayer(player) {}
 	
-	bool is_in_menu();
+	sol::object get_menu(sol::this_state s);
 	
-//	void show_menu(std::shared_ptr<LuaGuiElement> root);
+	void set_menu(sol::object elem);
 	
-	void close_menu();
+	std::shared_ptr<Gui::Element> get_hud();
 	
-//	std::shared_ptr<LuaGuiElement> get_hud();
-	
-//	void set_hud(std::shared_ptr<LuaGuiElement> hud);
+	void set_hud(std::shared_ptr<Gui::Element> hud);
 	
 	static void bind(State state, sol::state& lua, sol::table& core);
 };

@@ -1,10 +1,10 @@
 #include "GameScene.h"
 
-#include "util/Util.h"
 #include "client/Client.h"
-#include "util/PerfTimer.h"
+#include "lua/ModException.h"
 #include "util/net/PacketView.h"
 #include "client/graph/Renderer.h"
+#include "client/scene/LuaErrorScene.h"
 
 GameScene::GameScene(Client& client) : Scene(client),
 	world(make_shared<LocalWorld>(client.game, client.connection, client.renderer, perfSections)) {
@@ -13,8 +13,15 @@ GameScene::GameScene(Client& client) : Scene(client),
 	r.sendTo(client.connection.getPeer(), Packet::Channel::CONNECT);
 	
 	world.l()->init();
-	client.game->init(world, world.l()->getPlayer(), client);
-	world.l()->updatePlayerDimension();
+	
+	try {
+		client.game->init(world, world.l()->getPlayer(), client);
+		world.l()->updatePlayerDimension();
+	}
+	catch (ModException e) {
+		client.scene.setScene(make_unique<LuaErrorScene>(client, e.what()));
+		return;
+	}
 	
 	client.renderer.setClearColor(148, 194, 240);
 //	client.renderer.setClearColor(16, 24, 32);

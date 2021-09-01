@@ -18,7 +18,7 @@
 
 MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 	root(client.renderer.window, client.game->textures),
-	sandboxElem(root.create<Gui::BoxElement>({ .classes = { "sandbox" }})),
+	sandboxElem(root.create<Gui::BoxElement>()),
 	sandbox(client, root, sandboxElem) {
 	
 	client.renderer.setClearColor(0, 0, 0);
@@ -28,78 +28,68 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 
 	root.addStylesheet({
 		{ "navigation", {{
-			{ Gui::StyleRule::SIZE, array<Expr, 2> { Expr(""), Expr("18dp") } }
+			{ Gui::Prop::SIZE, array<Expr, 2> { Expr(""), Expr("18dp") } }
 		}}},
 		{ "navigationWrap", {{
-			{ Gui::StyleRule::DIRECTION, string("row") },
-			{ Gui::StyleRule::POS, array<Expr, 2> { Expr("0"), Expr("0") } }
+			{ Gui::Prop::DIRECTION, string("row") },
+			{ Gui::Prop::POS, array<Expr, 2> { Expr("0"), Expr("0") } }
 		}}},
 		{ "navigationBackground", {{
-			{ Gui::StyleRule::SIZE, array<Expr, 2> { Expr("64dp"), Expr("18dp") } },
-			{ Gui::StyleRule::BACKGROUND, string("menu_bar_bg") }
+			{ Gui::Prop::SIZE, array<Expr, 2> { Expr("64dp"), Expr("18dp") } },
+			{ Gui::Prop::BACKGROUND, string("menu_bar_bg") }
 		}}},
 		{ "navigationButton", {{
-			{ Gui::StyleRule::SIZE, array<Expr, 2> { Expr("16dp"), Expr("16dp") } },
-			{ Gui::StyleRule::CURSOR, string("pointer") }
+			{ Gui::Prop::SIZE, array<Expr, 2> { Expr("16dp"), Expr("16dp") } },
+			{ Gui::Prop::CURSOR, string("pointer") }
 		}}}
 	});
 
 	root.body->append(sandboxElem);
-	let navigation = root.body->append<Gui::BoxElement>({ .classes = { "navigation" } });
-	let navigationBG = navigation->append<Gui::BoxElement>({ .classes = { "navigationWrap" } });
+	let navigation = root.body->append<Gui::BoxElement>({{{ Gui::Prop::CLASS, vec<string> { "navigation" } }}});
+	let navigationBG = navigation->append<Gui::BoxElement>({{{ Gui::Prop::CLASS, vec<string> { "navigationWrap" } }}});
 
 	for (usize i = 0; i < 2000 / Gui::PX_SCALE / 64; i++)
-		navigationBG->append<Gui::BoxElement>({ .classes = { "navigationBackground" } });
+		navigationBG->append<Gui::BoxElement>({{{ Gui::Prop::CLASS, vec<string> { "navigationBackground" } }}});
 
-	let navigationList = navigation->append<Gui::BoxElement>({
-		.classes = { "navigationWrap" },
-		.styles = {{
-			{ Gui::StyleRule::PADDING, array<Expr, 4> { Expr("1dp"), Expr("1dp"), Expr("1dp"), Expr("1dp") } },
-			{ Gui::StyleRule::GAP, array<Expr, 2> { Expr("1dp"), Expr("1dp") } }
-		}}
-	});
+	let navigationList = navigation->append<Gui::BoxElement>({{
+		{ Gui::Prop::CLASS, vec<string> { "navigationWrap" } },
+		{ Gui::Prop::GAP, array<Expr, 2> { Expr("1dp"), Expr("1dp") } },
+		{ Gui::Prop::PADDING, array<Expr, 4> { Expr("1dp"), Expr("1dp"), Expr("1dp"), Expr("1dp") } }
+	}});
 
-	navigationList->append<Gui::BoxElement>({
-		.classes = { "navigationButton" },
-		.styles = {{
-			{ Gui::StyleRule::BACKGROUND, string("crop(0, 0, 16, 16, menu_flag_multiplayer)") },
-			{ Gui::StyleRule::BACKGROUND_HOVER, string("crop(16, 0, 16, 16, menu_flag_multiplayer)") }
-		}}
-	});
+	navigationList->append<Gui::BoxElement>({{
+		{ Gui::Prop::CLASS, vec<string> { "navigationButton" } },
+		{ Gui::Prop::BACKGROUND, string("crop(0, 0, 16, 16, menu_flag_multiplayer)") },
+		{ Gui::Prop::BACKGROUND_HOVER, string("crop(16, 0, 16, 16, menu_flag_multiplayer)") }
+	}});
 
-	let contentButton = navigationList->append<Gui::BoxElement>({
-		.classes = { "navigationButton" },
-		.styles = {{
-			{ Gui::StyleRule::BACKGROUND, string("crop(0, 0, 16, 16, menu_flag_content)") },
-			{ Gui::StyleRule::BACKGROUND_HOVER, string("crop(16, 0, 16, 16, menu_flag_content)") }
-		}}
-	});
+	let contentButton = navigationList->append<Gui::BoxElement>({{
+		{ Gui::Prop::CLASS, vec<string> { "navigationButton" } },
+		{ Gui::Prop::BACKGROUND, string("crop(0, 0, 16, 16, menu_flag_content)") },
+		{ Gui::Prop::BACKGROUND_HOVER, string("crop(16, 0, 16, 16, menu_flag_content)") }
+	}});
 
 	contentButton->onClick([&](u32 button, bool down) {
 		if (button != GLFW_MOUSE_BUTTON_1 || !down) return;
 		client.scene.setScene(make_unique<ConnectScene>(client, Address { "127.0.0.1" }));
 	});
 	
-	navigationList->append<Gui::BoxElement>({
-		.styles = {{
-			{ Gui::StyleRule::BACKGROUND, string("#fff5") },
-			{ Gui::StyleRule::SIZE, array<Expr, 2> { Expr("1dp"), Expr("10dp") } },
-			{ Gui::StyleRule::MARGIN, array<Expr, 4> { Expr("2dp"), Expr("3dp"), Expr("2dp"), Expr("3dp") } }
-		}}
-	});
+	navigationList->append<Gui::BoxElement>({{
+		{ Gui::Prop::BACKGROUND, string("#fff5") },
+		{ Gui::Prop::SIZE, array<Expr, 2> { Expr("1dp"), Expr("10dp") } },
+		{ Gui::Prop::MARGIN, array<Expr, 4> { Expr("2dp"), Expr("3dp"), Expr("2dp"), Expr("3dp") } }
+	}});
 
 	findSubgames();
 
 	for (usize i = 0; i < subgames.size(); i++) {
 		let& subgame = subgames[i];
 		
-		let elem = navigationList->append<Gui::BoxElement>({
-			.classes = { "navigationButton" },
-			.styles = {{
-				{ Gui::StyleRule::BACKGROUND, string("crop(0, 0, 16, 16, " + subgame.iconRef->name + ")") },
-				{ Gui::StyleRule::BACKGROUND_HOVER, string("crop(16, 0, 16, 16, " + subgame.iconRef->name + ")") }
-			}}
-		});
+		let elem = navigationList->append<Gui::BoxElement>({{
+			{ Gui::Prop::CLASS, vec<string> { "navigationButton" } },
+			{ Gui::Prop::BACKGROUND, string("crop(0, 0, 16, 16, " + subgame.iconRef->name + ")") },
+			{ Gui::Prop::BACKGROUND_HOVER, string("crop(16, 0, 16, 16, " + subgame.iconRef->name + ")") }
+		}});
 		
 		elem->onClick([&](u32 button, bool down) {
 			if (button != GLFW_MOUSE_BUTTON_1 || !down) return;
@@ -115,21 +105,17 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 
 	navigationList->append<Gui::BoxElement>();
 
-	navigationList->append<Gui::BoxElement>({
-		.classes = { "navigationButton" },
-		.styles = {{
-			{ Gui::StyleRule::BACKGROUND, string("crop(0, 0, 16, 16, menu_flag_settings)") },
-			{ Gui::StyleRule::BACKGROUND_HOVER, string("crop(16, 0, 16, 16, menu_flag_settings)") }
-		}}
-	});
+	navigationList->append<Gui::BoxElement>({{
+		{ Gui::Prop::CLASS, vec<string> { "navigationButton" } },
+		{ Gui::Prop::BACKGROUND, string("crop(0, 0, 16, 16, menu_flag_settings)") },
+		{ Gui::Prop::BACKGROUND_HOVER, string("crop(16, 0, 16, 16, menu_flag_settings)") }
+	}});
 
-	let closeButton = navigationList->append<Gui::BoxElement>({
-		.classes = { "navigationButton" },
-		.styles = {{
-			{ Gui::StyleRule::BACKGROUND, string("crop(0, 0, 16, 16, menu_flag_quit)") },
-			{ Gui::StyleRule::BACKGROUND_HOVER, string("crop(16, 0, 16, 16, menu_flag_quit)") }
-		}}
-	});
+	let closeButton = navigationList->append<Gui::BoxElement>({{
+		{ Gui::Prop::CLASS, vec<string> { "navigationButton" } },
+		{ Gui::Prop::BACKGROUND, string("crop(0, 0, 16, 16, menu_flag_quit)") },
+		{ Gui::Prop::BACKGROUND_HOVER, string("crop(16, 0, 16, 16, menu_flag_quit)") }
+	}});
 
 	closeButton->onClick([](u32 button, bool down) {
 		if (button != GLFW_MOUSE_BUTTON_1 || !down) return;

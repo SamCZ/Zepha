@@ -1,13 +1,12 @@
-zepha.player:set_hud(zepha.build_gui(function()
-    return Gui.Body {
+zepha.player:set_hud(zepha.gui(function()
+    return Gui.Box {
         background = "base:viginette",
 
-        Gui.Rect {
-            key = "crosshair",
+        Gui.Box {
+--             id = "crosshair",
 
-            position = { pc(50), pc(50) },
-            position_anchor = { pc(50), pc(50) },
-            size = { 22 / 3, 22 / 3 },
+            size = { "22px", "22px" },
+            pos = { "50cw - 50sw", "50ch - 50sh" },
 
             background = "base:crosshair"
         }

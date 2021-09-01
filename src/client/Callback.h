@@ -1,9 +1,21 @@
 #pragma once
 
 #include <list>
+#include <iostream>
 #include <functional>
 
 #include "util/Types.h"
+
+
+class CallbackRef {
+public:
+	CallbackRef() = default;
+	explicit CallbackRef(std::function<void()> unbind): unbind(std::make_shared<std::function<void()>>(unbind)) {};
+	~CallbackRef() { if (unbind && unbind.unique()) unbind->operator()(); }
+	
+private:
+	sptr<std::function<void()>> unbind = nullptr;
+};
 
 template <typename... Args>
 class CallbackManager {
@@ -17,13 +29,14 @@ public:
 		}
 	};
 	
-	void call(Args&&... args) {
-		for (const let& cb : callbacks) if (cb.second.valid) cb.second.call(std::forward<Args>(args)...);
+	void call(const Args&... args) {
+		for (const let& cb : callbacks) if (cb.second.valid) cb.second.call(args...);
 	};
 	
-	usize bind(const CB_TYPE& cb) {
-		callbacks.emplace(next, InvalidatableCB(cb));
-		return next++;
+	CallbackRef bind(const CB_TYPE& cb) {
+		usize cID = next++;
+		callbacks.emplace(cID, InvalidatableCB(cb));
+		return CallbackRef([=]() { unbind(cID); });
 	};
 	
 	void unbind(usize ind) {
@@ -53,11 +66,11 @@ public:
 		for (usize i = 0; i < callbacks.size(); i++) callbacks[i].update();
 	};
 	
-	void call(CB_IDENTIFIER type, Args&&... args) {
-		callbacks[static_cast<usize>(type)].call(std::forward<Args>(args)...);
+	void call(CB_IDENTIFIER type, const Args&... args) {
+		callbacks[static_cast<usize>(type)].call(args...);
 	};
 	
-	usize bind(CB_IDENTIFIER type, const CB_TYPE& cb) {
+	CallbackRef bind(CB_IDENTIFIER type, const CB_TYPE& cb) {
 		return callbacks[static_cast<usize>(type)].bind(cb);
 	};
 	

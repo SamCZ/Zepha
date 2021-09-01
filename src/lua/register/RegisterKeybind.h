@@ -16,15 +16,17 @@ namespace RegisterKeybind {
 		 * @param handler - The keybind handler to add the keybind to.
 		 */
 		
-		static void registerKeybind(sol::table keybinds, const std::string& identifier, LuaKeybindHandler& handler) {
+		static void registerKeybind(Input& input, vec<CallbackRef>& refs, sol::table keybinds, const string& identifier) {
 			sol::table keybindTbl = keybinds[identifier];
-			unsigned short def = keybindTbl.get<unsigned short>("default");
+			u32 def = keybindTbl.get<unsigned short>("default");
 			
 			auto onPress = keybindTbl.get<sol::optional<sol::function>>("on_press");
 			auto onRelease = keybindTbl.get<sol::optional<sol::function>>("on_release");
 			
-			if (onPress) handler.bindOnDown(def, *onPress);
-			if (onRelease) handler.bindOnUp(def, *onRelease);
+			if (onPress) refs.emplace_back(input.events.bind(Input::CBType::KEY_PRESS, [=](u32 key, i32) {
+				if (key == def) (*onPress)(); }));
+			if (onRelease) refs.emplace_back(input.events.bind(Input::CBType::KEY_RELEASE, [=](u32 key, i32) {
+				if (key == def) (*onRelease)(); }));
 		}
 	}
 	
@@ -35,11 +37,11 @@ namespace RegisterKeybind {
 	 * Registers a keybind to the keybind handler.
 	 *
 	 * @param core - The core table to index for 'registered_keybinds', i.e. `_G['zepha']`.
-	 * @param game - The keybind handler to add the keybind to.
+	 * @param game - The input manager to add the keybind to.
 	 * @param identifier - The identifier of the keybind to add.
 	 */
 	
-	static void client(sol::table& core, LuaKeybindHandler& handler, const std::string& identifier) {
-		registerKeybind(core.get<sol::table>("registered_keybinds"), identifier, handler);
+	static void client(sol::table& core, Input& input, vec<CallbackRef>& refs, const string& identifier) {
+		registerKeybind(input, refs, core.get<sol::table>("registered_keybinds"), identifier);
 	}
 };

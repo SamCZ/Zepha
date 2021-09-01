@@ -1,10 +1,10 @@
 _G["hot_wheel"] = {}
 
 if zepha.server then
-    runfile(_PATH .. "register")
+    require(_PATH .. "register")
 end
 
 if zepha.client then
-    runfile(_PATH .. "interface")
-    runfile(_PATH .. "keys")
+    require(_PATH .. "interface")
+    require(_PATH .. "keys")
 end

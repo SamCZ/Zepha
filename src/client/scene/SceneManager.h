@@ -13,6 +13,8 @@ public:
 	/** Sets the current scene to the one provided. */
 	void setScene(uptr<Scene> scene);
 	
+	bool isCurrent(Scene* self);
+	
 	/** Updates the current scene. */
 	void update();
 	

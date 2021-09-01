@@ -1,4 +1,4 @@
-runfile(_PATH .. "chest")
+require(_PATH .. "chest")
 
 local function stacker_action(dim, pos)
     local v = V(0, 1, 0)

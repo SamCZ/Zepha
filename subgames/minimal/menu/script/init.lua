@@ -3,26 +3,26 @@ zepha.set_gui(zepha.gui(function()
         background = "#334",
 
         Gui.Text {
-            pos = { 4, 4 },
+            pos = { "4dp", "4dp" },
             text_size = "2px",
             content = "Minimalminimalmmnal"
         },
 
         Gui.Box {
-            pos = { 64, 64 },
-            size = { 128 * (16/9), 128 },
+            pos = { "64dp", "64dp" },
+            size = { "128dp * (16/9)", "128dp" },
 
             background = "zeus_background"
         },
 
         Gui.Box {
-            pos = { 64 + 128, 64 + 64 },
-            size = { 128 * (16/9), 128 },
+            pos = { "64dp + 128dp", "128dp" },
+            size = { "128dp * (16/9)", "128dp" },
 
             background = "zeus_background",
 
             Gui.Text {
-                pos = 4,
+                pos = "4dp",
                 text_size = "4px",
                 content = "What's the fuck it'd going on?"
             }

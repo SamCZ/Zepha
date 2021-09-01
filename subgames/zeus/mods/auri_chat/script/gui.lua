@@ -1,63 +1,69 @@
 local max_messages = 8
+local chat_pos = { '4dp', '100ch - 100sh - 4dp - 80dp' }
+local chat_size = { '256dp', 23 + max_messages * 8 .. 'dp' }
 
-local chat_wrap = zepha.build_gui(function()
-    return Gui.Rect {
-        position = { 4, '100%' },
-        position_anchor = { 0, '200%' },
-        size = { 256, 23 + max_messages * 8 },
+local chat_hud = zepha.Gui.Box {
+    pos = chat_pos,
+    size = chat_size,
+}
 
-        Gui.Rect {
-            key = 'chat_tabs',
-            position = { 0, -10 }
-        },
+local chat_menu = zepha.Gui.Box {
+    pos = chat_pos,
+    size = chat_size,
 
-        Gui.Rect {
-            key = 'chat_box',
-            size = { 256, 2 + max_messages * 8 }
-        },
+    zepha.Gui.Box {
+        id = 'chat_tabs',
+        pos = { '0', '-10dp' }
+    },
 
-        Gui.Rect {
-            key = 'chat_input',
-            size = { 256, 10 },
-            position = { 0, 3 + max_messages * 8 }
-        }
+    zepha.Gui.Box {
+        id = 'chat_box',
+        size = { '256dp', 2 + max_messages * 8 .. 'dp' }
+    },
+
+    zepha.Gui.Box {
+        id = 'chat_input',
+        size = { '256dp', '10dp' },
+        pos = { '0dp', 3 + max_messages * 8 .. 'dp' }
     }
-end)
+}
 
-local chat_box = chat_wrap:get('chat_box')
-local chat_tabs = chat_wrap:get('chat_tabs')
-local chat_input = chat_wrap:get('chat_input')
+local chat_menu_box = chat_menu:get('chat_box')
+local chat_menu_tabs = chat_menu:get('chat_tabs')
+local chat_menu_input = chat_menu:get('chat_input')
 
 -- Rerenders the chat gui.
 chat._refresh = function()
-    chat_box:clear()
-    chat_tabs:clear()
+    chat_hud:clear()
+    chat_menu_box:clear()
+    chat_menu_box.background = chat.open and '#0005' or '#0000'
+    chat_menu_input.background = chat.open and '#0005' or '#0000'
 
     if chat.open then
+        chat_menu_tabs:clear()
+
         local i = 0
         for _, identifier in ipairs(chat.channel_order) do
             local channel = chat.channels[identifier]
-            chat_tabs:append(function()
-                return Gui.Rect {
-                    size = { 48, 10 },
-                    position = { i * 49, 0 },
-                    background = (chat.current_channel == identifier) and '#0005' or '#0002',
+            chat_menu_tabs:append(zepha.Gui.Box {
+                size = { '48dp', '10dp' },
+                pos = { i * 49 .. 'dp', '0dp' },
+                background = (chat.current_channel == identifier) and '#0005' or '#0002',
 
-                    Gui.Rect {
-                        position = { 2, 2 },
-                        size = { 8 * (2/3), 8 * (2/3) },
-                        background = 'multiply(' .. channel.icon .. ', ' ..
-                            (chat.current_channel == identifier and '#ffe791' or '#fff') .. ')'
-                    },
+                zepha.Gui.Box {
+                    pos = '2dp',
+                    size = { '8px * 2', '8px * 2' },
+                    background = 'multiply(' .. channel.icon .. ', ' ..
+                        (chat.current_channel == identifier and '#ffe791' or '#fff') .. ')'
+                },
 
-                    Gui.Text {
-                        color = (chat.current_channel == identifier) and '#ffe791' or '#fff',
-                        position = { 8, 2 },
-                        scale = { 2.02/3, 2.02/3 },
-                        content = channel.name
-                    }
+                zepha.Gui.Text {
+                    text_size = '2px',
+                    pos = { '8dp', '2dp' },
+                    content = channel.name,
+                    text_color = (chat.current_channel == identifier) and '#ffe791' or '#fff',
                 }
-            end)
+            })
             i = i + 1
         end
     end
@@ -69,30 +75,39 @@ chat._refresh = function()
     local count = 0
 
     local start = math.max(chat.open and 1 or channel._current_history_head, #channel.history - max_messages + 1)
+    local append_to = chat.open and chat_menu_box or chat_hud
+    append_to:clear()
 
     for i = #channel.history, start, -1 do
         local message = channel.history[i]
         if now - message.time > chat._message_persist_time and not chat.open then
             channel._current_history_head = i + 1
         else
-            chat_box:append(function()
-                return Gui.Text {
-                    position = { 2, 2 + (max_messages - count - 1) * 8 },
-                    background = chat.open and '#0000' or '#0003',
-                    scale = { 2.02/3, 2.02/3 },
-                    content = '`c7[` `r' .. message.from .. '`r` `c7]`cr ' .. message.content .. '`r'
-                }
-            end)
+            append_to:append(zepha.Gui.Text {
+                text_size = '2px',
+                background = chat.open and '#0000' or '#0003',
+                pos = { '2dp', 2 + (max_messages - count - 1) * 8 .. 'dp' },
+                content = '`c1[` `r' .. message.from .. '`r` `c1]`cr ' .. message.content .. '`r'
+            })
             count = count + 1
         end
     end
-
-    chat_box.background = chat.open and '#0005' or '#0000'
-    chat_input.background = chat.open and '#0005' or '#0000'
 end
 
-zepha.player:get_hud():append(chat_wrap)
+zepha.player:get_hud():append(chat_hud)
 chat._refresh()
+
+-- Toggles the chat being open and listening for input.
+chat.set_open = function(open)
+    if zepha.player.menu ~= nil and zepha.player.menu ~= chat_menu then return end
+
+    if open == nil then chat.open = not chat.open
+    else chat.open = open end
+
+    zepha.player.menu = chat.open and chat_menu or nil
+
+    chat._refresh()
+end
 
 -- Keyboard shortcut to toggle the chat.
 zepha.register_keybind(":open_chat", {

@@ -1,2 +1,2 @@
-runfile("zeus:kinetic/models/axle")
-runfile("zeus:kinetic/blocks/axle")
+require("zeus:kinetic/models/axle")
+require("zeus:kinetic/blocks/axle")

@@ -37,8 +37,6 @@ private:
 	
 	sol::protected_function_result runFileSandboxed(const string& file);
 	
-	virtual sol::protected_function_result errorCallback(sol::protected_function_result r) override;
-	
 	LuaMod mod {};
 	string subgameName;
 	

@@ -3,10 +3,10 @@
 #include <functional>
 
 #include "client/gui/Gui.h"
-#include "client/gui/Style.h"
 #include "world/dim/ent/DrawableEntity.h"
 
 #include "util/Types.h"
+#include "client/gui/Style.h"
 
 class Window;
 class Renderer;
@@ -25,23 +25,18 @@ namespace Gui {
 		friend class TextElement;
 		
 	public:
-		struct Props {;
-			string id {};
-			vec<string> classes {};
-			Style styles {};
-		};
-		
 		Element(Root& root, vec<StyleSheet>& stylesheets): root(root), stylesheets(stylesheets) {}
 		
 		~Element();
+		
+		/** Gets a reference to the element's props. */
+		const Props& getProps() const;
 
 		/** Sets the element's props to the struct specified. */
 		virtual void setProps(const Props& props);
 
 		/** Sets a style rule on the element. */
-		virtual void setStyle(StyleRule style, const std::any& value);
-		
-		virtual const optional<any> getStyleRaw(StyleRule style) const;
+		virtual void setProp(Prop prop, const std::any& value);
 		
 		/** Recalculates the element based on its props. Call when props or stylesheets change. */
 		virtual void updateElement();
@@ -50,6 +45,8 @@ namespace Gui {
 		virtual void draw(Renderer& renderer);
 		
 		sptr<Element> get(u32 ind);
+		
+		sptr<Element> get(const string& id);
 		
 		template<typename E, std::enable_if_t<std::is_base_of_v<Element, E>, bool> = true>
 		sptr<E> get(u32 ind) {
@@ -92,32 +89,36 @@ namespace Gui {
 		
 		void clear();
 		
+		void remove();
+		
 		void onClick(const std::function<void(i32, bool)>& cb);
 		
 		/** Returns the element's computed size. */
-		virtual ivec2 getComputedSize() const;
-		
-		/** Returns the element's computed size + margins. */
-		virtual ivec2 getComputedOuterSize() const;
+		virtual vec2 getComputedSize() const;
 		
 		/** Returns the element's computed content size, which is its size - padding. */
-		virtual ivec2 getComputedContentSize() const;
+		virtual vec2 getComputedContentSize() const;
 		
 		/** Returns the element's explicit size. Unspecified dimensions are -1. */
-		virtual ivec2 getExplicitSize() const;
+		virtual vec2 getExplicitSize() const;
 		
 		/** Returns the element's computed position relative to its parent. */
-		virtual ivec2 getComputedPos() const;
+		virtual vec2 getComputedPos() const;
 		
 		/** Returns the element's computed position relative to the screen. */
-		virtual ivec2 getComputedScreenPos() const;
+		virtual vec2 getComputedScreenPos() const;
+		
+		/** Returns the element's explicit position. Unspecified dimensions are nan. */
+		virtual vec2 getExplicitPos() const;
 		
 		/** Gets a style value from the element's styles or the root's stylesheets. */
-		const optional<any> getStyle(StyleRule rule) const {
-			const optional<any> opt = props.styles.get(rule);
+		const optional<any> getStyle(Prop rule) const {
+			const optional<any> opt = props.get(rule);
 			if (opt) return *opt;
+			const let& classes = props.get<vec<string>>(Prop::CLASS);
+			if (!classes) return std::nullopt;
 			for (const let& ss : stylesheets) {
-				for (const string& className : props.classes) {
+				for (const string& className : *classes) {
 					const let& styles = ss.find(className);
 					if (styles == ss.end()) continue;
 					const optional<any> opt = styles->second.get(rule);
@@ -128,14 +129,15 @@ namespace Gui {
 		}
 		
 		/** Gets a generic value from the element's styles or the root's stylesheets. */
-		template<typename V, ValueType T = ValueType::LITERAL,
-			std::enable_if_t<T != ValueType::LENGTH, bool> = true>
+		template<typename V, Type T = Type::LITERAL, std::enable_if_t<T != Type::LENGTH, bool> = true>
 			
-		const optional<V> getStyle(StyleRule rule) const {
-			const optional<V> opt = props.styles.get<V, T>(rule);
+		const optional<V> getStyle(Prop rule) const {
+			const optional<V> opt = props.get<V, T>(rule);
 			if (opt) return *opt;
+			const let& classes = props.get<vec<string>>(Prop::CLASS);
+			if (!classes) return std::nullopt;
 			for (const let& ss : stylesheets) {
-				for (const string& className : props.classes) {
+				for (const string& className : *classes) {
 					const let& styles = ss.find(className);
 					if (styles == ss.end()) continue;
 					const optional<V> opt = styles->second.get<V, T>(rule);
@@ -146,15 +148,16 @@ namespace Gui {
 		}
 		
 		/** Gets a LENGTH value from the element's styles or the root's stylesheets. */
-		template<typename V, ValueType T = ValueType::LITERAL,
-			std::enable_if_t<T == ValueType::LENGTH, bool> = true>
+		template<typename V, Type T = Type::LITERAL, std::enable_if_t<T == Type::LENGTH, bool> = true>
 		
-		const optional<V> getStyle(StyleRule rule) const {
+		const optional<V> getStyle(Prop rule) const {
 			ExpressionInfo info = getExpr();
-			const optional<V> opt = props.styles.get<V, T>(rule, info);
+			const optional<V> opt = props.get<V, T>(rule, info);
 			if (opt) return *opt;
+			const let& classes = props.get<vec<string>>(Prop::CLASS);
+			if (!classes) return std::nullopt;
 			for (const let& ss : stylesheets) {
-				for (const string& className : props.classes) {
+				for (const string& className : *classes) {
 					const let& styles = ss.find(className);
 					if (styles == ss.end()) continue;
 					const optional<V> opt = styles->second.get<V, T>(rule, info);
@@ -165,14 +168,15 @@ namespace Gui {
 		}
 		
 		/** Gets a LENGTH value from the element's styles or the root's stylesheets. */
-		template<typename V, ValueType T = ValueType::LITERAL,
-			std::enable_if_t<T == ValueType::LENGTH, bool> = true>
+		template<typename V, Type T = Type::LITERAL, std::enable_if_t<T == Type::LENGTH, bool> = true>
 		
-        const optional<V> getStyleWithExpr(StyleRule rule, const ExpressionInfo& expr) const {
-        	const optional<V> opt = props.styles.get<V, T>(rule, expr);
+		const optional<V> getStyleWithExpr(Prop rule, const ExpressionInfo& expr) const {
+        	const optional<V> opt = props.get<V, T>(rule, expr);
 			if (opt) return *opt;
+			const let& classes = props.get<vec<string>>(Prop::CLASS);
+			if (!classes) return std::nullopt;
 			for (const let& ss : stylesheets) {
-				for (const string& className : props.classes) {
+				for (const string& className : *classes) {
 					const let& styles = ss.find(className);
 					if (styles == ss.end()) continue;
 					const optional<V> opt = styles->second.get<V, T>(rule, expr);
@@ -183,28 +187,27 @@ namespace Gui {
 		}
 	
 		/** Gets a style value from the element's styles or the root's stylesheets. */
-		template<typename V, ValueType T = ValueType::LITERAL>
+		template<typename V, Type T = Type::LITERAL>
 		
-		const V getStyle(StyleRule rule, V def) const {
+		const V getStyle(Prop rule, V def) const {
 			const optional<V> opt = getStyle<V, T>(rule);
 			if (opt) return *opt;
 			return def;
 		}
 	
 		/** Gets a LENGTH value from the element's styles or the root's stylesheets, with a custom ExpressionInfo. */
-		template<typename V, ValueType T = ValueType::LITERAL,
-			std::enable_if_t<T == ValueType::LENGTH, bool> = true>
+		template<typename V, Type T = Type::LITERAL, std::enable_if_t<T == Type::LENGTH, bool> = true>
 			
-		const V getStyleWithExpr(StyleRule rule, V def, const ExpressionInfo& info) const {
+		const V getStyleWithExpr(Prop rule, V def, const ExpressionInfo& info) const {
 			const optional<V> opt = getStyleWithExpr<V, T>(rule, info);
 			if (opt) return *opt;
 			return def;
 		}
 		
-	protected:
-		
 		/** Returns an ExpressionInfo object for evaluating Lengths. */
 		virtual ExpressionInfo getExpr() const;
+		
+	protected:
 
 		/**
 		 * Called by the root when the mouse position changes.
@@ -232,16 +235,16 @@ namespace Gui {
 		std::function<void(u32, bool)> clickCb = nullptr;
 		
 		/** The screen offset of the parent. */
-		ivec2 parentOffset {};
+		vec2 parentOffset {};
 		
 		/** The last computed size of the element. */
-		mutable ivec2 computedSize {};
+		mutable vec2 computedSize {};
 		
 		/** The element's implicit size, as defined by the parent layout. */
-		ivec2 layoutSize { -1, -1 };
+		vec2 layoutSize { -1, -1 };
 		
 		/** The element's implicit position, as defined by the parent layout. */
-		ivec2 layoutPosition {};
+		vec2 layoutPosition {};
 		
 		/** Updates child sizes and offsets based on layout styles. */
 		virtual void layoutChildren();

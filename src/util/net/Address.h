@@ -22,6 +22,8 @@ public:
 	 
 	static Address fromString(const string& addressString);
 	
+	string toString();
+	
 	string host;
 	u16 port = Address::DEFAULT_PORT;
 	

@@ -1,6 +1,6 @@
 _G['health'] = {}
 health.internal = {}
 
-runfile(_PATH .. 'api')
-runfile(_PATH .. 'interface')
-runfile(_PATH .. 'hooks')
+require(_PATH .. 'api')
+require(_PATH .. 'interface')
+require(_PATH .. 'hooks')

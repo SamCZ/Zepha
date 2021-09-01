@@ -45,44 +45,9 @@ bool Input::isMouseDown(u32 button) {
 void Input::setMouseLocked(bool lock) {
 	forceMouseUnlocked = !lock;
 	mouseLocked = lock;
-	glfwSetCursorPos(window, LOCKED_MOUSE_POS.x, LOCKED_MOUSE_POS.y);
+	ivec2 mousePos = static_cast<Window*>(glfwGetWindowUserPointer(window))->getSize() / 2;
 	glfwSetInputMode(window, GLFW_CURSOR, (mouseLocked ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL));
-}
-
-usize Input::bindKeyCallback(i32 key, std::function<void(i32)> cb) {
-	keyCallbacks[key].emplace(keyCallbacksInd, ICB(cb));
-	return keyCallbacksInd++;
-}
-
-void Input::unbindKeyCallback(i32 key, usize id) {
-	keyCallbacks[key].at(id).valid = false;
-}
-
-usize Input::bindKeyCallback(std::function<void(u32, i32)> cb) {
-	globalKeyCallbacks.emplace(globalKeyCallbacksInd, ICB(cb));
-	return globalKeyCallbacksInd++;
-}
-
-void Input::unbindKeyCallback(usize id) {
-	globalKeyCallbacks.at(id).valid = false;
-}
-
-usize Input::bindMouseCallback(i32 button, std::function<void(i32)> cb) {
-	mouseCallbacks[button].emplace(mouseCallbacksInd, ICB(cb));
-	return mouseCallbacksInd++;
-}
-
-void Input::unbindMouseCallback(i32 button, usize id) {
-	mouseCallbacks[button].at(id).valid = false;
-}
-
-usize Input::bindMouseCallback(std::function<void(u32, i32)> cb) {
-	globalMouseCallbacks.emplace(globalMouseCallbacksInd, ICB(cb));
-	return globalMouseCallbacksInd++;
-}
-
-void Input::unbindMouseCallback(usize id) {
-	globalMouseCallbacks.at(id).valid = false;
+	glfwSetCursorPos(window, lock ? LOCKED_MOUSE_POS.x : mousePos.x, lock ? LOCKED_MOUSE_POS.y : mousePos.y);
 }
 
 ivec2 Input::getMousePos() {
@@ -96,15 +61,16 @@ ivec2 Input::getMouseDelta() {
 }
 
 void Input::updateKey(u32 key, i32 state) {
+	if (state == GLFW_REPEAT) return;
 	keyState[key] = state != GLFW_RELEASE && state != 3;
-	for (let& cb : keyCallbacks[key]) if (cb.second.valid) cb.second.cb(state);
-	for (let& cb : globalKeyCallbacks) if (cb.second.valid) cb.second.cb(key, state);
+	events.call(CBType::KEY, key, state);
+	events.call(state != GLFW_RELEASE ? CBType::KEY_PRESS : CBType::KEY_RELEASE, key, state);
 }
 
 void Input::updateMouse(u32 button, i32 state) {
 	mouseState[button] = state != GLFW_RELEASE && state != 3;
-	for (let& cb : mouseCallbacks[button]) if (cb.second.valid) cb.second.cb(state);
-	for (let& cb : globalMouseCallbacks) if (cb.second.valid) cb.second.cb(button, state);
+	events.call(CBType::MOUSE, button, state);
+	events.call(state != GLFW_RELEASE ? CBType::MOUSE_PRESS : CBType::MOUSE_RELEASE, button, state);
 }
 
 void Input::scrollCallback(GLFWwindow* window, f64 x, f64 y) {

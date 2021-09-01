@@ -16,7 +16,7 @@
 class Subgame;
 
 class LuaParser {
-	public:
+public:
 	constexpr static double UPDATE_STEP{ 1 / 60. };
 	
 	LuaParser(Subgame& game) : game(game) {};
@@ -28,11 +28,9 @@ class LuaParser {
 	template<typename... Args>
 	sol::protected_function_result safe_function(sol::protected_function f, Args... args) {
 		auto res = f(args...);
-		//if (!res.valid()) errorCallback(res);
+//		if (!res.valid()) errorCallback(res);
 		return res;
 	}
-	
-	virtual sol::protected_function_result errorCallback(sol::protected_function_result r) = 0;
 	
 	Subgame& game;
 	

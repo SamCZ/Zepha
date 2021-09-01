@@ -14,7 +14,7 @@
 #include "lua/modules/Time.h"
 #include "lua/modules/mSetGui.h"
 #include "lua/modules/mStartGame.h"
-#include "lua/usertype/LuaGuiElement.h"
+#include "lua/usertype/GuiElement.h"
 
 MenuSandbox::MenuSandbox(Client& client, Gui::Root& root, sptr<Gui::Element> sandboxRoot) :
 	LuaParser(*client.game),
@@ -49,17 +49,51 @@ void MenuSandbox::loadApi() {
 	
 	bindModules();
 	
-	// Create sandboxed runfile()
-	lua["dofile"] = lua["loadfile"] = sol::nil;
-	lua.set_function("runfile", &MenuSandbox::runFileSandboxed, this);
+	lua.set_function("require", &MenuSandbox::runFileSandboxed, this);
+	lua["dofile"] = lua["loadfile"] = lua["require"];
 }
 
 void MenuSandbox::load(const SubgameDef& subgame) {
 	reset();
 	subgameName = subgame.config.name;
 
-	loadAndRunMod(subgame.subgamePath + "/../../assets/base");
-	loadAndRunMod(subgame.subgamePath + "/menu");
+	try {
+		loadAndRunMod(subgame.subgamePath + "/../../assets/base");
+		loadAndRunMod(subgame.subgamePath + "/menu");
+	}
+	catch (sol::error e) {
+		string err = static_cast<sol::error>(e).what();
+	
+		vec<string> lines;
+		{
+			string line;
+			std::stringstream textStream(err);
+			while (std::getline(textStream, line, '\n')) lines.emplace_back(line);
+		}
+
+		for (const let& line : lines) {
+			usize lineNumStart = line.find(':');
+			if (lineNumStart == string::npos) continue;
+			usize lineNumEnd = line.find(':', lineNumStart + 1);
+			if (lineNumEnd == string::npos) continue;
+		
+			string fileName = line.substr(0, lineNumStart);
+			fileName.erase(std::remove_if(fileName.begin(), fileName.end(), isspace), fileName.end());
+			
+			for (const let& file : mod.files) {
+				if (file.path != fileName) continue;
+			
+				let msg = ErrorFormatter::formatError(fileName,
+					std::stoi(line.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1)),
+					err, file.file);
+			
+				showError(msg);
+				return;
+			}
+		}
+	
+		showError(err);
+	}
 }
 
 void MenuSandbox::update(double delta) {
@@ -80,8 +114,10 @@ sol::protected_function_result MenuSandbox::runFileSandboxed(const string& file)
 		env["_FILE"] = f.path;
 		env["_MODNAME"] = mod.config.name;
 		
-		return lua.safe_script(f.file, env, std::bind(&MenuSandbox::errorCallback,
-			this, std::placeholders::_2), "@" + f.path, sol::load_mode::text);
+		using Pfr = sol::protected_function_result;
+		return lua.safe_script(f.file, env,
+			[](lua_State*, Pfr pfr) -> Pfr { throw static_cast<sol::error>(pfr); },
+			"@" + f.path, sol::load_mode::text);
 	}
 	throw std::runtime_error("Error opening '" + file + "', file not found.");
 }
@@ -92,8 +128,8 @@ void MenuSandbox::loadAndRunMod(const string& modPath) {
 	LuaMod mod;
 	string root = modPath + "/script";
 	
-	std::list<string> dirsToScan{ root };
-	std::list<string> luaFiles{};
+	std::list<string> dirsToScan { root };
+	std::list<string> luaFiles {};
 	
 	cf_dir_t dir;
 	while (!dirsToScan.empty()) {
@@ -153,49 +189,10 @@ void MenuSandbox::showError(const string& err) {
 
 	using Expr = Gui::Expression;
 	sandboxRoot->clear();
-	sandboxRoot->append<Gui::TextElement>({
-		.styles = {{
-			{ Gui::StyleRule::CONTENT, errPrefixText + err },
-			{ Gui::StyleRule::TEXT_SIZE, Expr("2px") },
-			{ Gui::StyleRule::SIZE, array<Expr, 2> { Expr("100dp"), Expr("-1") } },
-			{ Gui::StyleRule::MARGIN, array<Expr, 4> { Expr("4dp"), Expr("4dp"), Expr("4dp"), Expr("4dp") } }
-		}}
-	});
-}
-
-sol::protected_function_result MenuSandbox::errorCallback(sol::protected_function_result r) {
-	string err = static_cast<sol::error>(r).what();
-	
-	std::cout << Log::err << err << Log::endl;
-	
-	vec<string> lines;
-	{
-		string line;
-		std::stringstream textStream(err);
-		while (std::getline(textStream, line, '\n')) lines.emplace_back(line);
-	}
-
-	for (const let& line : lines) {
-		usize lineNumStart = line.find(':');
-		if (lineNumStart == string::npos) continue;
-		usize lineNumEnd = line.find(':', lineNumStart + 1);
-		if (lineNumEnd == string::npos) continue;
-		
-		string fileName = line.substr(0, lineNumStart);
-		fileName.erase(std::remove_if(fileName.begin(), fileName.end(), isspace), fileName.end());
-		
-		for (const let& file : mod.files) {
-			if (file.path == fileName) {
-				let msg = ErrorFormatter::formatError(fileName,
-					std::stoi(line.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1)),
-					err, file.file);
-				
-				showError(msg);
-				return r;
-			}
-		}
-	}
-	
-	showError(err);
-	return r;
+	sandboxRoot->append<Gui::TextElement>({{
+		{ Gui::Prop::CONTENT, errPrefixText + err },
+		{ Gui::Prop::TEXT_SIZE, Expr("2px") },
+		{ Gui::Prop::SIZE, array<Expr, 2> { Expr("100dp"), Expr("-1") } },
+		{ Gui::Prop::MARGIN, array<Expr, 4> { Expr("4dp"), Expr("4dp"), Expr("4dp"), Expr("4dp") } }
+	}});
 }

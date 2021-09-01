@@ -1,7 +1,7 @@
 if zepha.server then
     chat.create_channel('commands', { name = 'Commands', icon = '@auri:chat:commands_icon' })
     chat.create_channel('debug', { name = 'Debug', icon = '@auri:chat:debug_icon' })
---
+
 --     local random_messages = {
 --         { '`b`cbA`cdu`cfr`cdi`cb!', 'the quick brown fox jumps over the lazy dog' },
 --         { '`b`cbA`cdu`cfr`cdi`cb!', 'lorum ipsum dolor sit amet consequitor lorem ipsum dolor sit amet' },

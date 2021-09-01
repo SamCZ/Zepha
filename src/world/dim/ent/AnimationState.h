@@ -15,7 +15,7 @@ class AnimationState {
 	public:
 	AnimationState() = default;
 	
-	explicit AnimationState(Model& source);
+	explicit AnimationState(Model* source);
 	
 	void update(double delta);
 	

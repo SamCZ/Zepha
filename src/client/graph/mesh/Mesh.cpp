@@ -1,6 +1,8 @@
 #include "Mesh.h"
 
 void Mesh::draw() const {
+	if (VAO == 0) return;
+	
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 	

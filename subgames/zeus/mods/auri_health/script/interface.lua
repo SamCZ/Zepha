@@ -2,11 +2,7 @@ if not zepha.client then return end
 
 local hud = zepha.player:get_hud()
 
-health.internal._wrapper = zepha.build_gui(function()
-    return Gui.Rect {
-        key = 'health_wrapper'
-    }
-end)
+health.internal._wrapper = zepha.Gui.Box { id = 'health_wrapper' }
 
 function health.internal.update()
     local hp = health.my_health
@@ -14,16 +10,16 @@ function health.internal.update()
 
     health.internal._wrapper:remove('@health:component')
     health.internal._wrapper:append(function()
-        local elem = Gui.Rect {
-            key = '@health:component',
-            size = { health.internal._width, 9 },
+        local elem = Gui.Box {
+            id = '@health:component',
+            size = { health.internal._width .. 'dp', '9dp' }
         }
 
         -- Background
         for i = 1, hp.max do
-            elem:append(Gui.Rect {
-                size = { 9, 9 },
-                position = { 8 * (i - 1), 0 },
+            elem:append(Gui.Box {
+                size = '9dp',
+                pos = { 8 * (i - 1) .. 'dp', 0 },
                 background = 'crop(0, 0, 9, 9, @auri:health:hearts)'
             })
         end
@@ -35,16 +31,16 @@ function health.internal.update()
             local start = i % 2
             if i > red_start and i <= red_end then
                 local segment = start ~= 0 and 9 or 18
-                elem:append(Gui.Rect {
-                    size = { 9, 9 },
-                    position = { 8 * math.floor((i - 1) / 2), 0 },
+                elem:append(Gui.Box {
+                    size = '9dp',
+                    pos = { 8 * math.floor((i - 1) / 2) .. 'dp', 0 },
                     background = 'crop(9, ' .. segment .. ', 9, 9, @auri:health:hearts)'
                 })
             elseif i > blue_start and i <= blue_end then
                 local segment = start ~= 0 and 9 or 18
-                elem:append(Gui.Rect {
-                    size = { 9, 9 },
-                    position = { 8 * math.floor((i - 1) / 2), 0 },
+                elem:append(Gui.Box {
+                    size = '9dp',
+                    pos = { 8 * math.floor((i - 1) / 2) .. 'dp', 0 },
                     background = 'crop(18, ' .. segment .. ', 9, 9, @auri:health:hearts)'
                 })
             end
@@ -57,17 +53,14 @@ end
 function health.render_default(render)
     hud:remove('@health:default')
     if render then
-        hud:append(function()
-            return Gui.Rect {
-                key = '@health:default',
+        hud:append(zepha.Gui.Box {
+            id = '@health:default',
 
-                size = { health.internal._width, 9 },
-                position = { '50%', '100%' },
-                position_anchor = { '50%', '200%' },
+            pos = { '50cw - 50sw', '100ch - 18dp' },
+            size = { health.internal._width .. "dp", 9 },
 
-                health.internal._wrapper
-            }
-        end)
+            health.internal._wrapper
+        })
     end
 end
 
