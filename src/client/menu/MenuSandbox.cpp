@@ -1,6 +1,6 @@
 #include <fstream>
 #include <iostream>
-#include <cute_files/cute_files.h>
+#include <cute_files.h>
 #include <client/gui/TextElement.h>
 
 #include "MenuSandbox.h"

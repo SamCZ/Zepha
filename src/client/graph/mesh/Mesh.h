@@ -1,7 +1,6 @@
 #pragma once
 
-#include <GL/glew.h>
-
+#include "util/GL.h"
 #include "util/Types.h"
 
 /** Returns the stride and the offset of the member in the struct. */

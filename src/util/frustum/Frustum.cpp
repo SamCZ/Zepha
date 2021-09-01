@@ -36,7 +36,7 @@ void Frustum::update(vec3& pos, vec3& look, vec3& up, vec3& right) {
 	planes[static_cast<u8>(Direction::BOTTOM)].setPoints(nbl, nbr, fbr);
 	planes[static_cast<u8>(Direction::LEFT  )].setPoints(ntl, nbl, fbl);
 	planes[static_cast<u8>(Direction::RIGHT )].setPoints(nbr, ntr, fbr);
-	planes[static_cast<u8>(Direction::NEAR  )].setPoints(ntl, ntr, nbr);
+	planes[static_cast<u8>(Direction::Near  )].setPoints(ntl, ntr, nbr);
 	planes[static_cast<u8>(Direction::FAR   )].setPoints(ftr, ftl, fbl);
 }
 

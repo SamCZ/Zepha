@@ -4,7 +4,7 @@
 
 #include "LocalInventory.h"
 
-#include "LocalInventoryList.cpp"
+#include "LocalInventoryList.h"
 #include "client/conn/ClientNetworkInterpreter.h"
 
 InventoryListPtr LocalInventory::getList(const std::string& name) {

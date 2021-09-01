@@ -1,4 +1,4 @@
-#include <GL/glew.h>
+#include "util/GL.h"
 #include <util/Util.h>
 #include <GLFW/glfw3.h>
 

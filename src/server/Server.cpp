@@ -92,7 +92,7 @@ void Server::update() {
 	
 	playersUpdated.clear();
 	
-	i64 sleep_for = (std::max)(interval_ns - static_cast<i64>(loop.elapsedNs()), 0L);
+	i64 sleep_for = std::max<i64>(interval_ns - static_cast<i64>(loop.elapsedNs()), 0L);
 	if (sleep_for > 0) std::this_thread::sleep_for(std::chrono::nanoseconds(sleep_for));
 	
 	delta = loop.elapsedNs() / 1000000.f / 1000.f;

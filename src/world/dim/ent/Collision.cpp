@@ -18,7 +18,7 @@ std::tuple<glm::vec3, glm::vec3> Collision::applyVel(SubgamePtr game, DimensionP
 	const SelectionBox& collisionBox, glm::vec3 pos, glm::vec3 vel, float delta) {
 	constexpr static double INC = 0.05;
 	
-	for (u_char i = 0; i < 3; i++) {
+	for (unsigned char i = 0; i < 3; i++) {
 		for (int j = 0; j < std::abs(vel[i] * delta) / INC; j++) {
 			double moveAmount = std::max(std::min(INC, std::abs(vel[i] * delta) - (j * INC)), 0.);
 			

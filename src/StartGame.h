@@ -5,7 +5,6 @@
 #pragma once
 
 #include <iostream>
-#include <execinfo.h>
 #include <unordered_map>
 
 #include "util/Log.h"
@@ -108,8 +107,14 @@ int StartGame(int argc, char* argv[]) {
 				"\t\t(____)(____)(__)  \\_)(_/\\_/\\_/\n" << std::endl;
 		}
 		
-		if (mode == Mode::CLIENT) Client({ 1366, 768 });
-		else Server(port, subgame);
+		if (mode == Mode::CLIENT)
+		{
+			Client({ 1366, 768 });
+		}
+		else
+		{
+			Server(port, subgame);
+		}
 		
 		return 0;
 	}

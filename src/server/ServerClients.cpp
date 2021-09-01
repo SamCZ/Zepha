@@ -16,7 +16,7 @@ void ServerClients::init(ServerWorld* world) {
 }
 
 void ServerClients::handleConnect(ENetEvent e) {
-	const auto client = make_shared<ServerClient>("TEMP:" + NetHandler::intToIPString(e.peer->address.host)
+	const auto client = make_shared<ServerClient>("TEMP:" + NetHandler::intToIPString(*reinterpret_cast<unsigned int*>(&e.peer->address.host))
 		+ ":" + std::to_string(e.peer->address.port), e.peer->connectID, e.peer);
 	e.peer->data = client.get();
 	clients.emplace(client->id, client);

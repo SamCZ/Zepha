@@ -6,6 +6,7 @@
 #include "util/Log.h"
 #include "server/Server.h"
 #include <iostream>
+#include <thread>
 
 LocalServerInstance::LocalServerInstance(const std::string& path, unsigned short port, const std::string& subgame) :
 	port(port),

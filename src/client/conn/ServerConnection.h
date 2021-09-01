@@ -5,7 +5,7 @@
 #pragma once
 
 #include <chrono>
-#include <enet/enet.h>
+#include <enet.h>
 
 class Address;
 

@@ -5,7 +5,7 @@
 #pragma once
 
 #include <list>
-#include <GL/glew.h>
+#include "util/GL.h"
 #include <GLFW/glfw3.h>
 
 #include "util/Types.h"

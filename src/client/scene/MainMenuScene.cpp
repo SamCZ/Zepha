@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
-#include <json/json.hpp>
-#include <cute_files/cute_files.h>
+#include <nlohmann/json.hpp>
+#include <cute_files.h>
 
 #include "MainMenuScene.h"
 

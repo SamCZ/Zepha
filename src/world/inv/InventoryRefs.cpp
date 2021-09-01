@@ -4,6 +4,8 @@
 
 #include "InventoryRefs.h"
 
+#include <stdexcept>
+
 #include "game/Subgame.h"
 
 InventoryRefs::InventoryRefs(SubgamePtr game) : game(game) {}

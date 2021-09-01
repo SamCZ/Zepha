@@ -32,7 +32,7 @@ void ClientNetworkInterpreter::update() {
 		default: break;
 		case ENET_EVENT_TYPE_CONNECT: {
 			std::cout << Log::info << "Connected to server "
-			          << NetHandler::intToIPString(event.peer->address.host)
+			          << NetHandler::intToIPString(*reinterpret_cast<unsigned int*>(&event.peer->address.host))
 			          << ":" << event.peer->address.port << "." << Log::endl;
 			break;
 		}
@@ -42,8 +42,7 @@ void ClientNetworkInterpreter::update() {
 			break;
 		}
 		case ENET_EVENT_TYPE_DISCONNECT: {
-			std::cout << Log::info << "Disconnected from server "
-			          << event.peer->address.host << ":" << event.peer->address.port << "." << Log::endl;
+			//std::cout << Log::info << "Disconnected from server " << event.peer->address.host << ":" << event.peer->address.port << "." << Log::endl;
 			break;
 		}
 		}
