@@ -17,7 +17,10 @@ Client::Client(ivec2 window) :
 	std::cout << Log::info << "Starting Zepha Client." << Log::endl;
 	
 	scene.setScene(make_unique<MainMenuScene>(*this));
-	while (!renderer.window.shouldClose()) loop();
+	while (!renderer.window.shouldClose())
+	{
+		loop();
+	}
 }
 
 f64 Client::getDelta() {

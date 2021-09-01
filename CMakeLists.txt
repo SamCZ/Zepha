@@ -6,6 +6,17 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(ZP_BUILD_SHARED_LIBS ON)
+else()
+    set(ZP_BUILD_SHARED_LIBS OFF)
+endif()
+
+if(ZP_BUILD_SHARED_LIBS)
+    set(BUILD_SHARED_LIBS ON)
+    set(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+endif()
+
 # Set warnings
 if ((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang"))
     add_compile_options(
@@ -22,10 +33,29 @@ set(MAIN_EXEC_NAME "Zepha")
 
 project(${PROJECT_NAME})
 
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
+
 add_subdirectory(lib)
-set(BUILD_SHARED_LIBS OFF)
 
-add_subdirectory(src)
+file(GLOB_RECURSE SOURCE_FILES src/*.hpp src/*.cpp)
 
-add_executable(${MAIN_EXEC_NAME} src/Main.cpp)
-target_link_libraries(${MAIN_EXEC_NAME} Zepha_Core)
+add_executable(${MAIN_EXEC_NAME} ${SOURCE_FILES})
+
+target_include_directories(${MAIN_EXEC_NAME} PUBLIC src)
+
+target_link_libraries(${MAIN_EXEC_NAME} PUBLIC glfw glm enet glad assimp FastNoise nothings-stb gzip cute_headers nlohmann_json)
+target_link_libraries(${MAIN_EXEC_NAME} PUBLIC lua sol2)
+
+if(WIN32)
+    target_link_libraries(${MAIN_EXEC_NAME} PUBLIC opengl32 gdi32)
+endif()
+
+if(WIN32)
+    foreach(DLL ${ZEPHA_DLL_TO_COPY})
+        add_custom_command(TARGET ${MAIN_EXEC_NAME} POST_BUILD
+                COMMAND "${CMAKE_COMMAND}" -E copy
+                ${DLL}
+                ${CMAKE_CURRENT_BINARY_DIR}
+                COMMENT "Copying dll ${DLL} to output directory")
+    endforeach(DLL)
+endif(WIN32)

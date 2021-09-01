@@ -9,6 +9,9 @@ if(NOT TARGET glfw AND NOT PLATFORM_ANDROID)
     set(GLFW_BUILD_DOCS OFF)
     set(BUILD_SHARED_LIBS OFF)
     set(GLFW_USE_HYBRID_HPG ON)
+
+    set(BUILD_SHARED_LIBS OFF)
+
     add_subdirectory(glfw)
     set_property(TARGET glfw PROPERTY FOLDER "GameLib")
 endif()
@@ -18,6 +21,7 @@ endif()
 # Game mathematics library
 #------------------------------
 if(NOT TARGET glm)
+    set(BUILD_SHARED_LIBS OFF)
     add_subdirectory(glm)
     set_property(TARGET glm PROPERTY FOLDER "GameLib")
 endif()
@@ -27,6 +31,14 @@ endif()
 # ENet reliable UDP networking library
 #------------------------------
 if(NOT TARGET enet)
+    if(ZP_BUILD_SHARED_LIBS)
+        set(ENET_STATIC OFF)
+        set(ENET_SHARED ON)
+    else()
+        set(ENET_STATIC ON)
+        set(ENET_SHARED OFF)
+    endif()
+
     add_subdirectory(enet)
     set_property(TARGET enet PROPERTY FOLDER "GameLib")
 endif()
@@ -36,6 +48,7 @@ endif()
 # OpenGL
 #------------------------------
 if(NOT TARGET glad AND NOT PLATFORM_ANDROID)
+    set(BUILD_SHARED_LIBS OFF)
     add_subdirectory(glad)
     set_property(TARGET glad PROPERTY FOLDER "GameLib")
 endif()
@@ -61,7 +74,14 @@ if(NOT TARGET sol2)
     set(SOL2_TESTS_EXAMPLES OFF)
     set(SOL2_TESTS_INTEROP_EXAMPLES OFF)
     set(BUILD_LUA_AS_DLL OFF)
-    set(SOL2_BUILD_LUA ON)
+    set(SOL2_BUILD_LUA OFF)
+
+    if(ZP_BUILD_SHARED_LIBS)
+        set(BUILD_SHARED_LIBS ON)
+    else()
+        set(BUILD_SHARED_LIBS OFF)
+    endif()
+
     add_subdirectory(sol2)
     set_property(TARGET sol2 PROPERTY FOLDER "GameLib")
 endif()
@@ -71,13 +91,11 @@ endif()
 # Model loading library
 #------------------------------
 if(NOT TARGET assimp)
-    if (CMAKE_BUILD_TYPE STREQUAL Debug)
+    if(ZP_BUILD_SHARED_LIBS)
         set(BUILD_SHARED_LIBS ON)
     else()
         set(BUILD_SHARED_LIBS OFF)
     endif()
-
-    set(BUILD_SHARED_LIBS ON)
 
     cmake_policy(SET CMP0077 NEW) # set() overrides option()
 
@@ -153,8 +171,6 @@ if(NOT TARGET assimp)
             endif(WIN32)
         endif()
     endif()
-
-    set(BUILD_SHARED_LIBS OFF)
 endif()
 
 #------------------------------
@@ -162,6 +178,7 @@ endif()
 # Modular node based noise generation library using SIMD, C++17 and templates
 #------------------------------
 if(NOT TARGET FastNoise)
+    set(BUILD_SHARED_LIBS OFF)
     set(FASTNOISE2_NOISETOOL OFF)
     add_subdirectory(FastNoise2)
 endif()
