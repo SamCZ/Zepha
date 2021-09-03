@@ -153,12 +153,10 @@ void MainMenuScene::findSubgames() {
 			}
 			cf_dir_close(&subgame);
 			
-			if (!hasConf)
-				throw std::runtime_error(
-					string("Subgame ") + string(subgameFolder.name) + " is missing a conf.json.");
-			if (!hasMods)
-				throw std::runtime_error(
-					string("Subgame ") + string(subgameFolder.name) + " is missing a 'mods' directory.");
+			if (!hasConf) throw std::runtime_error(
+				string("Subgame ") + string(subgameFolder.name) + " is missing a conf.json.");
+			if (!hasMods) throw std::runtime_error(
+				string("Subgame ") + string(subgameFolder.name) + " is missing a 'mods' directory.");
 			
 			nlohmann::json j{};
 			try {

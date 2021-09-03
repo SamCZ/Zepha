@@ -36,7 +36,7 @@ public:
 	CallbackRef bind(const CB_TYPE& cb) {
 		usize cID = next++;
 		callbacks.emplace(cID, InvalidatableCB(cb));
-		return CallbackRef([=]() { unbind(cID); });
+		return CallbackRef([cID, this]() { unbind(cID); });
 	};
 	
 	void unbind(usize ind) {

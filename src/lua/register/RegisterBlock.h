@@ -375,7 +375,7 @@ namespace RegisterBlock {
 			def->health = health;
 			def->defense = defense;
 			
-			def->maxStackSize = maxStack;
+			def->maxStack = maxStack;
 			
 			def->model = models.first;
 			def->farModel = models.second;

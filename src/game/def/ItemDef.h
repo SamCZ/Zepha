@@ -11,22 +11,24 @@
 
 class ItemDef {
 public:
-	ItemDef(const ItemDef& o) = delete;
-	
 	enum class Type {
 		INVALID,
 		BLOCK,
 		CRAFTITEM
 	};
 	
-	std::string identifier = "";
-	std::string name = "";
-	unsigned int index = 0;
+	ItemDef(const ItemDef& o) = delete;
+	ItemDef(Type type): type(type) {}
+	ItemDef(Type type, string identifier, string name, u16 index, u16 maxStack):
+		type(type), identifier(identifier), name(name), index(index), maxStack(maxStack) {}
 	
-	unsigned short maxStackSize;
+	string identifier {};
+	string name {};
+	u16 index = 0;
 	
+	u16 maxStack = 0;
 	Type type = Type::INVALID;
 	
-	std::shared_ptr<Model> entityModel = std::make_shared<Model>();
+	sptr<Model> entityModel = make_shared<Model>();
 };
 

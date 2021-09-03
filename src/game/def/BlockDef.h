@@ -30,7 +30,7 @@ public:
 		HIT, HIT_CLIENT
 	};
 	
-	BlockDef() : ItemDef{ "", "", 0, 0, ItemDef::Type::BLOCK } {};
+	BlockDef() : ItemDef(ItemDef::Type::BLOCK) {};
 	
 	void createModel();
 	

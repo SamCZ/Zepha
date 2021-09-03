@@ -20,7 +20,7 @@ public:
 		HIT, HIT_CLIENT
 	};
 	
-	CraftItemDef() : ItemDef{ "", "", 0, 0, ItemDef::Type::CRAFTITEM } {};
+	CraftItemDef(): ItemDef(ItemDef::Type::CRAFTITEM) {};
 	
 	CraftItemDef(const std::string& identifier, const std::string& name, unsigned short maxStackSize,
 		const std::vector<std::string>& textures, const std::vector<std::shared_ptr<AtlasRef>>& textureRefs);

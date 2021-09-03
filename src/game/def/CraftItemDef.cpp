@@ -15,7 +15,7 @@ CraftItemDef::CraftItemDef(const std::string& identifier, unsigned int index, co
 	unsigned short maxStackSize, const std::vector<std::string>& textures,
 	const std::vector<std::shared_ptr<AtlasRef>>& textureRefs) :
 	
-	ItemDef{ identifier, name, index, maxStackSize, ItemDef::Type::CRAFTITEM },
+	ItemDef(ItemDef::Type::CRAFTITEM, identifier, name, index, maxStackSize),
 	textures(textures),
 	textureRefs(textureRefs) {}
 
