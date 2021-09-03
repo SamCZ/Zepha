@@ -29,7 +29,7 @@ void DrawableEntity::setModel(std::shared_ptr<Model> model) {
 void DrawableEntity::update(double delta) {
 	Entity::update(delta);
 	
-	float factor = static_cast<float>(fmin(delta * 8, 1));
+	float factor = static_cast<float>(fmin(delta * 15, 1));
 	
 	visualPosition = visualPosition * (1 - factor) + pos * factor;
 	visualVisualOffset = visualVisualOffset * (1 - factor) + visualOff * factor;

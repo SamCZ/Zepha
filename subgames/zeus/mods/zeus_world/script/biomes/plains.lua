@@ -200,7 +200,7 @@ zepha.register_biome(identifier, {
     },
     tags = { natural = 1, default = 1 },
     structures = structures,
-    biome_tint = "#6effee",
+    biome_tint = "#46cfc0",
     noise = noise
 })
 

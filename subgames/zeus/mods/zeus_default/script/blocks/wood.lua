@@ -3,8 +3,8 @@ zepha.register_block(":wood", {
 
     model = "base:pillar",
     textures = {
-        "zeus:default:oak_log_top",
-        "zeus:default:oak_log_top",
+        "zeus:default:oak_log_top_pillar",
+        "zeus:default:oak_log_top_pillar",
         "zeus:default:oak_log_side_pillar"
     },
     culls = false,

@@ -55,7 +55,7 @@ public:
 
 		Job(ivec3 pos, u16 size) :
 			pos(pos), size(size),
-			volume(u16vec3(size * 16), 4),
+			volume(u16vec3(size * 16, (size + 1) * 16, size * 16), 4),
 			heightmap(u16vec2(size * 16), 4),
 			
 			temperature(u16vec2(size * 16), 4),

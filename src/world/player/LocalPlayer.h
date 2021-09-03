@@ -139,6 +139,8 @@ private:
 	/** The interval at which the currently wielded tool can hit. */
 	f64 breakInterval = 0;
 	
+	bool mouseLeftClicked = false, mouseRightClicked = false;
+	
 	/** The targeted wireframe entity. */
 	WireframeEntity wireframe;
 	
@@ -147,5 +149,7 @@ private:
 	
 	/** The actual wield-item model, set to the currently held item. */
 	DrawableEntity handItemModel;
+	
+	vec<CallbackRef> callbacks;
 };
 

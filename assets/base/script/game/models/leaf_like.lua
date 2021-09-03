@@ -9,7 +9,7 @@ local amp = 0.2
 zepha.register_blockmodel("base:leaf_like", {
     parts = {
         {
-            face = "left",
+            face = "back",
             tex = 1,
             points = {
                 0, 0, 0, 0, 1,
@@ -22,7 +22,7 @@ zepha.register_blockmodel("base:leaf_like", {
                 amplitude = amp
             }
         }, {
-            face = "right",
+            face = "front",
             tex = 1,
             points = {
                 1, 1, 1, 0, 0,
@@ -61,7 +61,7 @@ zepha.register_blockmodel("base:leaf_like", {
                 amplitude = amp
             }
         }, {
-            face = "front",
+            face = "left",
             tex = 1,
             points = {
                 0, 0, 1, 0, 1,
@@ -74,7 +74,7 @@ zepha.register_blockmodel("base:leaf_like", {
                 amplitude = amp
             }
         }, {
-            face = "back",
+            face = "right",
             tex = 1,
             points = {
                 0, 0, 0, 1, 1,

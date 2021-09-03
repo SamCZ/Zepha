@@ -6,7 +6,7 @@
 zepha.register_blockmodel("base:block", {
     parts = {
         {
-            face = "left",
+            face = "back",
             tex = 3,
             points = {
                 0, 0, 0, 0, 1,
@@ -15,7 +15,7 @@ zepha.register_blockmodel("base:block", {
                 0, 1, 0, 0, 0
             }
         }, {
-            face = "right",
+            face = "front",
             tex = 4,
             points = {
                 1, 1, 1, 0, 0,
@@ -42,7 +42,7 @@ zepha.register_blockmodel("base:block", {
                 0, 0, 1, 0, 1
             }
         }, {
-            face = "front",
+            face = "left",
             tex = 5,
             points = {
                 0, 0, 1, 0, 1,
@@ -51,7 +51,7 @@ zepha.register_blockmodel("base:block", {
                 0, 1, 1, 0, 0
             }
         }, {
-            face = "back",
+            face = "right",
             tex = 6,
             points = {
                 0, 0, 0, 1, 1,

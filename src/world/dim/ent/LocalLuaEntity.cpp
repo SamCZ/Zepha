@@ -15,13 +15,13 @@ LocalLuaEntity::LocalLuaEntity(SubgamePtr game, DimensionPtr dim) :
 void LocalLuaEntity::setScale(f32 newScale) {
 	if (appearance == "wireframe") model->fromMesh(
 		WireframeEntity::createMesh({ {}, vec3(newScale) }, 0.035, wfStroke, wfFill));
-	else DrawableEntity::setScale(scale);
+	else DrawableEntity::setScale(newScale);
 }
 
 void LocalLuaEntity::setScale(vec3 newScale) {
 	if (appearance == "wireframe") model->fromMesh(
 		WireframeEntity::createMesh({ {}, newScale }, 0.035, wfStroke, wfFill));
-	else DrawableEntity::setScale(scale);
+	else DrawableEntity::setScale(newScale);
 }
 
 void LocalLuaEntity::setAppearance(const string& mode, const string& argA, const string& argB) {

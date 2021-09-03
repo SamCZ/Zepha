@@ -4,8 +4,8 @@ zepha.register_block(":leaves", {
     culls = false,
     model = "base:leaf_like",
     textures = {
-        "tint(0, zeus:default:leaves)",
-        "tint(0, zeus:default:leaves_puff)"
+        "zeus:default:leaves",
+        "zeus:default:leaves_puff"
     },
     lowdef_textures = {
         "tint(0, zeus:default:leaves_opaque)",

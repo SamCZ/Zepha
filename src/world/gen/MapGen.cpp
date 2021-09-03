@@ -113,8 +113,7 @@ void MapGen::generateVoronoi(const std::unordered_set<u16>& biomes) {
 		auto& biome = game.getBiomes().biomeFromId(biomeInd);
 
 		points.emplace_back(vec3 {
-			static_cast<u16>(std::fmin(voronoiSize - 1,
-				std::fmax(0, (biome.temperature + 1) / 2 * voronoiSize))),
+			static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, (biome.temperature + 1) / 2 * voronoiSize))),
 			static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, biome.humidity * voronoiSize))),
 			static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, biome.roughness * voronoiSize)))
 		}, biomeInd);

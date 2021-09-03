@@ -38,15 +38,20 @@ LocalPlayer::LocalPlayer(SubgamePtr game, LocalWorld& world, DimensionPtr dim, R
 		}}}
 	});
 	
-	debug->setProp(Gui::Prop::VISIBLE, false);
+//	debug->setProp(Gui::Prop::VISIBLE, false);
 	
 	indicators->append<Gui::BoxElement>();
+	
+	callbacks.emplace_back(renderer.window.input.events.bind(Input::CBType::MOUSE_PRESS, [&](u32 button, i32) {
+		if (button == GLFW_MOUSE_BUTTON_LEFT) mouseLeftClicked = true;
+		else if (button == GLFW_MOUSE_BUTTON_RIGHT) mouseRightClicked = true;
+	}));
 }
 
 void LocalPlayer::update(f64 delta, vec2 mouseDelta) {
 	root.update();
 //	handItemModel.setVisible(gameGui.isVisible());
-	
+
 	updatePhysics(delta, mouseDelta);
 	
 	vec3 newPos, newVel;
@@ -60,6 +65,8 @@ void LocalPlayer::update(f64 delta, vec2 mouseDelta) {
 	updateWireframe();
 	
 	if (!isInMenu()) updateInteract(delta);
+	mouseLeftClicked = false;
+	mouseRightClicked = false;
 }
 
 string LocalPlayer::getUsername() {
@@ -362,29 +369,29 @@ void LocalPlayer::updateCamera() {
 }
 
 void LocalPlayer::updateWireframe() {
-//	if (gameGui.isVisible() && target.type != Target::Type::NOTHING) {
-//		std::vector<SelectionBox> boxes {};
-//		vec3 thicknessOffset {};
-//		vec3 renderPos {};
-//
-//		if (target.type == Target::Type::BLOCK) {
-//			boxes = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos)).sBoxes;
-//			renderPos = target.data.block.pos;
-//			thicknessOffset = vec3(0.5);
-//		}
-//		else {
-//			const auto& entity = **dim.l()->getEntityById(target.data.entity.id).entity;
-//			boxes.push_back(*entity.getCollisionBox());
-//			renderPos = entity.getPos();
-//		}
-//
-//		float distance = glm::distance(pos, renderPos + thicknessOffset);
-//
-//		wireframe.updateMesh(boxes, 0.002f + distance * 0.0014f);
-//		wireframe.setPos(renderPos);
-//		wireframe.setVisible(true);
-//	}
-//	else wireframe.setVisible(false);
+	if (target.type != Target::Type::NOTHING) {
+		std::vector<SelectionBox> boxes {};
+		vec3 thicknessOffset {};
+		vec3 renderPos {};
+
+		if (target.type == Target::Type::BLOCK) {
+			boxes = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos)).sBoxes;
+			renderPos = target.data.block.pos;
+			thicknessOffset = vec3(0.5);
+		}
+		else {
+			const auto& entity = **dim.l()->getEntityById(target.data.entity.id).entity;
+			boxes.push_back(*entity.getCollisionBox());
+			renderPos = entity.getPos();
+		}
+
+		float distance = glm::distance(pos, renderPos + thicknessOffset);
+
+		wireframe.updateMesh(boxes, 0.002f + distance * 0.0014f);
+		wireframe.setPos(renderPos);
+		wireframe.setVisible(true);
+	}
+	else wireframe.setVisible(false);
 }
 
 void LocalPlayer::updateWieldAndHandItems() {
@@ -463,7 +470,7 @@ void LocalPlayer::updateInteract(f64 delta) {
 			breakTime += delta;
 		}
 	}
-	else if (renderer.window.input.isMouseDown(GLFW_MOUSE_BUTTON_RIGHT)) {
+	else if (mouseRightClicked) {
 		if (target.type == Target::Type::BLOCK) {
 			auto& wieldItem = game->getDefs().fromId(this->wieldItem);
 			auto& targetedBlock = game->getDefs().blockFromId(dim->getBlock(target.data.block.pos));
