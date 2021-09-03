@@ -57,15 +57,15 @@ ChunkMeshGenerator::ChunkMeshGenerator(MeshChunkDetails* meshDetails, LocalDefin
 			default: break;
 			
 			case MeshMod::OFFSET_X:
-//				vis.x += blockOffsets[0][vec3(off) / 16.f] * mod.second;
+				vis.x += blockOffsets[0][off] * mod.second;
 				break;
 			
 			case MeshMod::OFFSET_Y:
-//				vis.y += blockOffsets[1][vec3(off) / 16.f] * mod.second;
+				vis.y += blockOffsets[1][off] * mod.second;
 				break;
 				
 			case MeshMod::OFFSET_Z:
-//				vis.z += blockOffsets[2][vec3(off) / 16.f] * mod.second;
+				vis.z += blockOffsets[2][off] * mod.second;
 				break;
 			}
 		}

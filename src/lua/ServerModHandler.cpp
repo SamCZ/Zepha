@@ -4,10 +4,10 @@
 
 #include <sstream>
 #include <fstream>
-#include <nlohmann/json.hpp>
-#include <gzip/compress.hpp>
 #include <stb_image.h>
 #include <cute_files.h>
+#include <gzip/compress.hpp>
+#include <nlohmann/json.hpp>
 
 #include "ServerModHandler.h"
 

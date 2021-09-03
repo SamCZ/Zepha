@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
-#include <nlohmann/json.hpp>
 #include <cute_files.h>
+#include <nlohmann/json.hpp>
 
 #include "MainMenuScene.h"
 
@@ -211,6 +211,6 @@ void MainMenuScene::draw() {
 	renderer.endDeferredCalls();
 	
 	renderer.beginGUIDrawCalls();
-	renderer.enableTexture(&client.game->textures.atlasTexture);
+	renderer.enableTexture(&client.game->textures.texture);
 	root.draw(renderer);
 }

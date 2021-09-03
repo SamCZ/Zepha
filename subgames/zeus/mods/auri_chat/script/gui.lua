@@ -24,13 +24,42 @@ local chat_menu = zepha.Gui.Box {
     zepha.Gui.Box {
         id = 'chat_input',
         size = { '256dp', '10dp' },
-        pos = { '0dp', 3 + max_messages * 8 .. 'dp' }
+        pos = { '0dp', 3 + max_messages * 8 .. 'dp' },
+
+        zepha.Gui.Text {
+            id = 'chat_input_text',
+            pos = '2dp',
+            text_size = '2px',
+            content = ''
+        }
     }
 }
 
 local chat_menu_box = chat_menu:get('chat_box')
 local chat_menu_tabs = chat_menu:get('chat_tabs')
 local chat_menu_input = chat_menu:get('chat_input')
+local chat_menu_input_text = chat_menu:get('chat_input_text')
+
+local chat_buffer = ''
+local pipe = '`r` `c1|'
+local has_pipe = false
+local observer = KeyObserver.new()
+observer.on_press = function(keycode)
+    local key = zepha.keycodes[keycode]
+    if key == 'enter' then return
+    elseif key == 'space' then chat_buffer = chat_buffer .. ' '
+    elseif key == 'backspace' then chat_buffer = chat_buffer:sub(1, chat_buffer:len() - 1)
+    else chat_buffer = chat_buffer .. key end
+
+    chat_menu_input_text.content = chat_buffer .. (has_pipe and pipe or '')
+end
+
+zepha.after(function()
+    if not chat.open then return true end
+    has_pipe = not has_pipe
+    chat_menu_input_text.content = chat_buffer .. (has_pipe and pipe or '')
+    return true
+end, 0.5)
 
 -- Rerenders the chat gui.
 chat._refresh = function()
@@ -104,6 +133,13 @@ chat.set_open = function(open)
     if open == nil then chat.open = not chat.open
     else chat.open = open end
 
+    if chat.open then
+        observer:start()
+    else
+        observer:stop()
+        chat_buffer = ''
+    end
+
     zepha.player.menu = chat.open and chat_menu or nil
 
     chat._refresh()
@@ -113,5 +149,19 @@ end
 zepha.register_keybind(":open_chat", {
     description = "Open Chat",
     default = zepha.keys.p,
-    on_press = chat.set_open
+    on_press = function()
+        if chat.open then return end
+        chat.set_open()
+    end
+})
+
+-- Keyboard shortcut to send the message
+zepha.register_keybind(":send_message", {
+    description = "Send Message",
+    default = zepha.keys.enter,
+    on_press = function()
+        if not chat.open then return end
+        chat.send(chat_buffer)
+        chat.set_open()
+    end
 })

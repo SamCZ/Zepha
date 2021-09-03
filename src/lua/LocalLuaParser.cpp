@@ -5,30 +5,30 @@
 #include "LocalLuaParser.h"
 
 #include "client/Client.h"
-#include "ErrorFormatter.h"
 #include "lua/ModException.h"
-#include "register/RegisterItem.h"
-#include "register/RegisterBlock.h"
-#include "register/RegisterBiome.h"
-#include "register/RegisterKeybind.h"
+#include "lua/ErrorFormatter.h"
+#include "lua/register/RegisterItem.h"
+#include "lua/register/RegisterBlock.h"
+#include "lua/register/RegisterBiome.h"
+#include "lua/register/RegisterKeybind.h"
 
 // Usertypes
-#include "usertype/Target.h"
-#include "usertype/Player.h"
-#include "usertype/Entity.h"
-#include "usertype/Inventory.h"
-#include "usertype/Dimension.h"
-#include "usertype/ItemStack.h"
-#include "usertype/InventoryList.h"
-#include "usertype/AnimationManager.h"
-
-#include "usertype/GuiElement.h"
+#include "lua/usertype/Target.h"
+#include "lua/usertype/Player.h"
+#include "lua/usertype/Entity.h"
+#include "lua/usertype/Inventory.h"
+#include "lua/usertype/Dimension.h"
+#include "lua/usertype/ItemStack.h"
+#include "lua/usertype/GuiElement.h"
+#include "lua/usertype/KeyObserver.h"
+#include "lua/usertype/InventoryList.h"
+#include "lua/usertype/AnimationManager.h"
 
 // Modules
-#include "modules/Time.h"
-#include "modules/Message.h"
-#include "modules/Dimension.h"
-#include "modules/Structure.h"
+#include "lua/modules/Time.h"
+#include "lua/modules/Message.h"
+#include "lua/modules/Dimension.h"
+#include "lua/modules/Structure.h"
 
 // Util
 #include "lua/register/CreateRegister.h"
@@ -37,9 +37,10 @@ LocalLuaParser::LocalLuaParser(LocalSubgame& game) : LuaParser(game) {}
 
 void LocalLuaParser::init(WorldPtr world, PlayerPtr player, Client& client) {
 	this->client = &client;
+	this->player = player;
 	lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table, sol::lib::debug);
 	
-	loadApi(world, player);
+	loadApi(world);
 	
 	try {
 		runFileSandboxed("base/init");
@@ -87,8 +88,6 @@ void LocalLuaParser::init(WorldPtr world, PlayerPtr player, Client& client) {
 	
 		throw ModException(err);
 	}
-	
-//	client.renderer.window.input.setCallback(Util::bind_this(&keybinds, &LuaKeybindHandler::keybindHandler));
 }
 
 void LocalLuaParser::update(double delta) {
@@ -108,7 +107,17 @@ void LocalLuaParser::setModLoadOrder(const vec<string> order) {
 	modLoadOrder = order;
 }
 
-void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
+void LocalLuaParser::addKBObserver(usize id) {
+	kbObservers.emplace(id);
+	player.l()->setKBIndicatorVisible(true);
+}
+
+void LocalLuaParser::removeKBObserver(usize id) {
+	kbObservers.erase(id);
+	player.l()->setKBIndicatorVisible(kbObservers.size());
+}
+
+void LocalLuaParser::loadApi(WorldPtr world) {
 	//Create Zepha Table
 	core = lua.create_table();
 	lua["zepha"] = core;
@@ -124,6 +133,7 @@ void LocalLuaParser::loadApi(WorldPtr world, PlayerPtr player) {
 	Api::Usertype::GuiElement::bind(lua, core, player.l()->getRoot());
 	Api::Usertype::InventoryList::bind(Api::State::CLIENT, lua, core);
 	Api::Usertype::LocalAnimationManager::bind(Api::State::CLIENT, lua, core);
+	Api::Usertype::KeyObserver::bind(lua, core, client->renderer.window.input, *this);
 	
 	core["client"] = true;
 	core["player"] = Api::Usertype::LocalPlayer(player);

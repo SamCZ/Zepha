@@ -44,11 +44,11 @@ void CraftItemDef::createModel(TextureAtlas& atlas) {
 	for (unsigned int i = 0; i < 16 * 16; i++) {
 		glm::vec2 samplePos = { i % 16, i / 16 };
 		glm::vec2 off{ samplePos.x / 16.f, samplePos.y / 16.f };
-		glm::vec4 col = atlas.sampleTexturePixel(ref, samplePos);
+		glm::vec4 col = atlas.getPixel(ref, samplePos);
 		
 		if (col.w < 0.5) continue;
 		
-		if (samplePos.y == 0 || atlas.sampleTexturePixel(ref, { samplePos.x, samplePos.y - 1 }).w < 0.5) {
+		if (samplePos.y == 0 || atlas.getPixel(ref, { samplePos.x, samplePos.y - 1 }).w < 0.5) {
 			std::vector<EntityVertex> myVerts = {
 				{{ -xo, 0.5 - off.y, -0.5 + off.x }, col, { 1, 1, 1 }, false, { 0, 1, 0 }, {}, {}},
 				{{ -xo, 0.5 - off.y, -0.5 + off.x + 0.0625 }, col, { 1, 1, 1 }, false, { 0, 1, 0 }, {}, {}},
@@ -61,7 +61,7 @@ void CraftItemDef::createModel(TextureAtlas& atlas) {
 			indOffset += 4;
 		}
 		
-		if (samplePos.y == 15 || atlas.sampleTexturePixel(ref, { samplePos.x, samplePos.y + 1 }).w < 0.5) {
+		if (samplePos.y == 15 || atlas.getPixel(ref, { samplePos.x, samplePos.y + 1 }).w < 0.5) {
 			std::vector<EntityVertex> myVerts = {
 				{{ -xo, 0.5 - off.y - 0.0625, -0.5 + off.x }, col, { 1, 1, 1 }, false, { 0, -1, 0 }, {}, {}},
 				{{ -xo, 0.5 - off.y - 0.0625, -0.5 + off.x + 0.0625 }, col, { 1, 1, 1 }, false, { 0, -1, 0 }, {}, {}},
@@ -74,7 +74,7 @@ void CraftItemDef::createModel(TextureAtlas& atlas) {
 			indOffset += 4;
 		}
 		
-		if (samplePos.x == 0 || atlas.sampleTexturePixel(ref, { samplePos.x - 1, samplePos.y }).w < 0.5) {
+		if (samplePos.x == 0 || atlas.getPixel(ref, { samplePos.x - 1, samplePos.y }).w < 0.5) {
 			std::vector<EntityVertex> myVerts = {
 				{{ -xo, 0.5 - off.y - 0.0625, -0.5 + off.x }, col, { 1, 1, 1 }, false, { 0, 0, 1 }, {}, {}},
 				{{ -xo, 0.5 - off.y, -0.5 + off.x }, col, { 1, 1, 1 }, false, { 0, 0, 1 }, {}, {}},
@@ -87,7 +87,7 @@ void CraftItemDef::createModel(TextureAtlas& atlas) {
 			indOffset += 4;
 		}
 		
-		if (samplePos.x == 15 || atlas.sampleTexturePixel(ref, { samplePos.x + 1, samplePos.y }).w < 0.5) {
+		if (samplePos.x == 15 || atlas.getPixel(ref, { samplePos.x + 1, samplePos.y }).w < 0.5) {
 			std::vector<EntityVertex> myVerts = {
 				{{ -xo, 0.5 - off.y - 0.0625, -0.5 + off.x + 0.0625 }, col, { 1, 1, 1 }, false, { 0, 0, -1 }, {}, {}},
 				{{ -xo, 0.5 - off.y, -0.5 + off.x + 0.0625 }, col, { 1, 1, 1 }, false, { 0, 0, -1 }, {}, {}},

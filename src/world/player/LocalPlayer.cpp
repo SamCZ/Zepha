@@ -20,6 +20,13 @@ LocalPlayer::LocalPlayer(SubgamePtr game, LocalWorld& world, DimensionPtr dim, R
 	hud(root.body->append<Gui::BoxElement>({{ { Gui::Prop::CLASS, vec<string> { "_GUI_ROOT" } } }})),
 	menu(root.body->append<Gui::BoxElement>({{ { Gui::Prop::CLASS, vec<string> { "_GUI_ROOT" } } }})),
 	debug(root.body->append<Gui::BoxElement>({{ { Gui::Prop::CLASS, vec<string> { "_GUI_ROOT" } } }})),
+	indicators(root.body->append<Gui::BoxElement>({{ { Gui::Prop::CLASS, vec<string> { "_GUI_ROOT" } } }})),
+	kbIndicator(indicators->append<Gui::BoxElement>({{
+		{ Gui::Prop::VISIBLE, false },
+		{ Gui::Prop::BACKGROUND, string("key_observing") },
+		{ Gui::Prop::POS, array<Gui::Expression, 2> { Gui::Expression("100cw - 100sw - 2dp"), Gui::Expression("100ch - 100sh - 2dp") } },
+		{ Gui::Prop::SIZE, array<Gui::Expression, 2> { Gui::Expression("20px * 2"), Gui::Expression("16px * 2") } }
+	}})),
 	wireframe(game, dim, { 1, 1, 1 }),
 	renderer(renderer) {
 	handItemModel.parent = &handModel;
@@ -30,6 +37,10 @@ LocalPlayer::LocalPlayer(SubgamePtr game, LocalWorld& world, DimensionPtr dim, R
 			{ Gui::Prop::SIZE, array<Gui::Expression, 2> { Gui::Expression("100cw"), Gui::Expression("100ch") }}
 		}}}
 	});
+	
+	debug->setProp(Gui::Prop::VISIBLE, false);
+	
+	indicators->append<Gui::BoxElement>();
 }
 
 void LocalPlayer::update(f64 delta, vec2 mouseDelta) {
@@ -48,8 +59,7 @@ void LocalPlayer::update(f64 delta, vec2 mouseDelta) {
 	findTarget();
 	updateWireframe();
 	
-//	if (!gameGui.isInMenu())
-	updateInteract(delta);
+	if (!isInMenu()) updateInteract(delta);
 }
 
 string LocalPlayer::getUsername() {
@@ -139,6 +149,11 @@ void LocalPlayer::setHudVisible(bool visible) {
 //	gameGui.setVisible(hudVisible);
 }
 
+void LocalPlayer::setKBIndicatorVisible(bool visible) {
+	kbIndicator->setProp(Gui::Prop::VISIBLE, visible);
+	kbIndicator->updateElement();
+}
+
 void LocalPlayer::draw(Renderer&) {
 	wireframe.draw(renderer);
 	handItemModel.draw(renderer);
@@ -151,6 +166,7 @@ void LocalPlayer::drawHud(Renderer&) {
 
 void LocalPlayer::drawMenu(Renderer&) {
 	menu->draw(renderer);
+	indicators->draw(renderer);
 }
 
 void LocalPlayer::assertField(Packet packet) {
@@ -222,6 +238,7 @@ void LocalPlayer::handleAssertion(Deserializer& d) {
 }
 
 bool LocalPlayer::getKey(LocalPlayer::PlayerControl control) {
+	if (isInMenu()) return false;
 	return renderer.window.input.isKeyDown(
 		control == PlayerControl::FORWARD ? GLFW_KEY_COMMA :
 		control == PlayerControl::BACKWARD ? GLFW_KEY_O :

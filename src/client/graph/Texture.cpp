@@ -2,8 +2,8 @@
 // Created by aurailus on 29/11/18.
 //
 
-#include <stb_image.h>
 #include <stdexcept>
+#include <stb_image.h>
 
 #include "Texture.h"
 

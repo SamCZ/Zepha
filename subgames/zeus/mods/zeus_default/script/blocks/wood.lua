@@ -1,12 +1,13 @@
 zepha.register_block(":wood", {
     name = "Log",
 
-    model = "base:block",
+    model = "base:pillar",
     textures = {
         "zeus:default:oak_log_top",
         "zeus:default:oak_log_top",
-        "zeus:default:oak_log_side"
+        "zeus:default:oak_log_side_pillar"
     },
+    culls = false,
 
     tool_props = {
         health = 30,

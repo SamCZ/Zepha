@@ -138,8 +138,8 @@ void ConnectScene::update() {
 						string uncompressed = gzip::decompress(data.data(), data.length());
 						
 						client.game->textures.addImage(
-							reinterpret_cast<unsigned char*>(const_cast<char*>(uncompressed.data())),
-							assetName, true, width, height);
+							assetName, true, u16vec2(width, height),
+							reinterpret_cast<u8*>(const_cast<char*>(uncompressed.data())));
 					}
 					else if (t == AssetType::MODEL) {
 						string format = p.d.read<string>();
@@ -213,7 +213,7 @@ void ConnectScene::draw() {
 	renderer.beginChunkDeferredCalls();
 	renderer.endDeferredCalls();
 	renderer.beginGUIDrawCalls();
-	renderer.enableTexture(&client.game->textures.atlasTexture);
+	renderer.enableTexture(&client.game->textures.texture);
 	
 	root.draw(renderer);
 }

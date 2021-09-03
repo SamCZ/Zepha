@@ -47,18 +47,18 @@ void GameScene::draw() {
 	
 	perf.start("draw:world");
 	renderer.beginChunkDeferredCalls();
-	renderer.enableTexture(&client.game->textures.atlasTexture);
+	renderer.enableTexture(&client.game->textures.texture);
 	world.l()->drawChunks();
 	
 	perf.start("draw:entities");
 	renderer.beginEntityDeferredCalls();
-	renderer.enableTexture(&client.game->textures.atlasTexture);
+	renderer.enableTexture(&client.game->textures.texture);
 	world.l()->drawEntities();
 	renderer.endDeferredCalls();
 	
 	perf.start("draw:interface");
 	renderer.beginGUIDrawCalls();
-	renderer.enableTexture(&client.game->textures.atlasTexture);
+	renderer.enableTexture(&client.game->textures.texture);
 	world.l()->drawInterface();
 	
 	perf.start("idle");

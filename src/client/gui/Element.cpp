@@ -130,6 +130,7 @@ bool Gui::Element::handleMouseClick(ivec2 mousePos, u32 button, bool down) {
 }
 
 void Gui::Element::draw(Renderer& renderer) {
+	if (!getStyle<bool>(Gui::Prop::VISIBLE, true)) return;
 	entity.draw(renderer);
 	for (let& child : children) child->draw(renderer);
 }

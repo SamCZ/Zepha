@@ -12,7 +12,7 @@
  */
 
 LocalSubgame::LocalSubgame(const std::string& baseAssets) :
-	textures(2048),
+	textures(u16vec2(2048)),
 	
 	lua(std::make_unique<LocalLuaParser>(*this)),
 	biomes(std::make_unique<LocalBiomeAtlas>()),

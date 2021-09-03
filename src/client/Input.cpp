@@ -1,10 +1,10 @@
 #include "util/GL.h"
-#include <util/Util.h>
 #include <GLFW/glfw3.h>
 
 #include "Input.h"
 
-#include "Window.h"
+#include "util/Util.h"
+#include "client/Window.h"
 
 void Input::init(GLFWwindow* window) {
 	this->window = window;

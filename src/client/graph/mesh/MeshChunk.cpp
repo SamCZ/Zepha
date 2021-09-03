@@ -32,5 +32,5 @@ MeshChunk::Mesh::Mesh(const vec<Vertex>& vertices, const vec<u32>& indices) {
 	createVertexAttrib(idx++, 1, GL_FLOAT,         false, STRIDE_OFFSET(Vertex, normal));
 	createVertexAttrib(idx++, 4, GL_UNSIGNED_BYTE, true,  STRIDE_OFFSET(Vertex, light));
 	createVertexAttrib(idx++, 1, GL_UNSIGNED_BYTE, true,  STRIDE_OFFSET(Vertex, shaderMod));
-	createVertexAttrib(idx,   3, GL_UNSIGNED_BYTE, true,  STRIDE_OFFSET(Vertex, modValues));
+	createVertexAttrib(idx++, 3, GL_FLOAT        , false, STRIDE_OFFSET(Vertex, modValues));
 }

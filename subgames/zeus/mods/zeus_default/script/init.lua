@@ -1,13 +1,6 @@
 require(_PATH .. "blocks/index")
 require(_PATH .. "entity/index")
 
-local chat_down = false
-zepha.register_keybind("zeus:default:open_chat", {
-    description = "Open Chat",
-    default = zepha.keys.t,
-    on_press = function() print "Opened chat!" end
-})
-
 -- Flying toggles
 local function toggleFlying()
     zepha.player.flying = not zepha.player.flying
@@ -19,7 +12,7 @@ zepha.register_keybind("zeus:default:toggle_flying", {
     on_press = toggleFlying
 })
 
-local last_press = -100
+local last_press = -1
 zepha.register_keybind("zeus:default:double_jump_fly", {
     description = "Double Jump to Toggle Flying",
     default = zepha.keys.space,

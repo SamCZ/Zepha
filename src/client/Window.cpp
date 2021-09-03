@@ -6,7 +6,6 @@
 
 #include <stdexcept>
 
-#include "util/Log.h"
 #include "util/GL.h"
 
 Window::Window() : Window({ 800, 600 }) {};

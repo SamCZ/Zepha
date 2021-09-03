@@ -4,22 +4,16 @@
 
 #pragma once
 
-#include <string>
-#include <glm/glm.hpp>
+#include "util/Util.h"
 
 struct AtlasRef {
-	int tileX = 0;
-	int tileY = 0;
-	int tileWidth = 0;
-	int tileHeight = 0;
+	u16vec2 pos {};
+	u16vec2 size {};
+	uvec2 rawPos {};
+	uvec2 rawSize {};
+	vec4 uv {};
 	
+	string name = "";
 	bool base = false;
-	
-	glm::vec4 pos{};
-	glm::vec4 uv{};
-	std::string name = "";
-	
-	int width = 0;
-	int height = 0;
 };
 

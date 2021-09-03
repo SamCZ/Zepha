@@ -58,7 +58,7 @@ void Renderer::update(double delta) {
 	elapsedTime += delta;
 	
 	window.update();
-	//world.updateSwayMap(delta);
+	world.updateSwayMap(delta);
 }
 
 void Renderer::beginChunkDeferredCalls() {

@@ -80,6 +80,9 @@ public:
 	/** Sets whether or not the hud should be visible. */
 	void setHudVisible(bool visible);
 	
+	/** Sets whether or not the KBIndicator is visible. */
+	void setKBIndicatorVisible(bool visible);
+	
 	/** Draws the player's target wireframe and held item. */
 	void draw(Renderer& renderer) override;
 	
@@ -122,7 +125,7 @@ private:
 	Gui::Root root;
 	
 	/** Element roots for the hud and menu, respectively. */
-	sptr<Gui::BoxElement> hud, menu, debug;
+	sptr<Gui::BoxElement> hud, menu, debug, indicators, kbIndicator;
 	
 	/** A reference to the renderer. */
 	Renderer& renderer;

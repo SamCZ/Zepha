@@ -28,7 +28,7 @@ f64 Client::getDelta() {
 }
 
 void Client::startLocalServer(const string& subgame) {
-	//TODO: Implement Local Server
+//    TODO: Implement Local Server
 //    localServer = std::make_shared<LocalServerInstance>(executablePath, addr.port, state.subgame);
 //    localServer->start();
 	

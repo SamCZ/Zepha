@@ -37,7 +37,7 @@ void LuaErrorScene::draw() {
 	renderer.beginChunkDeferredCalls();
 	renderer.endDeferredCalls();
 	renderer.beginGUIDrawCalls();
-	renderer.enableTexture(&client.game->textures.atlasTexture);
+	renderer.enableTexture(&client.game->textures.texture);
 	
 	root.draw(renderer);
 }

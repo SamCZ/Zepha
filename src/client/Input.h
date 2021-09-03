@@ -7,6 +7,8 @@
 #include "util/Types.h"
 #include "client/Callback.h"
 
+class GLFWwindow;
+
 /**
  * Manages callbacks for key and mouse input, allows toggling mouse locking.
  */

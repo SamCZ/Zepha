@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include <vector>
 #include <FastNoise/FastNoise.h>
 
 #include "Shader.h"
 
-#include "../Texture.h"
+#include "util/Types.h"
+#include "client/graph/Texture.h"
 
 class WorldGeometryShader : public Shader {
 public:
@@ -34,9 +34,9 @@ public:
 	Uniforms uniforms{};
 	
 	Texture swayTex;
-	double swayOffset = 0;
-	FastNoise::SmartNode<> swayNoise;
-	std::vector<unsigned char> swayData{};
+	vec<u8> swayData{};
+	f64 swayOffset = 0;
+	FastNoise::SmartNode<> swayGenerator;
 	
 	glm::ivec2 windowSize{};
 	float bufferScale = 1;

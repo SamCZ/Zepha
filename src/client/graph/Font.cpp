@@ -11,7 +11,7 @@
 
 Font::Font(TextureAtlas& atlas, std::shared_ptr<AtlasRef> tex) :
 	fontTex(std::move(tex)),
-	atlasSize(atlas.pixelSize) {
+	atlasSize(atlas.canvasSize) {
 	
 	getCharWidths(atlas);
 }
@@ -30,8 +30,8 @@ void Font::getCharWidths(TextureAtlas& atlas) {
 	for (u16 i = 1; i < C_COUNT + 1; i++) {
 		glm::vec2 charPos = { i % 18 * C_WIDTH, std::floor(i / 18) * C_HEIGHT };
 		
-		u32 xBase = static_cast<u32>(fontTex->pos.x) + static_cast<u32>(charPos.x);
-		u32 yBase = static_cast<u32>(fontTex->pos.y) + static_cast<u32>(charPos.y);
+		u32 xBase = static_cast<u32>(fontTex->rawPos.x) + static_cast<u32>(charPos.x);
+		u32 yBase = static_cast<u32>(fontTex->rawPos.y) + static_cast<u32>(charPos.y);
 		
 		u16 width = 0;
 		

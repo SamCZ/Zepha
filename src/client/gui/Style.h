@@ -8,6 +8,7 @@ namespace Gui {
 	enum class Prop {
 		ID,
 		CLASS,
+		VISIBLE,
 		
 		POS,
 		SIZE,

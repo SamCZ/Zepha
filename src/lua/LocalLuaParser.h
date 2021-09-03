@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <unordered_set>
 #include <unordered_map>
 
 #include "lua/LuaParser.h"
@@ -30,15 +31,21 @@ public:
 	
 	void setModLoadOrder(const vec<string> order);
 	
+	void addKBObserver(usize id);
+	
+	void removeKBObserver(usize id);
+	
 private:
-	void loadApi(WorldPtr world, PlayerPtr player);
+	void loadApi(WorldPtr world);
 	
 	sol::protected_function_result runFileSandboxed(const std::string& file);
 	
 	Client* client;
+	PlayerPtr player;
 	double accumulatedDelta = 0;
 	
 	vec<CallbackRef> refs;
 	vec<string> modLoadOrder {};
+	std::unordered_set<usize> kbObservers {};
 	std::unordered_map<string, LuaMod> mods {};
 };
