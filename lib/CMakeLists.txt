@@ -41,6 +41,7 @@ if(NOT TARGET enet)
 
     add_subdirectory(enet)
     set_property(TARGET enet PROPERTY FOLDER "GameLib")
+    target_compile_definitions(enet PUBLIC ENET_FEATURE_ADDRESS_MAPPING)
 endif()
 
 #------------------------------
