@@ -48,7 +48,9 @@ public:
 	enum class CBType {
 		KEY,
 		KEY_PRESS,
+		KEY_REPEAT,
 		KEY_RELEASE,
+		CHAR,
 		MOUSE,
 		MOUSE_PRESS,
 		MOUSE_RELEASE,
@@ -62,6 +64,9 @@ private:
 	/** Calls the key callbacks and sets the key state of the key provided. */
 	void updateKey(u32 key, i32 state);
 	
+	/** Calls the char callbacks with the codepoint provided. */
+	void updateChar(u32 codepoint);
+	
 	/** Calls the button callbacks and sets the button state of the mouse button provided. */
 	void updateMouse(u32 button, i32 state);
 	
@@ -74,6 +79,9 @@ private:
 	
 	/** Calls the updateKey function with the proper key and state. */
 	static void keyCallback(GLFWwindow* window, i32 key, i32 code, i32 action, i32 mode);
+	
+	/** Calls the updateChar function with the proper codepoint. */
+	static void charCallback(GLFWwindow* window, u32 codepoint);
 	
 	/** Calls the updateMouse function with the proper button and state. */
 	static void mouseCallback(GLFWwindow* window, i32 key, i32 action, i32 mods);

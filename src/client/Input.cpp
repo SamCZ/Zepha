@@ -9,6 +9,7 @@
 void Input::init(GLFWwindow* window) {
 	this->window = window;
 	glfwSetKeyCallback(window, keyCallback);
+	glfwSetCharCallback(window, charCallback);
 	glfwSetScrollCallback(window, scrollCallback);
 	glfwSetMouseButtonCallback(window, mouseCallback);
 }
@@ -61,10 +62,14 @@ ivec2 Input::getMouseDelta() {
 }
 
 void Input::updateKey(u32 key, i32 state) {
-	if (state == GLFW_REPEAT) return;
 	keyState[key] = state != GLFW_RELEASE && state != 3;
 	events.call(CBType::KEY, key, state);
-	events.call(state != GLFW_RELEASE ? CBType::KEY_PRESS : CBType::KEY_RELEASE, key, state);
+	events.call(state == GLFW_PRESS ? CBType::KEY_PRESS :
+		state == GLFW_RELEASE ? CBType::KEY_RELEASE : CBType::KEY_REPEAT, key, state);
+}
+
+void Input::updateChar(u32 codepoint) {
+	events.call(CBType::CHAR, codepoint, 0);
 }
 
 void Input::updateMouse(u32 button, i32 state) {
@@ -80,8 +85,13 @@ void Input::scrollCallback(GLFWwindow* window, f64 x, f64 y) {
 
 void Input::keyCallback(GLFWwindow* window, i32 key, i32, i32 action, i32) {
 	let& self = static_cast<Window*>(glfwGetWindowUserPointer(window))->input;
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) glfwSetWindowShouldClose(window, GL_TRUE);
+	if (key == GLFW_KEY_LEFT_ALT) glfwSetWindowShouldClose(window, GL_TRUE);
 	else if (key >= 32 && key < 1024) self.updateKey(key, action);
+}
+
+void Input::charCallback(GLFWwindow* window, u32 codepoint) {
+	let& self = static_cast<Window*>(glfwGetWindowUserPointer(window))->input;
+	self.updateChar(codepoint);
 }
 
 void Input::mouseCallback(GLFWwindow* window, i32 button, i32 action, i32) {

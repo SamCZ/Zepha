@@ -40,24 +40,20 @@ local chat_menu_tabs = chat_menu:get('chat_tabs')
 local chat_menu_input = chat_menu:get('chat_input')
 local chat_menu_input_text = chat_menu:get('chat_input_text')
 
-local chat_buffer = ''
 local pipe = '`r` `c1|'
 local has_pipe = false
 local observer = KeyObserver.new()
-observer.on_press = function(keycode)
-    local key = zepha.keycodes[keycode]
-    if key == 'enter' then return
-    elseif key == 'space' then chat_buffer = chat_buffer .. ' '
-    elseif key == 'backspace' then chat_buffer = chat_buffer:sub(1, chat_buffer:len() - 1)
-    else chat_buffer = chat_buffer .. key end
 
-    chat_menu_input_text.content = chat_buffer .. (has_pipe and pipe or '')
+local function update_content()
+    chat_menu_input_text.content = observer.buffer .. (has_pipe and pipe or '')
 end
+
+observer.on_change = update_content
 
 zepha.after(function()
     if not chat.open then return true end
     has_pipe = not has_pipe
-    chat_menu_input_text.content = chat_buffer .. (has_pipe and pipe or '')
+    update_content()
     return true
 end, 0.5)
 
@@ -70,11 +66,13 @@ chat._refresh = function()
 
     if chat.open then
         chat_menu_tabs:clear()
+        update_content()
 
         local i = 0
         for _, identifier in ipairs(chat.channel_order) do
             local channel = chat.channels[identifier]
             chat_menu_tabs:append(zepha.Gui.Box {
+                cursor = 'pointer',
                 size = { '48dp', '10dp' },
                 pos = { i * 49 .. 'dp', '0dp' },
                 background = (chat.current_channel == identifier) and '#0005' or '#0002',
@@ -132,25 +130,29 @@ chat.set_open = function(open)
 
     if open == nil then chat.open = not chat.open
     else chat.open = open end
-
-    if chat.open then
-        observer:start()
-    else
-        observer:stop()
-        chat_buffer = ''
-    end
+    if chat.open then zepha.after(function() observer:start() end, 0.05)
+    else observer:stop() end
+    observer.buffer = ''
 
     zepha.player.menu = chat.open and chat_menu or nil
 
     chat._refresh()
 end
 
--- Keyboard shortcut to toggle the chat.
 zepha.register_keybind(":open_chat", {
     description = "Open Chat",
     default = zepha.keys.p,
     on_press = function()
         if chat.open then return end
+        chat.set_open()
+    end
+})
+
+zepha.register_keybind(":close_chat", {
+    description = "Close Chat",
+    default = zepha.keys.escape,
+    on_press = function()
+        if not chat.open then return end
         chat.set_open()
     end
 })
@@ -161,7 +163,7 @@ zepha.register_keybind(":send_message", {
     default = zepha.keys.enter,
     on_press = function()
         if not chat.open then return end
-        chat.send(chat_buffer)
+        if observer.buffer:len() > 0 then chat.send(observer.buffer) end
         chat.set_open()
     end
 })

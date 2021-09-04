@@ -145,13 +145,13 @@ local noise = {
 --     heightmap = {
 --         module = "add",
 --         sources = {
---             runfile(_PATH .. 'world_noise'),
+--             require(_PATH .. 'world_noise'),
 --             {
 --                 module = "max",
 --                 scalar = 0,
 --                 source = {
 --                     module = "add",
---                     scalar = -150,
+--                     scalar = -50,
 --                     source = {
 --                         module = "multiply",
 --                         scalar = 400,
@@ -172,7 +172,7 @@ local noise = {
         y_scale = 2,
         source = {
             module = "add",
-            scalar = -2200,
+            scalar = -1800,
             source = {
                 module = "multiply",
                 scalar = 3000,

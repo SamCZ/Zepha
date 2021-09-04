@@ -18,20 +18,24 @@ namespace Api::Usertype {
 		
 		void stop();
 		
+		const string& getBuffer();
+		void setBuffer(const string& buffer);
+		
 		static void bind(sol::state& lua, sol::table& core, Input& input, LocalLuaParser& parser);
 		
 	private:
+		usize id = 0;
+		bool active = false;
+		
+		string buffer {};
+		
 		sol::protected_function on_press = sol::nil;
 		sol::protected_function on_release = sol::nil;
 		sol::protected_function on_change = sol::nil;
 		
-		vec<CallbackRef> nativeCBs {};
-		
-		usize id = 0;
-		bool active = false;
-		
 		Input& input;
 		LocalLuaParser& parser;
+		vec<CallbackRef> nativeCBs {};
 		
 		static usize ID_NEXT;
 	};

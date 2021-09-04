@@ -6,7 +6,6 @@
 
 #include "util/Types.h"
 
-
 class CallbackRef {
 public:
 	CallbackRef() = default;
