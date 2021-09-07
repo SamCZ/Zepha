@@ -12,14 +12,14 @@ end
 -- register_element
 -- Add an element to the Gui namespace.
 local function register_element(key)
-    if type(key) == "table" then
+    if type(key) == 'table' then
         for _, v in pairs(key) do register_element(v) end
         return
     end
     env.Gui[key] = function(data) return create_element(key, data) end
 end
 
-register_element({ "Box", "Text" })
+register_element({ 'Box', 'Text' })
 
 -- zepha.build_gui
 -- Allows you to Build UI Elements with the GUI namespace outside of a callback.

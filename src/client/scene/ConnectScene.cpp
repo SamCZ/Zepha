@@ -49,7 +49,7 @@ void ConnectScene::update() {
 			
 			if (p.type == Packet::Type::SERVER_INFO) {
 				status->setProp(Gui::Prop::CONTENT, status->getStyle<string>(Gui::Prop::CONTENT, "")
-				                                    + "Received server properties.\n");
+					+ "Received server properties.\n");
 				
 				const u32 seed = p.d.read<u32>();
 				std::cout << seed << std::endl;
@@ -75,8 +75,7 @@ void ConnectScene::update() {
 			}
 			else if (p.type == Packet::Type::BIOME_IDENTIFIER_LIST) {
 				status->setProp(Gui::Prop::CONTENT, status->getStyle<string>(Gui::Prop::CONTENT, "")
-				                                    +
-				                                    "Received block & biome index-identifier table.\nDownloading mods... ");
+					+ "Received block & biome index-identifier table.\nDownloading mods... ");
 				
 				client.game->getBiomes().setIdentifiers(p.d.read<vec<string>>());
 				state = State::MODS;
@@ -93,11 +92,11 @@ void ConnectScene::update() {
 			PacketView p(e.packet);
 			
 			if (p.type == Packet::Type::MODS) {
-				auto mod = LuaMod(p);
+				auto mod = Mod(p);
 				status->setProp(Gui::Prop::CONTENT, status->getStyle<string>(Gui::Prop::CONTENT, "") +
-				                                    (modsFound == 0 ? "" : ", ") +
-				                                    ((modsFound) % 8 == 0 && modsFound != 0 ? "\n" : "") +
-				                                    "`c0`u" + mod.config.name + "`r`c1");
+	                (modsFound == 0 ? "" : ", ") +
+	                ((modsFound) % 8 == 0 && modsFound != 0 ? "\n" : "") +
+	                "`c0`u" + mod.name + "`r`c1");
 				modsFound++;
 				client.game->getParser().addMod(std::move(mod));
 			}
@@ -105,8 +104,7 @@ void ConnectScene::update() {
 				client.game->getParser().setModLoadOrder(p.d.read<vec<string>>());
 				
 				status->setProp(Gui::Prop::CONTENT, status->getStyle<string>(Gui::Prop::CONTENT, "")
-				                                    +
-				                                    ".\n`c7Done`c1 downloading mods. Received the mods order.\nReceiving media");
+					+ ".\n`c7Done`c1 downloading mods. Received the mods order.\nReceiving media");
 				
 				state = State::MEDIA;
 				Packet resp(Packet::Type::MEDIA);

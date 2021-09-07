@@ -1,6 +1,10 @@
 {
-	"name": "zeus:flowers",
+	"name": "Flowers",
+	"identifier": "zeus:flowers",
 	"description": "Flowers and vegitation for the Zeus subgame.",
 	"version": "0.0.1",
-	"depends": ["zeus:default"]
+	"main": "main",
+	"dependencies": {
+		"zeus:default": "^0"
+	}
 }

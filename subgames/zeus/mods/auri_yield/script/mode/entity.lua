@@ -1,4 +1,4 @@
-local get_yield = require("@auri:yield/get_yield")
+local get_yield = require '../get_yield'
 
 if zepha.server then
     zepha.bind("on_break", function(dim, pos)

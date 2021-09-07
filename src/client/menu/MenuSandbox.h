@@ -6,7 +6,7 @@
 
 #include "lua/LuaParser.h"
 
-#include "lua/LuaMod.h"
+#include "lua/Mod.h"
 #include "client/gui/Root.h"
 #include "client/gui/Element.h"
 
@@ -31,13 +31,17 @@ private:
 	
 	void loadApi();
 	
-	void loadAndRunMod(const string& modPath);
+	void loadMod(const std::filesystem::path& path);
 	
 	void showError(const string& err);
 	
-	sol::protected_function_result runFileSandboxed(const string& file);
+	/** Exposed to Lua, can provide a relative path, uses environment variables to resolve. */
+	sol::protected_function_result require(sol::this_environment thisEnv, const string& path);
 	
-	LuaMod mod {};
+	/** Loads a file with the right enviroment, needs a canonical path. */
+	sol::protected_function_result loadFile(const string& path);
+	
+	Mod mod {};
 	string subgameName;
 	
 	Client& client;

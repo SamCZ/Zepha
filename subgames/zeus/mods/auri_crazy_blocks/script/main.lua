@@ -1,4 +1,4 @@
-require(_PATH .. "chest")
+require './chest'
 
 local function stacker_action(dim, pos)
     local v = V(0, 1, 0)
@@ -12,7 +12,6 @@ end
 
 zepha.register_block("@auri:crazy_blocks:stacker", {
     name = "Stacker",
-    model = "base:block",
     textures = {"zeus:default:oak_planks"},
     on_interact = stacker_action,
     on_interact_client = stacker_action
@@ -20,7 +19,6 @@ zepha.register_block("@auri:crazy_blocks:stacker", {
 
 zepha.register_block("@auri:crazy_blocks:inventory", {
     name = "Open Inventory",
-    model = "base:block",
     textures = {"zeus:default:cobblestone"},
     on_interact_client = inventory_action
 })

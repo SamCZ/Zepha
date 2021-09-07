@@ -1,3 +1,5 @@
+require '../common/api'
+
 chat.open = false
 chat.current_channel = nil
 chat._message_persist_time = 5

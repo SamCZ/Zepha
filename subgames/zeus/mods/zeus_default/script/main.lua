@@ -1,5 +1,5 @@
-require(_PATH .. "blocks/index")
-require(_PATH .. "entity/index")
+require './blocks'
+require './entity'
 
 -- Flying toggles
 local function toggleFlying()

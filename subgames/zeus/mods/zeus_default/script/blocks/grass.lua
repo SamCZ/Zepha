@@ -1,7 +1,7 @@
 zepha.register_block(":grass", {
     name = "Grass",
 
-    model = "base:block_foliage",
+    model = "zepha:base:block_foliage",
     textures = {
         "tint(0, zeus:default:grass_top)",
         "zeus:default:dirt",

@@ -2,7 +2,7 @@ zepha.register_block(":leaves", {
     name = "Leaves",
 
     culls = false,
-    model = "base:leaf_like",
+    model = "zepha:base:leaf_like",
     textures = {
         "zeus:default:leaves",
         "zeus:default:leaves_puff"

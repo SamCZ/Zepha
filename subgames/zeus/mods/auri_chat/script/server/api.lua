@@ -1,3 +1,5 @@
+require '../common/api'
+
 -- Creates a new chat channel with the name and options provided.
 chat.create_channel = function(identifier, options)
     chat.channels[identifier] = {

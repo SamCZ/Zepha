@@ -1,6 +1,12 @@
 {
-	"name": "zeus:default",
+	"name": "Zeus",
+	"identifier": "zeus:default",
 	"description": "Default mod for the Zeus subgame.",
 	"version": "0.0.1",
-	"depends": ["zeus:materials", "@aurailus:basictools", "@aurailus:crafting"]
+	"main": "main",
+	"dependencies": {
+		"zeus:materials": "^0",
+		"@auri:basic_tools": "^0",
+		"@auri:crafting": "^0"
+	}
 }

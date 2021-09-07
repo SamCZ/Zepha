@@ -1,6 +1,10 @@
 {
-  "name": "zeus:inventory",
-  "description": "Inventory mod for the Zeus subgame.",
+  "name": "Inventory",
+  "identifier": "zeus:inventory",
+  "description": "The inventory for the Zeus subgame.",
   "version": "0.0.1",
-  "depends": [ "@aurailus:hot_wheel" ]
+  "main": "main",
+  "dependencies": {
+    "@auri:hot_wheel": "^0"
+  }
 }

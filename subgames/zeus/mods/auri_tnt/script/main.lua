@@ -1,6 +1,6 @@
 zepha.register_block("@auri:tnt:tnt", {
     name = "TNT",
-    model = "base:block",
+    model = "zepha:base:block",
     textures = {
         "@auri:tnt:tnt_top",
         "@auri:tnt:tnt_bottom",

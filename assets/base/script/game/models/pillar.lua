@@ -3,10 +3,10 @@
 -- Texture order is: top, bottom, side
 --
 
-zepha.register_blockmodel("base:pillar", {
+zepha.register_blockmodel(':pillar', {
     parts = {
         {
-            face = "back",
+            face = 'back',
             tex = 3,
             points = {
                 0, 0, 4/16, 0, 1,
@@ -15,7 +15,7 @@ zepha.register_blockmodel("base:pillar", {
                 0, 1, 4/16, 0, 0
             }
         }, {
-            face = "front",
+            face = 'front',
             tex = 3,
             points = {
                 1, 1, 12/16, 0, 0,
@@ -24,7 +24,7 @@ zepha.register_blockmodel("base:pillar", {
                 1, 1, 4/16, 8/16, 0
             }
         }, {
-            face = "top",
+            face = 'top',
             tex = 1,
             points = {
                 4/16, 1, 0, 4/16, 0,
@@ -43,7 +43,7 @@ zepha.register_blockmodel("base:pillar", {
                 1, 1, 4/16, 1, 4/16
             }
         }, {
-            face = "bottom",
+            face = 'bottom',
             tex = 2,
             points = {
                 4/16, 0, 0, 4/16, 0,
@@ -62,7 +62,7 @@ zepha.register_blockmodel("base:pillar", {
                 12/16, 0, 1, 12/16, 1
             }
         }, {
-            face = "left",
+            face = 'left',
             tex = 3,
             points = {
                 4/16, 0, 1, 0, 1,
@@ -71,7 +71,7 @@ zepha.register_blockmodel("base:pillar", {
                 4/16, 1, 1, 0, 0
             }
         }, {
-            face = "right",
+            face = 'right',
             tex = 3,
             points = {
                 4/16, 0, 0, 8/16, 1,
@@ -81,7 +81,7 @@ zepha.register_blockmodel("base:pillar", {
             }
         },
         {
-            face = "nocull",
+            face = 'nocull',
             tex = 3,
             points = {
                 0, 0, 4/16, 10/16, 0,

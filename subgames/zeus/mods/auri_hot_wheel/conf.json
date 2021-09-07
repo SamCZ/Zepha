@@ -1,6 +1,13 @@
 {
-  "name": "@auri:hot_wheel",
+  "name": "Hot Wheel",
+  "identifier": "@auri:hot_wheel",
   "description": "A speedy way to select items from your inventory :3",
   "version": "0.0.1",
-  "depends": [ "@auri:health" ]
+  "main": {
+    "client": "client/main",
+    "server": "server/main"
+  },
+  "dependencies": {
+    "@auri:health": "^0"
+  }
 }

@@ -32,8 +32,8 @@ function zepha.block_interact(player, target)
     local def = zepha.registered_blocks[block]
 
     local args = { target.dim, target.pos, player }
-    local cb = zepha.server and "on_interact" or "on_interact_client"
-    if type(def[cb]) == "function" then def[cb](table.unpack(args)) end
+    local cb = zepha.server and 'on_interact' or 'on_interact_client'
+    if type(def[cb]) == 'function' then def[cb](table.unpack(args)) end
     zepha.trigger(cb, table.unpack(args))
 
     return def.on_interact or def.on_interact_client
@@ -89,14 +89,14 @@ function zepha.block_break(player, target)
 
     local args = { target.dim, target.pos, player }
 
-    local cb = zepha.server and "on_break" or "on_break_client"
-    if type(def[cb]) == "function" then def[cb](table.unpack(args)) end
+    local cb = zepha.server and 'on_break' or 'on_break_client'
+    if type(def[cb]) == 'function' then def[cb](table.unpack(args)) end
     zepha.trigger(cb, table.unpack(args))
 
-    target.dim:set_block(target.pos, "air")
+    target.dim:set_block(target.pos, 'air')
 
-    local cb = zepha.server and "after_break" or "after_break_client"
-    if type(def[cb]) == "function" then def[cb](table.unpack(args)) end
+    local cb = zepha.server and 'after_break' or 'after_break_client'
+    if type(def[cb]) == 'function' then def[cb](table.unpack(args)) end
     zepha.trigger(cb, table.unpack(args))
 end
 
@@ -112,8 +112,8 @@ function zepha.item_use(player, target, stack)
     if stack == nil or def == nil then return stack end
 
     local args = { stack, target, player }
-    local cb = zepha.server and "on_use" or "on_use_client"
+    local cb = zepha.server and 'on_use' or 'on_use_client'
 
-    if type(def[cb]) == "function" then return def[cb](table.unpack(args)) end
+    if type(def[cb]) == 'function' then return def[cb](table.unpack(args)) end
     return nil
 end

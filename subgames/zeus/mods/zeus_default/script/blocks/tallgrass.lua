@@ -4,7 +4,7 @@ for i = 1, 5, 1 do
 
         culls = false,
         solid = false,
-        model = "base:cross_plant",
+        model = "zepha:base:cross_plant",
         textures = { "tint(0, zeus:default:tallgrass_"..i..")" },
         lowdef_render = false,
 

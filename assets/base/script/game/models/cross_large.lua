@@ -4,10 +4,10 @@
 -- Only takes one texture, which is displayed on all faces.
 --
 
-zepha.register_blockmodel("base:cross_large", {
+zepha.register_blockmodel(':cross_large', {
     parts = {
         {
-            face = "nocull",
+            face = 'nocull',
             tex = 1,
             points = {
                 0, 0, 0, 0, 1,
@@ -16,7 +16,7 @@ zepha.register_blockmodel("base:cross_large", {
                 0, 1, 0, 0, 0
             }
         }, {
-            face = "nocull",
+            face = 'nocull',
             tex = 1,
             points = {
                 1, 1, 1, 1, 0,
@@ -25,7 +25,7 @@ zepha.register_blockmodel("base:cross_large", {
                 0, 1, 0, 0, 0
             }
         }, {
-            face = "nocull",
+            face = 'nocull',
             tex = 1,
             points = {
                 1, 1, 0, 1, 0,
@@ -34,7 +34,7 @@ zepha.register_blockmodel("base:cross_large", {
                 0, 1, 1, 0, 0
             }
         }, {
-            face = "nocull",
+            face = 'nocull',
             tex = 1,
             points = {
                 0, 0, 1, 0, 1,

@@ -2,7 +2,7 @@ zepha.register_block(":bush_stem", {
     name = "Bush Stem",
 
     culls = false,
-    model = "base:cross_large",
+    model = "zepha:base:cross_large",
     textures = { "zeus:default:bush_stem" },
     far_render = false,
 

@@ -88,7 +88,7 @@ namespace RegisterBlock {
 		static std::pair<BlockModel, BlockModel>
 		createBlockModel(sol::table blockTable, sol::table blockModels, TextureAtlas* atlas) {
 			// Get the specified block model
-			auto modelStr = blockTable.get_or<std::string>("model", "base:block");
+			auto modelStr = blockTable.get_or<std::string>("model", "zepha:base:block");
 			auto modelOpt = blockModels.get<sol::optional<sol::table>>(modelStr);
 			if (!modelOpt) throw std::runtime_error("Non-existent model \"" + modelStr + "\" specified");
 			

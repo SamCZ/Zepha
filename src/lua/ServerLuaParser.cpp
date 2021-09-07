@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 11/06/19.
-//
-
 #include <gzip/compress.hpp>
 
 #include "ServerLuaParser.h"
@@ -40,11 +36,10 @@ void ServerLuaParser::init(WorldPtr world, const std::string& path) {
 	
 	loadApi(world);
 	handler.loadMods(static_cast<ServerSubgame&>(game), path + "mods");
-	handler.executeMods(std::bind(&ServerLuaParser::runFileSandboxed, this, std::placeholders::_1));
+	handler.executeMods(std::bind(&ServerLuaParser::loadFile, this, std::placeholders::_1));
 	
-	std::cout << Log::info << "Loaded " << handler.cGetMods().size() << " mods: [ ";
-	for (unsigned int i = 0; i < handler.cGetMods().size(); i++)
-		std::cout << handler.cGetMods()[i].config.name << (i < handler.cGetMods().size() - 1 ? ", " : " ]\n");
+	std::cout << Log::info << "Loaded " << handler.modOrder.size() <<
+		" mods: " << Util::toString(handler.modOrder) << std::endl;
 }
 
 void ServerLuaParser::update(double delta) {
@@ -57,12 +52,10 @@ void ServerLuaParser::update(double delta) {
 }
 
 void ServerLuaParser::sendModsPacket(ENetPeer* peer) const {
-	for (const LuaMod& mod : handler.cGetMods())
-		Serializer().append(mod.serialized).packet(Packet::Type::MODS).sendTo(peer, Packet::Channel::CONNECT);
-	
-	vec<string> order {};
-	for (const LuaMod& mod : handler.cGetMods()) order.push_back(mod.config.name);
-	Serializer().append(order).packet(Packet::Type::MOD_ORDER).sendTo(peer, Packet::Channel::CONNECT);
+	for (const let& pair : handler.mods)
+		Serializer().append(pair.second.serialize())
+			.packet(Packet::Type::MODS).sendTo(peer, Packet::Channel::CONNECT);
+	Serializer().append(handler.modOrder).packet(Packet::Type::MOD_ORDER).sendTo(peer, Packet::Channel::CONNECT);
 }
 
 void ServerLuaParser::playerConnected(std::shared_ptr<ServerPlayer> client) {
@@ -117,11 +110,11 @@ void ServerLuaParser::loadApi(WorldPtr world) {
 	
 	Api::Util::createRegister(lua, core, "mesh");
 	Api::Util::createRegister(lua, core, "item",
-		[&](const auto& iden) { RegisterItem::server(core, game, iden); });
+		[&](const let& iden) { RegisterItem::server(core, game, iden); });
 	Api::Util::createRegister(lua, core, "block",
-		[&](const auto& iden) { RegisterBlock::server(core, game, iden); });
+		[&](const let& iden) { RegisterBlock::server(core, game, iden); });
 	Api::Util::createRegister(lua, core, "biome",
-		[&](const auto& iden) { RegisterBiome::server(core, game, iden); });
+		[&](const let& iden) { RegisterBiome::server(core, game, iden); });
 	Api::Util::createRegister(lua, core, "keybind");
 	Api::Util::createRegister(lua, core, "blockmodel");
 	Api::Util::createRegister(lua, core, "entity", nullptr, "entities");
@@ -140,32 +133,78 @@ void ServerLuaParser::loadApi(WorldPtr world) {
 	
 	bindModules();
 	
-	lua.set_function("require", &ServerLuaParser::runFileSandboxed, this);
+	lua.set_function("require", &ServerLuaParser::require, this);
 	lua["dofile"] = lua["loadfile"] = lua["require"];
 }
 
-sol::protected_function_result ServerLuaParser::runFileSandboxed(const std::string& file) {
-	size_t modname_length = file.find('/');
-	if (modname_length == std::string::npos)
-		throw std::runtime_error("Error opening \"" + file + "\", specified file is invalid.");
-	std::string modname = file.substr(0, modname_length);
+sol::protected_function_result ServerLuaParser::require(sol::this_environment env, string requirePath) {
+	string currentPath = static_cast<sol::environment>(env).get<string>("__PATH");
+	vec<string> pathSegments;
 	
-	for (const LuaMod& mod : handler.cGetMods()) {
-		if (modname != mod.config.name) continue;
-		for (const LuaMod::File& f : mod.files) {
-			if (f.path != file) continue;
-			
-			sol::environment env(lua, sol::create, lua.globals());
-			env["_PATH"] = f.path.substr(0, f.path.find_last_of('/') + 1);
-			env["_FILE"] = f.path;
-			env["_MODNAME"] = mod.config.name;
-			
-			using Pfr = sol::protected_function_result;
-			return lua.safe_script(f.file, env,
-				[](lua_State*, Pfr pfr) -> Pfr { throw static_cast<sol::error>(pfr); },
-				"@" + f.path, sol::load_mode::text);
+	if (requirePath[0] == '.') {
+		usize lastPos = 0, pos;
+		while ((pos = currentPath.find('/', lastPos)) != string::npos) {
+			pathSegments.emplace_back(currentPath.substr(lastPos, pos - lastPos));
+			lastPos = pos + 1;
 		}
-		throw std::runtime_error("Error opening \"" + file + "\", file not found.");
+		if (lastPos < currentPath.size())
+			pathSegments.emplace_back(currentPath.substr(lastPos, currentPath.size()));
+		
+		lastPos = 0;
+		while ((pos = requirePath.find('/', lastPos)) != string::npos) {
+			pathSegments.emplace_back(requirePath.substr(lastPos, pos - lastPos));
+			lastPos = pos + 1;
+		}
+		if (lastPos < requirePath.size())
+			pathSegments.emplace_back(requirePath.substr(lastPos, requirePath.size()));
+		
+		for (let it = pathSegments.begin(); it != pathSegments.end();) {
+			if (*it == ".") {
+				pathSegments.erase(it);
+			}
+			else if (*it == "..") {
+				if (it - pathSegments.begin() < 2) throw std::runtime_error("Path escapes sandbox.");
+				pathSegments.erase(it);
+				pathSegments.erase(--it);
+			}
+			else it++;
+		}
+		
+		std::stringstream s;
+		for (usize i = 0; i < pathSegments.size(); i++) s << (i != 0 ? "/" : "") << pathSegments[i];
+		requirePath = s.str();
 	}
-	throw std::runtime_error("Error opening \"" + file + "\", mod not found.");
+	
+	return loadFile(requirePath);
+}
+
+sol::protected_function_result ServerLuaParser::loadFile(string path) {
+	usize modnameEnd = path.find('/');
+	if (modnameEnd == string::npos) throw std::runtime_error(
+		"Error opening '" + path + "', specified file is invalid.");
+	string modname = path.substr(0, modnameEnd);
+	
+	let modIt = handler.mods.find(modname);
+	if (modIt == handler.mods.end()) throw sol::error("Error opening '" + path + "', mod not found.");
+	let& mod = modIt->second;
+	
+	std::string_view file;
+	let it = mod.files.find(path);
+	if (it != mod.files.end()) file = it->second;
+	else {
+		it = mod.files.find(path + "/main");
+		if (it == mod.files.end()) throw sol::error("Error opening '" + path + "', file not found.");
+		file = it->second;
+		path += "/main";
+	}
+	
+	sol::environment env(lua, sol::create, lua.globals());
+	env["__PATH"] = path.substr(0, path.find_last_of('/') + 1);
+	env["__FILE"] = path;
+	env["__MOD_NAME"] = mod.identifier;
+	
+	using Pfr = sol::protected_function_result;
+	return lua.safe_script(file, env,
+		[](lua_State*, Pfr pfr) -> Pfr { throw static_cast<sol::error>(pfr); },
+		"@" + path, sol::load_mode::text);
 }

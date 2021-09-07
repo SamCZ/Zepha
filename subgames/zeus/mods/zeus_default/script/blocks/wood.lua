@@ -1,7 +1,7 @@
 zepha.register_block(":wood", {
     name = "Log",
 
-    model = "base:pillar",
+    model = "zepha:base:pillar",
     textures = {
         "zeus:default:oak_log_top_pillar",
         "zeus:default:oak_log_top_pillar",

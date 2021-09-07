@@ -1,5 +1,7 @@
 {
-  "name": "@auri:tnt",
+  "name": "TNT",
+  "identifier": "@auri:tnt",
   "description": "Bet you've never seen this one before.",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "main": "main"
 }

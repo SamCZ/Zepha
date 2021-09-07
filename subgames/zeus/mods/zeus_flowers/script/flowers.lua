@@ -18,7 +18,7 @@ for _,flower in pairs(flowers) do
         culls = false,
         solid = false,
         name = name,
-        model = "base:cross_plant",
+        model = "zepha:base:cross_plant",
         textures = {
             "zeus:flowers:" .. flower
         },

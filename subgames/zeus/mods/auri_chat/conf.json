@@ -1,5 +1,13 @@
 {
-  "name": "@auri:chat",
+  "name": "Chat",
+  "identifier": "@auri:chat",
   "description": "A simple chat interface and API supporting messaging and commands.",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "main": {
+    "client": "client/main",
+    "server": "server/main"
+  },
+  "dependencies": {
+    "zepha": "^0"
+  }
 }

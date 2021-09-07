@@ -1,5 +1,5 @@
-require(_PATH .. 'keys')
-require(_PATH .. 'register_biomes')
+require './keys'
+require './biomes'
 
 zepha.create_dimension('zeus:world:default', {
     biomes = { '#natural', '#default' }
