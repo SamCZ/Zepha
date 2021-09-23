@@ -23,34 +23,45 @@ namespace {
 	inline constexpr bool is_optional_v = is_optional<T>::value;
 }
 
-template <typename R>
+template <typename R, typename C = nullptr_t>
 class StringParser {
+public:
+	typedef R Data;
+	typedef C Ctx;
+	
 	class Fn;
 
 	using EXEC_ARGS = const vec<std::string_view>&;
-	using EXEC_FN = std::function<R(std::unordered_map<string, Fn>, EXEC_ARGS)>;
+	using EXEC_FN = std::function<R(C&, EXEC_ARGS)>;
 
 	struct Fn {
 		Fn(EXEC_FN exec): exec(exec) {};
 
-		R operator()(std::unordered_map<string, Fn> functions, EXEC_ARGS args) const {
-			return exec(functions, args);
+		R operator()(C& ctx, EXEC_ARGS args) const {
+			return exec(ctx, args);
 		}
 
 	private:
 		EXEC_FN exec;
 	};
 	
-public:
 	explicit StringParser() = default;
 	
 	template <typename... Args, typename Func>
 	void addFn(const string& name, const Func& fn) {
-		using TYPES = std::tuple<Args...>;
-		functions.emplace(name, [=, this](std::unordered_map<string, Fn> functions, EXEC_ARGS strArgs) {
-			TYPES args = {};
-			parseStrArgs<TYPES>(strArgs, args);
+		functions.emplace(name, [=, this](C& ctx, EXEC_ARGS strArgs) {
+			std::tuple<Args...> args = {};
+			parseStrArgs<std::tuple<Args...>>(strArgs, args, ctx);
 			return std::apply(fn, args);
+		});
+	}
+	
+	template <typename... Args, typename Func>
+	void addFnCtx(const string& name, const Func& fn) {
+		functions.emplace(name, [=, this](C& ctx, EXEC_ARGS strArgs) {
+			std::tuple<Args...> args = {};
+			parseStrArgs<std::tuple<Args...>>(strArgs, args, ctx);
+			return std::apply(fn, std::tuple_cat(std::tuple<C&>(ctx), args));
 		});
 	}
 	
@@ -59,23 +70,34 @@ public:
 		addFn<Args...>("_", fn);
 	}
 	
+	template <typename... Args, typename Func>
+	void addLiteralFnCtx(const Func& fn) {
+		addFnCtx<Args...>("_", fn);
+	}
+	
 	const R parse(string str) const {
+		const nullptr_t ctx {};
 		str.erase(std::remove_if(str.begin(), str.end(), isspace), str.end());
-		return std::move(parseRaw(str));
+		return std::move(parseRaw(str, const_cast<C&>(ctx)));
+	}
+	
+	const R parse(string str, C& ctx) const {
+		str.erase(std::remove_if(str.begin(), str.end(), isspace), str.end());
+		return std::move(parseRaw(str, ctx));
 	}
 
 private:
-	const R parseRaw(const std::string_view str) const {
+	const R parseRaw(const std::string_view str, C& ctx = {}) const {
 		if (strIsFunction(str)) {
 			let func = parseFunction(str);
 			const let f = functions.find(string(func.first));
 			if (f == functions.end()) throw std::invalid_argument("Unknown function '" + string(func.first) + "'!");
-			return f->second(functions, func.second);
+			return f->second(ctx, func.second);
 		}
 		else {
 			const let& f = functions.find("_");
 			if (f == functions.end()) throw std::invalid_argument("No default function handler!");
-			return f->second(functions, { str });
+			return f->second(ctx, { str });
 		}
 	}
 	
@@ -123,31 +145,31 @@ private:
 	}
 	
 	template <typename T, usize I, std::enable_if_t<std::is_same_v<T, string>, bool> = true>
-	T parseStrArg(EXEC_ARGS args) {
+	T parseStrArg(EXEC_ARGS args, C&) {
 		if (I >= args.size()) throw std::invalid_argument("Not enough parameters.");
 		return string(args[I]);
 	}
 	
 	template <typename T, usize I, std::enable_if_t<std::is_integral_v<T>, bool> = true>
-	T parseStrArg(EXEC_ARGS args) {
+	T parseStrArg(EXEC_ARGS args, C&) {
 		if (I >= args.size()) throw std::invalid_argument("Not enough parameters.");
 		return std::stoi(args[I].data());
 	}
 	
 	template <typename T, usize I, std::enable_if_t<std::is_floating_point_v<T>, bool> = true>
-	T parseStrArg(EXEC_ARGS args) {
+	T parseStrArg(EXEC_ARGS args, C&) {
 		if (I >= args.size()) throw std::invalid_argument("Not enough parameters.");
 		return std::stod(args[I].data());
 	}
 	
 	template <typename T, usize I, usize VI = 0>
-	T parseStrVariantArg(EXEC_ARGS args) {
+	T parseStrVariantArg(EXEC_ARGS args, C& ctx) {
 		try {
-			return parseStrArg<std::variant_alternative_t<VI, T>, I>(args);
+			return parseStrArg<std::variant_alternative_t<VI, T>, I>(args, ctx);
 		}
 		catch (...) {}
 		if constexpr (VI + 1 < std::variant_size_v<T>) {
-			return parseStrVariantArg<T, I, VI + 1>(args);
+			return parseStrVariantArg<T, I, VI + 1>(args, ctx);
 		}
 		else {
 			throw std::invalid_argument("Argument does not match types required.");
@@ -155,27 +177,27 @@ private:
 	}
 	
 	template<typename T, usize I, std::enable_if_t<is_variant_v<T>, bool> = true>
-	T parseStrArg(EXEC_ARGS args) {
+	T parseStrArg(EXEC_ARGS args, C& ctx) {
 		if (I >= args.size()) throw std::invalid_argument("Not enough parameters.");
-		return parseStrVariantArg<T, I>(args);
+		return parseStrVariantArg<T, I>(args, ctx);
 	}
 	
 	template<typename T, usize I, std::enable_if_t<is_optional_v<T>, bool> = true>
-	T parseStrArg(EXEC_ARGS args) {
+	T parseStrArg(EXEC_ARGS args, C& ctx) {
 		if (I >= args.size() || args[I].empty()) return {};
-		return parseStrArg<typename T::value_type, I>(args);
+		return parseStrArg<typename T::value_type, I>(args, ctx);
 	}
 	
 	template <typename T, usize I, std::enable_if_t<std::is_same_v<T, R>, bool> = true>
-	T parseStrArg(EXEC_ARGS args) {
+	T parseStrArg(EXEC_ARGS args, C& ctx) {
 		if (I >= args.size()) throw std::invalid_argument("Not enough parameters.");
-		return parseRaw(parseStrArg<string, I>(args));
+		return parseRaw(parseStrArg<string, I>(args, ctx), ctx);
 	}
 	
 	template <typename T, usize I = 0>
-	void parseStrArgs(EXEC_ARGS strArgs, T& args) {
-		std::get<I>(args) = parseStrArg<std::tuple_element_t<I, T>, I>(strArgs);
-		if constexpr (I + 1 < std::tuple_size_v<T>) parseStrArgs<T, I + 1>(strArgs, args);
+	void parseStrArgs(EXEC_ARGS strArgs, T& args, C& ctx) {
+		std::get<I>(args) = parseStrArg<std::tuple_element_t<I, T>, I>(strArgs, ctx);
+		if constexpr (I + 1 < std::tuple_size_v<T>) parseStrArgs<T, I + 1>(strArgs, args, ctx);
 	}
 
 	std::unordered_map<string, Fn> functions {};

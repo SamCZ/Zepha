@@ -134,10 +134,10 @@ void ConnectScene::update() {
 						
 						string data = p.d.read<string>();
 						string uncompressed = gzip::decompress(data.data(), data.length());
+						const u8* dataPtr = reinterpret_cast<u8*>(const_cast<char*>(uncompressed.data()));
+						const vec<u8> tex(dataPtr, dataPtr + width * height * 4);
 						
-						client.game->textures.addImage(
-							assetName, true, u16vec2(width, height),
-							reinterpret_cast<u8*>(const_cast<char*>(uncompressed.data())));
+						client.game->textures.addImage(assetName, true, u16vec2(width, height), tex);
 					}
 					else if (t == AssetType::MODEL) {
 						string format = p.d.read<string>();

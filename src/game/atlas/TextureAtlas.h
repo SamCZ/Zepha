@@ -3,13 +3,17 @@
 #include <unordered_map>
 
 #include "util/Types.h"
+#include "util/StringParser.h"
 #include "client/graph/Texture.h"
 
 class AtlasRef;
 
 class TextureAtlas {
 public:
-	struct RawTexData { u8* data; uvec2 size; };
+	struct RawTexData {
+		vec<u8> data;
+		uvec2 size;
+	};
 	
 	TextureAtlas() = default;
 	
@@ -21,7 +25,7 @@ public:
 	
 	sptr<AtlasRef> loadImage(const string& path, const string& name, bool base = false);
 	
-	sptr<AtlasRef> addImage(const string& name, bool base, u16vec2 size, u8* data);
+	sptr<AtlasRef> addImage(const string& name, bool base, u16vec2 size, vec<u8> data);
 	
 	sptr<AtlasRef> operator[](const string& name);
 	
@@ -49,9 +53,24 @@ private:
 	
 	void createMissingTexture();
 	
-	void updateAtlas(u16vec2 pos, u16vec2 size, u8* data);
+	void updateAtlas(u16vec2 pos, u16vec2 size, vec<u8> data);
 	
 	void deleteImage(sptr<AtlasRef> ref);
+	
+	struct TexParserData {
+		TexParserData() = default;
+		explicit TexParserData(sptr<RawTexData> data): data(data) {};
+		
+		sptr<RawTexData> data;
+	};
+	
+	struct TexParserCtx {
+		TextureAtlas& atlas;
+	};
+	
+	using TexParser = StringParser<TexParserData, TexParserCtx>;
+	
+	TexParser parser {};
 	
 	vec<bool> empty;
 	std::unordered_map<string, sptr<AtlasRef>> textures;

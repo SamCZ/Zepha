@@ -41,7 +41,7 @@ zepha.register_block("zeus:flowers:clover", {
     solid = false,
     model = "zeus:flowers:hash",
     textures = {
-        "tint(0, crop(0, 0, 16, 16, zeus:flowers:clover))",
+--         "tint(0, crop(0, 0, 16, 16, zeus:flowers:clover))",
 --         "tint(0, crop(16, 0, 16, 16, zeus:flowers:clover))",
 --         "tint(0, crop(32, 0, 16, 16, zeus:flowers:clover))"
     },

@@ -1,5 +1,3 @@
-#include <cmath>
-#include <iostream>
 #include <algorithm>
 #include <stb_image.h>
 #include <cute_files.h>
@@ -17,13 +15,66 @@ TextureAtlas::TextureAtlas(uvec2 size) :
 	maxTextureSlots(canvasTileSize.x * canvasTileSize.y),
 	empty(canvasTileSize.x * canvasTileSize.y, true) {
 
-//    int maxTexSize, texUnits;
-//
-//    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
-//    std::cout << Log::info << "This GPU's max texture size is: " << maxTexSize / 4 << "px^2." << Log::endl;
-//
-//    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texUnits);
-//    std::cout << Log::info << "This GPU supports " << texUnits << " texture units." << Log::endl;
+	/**
+	 * Crop Function.
+	 * Crops the texture to the specified dimensions and position.
+	 *
+	 * @param x - The left edge of the crop on the base texture.
+	 * @param y - The top edge of the crop on the base texture.
+	 * @param w - The width of the crop.
+	 * @param h - The height of the crop.
+	 * @param tex - The texture to crop.
+	 */
+	 
+	parser.addFn<u16, u16, u16, u16, TexParserData>("crop", [](u16 x, u16 y, u16 w, u16 h, TexParserData tex) {
+		let newData = vec<u8>(w * h * 4);
+		for (u32 i = 0; i < w * h * 4; i++) newData[i] =
+			tex.data->data[((x + i / 4 % w) + (y + i / 4 / w) * tex.data->size.x) * 4 + i % 4];
+
+		tex.data->data = newData;
+		tex.data->size = { w, h };
+		return tex;
+	});
+
+	/**
+	 * Multiply Function.
+	 * Multiplies the texture by the specified color.
+	 *
+	 * @param hex - The hex code of the color to multiply the image by.
+	 * @param tex - The texture to multiply.
+	 */
+	
+	parser.addFn<string, TexParserData>("multiply", [](string hex, TexParserData tex) {
+		vec4 multiple = Util::hexToColorVec(hex);
+		
+		for (u32 i = 0; i < tex.data->size.x * tex.data->size.y * 4; i++)
+			tex.data->data[i] *= multiple[i % 4];
+		
+		return tex;
+	});
+	
+	/**
+	 * Literal Function.
+	 * Converts raw strings to texture data by indexing the atlas.
+	 *
+	 * @param tex - The string of the texture to convert.
+	 */
+
+	parser.addLiteralFnCtx<string>([](TexParser::Ctx& ctx, string tex) {
+		return TexParser::Data { std::make_shared<RawTexData>(ctx.atlas.getBytesOfTex(tex)) };
+	});
+	
+	// Get GPU texture capabilites and log it.
+ 
+	i32 maxTexSize, texUnits;
+
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
+    std::cout << Log::info << "This GPU's max texture size is: " << maxTexSize << "px^2." << Log::endl;
+
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texUnits);
+    std::cout << Log::info << "This GPU supports " << texUnits << " texture units." << Log::endl;
+	
+	// Initialize the texture atlas.
 	
 	texture.loadFromBytes(&atlasData[0], size.x, size.y);
 	
@@ -57,9 +108,10 @@ vec<sptr<AtlasRef>> TextureAtlas::loadDirectory(const string& path, bool base, b
 
 sptr<AtlasRef> TextureAtlas::loadImage(const string& path, const string& name, bool base) {
 	i32 width, height;
-	u8* data = stbi_load(path.data(), &width, &height, nullptr, 4);
+	u8* rawData = stbi_load(path.data(), &width, &height, nullptr, 4);
+	vec<u8> data(rawData, rawData + width * height * 4);
+	free(rawData);
 	let ref = addImage(name, base, u16vec2(width, height), data);
-	free(data);
 	return ref;
 }
 
@@ -81,8 +133,7 @@ vec4 TextureAtlas::getPixel(const sptr<AtlasRef>& ref, ivec2 pos) {
 		atlasData[index + 2] / 255.f, atlasData[index + 3] / 255.f };
 }
 
-sptr<AtlasRef> TextureAtlas::addImage(const string& name, bool base, u16vec2 size, u8* data) {
-	sptr<AtlasRef> ref;
+sptr<AtlasRef> TextureAtlas::addImage(const string& name, bool base, u16vec2 size, vec<u8> data) {
 	u16vec2 tileSize = u16vec2(glm::ceil(vec2(size) / 16.f));
 	
 	let posOpt = findImageSpace(tileSize);
@@ -92,7 +143,7 @@ sptr<AtlasRef> TextureAtlas::addImage(const string& name, bool base, u16vec2 siz
 	textureSlotsUsed += tileSize.x * tileSize.y;
 	
 	textures.erase(name);
-	ref = make_shared<AtlasRef>(AtlasRef {
+	let ref = make_shared<AtlasRef>(AtlasRef {
 		pos,
 		tileSize,
 		uvec2(pos) * 16u,
@@ -124,10 +175,6 @@ sptr<AtlasRef> TextureAtlas::generateCrackImage(const string& name, u8 crackLeve
 	}
 	
 	auto ref = addImage(name + "_crack_" + std::to_string(crackLevel), false, base.size, base.data);
-	
-	delete[] base.data;
-	delete[] crack.data;
-	
 	return ref;
 }
 
@@ -141,84 +188,33 @@ sptr<AtlasRef> TextureAtlas::operator[](const string& name) {
 }
 
 sptr<AtlasRef> TextureAtlas::generateTexture(string req) {
-	req.erase(std::remove_if(req.begin(), req.end(), isspace), req.end());
-	
-	if (req.find_first_of('(') != string::npos) {
-		std::cout << req << std::endl;
-		if (req.find_last_of(')') == string::npos) throw std::runtime_error("Mismatched braces.");
-		
-		usize paramsBegin = req.find_first_of('(');
-		usize paramsEnd = req.find_last_of(')');
-		
-		string paramName = req.substr(0, paramsBegin);
-		string paramsString = req.substr(paramsBegin + 1, paramsEnd - paramsBegin - 1);
-		
-		vec<string> params;
-		usize pos;
-		while ((pos = paramsString.find(',')) != string::npos) {
-			params.push_back(paramsString.substr(0, pos));
-			paramsString.erase(0, pos + 1);
-		}
-		params.push_back(paramsString);
-		
-		if (paramName == "crop") {
-			if (params.size() != 5) throw std::runtime_error("crop() requires 5 parameters.");
-			uvec2 pos = { atoi(params[0].data()), atoi(params[1].data()) };
-			uvec2 size = { atoi(params[2].data()), atoi(params[3].data()) };
-			sptr<AtlasRef> src = operator[](params[4]);
-			
-			let data = getBytesAtPos(src->rawPos + pos, size).data;
-			return addImage(req, false, size, data);
-		}
-		else if (paramName == "multiply") {
-			if (params.size() != 2) throw std::runtime_error("multiply() requires 2 parameters.");
-			vec4 multiple = Util::hexToColorVec(params[1]);
-			auto tex = getBytesOfTex(params[0]);
-			
-			for (int i = 0; i < tex.size.x * tex.size.y; i++) {
-				tex.data[i * 4 + 0] *= multiple.x;
-				tex.data[i * 4 + 1] *= multiple.y;
-				tex.data[i * 4 + 2] *= multiple.z;
-				tex.data[i * 4 + 3] *= multiple.w;
-			}
-			
-			return addImage(req, false, tex.size, tex.data);
-		}
-		else {
-			throw std::runtime_error("Invalid parameter.");
-		}
-	}
-	
-	return nullptr;
+	TexParserCtx ctx { *this };
+	const let data = parser.parse(req, ctx);
+	return addImage(req, false, data.data->size, data.data->data);
 }
 
 TextureAtlas::RawTexData TextureAtlas::getBytesOfTex(const string& name) {
 	let it = textures.find(name);
 	if (it != textures.end()) return getBytesAtPos(it->second->rawPos, it->second->rawSize);
-	
 	std::cout << Log::err << "Invalid base texture '" << name << "'." << Log::endl;
 	let& missing = textures["_missing"];
 	return getBytesAtPos(missing->rawPos, missing->rawSize);
 }
 
 TextureAtlas::RawTexData TextureAtlas::getBytesAtPos(uvec2 pos, uvec2 size) {
-	RawTexData data {};
-	data.size = size;
-	
-	let pixels = new u8[size.x * size.y * 4];
+	RawTexData tex { vec<u8>(size.x * size.y * 4), size };
 	
 	for (u32 i = 0; i < size.x * size.y; i++) {
 		u32 x = pos.x + (i % size.x);
-		u32 y = pos.y + (i / size.y);
+		u32 y = pos.y + (i / size.x);
 		
-		pixels[i * 4 + 0] = atlasData[x * 4     + y * (canvasSize.x * 4)];
-		pixels[i * 4 + 1] = atlasData[x * 4 + 1 + y * (canvasSize.x * 4)];
-		pixels[i * 4 + 2] = atlasData[x * 4 + 2 + y * (canvasSize.x * 4)];
-		pixels[i * 4 + 3] = atlasData[x * 4 + 3 + y * (canvasSize.x * 4)];
+		tex.data[i * 4 + 0] = atlasData[x * 4     + y * (canvasSize.x * 4)];
+		tex.data[i * 4 + 1] = atlasData[x * 4 + 1 + y * (canvasSize.x * 4)];
+		tex.data[i * 4 + 2] = atlasData[x * 4 + 2 + y * (canvasSize.x * 4)];
+		tex.data[i * 4 + 3] = atlasData[x * 4 + 3 + y * (canvasSize.x * 4)];
 	}
 	
-	data.data = pixels;
-	return data;
+	return tex;
 }
 
 optional<u16vec2> TextureAtlas::findImageSpace(u16vec2 tileSize) {
@@ -254,9 +250,8 @@ optional<u16vec2> TextureAtlas::findImageSpace(u16vec2 tileSize) {
 }
 
 void TextureAtlas::createMissingTexture() {
-	auto data = new u8[16 * 4 * 16];
+	let data = vec<u8>(16 * 4 * 16);
 	for (u16 i = 0; i < 16 * 16; i++) {
-		
 		u8 m = 0;
 		if ((i % 16 < 8) ^ ((i / 16) < 8)) m = 255;
 		
@@ -267,11 +262,10 @@ void TextureAtlas::createMissingTexture() {
 	}
 	
 	addImage("_missing", true, u16vec2(16), data);
-	delete[] data;
 }
 
-void TextureAtlas::updateAtlas(u16vec2 pos, u16vec2 size, u8* data) {
-	texture.updateTexture(pos.x, pos.y, size.x, size.y, data);
+void TextureAtlas::updateAtlas(u16vec2 pos, u16vec2 size, vec<u8> data) {
+	texture.updateTexture(pos.x, pos.y, size.x, size.y, data.data());
 	
 	for (u32 i = 0; i < size.x * size.y * 4; i++) {
 		u32 x = (i / 4) % size.x;
