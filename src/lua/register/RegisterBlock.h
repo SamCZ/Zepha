@@ -13,7 +13,17 @@
 #include "game/atlas/ServerDefinitionAtlas.h"
 
 namespace RegisterBlock {
+	
 	namespace {
+		struct TintParserData {
+			string tex;
+			optional<u32> tint;
+			optional<string> mask;
+		};
+		
+		using TintParser = StringParser<TintParserData>;
+		TintParser parser {};
+		bool parserReady = false;
 		
 		/**
 		 * Takes a lua selection box table list, and returns a vector of selection boxes.
@@ -36,44 +46,6 @@ namespace RegisterBlock {
 			
 			return boxes;
 		}
-		
-		
-		/**
-		 * Given a textures string, attempts to find a tint() texture modifier and modifies the inputted parameters
-		 * to describe it. Does nothing to the passed in variables if there is tint() is not used.
-		 *
-		 * @param texture - The texture string, will be replaced with the inner string if tint() is used.
-		 * @param blendInd - A variable reference that will be assigned the index of the tint blend, if there is one.
-		 * @param blendMask - A variable reference to the blend mask texture, which will be assigned if one is found.
-		 */
-		
-		static inline void getMeshPartTexture(std::string& texture, unsigned int& blendInd, std::string& blendMask) {
-			if (strncmp(texture.data(), "tint(", 5) == 0 && texture.find_last_of(')') != std::string::npos) {
-				// Biome tinting time
-				texture.erase(std::remove_if(texture.begin(), texture.end(), isspace), texture.end());
-				
-				std::string::size_type paramsBegin = texture.find_first_of('(');
-				std::string::size_type paramsEnd = texture.find_last_of(')');
-				
-				std::string paramsString = texture.substr(paramsBegin + 1, paramsEnd - paramsBegin - 1);
-				
-				std::vector<std::string> params;
-				std::string::size_type pos;
-				while ((pos = paramsString.find(',')) != std::string::npos) {
-					params.push_back(paramsString.substr(0, pos));
-					paramsString.erase(0, pos + 1);
-				}
-				params.push_back(paramsString);
-				
-				if (params.size() < 2)
-					throw std::runtime_error("Invalid biome tint values. Must have at least 2 params.");
-				
-				texture = params[1];
-				blendInd = atoi(params[0].data()) + 1; //TODO: support multiple blend colors
-				blendMask = (params.size() >= 3 ? params[2] : "");
-			}
-		}
-		
 		
 		/**
 		 * Creates near and far models for a block based on the passed in parameters.
@@ -141,7 +113,7 @@ namespace RegisterBlock {
 				}
 			}
 			
-			// Parse through all of the parts and add them to the model
+			// Parse through all the parts and add them to the model
 			auto partsOpt = modelTable.get<sol::optional<sol::table>>("parts");
 			if (!partsOpt) throw std::runtime_error("blockmodel is missing parts table");
 			partsOpt->for_each([&](sol::object key, sol::object value) {
@@ -183,20 +155,17 @@ namespace RegisterBlock {
 				
 				// Get the part's texture
 				int tex = std::max(static_cast<int>(meshPartTable.get_or<float>("tex", 1)), 1);
-				
-				auto texture = textures[std::min(tex - 1, (int) textures.size() - 1)];
-				unsigned int blendInd = 0;
-				std::string blendMask = "";
-				getMeshPartTexture(texture, blendInd, blendMask);
+				let data = parser.parse(textures[std::min(tex - 1, (int) textures.size() - 1)]);
+				u32 blendInd = data.tint ? *data.tint + 1 : 0;
 				
 				// Add texture refs to blockModel if the textures table is provided
 				std::shared_ptr<AtlasRef> textureRef = nullptr, blendMaskRef = nullptr;
 				if (atlas) {
-					textureRef = (*atlas)[texture];
+					textureRef = (*atlas)[data.tex];
 					model.textureRefs.insert(textureRef);
 					
-					if (blendInd && !blendMask.empty()) {
-						blendMaskRef = (*atlas)[blendMask];
+					if (blendInd && data.mask) {
+						blendMaskRef = (*atlas)[*data.mask];
 						model.textureRefs.insert(blendMaskRef);
 					}
 				}
@@ -259,14 +228,12 @@ namespace RegisterBlock {
 				std::vector<std::shared_ptr<AtlasRef>> blendMaskRefs;
 				
 				for (auto i = 0; i < lowdef_textures.size(); i++) {
-					std::string texture = lowdef_textures[i];
-					unsigned int blendInd = 0;
-					std::string blendMask = "";
-					getMeshPartTexture(texture, blendInd, blendMask);
+					let data = parser.parse(lowdef_textures[i]);
+					u32 blendInd = data.tint ? *data.tint + 1 : 0;
 					
-					textureRefs.push_back((*atlas)[texture]);
+					textureRefs.push_back((*atlas)[data.tex]);
 					blendInds.push_back(blendInd);
-					blendMaskRefs.push_back(blendMask != "" ? (*atlas)[blendMask] : nullptr);
+					blendMaskRefs.push_back(data.mask ? (*atlas)[*data.mask] : nullptr);
 				}
 				
 				farModel = BlockModel::createCube(textureRefs, blendInds, blendMaskRefs);
@@ -413,6 +380,27 @@ namespace RegisterBlock {
 		}
 	}
 	
+	/**
+	 * Initializes the parser with the necessary parse functions.
+	 * In the future, this could be cleaned up, but as it is it's totally fine.
+	 */
+	
+	static void initParser() {
+		if (parserReady) return;
+		
+		parser.setUnknownFnsAreLiteral(true);
+		
+		parser.addFn<u32, TintParserData, optional<TintParserData>>("tint",
+			[](u32 tint, TintParserData tex, optional<TintParserData> mask) {
+			return TintParserData { tex.tex, tint, mask ? optional(mask->tex) : std::nullopt };
+		});
+		
+		parser.addLiteralFn([](string tex) {
+			return TintParserData { tex, std::nullopt, std::nullopt };
+		});
+		
+		parserReady = true;
+	}
 	
 	/**
 	 * Server method to register a block. Calls registerBlock with the necessary parameters.
@@ -424,10 +412,10 @@ namespace RegisterBlock {
 	 */
 	
 	static void server(sol::table& core, ServerSubgame& game, const std::string& identifier) {
+		initParser();
 		registerBlock(core["registered_blocks"], core["registered_blockmodels"],
 			identifier, game.getDefs(), nullptr);
 	}
-	
 	
 	/**
 	 * Client method to register a block. Calls registerBlock with the necessary parameters.
@@ -439,6 +427,7 @@ namespace RegisterBlock {
 	 */
 	
 	static void client(sol::table& core, LocalSubgame& game, const std::string& identifier) {
+		initParser();
 		registerBlock(core["registered_blocks"], core["registered_blockmodels"],
 			identifier, game.getDefs(), &game.textures);
 	}

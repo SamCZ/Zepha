@@ -60,7 +60,7 @@ TextureAtlas::TextureAtlas(uvec2 size) :
 	 * @param tex - The string of the texture to convert.
 	 */
 
-	parser.addLiteralFnCtx<string>([](TexParser::Ctx& ctx, string tex) {
+	parser.addLiteralFnCtx([](TexParser::Ctx& ctx, string tex) {
 		return TexParser::Data { std::make_shared<RawTexData>(ctx.atlas.getBytesOfTex(tex)) };
 	});
 	

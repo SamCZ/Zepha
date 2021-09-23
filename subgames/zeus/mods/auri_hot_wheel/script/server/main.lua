@@ -1,5 +1,4 @@
 zepha.bind('new_player', function(player)
-    print('added inventories :)')
     local inv = player:get_inventory()
     inv:add_list('hot_wheel_1', 5, 5)
     inv:add_list('hot_wheel_2', 5, 5)

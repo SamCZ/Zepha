@@ -21,7 +21,7 @@ local structures = {}
 
 table.insert(structures, zepha.create_structure({
     origin = V(1),
-    probability = 0.0025,
+    probability = 0.00125,
     layout = {{
         { none, none, none },
         { none, wood, none },
@@ -91,7 +91,7 @@ local leaf_layer_3 = {
 
 table.insert(structures, zepha.create_structure({
   origin = V(2, 2, 2),
-  probability = 0.0005,
+  probability = 0.00025,
   layout = {
 --       trunk_layer_0,
 --       trunk_layer_0,
@@ -121,28 +121,28 @@ table.insert(structures, zepha.create_structure({
   }
 }))
 
--- for i = 1, 5 do
---    table.insert(structures, zepha.create_structure({
---        origin = V(),
---        probability = 0.1,
---        layout = {{{ "zeus:default:tall_grass_" .. tostring(i) }}}
---    }))
--- end
+for i = 1, 5 do
+   table.insert(structures, zepha.create_structure({
+       origin = V(),
+       probability = 0.025,
+       layout = {{{ "zeus:default:tall_grass_" .. tostring(i) }}}
+   }))
+end
 
 table.insert(structures, zepha.create_structure({
    origin = V(),
-   probability = 0.1,
+   probability = 0.35,
    layout = {{{ "zeus:flowers:clover" }}}
 }))
 table.insert(structures, zepha.create_structure({
    origin = V(),
-   probability = 0.025,
+   probability = 0.0125,
    layout = {{{ "zeus:flowers:flower_geranium" }}}
 }))
 
 table.insert(structures, zepha.create_structure({
    origin = V(),
-   probability = 0.025,
+   probability = 0.0125,
    layout = {{{ "zeus:flowers:flower_white_dandelion" }}}
 }))
 
@@ -207,6 +207,7 @@ zepha.register_biome(identifier, {
     tags = { natural = 1, default = 1 },
     structures = structures,
     biome_tint = "#46cfc0",
+--     biome_tint = "#aaed45",
     noise = noise
 })
 
