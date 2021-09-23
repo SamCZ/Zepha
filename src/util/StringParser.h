@@ -225,18 +225,17 @@ private:
 	 */
 	
 	const std::pair<std::string_view, vec<std::string_view>> parseFunction(const std::string_view& str) const {
-		let nextParen = str.find_first_of('(');
-		let nextComma = str.find_first_of(',');
+		let firstParen = str.find_first_of('(');
 		
-		let name = str.substr(0, nextParen);
+		let name = str.substr(0, firstParen);
 		vec<std::string_view> args {};
 		
-		let end = findClosingParen(str, nextParen);
-		let s = nextParen + 1;
+		let end = findClosingParen(str, firstParen);
+		let s = firstParen + 1;
 		
 		while (s <= end) {
-			nextParen = str.find_first_of('(', s);
-			nextComma = str.find_first_of(',', s);
+			let nextParen = str.find_first_of('(', s);
+			let nextComma = str.find_first_of(',', s);
 			if (nextParen != string::npos && nextParen < nextComma) nextComma = findClosingParen(str, nextParen) + 1;
 			if (nextComma == string::npos) nextComma = end;
 			
