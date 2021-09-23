@@ -85,7 +85,7 @@ void Input::scrollCallback(GLFWwindow* window, f64 x, f64 y) {
 
 void Input::keyCallback(GLFWwindow* window, i32 key, i32, i32 action, i32) {
 	let& self = static_cast<Window*>(glfwGetWindowUserPointer(window))->input;
-	if (key == GLFW_KEY_LEFT_ALT) glfwSetWindowShouldClose(window, GL_TRUE);
+	if (key == GLFW_KEY_ESCAPE) glfwSetWindowShouldClose(window, GL_TRUE);
 	else if (key >= 32 && key < 1024) self.updateKey(key, action);
 }
 

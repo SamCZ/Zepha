@@ -96,7 +96,7 @@ void ConnectScene::update() {
 				status->setProp(Gui::Prop::CONTENT, status->getStyle<string>(Gui::Prop::CONTENT, "") +
 	                (modsFound == 0 ? "" : ", ") +
 	                ((modsFound) % 8 == 0 && modsFound != 0 ? "\n" : "") +
-	                "`c0`u" + mod.name + "`r`c1");
+	                "`c0`u" + mod.identifier + "`r`c1");
 				modsFound++;
 				client.game->getParser().addMod(std::move(mod));
 			}

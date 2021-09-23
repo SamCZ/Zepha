@@ -50,7 +50,7 @@ namespace RegisterBlock {
 		static inline void getMeshPartTexture(std::string& texture, unsigned int& blendInd, std::string& blendMask) {
 			if (strncmp(texture.data(), "tint(", 5) == 0 && texture.find_last_of(')') != std::string::npos) {
 				// Biome tinting time
-				texture.erase(std::remove(texture.begin(), texture.end(), ' '), texture.end());
+				texture.erase(std::remove_if(texture.begin(), texture.end(), isspace), texture.end());
 				
 				std::string::size_type paramsBegin = texture.find_first_of('(');
 				std::string::size_type paramsEnd = texture.find_last_of(')');

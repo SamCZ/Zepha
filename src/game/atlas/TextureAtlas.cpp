@@ -141,21 +141,20 @@ sptr<AtlasRef> TextureAtlas::operator[](const string& name) {
 }
 
 sptr<AtlasRef> TextureAtlas::generateTexture(string req) {
-	req.erase(std::remove(req.begin(), req.end(), ' '), req.end());
+	req.erase(std::remove_if(req.begin(), req.end(), isspace), req.end());
 	
-	if (req.find_first_of('(') != std::string::npos) {
-		if (req.find_last_of(')') == std::string::npos) {
-			throw std::runtime_error("Mismatched braces.");
-		}
+	if (req.find_first_of('(') != string::npos) {
+		std::cout << req << std::endl;
+		if (req.find_last_of(')') == string::npos) throw std::runtime_error("Mismatched braces.");
 		
-		string::size_type paramsBegin = req.find_first_of('(');
-		string::size_type paramsEnd = req.find_last_of(')');
+		usize paramsBegin = req.find_first_of('(');
+		usize paramsEnd = req.find_last_of(')');
 		
 		string paramName = req.substr(0, paramsBegin);
 		string paramsString = req.substr(paramsBegin + 1, paramsEnd - paramsBegin - 1);
 		
 		vec<string> params;
-		string::size_type pos;
+		usize pos;
 		while ((pos = paramsString.find(',')) != string::npos) {
 			params.push_back(paramsString.substr(0, pos));
 			paramsString.erase(0, pos + 1);
