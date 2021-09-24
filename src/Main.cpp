@@ -3,11 +3,9 @@
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
 
 #define STB_IMAGE_IMPLEMENTATION
-#define CUTE_FILES_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
 #include <stb_image.h>
-#include <cute_files.h>
 
 #pragma clang diagnostic pop
 

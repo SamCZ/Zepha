@@ -13,6 +13,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 
 #include "FileManipulator.h"
 
@@ -104,7 +105,7 @@ void FileManipulator::createRegionFileIfNotExists(glm::ivec3 pos) {
 	std::string fileName = std::to_string(pos.x) + "_" + std::to_string(pos.y) + "_" + std::to_string(pos.z);
 	std::string filePath = path + fileName;
 	
-	if (cf_file_exists(filePath.data())) return;
+	if (std::filesystem::exists(filePath.data())) return;
 	
 	std::fstream file(filePath, std::ios::out | std::ios::binary);
 	if (!file.is_open()) throw std::runtime_error("Couldn't open file.");

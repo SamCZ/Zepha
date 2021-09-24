@@ -41,5 +41,4 @@ void LocalSubgame::init(WorldPtr world, PlayerPtr player, Client& client) {
 
 void LocalSubgame::update(double delta) {
 	lua->update(delta);
-	textures.update();
 }

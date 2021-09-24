@@ -27,7 +27,6 @@ LuaErrorScene::LuaErrorScene(Client& client, const std::string& err) : Scene(cli
 }
 
 void LuaErrorScene::update() {
-	client.game->textures.update();
 	root.update();
 }
 

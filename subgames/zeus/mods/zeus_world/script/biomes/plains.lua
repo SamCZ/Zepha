@@ -124,14 +124,14 @@ table.insert(structures, zepha.create_structure({
 for i = 1, 5 do
    table.insert(structures, zepha.create_structure({
        origin = V(),
-       probability = 0.025,
+       probability = 0.05,
        layout = {{{ "zeus:default:tall_grass_" .. tostring(i) }}}
    }))
 end
 
 table.insert(structures, zepha.create_structure({
    origin = V(),
-   probability = 0.35,
+   probability = 0.55,
    layout = {{{ "zeus:flowers:clover" }}}
 }))
 table.insert(structures, zepha.create_structure({

@@ -1,6 +1,5 @@
 #include <fstream>
 #include <iostream>
-#include <cute_files.h>
 #include <nlohmann/json.hpp>
 
 #include "MainMenuScene.h"
@@ -79,8 +78,46 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 		{ Gui::Prop::SIZE, array<Expr, 2> { Expr("1dp"), Expr("10dp") } },
 		{ Gui::Prop::MARGIN, array<Expr, 4> { Expr("2dp"), Expr("3dp"), Expr("2dp"), Expr("3dp") } }
 	}});
-
-	findSubgames();
+	
+	let subgamesPath = std::filesystem::path("..") / "subgames";
+	std::filesystem::directory_iterator iter(subgamesPath);
+	
+	for (let& file : iter) {
+		if (!file.is_directory()) continue;
+		
+		try {
+			if (!std::filesystem::exists(file.path() / "conf.json")) throw std::runtime_error("Missing a conf.json");
+			if (!std::filesystem::exists(file.path() / "mods")) throw std::runtime_error("Missing a mods folder");
+			
+			nlohmann::json json {};
+			try {
+				std::ifstream(file.path() / "conf.json") >> json;
+			}
+			catch (...) {
+				throw std::runtime_error("conf.json has a syntax error");
+			}
+			
+			if (!json.is_object())
+				throw std::runtime_error("conf.json has a syntax error.");
+			if (!json["name"].is_string() || json["name"] == "")
+				throw std::runtime_error("conf.json is missing 'name'");
+			if (!json["version"].is_string() || json["version"] == "")
+				throw std::runtime_error("conf.json is missing 'version'");
+			
+			const let icon = std::filesystem::exists(file.path() / "icon.png")
+				? client.game->textures.loadImage((file.path() / "icon.png").string(), json["name"])
+				: client.game->textures["menu_flag_missing"];
+			
+			subgames.push_back({ icon, { json["name"], json["description"], json["version"] }, file.path().string() });
+		}
+		catch(const std::runtime_error& e) {
+			std::cout << Log::err << "Failed to load subgame '"
+			          << file.path().filename().string() << "', " << e.what() << "." << std::endl;
+		}
+	}
+	
+	std::sort(subgames.begin(), subgames.end(),
+		[](SubgameDef& a, SubgameDef& b) { return a.config.name < b.config.name; });
 
 	for (usize i = 0; i < subgames.size(); i++) {
 		let& subgame = subgames[i];
@@ -123,82 +160,8 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 	});
 }
 
-void MainMenuScene::findSubgames() {
-	string subgamesPath = "../subgames";
-	
-	cf_dir_t subgamesDir;
-	cf_dir_open(&subgamesDir, subgamesPath.data());
-	while (subgamesDir.has_next) {
-		cf_file_t subgameFolder;
-		cf_read_file(&subgamesDir, &subgameFolder);
-		if (!subgameFolder.is_dir || strncmp(subgameFolder.name, ".", 1) == 0) {
-			cf_dir_next(&subgamesDir);
-			continue;
-		}
-		
-		try {
-			bool hasConf = false, hasIcon = false, hasMods = false;
-			
-			cf_dir_t subgame;
-			cf_dir_open(&subgame, subgameFolder.path);
-			while (subgame.has_next) {
-				cf_file_t file;
-				cf_read_file(&subgame, &file);
-				
-				if (!file.is_dir && strncmp(file.name, "icon.png\0", 9) == 0) hasIcon = true;
-				if (!file.is_dir && strncmp(file.name, "conf.json\0", 10) == 0) hasConf = true;
-				if (file.is_dir && strncmp(file.name, "mods\0", 5) == 0) hasMods = true;
-				
-				cf_dir_next(&subgame);
-			}
-			cf_dir_close(&subgame);
-			
-			if (!hasConf) throw std::runtime_error(
-				string("Subgame ") + string(subgameFolder.name) + " is missing a conf.json.");
-			if (!hasMods) throw std::runtime_error(
-				string("Subgame ") + string(subgameFolder.name) + " is missing a 'mods' directory.");
-			
-			nlohmann::json j{};
-			try {
-				std::ifstream(string(subgameFolder.path) + "/conf.json") >> j;
-			}
-			catch (...) {
-				throw std::runtime_error(string(subgameFolder.name) + "/conf.json is not a valid JSON object.");
-			}
-			
-			if (!j.is_object())
-				throw std::runtime_error(string(subgameFolder.name) + "/conf.json is not a valid JSON object.");
-			if (!j["name"].is_string() || j["name"] == "")
-				throw std::runtime_error(
-					"The 'name' property in " + string(subgameFolder.name) + "/conf.json is missing or invalid.");
-			if (!j["version"].is_string() || j["version"] == "")
-				throw std::runtime_error("The 'version' property in " + string(subgameFolder.name) +
-				                         "/conf.json is missing or invalid.");
-			
-			string name = j["name"];
-			string description = (j["description"].is_string() ? j["description"] : "");
-			string version = j["version"];
-			
-			std::shared_ptr<AtlasRef> icon = client.game->textures["menu_flag_missing"];
-			if (hasIcon) icon = client.game->textures.loadImage(string(subgameFolder.path) + "/icon.png", name);
-			
-			subgames.push_back({ icon, { name, description, version }, subgameFolder.path });
-		}
-		catch (const std::runtime_error& e) {
-			std::cout << Log::err << "Encountered an error while loading subgames:\n\t" << e.what() << Log::endl;
-		}
-		
-		cf_dir_next(&subgamesDir);
-	}
-	cf_dir_close(&subgamesDir);
-	
-	std::sort(subgames.begin(), subgames.end(),
-		[](SubgameDef& a, SubgameDef& b) { return a.config.name < b.config.name; });
-}
-
 void MainMenuScene::update() {
 	root.update();
-	client.game->textures.update();
 	sandbox.update(client.getDelta());
 }
 

@@ -8,7 +8,6 @@
 #include <array>
 #include <string>
 #include <glm/vec3.hpp>
-#include <cute_files.h>
 
 class Chunk;
 

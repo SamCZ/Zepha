@@ -12,7 +12,6 @@
 
 Mod::Mod(const std::filesystem::path& path, bool noConfig) {
 	nlohmann::json json {};
-	
 	std::ifstream(path / "conf.json") >> json;
 	
 	rawPath = path;

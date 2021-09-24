@@ -30,7 +30,6 @@ ConnectScene::ConnectScene(Client& client, Address addr) : Scene(client),
 }
 
 void ConnectScene::update() {
-	client.game->textures.update();
 	root.update();
 	
 	switch (state) {

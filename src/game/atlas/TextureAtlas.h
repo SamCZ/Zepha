@@ -21,7 +21,7 @@ public:
 	
 	void update();
 	
-	vec<sptr<AtlasRef>> loadDirectory(const string& path, bool base = true, bool recurse = true);
+	vec<sptr<AtlasRef>> loadDirectory(const string& path, bool base = true);
 	
 	sptr<AtlasRef> loadImage(const string& path, const string& name, bool base = false);
 	

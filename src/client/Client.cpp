@@ -1,13 +1,8 @@
-
 #include <iostream>
 
 #include "Client.h"
 
-//#include "LocalServerInstance.h"
-
 #include "util/Types.h"
-#include "util/Timer.h"
-//#include "scene/GameScene.h"
 #include "scene/ConnectScene.h"
 #include "scene/MainMenuScene.h"
 
@@ -44,5 +39,7 @@ void Client::loop() {
 	
 	scene.update();
 	renderer.update(delta);
+	game->textures.update();
+	
 	renderer.swapBuffers();
 }

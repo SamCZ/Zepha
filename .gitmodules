@@ -37,10 +37,6 @@
 	path = lib/gzip-hpp
 	url = git@github.com:mapbox/gzip-hpp.git
 	branch = master
-[submodule "cute_headers"]
-	path = lib/cute_headers
-	url = git@github.com:RandyGaul/cute_headers.git
-	branch = master
 [submodule "FastNoise2"]
 	path = lib/FastNoise2
 	url = git@github.com:Auburn/FastNoise2.git

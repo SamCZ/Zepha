@@ -1,6 +1,5 @@
 #include <fstream>
 #include <iostream>
-#include <cute_files.h>
 #include <client/gui/TextElement.h>
 
 #include "MenuSandbox.h"
@@ -114,7 +113,6 @@ sol::protected_function_result MenuSandbox::require(sol::this_environment thisEn
 }
 
 sol::protected_function_result MenuSandbox::loadFile(const string& path) {
-	std::cout << "load " << path << std::endl;
 	let it = mod.files.find(path);
 	if (it == mod.files.end()) throw sol::error("Error opening '" + path + "', file not found.");
 	let& file = it->second;
@@ -134,7 +132,7 @@ void MenuSandbox::loadMod(const std::filesystem::path& path) {
 	mod = { path, true };
 	
 	if (std::filesystem::exists(path / "textures"))
-		menuAssets = client.game->textures.loadDirectory((path / "textures").string(), false, true);
+		menuAssets = client.game->textures.loadDirectory((path / "textures").string(), false);
 	
 	loadFile("/main");
 }

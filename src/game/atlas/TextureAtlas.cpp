@@ -1,6 +1,6 @@
 #include <algorithm>
+#include <filesystem>
 #include <stb_image.h>
-#include <cute_files.h>
 
 #include "TextureAtlas.h"
 
@@ -81,27 +81,12 @@ TextureAtlas::TextureAtlas(uvec2 size) :
 	createMissingTexture();
 }
 
-vec<sptr<AtlasRef>> TextureAtlas::loadDirectory(const string& path, bool base, bool recurse) {
+vec<sptr<AtlasRef>> TextureAtlas::loadDirectory(const string& path, bool base) {
 	vec<sptr<AtlasRef>> refs {};
 	
-	cf_dir_t dir;
-	cf_dir_open(&dir, (path).c_str());
-	
-	while (dir.has_next) {
-		cf_file_t file;
-		cf_read_file(&dir, &file);
-		std::string_view name = file.name;
-		
-		if (!file.is_dir && strcmp(file.ext, ".png") == 0)
-			refs.push_back(loadImage(file.path, string(name.substr(0, name.size() - 4)), base));
-		
-		if (recurse && file.is_dir && name.data()[0] != '.') {
-			let vec = loadDirectory(file.path, base, true);
-			refs.insert(refs.end(), vec.begin(), vec.end());
-		}
-		cf_dir_next(&dir);
-	}
-	cf_dir_close(&dir);
+	for (let file : std::filesystem::recursive_directory_iterator(path))
+		if (file.path().extension() == ".png") refs.push_back(
+			loadImage(file.path().string(), file.path().stem().string(), base));
 	
 	return refs;
 }

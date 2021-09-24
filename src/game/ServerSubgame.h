@@ -23,7 +23,7 @@ public:
 	
 	ServerSubgame(const string& subgame, usize seed);
 	
-	~ServerSubgame();
+	~ServerSubgame() {};
 	
 	void init(WorldPtr world);
 	
