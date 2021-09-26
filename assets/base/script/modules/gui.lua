@@ -1,7 +1,7 @@
 zepha.__builtin.gui_env = { Gui = {}}
 zepha.Gui = zepha.__builtin.gui_env.Gui
 local env = zepha.__builtin.gui_env
-setmetatable(env, {__index = _G})
+setmetatable(env, { __index = _G })
 
 -- create_element
 -- Build a GUI Element with the provided constructor data, apply the metatable.

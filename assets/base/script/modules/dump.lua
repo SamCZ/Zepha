@@ -17,6 +17,7 @@ _G['format'] = function(val, nl, idn)
     if nl == nil then nl = 3 end
 
     if type(val) == 'function' or type(val) == 'userdata' or type(val) == 'thread' then return tostring(val) end
+    if type(val) == 'boolean' then return val and 'true' or 'false' end
     if type(val) == 'string' then return '"' .. val .. '"' end
     if type(val) == 'nil' then return 'nil' end
     if type(val) == 'table' then

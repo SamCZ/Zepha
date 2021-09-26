@@ -110,6 +110,12 @@ namespace RegisterBlock {
 						model.meshMods.emplace_back(MeshMod::OFFSET_Y, modTable.get_or<float>("amplitude", 1));
 					else if (meshMod == "offset_z")
 						model.meshMods.emplace_back(MeshMod::OFFSET_Z, modTable.get_or<float>("amplitude", 1));
+					else if (meshMod == "rotate_x")
+						model.meshMods.emplace_back(MeshMod::ROTATE_X, modTable.get_or<float>("amplitude", 1));
+					else if (meshMod == "rotate_y")
+						model.meshMods.emplace_back(MeshMod::ROTATE_Y, modTable.get_or<float>("amplitude", 1));
+					else if (meshMod == "rotate_z")
+						model.meshMods.emplace_back(MeshMod::ROTATE_Z, modTable.get_or<float>("amplitude", 1));
 				}
 			}
 			

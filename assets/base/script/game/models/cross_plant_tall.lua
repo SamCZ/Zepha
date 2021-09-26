@@ -4,10 +4,10 @@
 -- Only takes one texture, which is displayed on all faces.
 --
 
-local wave_amplitude = 0.6
-local offset_amplitude = 0.3
+local wave_amplitude = 0.2
+local offset_amplitude = 0.14
 
-zepha.register_blockmodel(':cross_plant', {
+zepha.register_blockmodel(':cross_plant_tall', {
     mesh_mods = {
         {
             type = 'offset_x',
@@ -25,8 +25,12 @@ zepha.register_blockmodel(':cross_plant', {
             points = {
                 0.1, 0, 0.1, 0, 1,
                 0.9, 0, 0.9, 1, 1,
-                0.9, 0.9, 0.9, 1, 0,
-                0.1, 0.9, 0.1, 0, 0
+                0.9, 0.9, 0.9, 1, 0.5,
+                0.1, 0.9, 0.1, 0, 0.5,
+                0.1, 0.9, 0.1, 0, 0.5,
+                0.9, 0.9, 0.9, 1, 0.5,
+                0.9, 1.8, 0.9, 1, 0,
+                0.1, 1.8, 0.1, 0, 0
             },
             shader_mod = {
                 type = 'sway_attached',
@@ -34,16 +38,20 @@ zepha.register_blockmodel(':cross_plant', {
             },
             mesh_mod = {
                 type = 'offset',
-                scale = 0.2
+                scale = 0.1
             }
         }, {
             face = 'nocull',
             tex = 2,
             points = {
-                0.9, 0.9, 0.9, 1, 0,
+                0.9, 0.9, 0.9, 1, 0.5,
                 0.9, 0, 0.9, 1, 1,
                 0.1, 0, 0.1, 0, 1,
-                0.1, 0.9, 0.1, 0, 0
+                0.1, 0.9, 0.1, 0, 0.5,
+                0.9, 1.8, 0.9, 1, 0,
+                0.9, 0.9, 0.9, 1, 0.5,
+                0.1, 0.9, 0.1, 0, 0.5,
+                0.1, 1.8, 0.1, 0, 0
             },
             shader_mod = {
                 type = 'sway_attached',
@@ -51,16 +59,20 @@ zepha.register_blockmodel(':cross_plant', {
             },
             mesh_mod = {
                 type = 'offset',
-                scale = 0.2
+                scale = 0.1
             }
         }, {
             face = 'nocull',
             tex = 1,
             points = {
-                0.9, 0.9, 0.1, 1, 0,
+                0.9, 0.9, 0.1, 1, 0.5,
                 0.9, 0, 0.1, 1, 1,
                 0.1, 0, 0.9, 0, 1,
-                0.1, 0.9, 0.9, 0, 0
+                0.1, 0.9, 0.9, 0, 0.5,
+                0.9, 1.8, 0.1, 1, 0,
+                0.9, 0.9, 0.1, 1, 0.5,
+                0.1, 0.9, 0.9, 0, 0.5,
+                0.1, 1.8, 0.9, 0, 0
             },
             shader_mod = {
                 type = 'sway_attached',
@@ -68,7 +80,7 @@ zepha.register_blockmodel(':cross_plant', {
             },
             mesh_mod = {
                 type = 'offset',
-                scale = 0.2
+                scale = 0.1
             }
         }, {
             face = 'nocull',
@@ -76,8 +88,12 @@ zepha.register_blockmodel(':cross_plant', {
             points = {
                 0.1, 0, 0.9, 0, 1,
                 0.9, 0, 0.1, 1, 1,
-                0.9, 0.9, 0.1, 1, 0,
-                0.1, 0.9, 0.9, 0, 0
+                0.9, 0.9, 0.1, 1, 0.5,
+                0.1, 0.9, 0.9, 0, 0.5,
+                0.1, 0.9, 0.9, 0, 0.5,
+                0.9, 0.9, 0.1, 1, 0.5,
+                0.9, 1.8, 0.1, 1, 0,
+                0.1, 1.8, 0.9, 0, 0
             },
             shader_mod = {
                 type = 'sway_attached',
@@ -85,7 +101,7 @@ zepha.register_blockmodel(':cross_plant', {
             },
             mesh_mod = {
                 type = 'offset',
-                scale = 0.2
+                scale = 0.1
             }
         }
     }

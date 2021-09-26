@@ -62,7 +62,6 @@ zepha.deserialize = function(str, opt, path, table_refs)
         local tbl = {}
         str = str:sub(2, #str - 1):trim()
 
---        print(path, tbl)
         table_refs[path] = tbl
 
         while #str > 0 do

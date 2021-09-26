@@ -73,11 +73,17 @@ namespace RegisterBiome {
 			auto noiseList = biomeTable.get<sol::optional<sol::table>>("noise");
 			
 			if (noiseList) {
-				let heightTable = noiseList->get<sol::optional<sol::table>>("heightmap");
-				if (heightTable) heightmap = NoiseFromLua::parse(*heightTable);
+				let heightObj = noiseList->get<sol::object>("heightmap");
+				if (heightObj.is<sol::table>()) heightmap =
+					NoiseFromLua::parse(heightObj.as<sol::table>());
+				else if (heightObj.is<string>()) heightmap =
+					FastNoise::NewFromEncodedNodeTree(heightObj.as<string>().data());
 				
-				let volumeTable = noiseList->get<sol::optional<sol::table>>("volume");
-				if (volumeTable) volume = NoiseFromLua::parse(*volumeTable);
+				let volumeObj = noiseList->get<sol::object>("volume");
+				if (volumeObj.is<sol::table>()) volume =
+					NoiseFromLua::parse(volumeObj.as<sol::table>());
+				else if (volumeObj.is<string>()) volume =
+					FastNoise::NewFromEncodedNodeTree(volumeObj.as<string>().data());
 			}
 			
 			std::vector<std::shared_ptr<Structure>> schematics {};

@@ -11,6 +11,9 @@ class AtlasRef;
 class TextureAtlas {
 public:
 	struct RawTexData {
+		RawTexData(const vec<u8>& data, const uvec2& size):
+			data(data), size(size) {};
+		
 		vec<u8> data;
 		uvec2 size;
 	};

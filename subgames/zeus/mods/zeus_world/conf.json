@@ -6,7 +6,7 @@
 	"main": "main",
 	"dependencies": {
 		"zeus:default": "^0",
-		"zeus:flowers": "^0",
+		"zeus:vegetation": "^0",
 		"@auri:hot_wheel": "^0"
 	}
 }

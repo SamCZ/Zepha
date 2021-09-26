@@ -115,7 +115,7 @@ void DebugDisplay::update(sptr<LocalPlayer> player, f64 delta, u32 interpolatedC
 
 	// Textual information
 
-	vec3 playerPos = glm::floor(player->getPos());
+	ivec3 playerPos = glm::floor(player->getPos());
 	vec3 chunkPos = Space::Chunk::world::fromBlock(playerPos);
 	vec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunkPos);
 	vec3 regionPos = Space::Region::world::fromChunk(chunkPos);

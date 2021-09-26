@@ -34,6 +34,7 @@ void ServerClients::handleDisconnect(ENetEvent e) {
 
 void ServerClients::createPlayer(sptr<ServerClient> client, DimensionPtr dimension) {
 	client->player = make_shared<ServerPlayer>(*client, dimension->getWorld(), game, dimension);
+	client->player->setPos({ 0, 64, 0 });
 	
 	game.s()->getParser().playerConnected(client->player);
 //	client->player->setPos({ 256, -20, 256 }, true);

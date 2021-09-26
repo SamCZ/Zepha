@@ -1,5 +1,4 @@
 #include <random>
-#include <iostream>
 
 #include "MapGen.h"
 
@@ -33,7 +32,7 @@ MapGen::MapGen(Subgame& game, World& world, u32 seed, std::unordered_set<string>
 	
 	let biomeScale = FastNoise::New<FastNoise::DomainScale>();
 	biomeScale->SetSource(biomePerlin);
-	biomeScale->SetScale(1/1000.f);
+	biomeScale->SetScale(1/2000.f);
 	
 	let biomeFractal = FastNoise::New<FastNoise::FractalFBm>();
 	biomeFractal->SetSource(biomeScale);
@@ -55,8 +54,8 @@ std::unique_ptr<MapGen::ChunkMap> MapGen::generateArea(u16 dim, ivec3 origin, u1
 	Job job(origin, size);
 
 	job.temperature.generate({ job.pos.x * 16, 0, job.pos.z * 16 }, biomeGenerator);
-	job.roughness.generate({ job.pos.x * 16, 0, job.pos.z * 16 }, biomeGenerator);
-	job.humidity.generate({ job.pos.x * 16, 0, job.pos.z * 16 }, biomeGenerator);
+	job.roughness.generate(ivec3 { job.pos.x * 16, 0, job.pos.z * 16 } + ivec3(2000), biomeGenerator);
+	job.humidity.generate(ivec3 { job.pos.x * 16, 0, job.pos.z * 16 } + ivec3(-2000), biomeGenerator);
 	
 	let biomeMap = vec<u16>(pow(job.size * 16 + 1, 2));
 	u16vec3 bPos {};
@@ -108,25 +107,25 @@ std::unique_ptr<MapGen::ChunkMap> MapGen::generateArea(u16 dim, ivec3 origin, u1
 }
 
 void MapGen::generateVoronoi(const std::unordered_set<u16>& biomes) {
-	vec<std::pair<vec3, u16>> points {};
+	vec<Voronoi3D::VoronoiPoint> points {};
 	for (auto biomeInd : biomes) {
 		auto& biome = game.getBiomes().biomeFromId(biomeInd);
-
 		points.emplace_back(vec3 {
 			static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, (biome.temperature + 1) / 2 * voronoiSize))),
 			static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, biome.humidity * voronoiSize))),
 			static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, biome.roughness * voronoiSize)))
-		}, biomeInd);
+		}, biomeInd, biome.tint);
 	}
-
-	voronoi.setPoints(points);
+	voronoi.setData(points);
+	voronoi.outputImage(8);
 }
 
 u16 MapGen::getBiomeAt(f32 temperature, f32 humidity, f32 roughness) {
-	return voronoi.getPoint(
-		static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, (temperature + 1) / 2 * voronoiSize))),
-		static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, humidity * voronoiSize))),
-		static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, roughness * voronoiSize))));
+	return voronoi[{
+		static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, (temperature + 1) / 2 * (voronoiSize - 1)))),
+		static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, (humidity + 1) / 2 * (voronoiSize - 1)))),
+		static_cast<u16>(std::fmin(voronoiSize - 1, std::fmax(0, (roughness + 1) / 2 * (voronoiSize - 1))))
+	}];
 }
 
 uptr<MapGen::ChunkData> MapGen::populateChunkDensity(MapGen::Job& job, ivec3 localPos) {

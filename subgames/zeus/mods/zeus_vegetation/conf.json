@@ -1,0 +1,10 @@
+{
+	"name": "Vegetation",
+	"identifier": "zeus:vegetation",
+	"description": "Vegetation for the Zeus subgame.",
+	"version": "0.0.1",
+	"main": "main",
+	"dependencies": {
+		"zeus:default": "^0"
+	}
+}

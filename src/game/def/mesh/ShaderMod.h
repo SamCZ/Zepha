@@ -17,5 +17,8 @@ enum class MeshMod {
 	NONE = 0,
 	OFFSET_X,
 	OFFSET_Y,
-	OFFSET_Z
+	OFFSET_Z,
+	ROTATE_X,
+	ROTATE_Y,
+	ROTATE_Z
 };
