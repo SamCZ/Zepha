@@ -8,7 +8,7 @@
 
 ServerDefinitionAtlas::ServerDefinitionAtlas() {
 	//Invalid Node
-	BlockModel invalidModel = BlockModel::createCube({}, {}, {});
+	BlockModel invalidModel = BlockModel {};
 	BlockDef* invalid = new BlockDef();
 	invalid->identifier = "invalid";
 	invalid->name = "INVALID";
@@ -20,7 +20,7 @@ ServerDefinitionAtlas::ServerDefinitionAtlas() {
 	registerDef(invalid);
 	
 	//Air Node
-	BlockModel nullModel{};
+	BlockModel nullModel {};
 	BlockDef* air = new BlockDef();
 	air->lightPropagates = true;
 	air->identifier = "air";

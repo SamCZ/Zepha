@@ -12,13 +12,13 @@
  */
 
 LocalSubgame::LocalSubgame(const std::string& baseAssets) :
-	textures(u16vec2(2048)),
+	textures(u16vec2(512)),
 	
 	lua(std::make_unique<LocalLuaParser>(*this)),
 	biomes(std::make_unique<LocalBiomeAtlas>()),
 	defs(std::make_unique<LocalDefinitionAtlas>(textures)) {
 	
-	textures.loadDirectory(baseAssets);
+	textures.addDirectory(baseAssets, true);
 }
 
 

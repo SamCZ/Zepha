@@ -54,8 +54,8 @@ void MenuSandbox::load(const SubgameDef& subgame) {
 	subgameName = subgame.config.name;
 
 	try {
-		loadMod(subgame.subgamePath + "/../../assets/base");
-		loadMod(subgame.subgamePath + "/menu");
+		loadMod(subgame.subgamePath / "../../assets/base");
+		loadMod(subgame.subgamePath / "menu");
 	}
 	catch (sol::error e) {
 		string err = static_cast<sol::error>(e).what();
@@ -132,7 +132,7 @@ void MenuSandbox::loadMod(const std::filesystem::path& path) {
 	mod = { path, true };
 	
 	if (std::filesystem::exists(path / "textures"))
-		menuAssets = client.game->textures.loadDirectory((path / "textures").string(), false);
+		menuAssets = client.game->textures.addDirectory((path / "textures"), false);
 	
 	loadFile("/main");
 }

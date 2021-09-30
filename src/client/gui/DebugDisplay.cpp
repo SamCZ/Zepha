@@ -140,9 +140,9 @@ void DebugDisplay::update(sptr<LocalPlayer> player, f64 delta, u32 interpolatedC
 		<< "R: " << posOffsetFromRegion << " [" << regionPos << "]" << std::endl
 	    << std::endl
 
-	    << "Texture Slots: " << game.l()->textures.textureSlotsUsed << " / " << game.l()->textures.maxTextureSlots
+	    << "Texture Slots: " << game.l()->textures.getTilesUsed() << " / " << game.l()->textures.getTilesTotal()
 	    << " ("
-	    << round(game.l()->textures.textureSlotsUsed / static_cast<float>(game.l()->textures.maxTextureSlots) * 100)
+	    << round(game.l()->textures.getTilesUsed() / static_cast<f32>(game.l()->textures.getTilesTotal()) * 100)
 	    << "%)" << std::endl << std::endl
 
 		<< "Biome: " << onBiomeDef.identifier << " [" << onBiomeDef.index << "]" << std::endl << std::endl;

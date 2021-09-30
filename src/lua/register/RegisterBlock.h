@@ -9,21 +9,12 @@
 #include "game/def/CraftItemDef.h"
 #include "game/def/mesh/BlockModel.h"
 #include "game/def/mesh/SelectionBox.h"
+#include "game/atlas/asset/AtlasTexture.h"
 #include "game/atlas/LocalDefinitionAtlas.h"
 #include "game/atlas/ServerDefinitionAtlas.h"
 
 namespace RegisterBlock {
-	
 	namespace {
-		struct TintParserData {
-			string tex;
-			optional<u32> tint;
-			optional<string> mask;
-		};
-		
-		using TintParser = StringParser<TintParserData>;
-		TintParser parser {};
-		bool parserReady = false;
 		
 		/**
 		 * Takes a lua selection box table list, and returns a vector of selection boxes.
@@ -32,16 +23,15 @@ namespace RegisterBlock {
 		 * @returns a vector of selection boxes.
 		 */
 		
-		static std::vector<SelectionBox> parseBoxes(sol::table boxesTable) {
-			std::vector<SelectionBox> boxes{};
+		static vec<SelectionBox> parseBoxes(sol::table boxesTable) {
+			vec<SelectionBox> boxes{};
 			
 			for (auto pair : boxesTable) {
 				if (!pair.second.is<sol::table>()) throw std::runtime_error("must be a table");
 				sol::table table = pair.second;
 				
 				if (table.size() != 6) throw std::runtime_error("must contain exactly 6 elements");
-				boxes.emplace_back(glm::vec3{ table[1], table[2], table[3] },
-					glm::vec3{ table[4], table[5], table[6] });
+				boxes.emplace_back(vec3 { table[1], table[2], table[3] }, vec3 { table[4], table[5], table[6] });
 			}
 			
 			return boxes;
@@ -60,8 +50,8 @@ namespace RegisterBlock {
 		static std::pair<BlockModel, BlockModel>
 		createBlockModel(sol::table blockTable, sol::table blockModels, TextureAtlas* atlas) {
 			// Get the specified block model
-			auto modelStr = blockTable.get_or<std::string>("model", "zepha:base:block");
-			auto modelOpt = blockModels.get<sol::optional<sol::table>>(modelStr);
+			let modelStr = blockTable.get_or<string>("model", "zepha:base:block");
+			let modelOpt = blockModels.get<optional<sol::table>>(modelStr);
 			if (!modelOpt) throw std::runtime_error("Non-existent model \"" + modelStr + "\" specified");
 			
 			sol::table modelTable = *modelOpt;
@@ -72,55 +62,55 @@ namespace RegisterBlock {
 			model.visible = blockTable.get_or("visible", true);
 			
 			// Convert textures and low-def textures into vectors
-			auto texturesOpt = blockTable.get<sol::optional<sol::table >>("textures");
-			auto ldTexturesOpt = blockTable.get<sol::optional<sol::table >>("lowdef_textures");
+			let texturesOpt = blockTable.get<sol::optional<sol::table>>("textures");
+			let ldTexturesOpt = blockTable.get<sol::optional<sol::table>>("lowdef_textures");
 			
 			if (!texturesOpt) throw std::runtime_error("Missing textures property");
 			
-			std::vector<std::string> textures;
-			for (auto pair : *texturesOpt) {
-				if (!pair.second.is<std::string>())
-					throw std::runtime_error("textures table contains non-string value");
-				textures.push_back(pair.second.as<std::string>());
+			vec<string> textures;
+			for (let& pair : *texturesOpt) {
+				if (!pair.second.is<string>()) throw std::runtime_error(
+					"textures table contains non-string value");
+				textures.push_back(pair.second.as<string>());
 			}
-			if (textures.size() == 0) textures.push_back("_missing");
+			if (textures.empty()) textures.push_back("_missing");
 			
-			std::vector<std::string> lowdef_textures;
+			vec<string> lowdef_textures;
 			if (!ldTexturesOpt) lowdef_textures = textures;
 			else {
-				for (auto pair : *ldTexturesOpt) {
-					if (!pair.second.is<std::string>())
-						throw std::runtime_error("lowdef_textures table has non-string value!");
-					lowdef_textures.push_back(pair.second.as<std::string>());
+				for (let& pair : *ldTexturesOpt) {
+					if (!pair.second.is<string>()) throw std::runtime_error(
+						"lowdef_textures table has non-string value!");
+					lowdef_textures.push_back(pair.second.as<string>());
 				}
 			}
-			if (lowdef_textures.size() == 0) lowdef_textures.push_back("_missing");
+			if (lowdef_textures.empty()) lowdef_textures.push_back("_missing");
 			
 			// Parse through mesh mods and add them
-			sol::optional<sol::table> meshModTable = modelTable.get<sol::optional<sol::table>>("mesh_mods");
+			optional<sol::table> meshModTable = modelTable.get<optional<sol::table>>("mesh_mods");
 			if (meshModTable) {
 				for (auto& modEntry : *meshModTable) {
 					auto modTable = modEntry.second.as<sol::table>();
-					std::string meshMod = modTable.get_or<std::string>("type", "none");
+					string meshMod = modTable.get_or<string>("type", "none");
 					
 					if (meshMod == "none") continue;
 					else if (meshMod == "offset_x")
-						model.meshMods.emplace_back(MeshMod::OFFSET_X, modTable.get_or<float>("amplitude", 1));
+						model.meshMods.emplace_back(MeshMod::OFFSET_X, modTable.get_or<f32>("amplitude", 1));
 					else if (meshMod == "offset_y")
-						model.meshMods.emplace_back(MeshMod::OFFSET_Y, modTable.get_or<float>("amplitude", 1));
+						model.meshMods.emplace_back(MeshMod::OFFSET_Y, modTable.get_or<f32>("amplitude", 1));
 					else if (meshMod == "offset_z")
-						model.meshMods.emplace_back(MeshMod::OFFSET_Z, modTable.get_or<float>("amplitude", 1));
+						model.meshMods.emplace_back(MeshMod::OFFSET_Z, modTable.get_or<f32>("amplitude", 1));
 					else if (meshMod == "rotate_x")
-						model.meshMods.emplace_back(MeshMod::ROTATE_X, modTable.get_or<float>("amplitude", 1));
+						model.meshMods.emplace_back(MeshMod::ROTATE_X, modTable.get_or<f32>("amplitude", 1));
 					else if (meshMod == "rotate_y")
-						model.meshMods.emplace_back(MeshMod::ROTATE_Y, modTable.get_or<float>("amplitude", 1));
+						model.meshMods.emplace_back(MeshMod::ROTATE_Y, modTable.get_or<f32>("amplitude", 1));
 					else if (meshMod == "rotate_z")
-						model.meshMods.emplace_back(MeshMod::ROTATE_Z, modTable.get_or<float>("amplitude", 1));
+						model.meshMods.emplace_back(MeshMod::ROTATE_Z, modTable.get_or<f32>("amplitude", 1));
 				}
 			}
 			
 			// Parse through all the parts and add them to the model
-			auto partsOpt = modelTable.get<sol::optional<sol::table>>("parts");
+			let partsOpt = modelTable.get<optional<sol::table>>("parts");
 			if (!partsOpt) throw std::runtime_error("blockmodel is missing parts table");
 			partsOpt->for_each([&](sol::object key, sol::object value) {
 				
@@ -128,7 +118,7 @@ namespace RegisterBlock {
 				if (!value.is<sol::table>()) throw std::runtime_error("meshpart must be a table");
 				sol::table meshPartTable = value.as<sol::table>();
 				
-				auto points_optional = meshPartTable.get<sol::optional<sol::table>>("points");
+				let points_optional = meshPartTable.get<sol::optional<sol::table>>("points");
 				if (!points_optional) throw std::runtime_error("Meshpart is missing a points table");
 				sol::table points = *points_optional;
 				
@@ -136,20 +126,20 @@ namespace RegisterBlock {
 					throw std::runtime_error("Points table must contain a multiple of 20 values");
 				
 				// Populate the Vertices and Indices vectors from the points table
-				std::vector<BlockModelVertex> vertices;
-				std::vector<unsigned int> indices;
+				vec<BlockModelVertex> vertices;
+				vec<u32> indices;
 				
-				for (int i = 1; i <= points.size() / 5; i++) {
-					int offset = (i - 1) * 5 + 1;
+				for (u32 i = 1; i <= points.size() / 5; i++) {
+					u32 offset = (i - 1) * 5 + 1;
 					
-					glm::vec3 pos(points[offset], points[offset + 1], points[offset + 2]);
-					glm::vec2 tex(points[offset + 3], points[offset + 4]);
+					vec3 pos(points[offset], points[offset + 1], points[offset + 2]);
+					vec2 tex(points[offset + 3], points[offset + 4]);
 					
-					vertices.push_back(BlockModelVertex{ pos, {}, tex, tex, {}, {}});
+					vertices.push_back(BlockModelVertex { pos, {}, tex, tex, {}, {} });
 				}
 				
-				int ind = 0;
-				for (int i = 1; i <= points.size() / 20; i++) {
+				u32 ind = 0;
+				for (u32 i = 1; i <= points.size() / 20; i++) {
 					indices.push_back(ind);
 					indices.push_back(ind + 1);
 					indices.push_back(ind + 2);
@@ -159,25 +149,22 @@ namespace RegisterBlock {
 					ind += 4;
 				}
 				
-				// Get the part's texture
-				int tex = std::max(static_cast<int>(meshPartTable.get_or<float>("tex", 1)), 1);
-				let data = parser.parse(textures[std::min(tex - 1, (int) textures.size() - 1)]);
-				u32 blendInd = data.tint ? *data.tint + 1 : 0;
+				// Get texture, and add texture refs to blockModel if the atlas is provided
+				u32 tex = std::max(meshPartTable.get_or<u32>("tex", 1), 1u);
 				
-				// Add texture refs to blockModel if the textures table is provided
-				std::shared_ptr<AtlasRef> textureRef = nullptr, blendMaskRef = nullptr;
+				optional<u32> tintInd {};
+				optional<AtlasTexture> textureRef {};
+				optional<AtlasTexture> tintTextureRef = {};
+				
 				if (atlas) {
-					textureRef = (*atlas)[data.tex];
-					model.textureRefs.insert(textureRef);
-					
-					if (blendInd && data.mask) {
-						blendMaskRef = (*atlas)[*data.mask];
-						model.textureRefs.insert(blendMaskRef);
-					}
+					textureRef = (*atlas)[textures[std::min(tex - 1, static_cast<u32>(textures.size()) - 1)]];
+					model.textures.push_back(*textureRef);
+					tintInd = textureRef->getTintInd();
+					tintTextureRef = textureRef->getTintMask();
 				}
 				
 				// Create the meshpart object
-				MeshPart meshPart(std::move(vertices), std::move(indices), textureRef, blendInd, blendMaskRef);
+				MeshPart meshPart(std::move(vertices), std::move(indices), textureRef, tintInd, tintTextureRef);
 				
 				// Add the shader mod, if it exists
 				sol::optional<sol::table> shaderModTable = meshPartTable.get<sol::optional<sol::table>>("shader_mod");
@@ -225,27 +212,18 @@ namespace RegisterBlock {
 			});
 			
 			// Create the far model
-			BlockModel farModel;
+			BlockModel farModel {};
 			auto ldRender = blockTable.get_or("lowdef_render", true);
 			
 			if (atlas) {
-				std::vector<std::shared_ptr<AtlasRef>> textureRefs;
-				std::vector<unsigned int> blendInds;
-				std::vector<std::shared_ptr<AtlasRef>> blendMaskRefs;
+				vec<std::tuple<AtlasTexture, optional<u32>, optional<AtlasTexture>>> modelData;
 				
-				for (auto i = 0; i < lowdef_textures.size(); i++) {
-					let data = parser.parse(lowdef_textures[i]);
-					u32 blendInd = data.tint ? *data.tint + 1 : 0;
-					
-					textureRefs.push_back((*atlas)[data.tex]);
-					blendInds.push_back(blendInd);
-					blendMaskRefs.push_back(data.mask ? (*atlas)[*data.mask] : nullptr);
+				for (let i = 0; i < lowdef_textures.size(); i++) {
+					let textureRef = (*atlas)[lowdef_textures[i]];
+					modelData.emplace_back(textureRef, textureRef.getTintInd(), textureRef.getTintMask());
 				}
 				
-				farModel = BlockModel::createCube(textureRefs, blendInds, blendMaskRefs);
-			}
-			else {
-				farModel = BlockModel::createCube({}, {}, {});
+				farModel = BlockModel { modelData };
 			}
 			
 			farModel.culls = ldRender;
@@ -387,28 +365,6 @@ namespace RegisterBlock {
 	}
 	
 	/**
-	 * Initializes the parser with the necessary parse functions.
-	 * In the future, this could be cleaned up, but as it is it's totally fine.
-	 */
-	
-	static void initParser() {
-		if (parserReady) return;
-		
-		parser.setUnknownFnsAreLiteral(true);
-		
-		parser.addFn<u32, TintParserData, optional<TintParserData>>("tint",
-			[](u32 tint, TintParserData tex, optional<TintParserData> mask) {
-			return TintParserData { tex.tex, tint, mask ? optional(mask->tex) : std::nullopt };
-		});
-		
-		parser.addLiteralFn([](string tex) {
-			return TintParserData { tex, std::nullopt, std::nullopt };
-		});
-		
-		parserReady = true;
-	}
-	
-	/**
 	 * Server method to register a block. Calls registerBlock with the necessary parameters.
 	 * Registers a block to the DefinitionAtlas.
 	 *
@@ -417,8 +373,7 @@ namespace RegisterBlock {
 	 * @param identifier - The identifier of the block to register.
 	 */
 	
-	static void server(sol::table& core, ServerSubgame& game, const std::string& identifier) {
-		initParser();
+	static void server(sol::table& core, ServerSubgame& game, const string& identifier) {
 		registerBlock(core["registered_blocks"], core["registered_blockmodels"],
 			identifier, game.getDefs(), nullptr);
 	}
@@ -432,8 +387,7 @@ namespace RegisterBlock {
 	 * @param identifier - The identifier of the block to register.
 	 */
 	
-	static void client(sol::table& core, LocalSubgame& game, const std::string& identifier) {
-		initParser();
+	static void client(sol::table& core, LocalSubgame& game, const string& identifier) {
 		registerBlock(core["registered_blocks"], core["registered_blockmodels"],
 			identifier, game.getDefs(), &game.textures);
 	}

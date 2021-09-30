@@ -79,10 +79,10 @@ private:
 	vec<ivec3> generateOrder;
 
 	/** The range in mapblocks to generate around clients. */
-	const ivec2 mapBlockGenRange = { 4, 4 };
+	const ivec2 mapBlockGenRange = { 6, 6 };
 	
 	/** The range in mapblocks to send to clients. */
-	const ivec2 sendRange = { 4, 4 };
+	const ivec2 sendRange = { 6, 6 };
 
 	/** The range around clients that chunks should be updated. */
 	const ivec2 activeChunkRange = { 4, 4 };

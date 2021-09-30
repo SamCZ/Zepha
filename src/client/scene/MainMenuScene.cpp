@@ -11,7 +11,7 @@
 #include "client/gui/TextElement.h"
 #include "client/menu/SubgameDef.h"
 #include "client/gui/basic/GuiText.h"
-#include "game/atlas/asset/AtlasRef.h"
+#include "game/atlas/asset/AtlasTexture.h"
 #include "client/gui/basic/GuiContainer.h"
 #include "client/gui/compound/GuiImageButton.h"
 
@@ -104,11 +104,11 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 			if (!json["version"].is_string() || json["version"] == "")
 				throw std::runtime_error("conf.json is missing 'version'");
 			
-			const let icon = std::filesystem::exists(file.path() / "icon.png")
-				? client.game->textures.loadImage((file.path() / "icon.png").string(), json["name"])
+			const AtlasTexture icon = std::filesystem::exists(file.path() / "icon.png")
+				? client.game->textures.addFile((file.path() / "icon.png").string(), false)
 				: client.game->textures["menu_flag_missing"];
 			
-			subgames.push_back({ icon, { json["name"], json["description"], json["version"] }, file.path().string() });
+			subgames.push_back({ icon, { json["name"], json["description"], json["version"] }, file.path() });
 		}
 		catch(const std::runtime_error& e) {
 			std::cout << Log::err << "Failed to load subgame '"
@@ -124,8 +124,8 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 		
 		let elem = navigationList->append<Gui::BoxElement>({{
 			{ Gui::Prop::CLASS, vec<string> { "navigationButton" } },
-			{ Gui::Prop::BACKGROUND, string("crop(0, 0, 16, 16, " + subgame.iconRef->name + ")") },
-			{ Gui::Prop::BACKGROUND_HOVER, string("crop(16, 0, 16, 16, " + subgame.iconRef->name + ")") }
+			{ Gui::Prop::BACKGROUND, string("crop(0, 0, 16, 16, " + subgame.iconRef.getIdentifier() + ")") },
+			{ Gui::Prop::BACKGROUND_HOVER, string("crop(16, 0, 16, 16, " + subgame.iconRef.getIdentifier() + ")") }
 		}});
 		
 		elem->onClick([&](u32 button, bool down) {
@@ -171,7 +171,7 @@ void MainMenuScene::draw() {
 	renderer.beginChunkDeferredCalls();
 	renderer.endDeferredCalls();
 	
+	renderer.enableTexture(client.game->textures.getTexture());
 	renderer.beginGUIDrawCalls();
-	renderer.enableTexture(&client.game->textures.texture);
 	root.draw(renderer);
 }

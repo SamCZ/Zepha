@@ -13,7 +13,7 @@
 
 #include "util/Log.h"
 #include "util/Mat4Conv.h"
-#include "game/atlas/asset/AtlasRef.h"
+#include "game/atlas/asset/AtlasTexture.h"
 #include "game/atlas/asset/SerializedModel.h"
 
 void Model::fromMesh(std::unique_ptr<EntityMesh> mesh) {
@@ -21,7 +21,7 @@ void Model::fromMesh(std::unique_ptr<EntityMesh> mesh) {
 	meshes.push_back(std::move(mesh));
 }
 
-int Model::fromFile(const std::string& path, const std::vector<std::shared_ptr<AtlasRef>>& textures) {
+int Model::fromFile(const std::string& path, const std::vector<AtlasTexture>& textures) {
 	this->textures = textures;
 	
 	Assimp::Importer importer;
@@ -42,7 +42,7 @@ int Model::fromFile(const std::string& path, const std::vector<std::shared_ptr<A
 	return 0;
 }
 
-int Model::fromSerialized(const SerializedModel& model, const std::vector<std::shared_ptr<AtlasRef>>& textures) {
+int Model::fromSerialized(const SerializedModel& model, const std::vector<AtlasTexture>& textures) {
 	this->textures = textures;
 	
 	Assimp::Importer importer;
@@ -111,10 +111,11 @@ void Model::loadMeshAndBone(aiMesh* mesh, std::unique_ptr<EntityMesh>& target) {
 			auto& texture = textures[mesh->mMaterialIndex];
 			
 			//Set texture coordinates
+			vec4 uvs = texture.getUVPos();
 			vertex.useTex = true;
 			vertex.colorData = {
-				texture->uv.x + mesh->mTextureCoords[0][i].x * (texture->uv.z - texture->uv.x),
-				texture->uv.y + mesh->mTextureCoords[0][i].y * (texture->uv.w - texture->uv.y), 0, 1 //Alpha
+				uvs.x + mesh->mTextureCoords[0][i].x * (uvs.z - uvs.x),
+				uvs.y + mesh->mTextureCoords[0][i].y * (uvs.w - uvs.y), 0, 1 //Alpha
 			};
 		}
 		else vertex.colorData = { 1, 1, 1, 1 };

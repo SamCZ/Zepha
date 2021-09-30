@@ -27,7 +27,7 @@ void Gui::BoxElement::updateElement() {
 		else if (bgColor) {
 			let mesh = make_unique<EntityMesh>();
 			
-			tex = nullptr;
+			tex = {};
 			mesh->create({
 				{ { 0, 0, 0 }, *bgColor, vec3(1), false, {}, {}, {} },
 				{ { 0, 1, 0 }, *bgColor, vec3(1), false, {}, {}, {} },
@@ -43,11 +43,12 @@ void Gui::BoxElement::updateElement() {
 			let mesh = make_unique<EntityMesh>();
 			
 			tex = root.atlas[bgImage];
+			let uv = tex->getUVPos();
 			mesh->create({
-				{ { 0, 0, 0 }, { tex->uv.x, tex->uv.y, 0, 1 }, vec3(1), true, {}, {}, {} },
-				{ { 0, 1, 0 }, { tex->uv.x, tex->uv.w, 0, 1 }, vec3(1), true, {}, {}, {} },
-				{ { 1, 1, 0 }, { tex->uv.z, tex->uv.w, 0, 1 }, vec3(1), true, {}, {}, {} },
-				{ { 1, 0, 0 }, { tex->uv.z, tex->uv.y, 0, 1 }, vec3(1), true, {}, {}, {} }
+				{ { 0, 0, 0 }, { uv.x, uv.y, 0, 1 }, vec3(1), true, {}, {}, {} },
+				{ { 0, 1, 0 }, { uv.x, uv.w, 0, 1 }, vec3(1), true, {}, {}, {} },
+				{ { 1, 1, 0 }, { uv.z, uv.w, 0, 1 }, vec3(1), true, {}, {}, {} },
+				{ { 1, 0, 0 }, { uv.z, uv.y, 0, 1 }, vec3(1), true, {}, {}, {} }
 			}, { 0, 1, 2, 2, 3, 0 });
 			
 			let model = make_shared<Model>();

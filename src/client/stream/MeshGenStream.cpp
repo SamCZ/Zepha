@@ -87,7 +87,8 @@ void MeshGenStream::Thread::exec() {
 			assert(u.thisChunk);
 			for (int i = 0; i < u.adjacentChunks.size(); i++) assert(u.adjacentChunks[i]);
 			ChunkMeshGenerator m(u.meshDetails, game.getDefs(), game.getBiomes(),
-				std::move(u.thisChunk), std::move(u.adjacentChunks), offsetSamplers, ChunkMeshGenerator::Detail::HIGH);
+				std::move(u.thisChunk), std::move(u.adjacentChunks), offsetSamplers,
+				glm::distance(vec3(u.thisChunk->getPos()), vec3()) <= 16 ? ChunkMeshGenerator::Detail::HIGH : ChunkMeshGenerator::Detail::LOW);
 			empty = false;
 			u.busy = false;
 		}

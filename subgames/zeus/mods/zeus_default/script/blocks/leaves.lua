@@ -8,7 +8,7 @@ zepha.register_block(":leaves", {
         "zeus:default:leaves_puff"
     },
     lowdef_textures = {
-        "tint(0, zeus:default:leaves_opaque)",
+        "zeus:default:leaves_opaque",
     },
 
     tool_props = {

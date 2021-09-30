@@ -12,6 +12,10 @@ Texture::Texture(const std::string& file) :
 	loadFromFile(this->fileLocation);
 }
 
+bool Texture::operator==(const Texture& o) const {
+	return o.textureID == textureID;
+}
+
 void Texture::loadFromFile(std::string file) {
 	unsigned char* texData = stbi_load(file.c_str(), &width, &height, &bitDepth, 0);
 	if (!texData) throw std::runtime_error("Failed to find texture at " + file + ".");
@@ -46,7 +50,7 @@ void Texture::updateTexture(int x, int y, int width, int height, unsigned char* 
 }
 
 
-void Texture::use(GLuint position) {
+void Texture::use(GLuint position) const {
 	glActiveTexture(GL_TEXTURE0 + position);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 }

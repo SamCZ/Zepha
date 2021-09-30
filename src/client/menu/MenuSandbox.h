@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 2019-12-12.
-//
-
 #pragma once
 
 #include "lua/LuaParser.h"
@@ -9,10 +5,10 @@
 #include "lua/Mod.h"
 #include "client/gui/Root.h"
 #include "client/gui/Element.h"
+#include "game/atlas/asset/AtlasTexture.h"
 
 class Client;
 class Subgame;
-class AtlasRef;
 class SubgameDef;
 class GuiContainer;
 
@@ -48,7 +44,7 @@ private:
 	
 	Gui::Root& root;
 	sptr<Gui::Element> sandboxRoot;
-	vec<sptr<AtlasRef>> menuAssets {};
+	vec<AtlasTexture> menuAssets {};
 	
 	double accumulatedDelta = 0;
 	

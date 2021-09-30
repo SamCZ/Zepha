@@ -5,12 +5,12 @@
 #include "game/def/BiomeDef.h"
 #include "game/ServerSubgame.h"
 #include "game/def/CraftItemDef.h"
+#include "game/atlas/asset/AtlasTexture.h"
 #include "game/atlas/LocalDefinitionAtlas.h"
 #include "game/atlas/ServerDefinitionAtlas.h"
 
 namespace RegisterItem {
 	namespace {
-		
 		
 		/**
 		 * Attempts to add a callback of the type specified from the block table provided
@@ -23,9 +23,9 @@ namespace RegisterItem {
 		 */
 		
 		static void addCallback(CraftItemDef& itemDef, sol::table& itemTable,
-			const std::string& name, CraftItemDef::Callback cbType) {
+			const string& name, CraftItemDef::Callback cbType) {
 			
-			auto cb = itemTable.get<sol::optional<sol::protected_function>>(name);
+			auto cb = itemTable.get<optional<sol::protected_function>>(name);
 			if (cb) itemDef.callbacks.insert({ cbType, *cb });
 		}
 		
@@ -40,26 +40,25 @@ namespace RegisterItem {
 		 * @param atlas - The Texture Atlas, pass in if running on the client, otherwise pass nullptr.
 		 */
 		
-		static void
-		registerItem(sol::table items, const std::string& identifier, DefinitionAtlas& defs, TextureAtlas* atlas) {
-			
+		static void registerItem(sol::table items, const string& identifier,
+			DefinitionAtlas& defs, TextureAtlas* atlas) {
 			sol::table itemTable = items[identifier];
 			
 			// Basic item properties
-			auto nameOpt = itemTable.get<sol::optional<std::string>>("name");
-			auto texturesOpt = itemTable.get<sol::optional<sol::table>>("textures");
-			auto maxStack = itemTable.get_or("stack", 64);
+			let nameOpt = itemTable.get<optional<string>>("name");
+			let texturesOpt = itemTable.get<optional<sol::table>>("textures");
+			let maxStack = itemTable.get_or("stack", 64);
 			
 			if (!nameOpt) throw std::runtime_error(identifier + " is missing name property!");
 			if (!texturesOpt) throw std::runtime_error(identifier + " is missing textures property!");
 			
 			//Convert Textures Table to Vector
-			std::vector<std::string> textures;
-			std::vector<std::shared_ptr<AtlasRef>> textureRefs;
+			vec<string> textures;
+			vec<AtlasTexture> textureRefs;
 			for (auto pair : *texturesOpt) {
-				if (!pair.second.is<std::string>()) throw std::runtime_error("textures table has non-string value");
-				textures.push_back(pair.second.as<std::string>());
-				if (atlas) textureRefs.push_back((*atlas)[pair.second.as<std::string>()]);
+				if (!pair.second.is<string>()) throw std::runtime_error("textures table has non-string value");
+				textures.push_back(pair.second.as<string>());
+				if (atlas) textureRefs.push_back((*atlas)[pair.second.as<string>()]);
 			}
 			if (textures.size() == 0) {
 				textures.push_back("_missing");
@@ -89,7 +88,6 @@ namespace RegisterItem {
 		}
 	}
 	
-	
 	/**
 	 * Server method to register an item. Calls registerItem with the necessary parameters.
 	 * Registers an item to the DefinitionAtlas.
@@ -99,10 +97,9 @@ namespace RegisterItem {
 	 * @param identifier - The identifier of the item to register.
 	 */
 	
-	static void server(sol::table& core, ServerSubgame& game, const std::string& identifier) {
+	static void server(sol::table& core, ServerSubgame& game, const string& identifier) {
 		registerItem(core["registered_items"], identifier, game.getDefs(), nullptr);
 	}
-	
 	
 	/**
 	 * Client method to register an item. Calls registerItem with the necessary parameters.
@@ -113,7 +110,7 @@ namespace RegisterItem {
 	 * @param identifier - The identifier of the item to register.
 	 */
 	
-	static void client(sol::table& core, LocalSubgame& game, const std::string& identifier) {
+	static void client(sol::table& core, LocalSubgame& game, const string& identifier) {
 		registerItem(core["registered_items"], identifier, game.getDefs(), &game.textures);
 	}
 }

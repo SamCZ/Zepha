@@ -2,7 +2,7 @@
 
 #include "Element.h"
 
-#include "game/atlas/asset/AtlasRef.h"
+#include "game/atlas/asset/AtlasTexture.h"
 
 namespace Gui {
 	
@@ -17,7 +17,7 @@ namespace Gui {
 		virtual void updateElement() override;
 		
 	protected:
-		sptr<AtlasRef> tex;
 		optional<any> curBg;
+		optional<AtlasTexture> tex;
 	};
 }

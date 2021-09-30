@@ -10,7 +10,7 @@
 Renderer::Renderer() : Renderer({ 1366, 768 }) {};
 
 Renderer::Renderer(glm::ivec2 win) :
-	activeTexture(nullptr),
+//	activeTexture(nullptr),
 	window(win),
 	
 	world(win, 2),
@@ -62,7 +62,7 @@ void Renderer::update(double delta) {
 }
 
 void Renderer::beginChunkDeferredCalls() {
-	activeTexture = nullptr;
+//	activeTexture = nullptr;
 	currentModelUniform = world.uniforms.model;
 	
 	glClearColor(0, 0, 0, 0);
@@ -105,7 +105,7 @@ void Renderer::beginEntityDeferredCalls() {
 void Renderer::endDeferredCalls() {
 	glDisable(GL_BLEND);
 	
-	activeTexture = nullptr;
+//	activeTexture = nullptr;
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, ssao.fbo);
 	glClearColor(clearColor.x, clearColor.y, clearColor.z, 0);
@@ -163,7 +163,7 @@ void Renderer::endDeferredCalls() {
 }
 
 void Renderer::beginGUIDrawCalls() {
-	activeTexture = nullptr;
+//	activeTexture = nullptr;
 	currentModelUniform = gu.model;
 	
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -211,11 +211,11 @@ void Renderer::setClipBounds(glm::vec4 bounds) {
 	guiShader.set(gu.clipBounds, { bounds.x, window.getSize().y - bounds.w, bounds.z, window.getSize().y - bounds.y });
 }
 
-void Renderer::enableTexture(Texture* texture) {
-	if (texture != activeTexture) {
-		activeTexture = texture;
-		texture->use(0);
-	}
+void Renderer::enableTexture(const Texture& texture) {
+//	if (texture != *activeTexture) {
+//		activeTexture = texture;
+		texture.use(0);
+//	}
 }
 
 void Renderer::renderQuad() {

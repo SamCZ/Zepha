@@ -14,20 +14,19 @@
 #include "ModelBone.h"
 #include "ModelAnimation.h"
 #include "client/graph/mesh/EntityMesh.h"
-
-class AtlasRef;
+#include "game/atlas/asset/AtlasTexture.h"
 
 class SerializedModel;
 
 class Model {
-	public:
+public:
 	Model() = default;
 	
 	void fromMesh(std::unique_ptr<EntityMesh> mesh);
 	
-	int fromFile(const std::string& path, const std::vector<std::shared_ptr<AtlasRef>>& texture);
+	int fromFile(const std::string& path, const std::vector<AtlasTexture>& texture);
 	
-	int fromSerialized(const SerializedModel& model, const std::vector<std::shared_ptr<AtlasRef>>& texture);
+	int fromSerialized(const SerializedModel& model, const std::vector<AtlasTexture>& texture);
 	
 	void getTransformsByFrame(double frame, glm::ivec2 bounds, std::vector<glm::mat4>& transforms);
 //    void getTransformsByTime(double time, std::tuple<uint> bounds, std::vector<glm::mat4>& transforms);
@@ -77,7 +76,7 @@ private:
 	ModelAnimation animation {};
 	std::vector<ModelBone*> rootBones {};
 	std::vector<ModelBone> bones {};
-	std::vector<std::shared_ptr<AtlasRef>> textures {};
+	std::vector<AtlasTexture> textures {};
 	
 	glm::mat4 globalInverseTransform {};
 };

@@ -136,7 +136,7 @@ void ConnectScene::update() {
 						const u8* dataPtr = reinterpret_cast<u8*>(const_cast<char*>(uncompressed.data()));
 						const vec<u8> tex(dataPtr, dataPtr + width * height * 4);
 						
-						client.game->textures.addImage(assetName, true, u16vec2(width, height), tex);
+						client.game->textures.addBytes(assetName, true, u16vec2(width, height), tex);
 					}
 					else if (t == AssetType::MODEL) {
 						string format = p.d.read<string>();
@@ -210,7 +210,7 @@ void ConnectScene::draw() {
 	renderer.beginChunkDeferredCalls();
 	renderer.endDeferredCalls();
 	renderer.beginGUIDrawCalls();
-	renderer.enableTexture(&client.game->textures.texture);
+	renderer.enableTexture(client.game->textures.getTexture());
 	
 	root.draw(renderer);
 }

@@ -148,33 +148,42 @@ table.insert(structures, zepha.create_structure({
 }))
 
 local noise = {
---     heightmap = {
---         module = "add",
---         sources = {
---             require('./world_noise'),
---             {
---                 module = "max",
---                 smoothness = 50,
---                 scalar = 0,
---                 source = {
---                     module = "add",
---                     scalar = -50,
---                     source = {
---                         module = "multiply",
---                         scalar = 400,
---                         source = {
---                             module = "simplex",
---                             frequency = 0.00025,
---                             lacunarity = 2.5,
---                             octaves = 8,
---                             persistence = 0.55
---                         }
---                     }
---                 }
---             }
---         }
---     }
-    volume = require './world_noise'
+    heightmap = {
+        module = "add",
+        sources = {
+            {
+                module = "multiply",
+                scalar = 100,
+                source = {
+                    module = "simplex",
+                    frequency = 0.0002,
+                    octaves = 5,
+                    lacunarity = 3,
+                    persistence = 0.45
+                }
+            }, {
+                module = "max",
+                smoothness = 50,
+                scalar = 0,
+                source = {
+                    module = "add",
+                    scalar = -50,
+                    source = {
+                        module = "multiply",
+                        scalar = 400,
+                        source = {
+                            module = "simplex",
+                            frequency = 0.00025,
+                            lacunarity = 2.5,
+                            octaves = 8,
+                            persistence = 0.55
+                        }
+                    }
+                }
+            }
+        }
+    }
+--     volume = require './world_noise'
 --     volume = {
 --         module = "scale",
 --         y_scale = 2,

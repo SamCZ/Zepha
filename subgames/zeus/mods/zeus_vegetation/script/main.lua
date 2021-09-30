@@ -42,8 +42,8 @@ register_vegetation('mushroom_brown', { name = 'Brown Mushroom', model = 'zepha:
 register_vegetation('clover', {
     model = 'zeus:vegetation:clover',
     textures = {
-        'tint(0, crop(0, 0, 16, 16, zeus:vegetation:clover))',
-        'tint(0, crop(16, 0, 16, 16, zeus:vegetation:clover))'
+        '(canvas(16),tint(0, crop(0, 0, 16, 16, zeus:vegetation:clover)))',
+        '(canvas(16),tint(0, crop(16, 0, 16, 16, zeus:vegetation:clover)))'
     },
     selection_box = {
         { 1/16, 0, 1/16, 15/16, 4/16, 15/16 }
