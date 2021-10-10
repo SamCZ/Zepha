@@ -54,8 +54,8 @@ void MenuSandbox::load(const SubgameDef& subgame) {
 	subgameName = subgame.config.name;
 
 	try {
-		loadMod(subgame.subgamePath / "../../assets/base");
-		loadMod(subgame.subgamePath / "menu");
+		loadMod(subgame.path / "../../assets/base");
+		loadMod(subgame.path / "menu");
 	}
 	catch (sol::error e) {
 		string err = static_cast<sol::error>(e).what();

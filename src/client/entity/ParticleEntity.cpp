@@ -10,7 +10,7 @@ ParticleEntity::ParticleEntity(SubgamePtr game, DimensionPtr dim, vec3 pos, Bloc
 	let it = block.model.textures.cbegin();
 	advance(it, rand() % block.model.textures.size());
 	
-	vec4 uv = (*it).getUVPos();
+	vec4 uv = (*it)->getUVPos();
 	
 	f32 spanX = uv.z - uv.x;
 	f32 spanY = uv.w - uv.y;

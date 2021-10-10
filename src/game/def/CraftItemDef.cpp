@@ -5,13 +5,14 @@
 #include "CraftItemDef.h"
 
 #include "game/atlas/TextureAtlas.h"
+#include "game/atlas/asset/AtlasTexture.h"
 
 CraftItemDef::CraftItemDef(const string& identifier, const string& name, u16 maxStackSize,
-	const vec<string>& textures, const vec<AtlasTexture>& textureRefs) :
+	const vec<string>& textures, const vec<sptr<AtlasTexture>>& textureRefs) :
 	CraftItemDef(identifier, 0, name, maxStackSize, textures, textureRefs) {}
 
 CraftItemDef::CraftItemDef(const string& identifier, u16 index, const string& name,
-	u16 maxStackSize, const vec<string>& textures, const vec<AtlasTexture>& textureRefs) :
+	u16 maxStackSize, const vec<string>& textures, const vec<sptr<AtlasTexture>>& textureRefs) :
 	ItemDef(ItemDef::Type::CRAFTITEM, identifier, name, index, maxStackSize),
 	textures(textures), textureRefs(textureRefs) {}
 
@@ -22,7 +23,7 @@ void CraftItemDef::createModel(TextureAtlas& atlas) {
 	vec<u16> indices { 0, 1, 2, 2, 3, 0, 4, 7, 6, 6, 5, 4 };
 	
 	static const f32 xo = 0.040f;
-	vec4 uv = textureRefs[0].getUVPos();
+	vec4 uv = textureRefs[0]->getUVPos();
 	
 	for (u8 i = 0; i <= 1; i++) {
 		f32 xx = xo * (i == 1 ? -1 : 1);

@@ -3,8 +3,10 @@
 
 #include "MeshPart.h"
 
+#include "game/atlas/asset/AtlasTexture.h"
+
 MeshPart::MeshPart(const vec<BlockModelVertex>& vertices, const vec<u32>& indices,
-	optional<AtlasTexture> texture, optional<u32> blendInd, optional<AtlasTexture> blendTexture) :
+	optional<sptr<AtlasTexture>> texture, optional<u32> blendInd, optional<sptr<AtlasTexture>> blendTexture) :
 	
 	vertices(vertices),
 	indices(indices),
@@ -40,7 +42,7 @@ MeshPart::MeshPart(const vec<BlockModelVertex>& vertices, const vec<u32>& indice
 	 */
 	
 	if (texture) {
-		auto uv = texture->getUVPos();
+		auto uv = (*texture)->getUVPos();
 		
 		/* Iterate through the vertices to adjust the texture coordinates to fit the textureAtlas. */
 		for (BlockModelVertex& vertex: this->vertices) {
@@ -54,7 +56,7 @@ MeshPart::MeshPart(const vec<BlockModelVertex>& vertices, const vec<u32>& indice
 			vertex.tex.y = uv.y + ((uv.w - uv.y) * vertex.tex.y);
 			
 			if (blendTexture) {
-				auto bUV = blendTexture->getUVPos();
+				auto bUV = (*blendTexture)->getUVPos();
 				
 				/* Store the old positions in blendMaskUVs. */
 				vertex.blendMaskUVs.x = vertex.blendMask.x;

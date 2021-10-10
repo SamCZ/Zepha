@@ -2,8 +2,6 @@
 
 #include "Element.h"
 
-#include "game/atlas/asset/AtlasTexture.h"
-
 namespace Gui {
 	
 	/**
@@ -18,6 +16,6 @@ namespace Gui {
 		
 	protected:
 		optional<any> curBg;
-		optional<AtlasTexture> tex;
+		sptr<AtlasTexture> tex = nullptr;
 	};
 }

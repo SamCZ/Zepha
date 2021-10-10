@@ -36,7 +36,6 @@ void Client::loop() {
 	
 	scene.update();
 	renderer.update(delta);
-	game->textures.update();
 	
 	renderer.swapBuffers();
 }

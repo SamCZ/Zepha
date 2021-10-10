@@ -1,11 +1,15 @@
 #pragma once
 
 #include "client/menu/SubgameConfig.h"
-#include "game/atlas/asset/AtlasTexture.h"
+
+class AtlasTexture;
 
 class SubgameDef {
 public:
-	AtlasTexture iconRef;
+	SubgameDef(const SubgameConfig& config, const sptr<AtlasTexture>& icon, const std::filesystem::path& path):
+		config(config), icon(icon), path(path) {}
+		
 	SubgameConfig config {};
-	std::filesystem::path subgamePath;
+	sptr<AtlasTexture> icon;
+	std::filesystem::path path;
 };

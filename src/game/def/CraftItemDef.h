@@ -3,8 +3,8 @@
 #include "ItemDef.h"
 
 #include "lua/Lua.h"
-#include "game/atlas/asset/AtlasTexture.h"
 
+class AtlasTexture;
 class TextureAtlas;
 
 /**
@@ -22,17 +22,17 @@ public:
 	CraftItemDef(): ItemDef(ItemDef::Type::CRAFTITEM) {};
 	
 	CraftItemDef(const string& identifier, const string& name, u16 maxStackSize,
-		const vec<string>& textures, const vec<AtlasTexture>& texturesRefs);
+		const vec<string>& textures, const vec<sptr<AtlasTexture>>& texturesRefs);
 	
 	CraftItemDef(const string& identifier, u16 index, const string& name,
-		u16 maxStackSize, const vec<string>& textures, const vec<AtlasTexture>& texturesRefs);
+		u16 maxStackSize, const vec<string>& textures, const vec<sptr<AtlasTexture>>& texturesRefs);
 	
 	void createModel(TextureAtlas& atlas);
 	
 	bool hasUse();
 	
 	vec<string> textures {};
-	vec<AtlasTexture> textureRefs {};
+	vec<sptr<AtlasTexture>> textureRefs {};
 	
 	std::unordered_map<Callback, sol::protected_function, Util::EnumClassHash> callbacks {};
 };

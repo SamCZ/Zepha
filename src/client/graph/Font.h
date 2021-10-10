@@ -1,7 +1,8 @@
 #pragma once
 
 #include "util/Types.h"
-#include "game/atlas/asset/AtlasTexture.h"
+
+class AtlasTexture;
 
 /**
  * Stores information about a font,
@@ -10,7 +11,7 @@
 
 class Font {
 public:
-	Font(const AtlasTexture& texture);
+	Font(const sptr<AtlasTexture>& texture);
 	
 	u16 getCharWidth(char c);
 	vec4 getCharUVs(char c);
@@ -21,6 +22,6 @@ public:
 	constexpr static u16 C_HEIGHT = 9;
 	
 private:
-	AtlasTexture texture;
+	sptr<AtlasTexture> texture;
 	array<u16, C_COUNT + 1> charWidths {};
 };

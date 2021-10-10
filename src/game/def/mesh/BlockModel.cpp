@@ -2,8 +2,7 @@
 
 #include "util/Vec.h"
 
-
-BlockModel::BlockModel(vec<std::tuple<AtlasTexture, optional<u32>, optional<AtlasTexture>>> data):
+BlockModel::BlockModel(vec<std::tuple<sptr<AtlasTexture>, optional<u32>, optional<sptr<AtlasTexture>>>> data):
 	visible(true), culls(true) {
 	
 	textures.reserve(data.size());

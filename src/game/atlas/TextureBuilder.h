@@ -4,6 +4,7 @@
 //#include "game/atlas/TextureAtlas.h"
 
 class TextureAtlas;
+class AtlasTexture;
 
 class TextureBuilder {
 public:
@@ -17,9 +18,53 @@ private:
 	typedef StringParser<Data, Context> Parser;
 
 public:
+	class Texture {
+		struct ByteData {
+			ByteData() = default;
+			ByteData(const vec<u8>& data): data(data) {};
+			
+			vec<u8> data;
+		};
+		
+		struct CropData {
+			CropData(u16vec2 offset, const sptr<AtlasTexture>& source): offset(offset), source(source) {}
+			
+			u16vec2 offset;
+			sptr<AtlasTexture> source;
+		};
+		
+		vec<u8>& getBytes();
+		
+	public:
+		void alpha(f32 factor);
+		
+		void crop(u16vec2 pos, u16vec2 size);
+		
+		void multiply(vec4 scalar);
+		
+		void multiply(Texture& texture);
+		
+		void stack(Texture& texture);
+		
+		Texture(u16vec2 size, vec4 color):
+			size(size), data(ByteData(vec<u8>(size.x * size.y * 4))) {
+			let& bytes = get<ByteData>(data).data;
+			for (u32 i = 0; i < size.x * size.y * 4; i++) bytes[i] = color[i % 4] * 255;
+		}
+		
+		Texture(u16vec2 size, sptr<AtlasTexture> tex):
+			size(size), data(CropData({}, tex)) {}
+			
+		Texture(u16vec2 pos, u16vec2 size, sptr<AtlasTexture> tex):
+			size(size), data(CropData(pos, tex)) {}
+		
+		u16vec2 size;
+		variant<CropData, ByteData> data;
+	};
+	
 	class Data {
 		friend class TextureBuilder;
-
+		
 		/**
 		 * Loads a texture identified by a string into a Data.
 		 *
@@ -93,13 +138,23 @@ public:
 	
 	public:
 		Data() = default;
-		explicit Data(u16vec2 size): size(size) {};
-		Data(u16vec2 size, const vec<u8>& data): size(size), data(data) {};
 		
-		u16vec2 size;
-		vec<u8> data;
-		optional<u32> tintInd;
-		optional<vec<u8>> tintMask;
+		Data(Data&) = default;
+		Data(Data&&) = default;
+		Data& operator=(Data&) = default;
+		Data& operator=(Data&&) = default;
+		
+		Data(u16vec2 size, vec4 color): texture(make_unique<Texture>(size, color)) {};
+		Data(u16vec2 size, sptr<AtlasTexture> tex): texture(make_unique<Texture>(size, tex)) {};
+		Data(u16vec2 pos, u16vec2 size, sptr<AtlasTexture> tex): texture(make_unique<Texture>(pos, size, tex)) {};
+		
+//		Data(Data& o): texture(std::move(o.texture)) {};
+//		Data(Data&& o): texture(std::move(o.texture)) {};
+//		Data& operator=(Data& o) { this->texture = std::move(o.texture); return *this; };
+//		Data& operator=(Data&& o) { this->texture = std::move(o.texture); return *this; };
+		
+		sptr<Texture> texture = {};
+		optional<std::pair<u32, sptr<Texture>>> tintMask = {};
 	};
 	
 	TextureBuilder(TextureAtlas& atlas);

@@ -54,7 +54,7 @@ namespace RegisterItem {
 			
 			//Convert Textures Table to Vector
 			vec<string> textures;
-			vec<AtlasTexture> textureRefs;
+			vec<sptr<AtlasTexture>> textureRefs;
 			for (auto pair : *texturesOpt) {
 				if (!pair.second.is<string>()) throw std::runtime_error("textures table has non-string value");
 				textures.push_back(pair.second.as<string>());

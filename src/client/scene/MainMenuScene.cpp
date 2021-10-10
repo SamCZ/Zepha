@@ -104,11 +104,12 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 			if (!json["version"].is_string() || json["version"] == "")
 				throw std::runtime_error("conf.json is missing 'version'");
 			
-			const AtlasTexture icon = std::filesystem::exists(file.path() / "icon.png")
+			const AtlasRef icon = std::filesystem::exists(file.path() / "icon.png")
 				? client.game->textures.addFile((file.path() / "icon.png").string(), false)
 				: client.game->textures["menu_flag_missing"];
 			
-			subgames.push_back({ icon, { json["name"], json["description"], json["version"] }, file.path() });
+			subgames.emplace_back(SubgameConfig
+				{ json["name"], json["description"], json["version"] }, icon, file.path());
 		}
 		catch(const std::runtime_error& e) {
 			std::cout << Log::err << "Failed to load subgame '"
@@ -124,8 +125,8 @@ MainMenuScene::MainMenuScene(Client& client) : Scene(client),
 		
 		let elem = navigationList->append<Gui::BoxElement>({{
 			{ Gui::Prop::CLASS, vec<string> { "navigationButton" } },
-			{ Gui::Prop::BACKGROUND, string("crop(0, 0, 16, 16, " + subgame.iconRef.getIdentifier() + ")") },
-			{ Gui::Prop::BACKGROUND_HOVER, string("crop(16, 0, 16, 16, " + subgame.iconRef.getIdentifier() + ")") }
+			{ Gui::Prop::BACKGROUND, string("crop(0, 0, 16, 16, " + subgame.icon->getIdentifier() + ")") },
+			{ Gui::Prop::BACKGROUND_HOVER, string("crop(16, 0, 16, 16, " + subgame.icon->getIdentifier() + ")") }
 		}});
 		
 		elem->onClick([&](u32 button, bool down) {

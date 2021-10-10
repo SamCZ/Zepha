@@ -153,14 +153,14 @@ namespace RegisterBlock {
 				u32 tex = std::max(meshPartTable.get_or<u32>("tex", 1), 1u);
 				
 				optional<u32> tintInd {};
-				optional<AtlasTexture> textureRef {};
-				optional<AtlasTexture> tintTextureRef = {};
+				optional<AtlasRef> textureRef {};
+				optional<AtlasRef> tintTextureRef = {};
 				
 				if (atlas) {
 					textureRef = (*atlas)[textures[std::min(tex - 1, static_cast<u32>(textures.size()) - 1)]];
 					model.textures.push_back(*textureRef);
-					tintInd = textureRef->getTintInd();
-					tintTextureRef = textureRef->getTintMask();
+					tintInd = (*textureRef)->getTintInd();
+					tintTextureRef = (*textureRef)->getTintMask();
 				}
 				
 				// Create the meshpart object
@@ -216,11 +216,11 @@ namespace RegisterBlock {
 			auto ldRender = blockTable.get_or("lowdef_render", true);
 			
 			if (atlas) {
-				vec<std::tuple<AtlasTexture, optional<u32>, optional<AtlasTexture>>> modelData;
+				vec<std::tuple<sptr<AtlasTexture>, optional<u32>, optional<sptr<AtlasTexture>>>> modelData;
 				
 				for (let i = 0; i < lowdef_textures.size(); i++) {
 					let textureRef = (*atlas)[lowdef_textures[i]];
-					modelData.emplace_back(textureRef, textureRef.getTintInd(), textureRef.getTintMask());
+					modelData.emplace_back(textureRef, textureRef->getTintInd(), textureRef->getTintMask());
 				}
 				
 				farModel = BlockModel { modelData };
@@ -243,8 +243,8 @@ namespace RegisterBlock {
 		 * @param cbType - The type to register the callback as.
 		 */
 		
-		static void
-		addCallback(BlockDef& blockDef, sol::table& blockTable, const std::string& name, BlockDef::Callback cbType) {
+		static void addCallback(BlockDef& blockDef, sol::table& blockTable,
+			const string& name, BlockDef::Callback cbType) {
 			auto cb = blockTable.get<sol::optional<sol::protected_function>>(name);
 			if (cb) blockDef.callbacks.insert({ cbType, *cb });
 		}

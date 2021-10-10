@@ -3,6 +3,7 @@
 #include "client/gui/Root.h"
 #include "client/graph/Model.h"
 #include "client/graph/mesh/EntityMesh.h"
+#include "game/atlas/asset/AtlasTexture.h"
 
 void Gui::BoxElement::updateElement() {
 	const let bgRule = hovered && getStyle(Prop::BACKGROUND_HOVER) ?

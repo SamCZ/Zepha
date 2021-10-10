@@ -5,12 +5,12 @@
 #include "lua/Mod.h"
 #include "client/gui/Root.h"
 #include "client/gui/Element.h"
-#include "game/atlas/asset/AtlasTexture.h"
 
 class Client;
 class Subgame;
 class SubgameDef;
 class GuiContainer;
+class AtlasTexture;
 
 class MenuSandbox : LuaParser {
 public:
@@ -44,7 +44,7 @@ private:
 	
 	Gui::Root& root;
 	sptr<Gui::Element> sandboxRoot;
-	vec<AtlasTexture> menuAssets {};
+	vec<sptr<AtlasTexture>> menuAssets {};
 	
 	double accumulatedDelta = 0;
 	
