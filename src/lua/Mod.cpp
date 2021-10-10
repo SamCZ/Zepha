@@ -43,8 +43,10 @@ Mod::Mod(const std::filesystem::path& path, bool noConfig) {
 		if (!file.is_regular_file() || file.path().extension() != ".lua") continue;
 		std::ifstream fileStream(file.path());
 		string fileStr = string((std::istreambuf_iterator<char>(fileStream)), std::istreambuf_iterator<char>());
-		string rawPath = std::filesystem::relative(file.path(), path / "script").string();
-		string relativePath = identifier + "/" + rawPath.substr(0, rawPath.size() - 4);
+		string rawPath_ = std::filesystem::relative(file.path(), path / "script").string();
+		string relativePath = identifier + "/" + rawPath_.substr(0, rawPath_.size() - 4);
+		
+		std::replace( relativePath.begin(), relativePath.end(), '\\', '/');
 		
 		files.emplace(relativePath, fileStr);
 	}

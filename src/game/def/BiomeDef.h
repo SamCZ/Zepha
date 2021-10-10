@@ -7,6 +7,7 @@
 #pragma once
 
 #include <FastNoise/FastNoise.h>
+#include "util/Types.h"
 
 class Structure;
 

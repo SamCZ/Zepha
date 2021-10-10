@@ -38,7 +38,7 @@ namespace {
  * @tparam C - An optional context type, which an instance of can be passed to parse() and accessed in functions.
  */
 
-template <typename R, typename C = nullptr_t>
+template <typename R, typename C = std::nullptr_t>
 class StringParser {
 	
 	/** A type alias for a vector of string parameters that will be passed into a Fn. */
@@ -138,7 +138,7 @@ public:
 	 */
 	
 	const R parse(string str) const {
-		const nullptr_t ctx {};
+		const std::nullptr_t ctx {};
 		str.erase(std::remove_if(str.begin(), str.end(), isspace), str.end());
 		return std::move(parseRaw(str, const_cast<C&>(ctx)));
 	}

@@ -13,6 +13,7 @@
 #include <variant>
 #include <cstdint>
 #include <optional>
+#include <array>
 #include <glm/glm.hpp>
 
 using i8  = int8_t;

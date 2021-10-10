@@ -43,11 +43,15 @@ add_executable(${MAIN_EXEC_NAME} ${SOURCE_FILES})
 
 target_include_directories(${MAIN_EXEC_NAME} PUBLIC src)
 
-target_link_libraries(${MAIN_EXEC_NAME} PUBLIC glfw glm enet glad assimp FastNoise nothings-stb gzip nlohmann_json stdc++fs)
+target_link_libraries(${MAIN_EXEC_NAME} PUBLIC glfw glm enet glad assimp FastNoise nothings-stb gzip nlohmann_json)
 target_link_libraries(${MAIN_EXEC_NAME} PUBLIC lua sol2)
 
 if(WIN32)
     target_link_libraries(${MAIN_EXEC_NAME} PUBLIC opengl32 gdi32)
+    target_compile_definitions(${MAIN_EXEC_NAME} PUBLIC NOMINMAX)
+    target_compile_definitions(${MAIN_EXEC_NAME} PUBLIC ENET_FEATURE_ADDRESS_MAPPING=1)
+else()
+    target_link_libraries(${MAIN_EXEC_NAME} PUBLIC stdc++fs)
 endif()
 
 if(WIN32)
