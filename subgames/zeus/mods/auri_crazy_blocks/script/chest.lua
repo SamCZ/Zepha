@@ -4,7 +4,6 @@ zepha.register_blockmodel("@auri:crazy_blocks:box", {
 
 zepha.register_block("@auri:crazy_blocks:box", {
     name = "Box",
-    model = "base:block",
     textures = {"zeus:default:oak_log_side", "zeus:default:oak_planks"},
     on_interact = function(dim, pos, player)
         local in_desert = player:get_dimension().identifier == 'zeus:world:endless_desert'

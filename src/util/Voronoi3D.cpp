@@ -1,70 +1,63 @@
-//
-// Created by aurailus on 2019-11-12.
-//
-
-#include <glm/glm.hpp>
+#include <stb_image_write.h>
 
 #include "Voronoi3D.h"
 
-Voronoi3D::Voronoi3D(unsigned short size) :
-	size(size),
-	data(voronoi_data(size)) {
-	
-	for (unsigned short i = 0; i < size; i++) {
-		data[i].resize(size);
-		for (unsigned short j = 0; j < size; j++) {
-			data[i][j].resize(size);
-		}
-	}
+#include "util/Space.h"
+
+Voronoi3D::Voronoi3D(u16 size) : size(size), data(pow(size, 3)) {}
+
+Voronoi3D::Voronoi3D(u16 size, const vec<VoronoiPoint>& data) : size(size), data(pow(size, 3)), points(data) {
+	generate();
 }
 
-void Voronoi3D::setPoints(const std::vector<std::pair<glm::vec3, unsigned short>>& points) {
-	this->points = points;
-	
-	for (unsigned short i = 0; i < size; i++) {
-		for (unsigned short j = 0; j < size; j++) {
-			for (unsigned short k = 0; k < size; k++) {
-				float pointDistance = INFINITY;
-				unsigned short ind = 0;
-				
-				for (auto& point : points) {
-					float thisPointDistance = glm::distance(point.first, { i, j, k });
-					if (thisPointDistance < pointDistance) {
-						pointDistance = thisPointDistance;
-						ind = point.second;
-					}
-				}
-				
-				data[i][j][k] = ind;
+void Voronoi3D::setData(const vec<VoronoiPoint>& data) {
+	this->points = data;
+	generate();
+}
+
+void Voronoi3D::generate() {
+	for (u32 i = 0; i < pow(size, 3); i++) {
+		const u16vec3 pos = Space::indexToPos(i, size);
+		
+		f32 pointDistance = INFINITY;
+		u16 currentInd = 0;
+		
+		for (u32 j = 0; j < points.size(); j++) {
+			f32 thisPointDistance = glm::distance(vec3(points[j].pos), vec3(pos));
+			if (thisPointDistance < pointDistance) {
+				pointDistance = thisPointDistance;
+				currentInd = j;
 			}
 		}
+		
+		data[i] = currentInd;
 	}
 }
 
-unsigned short Voronoi3D::getPoint(unsigned short x, unsigned short y, unsigned short z) {
-	return data[x][y][z];
+unsigned short Voronoi3D::operator[](u32 ind) {
+	return points[data[ind]].data;
+}
+unsigned short Voronoi3D::operator[](u16vec3 pos) {
+	return operator[](Space::posToIndex(pos, size));
 }
 
-//void Voronoi3D::setColorValues(const std::vector<glm::vec3>& values) {
-//    colorValues = values;
-//}
+void Voronoi3D::outputImage(u16 yCount) {
+	vec<u8> colorData(pow(size, 2) * 3);
 
-//void Voronoi3D::generateImage(unsigned short depth) {
-//    auto colorData = new unsigned char[size * size * 3];
-//
-//    for (int i = 0; i < size * size; i++) {
-//        int x = i % size;
-//        int y = i / size;
-//
-//        unsigned short point = data[x][y][depth];
-//        auto color = colorValues[point];
-//
-//        colorData[i * 3 + 0] = static_cast<int>(color.x * 255.f);
-//        colorData[i * 3 + 1] = static_cast<int>(color.y * 255.f);
-//        colorData[i * 3 + 2] = static_cast<int>(color.z * 255.f);
-//    }
-//
-//    std::string name = "voronoi_";
-//    name += std::to_string(depth) + ".jpg";
-//    stbi_write_jpg(name.data(), size, size, 3, colorData, 100);
-//}
+	for (u32 i = 0; i < yCount; i++) {
+		for (u32 j = 0; j < pow(size, 2); j++) {
+			u16 x = j % size;
+			u16 z = j / size;
+			
+			vec3 color = points[data[Space::posToIndex(
+				{ x, floor(static_cast<f32>(i) / (yCount - 1) * (size - 1)), z }, size)]].color;
+			
+			colorData[j * 3 + 0] = static_cast<u8>(color.x * 255);
+			colorData[j * 3 + 1] = static_cast<u8>(color.y * 255);
+			colorData[j * 3 + 2] = static_cast<u8>(color.z * 255);
+		}
+		
+		string name = "voronoi_" + std::to_string(i) + ".jpg";
+		stbi_write_jpg(name.data(), size, size, 3, colorData.data(), 100);
+	}
+}

@@ -205,16 +205,6 @@ if(NOT TARGET gzip)
     target_include_directories(gzip INTERFACE gzip-hpp/include)
 endif()
 
-#------------------------------
-# cute_headers
-# Collection of cross-platform one-file C/C++ libraries with no dependencies, primarily used for games
-#------------------------------
-if(NOT TARGET cute_headers)
-    project(cute_headers)
-    add_library(cute_headers INTERFACE)
-    target_include_directories(cute_headers INTERFACE cute_headers)
-endif()
-
 #--------------------------------
 # nlohmann JSON
 # JSON for Modern C++

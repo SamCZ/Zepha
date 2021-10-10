@@ -27,7 +27,6 @@ LuaErrorScene::LuaErrorScene(Client& client, const std::string& err) : Scene(cli
 }
 
 void LuaErrorScene::update() {
-	client.game->textures.update();
 	root.update();
 }
 
@@ -37,7 +36,7 @@ void LuaErrorScene::draw() {
 	renderer.beginChunkDeferredCalls();
 	renderer.endDeferredCalls();
 	renderer.beginGUIDrawCalls();
-	renderer.enableTexture(&client.game->textures.atlasTexture);
+	renderer.enableTexture(client.game->textures.getTexture());
 	
 	root.draw(renderer);
 }

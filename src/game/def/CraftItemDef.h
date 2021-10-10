@@ -1,11 +1,10 @@
 #pragma once
 
-#include <vector>
-
-#include "lua/Lua.h"
 #include "ItemDef.h"
 
-class AtlasRef;
+#include "lua/Lua.h"
+
+class AtlasTexture;
 class TextureAtlas;
 
 /**
@@ -20,21 +19,20 @@ public:
 		HIT, HIT_CLIENT
 	};
 	
-	CraftItemDef() : ItemDef{ "", "", 0, 0, ItemDef::Type::CRAFTITEM } {};
+	CraftItemDef(): ItemDef(ItemDef::Type::CRAFTITEM) {};
 	
-	CraftItemDef(const std::string& identifier, const std::string& name, unsigned short maxStackSize,
-		const std::vector<std::string>& textures, const std::vector<std::shared_ptr<AtlasRef>>& textureRefs);
+	CraftItemDef(const string& identifier, const string& name, u16 maxStackSize,
+		const vec<string>& textures, const vec<sptr<AtlasTexture>>& texturesRefs);
 	
-	CraftItemDef(const std::string& identifier, unsigned int index, const std::string& name,
-		unsigned short maxStackSize, const std::vector<std::string>& textures,
-		const std::vector<std::shared_ptr<AtlasRef>>& textureRefs);
+	CraftItemDef(const string& identifier, u16 index, const string& name,
+		u16 maxStackSize, const vec<string>& textures, const vec<sptr<AtlasTexture>>& texturesRefs);
 	
 	void createModel(TextureAtlas& atlas);
 	
 	bool hasUse();
 	
-	std::vector<std::string> textures {};
-	std::vector<std::shared_ptr<AtlasRef>> textureRefs {};
+	vec<string> textures {};
+	vec<sptr<AtlasTexture>> textureRefs {};
 	
 	std::unordered_map<Callback, sol::protected_function, Util::EnumClassHash> callbacks {};
 };

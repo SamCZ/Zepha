@@ -6,10 +6,10 @@
 
 local amp = 0.2
 
-zepha.register_blockmodel("base:leaf_like", {
+zepha.register_blockmodel(':leaf_like', {
     parts = {
         {
-            face = "left",
+            face = 'back',
             tex = 1,
             points = {
                 0, 0, 0, 0, 1,
@@ -18,11 +18,11 @@ zepha.register_blockmodel("base:leaf_like", {
                 0, 1, 0, 0, 0
             },
             shader_mod = {
-                type = "sway_full_block",
+                type = 'sway_full_block',
                 amplitude = amp
             }
         }, {
-            face = "right",
+            face = 'front',
             tex = 1,
             points = {
                 1, 1, 1, 0, 0,
@@ -31,11 +31,11 @@ zepha.register_blockmodel("base:leaf_like", {
                 1, 1, 0, 1, 0
             },
             shader_mod = {
-                type = "sway_full_block",
+                type = 'sway_full_block',
                 amplitude = amp
             }
         }, {
-            face = "top",
+            face = 'top',
             tex = 1,
             points = {
                 0, 1, 0, 0, 0,
@@ -44,11 +44,11 @@ zepha.register_blockmodel("base:leaf_like", {
                 1, 1, 0, 1, 0
             },
             shader_mod = {
-                type = "sway_full_block",
+                type = 'sway_full_block',
                 amplitude = amp
             }
         }, {
-            face = "bottom",
+            face = 'bottom',
             tex = 1,
             points = {
                 0, 0, 0, 0, 0,
@@ -57,11 +57,11 @@ zepha.register_blockmodel("base:leaf_like", {
                 0, 0, 1, 0, 1
             },
             shader_mod = {
-                type = "sway_full_block",
+                type = 'sway_full_block',
                 amplitude = amp
             }
         }, {
-            face = "front",
+            face = 'left',
             tex = 1,
             points = {
                 0, 0, 1, 0, 1,
@@ -70,11 +70,11 @@ zepha.register_blockmodel("base:leaf_like", {
                 0, 1, 1, 0, 0
             },
             shader_mod = {
-                type = "sway_full_block",
+                type = 'sway_full_block',
                 amplitude = amp
             }
         }, {
-            face = "back",
+            face = 'right',
             tex = 1,
             points = {
                 0, 0, 0, 1, 1,
@@ -83,11 +83,11 @@ zepha.register_blockmodel("base:leaf_like", {
                 1, 0, 0, 0, 1
             },
             shader_mod = {
-                type = "sway_full_block",
+                type = 'sway_full_block',
                 amplitude = amp
             }
         }, {
-            face = "nocull",
+            face = 'nocull',
             tex = 2,
             points = {
                 -0.31, 1.30, -0.3, 0, 0,
@@ -111,7 +111,7 @@ zepha.register_blockmodel("base:leaf_like", {
                 1.3, 1.30, -0.3, 1, 0
             },
             shader_mod = {
-                type = "sway_full_block",
+                type = 'sway_full_block',
                 amplitude = amp
             }
         }

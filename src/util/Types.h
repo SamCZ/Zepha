@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <variant>
 #include <cstdint>
 #include <optional>
 #include <glm/glm.hpp>
@@ -78,6 +79,7 @@ using std::make_shared;
 using std::make_unique;
 
 using std::any;
+using std::variant;
 using std::optional;
 
 using std::any_cast;

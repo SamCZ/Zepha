@@ -2,14 +2,18 @@
 // Created by aurailus on 29/11/18.
 //
 
-#include <stb_image.h>
 #include <stdexcept>
+#include <stb_image.h>
 
 #include "Texture.h"
 
 Texture::Texture(const std::string& file) :
 	fileLocation(file) {
 	loadFromFile(this->fileLocation);
+}
+
+bool Texture::operator==(const Texture& o) const {
+	return o.textureID == textureID;
 }
 
 void Texture::loadFromFile(std::string file) {
@@ -46,7 +50,7 @@ void Texture::updateTexture(int x, int y, int width, int height, unsigned char* 
 }
 
 
-void Texture::use(GLuint position) {
+void Texture::use(GLuint position) const {
 	glActiveTexture(GL_TEXTURE0 + position);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 }

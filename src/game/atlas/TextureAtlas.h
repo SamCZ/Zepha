@@ -1,71 +1,65 @@
-//
-// Created by aurailus on 16/04/19.
-//
-
 #pragma once
 
-#include <map>
-#include <memory>
-#include <vector>
-#include <glm/vec2.hpp>
-#include <glm/vec4.hpp>
+#include <iostream>
+#include <filesystem>
+#include <unordered_set>
+#include <unordered_map>
 
+#include "util/Types.h"
+#include "util/StringParser.h"
 #include "client/graph/Texture.h"
+#include "game/atlas/TextureBuilder.h"
 
-class AtlasRef;
+class AtlasTexture;
+
+/**
+ * Manages loading and generating images into a single atlas texture,
+ * with reference counting and runtime manipulations.
+ */
 
 class TextureAtlas {
-	public:
-	struct RawTexData {
-		unsigned char* data;
-		int width;
-		int height;
-	};
-	
+public:
 	TextureAtlas() = default;
 	
-	explicit TextureAtlas(unsigned int width, unsigned int height = 0);
+	explicit TextureAtlas(uvec2 size);
 	
-	void update();
+	vec<sptr<AtlasTexture>> addDirectory(const std::filesystem::path& path, bool persistent);
 	
-	std::vector<std::shared_ptr<AtlasRef>>
-	loadDirectory(const std::string& path, bool base = true, bool recursive = true);
+	sptr<AtlasTexture> addFile(const std::filesystem::path& path, bool persistent);
 	
-	std::shared_ptr<AtlasRef> loadImage(const std::string& path, const std::string& name, bool base = false);
+	sptr<AtlasTexture> addBytes(const string& identifier, bool persistent, u16vec2 size, vec<u8> data);
 	
-	glm::vec4 sampleTexturePixel(const std::shared_ptr<AtlasRef>& atlasRef, glm::vec2 pixel);
+	sptr<AtlasTexture> operator[](const string& identifier);
 	
-	std::shared_ptr<AtlasRef> operator[](const std::string& name);
+	sptr<AtlasTexture> get(const string& identifier) const;
 	
-	std::shared_ptr<AtlasRef>
-	addImage(unsigned char* data, const std::string& name, bool base, int texWidth, int texHeight);
+	const uvec2 getCanvasSize();
 	
-	std::shared_ptr<AtlasRef> generateCrackImage(const std::string& name, unsigned short crackLevel);
+	const u32 getTilesUsed();
 	
-	glm::ivec2 pixelSize{};
-	glm::ivec2 tileSize{};
+	const u32 getTilesTotal();
 	
-	Texture atlasTexture{};
-	std::vector<unsigned char> atlasData;
+	const Texture& getTexture();
+private:
+	void createMissingTexture();
 	
-	unsigned int textureSlotsUsed = 0;
-	unsigned int maxTextureSlots = 0;
-	private:
-	std::shared_ptr<AtlasRef> generateTexture(std::string req);
+	optional<u16vec2> findAtlasSpace(u16vec2 tileSize);
 	
-	RawTexData getBytesOfTex(const std::string& name);
+	void addTexture(const sptr<AtlasTexture>& tex);
 	
-	RawTexData getBytesAtPos(glm::ivec2 pos, glm::ivec2 dims);
+	void removeTexture(const AtlasTexture* tex);
 	
-	glm::vec2 findImageSpace(int w, int h);
+	uvec2 canvasSize;
+	uvec2 canvasTileSize;
 	
-	void createMissingImage();
+	u32 tilesUsed = 0;
+	u32 tilesTotal = 0;
 	
-	void updateAtlas(int tileX, int tileY, int texWidth, int texHeight, unsigned char* data);
+	vec<bool> tiles;
+	std::unordered_map<string, std::weak_ptr<AtlasTexture>> textures {};
+	std::unordered_set<sptr<AtlasTexture>> persistentTextures {};
 	
-	void deleteImage(std::shared_ptr<AtlasRef> ref);
-	
-	std::map<std::string, std::shared_ptr<AtlasRef>> textures;
-	std::vector<bool> empty;
+	Texture texture {};
+	const TextureBuilder texBuilder { *this };
 };
 

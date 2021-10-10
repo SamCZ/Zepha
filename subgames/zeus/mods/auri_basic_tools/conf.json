@@ -1,6 +1,12 @@
 {
-	"name": "@auri:basic_tools",
+	"name": "Basic Tools",
+	"identifier": "@auri:basic_tools",
 	"description": "Basic tools for Zepha.",
 	"version": "0.0.1",
-	"depends": ["zeus:materials", "@auri:crafting", "@auri:hot_wheel"]
+	"main": "main",
+	"dependencies": {
+		"zeus:materials": "^0",
+		"@auri:crafting": "^0",
+		"@auri:hot_wheel": "^0"
+	}
 }

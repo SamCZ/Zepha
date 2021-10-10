@@ -19,7 +19,7 @@ namespace {
 	void registerFn(sol::table& core, const std::string& table, sol::environment env,
 		std::function<void(std::string)> after, const std::string& identifier, const sol::table& data) {
 		
-		auto modName = env.get<std::string>("_MODNAME");
+		auto modName = env.get<std::string>("__MOD_NAME");
 		std::string iden = identifier[0] == ':' ? modName + identifier : identifier;
 		
 		if (iden[0] == '!') iden = iden.substr(1, iden.length() - 1);

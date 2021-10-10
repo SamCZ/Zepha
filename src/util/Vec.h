@@ -13,7 +13,7 @@
 #include "util/Space.h"
 
 enum class EVec {
-	LEFT = 0, RIGHT = 1, BOTTOM = 2, TOP = 3, BACK = 4, FRONT = 5,
+	BACK = 0, FRONT = 1, BOTTOM = 2, TOP = 3, RIGHT = 4, LEFT = 5,
 	XNEG = 0, XPOS = 1, YNEG = 2, YPOS = 3, ZNEG = 4, ZPOS = 5,
 	
 	INVALID = -1, NONE = -1,

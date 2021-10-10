@@ -1,7 +1,3 @@
-//
-// Created by aurailus on 22/08/19.
-//
-
 #pragma once
 
 #include <memory>
@@ -15,59 +11,57 @@
 #include "ModelAnimation.h"
 #include "client/graph/mesh/EntityMesh.h"
 
-class AtlasRef;
-
+class AtlasTexture;
 class SerializedModel;
 
 class Model {
-	public:
+public:
 	Model() = default;
 	
-	void fromMesh(std::unique_ptr<EntityMesh> mesh);
+	void fromMesh(uptr<EntityMesh> mesh);
 	
-	int fromFile(const std::string& path, const std::vector<std::shared_ptr<AtlasRef>>& texture);
+	u8 fromFile(const string& path, const vec<sptr<AtlasTexture>>& texture);
 	
-	int fromSerialized(const SerializedModel& model, const std::vector<std::shared_ptr<AtlasRef>>& texture);
+	u8 fromSerialized(const SerializedModel& model, const vec<sptr<AtlasTexture>>& texture);
 	
-	void getTransformsByFrame(double frame, glm::ivec2 bounds, std::vector<glm::mat4>& transforms);
-//    void getTransformsByTime(double time, std::tuple<uint> bounds, std::vector<glm::mat4>& transforms);
+	void getTransformsByFrame(f64 frame, ivec2 bounds, vec<glm::mat4>& transforms);
+//    void getTransformsByTime(f64 time, std::tuple<uint> bounds, vec<glm::mat4>& transforms);
 	
 	const ModelAnimation& getAnimation();
 	
-	std::vector<std::unique_ptr<EntityMesh>> meshes {};
+	vec<uptr<EntityMesh>> meshes {};
 
 private:
 	void loadModelMeshes(aiNode* node, const aiScene* scene);
 	
-	void loadMeshAndBone(aiMesh* mesh, std::unique_ptr<EntityMesh>& target);
+	void loadMeshAndBone(aiMesh* mesh, uptr<EntityMesh>& target);
 	
 	void loadAnimations(const aiScene* scene);
 	
-	void calcBoneHeirarchy(aiNode* node, const aiScene* scene, int parentBoneIndex);
+	void calcBoneHeirarchy(aiNode* node, const aiScene* scene, u32 parentBoneIndex);
 	
-	void calcBoneTransformation(double animTime, ModelBone& bone, glm::mat4 parentTransform, glm::ivec2 bounds,
-		std::vector<glm::mat4>& transforms);
+	void calcBoneTransformation(f64 animTime, ModelBone& bone,
+		glm::mat4 parentTransform, ivec2 bounds, vec<glm::mat4>& transforms);
 	
 	template<typename T>
-	static inline T calcBoneVal(
-		double animTime, glm::ivec2 bounds, const std::vector<std::pair<double, T>>& keysArray,
-		const T& def, std::function<T(const T& a, const T& b, float factor)> merge) {
+	static inline T calcBoneVal(f64 animTime, ivec2 bounds, const vec<std::pair<f64, T>>& keysArray,
+		const T& def, std::function<T(const T& a, const T& b, f32)> merge) {
 		
 		if (keysArray.empty()) return def;
 		if (keysArray.size() == 1) return keysArray[0].second;
 		
-		unsigned int index = 0;
-		for (unsigned int i = 1; i < keysArray.size(); i++) {
+		u32 index = 0;
+		for (u32 i = 1; i < keysArray.size(); i++) {
 			if (keysArray[i].first > animTime) {
 				index = i - 1;
 				break;
 			}
 		}
-		float factor = 1;
-		unsigned int nextIndex = index + 1;
+		f32 factor = 1;
+		u32 nextIndex = index + 1;
 		if (nextIndex >= keysArray.size() || nextIndex > bounds.y) nextIndex = bounds.x;
 		else {
-			double delta = keysArray[nextIndex].first - keysArray[index].first;
+			f64 delta = keysArray[nextIndex].first - keysArray[index].first;
 			factor = (animTime - keysArray[index].first) / delta;
 		}
 		
@@ -75,9 +69,9 @@ private:
 	}
 	
 	ModelAnimation animation {};
-	std::vector<ModelBone*> rootBones {};
-	std::vector<ModelBone> bones {};
-	std::vector<std::shared_ptr<AtlasRef>> textures {};
+	vec<ModelBone*> rootBones {};
+	vec<ModelBone> bones {};
+	vec<sptr<AtlasTexture>> textures {};
 	
 	glm::mat4 globalInverseTransform {};
 };

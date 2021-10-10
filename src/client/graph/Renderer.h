@@ -48,7 +48,7 @@ public:
 	
 	void setClipBounds(glm::vec4 bounds);
 	
-	void enableTexture(Texture* texture);
+	void enableTexture(const Texture& texture);
 	
 	Window window;
 	Camera camera;
@@ -60,7 +60,7 @@ private:
 	unsigned int quadVBO = 0;
 	
 	glm::vec4 clearColor{ 0, 0, 0, 1 };
-	Texture* activeTexture;
+//	Texture* activeTexture;
 	
 	WorldGeometryShader world;
 	EntityGeometryShader entity;

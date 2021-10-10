@@ -7,21 +7,21 @@
 local wave_amplitude = 0.6
 local offset_amplitude = 0.3
 
-zepha.register_blockmodel("base:cross_plant", {
+zepha.register_blockmodel(':cross_plant', {
     mesh_mods = {
         {
-            type = "offset_x",
+            type = 'offset_x',
             amplitude = offset_amplitude,
         },
         {
-            type = "offset_z",
+            type = 'offset_z',
             amplitude = offset_amplitude,
         }
     },
     parts = {
         {
-            face = "nocull",
-            tex = 1,
+            face = 'nocull',
+            tex = 2,
             points = {
                 0.1, 0, 0.1, 0, 1,
                 0.9, 0, 0.9, 1, 1,
@@ -29,16 +29,16 @@ zepha.register_blockmodel("base:cross_plant", {
                 0.1, 0.9, 0.1, 0, 0
             },
             shader_mod = {
-                type = "sway_attached",
+                type = 'sway_attached',
                 amplitude = wave_amplitude
             },
             mesh_mod = {
-                type = "offset",
+                type = 'offset',
                 scale = 0.2
             }
         }, {
-            face = "nocull",
-            tex = 1,
+            face = 'nocull',
+            tex = 2,
             points = {
                 0.9, 0.9, 0.9, 1, 0,
                 0.9, 0, 0.9, 1, 1,
@@ -46,15 +46,15 @@ zepha.register_blockmodel("base:cross_plant", {
                 0.1, 0.9, 0.1, 0, 0
             },
             shader_mod = {
-                type = "sway_attached",
+                type = 'sway_attached',
                 amplitude = wave_amplitude
             },
             mesh_mod = {
-                type = "offset",
+                type = 'offset',
                 scale = 0.2
             }
         }, {
-            face = "nocull",
+            face = 'nocull',
             tex = 1,
             points = {
                 0.9, 0.9, 0.1, 1, 0,
@@ -63,15 +63,15 @@ zepha.register_blockmodel("base:cross_plant", {
                 0.1, 0.9, 0.9, 0, 0
             },
             shader_mod = {
-                type = "sway_attached",
+                type = 'sway_attached',
                 amplitude = wave_amplitude
             },
             mesh_mod = {
-                type = "offset",
+                type = 'offset',
                 scale = 0.2
             }
         }, {
-            face = "nocull",
+            face = 'nocull',
             tex = 1,
             points = {
                 0.1, 0, 0.9, 0, 1,
@@ -80,11 +80,11 @@ zepha.register_blockmodel("base:cross_plant", {
                 0.1, 0.9, 0.9, 0, 0
             },
             shader_mod = {
-                type = "sway_attached",
+                type = 'sway_attached',
                 amplitude = wave_amplitude
             },
             mesh_mod = {
-                type = "offset",
+                type = 'offset',
                 scale = 0.2
             }
         }

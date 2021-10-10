@@ -12,14 +12,15 @@
 -- @param {number | nil} idn - Internal value, do not assign manually.
 --
 
-_G["format"] = function(val, nl, idn)
+_G['format'] = function(val, nl, idn)
     idn = idn or 0
     if nl == nil then nl = 3 end
 
-    if type(val) == "function" or type(val) == "userdata" or type(val) == "thread" then return tostring(val) end
-    if type(val) == "string" then return '"' .. val .. '"' end
-    if type(val) == "nil" then return 'nil' end
-    if type(val) == "table" then
+    if type(val) == 'function' or type(val) == 'userdata' or type(val) == 'thread' then return tostring(val) end
+    if type(val) == 'boolean' then return val and 'true' or 'false' end
+    if type(val) == 'string' then return '"' .. val .. '"' end
+    if type(val) == 'nil' then return 'nil' end
+    if type(val) == 'table' then
         local strings = {}
 
         local num_keys = 0
@@ -42,6 +43,6 @@ _G["format"] = function(val, nl, idn)
     return val
 end
 
-_G["dump"] = function(val, nl)
+_G['dump'] = function(val, nl)
     print(format(val, nl))
 end

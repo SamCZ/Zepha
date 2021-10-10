@@ -1,7 +1,6 @@
 zepha.register_block(":sandstone", {
     name = "Sandstone",
 
-    model = "base:block",
     textures = {
         "zeus:default:sandstone_top",
         "zeus:default:sandstone_top",

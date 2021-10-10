@@ -2,11 +2,12 @@
 // Created by aurailus on 2019-10-31.
 //
 
-#include "LocalServerInstance.h"
-#include "util/Log.h"
-#include "server/Server.h"
-#include <iostream>
 #include <thread>
+#include <iostream>
+
+#include "LocalServerInstance.h"
+
+#include "server/Server.h"
 
 LocalServerInstance::LocalServerInstance(const std::string& path, unsigned short port, const std::string& subgame) :
 	port(port),

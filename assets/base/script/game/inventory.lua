@@ -1,8 +1,8 @@
 -- Register hand item
-zepha.register_item("base:hand", {
-    name = "Hand (you broke the game)",
+zepha.register_item(':hand', {
+    name = 'Hand (you broke the game)',
 
-    textures = {"base:hand"},
+    textures = { 'zepha:base:hand' },
 
     tool_props = {
         interval = 0.25,
@@ -12,14 +12,14 @@ zepha.register_item("base:hand", {
 
 -- Register main and hand inventories
 if zepha.server then
-    zepha.bind("new_player", function(p)
+    zepha.bind('new_player', function(p)
         local inv = p:get_inventory()
 
-        local main = inv:add_list("main", 30, 10)
+        local main = inv:add_list('main', 30, 10)
         inv:set_default_list(main)
 
-        local hand = inv:add_list("hand", 1, 1)
-        hand:add_stack({"base:hand", 1})
+        local hand = inv:add_list('hand', 1, 1)
+        hand:add_stack({ 'zepha:base:hand', 1 })
         p:set_hand_list(hand)
     end)
 end

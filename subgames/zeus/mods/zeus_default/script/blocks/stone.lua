@@ -1,7 +1,6 @@
 zepha.register_block(":stone", {
     name = "Stone",
 
-    model = "base:block",
     textures = {"zeus:default:stone"},
 
     tool_props = {

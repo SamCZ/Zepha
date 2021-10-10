@@ -1,18 +1,15 @@
-//
-// Created by aurailus on 2019-12-11.
-//
-
 #pragma once
 
-#include <memory>
+#include "client/menu/SubgameConfig.h"
 
-#include "SubgameConfig.h"
-
-class AtlasRef;
+class AtlasTexture;
 
 class SubgameDef {
-	public:
-	std::shared_ptr<AtlasRef> iconRef = nullptr;
-	SubgameConfig config{};
-	std::string subgamePath = "";
+public:
+	SubgameDef(const SubgameConfig& config, const sptr<AtlasTexture>& icon, const std::filesystem::path& path):
+		config(config), icon(icon), path(path) {}
+		
+	SubgameConfig config {};
+	sptr<AtlasTexture> icon;
+	std::filesystem::path path;
 };

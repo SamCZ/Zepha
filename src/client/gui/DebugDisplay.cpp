@@ -115,7 +115,7 @@ void DebugDisplay::update(sptr<LocalPlayer> player, f64 delta, u32 interpolatedC
 
 	// Textual information
 
-	vec3 playerPos = glm::floor(player->getPos());
+	ivec3 playerPos = glm::floor(player->getPos());
 	vec3 chunkPos = Space::Chunk::world::fromBlock(playerPos);
 	vec3 mapBlockPos = Space::MapBlock::world::fromChunk(chunkPos);
 	vec3 regionPos = Space::Region::world::fromChunk(chunkPos);
@@ -140,9 +140,9 @@ void DebugDisplay::update(sptr<LocalPlayer> player, f64 delta, u32 interpolatedC
 		<< "R: " << posOffsetFromRegion << " [" << regionPos << "]" << std::endl
 	    << std::endl
 
-	    << "Texture Slots: " << game.l()->textures.textureSlotsUsed << " / " << game.l()->textures.maxTextureSlots
+	    << "Texture Slots: " << game.l()->textures.getTilesUsed() << " / " << game.l()->textures.getTilesTotal()
 	    << " ("
-	    << round(game.l()->textures.textureSlotsUsed / static_cast<float>(game.l()->textures.maxTextureSlots) * 100)
+	    << round(game.l()->textures.getTilesUsed() / static_cast<f32>(game.l()->textures.getTilesTotal()) * 100)
 	    << "%)" << std::endl << std::endl
 
 		<< "Biome: " << onBiomeDef.identifier << " [" << onBiomeDef.index << "]" << std::endl << std::endl;

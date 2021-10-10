@@ -9,7 +9,7 @@
 /** Checks if boxes or points are within the camera's frustum cone. */
 class Frustum {
 private:
-	enum class Direction : uint8_t {
+	enum class Direction : u8 {
 		TOP = 0,
 		BOTTOM,
 		LEFT,

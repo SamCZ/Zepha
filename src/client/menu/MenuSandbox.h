@@ -1,20 +1,16 @@
-//
-// Created by aurailus on 2019-12-12.
-//
-
 #pragma once
 
 #include "lua/LuaParser.h"
 
-#include "lua/LuaMod.h"
+#include "lua/Mod.h"
 #include "client/gui/Root.h"
 #include "client/gui/Element.h"
 
 class Client;
 class Subgame;
-class AtlasRef;
 class SubgameDef;
 class GuiContainer;
+class AtlasTexture;
 
 class MenuSandbox : LuaParser {
 public:
@@ -31,20 +27,24 @@ private:
 	
 	void loadApi();
 	
-	void loadAndRunMod(const string& modPath);
+	void loadMod(const std::filesystem::path& path);
 	
 	void showError(const string& err);
 	
-	sol::protected_function_result runFileSandboxed(const string& file);
+	/** Exposed to Lua, can provide a relative path, uses environment variables to resolve. */
+	sol::protected_function_result require(sol::this_environment thisEnv, const string& path);
 	
-	LuaMod mod {};
+	/** Loads a file with the right enviroment, needs a canonical path. */
+	sol::protected_function_result loadFile(const string& path);
+	
+	Mod mod {};
 	string subgameName;
 	
 	Client& client;
 	
 	Gui::Root& root;
 	sptr<Gui::Element> sandboxRoot;
-	vec<sptr<AtlasRef>> menuAssets {};
+	vec<sptr<AtlasTexture>> menuAssets {};
 	
 	double accumulatedDelta = 0;
 	

@@ -12,7 +12,7 @@ layout (location = 2) in ivec3 aBlend;
 layout (location = 5) in ivec4 aLight;
 
 layout (location = 6) in int   aShaderMod;
-layout (location = 7) in ivec3 aModValues;
+layout (location = 7) in vec3  aModValues;
 
 out VS_OUT {
     vec3 pos;

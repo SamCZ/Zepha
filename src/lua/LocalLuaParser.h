@@ -4,11 +4,12 @@
 
 #pragma once
 
+#include <unordered_set>
 #include <unordered_map>
 
 #include "lua/LuaParser.h"
 
-#include "LuaMod.h"
+#include "Mod.h"
 #include "client/Callback.h"
 #include "util/CovariantPtr.h"
 #include "lua/LuaKeybindHandler.h"
@@ -26,19 +27,29 @@ public:
 	
 	void update(double delta) override;
 	
-	void addMod(const LuaMod& mod);
+	void addMod(const Mod& mod);
 	
 	void setModLoadOrder(const vec<string> order);
 	
-private:
-	void loadApi(WorldPtr world, PlayerPtr player);
+	void addKBObserver(usize id);
 	
-	sol::protected_function_result runFileSandboxed(const std::string& file);
+	void removeKBObserver(usize id);
+	
+private:
+	void loadApi(WorldPtr world);
+	
+	/** Exposed to Lua, can provide a relative path, uses environment variables to resolve. */
+	sol::protected_function_result require(sol::this_environment env, string requirePath);
+	
+	/** Loads a file with the right enviroment, needs a canonical path. */
+	sol::protected_function_result loadFile(string path);
 	
 	Client* client;
+	PlayerPtr player;
 	double accumulatedDelta = 0;
 	
 	vec<CallbackRef> refs;
-	vec<string> modLoadOrder {};
-	std::unordered_map<string, LuaMod> mods {};
+	vec<string> modOrder {};
+	std::unordered_set<usize> kbObservers {};
+	std::unordered_map<string, Mod> mods {};
 };

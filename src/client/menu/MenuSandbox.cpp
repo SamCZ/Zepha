@@ -1,11 +1,10 @@
 #include <fstream>
 #include <iostream>
-#include <cute_files.h>
 #include <client/gui/TextElement.h>
 
 #include "MenuSandbox.h"
 
-#include "lua/LuaMod.h"
+#include "lua/Mod.h"
 #include "client/Client.h"
 #include "lua/ErrorFormatter.h"
 #include "client/menu/SubgameDef.h"
@@ -38,18 +37,15 @@ void MenuSandbox::loadApi() {
 	lua["zepha"] = core;
 	core["__builtin"] = lua.create_table();
 	
-	
 	modules.emplace_back(std::make_unique<Api::Module::Time>(Api::State::CLIENT, lua, core));
 	
 	Api::Usertype::GuiElement::bind(lua, core, root);
-//	ClientApi::gui_element(lua);
-	
 	MenuApi::set_gui(lua, core, sandboxRoot);
 	MenuApi::start_game(client, core);
 	
 	bindModules();
 	
-	lua.set_function("require", &MenuSandbox::runFileSandboxed, this);
+	lua.set_function("require", &MenuSandbox::require, this);
 	lua["dofile"] = lua["loadfile"] = lua["require"];
 }
 
@@ -58,8 +54,8 @@ void MenuSandbox::load(const SubgameDef& subgame) {
 	subgameName = subgame.config.name;
 
 	try {
-		loadAndRunMod(subgame.subgamePath + "/../../assets/base");
-		loadAndRunMod(subgame.subgamePath + "/menu");
+		loadMod(subgame.path / "../../assets/base");
+		loadMod(subgame.path / "menu");
 	}
 	catch (sol::error e) {
 		string err = static_cast<sol::error>(e).what();
@@ -81,11 +77,11 @@ void MenuSandbox::load(const SubgameDef& subgame) {
 			fileName.erase(std::remove_if(fileName.begin(), fileName.end(), isspace), fileName.end());
 			
 			for (const let& file : mod.files) {
-				if (file.path != fileName) continue;
+				if (file.first != fileName) continue;
 			
 				let msg = ErrorFormatter::formatError(fileName,
 					std::stoi(line.substr(lineNumStart + 1, lineNumEnd - lineNumStart - 1)),
-					err, file.file);
+					err, file.first);
 			
 				showError(msg);
 				return;
@@ -105,83 +101,40 @@ void MenuSandbox::update(double delta) {
 	}
 }
 
-sol::protected_function_result MenuSandbox::runFileSandboxed(const string& file) {
-	for (LuaMod::File& f : mod.files) {
-		if (f.path != file) continue;
-		
-		sol::environment env(lua, sol::create, lua.globals());
-		env["_PATH"] = f.path.substr(0, f.path.find_last_of('/') + 1);
-		env["_FILE"] = f.path;
-		env["_MODNAME"] = mod.config.name;
-		
-		using Pfr = sol::protected_function_result;
-		return lua.safe_script(f.file, env,
-			[](lua_State*, Pfr pfr) -> Pfr { throw static_cast<sol::error>(pfr); },
-			"@" + f.path, sol::load_mode::text);
-	}
-	throw std::runtime_error("Error opening '" + file + "', file not found.");
+sol::protected_function_result MenuSandbox::require(sol::this_environment thisEnv, const string& path) {
+	sol::environment env = static_cast<sol::environment>(thisEnv);
+	string currentPath = env.get<string>("__PATH");
+	
+	std::cout << "CURRENT: " << currentPath << "\nPATH: " << path << std::endl;
+
+	return loadFile(path);
+	//	auto modName = env.get<std::string>("_MODNAME");
+//	std::string iden = identifier[0] == ':' ? modName + identifier : identifier;
 }
 
-void MenuSandbox::loadAndRunMod(const string& modPath) {
-	if (!cf_file_exists(modPath.data())) throw std::runtime_error("Directory not found.");
+sol::protected_function_result MenuSandbox::loadFile(const string& path) {
+	let it = mod.files.find(path);
+	if (it == mod.files.end()) throw sol::error("Error opening '" + path + "', file not found.");
+	let& file = it->second;
 	
-	LuaMod mod;
-	string root = modPath + "/script";
+	sol::environment env(lua, sol::create, lua.globals());
+	env["_PATH"] = path.substr(0, path.find_last_of('/') + 1);
+	env["_FILE"] = path;
+	env["_MODNAME"] = mod.name;
 	
-	std::list<string> dirsToScan { root };
-	std::list<string> luaFiles {};
+	using Pfr = sol::protected_function_result;
+	return lua.safe_script(file, env,
+		[](lua_State*, Pfr pfr) -> Pfr { throw static_cast<sol::error>(pfr); },
+		"@" + path, sol::load_mode::text);
+}
+
+void MenuSandbox::loadMod(const std::filesystem::path& path) {
+	mod = { path, true };
 	
-	cf_dir_t dir;
-	while (!dirsToScan.empty()) {
-		string dirStr = *dirsToScan.begin();
-		dirsToScan.erase(dirsToScan.begin());
-		
-		if (!cf_file_exists(dirStr.data())) throw std::runtime_error("Missing 'script' directory.");
-		cf_dir_open(&dir, dirStr.data());
-		
-		while (dir.has_next) {
-			// Read through files in the directory
-			cf_file_t scannedFile;
-			cf_read_file(&dir, &scannedFile);
-			
-			if (strncmp(scannedFile.name, ".", 1) != 0) {
-				if (scannedFile.is_dir) dirsToScan.emplace_back(scannedFile.path);
-				else {
-					auto path = std::string_view(scannedFile.path);
-					if (path.rfind('.') != std::string::npos && path.rfind('.') == path.rfind(".lua"))
-						luaFiles.emplace_back(scannedFile.path);
-				}
-			}
-			cf_dir_next(&dir);
-		}
-		cf_dir_close(&dir);
-	}
+	if (std::filesystem::exists(path / "textures"))
+		menuAssets = client.game->textures.addDirectory((path / "textures"), false);
 	
-	mod.modPath = modPath;
-	
-	for (string& file : luaFiles) {
-		size_t rootPos = file.find(root);
-		string modPath = file;
-		
-		if (rootPos == std::string::npos)
-			throw std::runtime_error("Attempted to access file \"" + file + "\", which is outside of the mod root.");
-		
-		modPath.erase(rootPos, root.length() + 1);
-		modPath.resize(modPath.size() - 4);
-		
-		std::ifstream t(file);
-		string fileStr((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-		
-		LuaMod::File f { modPath, fileStr };
-		mod.files.push_back(f);
-	}
-	
-	string texPath = modPath + "/textures";
-	if (cf_file_exists(texPath.data()))
-		menuAssets = client.game->textures.loadDirectory(texPath, false, true);
-	
-	this->mod = mod;
-	runFileSandboxed("init");
+	loadFile("/main");
 }
 
 void MenuSandbox::showError(const string& err) {

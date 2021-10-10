@@ -101,7 +101,7 @@ private:
 	u32 mapBlockScanY = 0;
 	const static u32 MAPBLOCK_SCAN_Y_INTERVAL = 8;
 	
-	const ivec2 retainMapBlockRange = { 4, 4 };
+	const ivec2 retainMapBlockRange = { 6, 6 };
 	i64 entityInd = -1;
 };
 

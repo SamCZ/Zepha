@@ -1,13 +1,8 @@
-
 #include <iostream>
 
 #include "Client.h"
 
-//#include "LocalServerInstance.h"
-
 #include "util/Types.h"
-#include "util/Timer.h"
-//#include "scene/GameScene.h"
 #include "scene/ConnectScene.h"
 #include "scene/MainMenuScene.h"
 
@@ -17,10 +12,7 @@ Client::Client(ivec2 window) :
 	std::cout << Log::info << "Starting Zepha Client." << Log::endl;
 	
 	scene.setScene(make_unique<MainMenuScene>(*this));
-	while (!renderer.window.shouldClose())
-	{
-		loop();
-	}
+	while (!renderer.window.shouldClose()) loop();
 }
 
 f64 Client::getDelta() {
@@ -28,7 +20,7 @@ f64 Client::getDelta() {
 }
 
 void Client::startLocalServer(const string& subgame) {
-	//TODO: Implement Local Server
+//    TODO: Implement Local Server
 //    localServer = std::make_shared<LocalServerInstance>(executablePath, addr.port, state.subgame);
 //    localServer->start();
 	
@@ -44,5 +36,6 @@ void Client::loop() {
 	
 	scene.update();
 	renderer.update(delta);
+	
 	renderer.swapBuffers();
 }

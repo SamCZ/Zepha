@@ -26,7 +26,7 @@ public:
 		u8vec4 light;
 		
 		u8     shaderMod;
-		u8vec3 modValues;
+		vec3   modValues;
 	};
 	
 	/** Represents a MeshChunk's underlying mesh. */

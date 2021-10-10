@@ -245,7 +245,7 @@ void LocalDimension::serverEntitiesInfo(Deserializer& e) {
 			}
 			
 			case NetField::POS: {
-				activeEntity->setPos(d.read<vec3>());
+				activeEntity->interpPos(d.read<vec3>());
 				break;
 			}
 			
@@ -260,12 +260,12 @@ void LocalDimension::serverEntitiesInfo(Deserializer& e) {
 			}
 			
 			case NetField::SCALE: {
-				activeEntity->setScale(d.read<vec3>());
+				activeEntity->interpScale(d.read<vec3>());
 				break;
 			}
 			
 			case NetField::VISUAL_OFF: {
-				activeEntity->setVisualOffset(d.read<vec3>());
+				activeEntity->interpVisualOffset(d.read<vec3>());
 				break;
 			}
 			

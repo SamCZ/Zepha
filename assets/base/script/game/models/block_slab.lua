@@ -3,10 +3,10 @@
 -- Texture order is: top, bottom, left, right, front, back.
 --
 
-zepha.register_blockmodel("base:block_slab", {
+zepha.register_blockmodel(':block_slab', {
     parts = {
         {
-            face = "left",
+            face = 'back',
             tex = 3,
             points = {
                 0, 0, 0, 0, 0.5,
@@ -15,7 +15,7 @@ zepha.register_blockmodel("base:block_slab", {
                 0, 0.5, 0, 0, 0
             }
         }, {
-            face = "right",
+            face = 'front',
             tex = 4,
             points = {
                 1, 0.5, 1, 0, 0,
@@ -24,7 +24,7 @@ zepha.register_blockmodel("base:block_slab", {
                 1, 0.5, 1, 0, 0
             }
         }, {
-            face = "nocull",
+            face = 'nocull',
             tex = 1,
             points = {
                 0, 0.5, 0, 0, 0,
@@ -33,7 +33,7 @@ zepha.register_blockmodel("base:block_slab", {
                 1, 0.5, 0, 1, 0
             }
         }, {
-            face = "bottom",
+            face = 'bottom',
             tex = 2,
             points = {
                 0, 0, 0, 0, 0,
@@ -42,7 +42,7 @@ zepha.register_blockmodel("base:block_slab", {
                 0, 0, 1, 0, 1
             }
         }, {
-            face = "front",
+            face = 'left',
             tex = 5,
             points = {
                 0, 0, 1, 0, 0.5,
@@ -51,7 +51,7 @@ zepha.register_blockmodel("base:block_slab", {
                 0, 0.5, 1, 0, 0
             }
         }, {
-            face = "back",
+            face = 'right',
             tex = 6,
             points = {
                 0, 0, 0, 1, 0.5,

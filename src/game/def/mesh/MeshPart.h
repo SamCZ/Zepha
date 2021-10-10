@@ -1,29 +1,23 @@
-//
-// Created by aurailus on 02/12/18.
-//
-
 #pragma once
 
-#include <vector>
-#include <memory>
+#include "util/Types.h"
+#include "game/def/mesh/ShaderMod.h"
+#include "game/def/mesh/BlockModelVertex.h"
 
-#include "ShaderMod.h"
-#include "BlockModelVertex.h"
-
-class AtlasRef;
+class AtlasTexture;
 
 struct MeshPart {
-	MeshPart(const std::vector<BlockModelVertex>& vertices, const std::vector<unsigned int>& indices,
-		std::shared_ptr<AtlasRef> texture, unsigned int blendInd, std::shared_ptr<AtlasRef> blendMask);
+	MeshPart(const vec<BlockModelVertex>& vertices, const vec<u32>& indices,
+		optional<sptr<AtlasTexture>> texture = std::nullopt, optional<u32> blendInd = std::nullopt,
+		optional<sptr<AtlasTexture>> blendTexture = std::nullopt);
 	
-	std::vector<BlockModelVertex> vertices;
-	std::vector<unsigned int> indices;
+	vec<BlockModelVertex> vertices;
+	vec<u32> indices;
 	
-	std::shared_ptr<AtlasRef> texture;
-	
-	unsigned int blendInd = 0;
-	std::shared_ptr<AtlasRef> blendMask;
+	optional<u32> blendInd;
+	optional<sptr<AtlasTexture>> texture;
+	optional<sptr<AtlasTexture>> blendTexture;
 	
 	ShaderMod shaderMod = ShaderMod::NONE;
-	float modValue = 0;
+	f32 modValue = 0;
 };

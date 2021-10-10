@@ -12,22 +12,16 @@
 #include "world/dim/LocalDimension.h"
 
 MeshGenStream::MeshGenStream(SubgamePtr game, LocalDimension& dimension): dimension(dimension),
-	noiseSampler({ NoiseSample(u16vec3(16), 4), NoiseSample(u16vec3(16), 4), NoiseSample(u16vec3(16), 4) }) {
-	/*noise::module::Perlin offsetBaseNoise;
-	offsetBaseNoise.SetFrequency(8);
-	offsetBaseNoise.SetOctaveCount(3);
-	
-	noise::module::Turbulence offsetTurbulence;
-	offsetTurbulence.SetSourceModule(0, offsetBaseNoise);
-	offsetTurbulence.SetFrequency(4.0);
-	offsetTurbulence.SetPower(0.125);*/
-	
-	generator = FastNoise::New<FastNoise::Constant>();
+	noiseSampler({ NoiseSample(u16vec3(16), 1), NoiseSample(u16vec3(16), 1), NoiseSample(u16vec3(16), 1) }) {
+	let simplex = FastNoise::New<FastNoise::Simplex>();
+	let generator = FastNoise::New<FastNoise::DomainScale>();
+	generator->SetSource(simplex);
+	generator->SetScale(1000.f);
 	
 	// 8 is just a random value to offset results
-//	noiseSampler[0].generate(u16vec3(8, 0, 0), generator);
-//	noiseSampler[1].generate(u16vec3(0, 8, 0), generator);
-//	noiseSampler[2].generate(u16vec3(0, 0, 8), generator);
+	noiseSampler[0].generate(u16vec3(8, 0, 0), generator);
+	noiseSampler[1].generate(u16vec3(0, 8, 0), generator);
+	noiseSampler[2].generate(u16vec3(0, 0, 8), generator);
 	
 	threads.reserve(THREADS);
 	for (int i = 0; i < THREADS; i++) threads.emplace_back(*game.l(), noiseSampler);
@@ -93,7 +87,8 @@ void MeshGenStream::Thread::exec() {
 			assert(u.thisChunk);
 			for (int i = 0; i < u.adjacentChunks.size(); i++) assert(u.adjacentChunks[i]);
 			ChunkMeshGenerator m(u.meshDetails, game.getDefs(), game.getBiomes(),
-				std::move(u.thisChunk), std::move(u.adjacentChunks), offsetSamplers, ChunkMeshGenerator::Detail::HIGH);
+				std::move(u.thisChunk), std::move(u.adjacentChunks), offsetSamplers,
+				glm::distance(vec3(u.thisChunk->getPos()), vec3()) <= 16 ? ChunkMeshGenerator::Detail::HIGH : ChunkMeshGenerator::Detail::LOW);
 			empty = false;
 			u.busy = false;
 		}

@@ -30,7 +30,6 @@ ConnectScene::ConnectScene(Client& client, Address addr) : Scene(client),
 }
 
 void ConnectScene::update() {
-	client.game->textures.update();
 	root.update();
 	
 	switch (state) {
@@ -49,7 +48,7 @@ void ConnectScene::update() {
 			
 			if (p.type == Packet::Type::SERVER_INFO) {
 				status->setProp(Gui::Prop::CONTENT, status->getStyle<string>(Gui::Prop::CONTENT, "")
-				                                    + "Received server properties.\n");
+					+ "Received server properties.\n");
 				
 				const u32 seed = p.d.read<u32>();
 				std::cout << seed << std::endl;
@@ -75,8 +74,7 @@ void ConnectScene::update() {
 			}
 			else if (p.type == Packet::Type::BIOME_IDENTIFIER_LIST) {
 				status->setProp(Gui::Prop::CONTENT, status->getStyle<string>(Gui::Prop::CONTENT, "")
-				                                    +
-				                                    "Received block & biome index-identifier table.\nDownloading mods... ");
+					+ "Received block & biome index-identifier table.\nDownloading mods... ");
 				
 				client.game->getBiomes().setIdentifiers(p.d.read<vec<string>>());
 				state = State::MODS;
@@ -93,11 +91,11 @@ void ConnectScene::update() {
 			PacketView p(e.packet);
 			
 			if (p.type == Packet::Type::MODS) {
-				auto mod = LuaMod(p);
+				auto mod = Mod(p);
 				status->setProp(Gui::Prop::CONTENT, status->getStyle<string>(Gui::Prop::CONTENT, "") +
-				                                    (modsFound == 0 ? "" : ", ") +
-				                                    ((modsFound) % 8 == 0 && modsFound != 0 ? "\n" : "") +
-				                                    "`c0`u" + mod.config.name + "`r`c1");
+	                (modsFound == 0 ? "" : ", ") +
+	                ((modsFound) % 8 == 0 && modsFound != 0 ? "\n" : "") +
+	                "`c0`u" + mod.identifier + "`r`c1");
 				modsFound++;
 				client.game->getParser().addMod(std::move(mod));
 			}
@@ -105,8 +103,7 @@ void ConnectScene::update() {
 				client.game->getParser().setModLoadOrder(p.d.read<vec<string>>());
 				
 				status->setProp(Gui::Prop::CONTENT, status->getStyle<string>(Gui::Prop::CONTENT, "")
-				                                    +
-				                                    ".\n`c7Done`c1 downloading mods. Received the mods order.\nReceiving media");
+					+ ".\n`c7Done`c1 downloading mods. Received the mods order.\nReceiving media");
 				
 				state = State::MEDIA;
 				Packet resp(Packet::Type::MEDIA);
@@ -136,10 +133,10 @@ void ConnectScene::update() {
 						
 						string data = p.d.read<string>();
 						string uncompressed = gzip::decompress(data.data(), data.length());
+						const u8* dataPtr = reinterpret_cast<u8*>(const_cast<char*>(uncompressed.data()));
+						const vec<u8> tex(dataPtr, dataPtr + width * height * 4);
 						
-						client.game->textures.addImage(
-							reinterpret_cast<unsigned char*>(const_cast<char*>(uncompressed.data())),
-							assetName, true, width, height);
+						client.game->textures.addBytes(assetName, true, u16vec2(width, height), tex);
 					}
 					else if (t == AssetType::MODEL) {
 						string format = p.d.read<string>();
@@ -213,7 +210,7 @@ void ConnectScene::draw() {
 	renderer.beginChunkDeferredCalls();
 	renderer.endDeferredCalls();
 	renderer.beginGUIDrawCalls();
-	renderer.enableTexture(&client.game->textures.atlasTexture);
+	renderer.enableTexture(client.game->textures.getTexture());
 	
 	root.draw(renderer);
 }

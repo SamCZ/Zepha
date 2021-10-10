@@ -51,6 +51,7 @@ void Server::update() {
 			break;
 		
 		case ENET_EVENT_TYPE_DISCONNECT:
+		case ENET_EVENT_TYPE_DISCONNECT_TIMEOUT:
 			clients.handleDisconnect(event);
 			break;
 		
@@ -66,6 +67,7 @@ void Server::update() {
 			
 			break;
 		}
+		
 		}
 	}
 	

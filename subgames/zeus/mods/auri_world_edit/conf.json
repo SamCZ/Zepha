@@ -1,0 +1,10 @@
+{
+  "name": "World Edit",
+  "identifier": "@auri:world_edit",
+  "description": "Copy, Paste, Save, and Load regions of the world.",
+  "version": "0.0.1",
+  "main": "main",
+  "dependencies": {
+    "@auri:hot_wheel": "^0"
+  }
+}

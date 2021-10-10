@@ -1,6 +1,10 @@
 {
-	"name": "zeus:materials",
-	"description": "Materials and craftitems for the Zeus subgame.",
+	"name": "Materials",
+	"identifier": "zeus:materials",
+	"description": "Materials and items for the Zeus subgame.",
 	"version": "0.0.1",
-	"depends": ["@auri:crafting"]
+	"main": "main",
+	"dependencies": {
+		"@auri:crafting": "^0"
+	}
 }

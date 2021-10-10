@@ -1,8 +1,0 @@
-require(_PATH .. "none")
-require(_PATH .. "block")
-require(_PATH .. "block_foliage")
-require(_PATH .. "cross_large")
-require(_PATH .. "block_slab")
-require(_PATH .. "block_slab_foliage")
-require(_PATH .. "leaf_like")
-require(_PATH .. "cross_plant")

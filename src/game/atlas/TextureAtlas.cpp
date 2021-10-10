@@ -1,296 +1,117 @@
-//
-// Created by aurailus on 16/04/19.
-//
-
-#include <cmath>
-#include <iostream>
 #include <algorithm>
 #include <stb_image.h>
-#include <cute_files.h>
-#include <util/Types.h>
-#include <util/Util.h>
 
 #include "TextureAtlas.h"
 
 #include "util/Log.h"
-#include "game/atlas/asset/AtlasRef.h"
+#include "util/Util.h"
+#include "game/atlas/asset/AtlasTexture.h"
 
-TextureAtlas::TextureAtlas(unsigned int width, unsigned int height) :
-	pixelSize(width, (height == 0 ? width : height)),
-	tileSize(pixelSize.x / 16, pixelSize.y / 16),
-	atlasData(pixelSize.x * 4 * pixelSize.y) {
+TextureAtlas::TextureAtlas(uvec2 size) :
+	canvasSize(size),
+	canvasTileSize(size / 16u),
+	tilesTotal(canvasTileSize.x * canvasTileSize.y),
+	tiles(canvasTileSize.x * canvasTileSize.y, false) {
 	
-	maxTextureSlots = tileSize.x * tileSize.y;
+	// Get GPU texture capabilites and log it.
+	i32 maxTexSize, texUnits;
 
-//    int maxTexSize, texUnits;
-//
-//    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
-//    std::cout << Log::info << "This GPU's max texture size is: " << maxTexSize / 4 << "px^2." << Log::endl;
-//
-//    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texUnits);
-//    std::cout << Log::info << "This GPU supports " << texUnits << " texture units." << Log::endl;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
+    std::cout << Log::info << "This GPU's max texture size is: " << maxTexSize << "px^2." << Log::endl;
+
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texUnits);
+    std::cout << Log::info << "This GPU supports " << texUnits << " texture units." << Log::endl;
 	
-	empty = std::vector<bool>(tileSize.x * tileSize.y, true);
-	atlasTexture.loadFromBytes(&atlasData[0], pixelSize.x, pixelSize.y);
-	
-	createMissingImage();
+	// Initialize the texture atlas.
+	texture.loadFromBytes(&vec<u8>(size.x * size.y * 4)[0], size.x, size.y);
+	createMissingTexture();
 }
 
-std::vector<std::shared_ptr<AtlasRef>> TextureAtlas::loadDirectory(const std::string& path, bool base, bool recursive) {
-	std::vector<std::shared_ptr<AtlasRef>> refs{};
-	
-	cf_dir_t dir;
-	cf_dir_open(&dir, (path).c_str());
-	
-	while (dir.has_next) {
-		cf_file_t file;
-		cf_read_file(&dir, &file);
-		
-		if (!file.is_dir && strcmp(file.ext, ".png") == 0) {
-			refs.push_back(
-				loadImage(file.path, std::string(file.name).substr(0, std::string(file.name).size() - 4), base));
-		}
-		
-		if (recursive && file.is_dir && strncmp(file.name, ".", 1) != 0) {
-			auto vec = loadDirectory(file.path, base, recursive);
-			refs.insert(refs.end(), vec.begin(), vec.end());
-		}
-		
-		cf_dir_next(&dir);
-	}
-	cf_dir_close(&dir);
-	
+vec<AtlasRef> TextureAtlas::addDirectory(const std::filesystem::path& path, bool persistent) {
+	vec<AtlasRef> refs {};
+	for (let file : std::filesystem::recursive_directory_iterator(path))
+		if (file.path().extension() == ".png") refs.push_back(addFile(file.path(), persistent));
 	return refs;
 }
 
-std::shared_ptr<AtlasRef> TextureAtlas::loadImage(const std::string& path, const std::string& name, bool base) {
-	int width, height;
-	unsigned char* data = stbi_load(path.data(), &width, &height, nullptr, 4);
-	auto ref = addImage(data, name, base, width, height);
-	free(data);
+AtlasRef TextureAtlas::addFile(const std::filesystem::path& path, bool persistent) {
+	i32 width, height;
+	u8* rawData = stbi_load(path.string().data(), &width, &height, nullptr, 4);
+	vec<u8> data(rawData, rawData + width * height * 4);
+	free(rawData);
+	let ref = addBytes(path.stem().string(), persistent, u16vec2(width, height), data);
 	return ref;
 }
 
-void TextureAtlas::update() {
-	auto it = textures.cbegin();
+AtlasRef TextureAtlas::addBytes(const string& identifier, bool persistent, u16vec2 size, vec<u8> data) {
+	let tileSize = u16vec2(glm::ceil(vec2(size) / 16.f));
+	let posOpt = findAtlasSpace(tileSize);
+	if (!posOpt) throw std::runtime_error("Failed to find space in the dynamic definition atlas.");
+	u16vec2 pos = *posOpt * static_cast<u16>(16);
 	
-	while (it != textures.cend()) {
-		auto curr = it++;
-		
-		if (!curr->second->base && curr->second.unique()) {
-			deleteImage(curr->second);
-			textures.erase(curr);
-		}
-	}
-}
-
-glm::vec4 TextureAtlas::sampleTexturePixel(const std::shared_ptr<AtlasRef>& atlasRef, glm::vec2 pixel) {
-	glm::vec2 absPos = { atlasRef->pos.x + pixel.x, atlasRef->pos.y + pixel.y };
-	unsigned int index = (static_cast<unsigned int>(absPos.y) * pixelSize.x + static_cast<unsigned int>(absPos.x)) * 4;
-	
-	return {
-		static_cast<float>(atlasData[index]) / 255.f,
-		static_cast<float>(atlasData[index + 1]) / 255.f,
-		static_cast<float>(atlasData[index + 2]) / 255.f,
-		static_cast<float>(atlasData[index + 3]) / 255.f,
-	};
-}
-
-std::shared_ptr<AtlasRef>
-TextureAtlas::addImage(unsigned char* data, const std::string& name, bool base, int texWidth, int texHeight) {
-	std::shared_ptr<AtlasRef> ref;
-	
-	if (textures.count(name) != 0) ref = textures[name];
-	else ref = std::make_shared<AtlasRef>();
-	
-	ref->name = name;
-	ref->base = base;
-	ref->width = texWidth;
-	ref->height = texHeight;
-	
-	auto tileWidth = static_cast<int>(std::ceil(texWidth / 16.0f));
-	auto tileHeight = static_cast<int>(std::ceil(texHeight / 16.0f));
-	
-	if (tileWidth != ref->tileWidth || tileHeight != ref->tileHeight) {
-		ref->tileWidth = tileWidth;
-		ref->tileHeight = tileHeight;
-		
-		auto space = findImageSpace(tileWidth, tileHeight);
-		if (space.x < 0) throw std::runtime_error("Failed to find space in the dynamic definition atlas.");
-		
-		textureSlotsUsed += tileWidth * tileHeight;
-		
-		ref->tileX = static_cast<int>(space.x);
-		ref->tileY = static_cast<int>(space.y);
-		
-		ref->pos = { space.x * 16, space.y * 16, space.x * 16 + texWidth, space.y * 16 + texHeight };
-		ref->uv = { (space.x * 16) / pixelSize.x, (space.y * 16) / pixelSize.y,
-			(space.x * 16 + texWidth) / pixelSize.x, (space.y * 16 + texHeight) / pixelSize.y };
-		
-		textures.insert({ name, ref });
-	}
-	
-	updateAtlas(ref->tileX, ref->tileY, texWidth, texHeight, data);
-	return ref;
-}
-
-std::shared_ptr<AtlasRef> TextureAtlas::generateCrackImage(const std::string& name, unsigned short crackLevel) {
-	RawTexData base = getBytesOfTex(name);
-	
-	std::string crackStr("zeus:default:crack_" + std::to_string(crackLevel));
-	RawTexData crack = getBytesOfTex(crackStr);
-	
-	for (int i = 0; i < base.width * base.height; i++) {
-		float alpha = crack.data[i * 4 + 3] / 255.f;
-		
-		base.data[i * 4 + 0] = static_cast<unsigned char>(base.data[i * 4 + 0] * (1 - alpha) +
-		                                                  crack.data[i * 4 + 0] * alpha);
-		base.data[i * 4 + 1] = static_cast<unsigned char>(base.data[i * 4 + 1] * (1 - alpha) +
-		                                                  crack.data[i * 4 + 1] * alpha);
-		base.data[i * 4 + 2] = static_cast<unsigned char>(base.data[i * 4 + 2] * (1 - alpha) +
-		                                                  crack.data[i * 4 + 2] * alpha);
-	}
-	
-	auto ref = addImage(base.data, name + "_crack_" + std::to_string(crackLevel), false, base.width, base.height);
-	
-	delete[] base.data;
-	delete[] crack.data;
+	tilesUsed += tileSize.x * tileSize.y;
+	textures.erase(identifier);
+	AtlasTexture* raw = new AtlasTexture(*this, identifier, pos, size, data);
+	AtlasRef ref = sptr<AtlasTexture>(raw, [this](AtlasTexture* tex) { removeTexture(tex); });
+	if (persistent) persistentTextures.insert(ref);
+	addTexture(ref);
 	
 	return ref;
 }
 
-std::shared_ptr<AtlasRef> TextureAtlas::operator[](const std::string& name) {
-	if (textures.count(name)) return textures[name];
+AtlasRef TextureAtlas::operator[](const string& identifier) {
+	const let tex = get(identifier);
+	if (tex->getIdentifier() != "_missing") return tex;
 	
-	std::shared_ptr<AtlasRef> gen = generateTexture(name);
-	if (gen) return gen;
-	
-	throw std::runtime_error("Invalid texture: '" + name + "'");
+	let data = texBuilder.build(identifier);
+	throw std::runtime_error("unimplemented");
+//	let texture = addBytes(identifier, false, data.size, data.getBytes());
+//	if (data.tintMask) texture->setTintData(*data.tintInd,
+//		addBytes(identifier + ":tint", false, data.size, *data.tintMask));
+//	return texture;
 }
 
-std::shared_ptr<AtlasRef> TextureAtlas::generateTexture(std::string req) {
-	req.erase(std::remove(req.begin(), req.end(), ' '), req.end());
-	
-	if (req.find_first_of('(') != std::string::npos) {
-		if (req.find_last_of(')') == std::string::npos) {
-			throw std::runtime_error("Mismatched braces.");
-		}
-		
-		std::string::size_type paramsBegin = req.find_first_of('(');
-		std::string::size_type paramsEnd = req.find_last_of(')');
-		
-		std::string paramName = req.substr(0, paramsBegin);
-		std::string paramsString = req.substr(paramsBegin + 1, paramsEnd - paramsBegin - 1);
-		
-		std::vector<std::string> params;
-		std::string::size_type pos;
-		while ((pos = paramsString.find(',')) != std::string::npos) {
-			params.push_back(paramsString.substr(0, pos));
-			paramsString.erase(0, pos + 1);
-		}
-		params.push_back(paramsString);
-		
-		if (paramName == "crop") {
-			if (params.size() != 5) throw std::runtime_error("crop() requires 5 parameters.");
-			glm::ivec4 loc = { atof(params[0].data()), atof(params[1].data()), atof(params[2].data()),
-				atof(params[3].data()) };
-			std::shared_ptr<AtlasRef> src = operator[](params[4]);
+AtlasRef TextureAtlas::get(const string& identifier) const {
+	if (textures.count(identifier)) return textures.at(identifier).lock();
+	return textures.at("_missing").lock();
+}
+
+const uvec2 TextureAtlas::getCanvasSize() {
+	return canvasSize;
+}
+
+optional<u16vec2> TextureAtlas::findAtlasSpace(u16vec2 tileSize) {
+	for (u16 j = 0; j < canvasTileSize.y - (tileSize.y - 1); j++) {
+		for (u16 i = 0; i < canvasTileSize.x - (tileSize.x - 1); i++) {
+			bool space = true;
 			
-			auto data = getBytesAtPos({ src->pos.x + loc.x, src->pos.y + loc.y }, { loc.z, loc.w }).data;
-			return addImage(data, req, false, loc.z, loc.w);
-		}
-		else if (paramName == "multiply") {
-			if (params.size() != 2) throw std::runtime_error("multiply() requires 2 parameters.");
-			vec4 multiple = Util::hexToColorVec(params[1]);
-			auto tex = getBytesOfTex(params[0]);
-			
-			for (int i = 0; i < tex.width * tex.height; i++) {
-				tex.data[i * 4 + 0] *= multiple.x;
-				tex.data[i * 4 + 1] *= multiple.y;
-				tex.data[i * 4 + 2] *= multiple.z;
-				tex.data[i * 4 + 3] *= multiple.w;
+			for (u16 k = 0; k < tileSize.y; k++) {
+				for (u16 l = 0; l < tileSize.x; l++) {
+					if (tiles[(j + k) * canvasTileSize.x + (i + l)]) {
+						space = false;
+						break;
+					}
+				}
+				
+				if (!space) break;
 			}
 			
-			return addImage(tex.data, req, false, tex.width, tex.height);
-		}
-		else {
-			throw std::runtime_error("Invalid parameter.");
-		}
-	}
-	
-	return nullptr;
-}
-
-TextureAtlas::RawTexData TextureAtlas::getBytesOfTex(const std::string& name) {
-	glm::vec4 pos;
-	
-	if (textures.count(name)) pos = textures[name]->pos;
-	else {
-		std::cout << Log::err << "Invalid base texture \"" << name << "\"." << Log::endl;
-		pos = textures["_missing"]->pos;
-	}
-	
-	return getBytesAtPos({ pos.x, pos.y }, { pos.z - pos.x, pos.w - pos.y });
-}
-
-TextureAtlas::RawTexData TextureAtlas::getBytesAtPos(glm::ivec2 pos, glm::ivec2 dims) {
-	RawTexData data{};
-	data.width = dims.x;
-	data.height = dims.y;
-	
-	auto pixels = new unsigned char[data.width * data.height * 4];
-	
-	for (int i = 0; i < data.width * data.height; i++) {
-		int xx = pos.x + (i % data.width);
-		int yy = pos.y + (i / data.width);
-		
-		pixels[i * 4 + 0] = atlasData[xx * 4 + yy * (pixelSize.x * 4)];
-		pixels[i * 4 + 1] = atlasData[xx * 4 + 1 + yy * (pixelSize.x * 4)];
-		pixels[i * 4 + 2] = atlasData[xx * 4 + 2 + yy * (pixelSize.x * 4)];
-		pixels[i * 4 + 3] = atlasData[xx * 4 + 3 + yy * (pixelSize.x * 4)];
-	}
-	
-	data.data = pixels;
-	return data;
-}
-
-glm::vec2 TextureAtlas::findImageSpace(int w, int h) {
-	for (int j = 0; j < tileSize.y - (h - 1); j++) {
-		for (int i = 0; i < tileSize.x - (w - 1); i++) {
-			if (empty[j * tileSize.x + i]) {
-				bool space = true;
-				
-				for (int k = 0; k < h; k++) {
-					for (int l = 0; l < w; l++) {
-						if (!empty[(j + k) * tileSize.x + (i + l)]) {
-							space = false;
-							break;
-						}
-					}
-					
-					if (!space) break;
-				}
-				
-				if (space) {
-					for (int k = 0; k < h; k++) {
-						for (int l = 0; l < w; l++) {
-							empty[(j + k) * tileSize.x + (i + l)] = false;
-						}
-					}
-					return glm::vec2(i, j);
-				}
+			if (space) {
+				for (u16 k = 0; k < tileSize.y; k++)
+					for (u16 l = 0; l < tileSize.x; l++)
+						tiles[(j + k) * canvasTileSize.x + (i + l)] = true;
+				return u16vec2(i, j);
 			}
 		}
 	}
 	
-	return glm::vec2(-1, -1);
+	return {};
 }
 
-void TextureAtlas::createMissingImage() {
-	auto data = new unsigned char[16 * 4 * 16];
-	for (int i = 0; i < 16 * 16; i++) {
-		
-		unsigned char m = 0;
+void TextureAtlas::createMissingTexture() {
+	let data = vec<u8>(16 * 4 * 16);
+	for (u16 i = 0; i < 16 * 16; i++) {
+		u8 m = 0;
 		if ((i % 16 < 8) ^ ((i / 16) < 8)) m = 255;
 		
 		data[i * 4 + 0] = m;
@@ -299,42 +120,44 @@ void TextureAtlas::createMissingImage() {
 		data[i * 4 + 3] = 255;
 	}
 	
-	addImage(data, "_missing", true, 16, 16);
-	delete[] data;
+	addBytes("_missing", true, u16vec2(16), data);
 }
 
-void TextureAtlas::updateAtlas(int tileX, int tileY, int texWidth, int texHeight, unsigned char* data) {
-	int baseX = tileX * 16;
-	int baseY = tileY * 16;
+void TextureAtlas::addTexture(const AtlasRef& tex) {
+	let pos = tex->getPos();
+	let size = tex->getSize();
+	textures.insert({ tex->getIdentifier(), std::weak_ptr(tex) });
+	texture.updateTexture(pos.x, pos.y, size.x, size.y, tex->getBytes().data());
+}
+
+void TextureAtlas::removeTexture(const AtlasTexture* tex) {
+	std::cout << tex->getIdentifier() << std::endl;
+	textures.erase(tex->getIdentifier());
 	
-	atlasTexture.updateTexture(baseX, baseY, texWidth, texHeight, data);
+	let tilePos = tex->getTilePos();
+	let tileSize = tex->getTileSize();
 	
-	for (int i = 0; i < texWidth * texHeight * 4; i++) {
-		int xx = (i / 4) % texWidth;
-		int yy = (i / 4) / texWidth;
-		int of = i % 4;
+	tilesUsed -= tileSize.x * tileSize.y;
+	
+	for (u16 x = tilePos.x; x < tilePos.x + tileSize.x; x++)
+		for (u16 y = tilePos.y; y < tilePos.y + tileSize.y; y++)
+			tiles[y * canvasTileSize.x + x] = false;
 		
-		atlasData[(baseX + xx + (baseY + yy) * pixelSize.x) * 4 + of] = data[(xx + yy * texWidth) * 4 + of];
-	}
+	// For debugging
+	vec<u8> clear(tileSize.x * 16 * tileSize.y * 16 * 4);
+	texture.updateTexture(tilePos.x * 16, tilePos.y * 16, tileSize.x * 16, tileSize.y * 16, clear.data());
+	
+	delete tex;
 }
 
-void TextureAtlas::deleteImage(std::shared_ptr<AtlasRef> ref) {
-	// Actually delete the image from the texture (for debugging)
-	
-	//auto data = new unsigned char[ref->width * ref->height * 4];
-	//
-	//for (int i = 0; i < ref->width * ref->height * 4; i++) {
-	//    data[i] = 0;
-	//}
-	//
-	//updateAtlas(ref->tileX, ref->tileY, ref->width, ref->height, data);
-	//delete[] data;
-	
-	textureSlotsUsed -= ref->tileWidth * ref->tileHeight;
-	
-	for (float i = ref->tileX; i < ref->tileX + ref->tileWidth; i++) {
-		for (float j = ref->tileY; j < ref->tileY + ref->tileHeight; j++) {
-			empty[j * tileSize.x + i] = true;
-		}
-	}
+const u32 TextureAtlas::getTilesUsed() {
+	return tilesUsed;
+}
+
+const u32 TextureAtlas::getTilesTotal() {
+	return tilesTotal;
+}
+
+const Texture& TextureAtlas::getTexture() {
+	return texture;
 }

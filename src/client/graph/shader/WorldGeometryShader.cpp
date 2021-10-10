@@ -2,7 +2,7 @@
 // Created by aurailus on 25/09/19.
 //
 
-#include <glm/vec2.hpp>
+#include <iostream>
 
 #include "WorldGeometryShader.h"
 
@@ -11,7 +11,11 @@ WorldGeometryShader::WorldGeometryShader(glm::ivec2 windowSize, float bufferScal
 	bufferScale(bufferScale),
 	swayData(16 * 4 * 16) {
 	
-	swayNoise = FastNoise::New<FastNoise::Constant>();
+	let simplex = FastNoise::New<FastNoise::Simplex>();
+	let generator = FastNoise::New<FastNoise::DomainScale>();
+	generator->SetSource(simplex);
+	generator->SetScale(500.f);
+	swayGenerator = generator;
 }
 
 void WorldGeometryShader::postCreate() {
@@ -33,15 +37,14 @@ void WorldGeometryShader::windowResized(glm::ivec2 windowSize) {
 }
 
 void WorldGeometryShader::updateSwayMap(double delta) {
-	swayOffset += delta * 2.8;
-	for (int i = 0; i < 16 * 16; i++) {
-		swayData[i * 4] = static_cast<unsigned char>(
-			(fmax(-1, fmin(1, swayNoise->GenSingle3D((i / 16) / 3.f, (i % 16) / 3.f, swayOffset, 0))) + 1) / 2.f * 255.f);
-		swayData[i * 4 + 1] = static_cast<unsigned char>(
-			(fmax(-1, fmin(1, swayNoise->GenSingle3D((i / 16) / 3.f, (i % 16) / 3.f, swayOffset + 50, 0))) + 1) / 2.f * 255.f);
-		swayData[i * 4 + 2] = static_cast<unsigned char>(
-			(fmax(-1, fmin(1, swayNoise->GenSingle3D((i / 16) / 3.f, (i % 16) / 3.f, swayOffset + 100, 0))) + 1) / 2.f *
-			255.f);
+	swayOffset += delta * 0.001;
+	for (u16 i = 0; i < 16 * 16; i++) {
+		swayData[i * 4] = static_cast<u8>((fmax(-1, fmin(1,
+			swayGenerator->GenSingle3D((i / 16) / 3.f, (i % 16) / 3.f, swayOffset, 0))) + 1) / 2.f * 255.f);
+		swayData[i * 4 + 1] = static_cast<u8>((fmax(-1, fmin(1,
+			swayGenerator->GenSingle3D((i / 16) / 3.f, (i % 16) / 3.f, swayOffset + 50, 0))) + 1) / 2.f * 255.f);
+		swayData[i * 4 + 2] = static_cast<u8>((fmax(-1, fmin(1,
+			swayGenerator->GenSingle3D((i / 16) / 3.f, (i % 16) / 3.f, swayOffset + 100, 0))) + 1) / 2.f * 255.f);
 	}
 	swayTex.updateTexture(0, 0, 16, 16, &swayData[0]);
 }

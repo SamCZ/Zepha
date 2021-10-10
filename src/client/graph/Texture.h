@@ -8,10 +8,12 @@
 #include "util/GL.h"
 
 class Texture {
-	public:
+public:
 	Texture() = default;
 	
 	explicit Texture(const std::string& file);
+	
+	bool operator==(const Texture& o) const;
 	
 	void loadFromFile(std::string file);
 	
@@ -20,13 +22,13 @@ class Texture {
 	
 	void updateTexture(int x, int y, int width, int height, unsigned char* bytes);
 	
-	void use(GLuint position = 0);
+	void use(GLuint position = 0) const;
 	
 	void clear();
 	
 	~Texture();
 	
-	protected:
+protected:
 	unsigned int textureID = 0;
 	int width = 0;
 	int height = 0;

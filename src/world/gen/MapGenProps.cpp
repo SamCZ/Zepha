@@ -1,10 +1,6 @@
-//
-// Created by aurailus on 2020-04-05.
-//
-
 #include "MapGenProps.h"
 
-MapGenProps::MapGenProps(unsigned int seed) : seed(seed) {
+MapGenProps::MapGenProps(u32 seed) : seed(seed) {
 	/*temperatureBase.SetSeed(seed);
 	temperatureBase.SetFrequency(0.02);
 	temperatureBase.SetOctaveCount(4);

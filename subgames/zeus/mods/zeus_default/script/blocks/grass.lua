@@ -1,17 +1,17 @@
 zepha.register_block(":grass", {
     name = "Grass",
 
-    model = "base:block_foliage",
+    model = "zepha:base:block_foliage",
     textures = {
         "tint(0, zeus:default:grass_top)",
         "zeus:default:dirt",
-        "tint(0, zeus:default:grass_side_under, zeus:default:grass_side_under_mask)",
+        "(zeus:default:dirt, tint(0, zeus:default:grass_side))",
         "tint(0, zeus:default:grass_floating)",
     },
     lowdef_textures = {
         "tint(0, zeus:default:grass_top)",
         "zeus:default:dirt",
-        "tint(0, zeus:default:grass_side_ld, zeus:default:grass_side_ld_mask)"
+        "(zeus:default:dirt, tint(0, zeus:default:grass_floating))"
     },
 
     tool_props = {

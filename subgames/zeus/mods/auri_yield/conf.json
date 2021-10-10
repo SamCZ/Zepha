@@ -1,5 +1,7 @@
 {
-  "name": "@auri:yield",
+  "name": "Yield",
+  "identifier": "@auri:yield",
   "description": "A mod to enable collecting items from blocks when mined. Can be configured to use dropped items or just directly add to inventory.",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "main": "main"
 }

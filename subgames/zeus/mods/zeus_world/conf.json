@@ -1,7 +1,12 @@
 {
-	"name": "zeus:world",
+	"name": "World",
+	"identifier": "zeus:world",
 	"description": "World and Mapgen definitions for the Zeus subgame.",
 	"version": "0.0.1",
-	"depends": [ "zeus:default", "zeus:flowers", "@auri:hot_wheel" ]
+	"main": "main",
+	"dependencies": {
+		"zeus:default": "^0",
+		"zeus:vegetation": "^0",
+		"@auri:hot_wheel": "^0"
+	}
 }
-

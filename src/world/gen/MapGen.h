@@ -20,11 +20,6 @@ class DefinitionAtlas;
 
 class MapGen {
 public:
-	/** The precision of the Biome map, as a divisor of the chunk size. */
-//	constexpr static u8 BIOP = 4;
-
-	/** The precision of the Terrain maps, as a divisor of the chunk size. */
-//	constexpr static u8 TERP = 4;
 
 	/** A type alias for the type the map of Chunks stored in the Job. */
 	typedef std::unordered_map<ivec3, sptr<Chunk>, Vec::ivec3> ChunkMap;
@@ -55,7 +50,7 @@ public:
 
 		Job(ivec3 pos, u16 size) :
 			pos(pos), size(size),
-			volume(u16vec3(size * 16), 4),
+			volume(u16vec3(size * 16, (size + 1) * 16, size * 16), 4),
 			heightmap(u16vec2(size * 16), 4),
 			
 			temperature(u16vec2(size * 16), 4),

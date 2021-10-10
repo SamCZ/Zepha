@@ -1,7 +1,6 @@
 #pragma once
 
 #include "lua/Lua.h"
-
 #include "util/Types.h"
 
 namespace Gui {

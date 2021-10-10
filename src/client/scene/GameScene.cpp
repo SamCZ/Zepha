@@ -46,19 +46,19 @@ void GameScene::draw() {
 	Camera& camera = renderer.camera;
 	
 	perf.start("draw:world");
+	renderer.enableTexture(client.game->textures.getTexture());
 	renderer.beginChunkDeferredCalls();
-	renderer.enableTexture(&client.game->textures.atlasTexture);
 	world.l()->drawChunks();
 	
 	perf.start("draw:entities");
+	renderer.enableTexture(client.game->textures.getTexture());
 	renderer.beginEntityDeferredCalls();
-	renderer.enableTexture(&client.game->textures.atlasTexture);
 	world.l()->drawEntities();
 	renderer.endDeferredCalls();
 	
 	perf.start("draw:interface");
+	renderer.enableTexture(client.game->textures.getTexture());
 	renderer.beginGUIDrawCalls();
-	renderer.enableTexture(&client.game->textures.atlasTexture);
 	world.l()->drawInterface();
 	
 	perf.start("idle");

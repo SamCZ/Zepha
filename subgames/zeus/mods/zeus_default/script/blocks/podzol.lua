@@ -1,7 +1,6 @@
 zepha.register_block(":podzol", {
     name = "Podzol",
 
-    model = "base:block",
     textures = {
         "zeus:default:podzol",
         "zeus:default:dirt",

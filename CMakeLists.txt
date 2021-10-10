@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.19)
 
 cmake_policy(SET CMP0077 NEW) # set() overrides option()
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -43,7 +43,7 @@ add_executable(${MAIN_EXEC_NAME} ${SOURCE_FILES})
 
 target_include_directories(${MAIN_EXEC_NAME} PUBLIC src)
 
-target_link_libraries(${MAIN_EXEC_NAME} PUBLIC glfw glm enet glad assimp FastNoise nothings-stb gzip cute_headers nlohmann_json)
+target_link_libraries(${MAIN_EXEC_NAME} PUBLIC glfw glm enet glad assimp FastNoise nothings-stb gzip nlohmann_json stdc++fs)
 target_link_libraries(${MAIN_EXEC_NAME} PUBLIC lua sol2)
 
 if(WIN32)

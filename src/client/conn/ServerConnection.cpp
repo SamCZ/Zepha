@@ -56,7 +56,7 @@ void ServerConnection::processConnecting() {
 		if (elapsedMs < timeout) {
 			if (enet_host_service(host, &event, 0) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
 				std::cout << Log::info << "Connected to "
-				          << NetHandler::intToIPString(*reinterpret_cast<unsigned int*>(&event.peer->address.host))
+				          << NetHandler::intToIPString(*reinterpret_cast<u32*>(&event.peer->address.host))
 				          << ":" << event.peer->address.port << "." << Log::endl;
 				
 				state = State::CONNECTED;

@@ -82,7 +82,7 @@ void main() {
                 vec4 origin = vec4(round(unpackFloat(gs_in[i].modValues.x) * 8 + 8), 1);
                 vec3 bsp = vec3(pos - origin);
                 vec3 worldPos = (model * pos).xyz;
-                if (bsp.x*bsp.y*bsp.z != 0 && bsp.x*bsp.y*bsp.z != 1) {
+                if (bsp.x * bsp.y * bsp.z != 0 && bsp.x * bsp.y * bsp.z != 1) {
                     vec3 sway = (texture(swayTex, worldPos.xz * (worldPos.y / 16.f) / 16.f).xyz - .5f) * vec3(gs_in[i].modValues.y, gs_in[i].modValues.y / 2, gs_in[i].modValues.y);
                     pos += vec4(sway, 0);
                 }

@@ -1,7 +1,7 @@
 -- Zepha Vector Library
 -- Version 1.0
 
-_G["vector"] = {}
+_G['vector'] = {}
 
 -- create_vector
 -- Create a new vector, and give it a metatable.
@@ -33,7 +33,7 @@ end
 function vector.add(v1, v2)
     assert(vector.is_vector(v1))
     if vector.is_vector(v2) then return create_vector(rawget(v1, 1) + rawget(v2, 1), rawget(v1, 2) + rawget(v2, 2), rawget(v1, 3) + rawget(v2, 3))
-    elseif type(v2) == "number" then return create_vector(rawget(v1, 1) + v2, rawget(v1, 2) + v2, rawget(v1, 3) + v2) end
+    elseif type(v2) == 'number' then return create_vector(rawget(v1, 1) + v2, rawget(v1, 2) + v2, rawget(v1, 3) + v2) end
 end
 
 vector.__add = vector.add
@@ -60,7 +60,7 @@ vector.__sub = vector.subtract
 function vector.multiply(v1, m)
     assert(vector.is_vector(v1))
     if vector.is_vector(m) then return create_vector(rawget(v1, 1) * rawget(m, 1), rawget(v1, 2) * rawget(m, 2), rawget(v1, 3) * rawget(m, 3))
-    elseif type(m) == "number" then return create_vector(rawget(v1, 1) * m, rawget(v1, 2) * m, rawget(v1, 3) * m) end
+    elseif type(m) == 'number' then return create_vector(rawget(v1, 1) * m, rawget(v1, 2) * m, rawget(v1, 3) * m) end
 end
 
 vector.__mul = vector.multiply
@@ -71,7 +71,7 @@ function vector.divide(v1, m)
     assert(vector.is_vector(v1))
     if vector.is_vector(m) then
         return create_vector(rawget(v1, 1) / rawget(m, 1), rawget(v1, 2) / rawget(m, 2), rawget(v1, 3) / rawget(m, 3))
-    elseif type(m) == "number" then
+    elseif type(m) == 'number' then
         return create_vector(rawget(v1, 1) / m, rawget(v1, 2) / m, rawget(v1, 3) / m)
     end
 end
@@ -159,24 +159,24 @@ vector.unit = vector.normalize
 -- Alias x, y, z to 1, 2, 3
 
 function vector:__index(key)
-    if key == "x" then return rawget(self, 1) end
-    if key == "y" then return rawget(self, 2) end
-    if key == "z" then return rawget(self, 3) end
+    if key == 'x' then return rawget(self, 1) end
+    if key == 'y' then return rawget(self, 2) end
+    if key == 'z' then return rawget(self, 3) end
     return getmetatable(self)[key]
 end
 
 function vector:__newindex(key, val)
-    if     key == "x" then rawset(self, 1, val)
-    elseif key == "y" then rawset(self, 2, val)
-    elseif key == "z" then rawset(self, 3, val) end
+    if     key == 'x' then rawset(self, 1, val)
+    elseif key == 'y' then rawset(self, 2, val)
+    elseif key == 'z' then rawset(self, 3, val) end
 end
 
 function vector:__tostring()
     return table.concat({
-      "{",
-      tostring(rawget(self, 1)), ", ",
-      tostring(rawget(self, 2)), ", ",
-      tostring(rawget(self, 3)), "}"
+      '{',
+      tostring(rawget(self, 1)), ', ',
+      tostring(rawget(self, 2)), ', ',
+      tostring(rawget(self, 3)), '}'
     })
 end
 
@@ -195,18 +195,18 @@ end
 -- Table constructor works with 1-3 values
 vector.new = function(x, y, z)
     -- Blank new constructor, return empty vector
-    if x == nil or (type(x) == "table" and x[1] == nil) then return create_vector(0, 0, 0)
+    if x == nil or (type(x) == 'table' and x[1] == nil) then return create_vector(0, 0, 0)
     -- Invalid type passed to function, return nil
-    elseif type(x) ~= "number" and type(x) ~= "table" then return nil
+    elseif type(x) ~= 'number' and type(x) ~= 'table' then return nil
     -- Passed a table as x with at least x and y parameters, z will be set to table value or 0
-    elseif type(x) == "table" and (vector.is_vector(x) or (type(x[1]) == "number" and type(x[2]) == "number")) then return create_vector(x[1], x[2], x[3] or 0)
+    elseif type(x) == 'table' and (vector.is_vector(x) or (type(x[1]) == 'number' and type(x[2]) == 'number')) then return create_vector(x[1], x[2], x[3] or 0)
     -- Only one number was passed, give a vector with all three values set to it
     elseif y == nil then return create_vector(x, x, x)
     -- Invalid type passed to function, return nil
-    elseif (type(y) ~= "number" and type(y) ~= "table") or type(z) ~= "number" then return end
+    elseif (type(y) ~= 'number' and type(y) ~= 'table') or type(z) ~= 'number' then return end
     -- Create a vector with the values x, y, and z
     return create_vector(x, y, z)
 end
 
 -- vector.new shorthand
-_G["V"] = vector.new
+_G['V'] = vector.new

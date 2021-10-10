@@ -3,7 +3,6 @@
 #include "Scene.h"
 
 #include "util/Types.h"
-#include "client/Window.h"
 #include "client/gui/Root.h"
 #include "client/menu/SubgameDef.h"
 #include "client/menu/MenuSandbox.h"
@@ -24,9 +23,7 @@ public:
 	void draw() override;
 	
 private:
-	/** Find valid subgames in the subgames folder. */
-	void findSubgames();
-
+	
 	/** The GUI root. */
 	Gui::Root root;
 	
